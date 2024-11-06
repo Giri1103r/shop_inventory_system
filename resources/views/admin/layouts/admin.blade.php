@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title> @yield('title') | {{ env('APP_NAME') }}</title>
+
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="{{ url('public/assets/images/favicon.ico') }}">
+    <!-- App css -->
+
+    <link href="{{ url('public/assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
+
+    <!-- icons -->
+    <link href="{{ url('public/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/4.0.0/css/jasny-bootstrap.min.css"
+        integrity="sha512-VUj0sZbQFPixq7NJ6ioBRK/scakfsdlKl647mLmZaZHWPgpnrWvIfy80/QF3q1l+kozBc8IHrTEoiZY25PSUTw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    @stack('styless')
+    <style>
+        :root {
+            --dt-header-background-color: #b8cde2 !important;
+            --dt-header-text-color: #3375b4 !important;
+        }
+
+        body.dark-skin {
+            --dt-header-background-color: #1a233a !important;
+            --dt-header-text-color: #a5b2cb !important;
+        }
+
+        .select2-container--default .select2-selection--single {
+            border: 1px solid #d9d9d9;
+            border-radius: 5px;
+            padding: 1px 5px;
+        }
+
+        .select2-container--default .select2-selection--single {
+            height: 35px;
+            border-color: #688cb4;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            top: 7px;
+            right: 5px;
+        }
+
+        .select2-container .select2-selection--single .select2-selection__rendered {
+            padding-top: 5px;
+        }
+
+        .sidebar-menu>li>a>i {
+            width: 30px;
+            line-height: 28px;
+            font-size: 1.5714285714rem;
+            display: inline-block;
+            vertical-align: middle;
+            color: #b5b5c3;
+            text-align: center;
+            border-radius: 5px;
+            margin-right: 5px;
+            background-color: transparent;
+        }
+
+        .treeview-menu>li>a>i {
+            padding-right: 5px;
+            padding-left: 5px;
+        }
+
+        .sidebar-menu li>a>span {
+            top: 0px;
+            position: relative;
+        }
+
+        .w-100 {
+            width: 100% !important;
+        }
+
+        .theme-primary .dt-buttons .dt-button {
+            background-color: #ffffff;
+        }
+
+        .theme-primary .dt-buttons .dt-button:hover {
+            background-color: #cccccc;
+            color: #000000;
+        }
+
+        hr {
+            border-top: 1px solid #000;
+        }
+
+        .form-label {
+            font-weight: 600;
+        }
+
+        .card-header-inner {
+            background-color: #473a69;
+            color: #fff;
+            padding-top: 15px;
+            margin-bottom: 1rem;
+        }
+
+        .dataTable>thead>tr>th {
+            color: var(--dt-header-text-color);
+            font-size: 14px;
+            background: var(--dt-header-background-color) !important;
+        }
+
+        table.dataTable.dtr-inline.collapsed>tbody>tr.parent>td:first-child:before,
+        table.dataTable.dtr-inline.collapsed>tbody>tr.parent>th:first-child:before {
+
+            background-color: var(--dt-header-background-color);
+        }
+
+        .light-skin #icon-light {
+            display: none;
+        }
+
+        .light-skin #icon-dark {
+            display: block;
+        }
+
+        .dark-skin #icon-light {
+            display: block;
+            color: #ffffff;
+        }
+
+        .dark-skin #icon-dark {
+            display: none;
+        }
+
+        label.require::after {
+            content: '*';
+            color: red;
+        }
+    </style>
+    @stack('style')
+
+</head>
+
+<!-- body start -->
+
+<body class="loading" data-layout-color="light" data-layout-mode="default" data-layout-size="fluid"
+    data-topbar-color="light" data-leftbar-position="fixed" data-leftbar-color="dark" data-leftbar-size='default'
+    data-sidebar-user='true'>
+
+    <!-- Begin page -->
+    <div id="wrapper">
+
+        <!-- Topbar Start -->
+        @include('admin.partial.header')
+
+        <!-- end Topbar -->
+
+        <!-- ========== Left Sidebar Start ========== -->
+        @include('admin.partial.left_menu')
+        <!-- Left Sidebar End -->
+
+        <!-- ============================================================== -->
+        <!-- Start Page Content here -->
+        <!-- ============================================================== -->
+
+        <div class="content-page">
+            <div class="content">
+
+                <!-- Start Content-->
+                @yield('content')
+
+                <!-- container-fluid -->
+
+            </div> <!-- content -->
+
+            <!-- Footer Start -->
+            @include('admin.partial.footer')
+
+            <!-- end Footer -->
+
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Page content -->
+        <!-- ============================================================== -->
+
+
+    </div>
+    <!-- END wrapper -->
+
+    <!-- Right Sidebar -->
+    @include('admin.partial.right_menu')
+
+    <!-- /Right-bar -->
+
+    <!-- Right bar overlay-->
+    <div class="rightbar-overlay"></div>
+
+    <!-- Vendor -->
+    <script src="{{ url('public/assets/plugins/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/simplebar/simplebar.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/node-waves/waves.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/waypoints/lib/jquery.waypoints.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/jquery.counterup/jquery.counterup.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/feather-icons/feather.min.js') }}"></script>
+
+    <!-- knob plugin -->
+    <script src="{{ url('public/assets/plugins/jquery-knob/jquery.knob.min.js') }}"></script>
+
+    <!--Morris Chart-->
+    <script src="{{ url('public/assets/plugins/morris.js06/morris.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/raphael/raphael.min.js') }}"></script>
+
+    <!-- Dashboar init js-->
+    <script src="{{ url('public/assets/js/pages/dashboard.init.js') }}"></script>
+
+    <!-- App js-->
+    <script src="{{ url('public/assets/js/app.min.js') }}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"
+        integrity="sha512-rstIgDs0xPgmG6RX1Aba4KV5cWJbAMcvRCVmglpam9SoHZiUCyQVDdH2LPlxoHtrv17XWblE/V/PP+Tr04hbtA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/additional-methods.min.js"
+        integrity="sha512-6S5LYNn3ZJCIm0f9L6BCerqFlQ4f5MwNKq+EthDXabtaJvg3TuFLhpno9pcm+5Ynm6jdA9xfpQoMz2fcjVMk9g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/4.0.0/js/jasny-bootstrap.min.js"
+        integrity="sha512-T+qL8JzVjquTv+yKR64v+58O+GVCe7A68gbJTzFVs76I7iAcgwisXKyOTaeKZaekcHeiG65p48NDqcMmPgnvIA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    @stack('scripts')
+
+    <script type="text/javascript" nonce="projectcab">
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        function datepickercall() {
+            $(".datepicker").datepicker({
+                'container': ".wrapper",
+                'format': "dd-mm-yyyy",
+                'autoclose': true,
+                'orientation': 'bottom',
+                'todayHighlight': true,
+                'startDate': '16-07-2024',
+            });
+
+            $(".todaymaxdatepicker").datepicker({
+                'container': ".wrapper",
+                'format': "dd-mm-yyyy",
+                'autoclose': true,
+                'orientation': 'bottom',
+                'todayHighlight': true,
+                'endDate': '16-07-2024',
+            });
+        }
+
+        function getEndDate(fromdate, addValue, type = {{ ADD_DATE }}, endDate = "") {
+
+            var fromdate = moment(fromdate, 'DD-MM-YYYY').toDate();
+
+            var currentDateTarget = new Date(fromdate);
+            var futureDateTarget = new Date(fromdate);
+
+            if (type === 1) {
+                addValue = addValue - 1;
+                futureDateTarget.setDate(currentDateTarget.getDate() + addValue);
+            } else if (type === 2) {
+                futureDateTarget.setMonth(currentDateTarget.getMonth() + addValue);
+            } else if (type === 3) {
+                futureDateTarget.setFullYear(currentDateTarget.getFullYear() + addValue);
+            } else {
+                return null;
+            }
+
+            if (endDate != '') {
+                var endDate = moment(endDate, 'DD-MM-YYYY').toDate();
+                if (endDate && futureDateTarget > new Date(endDate)) {
+
+                    futureDateTarget = new Date(endDate);
+                }
+            }
+
+            var day = futureDateTarget.getDate();
+            var month = futureDateTarget.getMonth() + 1;
+            var year = futureDateTarget.getFullYear();
+
+            if (day < 10) {
+                day = "0" + day;
+            }
+
+            if (month < 10) {
+                month = "0" + month;
+            }
+
+            var formattedDate = day + "-" + month + "-" + year;
+
+            return formattedDate;
+        }
+
+        function timepickercall() {
+
+            $(".clockpicker").clockpicker({
+                twelvehour: true,
+                placement: 'bottom',
+                autoclose: true,
+                donetext: 'Done',
+                'default': 'now'
+            });
+        }
+
+        function datetimepickercall() {
+
+            $(".datetimepicker").datetimepicker({
+                format: 'dd-mm-yyyy hh:ii',
+                autoclose: true,
+                todayHighlight: true,
+                minuteStep: 5,
+            });
+        }
+
+        function callsingleselect() {
+            $('.single-select').select2({
+                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+                placeholder: $(this).data('placeholder'),
+                allowClear: Boolean($(this).data('allow-clear')),
+            });
+        }
+
+        function callmultipleselect() {
+            $('.multiple-select').select2({
+                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+                placeholder: $(this).data('placeholder'),
+                allowClear: Boolean($(this).data('allow-clear')),
+            });
+        }
+
+        function callpopupsingleselect() {
+            $('.single-select-popup').select2({
+                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+                placeholder: $(this).data('placeholder'),
+                allowClear: Boolean($(this).data('allow-clear')),
+                dropdownParent: $('#popupwindowmodal'),
+            });
+        }
+
+        function callpopupmultipleselect() {
+            $('.multiple-select-popup').select2({
+                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+                placeholder: $(this).data('placeholder'),
+                allowClear: Boolean($(this).data('allow-clear')),
+                dropdownParent: $('#popupwindowmodal'),
+            });
+        }
+
+        function calltooltip() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+        }
+
+        $(document).ready(function() {
+
+            var toastMixin = Swal.mixin({
+                toast: true,
+                icon: 'success',
+                title: 'General Title',
+                animation: true,
+                position: 'top-right',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+
+            @if ($message = Session::get('success'))
+                toastMixin.fire({
+                    icon: 'success',
+                    animation: true,
+                    title: '{{ $message }}',
+                    showCloseButton: true,
+                });
+            @endif
+
+            @if ($message = Session::get('error'))
+                toastMixin.fire({
+                    icon: 'error',
+                    animation: true,
+                    title: '{{ $message }}',
+                    showCloseButton: true,
+                });
+            @endif
+
+            /** Tooltips **/
+            $(function() {
+                $('[data-toggle="tooltip"]').tooltip()
+            })
+
+            callsingleselect();
+            callmultipleselect();
+            calltooltip();
+
+        });
+
+        $(document).on('click', '.popupwindow', function(e) {
+            e.preventDefault();
+            $('#popupwindowmodal').modal('show').find('.modal-content').load($(this).attr('href'));
+        });
+
+        /*
+         * Menu Active dynamically
+         */
+
+        $(function() {
+            baseurl = "@yield('pageurl')";
+            $('.sidebar-menu a').each(function() {
+                var $this = $(this);
+                if ($this.attr('href') === baseurl) {
+                    $this.parent().addClass('active');
+                    $this.closest('.treeview').addClass('active menu-open');
+                }
+            });
+        });
+
+        /*
+         * Theme mode change
+         */
+
+        var theme = '{{ $themetype }}';
+
+        $(document).ready(function() {
+            $('#themeToggle').click(function() {
+                $('body').toggleClass('light-skin dark-skin');
+            });
+        });
+
+        $(document).on('click', '.themechange', function() {
+
+            if (theme == 'light-skin') {
+                theme = 'dark-skin';
+            } else {
+                theme = 'light-skin';
+            }
+
+            $.ajax({
+                url: "{{ admin_url('theme/change') }}",
+                type: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    theme: theme
+                },
+
+                success: function(data) {
+
+                }
+            });
+        });
+    </script>
+
+    @stack('script')
+
+</body>
+
+</html>

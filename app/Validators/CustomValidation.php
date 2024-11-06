@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Validators;
+
+use GuzzleHttp\Client;
+
+class CustomValidation
+{
+
+    public function validate($attribute, $value, $parameters, $validator)
+    {
+        $client = new Client;
+        $response = $client->post(
+            'https://www.google.com/recaptcha/api/siteverify',
+            [
+                'form_params' =>
+                [
+                    'secret' => env('GOOGLE_RECAPTCHA_SECRET'),
+                    'response' => $value
+                ]
+            ]
+        );
+
+        $body = json_decode((string) $response->getBody());
+        return $body->success;
+    }
+
+    public function emailid($attribute, $value, $parameters, $validator)
+    {
+
+        if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+
+            return false;
+        } else {
+            return true;
+        }
+    }
+}
