@@ -147,6 +147,7 @@
     </style>
     @stack('style')
 
+
 </head>
 
 <!-- body start -->
@@ -202,6 +203,10 @@
 
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
+
+    <script  nonce="projectcab">
+        var pageurl = '@yield("pageurl")';
+    </script>
 
     <!-- Vendor -->
     <script src="{{ url('public/assets/plugins/jquery/jquery.min.js') }}"></script>
