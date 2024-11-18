@@ -56,16 +56,19 @@ class UserRole extends Model
             });
         }
 
-        if($request->has('role_name') && $request->role_name){
-            $query = $query->where('role_name','LIKE', '%'.$request->role_name.'%' );
+        if ($request->has('role_id') && $request->role_id) {
+            $query = $query->where('role_id', 'LIKE', '%' . $request->role_id . '%');
+        }
+        if ($request->has('role_name') && $request->role_name) {
+            $query = $query->where('role_name', 'LIKE', '%' . $request->role_name . '%');
         }
 
-        if($request->has('status') && $request->status){
+        if ($request->has('status') && $request->status) {
 
-            $query = $query->where('status', decryptId($request->status) );
+            $query = $query->where('status', decryptId($request->status));
         }
 
-        $data_count = $query ;
+        $data_count = $query;
         $total_records = $data_count->count();
 
 
@@ -89,7 +92,9 @@ class UserRole extends Model
         $request = request();
 
         $insert_array = array(
+            'role_id' => $request->role_id,
             'role_name' => $request->role_name,
+            'role_permission' => $request->role_permission,
             'created_by' => Auth::id()
         );
 
@@ -102,7 +107,9 @@ class UserRole extends Model
         $request = request();
 
         $update_array = array(
+            'role_id' => $request->role_id,
             'role_name' => $request->role_name,
+            'role_permission' => $request->role_permission,
             'updated_by' => Auth::id()
         );
 
@@ -150,16 +157,19 @@ class UserRole extends Model
 
             $query->where(function ($query) use ($search) {
                 $query->orWhere('role_id', 'LIKE', '%' . $search . '%')
-                ->orWhere('role_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('role_name', 'LIKE', '%' . $search . '%');
             });
         }
-        if($request->has('role_name') && $request->role_name){
-            $query = $query->where('role_name','LIKE', '%'.$request->role_name.'%' );
+        if ($request->has('role_id') && $request->role_id) {
+            $query = $query->where('role_id', 'LIKE', '%' . $request->role_id . '%');
+        }
+        if ($request->has('role_name') && $request->role_name) {
+            $query = $query->where('role_name', 'LIKE', '%' . $request->role_name . '%');
         }
 
-        if($request->has('status') && $request->status){
+        if ($request->has('status') && $request->status) {
 
-            $query = $query->where('status', decryptId($request->status) );
+            $query = $query->where('status', decryptId($request->status));
         }
 
         $query = $query->orderBy('id', 'Desc');
@@ -181,7 +191,7 @@ class UserRole extends Model
         return $this->where('role_name',  $data)->get();
     }
 
-    public function existUniqueCheck($data,$id)
+    public function existUniqueCheck($data, $id)
     {
         return $this->where('role_name',  $data)
             ->where('id', '!=', $id)

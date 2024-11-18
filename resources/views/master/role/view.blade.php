@@ -42,7 +42,7 @@
                             <div class="card-header">
                                 <h4 class="card-title">{{ __('administration.role_view') }}</h4>
                                 <div>
-                                    <x-button-back href="{{ admin_url('admin/master/role/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('administration/role/list') }}"></x-button-back>
                                 </div>
                             </div>
 

@@ -7,6 +7,8 @@ use App\Models\Notification;
 use App\Models\Master\Fleet;
 use App\Models\UploadLogType;
 use App\Models\Master\UserRole;
+use App\Models\UserPermission;
+use App\Models\LeftMenu;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -15,7 +17,9 @@ use App\Models\FcmToken;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\WebPushConfig;
-
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Request;
 
 
 if (!function_exists('get_encryptVal')) {
@@ -823,6 +827,32 @@ if (!function_exists('CheckUserRole')) {
         }
     }
 }
+if (!function_exists('CheckUserPermission')) {
+
+    function CheckUserPermission($permissionType)
+    {
+        $userRoleId = Auth::user()->role;
+
+        $currentPath = Request::path();
+        $menuId = LeftMenu::where('link', 'LIKE', "%{$currentPath}%")->select('id')->first();
+
+        if (!$menuId) {
+            return false;
+        }
+        $leftmenu_id =  $menuId->id;
+
+        $userPermission = UserPermission::where('role_id', $userRoleId)
+            ->where('menu_id', $leftmenu_id)
+            ->value('role_permissions');
+        if ($userPermission) {
+            $permissionsArray = json_decode($userPermission, true);
+            return isset($permissionsArray[$permissionType]) && $permissionsArray[$permissionType] == 1;
+        }
+
+        return false;
+    }
+}
+
 
 if (!function_exists('getEndDate')) {
 
@@ -1203,7 +1233,8 @@ if (!function_exists('secondsToMinutesAndSeconds')) {
 }
 
 if (!function_exists('getMonth')) {
-    function getMonth($created_at) {
+    function getMonth($created_at)
+    {
         $month_name = Carbon::parse($created_at)->format('F');
         return $month_name;
     }

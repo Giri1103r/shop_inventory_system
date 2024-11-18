@@ -43,7 +43,7 @@
                             <div class="card-header">
                                 <h4 class="card-title">{{ __('administration.role_add') }}</h4>
                                 <div>
-                                    <x-button-back href="{{ admin_url('user/role/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('administration/role/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -51,7 +51,7 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="locationtypeedit"
-                                        action="{{ admin_url('user/role/list/edit/submit') }}">
+                                        action="{{ admin_url('administration/role/edit/submit') }}">
                                         @csrf
                                         <input type="hidden" name="id" id="id" value="{{ encryptId($role->id) }}">
                                         <div class="row">

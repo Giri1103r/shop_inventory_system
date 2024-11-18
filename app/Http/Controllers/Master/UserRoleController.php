@@ -24,11 +24,11 @@ use App\Models\Master\UserRole;
 
 class UserRoleController extends Controller
 {
-    private $UserRole;
+    private $user_role;
     private $user;
     public function __construct()
     {
-        $this->UserRole = new UserRole();
+        $this->user_role = new UserRole();
         $this->user = new User();
     }
 
@@ -40,7 +40,7 @@ class UserRoleController extends Controller
             if ($request->ajax()) {
                 try {
 
-                    $data =  $this->UserRole->list();
+                    $data =  $this->user_role->list();
 
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
@@ -117,7 +117,7 @@ class UserRoleController extends Controller
 
             try {
 
-                UserRole::store();
+                $this->user_role->store();
 
                 Session::flash('success', 'User Role added successfully!');
             } catch (Exception $ex) {
@@ -126,12 +126,12 @@ class UserRoleController extends Controller
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
-            return redirect(admin_url('admin/master/role/list'));
+            return redirect(admin_url('administration/role/list'));
         } catch (Exception $ex) {
 
 
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('admin/master/role/list'));
+            return redirect(admin_url('administration/role/list'));
         }
     }
 
@@ -140,7 +140,7 @@ class UserRoleController extends Controller
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
-                $role = UserRole::selectOne($id);
+                $role = $this->user_role->selectOne($id);
 
                 $data = array(
                     'role' => $role,
@@ -157,7 +157,7 @@ class UserRoleController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $role = UserRole::selectOne($id);
+            $role = $this->user_role->selectOne($id);
 
             $data = array(
                 'role' => $role,
@@ -186,14 +186,14 @@ class UserRoleController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-            UserRole::updates($id);
+            $this->user_role->updates($id);
 
             Session::flash('success', 'User Role updated successfully!');
-            return redirect(admin_url('admin/master/role/list'));
+            return redirect(admin_url('administration/role/list'));
         } catch (Exception $ex) {
 
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('admin/master/role/list'));
+            return redirect(admin_url('administration/role/list'));
         }
     }
 
@@ -220,7 +220,7 @@ class UserRoleController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $this->UserRole->statuschange($id);
+            $this->user_role->statuschange($id);
 
             return response()->json(['status' => 'success', 'msg' => 'User Role status changed'], 200);
         } catch (Exception $ex) {
@@ -234,7 +234,7 @@ class UserRoleController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $this->UserRole->deleterecord($id);
+            $this->user_role->deleterecord($id);
 
             return response()->json(['status' => 'success', 'msg' => 'User Role deleted successfully'], 200);
         } catch (Exception $ex) {
@@ -249,7 +249,7 @@ class UserRoleController extends Controller
 
         try {
 
-            $allData = $this->UserRole->exportdata();
+            $allData = $this->user_role->exportdata();
 
             $header = [
                 'No.',
@@ -292,7 +292,7 @@ class UserRoleController extends Controller
 
         try {
 
-            $allData = $this->UserRole->exportdata();
+            $allData = $this->user_role->exportdata();
 
             $header = [
                 'No.',

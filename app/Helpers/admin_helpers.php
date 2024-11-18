@@ -3,11 +3,15 @@
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 
+use App\Models\Master\Company;
+use App\Models\Master\Location;
+use App\Models\Master\Unit;
+use App\Models\Master\Department;
+use App\Models\Master\UserRole;
 
 use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Notification;
-use App\Models\Master\Location;
 
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -113,7 +117,7 @@ if (!function_exists('get_admin_menuchild')) {
 
                 $parenetlinkid = "link_" . encryptId($value['id']);
 
-                $string .= '<a href="#'.$parenetlinkid.'" data-bs-toggle="collapse">' . $value["name"] . '<span class="menu-arrow"></span></a>';
+                $string .= '<a href="#' . $parenetlinkid . '" data-bs-toggle="collapse">' . $value["name"] . '<span class="menu-arrow"></span></a>';
 
                 $parentdetails = array(
                     'id' => $value['id'],
@@ -123,8 +127,7 @@ if (!function_exists('get_admin_menuchild')) {
                 $string .= get_admin_menuchild($menu_array[$value['id']], $menu_array, $parentdetails);
                 $string .= '</li>';
             } else {
-                $string .= ' <li><a href="' . admin_url($value["link"]) . ';">' . $value["name"] . '</a></li>';
-
+                $string .= ' <li><a href="' . admin_url($value["link"]) . '">' . $value["name"] . '</a></li>';
             }
         }
         $string .= '</ul>';
@@ -146,7 +149,31 @@ if (!function_exists('getsequence')) {
             case 'user':
                 $sequence = Str::random(5);
                 break;
-
+            case 'company':
+                $count = Company::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'COMPANY-' . getautogen($count);
+                break;
+            case 'location':
+                $count = Location::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'LOC-' . getautogen($count);
+                break;
+            case 'unit':
+                $count = Unit::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'Unit-' . getautogen($count);
+                break;
+            case 'department':
+                $count = Department::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'DEP-' . getautogen($count);
+                break;
+            case 'role':
+                $count = UserRole::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'ROLE-' . getautogen($count);
+                break;
             default:
                 $sequence = Str::random(5);
                 break;
@@ -200,5 +227,91 @@ if (!function_exists('getMonthsArray')) {
             ['value' => 'November', 'name' => 'November'],
             ['value' => 'December', 'name' => 'December'],
         ];
+    }
+}
+
+
+/*
+ * Menu bar start
+ */
+
+if (!function_exists('getRoleMenu')) {
+    function getRoleMenu($menu)
+    {
+        $menu_array = array();
+        $i = 0;
+
+        foreach ($menu as $key => $value) {
+            $menu_array[$value->parent_id][$i]['id'] = $value->id;
+            $menu_array[$value->parent_id][$i]['name'] = $value->name;
+            $menu_array[$value->parent_id][$i]['link'] = $value->link;
+            $menu_array[$value->parent_id][$i]['icon'] = $value->icon;
+            $menu_array[$value->parent_id][$i]['is_parent'] = $value->is_parent;
+            $menu_array[$value->parent_id][$i]['parent_id'] = $value->parent_id;
+            $menu_array[$value->parent_id][$i]['permission'] = explode(',', trim($value->permission, '[{}]'));
+            $menu_array[$value->parent_id][$i]['sort_order'] = $value->sort_order;
+            $i++;
+        }
+        $html = "";
+        $html .= '<tbody >';
+
+
+        if (count($menu_array) > 0) {
+            foreach ($menu_array[0] as $key => $value) {
+                $class = $value['parent_id'];
+                if ($value['is_parent'] != 0) {
+                    $html .= '<tr> <td>' . $value['name'] . '<span style="padding: 41px;"> <input type="checkbox" name="menu_' . $value['id'] . '_all" class="parent " data-id="' . encryptId($value['id']) . '" data-parentid="" id ="checkbox_' . encryptId($value['id']) . '"> <label for="checkbox_' . encryptId($value['id']) . '"> Select All </label> </span></td><td colspan="5"></td> </tr>';
+                    if ($value['is_parent'] == '1' && isset($menu_array[$value['id']])) {
+                        $html .= getRoleMenuChild($menu_array[$value['id']], $menu_array, 0);
+                    }
+                } else {
+                    $permissions = $value['permission'];
+                    $html .= '<tr>
+                            <td>' . $value['name'] . '</td></tr>
+                  <tr>';
+
+                    foreach ($permissions as $perm) {
+                        $html .= '<td><div style="display: inline-flex;justify-content: space-evenly;width: 7%;">  <input type="checkbox" name="menu_' . $value['id'] . '_' . $perm . '" class="" data-id="" data-parentid="" > ' . ucfirst($perm) . '<td>';
+                    }
+
+                    $html .= '</tr>';
+                }
+            }
+        }
+
+        $html .= '</tbody>';
+        return $html;
+    }
+}
+
+if (!function_exists('getRoleMenuChild')) {
+
+    function getRoleMenuChild($menu, $menu_array, $i = 0, $clsss = "")
+    {
+        $i = $i + 2;
+        $string = '';
+
+        foreach ($menu as $key => $value) {
+
+            if ($value['is_parent'] == '1' && isset($menu_array[$value['id']])) {
+                $clsss = encryptId($value['parent_id']);
+
+                $string .= '<tr> <td style="padding:10px;padding-left:' . $i . 'rem;">' . $value['name'] . '  <span style="padding: 41px;"> <input type="checkbox" name="menu_' . $value['id'] . '_all" class="parent ' . $clsss . '" data-id="' . encryptId($value['id']) . '" data-parentid="' . encryptId($value['parent_id']) . '" id ="checkbox_' . encryptId($value['id']) . '"> <label for="checkbox_' . encryptId($value['id']) . '"> Select All </label></span> </td><td colspan="5"></td> </tr>';
+
+                $string .= getRoleMenuChild($menu_array[$value['id']], $menu_array, $i, $clsss);
+            } else {
+                $permissions = $value['permission'];
+                $string .= '<tr>
+                            <td style="padding:10px;padding-left:' . $i . 'rem;">' . $value['name'] . '</td></tr>';
+                $string .= '<tr><td colspan="5"><div style="display: inline-flex;justify-content: space-evenly;width: 100%;">';
+                foreach ($permissions as $perm) {
+                    $string .= '<div><input type="checkbox" name="menu_' . $value['id'] . '_' . $perm . '" class="child ' . $clsss . " " . encryptId($value['parent_id']) . '" data-id="' . encryptId($value['parent_id']) . '" data-parentid=""> ' . ucfirst($perm) . '
+                             </div>';
+                }
+                $string .= '</div> </td></tr>';
+            }
+        }
+
+        return $string;
     }
 }

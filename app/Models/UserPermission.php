@@ -35,7 +35,10 @@ class UserPermission extends Model
         'trash' => 'NO',
     ];
 
-
+    // protected $casts = [
+    //     'role_permissions' => 'array',
+    // ];
+    
 
 
     protected static function booted()

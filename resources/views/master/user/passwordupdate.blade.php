@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Location Type Add')
-@section('pageurl', admin_url('user/role/list'))
+@section('pageurl', admin_url('administration/role/list'))
 
 
 @section('content')

@@ -1,26 +1,10 @@
 @extends('admin.layouts.admin')
 @section('title', 'User Permission')
-@section('pageurl', admin_url('admin/master/permission/list'))
+@section('pageurl', admin_url('administration/permission/list'))
 
 @section('content')
     <div class="page-wrapper">
         <div class="page-content">
-            <!--breadcrumb-->
-            <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-                <div class="">
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb mb-0 p-0">
-                            <li class="breadcrumb-item">
-                                <a href="{{ admin_url('dashboard') }}"><i class="bx bx-home-alt"></i></a>
-                            </li>
-                            <li class="breadcrumb-item " aria-current="page">Administrator</li>
-                            <li class="breadcrumb-item active" aria-current="page">User</li>
-                            <li class="breadcrumb-item active" aria-current="page">User Permission</li>
-                        </ol>
-                    </nav>
-                </div>
-            </div>
-            <!--end breadcrumb-->
 
             <div class="card mainCard permission-cart">
                 <div class="card-body">
@@ -32,7 +16,7 @@
                     </div>
                     <hr />
                     
-                    <form id="userpermission" action="{{ admin_url('user/permission/update') }}" method="POST">
+                    <form id="userpermission" action="{{ admin_url('administration/permission/update') }}" method="POST">
                         @csrf
                         <div class="row">
                             <div class="col-md-12">
@@ -50,7 +34,7 @@
                         <hr>
                         <div class="table-responsive">
                             <h3>Menu</h3>
-                            <table id="example2" class="table table-striped table-bordered datatable-list">
+                            <table id="example2" class="table table-hover mb-0">
 
                                     {!! $menuList !!}
                             </table>
@@ -120,7 +104,7 @@
                     }
 
                     $.ajax({
-                        url: "{{ admin_url('user/permission/get') }}",
+                        url: "{{ admin_url('administration/permission/get') }}",
                         type: "POST",
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

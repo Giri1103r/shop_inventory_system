@@ -82,7 +82,7 @@ class UserPermissionController extends Controller
                 foreach ($childPermission as $childmenu) {
 
                     $rolePermissions = $childmenu->role_permissions;
-                    // $rolePermissions = json_decode($rolePermissions, true);
+                    $rolePermissions = json_decode($rolePermissions, true);
                     if (json_last_error() === JSON_ERROR_NONE) {
 
                         if (isset($rolePermissions['add']) && $rolePermissions['add'] == 1) {
@@ -144,6 +144,7 @@ class UserPermissionController extends Controller
                         $menuItems[$menudetails[1]]['role_id'] = $role_id;
                         $menuItems[$menudetails[1]]['menu_id'] = $menudetails[1];
                         $menuItems[$menudetails[1]]['role_permissions'][$menudetails[2]] = 1;
+
                     }
                     $permission[] = $menudetails[1];
                 }
@@ -166,12 +167,12 @@ class UserPermissionController extends Controller
 
             Session::flash('success', 'User Role Permision successfully updated!');
 
-            return redirect(admin_url('admin/master/permission/list'));
+            return redirect(admin_url('administration/permission/list'));
         } catch (\Throwable $th) {
 
             Session::flash('error', 'Something went wrong, Please try after sometimes');
 
-            return redirect(admin_url('admin/master/permission/list'));
+            return redirect(admin_url('administration/permission/list'));
         }
     }
 }

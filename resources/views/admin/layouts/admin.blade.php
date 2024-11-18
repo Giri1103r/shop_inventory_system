@@ -6,15 +6,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title> @yield('title') | {{ env('APP_NAME') }}</title>
 
-    <!-- App favicon -->
     <link rel="shortcut icon" href="{{ url('public/assets/images/favicon.ico') }}">
-    <!-- App css -->
 
     <link href="{{ url('public/assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
+    <link href="{{ url('public/assets/plugins/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" type="text/css"  />
+    <link href="{{ url('public/assets/plugins/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css') }}" rel="stylesheet" type="text/css"  />
+    <link href="{{ url('public/assets/plugins/datatables.net-keytable-bs5/css/keyTable.bootstrap5.min.css') }}" rel="stylesheet" type="text/css"  />
+    <link href="{{ url('public/assets/plugins/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}" rel="stylesheet" type="text/css"  />
+    <link href="{{ url('public/assets/plugins/datatables.net-select-bs5/css/select.bootstrap5.min.css') }}" rel="stylesheet" type="text/css"  />
+    <link href="{{ url('public/assets/plugins/admin-resources/rwd-table/rwd-table.min.css') }}" rel="stylesheet" type="text/css"  />
 
     <!-- icons -->
     <link href="{{ url('public/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
@@ -204,6 +207,8 @@
     <div class="rightbar-overlay"></div>
 
     <!-- Vendor -->
+    <script src="{{ url('public/assets/js/pages/responsive-table.init.js') }}"></script>
+    <script src="{{ url('public/assets/js/pages/datatables.init.js') }}"></script>
     <script src="{{ url('public/assets/plugins/jquery/jquery.min.js') }}"></script>
     <script src="{{ url('public/assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ url('public/assets/plugins/simplebar/simplebar.min.js') }}"></script>
@@ -211,6 +216,24 @@
     <script src="{{ url('public/assets/plugins/waypoints/lib/jquery.waypoints.min.js') }}"></script>
     <script src="{{ url('public/assets/plugins/jquery.counterup/jquery.counterup.min.js') }}"></script>
     <script src="{{ url('public/assets/plugins/feather-icons/feather.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/datatables.net-buttons/js/buttons.colVis.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/datatables.net-buttons/js/buttons.flash.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/datatables.net-keytable/js/dataTables.keyTable.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/datatables.net-keytable-bs5/js/keyTable.bootstrap5.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/datatables.net-select/js/dataTables.select.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/datatables.net-select-bs5/js/select.bootstrap5.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/admin-resources/rwd-table/rwd-table.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/pdfmake/build/pdfmake.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/pdfmake/build/vfs_fonts.js') }}"></script>
+
 
     <!-- knob plugin -->
     <script src="{{ url('public/assets/plugins/jquery-knob/jquery.knob.min.js') }}"></script>
@@ -218,6 +241,7 @@
     <!--Morris Chart-->
     <script src="{{ url('public/assets/plugins/morris.js06/morris.min.js') }}"></script>
     <script src="{{ url('public/assets/plugins/raphael/raphael.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/DataTables/datatables.min.js') }}"></script>
 
     <!-- Dashboar init js-->
     <script src="{{ url('public/assets/js/pages/dashboard.init.js') }}"></script>
