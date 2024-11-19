@@ -15,6 +15,7 @@ use App\Http\Controllers\Master\CompanyController;
 use App\Http\Controllers\Master\LocationController;
 use App\Http\Controllers\Master\UnitController;
 use App\Http\Controllers\Master\DepartmentController;
+use App\Http\Controllers\Master\WorkController;
 
 Route::get('cache', function () {
     Artisan::call('optimize:clear');
@@ -40,6 +41,8 @@ Route::get('/seed/{className}', function ($className) {
 Route::get('queuehigh', [CronController::class, 'queueHigh']);
 Route::get('queuedefault', [CronController::class, 'queueDefault']);
 Route::get('queueemail', [CronController::class, 'queueEmail']);
+Route::get('workmastertemp', [CronController::class, 'workMasterTemp']);
+Route::get('worksave', [CronController::class, 'workSave']);
 
 
 Route::get('test', [TestController::class,  'index']);
@@ -223,5 +226,26 @@ Route::middleware(['userlog'])->group(function () {
         Route::post('/import/submit', [DepartmentController::class, 'importSubmit']);
         Route::post('/status', [DepartmentController::class, 'statusChange']);
         Route::post('/unique', [DepartmentController::class, 'Uniquecheck']);
+        Route::get('/alllist/{unitId}', [DepartmentController::class, 'alllist']);
+        Route::get('/ajaxlist', [DepartmentController::class, 'list']);
+    });
+
+
+    Route::group(['prefix' => 'work'], function () {
+        Route::get('/list', [WorkController::class, 'index']);
+        Route::post('/list', [WorkController::class, 'index']);
+        Route::get('/add', [WorkController::class, 'add'])->middleware('role:department,add');
+        Route::post('/add/submit', [WorkController::class, 'store']);
+        Route::get('/edit/{id}', [WorkController::class, 'edit'])->middleware('role:department,edit');
+        Route::post('/edit/submit', [WorkController::class, 'update']);
+        Route::get('/view/{id}', [WorkController::class, 'view'])->middleware('role:department,view');
+        Route::post('/delete', [WorkController::class, 'delete'])->middleware('role:department,delete');
+        Route::get('/export/excel', [WorkController::class, 'exportExcel']);
+        Route::get('/export/pdf', [WorkController::class, 'exportPdf']);
+        Route::get('/sampledownload', [WorkController::class, 'DownloadSample']);
+        Route::get('/import', [WorkController::class, 'import'])->middleware('role:department,import');
+        Route::post('/import/submit', [WorkController::class, 'importSubmit']);
+        Route::post('/status', [WorkController::class, 'statusChange']);
+        Route::post('/unique', [WorkController::class, 'Uniquecheck']);
     });
 });

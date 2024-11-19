@@ -20,6 +20,7 @@ use App\Jobs\ImportdepartmentJob;
 
 
 use App\Models\Master\Company;
+use App\Models\Master\Work;
 use App\Models\Master\Location;
 use App\Models\Master\Unit;
 use App\Models\Master\Department;
@@ -27,7 +28,7 @@ use App\Models\User;
 use App\Models\UploadLog;
 
 
-class DepartmentController extends Controller
+class WorkController extends Controller
 {
 
     private $company;
@@ -36,6 +37,7 @@ class DepartmentController extends Controller
     private $location;
     private $unit;
     private $uploadlog;
+    private $Work;
 
     public function __construct()
     {
@@ -46,6 +48,7 @@ class DepartmentController extends Controller
         $this->location = new Location();
         $this->department = new Department();
         $this->uploadlog = new UploadLog();
+        $this->Work = new Work();
 
     }
 
@@ -57,7 +60,7 @@ class DepartmentController extends Controller
 
                 try {
 
-                    $data =  $this->department->list();
+                    $data =  $this->Work->list();
 
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
@@ -73,20 +76,13 @@ class DepartmentController extends Controller
                         ->addColumn('created_at', function ($row) {
                             return Displaydatetimeformat($row->created_at);
                         })
-                        ->addColumn('created_by', function ($row) {
-                            return getUsername($row->created_by);
-                        })
+                     
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             if (CheckUserPermission('view')) {
-                                $btn = '<a href="' . admin_url('department/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                                $btn = '<a href="' . admin_url('work/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             }
-                            if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('department/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            }
-                            if (CheckUserPermission('delete')) {
-                                $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
-                            }
+                            
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -96,7 +92,7 @@ class DepartmentController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -106,7 +102,7 @@ class DepartmentController extends Controller
         $data = array(
             'companyList' => $companyList,
         );
-        return view('master.department.list', $data);
+        return view('master.work.list', $data);
     }
 
     public function Add(Request $request)
@@ -127,59 +123,20 @@ class DepartmentController extends Controller
         }
     }
 
-    public function Store(Request $request)
-    {
-        try {
 
-            $rules = [
-                'department_id' => 'required',
-                'company_id' => 'required',
-                'location_id' => 'required',
-                'unit_id' => 'required',
-                'department_name' => 'required',
-            ];
-            $messages = [
-                'department_id.required' => 'Please enter Department ID',
-                'company_id.required' => 'Please Select Company ',
-                'location_id.required' => 'Please Select Location ',
-                'unit_id.required' => 'Please Select Unit',
-                'department_name.required' => 'Please Enter Department Name',
-
-            ];
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-
-            try {
-                $this->department->store();
-                Session::flash('success', 'Department added successfully!');
-            } catch (Exception $ex) {
-                report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            }
-
-            return redirect(admin_url('department/list'));
-        } catch (Exception $ex) {
-
-
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('department/list'));
-        }
-    }
 
     public function View(Request $request)
     {
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
-                $department = $this->department->selectOne($id);
+                $Work = $this->Work->selectOne($id);
 
                 $data = array(
-                    'department' => $department,
+                    'work' => $Work,
                 );
             }
-            return view('master.department.view', $data);
+            return view('master.work.view', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -278,18 +235,15 @@ class DepartmentController extends Controller
 
         try {
 
-            $allData = $this->department->exportdata();
+            $allData = $this->Work->exportdata();
 
             $header = [
                 __("common.sno"),
-                'Department Id',
-                'Company Name',
-                'Location Name',
+                'Worker Id',
+                'Worker Name',
+                'Phone Number',
                 'Unit Name',
                 'Department Name',
-                __("common.status"),
-                __("common.created_by"),
-                __("common.created_date"),
             ];
 
             $i = 1;
@@ -297,21 +251,18 @@ class DepartmentController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->department_id;
-                $export[] =  $data->company_name;
-                $export[] =  $data->location_name;
-                $export[] =  $data->unit_id;
+                $export[] =  $data->emp_id;
+                $export[] =  $data->emp_name;
+                $export[] =  $data->mobile_no;
+                $export[] =  $data->unit_name;
                 $export[] =  $data->department_name;
-                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
 
                 $exportData[] = $export;
 
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Department Details.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Worker Details.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -327,24 +278,20 @@ class DepartmentController extends Controller
 
         try {
 
-            $allData = $this->department->exportdata();
-
+            $allData = $this->Work->exportdata();
             $header = [
                 __("common.sno"),
-                'Department Id',
-                'Company Name',
-                'Location Name',
+                'Worker Id',
+                'Worker Name',
+                'Phone Number',
                 'Unit Name',
                 'Department Name',
-                __("common.status"),
-                __("common.created_by"),
-                __("common.created_date"),
             ];
 
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Department Details",
+                'pagetitle' => "Worker Details",
             );
 
             $property = [
@@ -359,7 +306,7 @@ class DepartmentController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('master.department.pdf', $data);
+            $view = view('master.work.pdf', $data);
             $html = $view->render();
 
 
@@ -465,20 +412,5 @@ class DepartmentController extends Controller
 
         //return Response::download($filePath, $customFileName);
         return redirect(url($filePath));
-    }
-    public function list(Request $request)
-    {
-        $unit_id = decryptId($request->unit_id);
-        $departId = decryptId($request->id) ? decryptId($request->id) : 0;
-
-        $dept = $this->department->ajaxList($unit_id, $departId);
-
-        return response()->json($dept);
-    }
-    public function alllist(Request $request)
-    {
-        $unitID = decryptId($request->unit_id);
-        $unit = $this->department->ajaxallList($unitID);
-        return response()->json($unit);
     }
 }

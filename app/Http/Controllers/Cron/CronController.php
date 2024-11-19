@@ -6,18 +6,32 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Queue;
-use App\Models\Master\Employee;
 use App\Models\User;
 use App\Mail\ContractExpireEmail;
 use App\Mail\ContractExpireListEmail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\File;
 
 use Carbon\Carbon;
+use App\Models\Master\Worktemp;
+use App\Models\Master\Work;
 
 
+use Exception;
 
 class CronController extends Controller
 {
+
+    private $worktemp;
+    private $work;
+
+    public function __construct()
+    {
+
+        $this->worktemp = new Worktemp();
+        $this->work = new Work();
+    }
     public function queueHigh()
     {
         $queueLength = Queue::size('high');
@@ -326,7 +340,6 @@ class CronController extends Controller
                 }
             }
             return response()->json(['message' => 'Contract Employee Login Blocked successfully.']);
-
         } else {
             return response()->json(['message' => 'No Contract Data Found', 'exit_code' => 0]);
         }
@@ -349,6 +362,84 @@ class CronController extends Controller
             return response()->json(['message' => 'Queue Employees Import work command executed successfully',  'exit_code' => $exitCode]);
         } else {
             return response()->json(['message' => 'No jobs in the Employee Import queue to process', 'exit_code' => 0]);
+        }
+    }
+
+    public function workMasterTemp()
+    {
+        try {
+
+            $apiUrl = 'https://vmsapi.karam.in/emp.asmx/GetWorkerDetails?TokenId=123&OfficeId=PNI';
+
+            $response = Http::get($apiUrl);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                if (!empty($data)) {
+                    $work = $this->worktemp->store($data);
+                    return response()->json(['message' => 'Data saved successfully.']);
+                } else {
+                    return response()->json(['message' => 'No data found in API response.']);
+                }
+            } else {
+                return response()->json(['message' => 'Failed to fetch data from API.', 'status' => $response->status()]);
+            }
+        } catch (Exception $ex) {
+            dd($ex);
+            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
+        }
+    }
+
+    public function workSave()
+    {
+
+        try {
+            $worktemp = Worktemp::select('*')->where('upload_status', '0')->get();
+
+
+            if (!empty($worktemp)) {
+
+
+                $work = $this->work->store($worktemp);
+                if (empty($work)) {
+                    $this->worktemp->updateAllErrorStatus();
+                } else {
+                    foreach ($work as $item) {
+                        $emp_id = $item['emp_id'];
+
+                        $worktempdata = $this->worktemp->updates($emp_id);
+                    }
+                }
+
+                $baseFolderPath = storage_path('app/private/');
+
+                $month = now()->format('F');
+                $date = now()->format('d');
+
+                $folderPath = $baseFolderPath . $month . '/' . $date . '/worker/';
+                if (!File::exists($folderPath)) {
+                    File::makeDirectory($folderPath, 0755, true);
+                }
+
+                $filePath = $folderPath . 'work_data.txt';
+                $content = '';
+                if (!empty($work)) {
+                    foreach ($work as $item) {
+                        $content .= 'Emp ID: ' . $item['emp_id'] . "\n";
+                        $content .= 'Other Data: ' . json_encode($item) . "\n\n";
+                    }
+                }
+
+                File::put($filePath, $content);
+                return response()->json(['message' => 'Data saved successfully.']);
+            } else {
+
+                return response()->json(['message' => 'No data found in API response.']);
+            }
+        } catch (Exception $ex) {
+            dd($ex);
+            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
 }

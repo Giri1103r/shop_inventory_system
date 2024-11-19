@@ -139,6 +139,52 @@ class Department extends Model
         return $this->where('id', $id)->update($update_array);
     }
 
+    public function ajaxList($unitId = '', $deptId = 0)
+    {
+        $query = $this->select('id', 'department_name')->where('status', 1);
+
+        if (!empty($locationId)) {
+            $query->where('unit_id', $locationId);
+        }
+
+        if ($unitId > 0) {
+            $query->where('id', $unitId);
+        }
+
+        $datas = $query->get();
+
+        $list = [];
+        foreach ($datas as $data) {
+            $listvalue = [];
+            $listvalue['id'] = encryptId($data->id);
+            $listvalue['name'] = $data->department_name;
+            $list[] = $listvalue;
+        }
+
+        return $list;
+    }
+
+    public function ajaxallList($unitId = '')
+    {
+        $query = $this->select('id', 'department_name');
+
+        if ($unitId != '') {
+
+            $query = $query->where('unit_id', $unitId);
+        }
+
+        $datas = $query->get();
+
+        $list = [];
+        foreach ($datas as $data) {
+            $listvalue = [];
+            $listvalue['id'] = encryptId($data->id);
+            $listvalue['name'] = $data->department_name;
+            $list[] = $listvalue;
+        }
+        return $list;
+    }
+
     public function statuschange($id)
     {
         $request = request();
