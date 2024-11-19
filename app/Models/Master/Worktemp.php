@@ -75,7 +75,7 @@ class Worktemp extends Model
                 'nationality' => isset($item['Nationality']) ? $item['Nationality'] : null,
                 'biometric_code' => isset($item['BiometricCode']) ? $item['BiometricCode'] : null,
                 'doi' => DBdatetimeformat($item['Doi']),
-                'exit_date' => DBdatetimeformat($item['ExitDate']),
+                'exit_date' => $item['ExitDate'] != '' ? DBdatetimeformat($item['ExitDate']) : null,
                 'mobile_no' => isset($item['MobileNo']) ? $item['MobileNo'] : null,
                 'company' => isset($item['Company']) ? $item['Company'] : null,
                 'subdepartment' => isset($item['Subdepartment']) ? $item['Subdepartment'] : null,
