@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Company')
+@section('title', 'Company Add')
 @section('pageurl', admin_url('company/list'))
 
 
@@ -7,10 +7,10 @@
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
-            <h4 class="text-black">{{ __('Company Add') }}</h4>
+            {{-- <h4 class="text-black">Company Add</h4> --}}
 
         </div>
-        <ol class="breadcrumb">
+        {{-- <ol class="breadcrumb">
             <li class="breadcrumb-item active ms-auto">
                 <a class="d-flex align-self-center" href="{{ admin_url('dashboard') }}">
                     <svg class="me-2 svg-main-icon" xmlns="http://www.w3.org/2000/svg"
@@ -28,7 +28,7 @@
             </li>
             <li class="breadcrumb-item"><a href="javascript:void(0)">{{ __('leftmenu.menu_4') }}</a></li>
             <li class="breadcrumb-item"><a href="javascript:void(0)">{{ __('leftmenu.menu_8') }}</a></li>
-        </ol>
+        </ol> --}}
     </div>
 
     <div class="content-body  default-height">
@@ -40,8 +40,8 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">{{ __('master.company_add') }}</h4>
-                                <div>
+                                {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
+                                <div class="align-back-btc">
                                     <x-button-back href="{{ admin_url('company/list') }}"></x-button-back>
                                 </div>
                             </div>
