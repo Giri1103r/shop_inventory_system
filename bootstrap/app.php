@@ -13,7 +13,6 @@ use App\Http\Middleware\PermisionCheck;
 use App\Http\Middleware\IsLogin;
 use App\Http\Middleware\AddSecurityHeaders;
 use App\Http\Middleware\LogRequestInfo;
-use App\Http\Middleware\CheckUserPermission;
 use App\Http\Middleware\ExtendAccessTokenExpiration;
 use App\Http\Middleware\LanguageManager;
 use App\Http\Middleware\RoleMiddleware;
@@ -60,9 +59,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->appendToGroup('userlog', [
             LogRequestInfo::class,
         ]);
-        $middleware->appendToGroup('checkpermission', [
-            CheckUserPermission::class,
-        ]);
+       
         $middleware->appendToGroup('extendtokenexpiration', [
             ExtendAccessTokenExpiration::class,
         ]);
