@@ -57,9 +57,7 @@ class WorkController extends Controller
     {
         if (Auth::check()) {
             if ($request->ajax()) {
-
                 try {
-
                     $data =  $this->Work->list();
 
                     $datatables = Datatables::of($data['data'])
@@ -82,7 +80,9 @@ class WorkController extends Controller
                             if (CheckUserPermission('view')) {
                                 $btn = '<a href="' . admin_url('work/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             }
-                            
+                            if (CheckUserPermission('edit')) {
+                                $btn .= '<a href="' . admin_url('work/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            }
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -92,7 +92,7 @@ class WorkController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-dd($ex);
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -104,26 +104,6 @@ dd($ex);
         );
         return view('master.work.list', $data);
     }
-
-    public function Add(Request $request)
-    {
-
-        try {
-            $companyList  = $this->company->select('id', 'company_name')->where('status', '1')->get();
-            $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
-            $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
-            $data = array(
-                'companyList' => $companyList,
-                'locationList' => $locationList,
-                'unitList' => $unitList,
-            );
-            return view('master.department.add', $data);
-        } catch (Exception $ex) {
-            report($ex);
-        }
-    }
-
-
 
     public function View(Request $request)
     {
@@ -147,19 +127,14 @@ dd($ex);
         try {
             $id = decryptId($request->id);
 
-            $department = $this->department->find($id);
-
+            $work = $this->Work->find($id);
             $companyList  = $this->company->select('id', 'company_name')->where('status', '1')->get();
-            $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
-            $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $data = array(
                 'companyList' => $companyList,
-                'locationList' => $locationList,
-                'unitList' => $unitList,
-                'department' => $department,
+                'work' => $work,
             );
 
-            return view('master.department.edit', $data);
+            return view('master.work.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
         }
@@ -170,18 +145,16 @@ dd($ex);
         try {
             $id = decryptId($request->id);
             $rules = [
-                'department_id' => 'required',
-                'company_id' => 'required',
-                'location_id' => 'required',
-                'unit_id' => 'required',
-                'department_name' => 'required',
+                'department' => 'required',
+                'company' => 'required',
+                'unit' => 'required',
+                'emp_name' => 'required',
             ];
             $messages = [
-                'department_id.required' => 'Please enter Department ID',
-                'company_id.required' => 'Please Select Company ',
-                'location_id.required' => 'Please Select Location ',
-                'unit_id.required' => 'Please Select Unit',
-                'department_name.required' => 'Please Enter Department Name',
+                'department.required' => 'Please Select Department ',
+                'company.required' => 'Please Select Company ',
+                'unit.required' => 'Please Select Unit',
+                'emp_name.required' => 'Please Enter Worker Name',
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -189,14 +162,14 @@ dd($ex);
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            $this->department->updates($id);
+            $this->Work->updates($id);
 
-            Session::flash('success', 'Department updated successfully!');
-            return redirect(admin_url('department/list'));
+            Session::flash('success', 'Work updated successfully!');
+            return redirect(admin_url('work/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('department/list'));
+            return redirect(admin_url('work/list'));
         }
     }
 

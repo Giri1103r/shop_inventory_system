@@ -31,6 +31,7 @@ class Work extends Model
         'exit_date',
         'mobile_no',
         'company',
+        'location',
         'subdepartment',
         'unit',
         'department',
@@ -131,6 +132,9 @@ class Work extends Model
             $companyExists = DB::table('company_management')
                 ->where('company_name', $item->company)
                 ->first();
+            $locationExists = DB::table('masters_location')
+                ->where('location_name', $item->location)
+                ->first();
             $unitExists = DB::table('masters_unit')
                 ->where('unit_name', $item->unit)
                 ->first();
@@ -158,6 +162,7 @@ class Work extends Model
                     'exit_date' => DBdatetimeformat($item->exit_date),
                     'mobile_no' => $item->mobile_no ?? null,
                     'company' => $companyExists->id,
+                    'location_id' => $locationExists->id,
                     'subdepartment' => $item->subdepartment ?? null,
                     'unit' => $unitExists->id,
                     'department' => $departmentExists->id,
@@ -186,12 +191,39 @@ class Work extends Model
     }
 
 
+    public function updates($id)
+    {
 
+        $request = request();
+
+        $update_array = array(
+            'emp_id' => $request->emp_id ?? null,
+            'emp_name' => $request->emp_name ?? null,
+            'gender' => $request->gender ?? null,
+            'nationality' => $request->nationality ?? null,
+            'biometric_code' => $request->biometric_code ?? null,
+            'doi' => DBdatetimeformat($request->doi),
+            'exit_date' => DBdatetimeformat($request->exit_date),
+            'mobile_no' => $request->mobile_no ?? null,
+            'company' => decryptId($request->company),
+            'location' => decryptId($request->location),
+            'subdepartment' => $request->subdepartment ?? null,
+            'unit' => decryptId($request->unit),
+            'department' => decryptId($request->department),
+            'designation' => $request->designation ?? null,
+            'wfemptype' => $request->wfemptype ?? null,
+            'skill' => $request->skill ?? null,
+            'status' => 1,
+            'updated_by' => Auth::id(),
+            'updated_at' => now(),
+        );
+        return $this->where('id', $id)->update($update_array);
+    }
     public function updateErrorStatus($emp_id, $errorMessage)
     {
         $update_data = [
             'error_status' => 1,
-            'error_remarks' => $errorMessage, 
+            'error_remarks' => $errorMessage,
         ];
 
         return Worktemp::where('emp_id', $emp_id)->update($update_data);
@@ -239,7 +271,7 @@ class Work extends Model
         $query = $query->leftJoin('company_management', 'masters_work.company', '=', 'company_management.id');
         $query = $query->leftJoin('masters_department', 'masters_work.department', '=', 'masters_department.id');
         $query = $query->leftJoin('masters_unit', 'masters_work.unit', '=', 'masters_unit.id');
-        
+
 
         if (!empty($request->search)) {
             $search = $request->search;
@@ -247,7 +279,7 @@ class Work extends Model
                 $query->orWhere('masters_work.emp_name', 'LIKE', '%' . $search . '%');
             });
         }
-        
+
         if ($request->has('emp_id') && $request->emp_id) {
             $query = $query->where('masters_work.emp_id', 'LIKE', '%' . $request->emp_id . '%');
         }
@@ -265,7 +297,7 @@ class Work extends Model
         if ($request->has('unit_id') && $request->unit_id) {
             $query = $query->where('masters_work.unit', decryptId($request->unit_id));
         }
-    
+
         return  $query->get();
     }
 

@@ -343,12 +343,22 @@ class LocationController extends Controller
             report($ex);
         }
     }
+    // public function list(Request $request)
+    // {
+    //     $companyId = decryptId($request->company_id);
+    //     $locationId = decryptId($request->id) ? decryptId($request->id) : 0;
+
+    //     $locations = $this->location->ajaxList($companyId, $locationId);
+
+    //     return response()->json($locations);
+    // }
     public function list(Request $request)
     {
         $companyId = decryptId($request->company_id);
-        $locationId = decryptId($request->id) ? decryptId($request->id) : 0;
 
-        $locations = $this->location->ajaxList($companyId, $locationId);
+        $id = decryptId($request->id);
+        $locations = $this->location->ajaxList($companyId, $id);
+
 
         return response()->json($locations);
     }

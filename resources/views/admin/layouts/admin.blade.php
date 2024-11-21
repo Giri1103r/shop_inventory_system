@@ -13,12 +13,34 @@
 
     <link href="{{ url('public/assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
     <link href="{{ url('public/assets/css/app.css') }}" rel="stylesheet" type="text/css" id="app-style" />
-    <link href="{{ url('public/assets/plugins/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" type="text/css"  />
-    <link href="{{ url('public/assets/plugins/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css') }}" rel="stylesheet" type="text/css"  />
-    <link href="{{ url('public/assets/plugins/datatables.net-keytable-bs5/css/keyTable.bootstrap5.min.css') }}" rel="stylesheet" type="text/css"  />
-    <link href="{{ url('public/assets/plugins/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}" rel="stylesheet" type="text/css"  />
-    <link href="{{ url('public/assets/plugins/datatables.net-select-bs5/css/select.bootstrap5.min.css') }}" rel="stylesheet" type="text/css"  />
-    <link href="{{ url('public/assets/plugins/admin-resources/rwd-table/rwd-table.min.css') }}" rel="stylesheet" type="text/css"  />
+    <link href="{{ url('public/assets/plugins/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}"
+        rel="stylesheet" type="text/css" />
+    <link href="{{ url('public/assets/plugins/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css') }}"
+        rel="stylesheet" type="text/css" />
+    <link href="{{ url('public/assets/plugins/datatables.net-keytable-bs5/css/keyTable.bootstrap5.min.css') }}"
+        rel="stylesheet" type="text/css" />
+    <link href="{{ url('public/assets/plugins/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}"
+        rel="stylesheet" type="text/css" />
+    <link href="{{ url('public/assets/plugins/datatables.net-select-bs5/css/select.bootstrap5.min.css') }}"
+        rel="stylesheet" type="text/css" />
+    <link href="{{ url('public/assets/plugins/admin-resources/rwd-table/rwd-table.min.css') }}" rel="stylesheet"
+        type="text/css" />
+
+    <link href="{{ url('public/assets/plugins/spectrum-colorpicker2/spectrum.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ url('public/assets/plugins/flatpickr/flatpickr.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ url('public/assets/plugins/clockpicker/bootstrap-clockpicker.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ url('public/assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}" rel="stylesheet" type="text/css" />
+ 
+
+
+    {{-- <link href="{{ url('public/assets/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css') }}"
+        rel="stylesheet" type="text/css" />
+    <link href="{{ url('public/assets/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css') }}"
+        rel="stylesheet" type="text/css" /> --}}
+    <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"
+        rel="stylesheet">
+
 
     <!-- icons -->
     <link href="{{ url('public/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
@@ -208,8 +230,8 @@
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
 
-    <script  nonce="projectcab">
-        var pageurl = '@yield("pageurl")';
+    <script nonce="projectcab">
+        var pageurl = '@yield('pageurl')';
     </script>
 
     <!-- Vendor -->
@@ -233,12 +255,19 @@
     <script src="{{ url('public/assets/plugins/datatables.net-keytable/js/dataTables.keyTable.min.js') }}"></script>
     <script src="{{ url('public/assets/plugins/datatables.net-keytable-bs5/js/keyTable.bootstrap5.min.js') }}"></script>
     <script src="{{ url('public/assets/plugins/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js') }}">
+    </script>
     <script src="{{ url('public/assets/plugins/datatables.net-select/js/dataTables.select.min.js') }}"></script>
     <script src="{{ url('public/assets/plugins/datatables.net-select-bs5/js/select.bootstrap5.min.js') }}"></script>
     <script src="{{ url('public/assets/plugins/admin-resources/rwd-table/rwd-table.min.js') }}"></script>
     <script src="{{ url('public/assets/plugins/pdfmake/build/pdfmake.min.js') }}"></script>
     <script src="{{ url('public/assets/plugins/pdfmake/build/vfs_fonts.js') }}"></script>
+    {{-- <script src="{{ url('public/assets/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}"></script> --}}
+    <script src="{{ url('public/assets/plugins/flatpickr/flatpickr.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/spectrum-colorpicker2/spectrum.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/clockpicker/bootstrap-clockpicker.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
+    <script src="{{ url('public/assets/js/pages/form-pickers.init.js') }}"></script>
 
 
     <!-- knob plugin -->
@@ -267,6 +296,10 @@
         integrity="sha512-T+qL8JzVjquTv+yKR64v+58O+GVCe7A68gbJTzFVs76I7iAcgwisXKyOTaeKZaekcHeiG65p48NDqcMmPgnvIA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js">
+    </script>
     @stack('scripts')
 
     <script type="text/javascript" nonce="projectcab">
@@ -275,6 +308,8 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+
+
 
         function datepickercall() {
             $(".datepicker").datepicker({
@@ -350,13 +385,22 @@
             });
         }
 
-        function datetimepickercall() {
+        // function datetimepickercall() {
 
+        //     $(".datetimepicker").datetimepicker({
+        //         format: 'dd-mm-yyyy hh:ii',
+        //         autoclose: true,
+        //         todayHighlight: true,
+        //         minuteStep: 5,
+        //     });
+        // }
+
+        function datetimepickercall() {
             $(".datetimepicker").datetimepicker({
-                format: 'dd-mm-yyyy hh:ii',
-                autoclose: true,
-                todayHighlight: true,
-                minuteStep: 5,
+                format: 'DD-MM-YYYY HH:mm', // Correct date format (DD-MM-YYYY) and time format (HH:mm)
+                autoclose: true, // Automatically closes after date selection
+                todayHighlight: true, // Highlights today’s date
+                minuteStep: 5, // Sets minute interval to 5 minutes
             });
         }
 

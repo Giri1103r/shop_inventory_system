@@ -9,7 +9,7 @@
         <div class="d-flex align-items-center">
 
         </div>
-       
+
     </div>
 
     <div class="content-body  default-height">
@@ -98,31 +98,27 @@
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(document).on('change', '#company_id', function() {
-            var company_id = $(this).val();
-
-            if (company_id) {
+            var companyId = $(this).val();
+            if (companyId) {
                 $.ajax({
-                    url: "{{ admin_url('location/ajaxlist') }}",
+                    url: "{{ admin_url('location/ajaxlist') }}/" + companyId + "/0",
                     type: 'GET',
-                    data: {
-                        company_id: company_id,
-                        id: 0 // Set to 0 or any default if no specific location ID is selected
-                    },
                     dataType: 'json',
                     success: function(data) {
-                        $('#location_id').empty().append(
-                            '<option value="">Select Location Name</option>');
+                        $('#location_id').empty().append('<option value="">Select Location</option>');
                         $.each(data, function(key, value) {
                             $('#location_id').append('<option value="' + value.id + '">' + value
                                 .name + '</option>');
                         });
+                        $('#location_id').trigger('change.');
                     },
-                    error: function(xhr, status, error) {
-                        console.error('AJAX Error:', error);
+                    error: function(xhr) {
+                        alert('Error fetching locations. Please try again.');
                     }
                 });
             } else {
-                $('#location_id').empty().append('<option value="">Select Location Name</option>');
+                $('#location_id').empty().append('<option value="">Select Location</option>');
+                $('#location_id').trigger('change.');
             }
         });
 

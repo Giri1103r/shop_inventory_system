@@ -48,7 +48,7 @@ class Department extends Model
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
-        
+
         if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];
 
@@ -79,7 +79,7 @@ class Department extends Model
         $data_count = $query->count();
         $total_records = $data_count;
 
-        $query->orderBy('id','DESC');
+        $query->orderBy('id', 'DESC');
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
@@ -139,18 +139,18 @@ class Department extends Model
         return $this->where('id', $id)->update($update_array);
     }
 
-    public function ajaxList($unitId = '', $deptId = 0)
+    public function ajaxList($unitId = '', $department_id)
     {
         $query = $this->select('id', 'department_name')->where('status', 1);
 
-        if (!empty($locationId)) {
-            $query->where('unit_id', $locationId);
+        if ($unitId != '') {
+            $query->where('unit_id', $unitId);
         }
-
-        if ($unitId > 0) {
-            $query->where('id', $unitId);
+        if (!empty($unitId) && !empty($department_id)) {
+            $query = $query->where('unit_id', $unitId)->where('status', 1)->orWhere(function ($query) use ($department_id, $unitId) {
+                $query->where('unit_id', $unitId)->where('id', $department_id);
+            });
         }
-
         $datas = $query->get();
 
         $list = [];
@@ -242,7 +242,7 @@ class Department extends Model
 
     public function selectOne($id)
     {
-    
+
         $data = $this->select('masters_department.*', 'company_management.company_name',  'masters_location.location_name', 'masters_unit.unit_name')->leftJoin('company_management', 'masters_department.company_id', '=', 'company_management.id')->leftJoin('masters_location', 'masters_department.location_id', '=', 'masters_location.id')->leftJoin('masters_unit', 'masters_department.unit_id', '=', 'masters_unit.id')
             ->where('masters_department.id', $id)
             ->first();

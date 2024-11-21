@@ -46,7 +46,7 @@ class Unit extends Model
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
-        
+
         if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];
 
@@ -76,7 +76,7 @@ class Unit extends Model
         $data_count = $query->count();
         $total_records = $data_count;
 
-        $query->orderBy('id','DESC');
+        $query->orderBy('id', 'DESC');
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
@@ -125,7 +125,7 @@ class Unit extends Model
         $request = request();
 
         $update_array = array(
-           'unit_id' => $request->unit_id,
+            'unit_id' => $request->unit_id,
             'location_id' => decryptId($request->location_id),
             'company_id' => decryptId($request->company_id),
             'unit_name' => $request->unit_name,
@@ -190,7 +190,7 @@ class Unit extends Model
 
     public function selectOne($id)
     {
-    
+
         $data = $this->select('masters_unit.*', 'company_management.company_name',  'masters_location.location_name')->leftJoin('company_management', 'masters_unit.company_id', '=', 'company_management.id')->leftJoin('masters_location', 'masters_unit.location_id', '=', 'masters_location.id')
             ->where('masters_unit.id', $id)
             ->first();
@@ -198,18 +198,36 @@ class Unit extends Model
         return $data;
     }
 
-    public function ajaxList($locationId = '', $unitId = 0)
+    // public function ajaxList($locationId = '')
+    // {
+    //     $query = $this->select('id', 'unit_name')->where('status', 1);
+
+    //     $query->where('location_id', $locationId);
+
+    //     $datas = $query->get();
+
+    //     $list = [];
+    //     foreach ($datas as $data) {
+    //         $listvalue = [];
+    //         $listvalue['id'] = encryptId($data->id);
+    //         $listvalue['name'] = $data->unit_name;
+    //         $list[] = $listvalue;
+    //     }
+
+    //     return $list;
+    // }
+    public function ajaxList($locationId = '', $unit_id)
     {
         $query = $this->select('id', 'unit_name')->where('status', 1);
 
-        if (!empty($locationId)) {
+        if ($locationId != '') {
             $query->where('location_id', $locationId);
         }
-
-        if ($unitId > 0) {
-            $query->where('id', $unitId);
+        if (!empty($locationId) && !empty($unit_id)) {
+            $query = $query->where('location_id', $locationId)->where('status', 1)->orWhere(function ($query) use ($unit_id, $locationId) {
+                $query->where('location_id', $locationId)->where('id', $unit_id);
+            });
         }
-
         $datas = $query->get();
 
         $list = [];

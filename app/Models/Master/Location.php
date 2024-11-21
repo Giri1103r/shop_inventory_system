@@ -188,42 +188,18 @@ class Location extends Model
         return $data;
     }
 
-    // public function ajaxList($companyId = '', $location_id)
-    // {
-    //     $query = $this->select('id', 'location_name');
-
-    //     if ($companyId != '') {
-
-    //         $query = $query->where('company_id', $companyId)->where('status', 1);
-    //     }
-    //     if (!empty($companyId) && !empty($location_id)) {
-    //         $query = $query->where('company_id', $companyId)->where('status', 1)->orWhere(function ($query) use ($location_id, $companyId) {
-    //             $query->where('company_id', $companyId)->where('id', $location_id);
-    //         });
-    //     }
-    //     $datas = $query->get();
-
-    //     $list = [];
-    //     foreach ($datas as $data) {
-    //         $listvalue = [];
-    //         $listvalue['id'] = encryptId($data->id);
-    //         $listvalue['name'] = $data->work_stage;
-    //         $list[] = $listvalue;
-    //     }
-    //     return $list;
-    // }
-    public function ajaxList($companyId = '', $locationId = 0)
+    public function ajaxList($companyId = '', $locationId)
     {
         $query = $this->select('id', 'location_name')->where('status', 1);
 
-        if (!empty($companyId)) {
+        if ($companyId != '') {
             $query->where('company_id', $companyId);
         }
-
-        if ($locationId > 0) {
-            $query->where('id', $locationId);
+        if (!empty($companyId) && !empty($locationId)) {
+            $query = $query->where('company_id', $companyId)->where('status', 1)->orWhere(function ($query) use ($locationId, $companyId) {
+                $query->where('company_id', $companyId)->where('id', $locationId);
+            });
         }
-
         $datas = $query->get();
 
         $list = [];
@@ -236,6 +212,30 @@ class Location extends Model
 
         return $list;
     }
+    // public function ajaxList($companyId = '', $locationId = 0)
+    // {
+    //     $query = $this->select('id', 'location_name')->where('status', 1);
+
+    //     if (!empty($companyId)) {
+    //         $query->where('company_id', $companyId);
+    //     }
+
+    //     if ($locationId > 0) {
+    //         $query->where('id', $locationId);
+    //     }
+
+    //     $datas = $query->get();
+
+    //     $list = [];
+    //     foreach ($datas as $data) {
+    //         $listvalue = [];
+    //         $listvalue['id'] = encryptId($data->id);
+    //         $listvalue['name'] = $data->location_name;
+    //         $list[] = $listvalue;
+    //     }
+
+    //     return $list;
+    // }
     public function ajaxallList($companyId = '')
     {
         $query = $this->select('id', 'location_name');

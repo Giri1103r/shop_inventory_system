@@ -9,7 +9,7 @@
         <div class="d-flex align-items-center">
 
         </div>
-        
+
     </div>
 
     <div class="content-body  default-height">
@@ -99,47 +99,48 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
-        var preselectedLocationId = "{{ encryptId($unit->location_id) ?? '' }}";
-        var initialCompanyId = $('#company_id').val();
+        $(document).ready(function() {
 
-        if (initialCompanyId) {
-            fetchLocations(initialCompanyId, preselectedLocationId);
-        }
+            var initialCompanyId = $('#company_id').val();
+            var preselectedLocationId = "{{ encryptId($unit->location_id) ?? '0' }}";
 
-        $('#company_id').on('change', function() {
-            var companyId = $(this).val();
-            fetchLocations(companyId, "0"); 
-        });
-
-        function fetchLocations(companyId, preselectedLocationId) {
-            if (companyId) {
-                $.ajax({
-                    url: "{{ admin_url('location/ajaxlist') }}",
-                    type: 'GET',
-                    data: {
-                        company_id: companyId
-                    },
-                    dataType: 'json',
-                    success: function(data) {
-                        $('#location_id').empty().append('<option value="">Select Location Name</option>');
-                        $.each(data, function(key, value) {
-                            // Check if the location ID matches the preselected location ID
-                            var selected = (value.encrypted_id == preselectedLocationId) ? 'selected' :
-                                '';
-                            $('#location_id').append('<option value="' + value.encrypted_id + '" ' +
-                                selected + '>' + value.name + '</option>');
-                        });
-                        $('#location_id').trigger('change');
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('AJAX Error:', error);
-                        alert('Failed to fetch locations. Please try again.');
-                    }
-                });
-            } else {
-                $('#location_id').empty().append('<option value="">Select Location Name</option>');
+            if (initialCompanyId) {
+                fetchLocations(initialCompanyId, preselectedLocationId);
             }
-        }
+
+            $('#company_id').on('change', function() {
+                var company_id = $(this).val();
+                fetchLocations(company_id, preselectedLocationId, function() {
+                    $('#location_id').trigger('change');
+                });
+            });
+
+            function fetchLocations(company_id, preselectedLocationId, callback) {
+                if (company_id) {
+                    $.ajax({
+                        url: "{{ admin_url('location/ajaxlist/') }}" + company_id + '/' +
+                            preselectedLocationId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#location_id').empty().append(
+                                '<option value="">Select Location</option>');
+                            $.each(data, function(key, value) {
+                                var selected = (value.id == preselectedLocationId) ?
+                                    'selected' : '';
+                                $('#location_id').append('<option value="' + value.id + '" ' +
+                                    selected + '>' + value.name + '</option>');
+                            });
+                            if (callback) callback();
+                        }
+                    });
+                } else {
+                    $('#location_id').empty().append('<option value="">Select Location</option>');
+                }
+            }
+
+         
+        });
         $(function() {
             $('#unitedit').validate({
                 rules: {

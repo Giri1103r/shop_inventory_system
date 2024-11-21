@@ -10,7 +10,7 @@
             {{-- <h4 class="text-black">{{ __('Department Add') }}</h4> --}}
 
         </div>
-      
+
     </div>
 
     <div class="content-body  default-height">
@@ -110,15 +110,13 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+     
         $(document).on('change', '#company_id', function() {
-            let companyId = $(this).val();
+            var companyId = $(this).val();
             if (companyId) {
                 $.ajax({
-                    url: "{{ admin_url('location/ajaxlist') }}", // Updated route
+                    url: "{{ admin_url('location/ajaxlist') }}/" + companyId + "/0", 
                     type: 'GET',
-                    data: {
-                        company_id: companyId
-                    },
                     dataType: 'json',
                     success: function(data) {
                         $('#location_id').empty().append('<option value="">Select Location</option>');
@@ -126,25 +124,24 @@
                             $('#location_id').append('<option value="' + value.id + '">' + value
                                 .name + '</option>');
                         });
-                        // Clear the Unit dropdown
-                        $('#unit_id').empty().append('<option value="">Select Unit</option>');
+                        $('#location_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching locations. Please try again.');
                     }
                 });
             } else {
                 $('#location_id').empty().append('<option value="">Select Location</option>');
-                $('#unit_id').empty().append('<option value="">Select Unit</option>');
+                $('#location_id').trigger('change.');
             }
         });
 
         $(document).on('change', '#location_id', function() {
-            let locationId = $(this).val();
+            var locationId = $(this).val();
             if (locationId) {
                 $.ajax({
-                    url: "{{ admin_url('unit/ajaxlist') }}", // Updated route
+                    url: "{{ admin_url('unit/ajaxlist') }}/" + locationId + "/0", 
                     type: 'GET',
-                    data: {
-                        location_id: locationId
-                    },
                     dataType: 'json',
                     success: function(data) {
                         $('#unit_id').empty().append('<option value="">Select Unit</option>');
@@ -152,14 +149,19 @@
                             $('#unit_id').append('<option value="' + value.id + '">' + value
                                 .name + '</option>');
                         });
+                        $('#unit_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching unit. Please try again.');
                     }
                 });
             } else {
                 $('#unit_id').empty().append('<option value="">Select Unit</option>');
+                $('#unit_id').trigger('change.');
             }
         });
 
-     
+
         $(function() {
             $('#departmentadd').validate({
                 rules: {

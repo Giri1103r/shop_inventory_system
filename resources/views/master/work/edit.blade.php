@@ -1,34 +1,16 @@
 @extends('admin.layouts.admin')
-@section('title', 'Department')
-@section('pageurl', admin_url('department/list'))
+@section('title', 'Worker Edit')
+@section('pageurl', admin_url('work/list'))
 
 
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
-            <h4 class="text-black">{{ __('Department Edit') }}</h4>
+            {{-- <h4 class="text-black">{{ __('Department Edit') }}</h4> --}}
 
         </div>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item active ms-auto">
-                <a class="d-flex align-self-center" href="{{ admin_url('dashboard') }}">
-                    <svg class="me-2 svg-main-icon" xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24"
-                        version="1.1">
-                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                            <rect x="0" y="0" width="24" height="24"></rect>
-                            <path
-                                d="M3.95709826,8.41510662 L11.47855,3.81866389 C11.7986624,3.62303967 12.2013376,3.62303967 12.52145,3.81866389 L20.0429,8.41510557 C20.6374094,8.77841684 21,9.42493654 21,10.1216692 L21,19.0000642 C21,20.1046337 20.1045695,21.0000642 19,21.0000642 L4.99998155,21.0000673 C3.89541205,21.0000673 2.99998155,20.1046368 2.99998155,19.0000673 L2.99999828,10.1216672 C2.99999935,9.42493561 3.36258984,8.77841732 3.95709826,8.41510662 Z M10,13 C9.44771525,13 9,13.4477153 9,14 L9,17 C9,17.5522847 9.44771525,18 10,18 L14,18 C14.5522847,18 15,17.5522847 15,17 L15,14 C15,13.4477153 14.5522847,13 14,13 L10,13 Z"
-                                fill="#009999"></path>
-                        </g>
-                    </svg>
-                    {{ __('common.dashboard') }}
-                </a>
-            </li>
-            <li class="breadcrumb-item"><a href="javascript:void(0)">{{ __('leftmenu.menu_4') }}</a></li>
-            <li class="breadcrumb-item"><a href="javascript:void(0)">{{ __('leftmenu.menu_8') }}</a></li>
-        </ol>
+
     </div>
 
     <div class="content-body  default-height">
@@ -42,45 +24,104 @@
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
                                 <div>
-                                    <x-button-back href="{{ admin_url('department/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('work/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="departmentedit" action="{{ admin_url('department/edit/submit') }}">
+                                    <form method="POST" id="workedit" action="{{ admin_url('work/edit/submit') }}">
                                         @csrf
                                         <input type="hidden" name="id" id="id"
-                                            value="{{ encryptId($department->id) }}">
+                                            value="{{ encryptId($work->id) }}">
 
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Department ID</label>
-                                                    <input type="text" name ="department_id" class="form-control"
-                                                        placeholder="Department ID" value="{{ $department->department_id }}" readonly>
+                                                    <label class="form-label require">Worker ID</label>
+                                                    <input type="text" name ="emp_id" class="form-control"
+                                                        placeholder="Worker ID" value="{{ $work->emp_id }}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Worker Name</label>
+                                                    <input type="text" name ="emp_name" class="form-control"
+                                                        placeholder="Worker Name" value="{{ $work->emp_name }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Gender</label>
+                                                    <select name="gender" id="gender" class="form-control single-select"
+                                                        style="width: 100%;">
+                                                        <option value="">Select Gender</option>
+                                                        <option value="M"
+                                                            {{ $work->gender === 'M' ? 'selected' : '' }}>Male</option>
+                                                        <option value="F"
+                                                            {{ $work->gender === 'F' ? 'selected' : '' }}>Female</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Nationality</label>
+                                                    <input type="text" name ="nationality" class="form-control"
+                                                        placeholder="Nationality" value="{{ $work->nationality }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Biometric Code</label>
+                                                    <input type="text" name ="biometric_code" class="form-control"
+                                                        placeholder="Biometric Code" value="{{ $work->biometric_code }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">DOI</label>
+                                                    <input type="text" name ="doi" id="doi-datetime-datepicker"
+                                                        class="form-control" placeholder="DOI"
+                                                        value="{{ Displaydatetimeformat($work->doi) }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Exit Date</label>
+                                                    <input type="text" name ="exit_date"
+                                                        id="exit-date-datetime-datepicker" class="form-control"
+                                                        placeholder="Exit Date"
+                                                        value="{{ Displaydatetimeformat($work->exit_date) }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Mobile No</label>
+                                                    <input type="text" name ="mobile_no" class="form-control"
+                                                        placeholder="Mobile No" value="{{ $work->mobile_no }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company Name</label>
-                                                    <select name="company_id" id="company_id"
-                                                        class=" form-control single-select" style="width: 100%">
+                                                    <select name="company" id="company_id"
+                                                        class="form-control single-select" style="width: 100%">
                                                         <option value="">Select Company Name</option>
                                                         @foreach ($companyList as $company)
-                                                            <option @if ($department->company_id == $company->id) selected @endif
+                                                            <option @if ($work->company == $company->id) selected @endif
                                                                 value="{{ encryptId($company->id) }}">
-                                                                {{ $company->company_name }}</option>
+                                                                {{ $company->company_name }}
+                                                            </option>
                                                         @endforeach
-
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Location Name</label>
-                                                    <select name="location_id" id="location_id"
+                                                    <select name="location" id="location_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Location Name</option>
 
@@ -90,7 +131,7 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit Name</label>
-                                                    <select name="unit_id" id="unit_id"
+                                                    <select name="unit" id="unit_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Unit Name</option>
 
@@ -100,8 +141,41 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Department Name</label>
-                                                    <input type="text" name="department_name" class="form-control"
-                                                        placeholder="Department Name" value="{{ $department->department_name }}">
+                                                    <select name="department" id="department_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Department Name</option>
+
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">SubDepartment Name</label>
+                                                    <input type="text" name ="subdepartment" class="form-control"
+                                                        placeholder="SubDepartment Name"
+                                                        value="{{ $work->subdepartment }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Designation </label>
+                                                    <input type="text" name ="designation" class="form-control"
+                                                        placeholder="Designation " value="{{ $work->designation }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">WFEmptype </label>
+                                                    <input type="text" name ="wfemptype" class="form-control"
+                                                        placeholder="WFEmptype " value="{{ $work->wfemptype }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Skill </label>
+                                                    <input type="text" name ="skill" class="form-control"
+                                                        placeholder="Skill " value="{{ $work->skill }}">
                                                 </div>
                                             </div>
                                         </div>
@@ -129,114 +203,211 @@
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
-            let selectedCompanyId = "{{ encryptId($department->company_id) }}";
-            let selectedLocationId = "{{ encryptId($department->location_id) }}";
-            let selectedUnitId = "{{ encryptId($department->unit_id) }}";
-
-            if (selectedCompanyId) {
-                populateLocations(selectedCompanyId, selectedLocationId);
-            }
-
-            if (selectedLocationId) {
-                populateUnits(selectedLocationId, selectedUnitId);
-            }
-
-            $(document).on('change', '#company_id', function() {
-                let companyId = $(this).val();
-                $('#location_id').empty().append('<option value="">Select Location</option>');
-                $('#unit_id').empty().append('<option value="">Select Unit</option>');
-
-                if (companyId) {
-                    populateLocations(companyId);
-                }
+            flatpickr("#doi-datetime-datepicker", {
+                enableTime: true, 
+                dateFormat: "d-m-Y H:i",
+                time_24hr: true, 
+                minuteIncrement: 5, 
             });
 
-            $(document).on('change', '#location_id', function() {
-                let locationId = $(this).val();
-                $('#unit_id').empty().append('<option value="">Select Unit</option>');
-
-                if (locationId) {
-                    populateUnits(locationId);
-                }
+            flatpickr("#exit-date-datetime-datepicker", {
+                enableTime: true, 
+                dateFormat: "d-m-Y H:i", 
+                time_24hr: true,
+                minuteIncrement: 5, 
             });
 
-            // Function to populate Location dropdown
-            function populateLocations(companyId, selectedLocationId = '') {
-                $.ajax({
-                    url: "{{ admin_url('location/ajaxlist') }}",
-                    type: 'GET',
-                    data: {
-                        company_id: companyId
-                    },
-                    dataType: 'json',
-                    success: function(data) {
-                        $('#location_id').empty().append('<option value="">Select Location</option>');
-                        $.each(data, function(key, value) {
-                            let selected = (value.id === selectedLocationId) ? 'selected' : '';
-                            $('#location_id').append('<option value="' + value.id + '" ' +
-                                selected + '>' + value.name + '</option>');
-                        });
+            var initialCompanyId = $('#company_id').val();
+            var preselectedLocationId = "{{ encryptId($work->location) ?? '0' }}";
+            var preselectedUnitId = "{{ encryptId($work->unit) ?? '0' }}";
+            var preselectedDepartmentId = "{{ encryptId($work->department) ?? '0' }}";
 
-                        // Trigger change event if editing
-                        if (selectedLocationId) {
-                            $('#location_id').trigger('change');
+            if (initialCompanyId) {
+                fetchLocations(initialCompanyId, preselectedLocationId, function() {
+                    var location_id = preselectedLocationId;
+                    fetchUnits(location_id, preselectedUnitId, function() {
+                        var unit_id = preselectedUnitId;
+                        fetchDepartments(unit_id, preselectedDepartmentId);
+                    });
+                });
+            }
+
+            $('#company_id').on('change', function() {
+                var company_id = $(this).val();
+                fetchLocations(company_id, preselectedLocationId, function() {
+                    $('#location_id').trigger('change');
+                });
+            });
+
+            $('#location_id').on('change', function() {
+                var location_id = $(this).val();
+                fetchUnits(location_id, preselectedUnitId, function() {
+                    $('#unit_id').trigger('change');
+                });
+            });
+
+            $('#unit_id').on('change', function() {
+                var unit_id = $(this).val();
+                fetchDepartments(unit_id, preselectedDepartmentId, function() {
+                    $('#department_id').trigger('change');
+                });
+            });
+
+            function fetchLocations(company_id, preselectedLocationId, callback) {
+                if (company_id) {
+                    $.ajax({
+                        url: "{{ admin_url('location/ajaxlist/') }}" + company_id + '/' +
+                            preselectedLocationId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#location_id').empty().append(
+                                '<option value="">Select Location</option>');
+                            $.each(data, function(key, value) {
+                                var selected = (value.id == preselectedLocationId) ?
+                                    'selected' : '';
+                                $('#location_id').append('<option value="' + value.id + '" ' +
+                                    selected + '>' + value.name + '</option>');
+                            });
+                            if (callback) callback();
                         }
-                    }
-                });
+                    });
+                } else {
+                    $('#location_id').empty().append('<option value="">Select Location</option>');
+                }
             }
 
-            // Function to populate Unit dropdown
-            function populateUnits(locationId, selectedUnitId = '') {
-                $.ajax({
-                    url: "{{ admin_url('unit/ajaxlist') }}",
-                    type: 'GET',
-                    data: {
-                        location_id: locationId
-                    },
-                    dataType: 'json',
-                    success: function(data) {
-                        $('#unit_id').empty().append('<option value="">Select Unit</option>');
-                        $.each(data, function(key, value) {
-                            let selected = (value.id === selectedUnitId) ? 'selected' : '';
-                            $('#unit_id').append('<option value="' + value.id + '" ' +
-                                selected + '>' + value.name + '</option>');
-                        });
-                    }
-                });
+            function fetchUnits(location_id, preselectedUnitId, callback) {
+                if (location_id) {
+                    $.ajax({
+                        url: "{{ admin_url('unit/ajaxlist/') }}" + location_id + '/' + preselectedUnitId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#unit_id').empty().append('<option value="">Select Unit</option>');
+                            $.each(data, function(key, value) {
+                                var selected = (value.id == preselectedUnitId) ? 'selected' :
+                                    '';
+                                $('#unit_id').append('<option value="' + value.id + '" ' +
+                                    selected + '>' + value.name + '</option>');
+                            });
+                            if (callback) callback();
+                        }
+                    });
+                } else {
+                    $('#unit_id').empty().append('<option value="">Select Unit</option>');
+                }
+            }
+
+            function fetchDepartments(unit_id, preselectedDepartmentId, callback) {
+                if (unit_id) {
+                    $.ajax({
+                        url: "{{ admin_url('department/ajaxlist/') }}" + unit_id + '/' +
+                            preselectedDepartmentId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#department_id').empty().append(
+                                '<option value="">Select Department</option>');
+                            $.each(data, function(key, value) {
+                                var selected = (value.id == preselectedDepartmentId) ?
+                                    'selected' : '';
+                                $('#department_id').append('<option value="' + value.id + '" ' +
+                                    selected + '>' + value.name + '</option>');
+                            });
+                            if (callback) callback();
+                        }
+                    });
+                } else {
+                    $('#department_id').empty().append('<option value="">Select Department</option>');
+                }
             }
         });
+
+
         $(function() {
-            $('#departmentedit').validate({
+            $('#workedit').validate({
                 rules: {
-                    company_id: {
+                    emp_name: {
                         required: true,
                     },
-                    location_id: {
+                    nationality: {
                         required: true,
                     },
-                    unit_id: {
+                    biometric_code: {
                         required: true,
                     },
-                    department_name: {
+                    doi: {
                         required: true,
-                        minlength: 3,
+                    },
+                    exit_date: {
+                        required: true,
+                    },
+                    mobile_no: {
+                        required: true,
+                    },
+                    company: {
+                        required: true,
+                    },
+                    unit: {
+                        required: true,
+                    },
+                    department: {
+                        required: true,
+                    },
+                    subdepartment: {
+                        required: true,
+                    },
+                    designation: {
+                        required: true,
+                    },
+                    wfemptype: {
+                        required: true,
+                    },
+                    skill: {
+                        required: true,
                     },
 
                 },
                 messages: {
-                    company_id: {
-                        required: "{{ __('Company Name is Required') }}",
+                    emp_name: {
+                        required: "{{ __('Worker Name is Required') }}",
                     },
-                    location_id: {
-                        required: "{{ __('Location Name is Required') }}",
+                    nationality: {
+                        required: "{{ __('Nationality is Required') }}",
                     },
-                    unit_id: {
-                        required: "{{ __('Unit Name is Required') }}",
-                        minlength: "{{ __('common.validate_min_length') }}",
+                    biometric_code: {
+                        required: "{{ __('Biometric Code is Required') }}",
                     },
-                    department_name: {
+                    doi: {
+                        required: "{{ __('DOI is Required') }}",
+                    },
+                    exit_date: {
+                        required: "{{ __('Exit Date is Required') }}",
+                    },
+                    mobile_no: {
+                        required: "{{ __('Mobile No is Required') }}",
+                    },
+                    company: {
+                        required: "{{ __('Company  Name is Required') }}",
+                    },
+                    unit: {
+                        required: "{{ __('Unit  Name is Required') }}",
+                    },
+                    department: {
                         required: "{{ __('Department  Name is Required') }}",
-                        minlength: "{{ __('common.validate_min_length') }}",
+                    },
+                    subdepartment: {
+                        required: "{{ __('SubDepartment  Name is Required') }}",
+                    },
+                    designation: {
+                        required: "{{ __('Designation is Required') }}",
+                    },
+                    wfemptype: {
+                        required: "{{ __('WFEmptype is Required') }}",
+                    },
+                    skill: {
+                        required: "{{ __('Skil is Required') }}",
                     },
 
                 },

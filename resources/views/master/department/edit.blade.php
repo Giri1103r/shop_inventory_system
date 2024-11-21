@@ -10,7 +10,7 @@
             {{-- <h4 class="text-black">{{ __('Department Edit') }}</h4> --}}
 
         </div>
-      
+
     </div>
 
     <div class="content-body  default-height">
@@ -31,7 +31,8 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="departmentedit" action="{{ admin_url('department/edit/submit') }}">
+                                    <form method="POST" id="departmentedit"
+                                        action="{{ admin_url('department/edit/submit') }}">
                                         @csrf
                                         <input type="hidden" name="id" id="id"
                                             value="{{ encryptId($department->id) }}">
@@ -41,7 +42,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Department ID</label>
                                                     <input type="text" name ="department_id" class="form-control"
-                                                        placeholder="Department ID" value="{{ $department->department_id }}" readonly>
+                                                        placeholder="Department ID" value="{{ $department->department_id }}"
+                                                        readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
@@ -83,7 +85,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Department Name</label>
                                                     <input type="text" name="department_name" class="form-control"
-                                                        placeholder="Department Name" value="{{ $department->department_name }}">
+                                                        placeholder="Department Name"
+                                                        value="{{ $department->department_name }}">
                                                 </div>
                                             </div>
                                         </div>
@@ -110,82 +113,84 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+        
         $(document).ready(function() {
-            let selectedCompanyId = "{{ encryptId($department->company_id) }}";
-            let selectedLocationId = "{{ encryptId($department->location_id) }}";
-            let selectedUnitId = "{{ encryptId($department->unit_id) }}";
+       
+            var initialCompanyId = $('#company_id').val();
+            var preselectedLocationId = "{{ encryptId($department->location_id) ?? '0' }}";
+            var preselectedUnitId = "{{ encryptId($department->unit_id) ?? '0' }}";
 
-            if (selectedCompanyId) {
-                populateLocations(selectedCompanyId, selectedLocationId);
+            if (initialCompanyId) {
+                fetchLocations(initialCompanyId, preselectedLocationId, function() {
+                    var location_id = preselectedLocationId;
+                    fetchUnits(location_id, preselectedUnitId);
+                   
+                });
             }
 
-            if (selectedLocationId) {
-                populateUnits(selectedLocationId, selectedUnitId);
-            }
-
-            $(document).on('change', '#company_id', function() {
-                let companyId = $(this).val();
-                $('#location_id').empty().append('<option value="">Select Location</option>');
-                $('#unit_id').empty().append('<option value="">Select Unit</option>');
-
-                if (companyId) {
-                    populateLocations(companyId);
-                }
+            $('#company_id').on('change', function() {
+                var company_id = $(this).val();
+                fetchLocations(company_id, preselectedLocationId, function() {
+                    $('#location_id').trigger('change');
+                });
             });
 
-            $(document).on('change', '#location_id', function() {
-                let locationId = $(this).val();
-                $('#unit_id').empty().append('<option value="">Select Unit</option>');
-
-                if (locationId) {
-                    populateUnits(locationId);
-                }
+            $('#location_id').on('change', function() {
+                var location_id = $(this).val();
+                fetchUnits(location_id, preselectedUnitId, function() {
+                    $('#unit_id').trigger('change');
+                });
             });
 
-            // Function to populate Location dropdown
-            function populateLocations(companyId, selectedLocationId = '') {
-                $.ajax({
-                    url: "{{ admin_url('location/ajaxlist') }}",
-                    type: 'GET',
-                    data: {
-                        company_id: companyId
-                    },
-                    dataType: 'json',
-                    success: function(data) {
-                        $('#location_id').empty().append('<option value="">Select Location</option>');
-                        $.each(data, function(key, value) {
-                            let selected = (value.id === selectedLocationId) ? 'selected' : '';
-                            $('#location_id').append('<option value="' + value.id + '" ' +
-                                selected + '>' + value.name + '</option>');
-                        });
+          
 
-                        // Trigger change event if editing
-                        if (selectedLocationId) {
-                            $('#location_id').trigger('change');
+            function fetchLocations(company_id, preselectedLocationId, callback) {
+                if (company_id) {
+                    $.ajax({
+                        url: "{{ admin_url('location/ajaxlist/') }}" + company_id + '/' +
+                            preselectedLocationId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#location_id').empty().append(
+                                '<option value="">Select Location</option>');
+                            $.each(data, function(key, value) {
+                                var selected = (value.id == preselectedLocationId) ?
+                                    'selected' : '';
+                                $('#location_id').append('<option value="' + value.id + '" ' +
+                                    selected + '>' + value.name + '</option>');
+                            });
+                            if (callback) callback();
                         }
-                    }
-                });
+                    });
+                } else {
+                    $('#location_id').empty().append('<option value="">Select Location</option>');
+                }
             }
 
-            // Function to populate Unit dropdown
-            function populateUnits(locationId, selectedUnitId = '') {
-                $.ajax({
-                    url: "{{ admin_url('unit/ajaxlist') }}",
-                    type: 'GET',
-                    data: {
-                        location_id: locationId
-                    },
-                    dataType: 'json',
-                    success: function(data) {
-                        $('#unit_id').empty().append('<option value="">Select Unit</option>');
-                        $.each(data, function(key, value) {
-                            let selected = (value.id === selectedUnitId) ? 'selected' : '';
-                            $('#unit_id').append('<option value="' + value.id + '" ' +
-                                selected + '>' + value.name + '</option>');
-                        });
-                    }
-                });
+            function fetchUnits(location_id, preselectedUnitId, callback) {
+                if (location_id) {
+                    $.ajax({
+                        url: "{{ admin_url('unit/ajaxlist/') }}" + location_id + '/' + preselectedUnitId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#unit_id').empty().append('<option value="">Select Unit</option>');
+                            $.each(data, function(key, value) {
+                                var selected = (value.id == preselectedUnitId) ? 'selected' :
+                                    '';
+                                $('#unit_id').append('<option value="' + value.id + '" ' +
+                                    selected + '>' + value.name + '</option>');
+                            });
+                            if (callback) callback();
+                        }
+                    });
+                } else {
+                    $('#unit_id').empty().append('<option value="">Select Unit</option>');
+                }
             }
+
+         
         });
         $(function() {
             $('#departmentedit').validate({

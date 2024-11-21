@@ -411,7 +411,6 @@ class CronController extends Controller
                         $worktempdata = $this->worktemp->updates($emp_id);
                     }
                 }
-
                 $baseFolderPath = storage_path('app/private/');
 
                 $month = now()->format('F');

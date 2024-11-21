@@ -437,12 +437,19 @@ class UnitController extends Controller
             return redirect(admin_url('unit/list'));
         }
     }
+
+    // public function list(Request $request)
+    // {
+    //     $locationId = decryptId($request->location_id);
+    //     $unit = $this->unit->ajaxList($locationId);
+
+    //     return response()->json($unit);
+    // }
     public function list(Request $request)
     {
         $locationId = decryptId($request->location_id);
-        $unitId = decryptId($request->id) ? decryptId($request->id) : 0;
-
-        $unit = $this->unit->ajaxList($locationId, $unitId);
+        $id = decryptId($request->id);
+        $unit = $this->unit->ajaxList($locationId, $id);
 
         return response()->json($unit);
     }

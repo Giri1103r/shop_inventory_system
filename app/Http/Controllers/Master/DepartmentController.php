@@ -46,7 +46,6 @@ class DepartmentController extends Controller
         $this->location = new Location();
         $this->department = new Department();
         $this->uploadlog = new UploadLog();
-
     }
 
 
@@ -466,14 +465,14 @@ class DepartmentController extends Controller
         //return Response::download($filePath, $customFileName);
         return redirect(url($filePath));
     }
+
     public function list(Request $request)
     {
         $unit_id = decryptId($request->unit_id);
-        $departId = decryptId($request->id) ? decryptId($request->id) : 0;
+        $id = decryptId($request->id);
+        $departments = $this->department->ajaxList($unit_id, $id);
 
-        $dept = $this->department->ajaxList($unit_id, $departId);
-
-        return response()->json($dept);
+        return response()->json($departments);
     }
     public function alllist(Request $request)
     {
