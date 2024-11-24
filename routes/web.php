@@ -16,6 +16,7 @@ use App\Http\Controllers\Master\LocationController;
 use App\Http\Controllers\Master\UnitController;
 use App\Http\Controllers\Master\DepartmentController;
 use App\Http\Controllers\Master\WorkController;
+use App\Http\Controllers\Master\EmployeeController;
 
 Route::get('cache', function () {
     Artisan::call('optimize:clear');
@@ -43,6 +44,9 @@ Route::get('queuedefault', [CronController::class, 'queueDefault']);
 Route::get('queueemail', [CronController::class, 'queueEmail']);
 Route::get('workmastertemp', [CronController::class, 'workMasterTemp']);
 Route::get('worksave', [CronController::class, 'workSave']);
+
+Route::get('employee_master_temp', [CronController::class, 'employeeMasterTemp']);
+Route::get('employee_save', [CronController::class, 'EmployeeSave']);
 
 
 Route::get('test', [TestController::class,  'index']);
@@ -244,14 +248,19 @@ Route::middleware(['userlog'])->group(function () {
             Route::get('/edit/{id}', [WorkController::class, 'edit']);
             Route::post('/edit/submit', [WorkController::class, 'update']);
             Route::get('/view/{id}', [WorkController::class, 'view']);
-            Route::post('/delete', [WorkController::class, 'delete']);
             Route::get('/export/excel', [WorkController::class, 'exportExcel']);
             Route::get('/export/pdf', [WorkController::class, 'exportPdf']);
-            Route::get('/sampledownload', [WorkController::class, 'DownloadSample']);
-            Route::get('/import', [WorkController::class, 'import']);
-            Route::post('/import/submit', [WorkController::class, 'importSubmit']);
-            Route::post('/status', [WorkController::class, 'statusChange']);
-            Route::post('/unique', [WorkController::class, 'Uniquecheck']);
+        });
+        Route::group(['prefix' => 'employee'], function () {
+            Route::get('/list', [EmployeeController::class, 'index']);
+            Route::post('/list', [EmployeeController::class, 'index']);
+            Route::post('/add/submit', [EmployeeController::class, 'store']);
+            Route::get('/edit/{id}', [EmployeeController::class, 'edit']);
+            Route::post('/edit/submit', [EmployeeController::class, 'update']);
+            Route::get('/view/{id}', [EmployeeController::class, 'view']);
+            Route::get('/export/excel', [EmployeeController::class, 'exportExcel']);
+            Route::get('/export/pdf', [EmployeeController::class, 'exportPdf']);
+         
         });
     });
 });

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Queue;
-use App\Models\User;
+use Illuminate\Support\Facades\Session;
 use App\Mail\ContractExpireEmail;
 use App\Mail\ContractExpireListEmail;
 use Illuminate\Support\Facades\Mail;
@@ -15,7 +15,9 @@ use Illuminate\Support\Facades\File;
 
 use Carbon\Carbon;
 use App\Models\Master\Worktemp;
+use App\Models\Master\EmployeeTemp;
 use App\Models\Master\Work;
+use App\Models\Master\Employee;
 
 
 use Exception;
@@ -24,13 +26,17 @@ class CronController extends Controller
 {
 
     private $worktemp;
+    private $emp_temp;
     private $work;
+    private $employee;
 
     public function __construct()
     {
 
         $this->worktemp = new Worktemp();
+        $this->emp_temp = new EmployeeTemp();
         $this->work = new Work();
+        $this->employee = new Employee();
     }
     public function queueHigh()
     {
@@ -45,9 +51,10 @@ class CronController extends Controller
             ];
 
             $exitCode = Artisan::call('queue:work', $options);
-
+            Session::invalidate();
             return response()->json(['message' => 'Queue High work command executed successfully',  'exit_code' => $exitCode]);
         } else {
+            Session::invalidate();
             return response()->json(['message' => 'No jobs in the high queue to process', 'exit_code' => 0]);
         }
     }
@@ -65,9 +72,10 @@ class CronController extends Controller
             ];
 
             $exitCode = Artisan::call('queue:work', $options);
-
+            Session::invalidate();
             return response()->json(['message' => 'Queue Default work command executed successfully',  'exit_code' => $exitCode]);
         } else {
+            Session::invalidate();
             return response()->json(['message' => 'No jobs in the default queue to process', 'exit_code' => 0]);
         }
     }
@@ -85,9 +93,10 @@ class CronController extends Controller
             ];
 
             $exitCode = Artisan::call('queue:work', $options);
-
+            Session::invalidate();
             return response()->json(['message' => 'Queue Email work command executed successfully',  'exit_code' => $exitCode]);
         } else {
+            Session::invalidate();
             return response()->json(['message' => 'No jobs in the email queue to process', 'exit_code' => 0]);
         }
     }
@@ -390,7 +399,82 @@ class CronController extends Controller
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
+    public function employeeMasterTemp()
+    {
+        try {
 
+            $apiUrl = 'https://hrms.esparsh.in/PunchesAPI/api/Attendance/GetEmployeeDetails?token=KARAroz4HhR1EIx8qaz3C13z/quTXBkQ3Q5hj7Qx3aA*&fromDate=2024-01-01&toDate=2024-11-16';
+
+            $response = Http::get($apiUrl);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                if (!empty($data)) {
+                    $emp_temp = $this->emp_temp->store($data);
+                    return response()->json(['message' => 'Data saved successfully.']);
+                } else {
+                    return response()->json(['message' => 'No data found in API response.']);
+                }
+            } else {
+                return response()->json(['message' => 'Failed to fetch data from API.', 'status' => $response->status()]);
+            }
+        } catch (Exception $ex) {
+            dd($ex);
+            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
+        }
+    }
+
+    public function EmployeeSave()
+    {
+
+        try {
+            $emp_temp = EmployeeTemp::select('*')->where('upload_status', '0')->get();
+
+
+            if (!empty($emp_temp)) {
+
+
+                $employee = $this->employee->store($emp_temp);
+                if (empty($employee)) {
+                    $this->emp_temp->updateAllErrorStatus();
+                } else {
+                    foreach ($employee as $item) {
+                        $emp_id = $item['emp_id'];
+
+                        $emp_tempdata = $this->emp_temp->updates($emp_id);
+                    }
+                }
+                $baseFolderPath = storage_path('app/private/');
+
+                $month = now()->format('F');
+                $date = now()->format('d');
+
+                $folderPath = $baseFolderPath . $month . '/' . $date . '/employee/';
+                if (!File::exists($folderPath)) {
+                    File::makeDirectory($folderPath, 0755, true);
+                }
+
+                $filePath = $folderPath . 'employee_data.txt';
+                $content = '';
+                if (!empty($employee)) {
+                    foreach ($employee as $item) {
+                        $content .= 'Emp ID: ' . $item['emp_id'] . "\n";
+                        $content .= 'Other Data: ' . json_encode($item) . "\n\n";
+                    }
+                }
+
+                File::put($filePath, $content);
+                return response()->json(['message' => 'Data saved successfully.']);
+            } else {
+
+                return response()->json(['message' => 'No data found in API response.']);
+            }
+        } catch (Exception $ex) {
+            dd($ex);
+            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
+        }
+    }
     public function workSave()
     {
 
