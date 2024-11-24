@@ -17,6 +17,9 @@ use App\Http\Controllers\Master\UnitController;
 use App\Http\Controllers\Master\DepartmentController;
 use App\Http\Controllers\Master\WorkController;
 use App\Http\Controllers\Master\EmployeeController;
+use App\Http\Controllers\Master\ProtectiveEquipController;
+use App\Http\Controllers\Master\EquipInvalveController;
+use App\Http\Controllers\Master\SafeWorkController;
 
 Route::get('cache', function () {
     Artisan::call('optimize:clear');
@@ -261,6 +264,80 @@ Route::middleware(['userlog'])->group(function () {
             Route::get('/export/excel', [EmployeeController::class, 'exportExcel']);
             Route::get('/export/pdf', [EmployeeController::class, 'exportPdf']);
          
+        });
+
+        Route::group(['prefix' => 'ptw/typeofworkmaster'], function () {
+            Route::get('/list', [WorkController::class, 'index']);
+            Route::post('/list', [WorkController::class, 'index']);
+            Route::post('/add/submit', [WorkController::class, 'store']);
+            Route::get('/edit/{id}', [WorkController::class, 'edit']);
+            Route::post('/edit/submit', [WorkController::class, 'update']);
+            Route::get('/view/{id}', [WorkController::class, 'view']);
+            Route::post('/delete', [WorkController::class, 'delete']);
+            Route::get('/export/excel', [WorkController::class, 'exportExcel']);
+            Route::get('/export/pdf', [WorkController::class, 'exportPdf']);
+            Route::get('/sampledownload', [WorkController::class, 'DownloadSample']);
+            Route::get('/import', [WorkController::class, 'import']);
+            Route::post('/import/submit', [WorkController::class, 'importSubmit']);
+            Route::post('/status', [WorkController::class, 'statusChange']);
+            Route::post('/unique', [WorkController::class, 'Uniquecheck']);
+        });
+
+        Route::group(['prefix' => 'ptw/protectiveequipmentmaster'], function () {
+            Route::get('/list', [ProtectiveEquipController::class, 'index']);
+            Route::post('/list', [ProtectiveEquipController::class, 'index']);
+            Route::get('/add', [ProtectiveEquipController::class, 'add']);
+            Route::post('/add/submit', [ProtectiveEquipController::class, 'store']);
+            Route::get('/edit/{id}', [ProtectiveEquipController::class, 'edit']);
+            Route::post('/edit/submit', [ProtectiveEquipController::class, 'update']);
+            Route::get('/view/{id}', [ProtectiveEquipController::class, 'view']);
+            Route::post('/delete', [ProtectiveEquipController::class, 'delete']);
+            Route::get('/export/excel', [ProtectiveEquipController::class, 'exportExcel']);
+            Route::get('/export/pdf', [ProtectiveEquipController::class, 'exportPdf']);
+            Route::get('/sampledownload', [ProtectiveEquipController::class, 'DownloadSample']);
+            Route::get('/import', [ProtectiveEquipController::class, 'import']);
+            Route::post('/import/submit', [ProtectiveEquipController::class, 'importSubmit']);
+            Route::post('/status', [ProtectiveEquipController::class, 'statusChange']);
+            Route::post('/unique', [ProtectiveEquipController::class, 'Uniquecheck']);
+        });
+
+      
+
+        Route::group(['prefix' => 'ptw/equipinvolvemaster'], function () {
+            Route::get('/list', [EquipInvalveController::class, 'index']);
+            Route::post('/list', [EquipInvalveController::class, 'index']);
+            Route::get('/add', [EquipInvalveController::class, 'add']);
+            Route::post('/add/submit', [EquipInvalveController::class, 'store']);
+            Route::get('/edit/{id}', [EquipInvalveController::class, 'edit']);
+            Route::post('/edit/submit', [EquipInvalveController::class, 'update']);
+            Route::get('/view/{id}', [EquipInvalveController::class, 'view']);
+            Route::post('/delete', [EquipInvalveController::class, 'delete']);
+            Route::get('/export/excel', [EquipInvalveController::class, 'exportExcel']);
+            Route::get('/export/pdf', [EquipInvalveController::class, 'exportPdf']);
+            Route::get('/sampledownload', [EquipInvalveController::class, 'DownloadSample']);
+            Route::get('/import', [EquipInvalveController::class, 'import']);
+            Route::post('/import/submit', [EquipInvalveController::class, 'importSubmit']);
+            Route::post('/status', [EquipInvalveController::class, 'statusChange']);
+            Route::post('/unique', [EquipInvalveController::class, 'Uniquecheck']);
+        });
+
+
+        Route::group(['prefix' => 'ptw/safeworkmaster'], function () {
+            Route::get('/list', [SafeWorkController::class, 'index']);
+            Route::post('/list', [SafeWorkController::class, 'index']);
+            Route::get('/add', [SafeWorkController::class, 'add']);
+            Route::post('/add/submit', [SafeWorkController::class, 'store']);
+            Route::get('/edit/{id}', [SafeWorkController::class, 'edit']);
+            Route::post('/edit/submit', [SafeWorkController::class, 'update']);
+            Route::get('/view/{id}', [SafeWorkController::class, 'view']);
+            Route::post('/delete', [SafeWorkController::class, 'delete']);
+            Route::get('/export/excel', [SafeWorkController::class, 'exportExcel']);
+            Route::get('/export/pdf', [SafeWorkController::class, 'exportPdf']);
+            Route::get('/sampledownload', [SafeWorkController::class, 'DownloadSample']);
+            Route::get('/import', [SafeWorkController::class, 'import']);
+            Route::post('/import/submit', [SafeWorkController::class, 'importSubmit']);
+            Route::post('/status', [SafeWorkController::class, 'statusChange']);
+            Route::post('/unique', [SafeWorkController::class, 'Uniquecheck']);
         });
     });
 });
