@@ -13,6 +13,7 @@
 
     <link href="{{ url('public/assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
     <link href="{{ url('public/assets/css/app.css') }}" rel="stylesheet" type="text/css" id="app-style" />
+    <link href="{{ url('public/assets/css/custom-style.css') }}" rel="stylesheet" type="text/css" id="app-style" />
     <link href="{{ url('public/assets/plugins/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}"
         rel="stylesheet" type="text/css" />
     <link href="{{ url('public/assets/plugins/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css') }}"

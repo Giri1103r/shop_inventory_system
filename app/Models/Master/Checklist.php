@@ -10,16 +10,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class EquipInvalve extends Model
+class Checklist extends Model
 {
     use  HasFactory;
 
 
-    protected $table = 'masters_ptw_equip_involved';
+    protected $table = 'masters_ptw_checklist';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'equip_involve',
+        'checklist',
         'status',
         'trash',
         'created_by',
@@ -38,7 +38,7 @@ class EquipInvalve extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_ptw_equip_involved.*');
+        $query = $this->select('masters_ptw_checklist.*');
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -48,12 +48,12 @@ class EquipInvalve extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('equip_involve', 'LIKE', '%' . $search . '%');
+                    ->orWhere('checklist', 'LIKE', '%' . $search . '%');
             });
         }
 
-        if ($request->has('equip_involve') && $request->equip_involve) {
-            $query = $query->where('equip_involve', 'LIKE', '%' . $request->equip_involve . '%');
+        if ($request->has('checklist') && $request->checklist) {
+            $query = $query->where('checklist', 'LIKE', '%' . $request->checklist . '%');
         }
         if ($request->has('status') && $request->status) {
 
@@ -81,12 +81,12 @@ class EquipInvalve extends Model
     public function UniqueCheck($data)
     {
 
-        return $this->where('equip_involve',  $data)->get();
+        return $this->where('checklist',  $data)->get();
     }
 
     public function ExistuniqueCheck($data,$id)
     {
-        return $this->where('equip_involve',  $data)
+        return $this->where('checklist',  $data)
         ->where('id', '!=', $id)
         ->get();
     }
@@ -96,7 +96,7 @@ class EquipInvalve extends Model
         $request = request();
 
         $insert_array = array(
-            'equip_involve' => $request->equip_involve,
+            'checklist' => $request->checklist,
             'created_by' => Auth::id()
         );
         return $this->create($insert_array);
@@ -108,7 +108,7 @@ class EquipInvalve extends Model
         $request = request();
 
         $update_array = array(
-            'equip_involve' => $request->equip_involve,
+            'checklist' => $request->checklist,
             'updated_by' => Auth::id()
         );
         return $this->where('id', $id)->update($update_array);
@@ -147,21 +147,21 @@ class EquipInvalve extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_ptw_equip_involved.*');
+        $query = $this->select('masters_ptw_checklist.*');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
             $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhereRaw('equip_involve LIKE "%' . $search . '%"');
+                $query->orWhereRaw('checklist LIKE "%' . $search . '%"');
             });
         }
 
-        if ($request->has('equip_involve') && $request->equip_involve) {
-            $query = $query->where('equip_involve', 'LIKE', '%' . $request->equip_involve . '%');
+        if ($request->has('checklist') && $request->checklist) {
+            $query = $query->where('checklist', 'LIKE', '%' . $request->checklist . '%');
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('company_management.status', decryptId($request->status));
+            $query = $query->where('masters_ptw_checklist.status', decryptId($request->status));
         }
 
         return  $query->get();
@@ -171,21 +171,19 @@ class EquipInvalve extends Model
     {
 
         $data = $this->select(
-            'masters_ptw_equip_involved.*'
+            'masters_ptw_checklist.*'
         )
-            ->where('masters_ptw_equip_involved.id', $id)
+            ->where('masters_ptw_checklist.id', $id)
             ->first();
 
         return $data;
     }
-
-
     public function selectchecklist()
     {
 
-        $data =  $this->select('masters_ptw_equip_involved.*')
-            ->where('masters_ptw_equip_involved.status', '1')
-            ->where('masters_ptw_equip_involved.trash', 'NO')
+        $data =  $this->select('masters_ptw_checklist.*')
+            ->where('masters_ptw_checklist.status', '1')
+            ->where('masters_ptw_checklist.trash', 'NO')
             ->get();
 
         return $data;
@@ -193,7 +191,7 @@ class EquipInvalve extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('masters_ptw_equip_involved'));
+        static::addGlobalScope(new TrashScope('masters_ptw_checklist'));
 
         // static::created(function ($model) {
 

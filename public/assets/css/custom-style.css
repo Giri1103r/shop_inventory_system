@@ -1,0 +1,90 @@
+.view_card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* border-collapse: collapse; */
+    width: 40%;
+    margin-top: 15px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.view_card .card-header {
+    background-color: #7a6fbe;
+ color: #FFFFFF;
+}
+.view_card{
+    /* border: 1px solid black !important; */
+    border-radius:5px;
+}
+.view_card .card-header {
+    background-color: #7a6fbe;
+ color: #FFFFFF;
+}
+
+.view_card th {
+    background-color: #7a6fbe !important;
+    color: #FFFFFF;
+}
+
+/* Wrapper for all tables */
+.table-wrapper {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+/* Individual table container */
+.table-container {
+    flex: 1;
+    min-width: 300px;
+    width: 45%; /* Adjust width for responsive layout */
+    max-height: 500px;
+    padding-top: 10px;
+    /* border: 1px solid #ccc;  */
+    border-radius: 5px; /* Optional: Rounded corners */
+}
+
+/* Header style for each table */
+h3 {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    padding: 10px;
+    margin: 0;
+    text-align: left;
+    font-size: 18px; /* Adjust the font size for consistency */
+    font-weight: bold;
+    border-bottom: 2px solid #ddd; /* Optional: Adds a border below the header */
+}
+
+/* Table style */
+.table {
+    width: 100%;
+    margin: 0 auto;
+    /* border-collapse: collapse; */
+}
+
+/* Table header and cell style */
+.table th, .table td {
+    padding: 15px;
+    text-align: left; /* Align text to the left */
+    border-bottom: 1px solid #ddd; /* Adds a border between rows */
+}
+
+/* Checkbox styling (optional) */
+.table input[type="checkbox"] {
+    margin: 0;
+    padding: 0;
+    vertical-align: middle; /* Ensures checkbox is aligned with text */
+}
+
+/* Table row striping (optional for better readability) */
+.table tbody tr:nth-child(even) {
+    background-color: #f9f9f9; /* Alternate row background */
+}
+
+/* Optional: Scrollable table container */
+.table-container div {
+    overflow-y: auto;
+    max-height: 400px;
+}
+
