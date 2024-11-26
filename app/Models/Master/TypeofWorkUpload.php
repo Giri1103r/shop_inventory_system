@@ -6,9 +6,15 @@ use Carbon\Carbon;
 use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\DB;
 
+use Str;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+use Illuminate\Support\Facades\File;
+
+
 
 class TypeofWorkUpload extends Model
 {
@@ -40,19 +46,21 @@ class TypeofWorkUpload extends Model
         'trash' => 'NO',
     ];
 
-    public function store($ptw_hot_cold)
+    public function store($id)
     {
 
         $request = request();
 
         $typeofwork_upload = $request->file('typeofwork_upload');
 
+        // dd($typeofwork_upload);
+
         if ($typeofwork_upload != null) {
 
 
-            $uploadpath = 'public/uploads/ptw/typeofwork/' . $ptw_hot_cold->id;
+            $uploadpath = 'public/uploads/ptw/typeofwork/' . $id;
 
-            $folderPath = public_path('uploads/ptw/typeofwork/' . $ptw_hot_cold->id);
+            $folderPath = public_path('uploads/ptw/typeofwork/' . $id);
 
             if (!File::exists($folderPath)) {
 
@@ -72,9 +80,7 @@ class TypeofWorkUpload extends Model
             $user_id = Auth::id();
 
             $insert_data = array(
-                'ptw_hot_cold_id' => $ptw_hot_cold->id,
-                'permit_id' => $request->id,
-                'file_type' => 1,
+                'typeofwork_id' => $id,
                 'file_name' => $filenewname,
                 'file_orgname' => $fileName,
                 'file_path' => $path,
@@ -82,23 +88,24 @@ class TypeofWorkUpload extends Model
                 'file_extension' => $fileExt,
                 'created_by' => $user_id,
             );
+
             $this->create($insert_data)->id;
         }
     }
 
 
-    public function updates($ptw_hot_cold)
+    public function updates($id)
     {
 
         $request = request();
         $typeofwork_upload = $request->file('typeofwork_upload');
-        // $this->where('ptw_hot_cold_id', $ptw_hot_cold)->update(['trash' => 'YES']);
+        $this->where('typeofwork_id', $id)->update(['trash' => 'YES']);
         if ($typeofwork_upload != null) {
 
 
-            $uploadpath = 'public/uploads/ptw/typeofwork/' . $ptw_hot_cold;
+            $uploadpath = 'public/uploads/ptw/typeofwork/' . $id;
 
-            $folderPath = public_path('uploads/ptw/typeofwork/' . $ptw_hot_cold);
+            $folderPath = public_path('uploads/ptw/typeofwork/' . $id);
 
             if (!File::exists($folderPath)) {
 
@@ -118,8 +125,7 @@ class TypeofWorkUpload extends Model
             $user_id = Auth::id();
 
             $insert_data = array(
-                'permit_id' => $ptw_hot_cold,
-                'ptw_hot_cold_id' => $ptw_hot_cold,
+                'typeofwork_id' => $id,
                 'file_type' => 1,
                 'file_name' => $filenewname,
                 'file_orgname' => $fileName,
@@ -134,7 +140,7 @@ class TypeofWorkUpload extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('masters_ptw_typeofwork'));
+        static::addGlobalScope(new TrashScope('masters_ptw_typeofwork_upload'));
 
         // static::created(function ($model) {
 

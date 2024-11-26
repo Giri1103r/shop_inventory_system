@@ -110,9 +110,12 @@ class TypeofWork extends Model
         $request = request();
 
         $update_array = array(
-            'checklist' => $request->checklist,
+            'work_name' => $request->work_name,
+            'description' => $request->description,
             'updated_by' => Auth::id()
         );
+
+        // dd($update_array);
         return $this->where('id', $id)->update($update_array);
     }
 

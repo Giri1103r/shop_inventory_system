@@ -49,7 +49,7 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="safe_workadd"
+                                    <form method="POST" id="typeofwork_add" enctype="multipart/form-data"
                                         action="{{ admin_url('ptw/typeofworkmaster/add/submit') }}">
                                         @csrf
 
@@ -66,7 +66,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Description</label>
                                                     <input type="text" name="description" id = "description"
-                                                        class="form-control" placeholder="Name">
+                                                        class="form-control" placeholder="Description">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 form-input">
@@ -79,7 +79,7 @@
                                                     <h3>
                                                         Protective Equipment's To be Worn
                                                     </h3>
-                                                    <input type="hidden" name = "type" id="" value = "type_1" >
+                                                   
                                                     <div>
                                                         <table class="table view_card">
                                                             <thead>
@@ -98,13 +98,19 @@
                                                                     <tr>
                                                                         <td>{{ $index }}</td>
                                                                         <td>
+                                                                            <input type="hidden" name="protective[protective_check][type1][{{ $detail->id }}]" value="0">
+                                                                            <input type="checkbox" name="protective[protective_check][type1][{{ $detail->id }}]" class="row-checkbox validate-radio-required" value="1">
                                                                             
-                                                                            <input type="checkbox" name="check[{{ $detail->id }}]" class="row-checkbox validate-radio-required" value="{{ $detail->id }}">
                                                                         </td>
-                                                                        <td>{{ $detail->protective_equip }}</td>
+                                                                        <td>
+                                                                            <input type="hidden" name="protective[protective_equip][type1][{{ $detail->id }}]" value="{{$detail->id}}">
+                                                                            {{ $detail->protective_equip }}
+                                                                        
+                                                                        </td>
                                                                         <td class="form-input">
-                                                                            <!-- Checkbox for 'Is Default Enable' -->
-                                                                            <input type="checkbox" name="protectivequip_checklist[{{ $detail->id }}]" class="validate-radio-required" value="YES">
+
+                                                                            <input type="hidden" name="protective[protectivequip_checklist][type1][{{ $detail->id }}]" value="0">
+                                                                            <input type="checkbox" name="protective[protectivequip_checklist][type1][{{ $detail->id }}]" class="validate-radio-required" value="1">
                                                                         </td>
                                                                     </tr>
                                                                     @php
@@ -121,14 +127,13 @@
                                                     <h3>
                                                         Equipment Involved
                                                     </h3>
-                                                    <input type="hidden" name = "type" id="" value = "type_2" >
+                                                  
                                                     <div>
                                                         <table class="table view_card">
                                                             <thead>
                                                                 <tr>
                                                                     <th>Sr.No</th>
                                                                     <th><input type="checkbox"
-                                                                            name="allprotectivequip_checklist"
                                                                             id="select-all1"
                                                                             class="validate-radio-required"></th>
                                                                     <th>Check Points</th>
@@ -144,17 +149,21 @@
                                                                         <td>{{ $index }}</td>
 
                                                                         <td>
-                                                                            
-                                                                            <input type="checkbox" name="check[{{ $equipinvalve_checklist->id }}]" class="row-checkbox1 validate-radio-required" value="{{ $equipinvalve_checklist->id }}">
+
+                                                                            <input type="hidden" name="equipment[equipinvalve_check][type2][{{ $equipinvalve_checklist->id }}]" value="0">
+                                                                            <input type="checkbox" name="equipment[equipinvalve_check][type2][{{ $equipinvalve_checklist->id }}]" class="row-checkbox1 validate-radio-required" value="1">
+
                                                                         </td>
                                                                      
-                                                                        <td>{{ $equipinvalve_checklist->equip_involve }}
+                                                                        <td>
+                                                                            <input type="hidden" name="equipment[equip_involve][type2][{{ $equipinvalve_checklist->id }}]" value="{{$equipinvalve_checklist->id}}">
+                                                                            {{ $equipinvalve_checklist->equip_involve }}
                                                                         </td>
                                                                         <td class="form-input">
-                                                                            <input type="checkbox"
-                                                                                name="equipinvalve_checklist[{{ $equipinvalve_checklist->id }}]"
-                                                                                class="validate-radio-required"
-                                                                                value="{{ $equipinvalve_checklist->id}}">
+
+
+                                                                            <input type="hidden" name="equipment[equipinvalve_checklist][type2][{{ $equipinvalve_checklist->id }}]" value="0">
+                                                                            <input type="checkbox" name="equipment[equipinvalve_checklist][type2][{{ $equipinvalve_checklist->id }}]" class="validate-radio-required" value="1">
                                                                         </td>
                                                                     </tr>
                                                                     @php
@@ -174,14 +183,13 @@
                                                 <div class="table-container">
                                                     <h3>
                                                         Manual List</h3>
-                                                        <input type="hidden" name = "type" id="" value = "type_3" >
+                                                       
                                                     <div>
                                                         <table class="table view_card">
                                                             <thead>
                                                                 <tr>
                                                                     <th>Sr.No</th>
                                                                     <th><input type="checkbox" id="select-all2"
-                                                                            name="allprotectivequip_checklist"
                                                                             class="validate-radio-required"></th>
                                                                     <th>Check Points</th>
                                                                     <th>Is Default Enable</th>
@@ -196,16 +204,22 @@
                                                                         <td>{{ $index }}</td>
 
                                                                         <td>
+
+                                                                            <input type="hidden" name="manual[precaution_check][type3][{{ $precaution_checklist->id }}]" value="0">
+                                                                            <input type="checkbox" name="manual[precaution_check][type3][{{ $precaution_checklist->id }}]" class="row-checkbox2 validate-radio-required" value="1">
                                                                             
-                                                                            <input type="checkbox" name="check[{{ $precaution_checklist->id }}]" class="row-checkbox2 validate-radio-required" value="{{ $precaution_checklist->id }}">
+                                                                           
                                                                         </td>
                                                                        
-                                                                        <td>{{ $precaution_checklist->precaution }}</td>
+                                                                        <td>
+                                                                            <input type="hidden" name="manual[precaution][type3][{{ $precaution_checklist->id }}]" value="{{$precaution_checklist->id}}">
+                                                                            {{ $precaution_checklist->precaution }}
+                                                                        </td>
                                                                         <td class="form-input">
-                                                                            <input type="checkbox"
-                                                                                name="precaution_checklist[{{ $precaution_checklist->id }}]"
-                                                                                class="validate-radio-required"
-                                                                                value="{{ $precaution_checklist->id}}">
+
+                                                                            
+                                                                            <input type="hidden" name="manual[precaution_checklist][type3][{{ $precaution_checklist->id }}]" value="0">
+                                                                            <input type="checkbox" name="manual[precaution_checklist][type3][{{ $precaution_checklist->id }}]" class="validate-radio-required" value="1">
                                                                         </td>
                                                                     </tr>
                                                                     @php
@@ -220,14 +234,13 @@
                                                 <div class="table-container">
                                                     <h3>
                                                         Check List</h3>
-                                                        <input type="hidden" name = "type" id="" value = "type_4" >
+                                                        
                                                     <div>
                                                         <table class="table view_card">
                                                             <thead>
                                                                 <tr>
                                                                     <th>Sr.No</th>
                                                                     <th><input type="checkbox" id="select-all3"
-                                                                            name="allprotectivequip_checklist"
                                                                             class="validate-radio-required"></th>
                                                                     <th>Check Points</th>
                                                                     <th>Is Default Enable</th>
@@ -243,15 +256,20 @@
 
                                                                         
                                                                         <td>
-                                                                            
-                                                                            <input type="checkbox" name="check[{{ $equipchecklist_checklist->id }}]" class="row-checkbox3 validate-radio-required" value="{{ $equipchecklist_checklist->id }}">
+
+                                                                            <input type="hidden" name="check[equipchecklist_check][type4][{{ $equipchecklist_checklist->id }}]" value="0">
+                                                                            <input type="checkbox" name="check[equipchecklist_check][type4][{{ $equipchecklist_checklist->id }}]" class="row-checkbox3 validate-radio-required" value="1">
+
                                                                         </td>
-                                                                        <td>{{ $equipchecklist_checklist->checklist }}</td>
+                                                                        <td>
+                                                                            <input type="hidden" name="check[checklist][type4][{{ $equipchecklist_checklist->id }}]" value="{{$equipchecklist_checklist->id}}">
+                                                                            {{ $equipchecklist_checklist->checklist }}
+                                                                        </td>
                                                                         <td class="form-input">
-                                                                            <input type="checkbox"
-                                                                                name="equipchecklist_checklist[{{ $equipchecklist_checklist->id }}]"
-                                                                                class="validate-radio-required"
-                                                                                value="{{ $equipchecklist_checklist->id}}">
+
+
+                                                                            <input type="hidden" name="check[equipchecklist_checklist][type4][{{ $equipchecklist_checklist->id }}]" value="0">
+                                                                            <input type="checkbox" name="check[equipchecklist_checklist][type4][{{ $equipchecklist_checklist->id }}]" class=" validate-radio-required" value="1">
                                                                         </td>
                                                                     </tr>
                                                                     @php
@@ -270,14 +288,13 @@
                                                 <div class="table-container">
                                                     <h3>
                                                         Instruction List</h3>
-                                                        <input type="hidden" name = "type" id="" value = "type_5" >
+                                                       
                                                     <div style="overflow-y: auto; max-height: 400px;">
                                                         <table class="table view_card">
                                                             <thead>
                                                                 <tr>
                                                                     <th>Sr.No</th>
                                                                     <th><input type="checkbox" id="select-all4"
-                                                                            name="allprotectivequip_checklist"
                                                                             class="validate-radio-required"></th>
                                                                     <th>Check Points</th>
                                                                     <th>Is Default Enable</th>
@@ -292,15 +309,20 @@
                                                                         <td>{{ $index }}</td>
 
                                                                         <td>
-                                                                            
-                                                                            <input type="checkbox" name="check[{{ $safework_checklist->id }}]" class="row-checkbox4 validate-radio-required" value="{{ $safework_checklist->id }}">
+                                                                            <input type="hidden" name="instruction[safework_check][type5][{{ $safework_checklist->id }}]" value="0">
+                                                                            <input type="checkbox" name="instruction[safework_check][type5][{{ $safework_checklist->id }}]" class="row-checkbox4 validate-radio-required" value="1">
+
                                                                         </td>
-                                                                        <td>{{ $safework_checklist->safe_work }}</td>
+                                                                        <td>
+
+                                                                            <input type="hidden" name="instruction[safe_work][type5][{{ $safework_checklist->id }}]" value="{{$safework_checklist->id}}">
+                                                                            {{ $safework_checklist->safe_work }}
+                                                                        </td>
                                                                         <td class="form-input">
-                                                                            <input type="checkbox"
-                                                                                name="safework_checklist[{{ $safework_checklist->id }}]"
-                                                                                class="validate-radio-required"
-                                                                                value="{{ $safework_checklist->id}}">
+
+                                                                            <input type="hidden" name="instruction[safework_checklist][type5][{{ $safework_checklist->id }}]" value="0">
+                                                                            <input type="checkbox" name="instruction[safework_checklist][type5][{{ $safework_checklist->id }}]" class="validate-radio-required" value="1">
+
                                                                         </td>
                                                                     </tr>
                                                                     @php
@@ -398,9 +420,9 @@
             }
         });
         $(function() {
-            $('#safe_workadd').validate({
+            $('#typeofwork_add').validate({
                 rules: {
-                    safe_work: {
+                    work_name: {
                         required: true,
 
                         minlength: 3,
@@ -409,18 +431,38 @@
                             type: 'post',
                             data: {
                                 location_type_name: function() {
-                                    return $('#checklist').val();
+                                    return $('#work_name').val();
                                 }
                             }
                         }
                     },
 
+                    description: {
+                        required: true,
+                        minlength: 3,
+                        
+                    },
+
+                    typeofwork_upload: {
+                        required: true,
+                        
+                    },
+
                 },
                 messages: {
-                    safe_work: {
+                    work_name: {
                         required: "{{ __('Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
                         remote: "{{ __('Name should be unique') }}"
+                    },
+
+                    description: {
+                        required: "{{ __('Description is Required') }}",
+                        minlength: "{{ __('common.validate_min_length') }}",
+                    },
+
+                    typeofwork_upload: {
+                        required: "{{ __('Image is Required') }}",
                     },
 
                 },
