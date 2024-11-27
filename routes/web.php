@@ -100,6 +100,7 @@ Route::middleware(['userlog'])->group(function () {
         Route::get('home', [AdminController::class, 'index'])->name('home');
         Route::get('profile', [AdminController::class, 'profileView']);
         Route::post('profile/image/update', [AdminController::class, 'profileUpdate']);
+        Route::post('profile/update', [AdminController::class, 'Update']);
         Route::post('profile/password/update', [AdminController::class, 'changeProfilePassword']);
 
         /**
@@ -338,9 +339,9 @@ Route::middleware(['userlog'])->group(function () {
         Route::group(['prefix' => 'topic'], function () {
             Route::get('/list', [TopicController::class, 'index']);
             Route::post('/list', [TopicController::class, 'index']);
-            Route::get('/add', [TopicController::class, 'add'])->middleware('role:company,add');
+            Route::get('/add', [TopicController::class, 'add']);
             Route::post('/add/submit', [TopicController::class, 'store']);
-            Route::get('/edit/{id}', [TopicController::class, 'edit'])->middleware('role:company,edit');
+            Route::get('/edit/{id}', [TopicController::class, 'edit']);
             Route::post('/edit/submit', [TopicController::class, 'update']);
             Route::get('/view/{id}', [TopicController::class, 'view'])->middleware('role:company,view');
             Route::post('/delete', [TopicController::class, 'delete'])->middleware('role:company,delete');

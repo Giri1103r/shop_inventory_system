@@ -100,6 +100,9 @@ class UserPermissionController extends Controller
                         if (isset($rolePermissions['export']) && $rolePermissions['export'] == 1) {
                             $menu_permission_list[] = 'menu_' . $childmenu->menu_id . '_export';
                         }
+                        if (isset($rolePermissions['import']) && $rolePermissions['import'] == 1) {
+                            $menu_permission_list[] = 'menu_' . $childmenu->menu_id . '_import';
+                        }
                     } else {
                         // Log JSON decoding error
                         Log::error('Failed to decode role permissions JSON for child menu ID ' . $childmenu->menu_id . ': ' . json_last_error_msg());
