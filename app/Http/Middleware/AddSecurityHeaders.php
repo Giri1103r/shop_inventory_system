@@ -25,8 +25,7 @@ class AddSecurityHeaders
         $allowedOrigin = env('CORS_ALLOWED_ORIGIN', '*');
 
         // Security headers
-        $response->headers->set(
-            'Content-Security-Policy',
+        $response->headers->set('Content-Security-Policy',
             "default-src 'self';
             script-src 'self' 'unsafe-inline';
             style-src 'self' 'unsafe-inline';
@@ -58,5 +57,7 @@ class AddSecurityHeaders
         } else {
             $response->headers->set('Cache-Control', 'public, max-age=31536000');
         }
+
+        return $response;
     }
 }
