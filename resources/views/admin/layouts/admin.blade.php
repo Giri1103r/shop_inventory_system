@@ -228,9 +228,9 @@
     </script>
 
     <!-- Vendor -->
+    <script src="{{ url('public/assets/plugins/jquery/jquery.min.js') }}"></script>
     <script src="{{ url('public/assets/js/pages/responsive-table.init.js') }}"></script>
     <script src="{{ url('public/assets/js/pages/datatables.init.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/jquery/jquery.min.js') }}"></script>
     <script src="{{ url('public/assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ url('public/assets/plugins/simplebar/simplebar.min.js') }}"></script>
     <script src="{{ url('public/assets/plugins/node-waves/waves.min.js') }}"></script>
