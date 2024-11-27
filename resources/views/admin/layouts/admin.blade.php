@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title> @yield('title') | KARAM </title>
+    <title>@yield('title') | KARAM</title>
 
     <link rel="shortcut icon" href="{{ url('public/assets/images/logo-dark.png') }}">
 
@@ -27,24 +27,21 @@
     <link href="{{ url('public/assets/plugins/admin-resources/rwd-table/rwd-table.min.css') }}" rel="stylesheet"
         type="text/css" />
 
-    <link href="{{ url('public/assets/plugins/spectrum-colorpicker2/spectrum.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ url('public/assets/plugins/spectrum-colorpicker2/spectrum.min.css') }}" rel="stylesheet"
+        type="text/css" />
     <link href="{{ url('public/assets/plugins/flatpickr/flatpickr.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ url('public/assets/plugins/clockpicker/bootstrap-clockpicker.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ url('public/assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}" rel="stylesheet" type="text/css" />
-
-
-
-    {{-- <link href="{{ url('public/assets/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css') }}"
+    <link href="{{ url('public/assets/plugins/clockpicker/bootstrap-clockpicker.min.css') }}" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ url('public/assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}"
         rel="stylesheet" type="text/css" />
-    <link href="{{ url('public/assets/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css') }}"
-        rel="stylesheet" type="text/css" /> --}}
+    <link href="{{ url('public/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
+
+
     <link
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"
         rel="stylesheet">
 
 
-    <!-- icons -->
-    <link href="{{ url('public/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
 
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
