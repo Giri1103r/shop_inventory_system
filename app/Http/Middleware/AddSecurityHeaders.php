@@ -25,15 +25,7 @@ class AddSecurityHeaders
         $allowedOrigin = env('CORS_ALLOWED_ORIGIN', '*');
 
         // Security headers
-        $response->headers->set('Content-Security-Policy',
-            "default-src 'self';
-            script-src 'self' 'unsafe-inline';
-            style-src 'self' 'unsafe-inline';
-            img-src 'self' data:;
-            font-src 'self' data:;
-            object-src 'none';
-            frame-ancestors 'none';
-            upgrade-insecure-requests;"
+        $response->headers->set('Content-Security-Policy',"default-src 'self';script-src 'self' 'unsafe-inline';style-src 'self' 'unsafe-inline';img-src 'self' data:;font-src 'self' data:;object-src 'none';frame-ancestors 'none';upgrade-insecure-requests;"
         );
         $response->headers->set('X-Frame-Options', 'DENY');
         $response->headers->set('X-Content-Type-Options', 'nosniff');
