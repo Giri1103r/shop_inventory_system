@@ -7,12 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="{{ public_image('favicon/favicon.ico') }}">
+    <link rel="icon" href="{{ url('public/assets/images/logo-dark.png') }}">
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ env('APP_NAME') }} | @yield('title')</title>
+    <title>@yield('title') | KARAM</title>
 
 
     <!-- Vendors Style-->
@@ -57,17 +57,10 @@
     <!-- Vendor JS -->
     <script src="{{ public_js('vendors.min.js') }}"></script>
     <script src="{{ public_js('pages/chat-popup.js') }}"></script>
-    <script src="{{ public_plugins('feather-icons/feather.min.js') }}"></script>
+    <script src="{{ public_plugins('sweetalert/sweetalert2.js') }}"></script>
+    <script src="{{ public_plugins('jqueryvalidation/jquery.validate.min.js') }}"></script>
+    <script src="{{ public_plugins('jqueryvalidation/additional-methods.min.js') }}"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"
-        integrity="sha512-rstIgDs0xPgmG6RX1Aba4KV5cWJbAMcvRCVmglpam9SoHZiUCyQVDdH2LPlxoHtrv17XWblE/V/PP+Tr04hbtA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/additional-methods.min.js"
-        integrity="sha512-6S5LYNn3ZJCIm0f9L6BCerqFlQ4f5MwNKq+EthDXabtaJvg3TuFLhpno9pcm+5Ynm6jdA9xfpQoMz2fcjVMk9g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     @stack('scripts')
 
