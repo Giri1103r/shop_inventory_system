@@ -9,7 +9,7 @@
         <div class="d-flex align-items-center">
 
         </div>
-      
+
     </div>
 
     <div class="content-body  default-height">
@@ -32,8 +32,9 @@
                                 <div class="basic-form">
                                     <form method="POST" id="locationedit" action="{{ admin_url('location/edit/submit') }}">
                                         @csrf
-                                        <input type="hidden" name="id" id="id" value="{{ encryptId( $location->id) }}">
-                                      
+                                        <input type="hidden" name="id" id="id"
+                                            value="{{ encryptId($location->id) }}">
+
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
@@ -46,22 +47,23 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company Name</label>
-                                                    <select name="company_id" id="company_id" class=" form-control single-select"
-                                                    style="width: 100%">
-                                                    <option value="">Select Company Name</option>
-                                                    @foreach ($companyList as $company)
-                                                        <option @if ($location->company_id == $company->id) selected @endif value="{{ encryptId($company->id) }}">
-                                                            {{ $company->company_name }}</option>
-                                                    @endforeach
-                                                  
-                                                </select>
+                                                    <select name="company_id" id="company_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Company Name</option>
+                                                        @foreach ($companyList as $company)
+                                                            <option @if ($location->company_id == $company->id) selected @endif
+                                                                value="{{ encryptId($company->id) }}">
+                                                                {{ $company->company_name }}</option>
+                                                        @endforeach
+
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Location Name</label>
-                                                    <input type="text" name="location_name" class="form-control"
-                                                        placeholder="Location Name"  value="{{ $location->location_name }}">
+                                                    <input type="text" name="location_name" id="location_name" class="form-control"
+                                                        placeholder="Location Name" value="{{ $location->location_name }}">
                                                 </div>
                                             </div>
                                         </div>
@@ -97,8 +99,23 @@
                     location_name: {
                         required: true,
                         minlength: 3,
+                        remote: {
+                            url: '{{ admin_url('location/unique') }}',
+                            type: 'post',
+                            data: {
+                                location_name: function() {
+                                    return $('#location_name').val();
+                                },
+                                company_id: function() {
+                                    return $('#company_id').val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
+                                }
+                            }
+                        }
                     },
-                   
+
                 },
                 messages: {
                     company_id: {
@@ -107,6 +124,7 @@
                     location_name: {
                         required: "{{ __('Location Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
+                        remote: "{{ __('Location Name should be unique') }}"
                     },
 
                 },
