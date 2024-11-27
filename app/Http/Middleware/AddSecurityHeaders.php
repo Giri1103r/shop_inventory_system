@@ -39,7 +39,7 @@ class AddSecurityHeaders
 
         // CORS headers
         $response->headers->set('Access-Control-Allow-Origin', $allowedOrigin);
-        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST');
         $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With, Authorization, Accept');
         $response->headers->set('Access-Control-Allow-Credentials', env('CORS_ALLOW_CREDENTIALS', 'false'));
 
