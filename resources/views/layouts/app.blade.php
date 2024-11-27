@@ -12,6 +12,8 @@
     <link rel="shortcut icon" href="assets/images/favicon.ico">
 
     <!-- App css -->
+    <link href="{{ url('public/assets/css/roboto-fontface.css') }}" rel="stylesheet" type="text/css"  />
+    <link href="{{ url('public/assets/css/karla.css') }}" rel="stylesheet" type="text/css"  />
     <link href="{{ url('public/assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
     <!-- icons -->
     <link href="{{ url('public/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />

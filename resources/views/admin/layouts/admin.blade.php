@@ -11,6 +11,8 @@
 
     <link rel="shortcut icon" href="{{ url('public/assets/images/logo-dark.png') }}">
 
+    <link href="{{ url('public/assets/css/roboto-fontface.css') }}" rel="stylesheet" type="text/css"  />
+    <link href="{{ url('public/assets/css/karla.css') }}" rel="stylesheet" type="text/css"  />
     <link href="{{ url('public/assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
     <link href="{{ url('public/assets/css/app.css') }}" rel="stylesheet" type="text/css" id="app-style" />
     <link href="{{ url('public/assets/css/custom-style.css') }}" rel="stylesheet" type="text/css" id="app-style" />
@@ -41,12 +43,12 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"
         rel="stylesheet">
 
-
-
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/4.0.0/css/jasny-bootstrap.min.css"
         integrity="sha512-VUj0sZbQFPixq7NJ6ioBRK/scakfsdlKl647mLmZaZHWPgpnrWvIfy80/QF3q1l+kozBc8IHrTEoiZY25PSUTw=="
