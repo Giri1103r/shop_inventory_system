@@ -25,6 +25,7 @@ use App\Models\Master\SafeWork;
 use App\Models\Master\Precaution;
 use App\Models\Master\Checklist;
 use App\Models\Master\TypeofWorkUpload;
+use App\Models\Master\TypeofWorkChecklist;
 
 
 class TypeofWorkController extends Controller
@@ -36,6 +37,7 @@ class TypeofWorkController extends Controller
     private $precaution;
     private $checklist;
     private $typeofworkupload;
+    private $typeofworkchecklist;
     private $uploadlog;
 
     public function __construct()
@@ -47,6 +49,7 @@ class TypeofWorkController extends Controller
         $this->precaution = new Precaution();
         $this->checklist = new Checklist();
         $this->typeofworkupload = new TypeofWorkUpload();
+        $this->typeofworkchecklist = new TypeofWorkChecklist();
         $this->uploadlog = new UploadLog();
     }
 
@@ -127,8 +130,8 @@ class TypeofWorkController extends Controller
     public function Store(Request $request)
     {
         try {
-dd('erfr');
-            dd($request);
+// dd('erfr');
+            // dd($request);
             // $rules = [
             //     'checklist' => 'required',
 
@@ -146,13 +149,22 @@ dd('erfr');
 
                 $typeofwork =    $this->typeofwork->store();
                 $this->typeofworkupload->store($typeofwork->id);
+                $this->typeofworkchecklist->store1($typeofwork->id);
+                $this->typeofworkchecklist->store2($typeofwork->id);
+                $this->typeofworkchecklist->store3($typeofwork->id);
+                $this->typeofworkchecklist->store4($typeofwork->id);
+                $this->typeofworkchecklist->store5($typeofwork->id);
 
                 Session::flash('success', __('Equipment Checklist added successfully'));
             } catch (Exception $ex) {
+            dd($ex);
+
                 Session::flash('error', __('common.message_error'));
             }
             return redirect(admin_url('ptw/typeofworkmaster/list'));
         } catch (Exception $ex) {
+
+            dd($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ptw/typeofworkmaster/list'));
         }
@@ -179,13 +191,40 @@ dd('erfr');
     {
         try {
             $id = decryptId($request->id);
-            $checklist = $this->checklist->find($id);
+            $typeofwork = $this->typeofwork->selectone($id);
+            $protectivequip_checklist = $this->protective->selectchecklist();
+            $equipinvalve_checklist = $this->equipinvalve->selectchecklist();
+            $safework_checklist = $this->safework->selectchecklist();
+            $precaution_checklist = $this->precaution->selectchecklist();
+            $equipchecklist_checklist = $this->checklist->selectchecklist();
+            $file = $this->typeofworkupload->where('typeofwork_id', $id)->first();
+
+
+            $protective = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type','type1')->get()->KeyBy('check_points');
+            $equipment = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type','type2')->get()->KeyBy('check_points');
+            $manual = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type','type3')->get()->KeyBy('check_points');
+            $check = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type','type4')->get()->KeyBy('check_points');
+            $instruction = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type','type5')->get()->KeyBy('check_points');
+
 
             $data = array(
-                'checklist' => $checklist,
+                'protectivequip_checklist' => $protectivequip_checklist,
+                'equipinvalve_checklist' => $equipinvalve_checklist,
+                'safework_checklist' => $safework_checklist,
+                'precaution_checklist' => $precaution_checklist,
+                'equipchecklist_checklist' => $equipchecklist_checklist,
+                'typeofwork' => $typeofwork,
+                'file' => $file,
+                'protective' => $protective,
+                'equipment' => $equipment,
+                'manual' => $manual,
+                'check' => $check,
+                'instruction' => $instruction,
             );
             return view('master.typeofwork.edit', $data);
         } catch (Exception $error) {
+
+            dd($error);
             report($error->getMessage());
         }
     }
@@ -194,27 +233,35 @@ dd('erfr');
     {
         try {
             $id = decryptId($request->id);
+// dd($id)
+            // $rules = [
+            //     'checklist' => 'required',
 
-            $rules = [
-                'checklist' => 'required',
+            // ];
+            // $messages = [
+            //     'checklist.required' => __('Equipment Checklist is required'),
 
-            ];
-            $messages = [
-                'checklist.required' => __('Equipment Checklist is required'),
-
-            ];
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
+            // ];
+            // $validator = Validator::make($request->all(), $rules, $messages);
+            // if ($validator->fails()) {
+            //     return redirect()->back()->withErrors($validator)->withInput();
+            // }
 
 
-            $this->checklist->updates($id);
+            $typeofwork =  $this->typeofwork->updates($id); 
+            $updatedRecord = $this->typeofwork->find($id);
+            $this->typeofworkupload->updates($updatedRecord->id);
+            $this->typeofworkchecklist->update1($updatedRecord->id);
+            $this->typeofworkchecklist->update2($updatedRecord->id);
+            $this->typeofworkchecklist->update3($updatedRecord->id);
+            $this->typeofworkchecklist->update4($updatedRecord->id);
+            $this->typeofworkchecklist->update5($updatedRecord->id);
 
             Session::flash('success', __('Equipment Checklist updated successfully'));
             return redirect(admin_url('ptw/typeofworkmaster/list'));
         } catch (Exception $ex) {
 
+            dd($ex);
             Session::flash('error', __('Something went wrong try again'));
             return redirect(admin_url('ptw/typeofworkmaster/list'));
         }

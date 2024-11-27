@@ -26,3 +26,5 @@ yarn-error.log
 /.history
 
 .htaccess
+
+composer.lock

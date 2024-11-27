@@ -173,16 +173,26 @@ class Unit extends Model
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhereRaw('unit_name LIKE "%' . $search . '%"');
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('unit_name', 'LIKE', '%' . $search . '%');
             });
+        }
+        if ($request->has('unit_id') && $request->unit_id) {
+            $query = $query->where('unit_id', 'LIKE', '%' . $request->unit_id . '%');
+        }
+        if ($request->has('company_id') && $request->company_id) {
+            $query = $query->where('masters_unit.company_id', decryptId($request->company_id));
+        }
+        if ($request->has('location_id') && $request->location_id) {
+            $query = $query->where('masters_unit.location_id', decryptId($request->location_id));
         }
         if ($request->has('unit_name') && $request->unit_name) {
             $query = $query->where('unit_name', 'LIKE', '%' . $request->unit_name . '%');
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('masters_unit.status', decryptId($request->status));
+            $query = $query->where('status', decryptId($request->status));
         }
 
         return  $query->get();
