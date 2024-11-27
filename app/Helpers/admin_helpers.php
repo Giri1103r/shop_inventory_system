@@ -7,6 +7,7 @@ use App\Models\Master\Company;
 use App\Models\Master\Location;
 use App\Models\Master\Unit;
 use App\Models\Master\Department;
+use App\Models\Master\Topic;
 use App\Models\Master\UserRole;
 
 use Illuminate\Support\Str;
@@ -173,6 +174,11 @@ if (!function_exists('getsequence')) {
                 $count = UserRole::withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'ROLE-' . getautogen($count);
+                break;
+            case 'topic':
+                $count = Topic::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'TOPIC-' . getautogen($count);
                 break;
             default:
                 $sequence = Str::random(5);
