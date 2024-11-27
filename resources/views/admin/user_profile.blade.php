@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'UA/UC Category Add')
-@section('pageurl', admin_url('oper_manage/factory/list'))
+@section('title', 'Profile')
+@section('pageurl', admin_url('dashboard'))
 
 
 @section('content')
