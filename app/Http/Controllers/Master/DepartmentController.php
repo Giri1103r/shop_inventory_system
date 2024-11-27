@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\File;
-
+use App\Models\Master\TrainingMatrix;
+use App\Models\Master\TrainingSchedule;
 use Str;
 use PDF;
 use Mail;
@@ -36,6 +37,8 @@ class DepartmentController extends Controller
     private $location;
     private $unit;
     private $uploadlog;
+    private $training_schedule;
+    private $training_matrix;
 
     public function __construct()
     {
@@ -46,6 +49,8 @@ class DepartmentController extends Controller
         $this->location = new Location();
         $this->department = new Department();
         $this->uploadlog = new UploadLog();
+        $this->training_matrix = new TrainingMatrix();
+        $this->training_schedule = new TrainingSchedule();
     }
 
 
@@ -261,12 +266,17 @@ class DepartmentController extends Controller
     {
         try {
             $id = decryptId($request->id);
+            // $training_schedule = $this->training_schedule->where('department_id', $id)->exists();
+            // $training_matrix = $this->training_matrix->where('department_id', $id)->exists();
 
+            // if ($training_schedule || $training_matrix) {
+            //     return response()->json(['status' => 'error', 'msg' => 'module_exits'], 406);
+            // }
             $this->department->deleterecord($id);
 
             return response()->json(['status' => 'success', 'msg' => 'Department deleted successfully'], 200);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }

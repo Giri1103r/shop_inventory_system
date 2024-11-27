@@ -20,8 +20,11 @@ use Response;
 use App\Jobs\ImportUnitJob;
 
 use App\Models\Master\Company;
-use App\Models\Master\Location;
 use App\Models\Master\Unit;
+use App\Models\Master\Location;
+use App\Models\Master\Department;
+use App\Models\Master\TrainingMatrix;
+use App\Models\Master\TrainingSchedule;
 use App\Models\User;
 use App\Models\UploadLog;
 
@@ -32,6 +35,9 @@ class UnitController extends Controller
     private $company;
     private $user;
     private $location;
+    private $training_schedule;
+    private $training_matrix;
+    private $department;
     private $unit;
     private $uploadlog;
 
@@ -40,6 +46,9 @@ class UnitController extends Controller
 
         $this->company = new Company();
         $this->user = new User();
+        $this->training_matrix = new TrainingMatrix();
+        $this->training_schedule = new TrainingSchedule();
+        $this->department = new Department();
         $this->unit = new Unit();
         $this->location = new Location();
         $this->uploadlog = new UploadLog();
@@ -248,6 +257,13 @@ class UnitController extends Controller
         try {
             $id = decryptId($request->id);
 
+            $department = $this->department->where('unit_id', $id)->exists();
+            // $training_schedule = $this->training_schedule->where('unit_id', $id)->exists();
+            // $training_matrix = $this->training_matrix->where('unit_id', $id)->exists();
+
+            if ( $department) {
+                return response()->json(['status' => 'error', 'msg' => 'module_exits'], 406);
+            }
             $this->unit->deleterecord($id);
 
             return response()->json(['status' => 'success', 'msg' => 'Unit deleted successfully'], 200);

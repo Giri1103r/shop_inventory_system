@@ -19,6 +19,9 @@ use Response;
 
 
 use App\Models\Master\Company;
+use App\Models\Master\Unit;
+use App\Models\Master\Location;
+use App\Models\Master\Department;
 use App\Models\User;
 use App\Models\UploadLog;
 use App\Jobs\ImportCompanyJob;
@@ -28,6 +31,9 @@ class CompanyController extends Controller
 {
 
     private $company;
+    private $unit;
+    private $location;
+    private $department;
     private $user;
     private $uploadlog;
 
@@ -36,6 +42,9 @@ class CompanyController extends Controller
     {
 
         $this->company = new Company();
+        $this->unit = new Unit();
+        $this->location = new Location();
+        $this->department = new Department();
         $this->user = new User();
         $this->uploadlog = new UploadLog();
     }
@@ -347,22 +356,26 @@ class CompanyController extends Controller
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
-
     public function Delete(Request $request)
     {
         try {
             $id = decryptId($request->id);
-            // $login_id = decryptId($request->login_id);
 
-            // $this->user->deleteCompanyrecord($login_id);
+            $location = $this->location->where('company_id', $id)->exists();
+            $unit = $this->unit->where('company_id', $id)->exists();
+            $department = $this->department->where('company_id', $id)->exists();
+
+            if ($location || $unit || $department) {
+                return response()->json(['status' => 'error', 'msg' => 'module_exits'], 406);
+            }
             $this->company->deleterecord($id);
-
             return response()->json(['status' => 'success', 'msg' => 'Company deleted successfully'], 200);
         } catch (Exception $ex) {
-            report($ex);
+
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
+ 
     public function Import(Request $request)
     {
         $data = array();

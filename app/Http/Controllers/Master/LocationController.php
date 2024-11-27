@@ -20,7 +20,9 @@ use App\Jobs\ImportLocationJob;
 
 
 use App\Models\Master\Company;
+use App\Models\Master\Unit;
 use App\Models\Master\Location;
+use App\Models\Master\Department;
 use App\Models\User;
 use App\Models\UploadLog;
 
@@ -30,6 +32,8 @@ class LocationController extends Controller
 
     private $company;
     private $user;
+    private $department;
+    private $unit;
     private $location;
     private $uploadlog;
 
@@ -38,6 +42,8 @@ class LocationController extends Controller
 
         $this->company = new Company();
         $this->user = new User();
+        $this->department = new Department();
+        $this->unit = new Unit();
         $this->location = new Location();
         $this->uploadlog = new UploadLog();
     }
@@ -239,6 +245,12 @@ class LocationController extends Controller
         try {
             $id = decryptId($request->id);
 
+            $department = $this->department->where('location_id', $id)->exists();
+            $unit = $this->unit->where('location_id', $id)->exists();
+
+            if ($unit || $department) {
+                return response()->json(['status' => 'error', 'msg' => 'module_exits'], 406);
+            }
             $this->location->deleterecord($id);
 
             return response()->json(['status' => 'success', 'msg' => 'Location deleted successfully'], 200);
@@ -447,7 +459,7 @@ class LocationController extends Controller
                 ];
 
                 // dispatch(new ImportLocationJob($details));
-                   dispatch((new ImportLocationJob($details))->onQueue('location'));
+                dispatch((new ImportLocationJob($details))->onQueue('location'));
             }
 
             $insert_data['log_id'] = $insert_id;
