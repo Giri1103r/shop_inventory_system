@@ -10,9 +10,9 @@
 
                 <div class="card">
                     <h4 class="card-title"></h4>
-                    <div class="ms-auto">
+                    <div class="align-add-btc" style="margin-left: 90%;">
 
-                        <x-button-filter dataId="" class="search" href=""></x-button-filter>    
+                        <x-button-filter dataId="" class="search" href=""></x-button-filter>
                     </div>
                     <div id="search" class="collapse">
                         <form action="" id="formsearch">
@@ -22,15 +22,13 @@
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_id" class="form-label ">Worker ID</label>
-                                            <input type="text" name="emp_id" id="emp_id"
-                                                class="form-control">
+                                            <input type="text" name="emp_id" id="emp_id" class="form-control">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">Worker Name</label>
-                                            <input type="text" name="emp_name" id="emp_name"
-                                                class="form-control">
+                                            <input type="text" name="emp_name" id="emp_name" class="form-control">
                                         </div>
-                                  
+
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="company_id" class="form-label ">Company</label>
                                             <select name="company_id" id="company_id" class=" form-control single-select"
@@ -52,7 +50,7 @@
                                             </select>
                                         </div>
 
-                         
+
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="unit_id" class="form-label ">Unit Name </label>
                                             <select name="unit_id" id="unit_id" class=" form-control single-select"
@@ -305,7 +303,7 @@
                                             '&company_id=' + company_id +
                                             '&location_id=' + location_id +
                                             '&unit_id=' + unit_id +
-                                            '&dept_id=' + dept_id 
+                                            '&dept_id=' + dept_id
                                     }
                                 },
                                 {
@@ -329,7 +327,7 @@
                                             '&company_id=' + company_id +
                                             '&location_id=' + location_id +
                                             '&unit_id=' + unit_id +
-                                            '&dept_id=' + dept_id 
+                                            '&dept_id=' + dept_id
                                     }
                                 },
                             ]

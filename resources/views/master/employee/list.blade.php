@@ -10,7 +10,7 @@
 
                 <div class="card">
                     <h4 class="card-title"></h4>
-                    <div class="ms-auto">
+                    <div class="align-add-btc" style="margin-left: 90%;">
 
                         <x-button-filter dataId="" class="search" href=""></x-button-filter>
                     </div>
