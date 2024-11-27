@@ -16,34 +16,47 @@ class AddSecurityHeaders
     public function handle(Request $request, Closure $next): Response
     {
 
-        // Ensure HTTPS for requests and responses
-        if (!$request->isSecure() && app()->environment('production')) {
+        if ((!$request->isSecure() && $request->header('X-Forwarded-Proto') !== 'https') && app()->environment('production')) {
             return redirect()->secure($request->getRequestUri());
         }
 
         $response = $next($request);
 
-        // Fetch allowed CORS domain from .env
-        $allowedOrigin = env('CORS_ALLOWED_ORIGIN', 'http://localhost');
+        $allowedOrigin = env('CORS_ALLOWED_ORIGIN', '*');
 
-        // Add security headers
-        $response->headers->set('Content-Security-Policy', "default-src 'self'; frame-ancestors 'none'; upgrade-insecure-requests;");
-        $response->headers->set('X-Frame-Options', 'DENY'); // Clickjacking protection
-        $response->headers->set('X-Content-Type-Options', 'nosniff'); // Prevent content type sniffing
-        $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload'); // Enforce HTTPS
+        // Security headers
+        $response->headers->set(
+            'Content-Security-Policy',
+            "default-src 'self';
+            script-src 'self' 'unsafe-inline';
+            style-src 'self' 'unsafe-inline';
+            img-src 'self' data:;
+            font-src 'self' data:;
+            object-src 'none';
+            frame-ancestors 'none';
+            upgrade-insecure-requests;"
+        );
+        $response->headers->set('X-Frame-Options', 'DENY');
+        $response->headers->set('X-Content-Type-Options', 'nosniff');
+        $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
         $response->headers->set('Referrer-Policy', 'no-referrer-when-downgrade');
-        $response->headers->set('X-XSS-Protection', '1; mode=block'); // Basic XSS protection
-        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+        $response->headers->set('X-XSS-Protection', '1; mode=block');
         $response->headers->set('Clear-Site-Data', '"cookies", "storage", "executionContexts"');
+        $response->headers->set('X-Permitted-Cross-Domain-Policies', 'none');
+        $response->headers->set('Feature-Policy', "vibrate 'none'; geolocation 'none'; microphone 'none'; camera 'none'; payment 'none';");
         $response->headers->set('Permission-Policy', 'geolocation=(), microphone=(), camera=(), fullscreen=(self), payment=()');
 
-        // CORS configuration
-        $response->headers->set('Access-Control-Allow-Origin', $allowedOrigin); // Dynamically set domain
-        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST'); // Only allow GET and POST methods
-        $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With, Authorization');
-        $response->headers->set('Access-Control-Allow-Credentials', 'false');
+        // CORS headers
+        $response->headers->set('Access-Control-Allow-Origin', $allowedOrigin);
+        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+        $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With, Authorization, Accept');
+        $response->headers->set('Access-Control-Allow-Credentials', env('CORS_ALLOW_CREDENTIALS', 'false'));
 
-
-        return $response;
+        // Cache control
+        if ($request->is('api/*')) {
+            $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+        } else {
+            $response->headers->set('Cache-Control', 'public, max-age=31536000');
+        }
     }
 }
