@@ -130,8 +130,6 @@ class TypeofWorkController extends Controller
     public function Store(Request $request)
     {
         try {
-// dd('erfr');
-            // dd($request);
             // $rules = [
             //     'checklist' => 'required',
 
@@ -157,7 +155,7 @@ class TypeofWorkController extends Controller
 
                 Session::flash('success', __('Equipment Checklist added successfully'));
             } catch (Exception $ex) {
-            dd($ex);
+                dd($ex);
 
                 Session::flash('error', __('common.message_error'));
             }
@@ -175,14 +173,45 @@ class TypeofWorkController extends Controller
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
-                $checklist = $this->checklist->selectOne($id);
+                $typeofwork = $this->typeofwork->selectone($id);
+
+                // dd($typeofwork);
+                $protectivequip_checklist = $this->protective->selectchecklist();
+                $equipinvalve_checklist = $this->equipinvalve->selectchecklist();
+                $safework_checklist = $this->safework->selectchecklist();
+                $precaution_checklist = $this->precaution->selectchecklist();
+                $equipchecklist_checklist = $this->checklist->selectchecklist();
+                $file = $this->typeofworkupload->where('typeofwork_id', $id)->first();
+
+
+                $protective = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type1')->get()->KeyBy('check_points');
+                $equipment = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type2')->get()->KeyBy('check_points');
+                $manual = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type3')->get()->KeyBy('check_points');
+                $check = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type4')->get()->KeyBy('check_points');
+                $instruction = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type5')->get()->KeyBy('check_points');
+
+
+
+                $getprotectivedetails = $this->typeofworkchecklist->getchecklistdetails($typeofwork->id, 'type1');
 
                 $data = array(
-                    'checklist' => $checklist,
+                    'typeofwork' => $typeofwork,
+                    'protectivequip_checklist' => $protectivequip_checklist,
+                    'equipinvalve_checklist' => $equipinvalve_checklist,
+                    'safework_checklist' => $safework_checklist,
+                    'precaution_checklist' => $precaution_checklist,
+                    'equipchecklist_checklist' => $equipchecklist_checklist,
+                    'protective' => $protective,
+                    'equipment' => $equipment,
+                    'manual' => $manual,
+                    'check' => $check,
+                    'instruction' => $instruction,
                 );
             }
             return view('master.typeofwork.view', $data);
         } catch (Exception $ex) {
+
+            dd($ex);
             report($ex);
         }
     }
@@ -200,11 +229,11 @@ class TypeofWorkController extends Controller
             $file = $this->typeofworkupload->where('typeofwork_id', $id)->first();
 
 
-            $protective = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type','type1')->get()->KeyBy('check_points');
-            $equipment = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type','type2')->get()->KeyBy('check_points');
-            $manual = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type','type3')->get()->KeyBy('check_points');
-            $check = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type','type4')->get()->KeyBy('check_points');
-            $instruction = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type','type5')->get()->KeyBy('check_points');
+            $protective = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type1')->get()->KeyBy('check_points');
+            $equipment = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type2')->get()->KeyBy('check_points');
+            $manual = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type3')->get()->KeyBy('check_points');
+            $check = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type4')->get()->KeyBy('check_points');
+            $instruction = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type5')->get()->KeyBy('check_points');
 
 
             $data = array(
@@ -233,7 +262,7 @@ class TypeofWorkController extends Controller
     {
         try {
             $id = decryptId($request->id);
-// dd($id)
+            // dd($id)
             // $rules = [
             //     'checklist' => 'required',
 
@@ -248,7 +277,7 @@ class TypeofWorkController extends Controller
             // }
 
 
-            $typeofwork =  $this->typeofwork->updates($id); 
+            $typeofwork =  $this->typeofwork->updates($id);
             $updatedRecord = $this->typeofwork->find($id);
             $this->typeofworkupload->updates($updatedRecord->id);
             $this->typeofworkchecklist->update1($updatedRecord->id);

@@ -172,12 +172,22 @@ class TypeofWork extends Model
         return  $query->get();
     }
 
+    // public function selectOne($id)
+    // {
+
+    //     $data = $this->select(
+    //         'masters_ptw_typeofwork.*'
+    //     )
+    //         ->where('masters_ptw_typeofwork.id', $id)
+    //         ->first();
+
+    //     return $data;
+    // }
+
     public function selectOne($id)
     {
 
-        $data = $this->select(
-            'masters_ptw_typeofwork.*'
-        )
+        $data =  $this->select('masters_ptw_typeofwork.*', 'masters_ptw_typeofwork_upload.file_path',)->leftjoin('masters_ptw_typeofwork_upload', 'masters_ptw_typeofwork_upload.typeofwork_id', '=', 'masters_ptw_typeofwork.id')
             ->where('masters_ptw_typeofwork.id', $id)
             ->first();
 

@@ -295,7 +295,7 @@ class TypeofWorkChecklist extends Model
                         $data = [
                             'typeofwork_id' => $id,
                             'type' => $type,
-                            'checked' => $value,  
+                            'checked' => $value,
                             'check_points' => $checkPoint,
                             'default_enable' => $defaultEnable,
                             'updated_by' => Auth::id(),
@@ -304,7 +304,6 @@ class TypeofWorkChecklist extends Model
                             $existingRecord->update($data);
                         }
                     }
-                  
                 }
             }
         }
@@ -333,14 +332,14 @@ class TypeofWorkChecklist extends Model
 
 
                         $existingRecord = $this->where('id', $equipmentrecord_id)->where('typeofwork_id', $id)
-                        ->where('type', $type)
-                        ->where('check_points', $checkPoint)
-                        ->first();
+                            ->where('type', $type)
+                            ->where('check_points', $checkPoint)
+                            ->first();
                         // dd($equipmentrecord_id,$id,$type,$checkPoint,$existingRecord);
                         $data = [
                             'typeofwork_id' => $id,
                             'type' => $type,
-                            'checked' => $value,  
+                            'checked' => $value,
                             'check_points' => $checkPoint,
                             'default_enable' => $defaultEnable,
                             'updated_by' => Auth::id(),
@@ -349,7 +348,6 @@ class TypeofWorkChecklist extends Model
                             $existingRecord->update($data);
                         }
                     }
-                  
                 }
             }
         }
@@ -378,14 +376,14 @@ class TypeofWorkChecklist extends Model
 
 
                         $existingRecord = $this->where('id', $manualrecord_id)->where('typeofwork_id', $id)
-                        ->where('type', $type)
-                        ->where('check_points', $checkPoint)
-                        ->first();
+                            ->where('type', $type)
+                            ->where('check_points', $checkPoint)
+                            ->first();
                         // dd($equipmentrecord_id,$id,$type,$checkPoint,$existingRecord);
                         $data = [
                             'typeofwork_id' => $id,
                             'type' => $type,
-                            'checked' => $value,  
+                            'checked' => $value,
                             'check_points' => $checkPoint,
                             'default_enable' => $defaultEnable,
                             'updated_by' => Auth::id(),
@@ -394,7 +392,6 @@ class TypeofWorkChecklist extends Model
                             $existingRecord->update($data);
                         }
                     }
-                  
                 }
             }
         }
@@ -423,14 +420,14 @@ class TypeofWorkChecklist extends Model
 
 
                         $existingRecord = $this->where('id', $checkrecord_id)->where('typeofwork_id', $id)
-                        ->where('type', $type)
-                        ->where('check_points', $checkPoint)
-                        ->first();
+                            ->where('type', $type)
+                            ->where('check_points', $checkPoint)
+                            ->first();
                         // dd($equipmentrecord_id,$id,$type,$checkPoint,$existingRecord);
                         $data = [
                             'typeofwork_id' => $id,
                             'type' => $type,
-                            'checked' => $value,  
+                            'checked' => $value,
                             'check_points' => $checkPoint,
                             'default_enable' => $defaultEnable,
                             'updated_by' => Auth::id(),
@@ -439,7 +436,6 @@ class TypeofWorkChecklist extends Model
                             $existingRecord->update($data);
                         }
                     }
-                  
                 }
             }
         }
@@ -468,14 +464,14 @@ class TypeofWorkChecklist extends Model
 
 
                         $existingRecord = $this->where('id', $instructionrecord_id)->where('typeofwork_id', $id)
-                        ->where('type', $type)
-                        ->where('check_points', $checkPoint)
-                        ->first();
+                            ->where('type', $type)
+                            ->where('check_points', $checkPoint)
+                            ->first();
                         // dd($equipmentrecord_id,$id,$type,$checkPoint,$existingRecord);
                         $data = [
                             'typeofwork_id' => $id,
                             'type' => $type,
-                            'checked' => $value,  
+                            'checked' => $value,
                             'check_points' => $checkPoint,
                             'default_enable' => $defaultEnable,
                             'updated_by' => Auth::id(),
@@ -484,12 +480,23 @@ class TypeofWorkChecklist extends Model
                             $existingRecord->update($data);
                         }
                     }
-                  
                 }
             }
         }
 
         return true;
+    }
+
+
+    public function getchecklistdetails($id, $type)
+    {
+
+        $data =  $this->select('masters_ptw_typeofwork_checklist.*', 'masters_ptw_protective_equip.protective_equip')
+            ->leftJoin('masters_ptw_protective_equip', 'masters_ptw_protective_equip.id', '=', 'masters_ptw_typeofwork_checklist.check_points')->where('masters_ptw_typeofwork_checklist.id', $id)
+            ->where('masters_ptw_typeofwork_checklist.type', $type)
+            ->get();
+
+        return $data;
     }
 
 
