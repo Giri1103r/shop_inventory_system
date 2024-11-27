@@ -27,20 +27,20 @@ class AddSecurityHeaders
         $allowedOrigin = env('CORS_ALLOWED_ORIGIN', 'http://localhost');
 
         // Add security headers
-        $response->headers->set('Content-Security-Policy', "default-src 'self'; frame-ancestors 'none'; upgrade-insecure-requests;");
-        $response->headers->set('X-Frame-Options', 'DENY'); // Clickjacking protection
-        $response->headers->set('X-Content-Type-Options', 'nosniff'); // Prevent content type sniffing
-        $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload'); // Enforce HTTPS
-        $response->headers->set('Referrer-Policy', 'no-referrer-when-downgrade');
-        $response->headers->set('X-XSS-Protection', '1; mode=block'); // Basic XSS protection
-        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-        $response->headers->set('Clear-Site-Data', '"cookies", "storage", "executionContexts"');
+        $response->headers('Content-Security-Policy', "default-src 'self'; frame-ancestors 'none'; upgrade-insecure-requests;");
+        $response->headers('X-Frame-Options', 'DENY'); // Clickjacking protection
+        $response->headers('X-Content-Type-Options', 'nosniff'); // Prevent content type sniffing
+        $response->headers('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload'); // Enforce HTTPS
+        $response->headers('Referrer-Policy', 'no-referrer-when-downgrade');
+        $response->headers('X-XSS-Protection', '1; mode=block'); // Basic XSS protection
+        $response->headers('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+        $response->headers('Clear-Site-Data', '"cookies", "storage", "executionContexts"');
 
         // CORS configuration
-        $response->headers->set('Access-Control-Allow-Origin', $allowedOrigin); // Dynamically set domain
-        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST'); // Only allow GET and POST methods
-        $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With, Authorization');
-        $response->headers->set('Access-Control-Allow-Credentials', 'false');
+        $response->headers('Access-Control-Allow-Origin', $allowedOrigin); // Dynamically set domain
+        $response->headers('Access-Control-Allow-Methods', 'GET, POST'); // Only allow GET and POST methods
+        $response->headers('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With, Authorization');
+        $response->headers('Access-Control-Allow-Credentials', 'false');
 
 
         return $response;
