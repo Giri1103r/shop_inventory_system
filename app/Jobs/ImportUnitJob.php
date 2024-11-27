@@ -31,8 +31,8 @@ use App\Models\Master\Location;
 use App\Models\Master\Company;
 use App\Models\Master\Unit;
 
-// class ImportCompanyJob implements ShouldQueue
-class ImportUnitJob
+class ImportUnitJob implements ShouldQueue
+// class ImportUnitJob
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

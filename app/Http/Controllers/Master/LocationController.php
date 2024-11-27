@@ -446,8 +446,8 @@ class LocationController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportLocationJob($details));
-                //    dispatch((new ImportEmployeeJob($details))->onQueue('empimport'));
+                // dispatch(new ImportLocationJob($details));
+                   dispatch((new ImportLocationJob($details))->onQueue('location'));
             }
 
             $insert_data['log_id'] = $insert_id;
