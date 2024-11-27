@@ -81,14 +81,19 @@
                                                         placeholder="Employee Email" value="{{ $employee->email }}">
                                                 </div>
                                             </div>
+                                       
                                             <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">User Role</label>
-                                                    <input type="text" name ="user_role" 
-                                                        class="form-control" placeholder="User Role"
-                                                        value="{{ $employee->user_role }}">
-                                                </div>
+                                                <label class="form-label required">User Role</label>
+                                                <select name="user_role" id="user_role" class="select2 form-control">
+
+                                                    <option value="">Select User Role</option>
+                                                    @foreach ($userrole as $role)
+                                                        <option @if ($employee->user_role == $role->id) selected @endif
+                                                            value="{{ $role->id }}">{{ $role->role_name }}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
+
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Joining Date</label>

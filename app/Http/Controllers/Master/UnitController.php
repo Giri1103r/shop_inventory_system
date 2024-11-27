@@ -486,4 +486,26 @@ class UnitController extends Controller
         //return Response::download($filePath, $customFileName);
         return redirect(url($filePath));
     }
+
+
+    
+    public function Uniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $unit_name = $request->unit_name;
+            $company_id = decryptId($request->company_id);
+            $location_id = decryptId($request->location_id);
+            $id = $request->id;
+            if ($id == '') {
+                $record = $this->unit->uniqueCheck($unit_name,$location_id,$company_id);
+            } else {
+                $id = decryptId($id);
+                $record = $this->unit->ExistuniqueCheck($unit_name,$location_id,$company_id,$company_id, $id);
+            }
+            if ($record->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
+        }
+    }
 }

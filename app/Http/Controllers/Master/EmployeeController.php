@@ -26,6 +26,7 @@ use App\Models\Master\Unit;
 use App\Models\Master\Department;
 use App\Models\User;
 use App\Models\UploadLog;
+use App\Models\Master\UserRole;
 
 
 class EmployeeController extends Controller
@@ -38,6 +39,7 @@ class EmployeeController extends Controller
     private $unit;
     private $uploadlog;
     private $employee;
+    private $userrole;
 
     public function __construct()
     {
@@ -49,6 +51,7 @@ class EmployeeController extends Controller
         $this->department = new Department();
         $this->uploadlog = new UploadLog();
         $this->employee = new Employee();
+        $this->userrole = new UserRole();
 
     }
 
@@ -128,10 +131,14 @@ class EmployeeController extends Controller
             $id = decryptId($request->id);
 
             $employee = $this->employee->find($id);
+
+            // dd($employee);
             $companyList  = $this->company->select('id', 'company_name')->where('status', '1')->get();
+            $userrole  = $this->userrole->select('id', 'role_name')->where('status', '1')->get();
             $data = array(
                 'companyList' => $companyList,
                 'employee' => $employee,
+                'userrole' => $userrole,
             );
 
             return view('master.employee.edit', $data);
@@ -157,11 +164,15 @@ class EmployeeController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            $this->employee->updates($id);
+           $employee =  $this->employee->updates($id);
+
+           $userUpdate =  $this->user->userUpdate($employee);
 
             Session::flash('success', 'Employee updated successfully!');
             return redirect(admin_url('employee/list'));
         } catch (Exception $ex) {
+
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('employee/list'));

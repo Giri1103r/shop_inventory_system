@@ -85,17 +85,17 @@ class Location extends Model
         return $datas;
     }
 
-    public function UniqueCheck($data)
+    public function UniqueCheck($location_name, $company_id)
     {
 
-        return $this->where($data['param'],  $data['value'])->get();
+        return $this->where('location_name',  $location_name)->where('company_id',$company_id )->get();
     }
 
-    public function ExistuniqueCheck($data)
+    public function ExistuniqueCheck($location_name, $company_id,$id)
     {
-        return $this->where($data['param'],  $data['value'])
-            ->where('id', '!=', decryptId($data['id']))
-            ->get();
+        return $this->where('location_name',  $location_name)->where('company_id',$company_id )
+        ->where('id', '!=', $id)
+        ->get();
     }
 
     public function store()
