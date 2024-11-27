@@ -62,13 +62,13 @@ Route::get('employee_save', [CronController::class, 'EmployeeSave']);
 Route::get('test', [TestController::class,  'index']);
 
 
-Auth::routes();
+
 
 Route::middleware(['securityheader'])->group(function () {
 
     Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 
-
+    Auth::routes();
 
     Route::middleware(['userlog'])->group(function () {
 
