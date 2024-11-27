@@ -439,8 +439,8 @@ class DepartmentController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportdepartmentJob($details));
-                //    dispatch((new ImportdepartmentJob($details))->onQueue('empimport'));
+                // dispatch(new ImportdepartmentJob($details));
+                   dispatch((new ImportdepartmentJob($details))->onQueue('department'));
             }
 
             $insert_data['log_id'] = $insert_id;

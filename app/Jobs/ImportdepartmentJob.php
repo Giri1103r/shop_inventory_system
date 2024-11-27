@@ -32,8 +32,8 @@ use App\Models\Master\Company;
 use App\Models\Master\Department;
 use App\Models\Master\Unit;
 
-// class ImportdepartmentJob implements ShouldQueue
-class ImportdepartmentJob
+class ImportdepartmentJob implements ShouldQueue
+// class ImportdepartmentJob
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

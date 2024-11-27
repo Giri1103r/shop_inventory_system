@@ -30,8 +30,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use App\Models\Master\Location;
 use App\Models\Master\Company;
 
-// class ImportCompanyJob implements ShouldQueue
-class ImportLocationJob
+class ImportLocationJob implements ShouldQueue
+// class ImportLocationJob
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

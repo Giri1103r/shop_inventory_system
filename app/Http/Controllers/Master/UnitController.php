@@ -422,8 +422,8 @@ class UnitController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportUnitJob($details));
-                //    dispatch((new ImportEmployeeJob($details))->onQueue('empimport'));
+                // dispatch(new ImportUnitJob($details));
+                   dispatch((new ImportUnitJob($details))->onQueue('unit'));
             }
 
             $insert_data['log_id'] = $insert_id;
