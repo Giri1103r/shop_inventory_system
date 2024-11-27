@@ -15,19 +15,33 @@ class AddSecurityHeaders
      */
     public function handle(Request $request, Closure $next): Response
     {
+
+        // Ensure HTTPS for requests and responses
+        if (!$request->isSecure() && app()->environment('production')) {
+            return redirect()->secure($request->getRequestUri());
+        }
+
         $response = $next($request);
 
-        $csp_header = "default-src 'self' ; " .
-            "script-src 'self' 'unsafe-inline' 'nonce-glicescript' code.jquery.com cdnjs.cloudflare.com unpkg.com kit.fontawesome.com cdn.jsdelivr.net ;" .
-            "style-src 'self' 'unsafe-inline' fonts.googleapis.com ;" .
-            "font-src 'self' fonts.gstatic.com;" .
-            "img-src 'self' data: cdn.example.com";
+        // Fetch allowed CORS domain from .env
+        $allowedOrigin = env('CORS_ALLOWED_ORIGIN', 'http://localhost');
 
-        $response->header('Strict-Transport-Security', 'max-age=31536000');
-       // $response->header('Content-Security-Policy', $csp_header);
-        $response->header('X-Content-Type-Options', 'nosniff');
-        $response->header('X-Frame-Options', 'SAMEORIGIN');
-        $response->header('X-XSS-Protection', '1; mode=block');
+        // Add security headers
+        $response->headers->set('Content-Security-Policy', "default-src 'self'; frame-ancestors 'none'; upgrade-insecure-requests;");
+        $response->headers->set('X-Frame-Options', 'DENY'); // Clickjacking protection
+        $response->headers->set('X-Content-Type-Options', 'nosniff'); // Prevent content type sniffing
+        $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload'); // Enforce HTTPS
+        $response->headers->set('Referrer-Policy', 'no-referrer-when-downgrade');
+        $response->headers->set('X-XSS-Protection', '1; mode=block'); // Basic XSS protection
+        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+        $response->headers->set('Clear-Site-Data', '"cookies", "storage", "executionContexts"');
+
+        // CORS configuration
+        $response->headers->set('Access-Control-Allow-Origin', $allowedOrigin); // Dynamically set domain
+        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST'); // Only allow GET and POST methods
+        $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With, Authorization');
+        $response->headers->set('Access-Control-Allow-Credentials', 'false');
+
 
         return $response;
     }
