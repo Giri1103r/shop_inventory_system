@@ -57,7 +57,7 @@
 
     <script src="{{ url('public/assets/js/app.min.js') }}"></script>
 
-    <script src="{{ public_plugins('sweetalert/sweetalert2.js') }}"></script>
+    <script src="{{ public_plugins('sweetalert/SweetAlertFull.js') }}"></script>
     <script src="{{ public_plugins('jqueryvalidation/jquery.validate.min.js') }}"></script>
     <script src="{{ public_plugins('jqueryvalidation/additional-methods.min.js') }}"></script>
 
