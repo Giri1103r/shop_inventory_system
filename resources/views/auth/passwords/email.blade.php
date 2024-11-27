@@ -11,8 +11,8 @@
             <form id="resetform" action="{{ admin_url('password/forgot/submit') }}"  method="post">
                 @csrf
                 <div class="mb-3 form-input">
-                    <label for="emailaddress" class="form-label">Email address</label>
-                    <input class="form-control" type="email" id="email" name="email" required=""
+                    <label for="emailaddress" class="form-label required">Email address</label>
+                    <input class="form-control" type="email" id="email" name="email" required
                         placeholder="Enter your email">
                 </div>
 

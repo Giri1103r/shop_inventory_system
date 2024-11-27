@@ -195,8 +195,17 @@ if (!function_exists('gettotalCount')) {
 
         switch ($type) {
 
-            case 'employee':
-                $count = 0;
+            case 'company':
+                $count = Company::count();
+                break;
+            case 'location':
+                $count = Location::count();
+                break;
+            case 'unit':
+                $count = Unit::count();
+                break;
+            case 'department':
+                $count = Department::count();
                 break;
             default:
                 $count = 0;

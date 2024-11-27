@@ -8,7 +8,7 @@
                 <h4 class="text-uppercase mt-0">Reset Password</h4>
             </div>
 
-            <form id="resetform" action="{{ admin_url('password/otp/submit') }}"  method="post">
+            <form id="resetform" action="{{ admin_url('password/otp/submit') }}" method="post">
                 @csrf
                 <input type="hidden" name="token" value="{{ $token }}">
                 <div class="mb-3">
@@ -23,18 +23,18 @@
                         placeholder="Enter your password">
                 </div>
 
-                <div class="mb-3">
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="checkbox-signin" name="remember">
-                        <label class="form-check-label" for="checkbox-signin">Remember me</label>
-                    </div>
-                </div>
 
                 <div class="mb-3 d-grid text-center">
                     <button class="btn btn-primary" type="submit"> Send OTP </button>
                 </div>
+                <p>OTP will expire in <span id="otp-timer">{{ $expire }}</span>.</p>
             </form>
-
+            <form action="{{ route('password.resend.otp') }}" method="POST" id="resend-otp-form">
+                @csrf
+                <input type="hidden" name="token" value="{{ $token }}">
+                <button type="submit" id="resend-otp-btn" class="btn btn-block text-primary"
+                    style="display: none;margin-left: 115;border-color: white;margin-top: -23px;">Resend OTP</button>
+            </form>
         </div> <!-- end card-body -->
     </div>
     <!-- end card -->
@@ -47,3 +47,53 @@
     </div>
     <!-- end row -->
 @endsection
+@push('script')
+    <script type="text/javascript" nonce="ardhasscript">
+        $(function() {
+            $('#resetform').validate({
+                rules: {
+                    otp: {
+                        required: true,
+
+                    },
+
+                },
+                messages: {
+                    otp: {
+                        required: "Please enter your otp",
+                    },
+
+                },
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+        });
+        var timer = parseInt("{{ $expire * 60 }}", 10);
+
+        function countdown() {
+            var minutes = Math.floor(timer / 60);
+            var seconds = timer % 60;
+
+            document.getElementById('otp-timer').innerHTML = minutes + ' min ' + (seconds < 10 ? '0' : '') + seconds +
+                ' sec';
+
+            if (timer > 0) {
+                timer--;
+                setTimeout(countdown, 1000);
+            } else {
+                document.getElementById('resend-otp-btn').style.display = 'block';
+
+            }
+        }
+        countdown();
+    </script>
+@endpush

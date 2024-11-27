@@ -92,7 +92,7 @@ Route::middleware(['userlog'])->group(function () {
     Route::get('password/otp', [LoginController::class, 'passwordOTP'])->name('otp.page');
     Route::post('password/otp/submit', [LoginController::class, 'passwordOTPSubmit']);
     Route::get('password/finalreset/form', [LoginController::class, 'passwordReset']);
-    Route::post('password/finalreset/submit', [LoginController::class, 'passwordResetSubmit']);
+    Route::post('password/reset-password/submit', [LoginController::class, 'passwordResetSubmit']);
 
     Route::middleware(['islogin', 'language'])->group(function () {
 

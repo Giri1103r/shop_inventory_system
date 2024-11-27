@@ -10,8 +10,7 @@ use Illuminate\Queue\SerializesModels;
 class PasswordOTPEmail extends Mailable
 {
 
-    use Queueable,
-        SerializesModels;
+    use Queueable, SerializesModels;
 
     protected $details;
     /**
