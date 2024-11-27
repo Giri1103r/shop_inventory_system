@@ -64,7 +64,7 @@ Route::get('test', [TestController::class,  'index']);
 
 
 
-// Route::middleware(['securityheader'])->group(function () {
+Route::middleware(['securityheader'])->group(function () {
 
     Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 
@@ -479,4 +479,4 @@ Route::get('test', [TestController::class,  'index']);
             });
         });
     });
-// });
+});
