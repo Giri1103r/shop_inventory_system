@@ -9,7 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title') | KARAM</title>
 
-    <link rel="shortcut icon" href="assets/images/favicon.ico">
+    <link rel="shortcut icon" href="{{ url('public/assets/images/logo-dark.png') }}">
 
     <!-- App css -->
     <link href="{{ url('public/assets/css/roboto-fontface.css') }}" rel="stylesheet" type="text/css"  />

@@ -33,7 +33,7 @@ class AddSecurityHeaders
         $response->headers->set('X-XSS-Protection', '1; mode=block');
         // $response->headers->set('Clear-Site-Data', '"cookies", "storage", "executionContexts"');
         $response->headers->set('X-Permitted-Cross-Domain-Policies', 'none');
-        $response->headers->set('Feature-Policy', "vibrate 'none'; geolocation 'none'; microphone 'none'; camera 'none'; payment 'none';");
+        $response->headers->set('Feature-Policy', "geolocation 'none'; microphone 'none'; camera 'none'; payment 'none';");
         $response->headers->set('Permission-Policy', 'geolocation=(), microphone=(), camera=(), fullscreen=(self), payment=()');
 
         // CORS headers
