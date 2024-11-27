@@ -97,8 +97,8 @@
                                         <th>{{ __('common.sno') }}</th>
                                         <th>Department Id</th>
                                         <th>Company Name</th>
-                                        <th>Location Nmae</th>
-                                        <th>Unit Nmae</th>
+                                        <th>Location Name</th>
+                                        <th>Unit Name</th>
                                         <th>Department Name</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
