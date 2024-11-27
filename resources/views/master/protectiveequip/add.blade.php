@@ -56,7 +56,7 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Name</label>
-                                                    <input type="text" name="protective_equip" class="form-control"
+                                                    <input type="text" name="protective_equip" id="protective_equip" class="form-control"
                                                         placeholder="Name">
                                                 </div>
                                             </div>

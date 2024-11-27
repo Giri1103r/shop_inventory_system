@@ -229,12 +229,24 @@ class Department extends Model
                 $query->orWhereRaw('department_name LIKE "%' . $search . '%"');
             });
         }
+        if ($request->has('department_id') && $request->department_id) {
+            $query = $query->where('department_id', 'LIKE', '%' . $request->department_id . '%');
+        }
+        if ($request->has('company_id') && $request->company_id) {
+            $query = $query->where('masters_department.company_id', decryptId($request->company_id));
+        }
+        if ($request->has('location_id') && $request->location_id) {
+            $query = $query->where('masters_department.location_id', decryptId($request->location_id));
+        }
+        if ($request->has('unit_id') && $request->unit_id) {
+            $query = $query->where('masters_department.unit_id', decryptId($request->unit_id));
+        }
         if ($request->has('department_name') && $request->department_name) {
             $query = $query->where('department_name', 'LIKE', '%' . $request->department_name . '%');
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('masters_department.status', decryptId($request->status));
+            $query = $query->where('status', decryptId($request->status));
         }
 
         return  $query->get();

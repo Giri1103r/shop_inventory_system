@@ -86,7 +86,7 @@
                                         <th>{{ __('common.sno') }}</th>
                                         <th>Unit Id</th>
                                         <th>Company Name</th>
-                                        <th>Location Nmae</th>
+                                        <th>Location Name</th>
                                         <th>Unit Name</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>

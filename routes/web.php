@@ -24,6 +24,9 @@ use App\Http\Controllers\Master\EmployeeController;
 use App\Http\Controllers\Master\ProtectiveEquipController;
 use App\Http\Controllers\Master\EquipInvalveController;
 use App\Http\Controllers\Master\SafeWorkController;
+use App\Http\Controllers\Master\PrecautionController;
+use App\Http\Controllers\Master\ChecklistController;
+use App\Http\Controllers\Master\TypeofWorkController;
 
 Route::get('cache', function () {
     Artisan::call('optimize:clear');
@@ -96,6 +99,8 @@ Route::middleware(['userlog'])->group(function () {
         Route::get('dashboard', [AdminController::class, 'index'])->middleware('role:dashboard,view');
         Route::get('home', [AdminController::class, 'index'])->name('home');
         Route::get('profile', [AdminController::class, 'profileView']);
+        Route::post('profile/image/update', [AdminController::class, 'profileUpdate']);
+        Route::post('profile/password/update', [AdminController::class, 'changeProfilePassword']);
 
         /**
          * User Access Log
@@ -270,23 +275,6 @@ Route::middleware(['userlog'])->group(function () {
          
         });
 
-        Route::group(['prefix' => 'ptw/typeofworkmaster'], function () {
-            Route::get('/list', [WorkController::class, 'index']);
-            Route::post('/list', [WorkController::class, 'index']);
-            Route::post('/add/submit', [WorkController::class, 'store']);
-            Route::get('/edit/{id}', [WorkController::class, 'edit']);
-            Route::post('/edit/submit', [WorkController::class, 'update']);
-            Route::get('/view/{id}', [WorkController::class, 'view']);
-            Route::post('/delete', [WorkController::class, 'delete']);
-            Route::get('/export/excel', [WorkController::class, 'exportExcel']);
-            Route::get('/export/pdf', [WorkController::class, 'exportPdf']);
-            Route::get('/sampledownload', [WorkController::class, 'DownloadSample']);
-            Route::get('/import', [WorkController::class, 'import']);
-            Route::post('/import/submit', [WorkController::class, 'importSubmit']);
-            Route::post('/status', [WorkController::class, 'statusChange']);
-            Route::post('/unique', [WorkController::class, 'Uniquecheck']);
-        });
-
         Route::group(['prefix' => 'ptw/protectiveequipmentmaster'], function () {
             Route::get('/list', [ProtectiveEquipController::class, 'index']);
             Route::post('/list', [ProtectiveEquipController::class, 'index']);
@@ -435,5 +423,62 @@ Route::middleware(['userlog'])->group(function () {
 
 
 
+
+        Route::group(['prefix' => 'ptw/precautionmaster'], function () {
+            Route::get('/list', [PrecautionController::class, 'index']);
+            Route::post('/list', [PrecautionController::class, 'index']);
+            Route::get('/add', [PrecautionController::class, 'add']);
+            Route::post('/add/submit', [PrecautionController::class, 'store']);
+            Route::get('/edit/{id}', [PrecautionController::class, 'edit']);
+            Route::post('/edit/submit', [PrecautionController::class, 'update']);
+            Route::get('/view/{id}', [PrecautionController::class, 'view']);
+            Route::post('/delete', [PrecautionController::class, 'delete']);
+            Route::get('/export/excel', [PrecautionController::class, 'exportExcel']);
+            Route::get('/export/pdf', [PrecautionController::class, 'exportPdf']);
+            Route::get('/sample_download', [PrecautionController::class, 'DownloadSample']);
+            Route::get('/import', [PrecautionController::class, 'import']);
+            Route::post('/import/submit', [PrecautionController::class, 'importSubmit']);
+            Route::post('/status', [PrecautionController::class, 'statusChange']);
+            Route::post('/unique', [PrecautionController::class, 'Uniquecheck']);
+        });
+
+        
+
+        Route::group(['prefix' => 'ptw/checklistmaster'], function () {
+            Route::get('/list', [ChecklistController::class, 'index']);
+            Route::post('/list', [ChecklistController::class, 'index']);
+            Route::get('/add', [ChecklistController::class, 'add']);
+            Route::post('/add/submit', [ChecklistController::class, 'store']);
+            Route::get('/edit/{id}', [ChecklistController::class, 'edit']);
+            Route::post('/edit/submit', [ChecklistController::class, 'update']);
+            Route::get('/view/{id}', [ChecklistController::class, 'view']);
+            Route::post('/delete', [ChecklistController::class, 'delete']);
+            Route::get('/export/excel', [ChecklistController::class, 'exportExcel']);
+            Route::get('/export/pdf', [ChecklistController::class, 'exportPdf']);
+            Route::get('/sample_download', [ChecklistController::class, 'DownloadSample']);
+            Route::get('/import', [ChecklistController::class, 'import']);
+            Route::post('/import/Submit', [ChecklistController::class, 'importSubmit']);
+            Route::post('/status', [ChecklistController::class, 'statusChange']);
+            Route::post('/unique', [ChecklistController::class, 'Uniquecheck']);
+        });
+
+
+        Route::group(['prefix' => 'ptw/typeofworkmaster'], function () {
+            Route::get('/list', [TypeofWorkController::class, 'index']);
+            Route::post('/list', [TypeofWorkController::class, 'index']);
+            Route::get('/add', [TypeofWorkController::class, 'add']);
+            Route::post('/add/submit', [TypeofWorkController::class, 'store']);
+            Route::get('/edit/{id}', [TypeofWorkController::class, 'edit']);
+            Route::post('/edit/submit', [TypeofWorkController::class, 'update']);
+            Route::get('/view/{id}', [TypeofWorkController::class, 'view']);
+            Route::post('/delete', [TypeofWorkController::class, 'delete']);
+            Route::get('/export/excel', [TypeofWorkController::class, 'exportExcel']);
+            Route::get('/export/pdf', [TypeofWorkController::class, 'exportPdf']);
+            Route::get('/sample_download', [TypeofWorkController::class, 'DownloadSample']);
+            Route::get('/import', [TypeofWorkController::class, 'import']);
+            Route::post('/import/Submit', [TypeofWorkController::class, 'importSubmit']);
+            Route::post('/status', [TypeofWorkController::class, 'statusChange']);
+            Route::post('/unique', [TypeofWorkController::class, 'Uniquecheck']);
+        });
     });
 });

@@ -113,7 +113,16 @@ class ProtectiveEquip extends Model
         );
         return $this->where('id', $id)->update($update_array);
     }
+    public function selectchecklist()
+    {
 
+        $data =  $this->select('masters_ptw_protective_equip.*')
+            ->where('masters_ptw_protective_equip.status', '1')
+            ->where('masters_ptw_protective_equip.trash', 'NO')
+            ->get();
+
+        return $data;
+    }
     public function statuschange($id)
     {
         $request = request();

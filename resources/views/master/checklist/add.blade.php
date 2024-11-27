@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safe Work Instruction Add')
-@section('pageurl', admin_url('ptw/safeworkmaster/list'))
+@section('title', 'Equipment Checklist Add')
+@section('pageurl', admin_url('ptw/checklistmaster/list'))
 
 
 @section('content')
@@ -42,21 +42,21 @@
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('ptw/safeworkmaster/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('ptw/checklistmaster/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="safe_workadd" action="{{ admin_url('ptw/safeworkmaster/add/submit') }}">
+                                    <form method="POST" id="safe_workadd" action="{{ admin_url('ptw/checklistmaster/add/submit') }}">
                                         @csrf
 
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Name</label>
-                                                    <input type="text" name="safe_work" id = "safe_work" class="form-control"
+                                                    <input type="text" name="checklist" id = "checklist" class="form-control"
                                                         placeholder="Name">
                                                 </div>
                                             </div>
@@ -77,6 +77,7 @@
                         </div>
                     </div>
                 </div>
+                
             </div>
         </div>
         </form>
@@ -94,11 +95,11 @@
                         
                         minlength: 3,
                         remote: {
-                            url: '{{ admin_url("ptw/safeworkmaster/unique") }}',
+                            url: '{{ admin_url("ptw/checklistmaster/unique") }}',
                             type: 'post',
                             data: {
                                 location_type_name: function() {
-                                    return $('#equip_involve').val();
+                                    return $('#checklist').val();
                                 }
                             }
                         }

@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Department')
-@section('pageurl', admin_url('department/list'))
+@section('title', 'Precaution to be taken')
+@section('pageurl', admin_url('precautionmaster/list'))
 
 
 @section('content')
@@ -14,11 +14,11 @@
 
                         <x-button-filter dataId="" class="search" href=""></x-button-filter>
                         @if (CheckUserPermission('import'))
-                            <x-button-import href="{{ admin_url('department/import') }}"></x-button-import>
+                            <x-button-import href="{{ admin_url('ptw/precautionmaster/import') }}"></x-button-import>
                         @endif
                         @if (CheckUserPermission('add'))
                             <x-button-add dataId="" class="add btn btn-primary"
-                                href="{{ admin_url('department/add') }}">Add</x-button-add>
+                                href="{{ admin_url('ptw/precautionmaster/add') }}">Add</x-button-add>
                         @endif
                     </div>
                     <div id="search" class="collapse">
@@ -27,42 +27,8 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="department_id" class="form-label ">Department Id</label>
-                                            <input type="text" name="department_id" id="department_id"
-                                                class="form-control">
-                                        </div>
-
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="company_id" class="form-label ">Company Name</label>
-                                            <select name="company_id" id="company_id" class=" form-control single-select"
-                                                style="width: 100%">
-                                                <option value="">Select Company Name</option>
-                                                @foreach ($companyList as $company)
-                                                    <option value="{{ encryptId($company->id) }}">
-                                                        {{ $company->company_name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="location_id" class="form-label ">Location Name </label>
-                                            <select name="location_id" id="location_id" class=" form-control single-select"
-                                                style="width: 100%">
-                                                <option value="">Select Location Name</option>
-
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="unit_id" class="form-label ">Unit Name </label>
-                                            <select name="unit_id" id="unit_id" class=" form-control single-select"
-                                                style="width: 100%">
-                                                <option value="">Select Unit Name</option>
-
-                                            </select>
-                                        </div>
-
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="department_name" class="form-label ">Department Name</label>
-                                            <input type="text" name="department_name" id="department_name"
+                                            <label for="precaution" class="form-label ">Work Name</label>
+                                            <input type="text" name="precaution" id="precaution"
                                                 class="form-control">
                                         </div>
 
@@ -95,14 +61,8 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Department Id</th>
-                                        <th>Company Name</th>
-                                        <th>Location Name</th>
-                                        <th>Unit Name</th>
-                                        <th>Department Name</th>
+                                        <th>Work Name</th>
                                         <th>{{ __('common.status') }}</th>
-                                        <th>{{ __('common.created_by') }}</th>
-                                        <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -119,57 +79,12 @@
     @stop
 
     @push('script')
-        <script type="text/javascript" nonce="projectcab">
+        <script type="text/javascript">
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
-            $(document).on('change', '#company_id', function() {
-                var company_id = $(this).val();
-                if (company_id) {
-                    $.ajax({
-                        url: "{{ admin_url('location/alllist/') }}" + company_id,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            $('#location_id').empty().append(
-                                '<option value="">Select Location Name</option>');
-                            $.each(data, function(key, value) {
-                                $('#location_id').append('<option value="' + value.id +
-                                    '">' + value.name + '</option>');
-                            });
 
-                            $('#location_id').trigger('change.');
-                        }
-                    });
-                } else {
-                    $('#location_id').empty().append('<option value="">Select Location Name</option>');
-                    $('#location_id').trigger('change.');
-                }
-            });
-            $(document).on('change', '#location_id', function() {
-                var location_id = $(this).val();
-                if (location_id) {
-                    $.ajax({
-                        url: "{{ admin_url('unit/alllist/') }}" + location_id,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            $('#unit_id').empty().append(
-                                '<option value="">Select Unit Name</option>');
-                            $.each(data, function(key, value) {
-                                $('#unit_id').append('<option value="' + value.id +
-                                    '">' + value.name + '</option>');
-                            });
-
-                            $('#unit_id').trigger('change.');
-                        }
-                    });
-                } else {
-                    $('#unit_id').empty().append('<option value="">Select Unit Name</option>');
-                    $('#unit_id').trigger('change.');
-                }
-            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -196,18 +111,14 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('department/list') }}",
+                        url: "{{ admin_url('ptw/precautionmaster/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.department_id = $('#department_id').val();
-                            d.company_id = $('#company_id').val();
-                            d.location_id = $('#location_id').val();
-                            d.unit_id = $('#unit_id').val();
-                            d.department_name = $('#department_name').val();
+                            d.precaution = $('#precaution').val();
                             d.status = $('#status').val();
 
                         }
@@ -215,40 +126,16 @@
                     columns: [{
                             data: 'DT_RowIndex',
                             orderable: false,
-                            searchable: false
+                            searchable: true,
                         },
                         {
-                            data: 'department_id',
-                            name: 'department_id'
+                            data: 'precaution',
+                            name: 'precaution'
                         },
-                        {
-                            data: 'company_name',
-                            name: 'company_name'
-                        },
-                        {
-                            data: 'location_name',
-                            name: 'location_name'
-                        },
-                        {
-                            data: 'unit_name',
-                            name: 'unit_name'
-                        },
-                        {
-                            data: 'department_name',
-                            name: 'department_name'
-                        },
-
+                    
                         {
                             data: 'status',
                             name: 'status'
-                        },
-                        {
-                            data: 'created_by',
-                            name: 'created_by'
-                        },
-                        {
-                            data: 'created_at',
-                            name: 'created_at'
                         },
                         {
                             data: 'action',
@@ -279,23 +166,15 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        department_id = $('#department_id').val();
-                                        company_id = $('#company_id').val();
-                                        location_id = $('#location_id').val();
-                                        unit_id = $('#unit_id').val();
-                                        department_name = $('#department_name').val();
+                                        precaution = $('#precaution').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('department/export/pdf') }}" +
+                                            "{{ admin_url('ptw/precautionmaster/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&department_id=' + department_id +
-                                            '&company_id=' + company_id +
-                                            '&location_id=' + location_id +
-                                            '&unit_id=' + unit_id +
-                                            '&department_name=' + department_name +
+                                            '&precaution=' + precaution +
                                             '&status=' + status
                                     }
                                 },
@@ -304,22 +183,14 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        department_id = $('#department_id').val();
-                                        company_id = $('#company_id').val();
-                                        location_id = $('#location_id').val();
-                                        unit_id = $('#unit_id').val();
-                                        department_name = $('#department_name').val();
+                                        precaution = $('#precaution').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('department/export/excel') }}" +
+                                            "{{ admin_url('ptw/precautionmaster/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&department_id=' + department_id +
-                                            '&company_id=' + company_id +
-                                            '&location_id=' + location_id +
-                                            '&unit_id=' + unit_id +
-                                            '&department_name=' + department_name +
+                                            '&precaution=' + precaution +
                                             '&status=' + status
                                     }
                                 },
@@ -340,7 +211,6 @@
                 });
 
                 $(document).on('click', '#searchform', function() {
-                    console.log('test');
                     table.draw();
                 });
 
@@ -357,12 +227,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Department Management') }}';
+                        var title = '{{ __('Do You want to In-Activate Precation to be taken') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Department Management') }}';
+                        var title = '{{ __('Do You want to Activate Precation to be taken') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -382,7 +252,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('department/status') }}",
+                                url: "{{ admin_url('ptw/precautionmaster/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -430,7 +300,7 @@
                     var id = $(this).data('id');
                     var login_id = $(this).data('login_id');
 
-                    var title = '{{ __('Do You want to Delete Department Management') }}';
+                    var title = '{{ __('Do You want to Delete Precation to be taken') }}';
                     var text = '{{ __('common.delete') }}';
                     var btncolor = '#dc3545'
 
@@ -450,7 +320,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('department/delete') }}",
+                                url: "{{ admin_url('ptw/precautionmaster/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -489,7 +359,7 @@
                                         Swal.fire({
                                             icon: 'error',
                                             title: 'Error',
-                                            text: 'Department Deletion Failed: Module Dependencies Exist.',
+                                            text: 'Company Deletion Failed: Module Dependencies Exist.',
                                         });
                                     } else {
                                         $.notify(data.responseJSON.msg, "error");

@@ -179,7 +179,16 @@ class SafeWork extends Model
         return $data;
     }
 
+    public function selectchecklist()
+    {
 
+        $data =  $this->select('masters_ptw_safe_work.*')
+            ->where('masters_ptw_safe_work.status', '1')
+            ->where('masters_ptw_safe_work.trash', 'NO')
+            ->get();
+
+        return $data;
+    }
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('masters_ptw_safe_work'));

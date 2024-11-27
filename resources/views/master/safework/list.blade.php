@@ -227,12 +227,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Protective equipments to be worn') }}';
+                        var title = '{{ __('Do You want to In-Activate Safe work instructions') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Protective equipments to be worn') }}';
+                        var title = '{{ __('Do You want to Activate Safe work instructions') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -300,7 +300,7 @@
                     var id = $(this).data('id');
                     var login_id = $(this).data('login_id');
 
-                    var title = '{{ __('Do You want to Delete Protective equipments to be worn') }}';
+                    var title = '{{ __('Do You want to Delete Safe work instructions') }}';
                     var text = '{{ __('common.delete') }}';
                     var btncolor = '#dc3545'
 

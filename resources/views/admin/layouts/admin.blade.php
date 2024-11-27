@@ -9,10 +9,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title> @yield('title') | {{ env('APP_NAME') }}</title>
 
-    <link rel="shortcut icon" href="{{ url('public/assets/images/favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ url('public/assets/images/logo-dark.png') }}">
 
     <link href="{{ url('public/assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
     <link href="{{ url('public/assets/css/app.css') }}" rel="stylesheet" type="text/css" id="app-style" />
+    <link href="{{ url('public/assets/css/custom-style.css') }}" rel="stylesheet" type="text/css" id="app-style" />
     <link href="{{ url('public/assets/plugins/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}"
         rel="stylesheet" type="text/css" />
     <link href="{{ url('public/assets/plugins/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css') }}"
@@ -30,7 +31,7 @@
     <link href="{{ url('public/assets/plugins/flatpickr/flatpickr.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ url('public/assets/plugins/clockpicker/bootstrap-clockpicker.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ url('public/assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}" rel="stylesheet" type="text/css" />
- 
+
 
 
     {{-- <link href="{{ url('public/assets/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css') }}"

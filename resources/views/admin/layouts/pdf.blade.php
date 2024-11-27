@@ -46,7 +46,7 @@
         <table border="0" style="width:100%;border:0;border-bottom: 4px solid #000;background-color: #FFF;">
             <tr style="">
                 <td border="0" style="width:50%;float:left;text-align:left;">
-                    <img src="{{ public_image('logo/logo-full.png') }}" style="width:200px;height:50px;"> </td>
+                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:200px;height:50px;"> </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
                     {{ $pagetitle }}
