@@ -32,7 +32,7 @@
                             <div class="col-lg-5">
                                 <div class="card-body ">
                                     <div class="d-flex flex-column align-items-center text-center">
-                                        <img src="{{ url(profileImage(Auth::id())) }}" alt="Admin" class="rounded-circle p-1 bg-primary" width="150" height="150">
+                                        <img src="{{ url(profileImage(Auth::id())) }}" alt="" class="rounded-circle p-1 bg-primary" width="150" height="150">
                                         <div class="mt-3">
                                             <h4> {{ Auth::user()->name }} </h4>
                                             <p class="text-secondary mb-1">
@@ -78,7 +78,7 @@
                                         <div class="col-sm-3">
                                             <h6 class="mb-0">Full Name</h6>
                                         </div>
-                                        <div class="col-sm-9 text-secondary">{{ Auth::user()->name }}
+                                        <div class="col-sm-9">{{ Auth::user()->name }}
                                             {{-- <input readonly type="text" class="form-control"
                                                 value="{{ Auth::user()->name }}" /> --}}
                                         </div>
@@ -87,7 +87,7 @@
                                         <div class="col-sm-3">
                                             <h6 class="mb-0">Email</h6>
                                         </div>
-                                        <div class="col-sm-9 text-secondary">{{ Auth::user()->email }}
+                                        <div class="col-sm-9">{{ Auth::user()->email }}
                                             {{-- <input readonly type="text" class="form-control"
                                                 value="{{ Auth::user()->email }}"/> --}}
                                         </div>
@@ -96,7 +96,7 @@
                                         <div class="col-sm-3">
                                             <h6 class="mb-0">Phone</h6>
                                         </div>
-                                        <div class="col-sm-9 text-secondary">{{ Auth::user()->mobile }}
+                                        <div class="col-sm-9">{{ Auth::user()->mobile }}
                                             {{-- <input readonly type="text" class="form-control"
                                                 value="{{ Auth::user()->mobile }}" /> --}}
                                         </div>
@@ -139,12 +139,12 @@
                                             data-trigger="fileinput">
                                         </div>
                                         <p class="mini-txt ">(png, jpeg, jpg )</p>
-                                        <div class="file-pop ">
+                                        <div class="file-pop " style  = "border :2px solid black; padding:30px;">
                                             <span class="text-green btn-file">
                                                 <span class="photo fileinput-new" title="Add Image">
                                                     <img class="imgupload"
                                                         src='{{ admin_url('public/assets/images/common/camera.png') }}'
-                                                        style=" width: 30%; " />
+                                                        style="height: 30px;" />
                                                 </span>
                                                 <span class="fileinput-exists" title="Add Image"></span>
                                                 <input type="file" name="profile_image" class='atarfile'

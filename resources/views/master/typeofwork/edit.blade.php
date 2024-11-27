@@ -32,7 +32,7 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="safe_workadd" enctype="multipart/form-data"
+                                    <form method="POST" id="typeofwork_add" enctype="multipart/form-data"
                                         action="{{ admin_url('ptw/typeofworkmaster/edit/submit') }}">
                                         @csrf
                                         <input type="hidden" name="id" id="id"
@@ -427,31 +427,51 @@ $('#select-all').on('change', function() {
             }
         });
         $(function() {
-            $('#checklistedit').validate({
+            $('#typeofwork_add').validate({
                 rules: {
-                    protective_equip: {
+                    work_name: {
                         required: true,
+
                         minlength: 3,
                         remote: {
-                            url: '{{ admin_url("ptw/checklistmaster/unique") }}',
+                            url: '{{ admin_url('ptw/typeofworkmaster/unique') }}',
                             type: 'post',
                             data: {
                                 location_type_name: function() {
-                                    return $('#checklist').val();
-                                },
-                                id: function() {
-                                    return $('#id').val();
+                                    return $('#work_name').val();
                                 }
                             }
                         }
                     },
+
+                    description: {
+                        required: true,
+                        minlength: 3,
+                        
+                    },
+
+                    typeofwork_upload: {
+                        required: true,
+                        
+                    },
+
                 },
                 messages: {
-                    protective_equip: {
+                    work_name: {
                         required: "{{ __('Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
                         remote: "{{ __('Name should be unique') }}"
                     },
+
+                    description: {
+                        required: "{{ __('Description is Required') }}",
+                        minlength: "{{ __('common.validate_min_length') }}",
+                    },
+
+                    typeofwork_upload: {
+                        required: "{{ __('Image is Required') }}",
+                    },
+
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {

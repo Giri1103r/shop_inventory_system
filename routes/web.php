@@ -95,6 +95,8 @@ Route::middleware(['userlog'])->group(function () {
         Route::get('dashboard', [AdminController::class, 'index'])->middleware('role:dashboard,view');
         Route::get('home', [AdminController::class, 'index'])->name('home');
         Route::get('profile', [AdminController::class, 'profileView']);
+        Route::post('profile/image/update', [AdminController::class, 'profileUpdate']);
+        Route::post('profile/password/update', [AdminController::class, 'changeProfilePassword']);
 
         /**
          * User Access Log
@@ -267,23 +269,6 @@ Route::middleware(['userlog'])->group(function () {
             Route::get('/export/excel', [EmployeeController::class, 'exportExcel']);
             Route::get('/export/pdf', [EmployeeController::class, 'exportPdf']);
          
-        });
-
-        Route::group(['prefix' => 'ptw/typeofworkmaster'], function () {
-            Route::get('/list', [WorkController::class, 'index']);
-            Route::post('/list', [WorkController::class, 'index']);
-            Route::post('/add/submit', [WorkController::class, 'store']);
-            Route::get('/edit/{id}', [WorkController::class, 'edit']);
-            Route::post('/edit/submit', [WorkController::class, 'update']);
-            Route::get('/view/{id}', [WorkController::class, 'view']);
-            Route::post('/delete', [WorkController::class, 'delete']);
-            Route::get('/export/excel', [WorkController::class, 'exportExcel']);
-            Route::get('/export/pdf', [WorkController::class, 'exportPdf']);
-            Route::get('/sampledownload', [WorkController::class, 'DownloadSample']);
-            Route::get('/import', [WorkController::class, 'import']);
-            Route::post('/import/submit', [WorkController::class, 'importSubmit']);
-            Route::post('/status', [WorkController::class, 'statusChange']);
-            Route::post('/unique', [WorkController::class, 'Uniquecheck']);
         });
 
         Route::group(['prefix' => 'ptw/protectiveequipmentmaster'], function () {
