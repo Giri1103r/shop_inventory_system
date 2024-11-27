@@ -35,6 +35,7 @@ class AddSecurityHeaders
         $response->headers->set('X-XSS-Protection', '1; mode=block'); // Basic XSS protection
         $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
         $response->headers->set('Clear-Site-Data', '"cookies", "storage", "executionContexts"');
+        $response->headers->set('Permission-Policy', 'geolocation=(), microphone=(), camera=(), fullscreen=(self), payment=()');
 
         // CORS configuration
         $response->headers->set('Access-Control-Allow-Origin', $allowedOrigin); // Dynamically set domain
