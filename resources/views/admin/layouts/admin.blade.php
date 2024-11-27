@@ -284,18 +284,15 @@
     <script src="{{ public_plugins('select2/js/select2.full.min.js') }}"></script>
     <script src="{{ public_plugins('jasny-bootstrap/js/jasny-bootstrap.min.js') }}"></script>
 
+    <script src="{{ public_plugins('moment/moment.js') }}"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/4.0.0/js/jasny-bootstrap.min.js"
-        integrity="sha512-T+qL8JzVjquTv+yKR64v+58O+GVCe7A68gbJTzFVs76I7iAcgwisXKyOTaeKZaekcHeiG65p48NDqcMmPgnvIA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script
         src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js">
     </script>
     @stack('scripts')
 
     <script type="text/javascript" nonce="projectcab">
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
