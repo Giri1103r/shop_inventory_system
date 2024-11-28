@@ -16,38 +16,26 @@
     <link href="{{ url('public/assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
     <link href="{{ url('public/assets/css/app.css') }}" rel="stylesheet" type="text/css" id="app-style" />
     <link href="{{ url('public/assets/css/custom-style.css') }}" rel="stylesheet" type="text/css" id="app-style" />
-    <link href="{{ url('datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}"
-        rel="stylesheet" type="text/css" />
-    <link href="{{ url('datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css') }}"
-        rel="stylesheet" type="text/css" />
-    <link href="{{ url('datatables.net-keytable-bs5/css/keyTable.bootstrap5.min.css') }}"
-        rel="stylesheet" type="text/css" />
-    <link href="{{ url('datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}"
-        rel="stylesheet" type="text/css" />
-    <link href="{{ url('datatables.net-select-bs5/css/select.bootstrap5.min.css') }}"
-        rel="stylesheet" type="text/css" />
-    <link href="{{ url('admin-resources/rwd-table/rwd-table.min.css') }}" rel="stylesheet"
-        type="text/css" />
 
-    <link href="{{ url('spectrum-colorpicker2/spectrum.min.css') }}" rel="stylesheet"
-        type="text/css" />
-    <link href="{{ url('flatpickr/flatpickr.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ url('clockpicker/bootstrap-clockpicker.min.css') }}" rel="stylesheet"
-        type="text/css" />
-    <link href="{{ url('bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}"
-        rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('datatables.net-keytable-bs5/css/keyTable.bootstrap5.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('datatables.net-select-bs5/css/select.bootstrap5.min.css') }}"rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('admin-resources/rwd-table/rwd-table.min.css') }}" rel="stylesheet" type="text/css" />
+
+    <link href="{{ public_plugins('spectrum-colorpicker2/spectrum.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('flatpickr/flatpickr.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('clockpicker/bootstrap-clockpicker.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ url('public/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
 
 
-    <link href="{{ url('select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ url('fontawesome/css/all.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ url('jasny-bootstrap/css/jasny-bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('fontawesome/css/all.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('jasny-bootstrap/css/jasny-bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
 
-    <link
-        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"
-        rel="stylesheet">
-
-    @stack('styless')
+     @stack('styless')
     <style>
         :root {
             --dt-header-background-color: #b8cde2 !important;
