@@ -298,6 +298,8 @@ class Work extends Model
             $query = $query->where('masters_work.unit', decryptId($request->unit_id));
         }
 
+        $query->orderBy('id', 'DESC');
+
         return  $query->get();
     }
 

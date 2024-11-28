@@ -343,7 +343,7 @@ class Employee extends Model
         if ($request->has('unit_id') && $request->unit_id) {
             $query = $query->where('masters_employee.unit', decryptId($request->unit_id));
         }
-
+        $query->orderBy('id', 'DESC');
         return  $query->get();
     }
 

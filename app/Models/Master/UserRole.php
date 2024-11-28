@@ -186,18 +186,17 @@ class UserRole extends Model
         return $data;
     }
 
-    public function uniqueCheck($data)
+    public function UniqueCheck($role_name)
     {
-        return $this->where('role_name',  $data)->get();
+        return $this->where('role_name',  $role_name)->get();
     }
 
-    public function existUniqueCheck($data, $id)
+    public function ExistuniqueCheck($role_name,$id)
     {
-        return $this->where('role_name',  $data)
-            ->where('id', '!=', $id)
-            ->get();
+        return $this->where('role_name',  $role_name)
+        ->where('id', '!=', $id)
+        ->get();
     }
-
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('template_user_role'));

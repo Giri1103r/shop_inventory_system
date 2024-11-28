@@ -338,7 +338,7 @@
                     var id = $(this).data('id');
                     var login_id = $(this).data('login_id');
 
-                    var title = '{{ __('Do You want to Delete Company Management') }}';
+                    var title = '{{ __('Do You want to Delete Company Details') }}';
                     var text = '{{ __('common.delete') }}';
                     var btncolor = '#dc3545'
 

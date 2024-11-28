@@ -103,6 +103,7 @@ class User extends Authenticatable
 
 
 
+
     public function userUpdate($employee)
     {
 
@@ -135,6 +136,8 @@ class User extends Authenticatable
         return $this->where('employee_id', $employee->emp_id)->update($data);
     }
 
+
+  
 
     
 }

@@ -313,12 +313,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Unit Management') }}';
+                        var title = '{{ __('Do You want to In-Activate Unit Details') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Unit Management') }}';
+                        var title = '{{ __('Do You want to Activate Unit Details') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -386,7 +386,7 @@
                     var id = $(this).data('id');
                     var login_id = $(this).data('login_id');
 
-                    var title = '{{ __('Do You want to Delete Unit Management') }}';
+                    var title = '{{ __('Do You want to Delete Unit Details') }}';
                     var text = '{{ __('common.delete') }}';
                     var btncolor = '#dc3545'
 

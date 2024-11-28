@@ -66,7 +66,7 @@ class ImportLocationJob implements ShouldQueue
         UploadLog::where('id', $this->details['log_id'])
             ->update($update_array);
 
-       $xlsx = SimpleXLSX::parse($this->details['path']);
+        $xlsx = SimpleXLSX::parse($this->details['path']);
         // dd($xlsx);
         $cond_error_datas = [];
 
@@ -123,75 +123,80 @@ class ImportLocationJob implements ShouldQueue
 
                 $i++;
                 continue;
-            } else {
-
-                $companyExist = Company::where('company_name', $companyname)->get();
-                try {
-
-                    if (count($companyExist) <= 0) {
-                        $cond_error_data = array(
-                            'upload_id' => $this->details['log_id'],
-                            'line_no' => $i,
-                            'error' => 'Invalid Company name',
-                        );
-                        UploadLogError::insert($cond_error_data);
-                        $i++;
-                        continue;
-                    }
-                    $companyId = $companyExist['0']->id;
-                } catch (\Exception $ex) {
-                    report($ex);
-                }
             }
 
+            // else {
 
-            if ($location_name == '') {
+            //     $companyExist = Company::where('company_name', $companyname)->get();
+            //     try {
 
-                $cond_error_data = array(
+            //         if (count($companyExist) <= 0) {
+            //             $cond_error_data = array(
+            //                 'upload_id' => $this->details['log_id'],
+            //                 'line_no' => $i,
+            //                 'error' => 'Invalid Company name',
+            //             );
+            //             UploadLogError::insert($cond_error_data);
+            //             $i++;
+            //             continue;
+            //         }
+            //         $companyId = $companyExist['0']->id;
+            //     } catch (\Exception $ex) {
+            //         report($ex);
+            //     }
+            // }
+
+
+            if (empty($location_name)) {
+                $cond_error_data = [
                     'upload_id' => $this->details['log_id'],
                     'line_no' => $i,
-                    'error' => 'Company name is missing',
-                );
+                    'error' => 'Location name is missing',
+                ];
 
                 $cond_error_datas[] = $cond_error_data;
 
                 $i++;
                 continue;
-            } else {
+            }
 
-                $locationExist = Location::where('location_name', $location_name)->get();
-                try {
+            $companyExist = Company::select('id')->where('company_name', $companyname)->first();
 
-                    if (count($locationExist) > 0) {
-                        $cond_error_data = array(
-                            'upload_id' => $this->details['log_id'],
-                            'line_no' => $i,
-                            'error' => 'Location Name Already Exist',
-                        );
-                        $cond_error_datas[] = $cond_error_data;
-                        $i++;
-                        continue;
-                    }
+            if ($companyExist) {
+ 
+                $locationExist = Location::where('location_name', $location_name)
+                    ->where('company_id', $companyExist->id)
+                    ->exists();
 
-                } catch (\Exception $ex) {
-                    $cond_error_data = array(
+                if ($locationExist) {
+                    $cond_error_data = [
                         'upload_id' => $this->details['log_id'],
                         'line_no' => $i,
-                        'error' => 'Invalid Data',
-                    );
+                        'error' => 'Location Name Already Exists for this Company',
+                    ];
                     $cond_error_datas[] = $cond_error_data;
+                    $i++;
+                    continue;
                 }
+            } else {
+                $cond_error_data = [
+                    'upload_id' => $this->details['log_id'],
+                    'line_no' => $i,
+                    'error' => 'Company not found',
+                ];
+                $cond_error_datas[] = $cond_error_data;
+                $i++;
+                continue;
             }
 
 
-
-            $data = array(
-                'company_id' => $companyId,
+            $data = [
+                'company_id' => $companyExist->id,
                 'location_name' => $location_name,
-                'created_by' => $this->details['user_id']
-            );
+                'created_by' => $this->details['user_id'],
+            ];
+
             Location::create($data);
-            // SmpsFactory::create($data);
 
             $i++;
         }

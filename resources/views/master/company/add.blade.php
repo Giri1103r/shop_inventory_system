@@ -85,11 +85,10 @@
                                         </div>
                                         <hr>
                                         <div class="submit-button">
-
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-cancel></x-button-cancel>
+                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-cancel href="{{ admin_url('company/list') }}"></x-button-cancel>
                                         </div>
-
                                     </form>
                                 </div>
 
@@ -112,6 +111,7 @@
                     company_name: {
                         required: true,
                         minlength: 3,
+                        maxlength: 100,
                         remote: {
                             url: '{{ admin_url('company/unique') }}',
                             type: 'post',
@@ -125,6 +125,7 @@
                     short_name: {
                         required: true,
                         minlength: 3,
+                        maxlength: 10,
                     },
                     address: {
                         required: true,
@@ -134,11 +135,13 @@
                     company_name: {
                         required: "{{ __('Company Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 100",
                         remote: "{{ __('Company Name should be unique') }}"
                     },
                     short_name: {
                         required: "{{ __('Short Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 10",
                     },
                     address: {
                         required: "{{ __('Company Address is Required') }}",

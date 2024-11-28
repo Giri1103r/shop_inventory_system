@@ -249,7 +249,7 @@ class Department extends Model
 
             $query = $query->where('status', decryptId($request->status));
         }
-
+        $query->orderBy('id', 'DESC');
         return  $query->get();
     }
 

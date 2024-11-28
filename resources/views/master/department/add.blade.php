@@ -91,7 +91,8 @@
                                         <div class="submit-button">
 
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-cancel></x-button-cancel>
+                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-cancel href="{{ admin_url('department/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
