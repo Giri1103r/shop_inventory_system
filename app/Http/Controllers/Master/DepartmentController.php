@@ -476,9 +476,9 @@ class DepartmentController extends Controller
         return redirect(url($filePath));
     }
 
-    public function list(Request $request)
+    public function list(Request $request, $unit_id)
     {
-        $unit_id = decryptId($request->unit_id);
+        $unit_id = decryptId($unit_id);
         $id = decryptId($request->id);
         $departments = $this->department->ajaxList($unit_id, $id);
 
@@ -505,6 +505,8 @@ class DepartmentController extends Controller
                 // dd('sdcds');
                 $record = $this->department->uniqueCheck($company_id,$location_id,$unit_id,$department_name);
             } else {
+
+                // dd('sdcgsed');
                 $id = decryptId($id);
                 $record = $this->department->ExistuniqueCheck($company_id,$location_id,$unit_id,$department_name, $id);
             }

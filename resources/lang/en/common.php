@@ -3,7 +3,8 @@
 return [
     'add' => 'Add',
     'import' => 'Import',
-    'export' => 'Sample Excel',
+    'export' => 'Export',
+    'sample_export' => 'Sample Excel',
     'pdf' => 'Pdf',
     'email' => 'Email',
     'paid' => 'Paid',

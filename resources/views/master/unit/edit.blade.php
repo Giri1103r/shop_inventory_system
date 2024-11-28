@@ -118,7 +118,7 @@
             function fetchLocations(company_id, preselectedLocationId, callback) {
                 if (company_id) {
                     $.ajax({
-                        url: "{{ admin_url('location/ajaxlist/') }}" + company_id + '/' +
+                        url: "{{ admin_url('location/ajax-list/') }}" + company_id + '/' +
                             preselectedLocationId,
                         type: 'GET',
                         dataType: 'json',

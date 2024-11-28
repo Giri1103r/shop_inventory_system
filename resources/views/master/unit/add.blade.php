@@ -98,10 +98,11 @@
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(document).on('change', '#company_id', function() {
-            var companyId = $(this).val();
+            let companyId = $(this).val();
+
             if (companyId) {
                 $.ajax({
-                    url: "{{ admin_url('location/ajaxlist') }}/" + companyId + "/0",
+                    url: "{{ admin_url('location/ajax-list') }}/" + companyId + "/0",
                     type: 'GET',
                     dataType: 'json',
                     success: function(data) {

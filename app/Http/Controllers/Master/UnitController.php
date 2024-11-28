@@ -121,6 +121,7 @@ class UnitController extends Controller
             $data = array(
                 'companyList' => $companyList,
             );
+
             return view('master.unit.add', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -454,16 +455,10 @@ class UnitController extends Controller
         }
     }
 
-    // public function list(Request $request)
-    // {
-    //     $locationId = decryptId($request->location_id);
-    //     $unit = $this->unit->ajaxList($locationId);
-
-    //     return response()->json($unit);
-    // }
-    public function list(Request $request)
+    
+    public function list(Request $request, $locationId)
     {
-        $locationId = decryptId($request->location_id);
+        $locationId = decryptId($locationId);
         $id = decryptId($request->id);
         $unit = $this->unit->ajaxList($locationId, $id);
 

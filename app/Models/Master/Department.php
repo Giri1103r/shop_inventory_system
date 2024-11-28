@@ -103,6 +103,7 @@ class Department extends Model
 
     public function ExistuniqueCheck($company_id,$location_id,$unit_id,$department_name, $id)
     {
+
         return $this->where('company_id', $company_id)->where('location_id',$location_id )->where('unit_id',$unit_id)->where('department_name',$department_name)
         ->where('id', '!=', $id)
         ->get();
