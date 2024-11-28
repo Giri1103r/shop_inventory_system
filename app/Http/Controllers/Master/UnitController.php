@@ -285,8 +285,8 @@ class UnitController extends Controller
             $header = [
                 __("common.sno"),
                 'Unit Id',
-                'Location',
                 'Company',
+                'Location',
                 'Unit Name',
                 __("common.status"),
                 __("common.created_by"),
@@ -332,8 +332,8 @@ class UnitController extends Controller
             $header = [
                 __("common.sno"),
                 'Unit Id',
-                'Location',
                 'Company',
+                'Location',
                 'Unit Name',
                 __("common.status"),
                 __("common.created_by"),
@@ -366,7 +366,7 @@ class UnitController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Unit.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);

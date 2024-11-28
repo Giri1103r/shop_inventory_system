@@ -32,12 +32,12 @@
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspectiontype" class="form-label ">Company ID</label>
-                                            <input type="text" name="company_id" id="company_id" class="form-control">
+                                            <input type="text" name="company_id" id="company_id" class="form-control" placeholder="Company ID">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspectiontype" class="form-label ">Company Name</label>
                                             <input type="text" name="company_name" id="company_name"
-                                                class="form-control">
+                                                class="form-control" placeholder="Company Name">
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">

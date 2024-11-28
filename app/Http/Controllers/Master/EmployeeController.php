@@ -52,7 +52,6 @@ class EmployeeController extends Controller
         $this->uploadlog = new UploadLog();
         $this->employee = new Employee();
         $this->userrole = new UserRole();
-
     }
 
 
@@ -77,7 +76,7 @@ class EmployeeController extends Controller
                         ->addColumn('created_at', function ($row) {
                             return Displaydatetimeformat($row->created_at);
                         })
-                     
+
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             if (CheckUserPermission('view')) {
@@ -132,7 +131,6 @@ class EmployeeController extends Controller
 
             $employee = $this->employee->find($id);
 
-            // dd($employee);
             $companyList  = $this->company->select('id', 'company_name')->where('status', '1')->get();
             $userrole  = $this->userrole->select('id', 'role_name')->where('status', '1')->get();
             $data = array(
@@ -155,7 +153,7 @@ class EmployeeController extends Controller
                 'emp_name' => 'required',
             ];
             $messages = [
-                
+
                 'emp_name.required' => 'Please Enter Employee Name',
 
             ];
@@ -164,9 +162,9 @@ class EmployeeController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-           $employee =  $this->employee->updates($id);
+            $employee =  $this->employee->updates($id);
 
-           $userUpdate =  $this->user->userUpdate($employee);
+            $userUpdate =  $this->user->userUpdate($employee);
 
             Session::flash('success', 'Employee updated successfully!');
             return redirect(admin_url('employee/list'));
@@ -179,7 +177,7 @@ class EmployeeController extends Controller
         }
     }
 
-  
+
 
     public function ExportExcel(Request $request)
     {
@@ -192,9 +190,8 @@ class EmployeeController extends Controller
                 __("common.sno"),
                 'Employee Id',
                 'Employee Name',
-                'Phone Number',
-                'Unit Name',
-                'Department Name',
+                'Email',
+                'Employee Status',
             ];
 
             $i = 1;
@@ -204,9 +201,8 @@ class EmployeeController extends Controller
                 $export[] =  $i;
                 $export[] =  $data->emp_id;
                 $export[] =  $data->emp_name;
-                $export[] =  $data->mobile_no;
-                $export[] =  $data->unit_name;
-                $export[] =  $data->department_name;
+                $export[] =  $data->email;
+                $export[] =  $data->employee_status;
 
                 $exportData[] = $export;
 
@@ -234,9 +230,8 @@ class EmployeeController extends Controller
                 __("common.sno"),
                 'Employee Id',
                 'Employee Name',
-                'Phone Number',
-                'Unit Name',
-                'Department Name',
+                'Email',
+                'Employee Status',
             ];
 
             $data = array(
@@ -265,11 +260,10 @@ class EmployeeController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Employee.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);
         }
     }
-  
 }

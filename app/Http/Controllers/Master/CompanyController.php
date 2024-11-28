@@ -418,8 +418,8 @@ class CompanyController extends Controller
                     "path" => $path,
                 ];
 
-                // dispatch(new ImportCompanyJob($details));
-                   dispatch((new ImportCompanyJob($details))->onQueue('company'));
+                dispatch(new ImportCompanyJob($details));
+                //    dispatch((new ImportCompanyJob($details))->onQueue('company'));
             }
 
             $insert_data['log_id'] = $insert_id;
@@ -524,7 +524,7 @@ class CompanyController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Company.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);

@@ -69,7 +69,7 @@ class Employee extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('masters_employee.emp_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('masters_employee.emp_id', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('emp_id') && $request->emp_id) {
@@ -79,16 +79,27 @@ class Employee extends Model
         if ($request->has('emp_name') && $request->emp_name) {
             $query = $query->where('masters_employee.emp_name', 'LIKE', '%' . $request->emp_name . '%');
         }
-        if ($request->has('company_id') && $request->company_id) {
-            $query = $query->where('masters_employee.company', decryptId($request->company_id));
+        if ($request->has('email') && $request->email) {
+            $query = $query->where('masters_employee.email', 'LIKE', '%' . $request->email . '%');
         }
-        if ($request->has('dept_id') && $request->dept_id) {
-            $query = $query->where('masters_employee.department', decryptId($request->dept_id));
+        if ($request->has('employee_status') && $request->employee_status) {
+            $query = $query->where('masters_employee.employee_status', 'LIKE', '%' . $request->employee_status . '%');
         }
+      
+        // if ($request->has('status') && $request->status) {
 
-        if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('masters_employee.unit', decryptId($request->unit_id));
-        }
+        //     $query = $query->where('masters_employee.status', decryptId($request->status));
+        // }
+        // if ($request->has('company_id') && $request->company_id) {
+        //     $query = $query->where('masters_employee.company', decryptId($request->company_id));
+        // }
+        // if ($request->has('dept_id') && $request->dept_id) {
+        //     $query = $query->where('masters_employee.department', decryptId($request->dept_id));
+        // }
+
+        // if ($request->has('unit_id') && $request->unit_id) {
+        //     $query = $query->where('masters_employee.unit', decryptId($request->unit_id));
+        // }
 
 
         $data_count = $query->count();
@@ -246,7 +257,7 @@ class Employee extends Model
             'email' => $request->email ?? null,
             'joining_date' => DBdatetimeformat($request->joining_date),
             'mobile_no' => $request->mobile_no ?? null,
-            'user_role' => $request->user_role,
+            'user_role' => decryptId($request->user_role),
             'company' => decryptId($request->company),
             'location' => decryptId($request->location),
             'unit' => decryptId($request->unit),
@@ -257,7 +268,6 @@ class Employee extends Model
             'updated_by' => Auth::id(),
             'updated_at' => now(),
         ];
-    
         // Perform the update
         $this->where('id', $id)->update($update_array);
     
@@ -322,7 +332,7 @@ class Employee extends Model
         if (!empty($request->search)) {
             $search = $request->search;
             $query->where(function ($query) use ($search) {
-                $query->orWhere('masters_employee.emp_name', 'LIKE', '%' . $search . '%');
+                $query->orWhere('masters_employee.emp_id', 'LIKE', '%' . $search . '%');
             });
         }
 
@@ -333,15 +343,11 @@ class Employee extends Model
         if ($request->has('emp_name') && $request->emp_name) {
             $query = $query->where('masters_employee.emp_name', 'LIKE', '%' . $request->emp_name . '%');
         }
-        if ($request->has('company_id') && $request->company_id) {
-            $query = $query->where('masters_employee.company', decryptId($request->company_id));
+        if ($request->has('email') && $request->email) {
+            $query = $query->where('masters_employee.email', 'LIKE', '%' . $request->email . '%');
         }
-        if ($request->has('dept_id') && $request->dept_id) {
-            $query = $query->where('masters_employee.department', decryptId($request->dept_id));
-        }
-
-        if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('masters_employee.unit', decryptId($request->unit_id));
+        if ($request->has('employee_status') && $request->employee_status) {
+            $query = $query->where('masters_employee.employee_status', 'LIKE', '%' . $request->employee_status . '%');
         }
 
         return  $query->get();
