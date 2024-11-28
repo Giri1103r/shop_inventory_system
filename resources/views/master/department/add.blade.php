@@ -114,7 +114,7 @@
             var companyId = $(this).val();
             if (companyId) {
                 $.ajax({
-                    url: "{{ admin_url('location/ajaxlist') }}/" + companyId + "/0",
+                    url: "{{ admin_url('location/ajax-list') }}/" + companyId + "/0",
                     type: 'GET',
                     dataType: 'json',
                     success: function(data) {
@@ -139,7 +139,7 @@
             var locationId = $(this).val();
             if (locationId) {
                 $.ajax({
-                    url: "{{ admin_url('unit/ajaxlist') }}/" + locationId + "/0",
+                    url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
                     type: 'GET',
                     dataType: 'json',
                     success: function(data) {

@@ -167,6 +167,8 @@ class WorkController extends Controller
             Session::flash('success', 'Work updated successfully!');
             return redirect(admin_url('work/list'));
         } catch (Exception $ex) {
+
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('work/list'));

@@ -263,7 +263,7 @@
         //     function fetchLocations(company_id, preselectedLocationId, callback) {
         //         if (company_id) {
         //             $.ajax({
-        //                 url: "{{ admin_url('location/ajaxlist/') }}" + company_id + '/' +
+        //                 url: "{{ admin_url('location/ajax-list/') }}" + company_id + '/' +
         //                     preselectedLocationId,
         //                 type: 'GET',
         //                 dataType: 'json',
@@ -287,7 +287,7 @@
         //     function fetchUnits(location_id, preselectedUnitId, callback) {
         //         if (location_id) {
         //             $.ajax({
-        //                 url: "{{ admin_url('unit/ajaxlist/') }}" + location_id + '/' + preselectedUnitId,
+        //                 url: "{{ admin_url('unit/ajax-list/') }}" + location_id + '/' + preselectedUnitId,
         //                 type: 'GET',
         //                 dataType: 'json',
         //                 success: function(data) {
@@ -309,7 +309,7 @@
         //     function fetchDepartments(unit_id, preselectedDepartmentId, callback) {
         //         if (unit_id) {
         //             $.ajax({
-        //                 url: "{{ admin_url('department/ajaxlist/') }}" + unit_id + '/' +
+        //                 url: "{{ admin_url('department/ajax-list/') }}" + unit_id + '/' +
         //                     preselectedDepartmentId,
         //                 type: 'GET',
         //                 dataType: 'json',

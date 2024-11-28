@@ -84,7 +84,7 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Department Name</label>
-                                                    <input type="text" name="department_name" class="form-control"
+                                                    <input type="text" name="department_name" id = "department_name" class="form-control"
                                                         placeholder="Department Name"
                                                         value="{{ $department->department_name }}">
                                                 </div>
@@ -147,7 +147,7 @@
             function fetchLocations(company_id, preselectedLocationId, callback) {
                 if (company_id) {
                     $.ajax({
-                        url: "{{ admin_url('location/ajaxlist/') }}" + company_id + '/' +
+                        url: "{{ admin_url('location/ajax-list/') }}" + company_id + '/' +
                             preselectedLocationId,
                         type: 'GET',
                         dataType: 'json',
@@ -171,7 +171,7 @@
             function fetchUnits(location_id, preselectedUnitId, callback) {
                 if (location_id) {
                     $.ajax({
-                        url: "{{ admin_url('unit/ajaxlist/') }}" + location_id + '/' + preselectedUnitId,
+                        url: "{{ admin_url('unit/ajax-list/') }}" + location_id + '/' + preselectedUnitId,
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
