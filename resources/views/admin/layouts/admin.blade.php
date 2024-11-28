@@ -220,7 +220,7 @@
 
     <script src="{{ url('public/assets/js/pages/responsive-table.init.js') }}"></script>
     <script src="{{ url('public/assets/js/pages/datatables.init.js') }}"></script>
-    <script src="{{ url('public/assets/js/pages/form-pickers.init.js') }}"></script>
+    {{-- <script src="{{ url('public/assets/js/pages/form-pickers.init.js') }}"></script> --}}
 
     <script src="{{ public_plugins('bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ public_plugins('moment/moment.js') }}"></script>
