@@ -16,38 +16,26 @@
     <link href="{{ url('public/assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
     <link href="{{ url('public/assets/css/app.css') }}" rel="stylesheet" type="text/css" id="app-style" />
     <link href="{{ url('public/assets/css/custom-style.css') }}" rel="stylesheet" type="text/css" id="app-style" />
-    <link href="{{ url('public/assets/plugins/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}"
-        rel="stylesheet" type="text/css" />
-    <link href="{{ url('public/assets/plugins/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css') }}"
-        rel="stylesheet" type="text/css" />
-    <link href="{{ url('public/assets/plugins/datatables.net-keytable-bs5/css/keyTable.bootstrap5.min.css') }}"
-        rel="stylesheet" type="text/css" />
-    <link href="{{ url('public/assets/plugins/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}"
-        rel="stylesheet" type="text/css" />
-    <link href="{{ url('public/assets/plugins/datatables.net-select-bs5/css/select.bootstrap5.min.css') }}"
-        rel="stylesheet" type="text/css" />
-    <link href="{{ url('public/assets/plugins/admin-resources/rwd-table/rwd-table.min.css') }}" rel="stylesheet"
-        type="text/css" />
 
-    <link href="{{ url('public/assets/plugins/spectrum-colorpicker2/spectrum.min.css') }}" rel="stylesheet"
-        type="text/css" />
-    <link href="{{ url('public/assets/plugins/flatpickr/flatpickr.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ url('public/assets/plugins/clockpicker/bootstrap-clockpicker.min.css') }}" rel="stylesheet"
-        type="text/css" />
-    <link href="{{ url('public/assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}"
-        rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('datatables.net-keytable-bs5/css/keyTable.bootstrap5.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('datatables.net-select-bs5/css/select.bootstrap5.min.css') }}"rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('admin-resources/rwd-table/rwd-table.min.css') }}" rel="stylesheet" type="text/css" />
+
+    <link href="{{ public_plugins('spectrum-colorpicker2/spectrum.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('flatpickr/flatpickr.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('clockpicker/bootstrap-clockpicker.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ url('public/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
 
 
-    <link href="{{ url('public/assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ url('public/assets/plugins/fontawesome/css/all.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ url('public/assets/plugins/jasny-bootstrap/css/jasny-bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('fontawesome/css/all.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('jasny-bootstrap/css/jasny-bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
 
-    <link
-        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"
-        rel="stylesheet">
-
-    @stack('styless')
+     @stack('styless')
     <style>
         :root {
             --dt-header-background-color: #b8cde2 !important;
@@ -228,51 +216,51 @@
     </script>
 
     <!-- Vendor -->
-    <script src="{{ url('public/assets/plugins/jquery/jquery.min.js') }}"></script>
+    <script src="{{ public_plugins('jquery/jquery.min.js') }}"></script>
+
     <script src="{{ url('public/assets/js/pages/responsive-table.init.js') }}"></script>
     <script src="{{ url('public/assets/js/pages/datatables.init.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/simplebar/simplebar.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/node-waves/waves.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/waypoints/lib/jquery.waypoints.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/jquery.counterup/jquery.counterup.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/feather-icons/feather.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/datatables.net/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/datatables.net-buttons/js/buttons.colVis.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/datatables.net-buttons/js/buttons.flash.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/datatables.net-keytable/js/dataTables.keyTable.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/datatables.net-keytable-bs5/js/keyTable.bootstrap5.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js') }}">
-    </script>
-    <script src="{{ url('public/assets/plugins/datatables.net-select/js/dataTables.select.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/datatables.net-select-bs5/js/select.bootstrap5.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/admin-resources/rwd-table/rwd-table.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/pdfmake/build/pdfmake.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/pdfmake/build/vfs_fonts.js') }}"></script>
-    {{-- <script src="{{ url('public/assets/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}"></script> --}}
-    <script src="{{ url('public/assets/plugins/flatpickr/flatpickr.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/spectrum-colorpicker2/spectrum.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/clockpicker/bootstrap-clockpicker.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
-    <script src="{{ url('public/assets/js/pages/form-pickers.init.js') }}"></script>
+    {{-- <script src="{{ url('public/assets/js/pages/form-pickers.init.js') }}"></script> --}}
+
+    <script src="{{ public_plugins('bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ public_plugins('moment/moment.js') }}"></script>
+    <script src="{{ public_plugins('simplebar/simplebar.min.js') }}"></script>
+    <script src="{{ public_plugins('node-waves/waves.min.js') }}"></script>
+    <script src="{{ public_plugins('waypoints/lib/jquery.waypoints.min.js') }}"></script>
+    <script src="{{ public_plugins('jquery.counterup/jquery.counterup.min.js') }}"></script>
+    <script src="{{ public_plugins('feather-icons/feather.min.js') }}"></script>
+    <script src="{{ public_plugins('datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ public_plugins('datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="{{ public_plugins('datatables.net-buttons/js/buttons.colVis.min.js') }}"></script>
+
+    <script src="{{ public_plugins('datatables.net-buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ public_plugins('datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ public_plugins('datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js') }}"></script>
+    <script src="{{ public_plugins('datatables.net-keytable/js/dataTables.keyTable.min.js') }}"></script>
+    <script src="{{ public_plugins('datatables.net-keytable-bs5/js/keyTable.bootstrap5.min.js') }}"></script>
+    <script src="{{ public_plugins('datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ public_plugins('datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js') }}"></script>
+    <script src="{{ public_plugins('datatables.net-select/js/dataTables.select.min.js') }}"></script>
+    <script src="{{ public_plugins('datatables.net-select-bs5/js/select.bootstrap5.min.js') }}"></script>
+    <script src="{{ public_plugins('admin-resources/rwd-table/rwd-table.min.js') }}"></script>
+    <script src="{{ public_plugins('pdfmake/build/pdfmake.min.js') }}"></script>
+    <script src="{{ public_plugins('pdfmake/build/vfs_fonts.js') }}"></script>
+    <script src="{{ public_plugins('bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js') }}"></script>
+    <script src="{{ public_plugins('flatpickr/flatpickr.min.js') }}"></script>
+    <script src="{{ public_plugins('spectrum-colorpicker2/spectrum.min.js') }}"></script>
+    <script src="{{ public_plugins('clockpicker/bootstrap-clockpicker.min.js') }}"></script>
+    <script src="{{ public_plugins('bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
+
 
 
     <!-- knob plugin -->
-    <script src="{{ url('public/assets/plugins/jquery-knob/jquery.knob.min.js') }}"></script>
+    <script src="{{ public_plugins('jquery-knob/jquery.knob.min.js') }}"></script>
 
     <!--Morris Chart-->
-    <script src="{{ url('public/assets/plugins/morris.js06/morris.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/raphael/raphael.min.js') }}"></script>
-    <script src="{{ url('public/assets/plugins/DataTables/datatables.min.js') }}"></script>
+    <script src="{{ public_plugins('morris.js06/morris.min.js') }}"></script>
+    <script src="{{ public_plugins('raphael/raphael.min.js') }}"></script>
+    <script src="{{ public_plugins('DataTables/datatables.min.js') }}"></script>
 
-    <!-- Dashboar init js-->
-    <script src="{{ url('public/assets/js/pages/dashboard.init.js') }}"></script>
 
     <!-- App js-->
     <script src="{{ url('public/assets/js/app.min.js') }}"></script>
@@ -284,11 +272,8 @@
     <script src="{{ public_plugins('select2/js/select2.full.min.js') }}"></script>
     <script src="{{ public_plugins('jasny-bootstrap/js/jasny-bootstrap.min.js') }}"></script>
 
-    <script src="{{ public_plugins('moment/moment.js') }}"></script>
 
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js">
-    </script>
+
     @stack('scripts')
 
     <script type="text/javascript" nonce="projectcab">
