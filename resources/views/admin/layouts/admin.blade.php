@@ -246,7 +246,7 @@
     <script src="{{ public_plugins('admin-resources/rwd-table/rwd-table.min.js') }}"></script>
     <script src="{{ public_plugins('pdfmake/build/pdfmake.min.js') }}"></script>
     <script src="{{ public_plugins('pdfmake/build/vfs_fonts.js') }}"></script>
-    <script src="{{ public_plugins('bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}"></script>
+    <script src="{{ public_plugins('bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js') }}"></script>
     <script src="{{ public_plugins('flatpickr/flatpickr.min.js') }}"></script>
     <script src="{{ public_plugins('spectrum-colorpicker2/spectrum.min.js') }}"></script>
     <script src="{{ public_plugins('clockpicker/bootstrap-clockpicker.min.js') }}"></script>
