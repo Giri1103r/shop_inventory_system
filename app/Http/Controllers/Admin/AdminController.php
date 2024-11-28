@@ -58,6 +58,23 @@ class AdminController extends Controller
                         'icon_color' => 'text-primary',
                     ],
 
+
+                    [
+                        'link' => 'employee/list',
+                        'name' => 'Employees',
+                        'count' => gettotalCount('employee'),
+                        'icon' => 'bx bx-message-square-detail',
+                        'icon_color' => 'text-primary',
+                    ],
+
+                    [
+                        'link' => 'work/list',
+                        'name' => 'Workers',
+                        'count' => gettotalCount('work'),
+                        'icon' => 'bx bx-message-square-detail',
+                        'icon_color' => 'text-primary',
+                    ],
+
                 ];
 
                 $data = [
