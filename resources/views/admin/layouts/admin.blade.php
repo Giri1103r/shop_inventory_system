@@ -262,8 +262,6 @@
     <script src="{{ public_plugins('raphael/raphael.min.js') }}"></script>
     <script src="{{ public_plugins('DataTables/datatables.min.js') }}"></script>
 
-    <!-- Dashboar init js-->
-    <script src="{{ url('public/assets/js/pages/dashboard.init.js') }}"></script>
 
     <!-- App js-->
     <script src="{{ url('public/assets/js/app.min.js') }}"></script>
