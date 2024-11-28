@@ -490,4 +490,28 @@ class DepartmentController extends Controller
         $unit = $this->department->ajaxallList($unitID);
         return response()->json($unit);
     }
+
+
+    public function Uniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $unit_id = decryptId($request->unit_id);
+            $company_id = decryptId($request->company_id);
+            $location_id = decryptId($request->location_id);
+            $department_name =$request->department_name;
+            $id = $request->id;
+            if ($id == '') {
+
+                // dd('sdcds');
+                $record = $this->department->uniqueCheck($company_id,$location_id,$unit_id,$department_name);
+            } else {
+                $id = decryptId($id);
+                $record = $this->department->ExistuniqueCheck($company_id,$location_id,$unit_id,$department_name, $id);
+            }
+            if ($record->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
+        }
+    }
 }

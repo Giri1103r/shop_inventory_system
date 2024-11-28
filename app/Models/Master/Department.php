@@ -95,17 +95,17 @@ class Department extends Model
         return $datas;
     }
 
-    public function UniqueCheck($data)
+    public function UniqueCheck($company_id,$location_id,$unit_id,$department_name)
     {
 
-        return $this->where($data['param'],  $data['value'])->get();
+        return $this->where('company_id', $company_id)->where('location_id',$location_id )->where('unit_id',$unit_id)->where('department_name',$department_name)->get();
     }
 
-    public function ExistuniqueCheck($data)
+    public function ExistuniqueCheck($company_id,$location_id,$unit_id,$department_name, $id)
     {
-        return $this->where($data['param'],  $data['value'])
-            ->where('id', '!=', decryptId($data['id']))
-            ->get();
+        return $this->where('company_id', $company_id)->where('location_id',$location_id )->where('unit_id',$unit_id)->where('department_name',$department_name)
+        ->where('id', '!=', $id)
+        ->get();
     }
 
     public function store()
