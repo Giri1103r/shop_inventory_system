@@ -18,10 +18,10 @@
 
                         <div class="d-inline-block align-items-center">
                             <nav>
-                                <ol class="breadcrumb">
+                                {{-- <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="{{ url('') }}"><i class="mdi mdi-home-outline"></i></a> </li>
                                     <li class="breadcrumb-item" aria-current="page">{{__('administration.notification')}}</li>
-                                </ol>
+                                </ol> --}}
                             </nav>
                         </div>
                     </div>
@@ -35,7 +35,7 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">{{ __('administration.notification_list') }}</h4>
+                                    {{-- <h4 class="card-title">{{ __('administration.notification_list') }}</h4> --}}
 
                                 </div>
 

@@ -9,7 +9,7 @@
                 <h4 class="text-uppercase mt-0">Sign In</h4>
             </div>
 
-            <form  id="loginform" action="{{ admin_url('logintry') }}" method="post">
+            <form id="login_form_validate" action="{{ admin_url('logintry') }}" method="post">
                 @csrf
                 <div class="mb-3 form-input">
                     <label for="emailaddress" class="form-label">Email address</label>
@@ -29,7 +29,11 @@
                         <label class="form-check-label" for="checkbox-signin">Remember me</label>
                     </div>
                 </div>
+                <div class="mb-3">
 
+                    <div class="g-recaptcha" data-sitekey="{{ env('GOOGLE_RECAPTCHA_KEY') }}"></div>
+                    <div class="recaptcha-error" style="color:red;"></div>
+                </div>
                 <div class="mb-3 d-grid text-center">
                     <button class="btn btn-primary" type="submit"> Log In </button>
                 </div>
@@ -50,9 +54,21 @@
 @endsection
 
 @push('script')
-    <script type="text/javascript" nonce="neoehsscript">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+    <script type="text/javascript">
+        $('#login_form_validate').on('submit', function(e) {
+            if (grecaptcha.getResponse() == "") {
+                e.preventDefault();
+                $(".recaptcha-error").html('The recaptcha field is required');
+                return false;
+            } else {
+                $(".recaptcha-error").empty();
+                return true;
+            }
+        });
         $(function() {
-            $('#loginform').validate({
+            $('#login_form_validate').validate({
                 rules: {
                     email: {
                         required: true,

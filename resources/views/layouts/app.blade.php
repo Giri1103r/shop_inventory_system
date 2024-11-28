@@ -32,7 +32,7 @@
             <div class="row justify-content-center">
                 <div class="col-md-8 col-lg-6 col-xl-4">
                     <div class="text-center">
-                        <a href="index.html">
+                        <a href="{{ url('/') }}">
                             <img src="{{ url('public/assets/images/logo-dark.png') }}" alt="logo" class="mx-auto">
                         </a>
                         <p class="text-muted mt-2 mb-4"></p>
