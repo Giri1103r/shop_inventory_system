@@ -16,8 +16,12 @@ use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
 use App\Models\Master\Worktemp;
 use App\Models\Master\EmployeeTemp;
+
+use App\Models\User;
 use App\Models\Master\Work;
 use App\Models\Master\Employee;
+
+use App\Mail\EmployeeRegisterEmail;
 
 
 use Exception;
@@ -29,6 +33,7 @@ class CronController extends Controller
     private $emp_temp;
     private $work;
     private $employee;
+    private $user;
 
     public function __construct()
     {
@@ -37,6 +42,7 @@ class CronController extends Controller
         $this->emp_temp = new EmployeeTemp();
         $this->work = new Work();
         $this->employee = new Employee();
+        $this->user = new User();
     }
     public function queueHigh()
     {
@@ -434,8 +440,21 @@ class CronController extends Controller
 
             if (!empty($emp_temp)) {
 
-
+                
                 $employee = $this->employee->store($emp_temp);
+                // dd($employee);
+                $user = $this->user->store($employee);
+
+                // if (!empty($user) && !empty($user->email)) {
+                //     $empdetails = $this->employee->selectOne($employee['emp_id']);
+                
+
+                //     if (!empty($empdetails)) {
+                //         $emp = $empdetails->toArray();
+                //         Mail::to($user->email)->queue(new EmployeeRegisterEmail($emp));
+                //     }
+                // }
+
                 if (empty($employee)) {
                     $this->emp_temp->updateAllErrorStatus();
                 } else {

@@ -62,424 +62,421 @@ Route::get('employee_save', [CronController::class, 'EmployeeSave']);
 Route::get('test', [TestController::class,  'index']);
 
 
-Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
-
-Auth::routes();
 
 
+Route::middleware(['securityheader'])->group(function () {
 
-Route::middleware(['userlog'])->group(function () {
+    Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 
+    Auth::routes();
 
-    /**
-     * Localization
-     */
-    Route::get('lang/change/{lang}/{lang_id}', [LocalizationController::class, 'lang_change'])->name('changeLang');
-    Route::get('theme/change', [SettingsController::class, 'theme_change'])->name('changetheme');
-
-
-    Route::get('Account_Activate/{token}', [LoginController::class, 'Account_Activate']);
-    Route::post('SubmitAccountActivate', [LoginController::class, 'SubmitAccountActivate']);
-
-    Route::get('login', [LoginController::class, 'showLoginForm']);
-    Route::post('logintry', [LoginController::class, 'authenticate']);
-    Route::post('logout', [LoginController::class, 'logout']);
-    Route::get('reset-password', [LoginController::class, 'showResetForm'])->name('password.reset.form');
-    Route::post('reset-password/store', [LoginController::class, 'resetPassword'])->name('password.reset.store');
-    Route::post('/password/resend-otp', [LoginController::class, 'resendOTP'])->name('password.resend.otp');
-    Route::get('password/forgot', [LoginController::class, 'forgotPassword']);
-    Route::post('password/forgot/submit', [LoginController::class, 'sendOTP'])->name('resetpasswordSend');
-    Route::get('password/otp', [LoginController::class, 'passwordOTP'])->name('otp.page');
-    Route::post('password/otp/submit', [LoginController::class, 'passwordOTPSubmit']);
-    Route::get('password/finalreset/form', [LoginController::class, 'passwordReset']);
-    Route::post('password/reset-password/submit', [LoginController::class, 'passwordResetSubmit']);
-
-    Route::middleware(['islogin', 'language'])->group(function () {
-
-        Route::get('dashboard', [AdminController::class, 'index'])->middleware('role:dashboard,view');
-        Route::get('home', [AdminController::class, 'index'])->name('home');
-        Route::get('profile', [AdminController::class, 'profileView']);
-        Route::post('profile/image/update', [AdminController::class, 'profileUpdate']);
-        Route::post('profile/update', [AdminController::class, 'Update']);
-        Route::post('profile/password/update', [AdminController::class, 'changeProfilePassword']);
+    Route::middleware(['userlog'])->group(function () {
 
         /**
-         * User Access Log
+         * Localization
          */
-
-        Route::get('admin/master/userlog/list', [UserLogController::class, 'index']);
-        Route::post('admin/master/userlog/list', [UserLogController::class, 'index']);
-        Route::get('admin/master/userlog/export/excel', [UserLogController::class, 'ExportExcel']);
-
-        Route::get('administration/role/list', [UserRoleController::class, 'index']);
-        Route::post('administration/role/list', [UserRoleController::class, 'index']);
-        Route::get('administration/role/add', [UserRoleController::class, 'add']);
-        Route::post('administration/role/add/submit',  [UserRoleController::class, 'store']);
-        Route::get('administration/role/view/{id}', [UserRoleController::class, 'view']);
-        Route::get('administration/role/edit/{id}',  [UserRoleController::class, 'edit']);
-        Route::post('administration/role/edit/submit', [UserRoleController::class, 'update']);
-        Route::post('administration/role/unique', [UserRoleController::class, 'uniqueCheck']);
-        Route::post('administration/role/status', [UserRoleController::class, 'statusChange']);
-        Route::post('administration/role/delete',  [UserRoleController::class, 'delete']);
-        Route::get('administration/role/export/excel', [UserRoleController::class, 'exportExcel']);
-        Route::get('administration/role/export/pdf', [UserRoleController::class, 'exportPdf']);
-        Route::get('administration/role/import', [UserRoleController::class, 'import']);
-        Route::post('administration/role/import/submit', [UserRoleController::class, 'importSubmit']);
-        Route::get('administration/role/list/{companyId}', [UserRoleController::class, 'list']);
-        Route::get('administration/role/sampledownload', [UserRoleController::class, 'DownloadSample']);
-        /**
-         * User Permission
-         */
-
-        Route::get('administration/permission/list', [UserPermissionController::class, 'index']);
-        Route::post('administration/permission/get', [UserPermissionController::class, 'getUserPermission']);
-        Route::post('administration/permission/update', [UserPermissionController::class, 'updateUserPermission']);
-
-        /**
-         * File Upload Error Log
-         */
-
-        Route::get('uploadlog/list', [UploadLogController::class, 'index']);
-        Route::post('uploadlog/list', [UploadLogController::class, 'index']);
-        Route::get('uploadlog/list/{logid}', [UploadLogController::class, 'view']);
-        Route::post('uploadlog/list/{logid}', [UploadLogController::class, 'view']);
-        Route::get('uploadlog/download/{logid}', [UploadLogController::class, 'download']);
-        Route::get('uploadlog/export/excel/{logid}', [UploadLogController::class, 'ExportExcel']);
-
-        /**
-         * Notification
-         */
-
-        Route::get('notification/list', [NotificationController::class, 'notificationList']);
-        Route::post('notification/list', [NotificationController::class, 'notificationList']);
-        Route::get('notification/read/{id}', [NotificationController::class, 'notificationRead']);
-        Route::get('notification/readall', [NotificationController::class, 'notificationAllRead']);
-        Route::get('notification/view/{id}', [NotificationController::class, 'notificationView']);
-
-        /**
-         * company master
-         */
-        Route::group(['prefix' => 'company'], function () {
-            Route::get('/list', [CompanyController::class, 'index']);
-            Route::post('/list', [CompanyController::class, 'index']);
-            Route::get('/add', [CompanyController::class, 'add'])->middleware('role:company,add');
-            Route::post('/add/submit', [CompanyController::class, 'store']);
-            Route::get('/edit/{id}', [CompanyController::class, 'edit'])->middleware('role:company,edit');
-            Route::post('/edit/submit', [CompanyController::class, 'update']);
-            Route::get('/view/{id}', [CompanyController::class, 'view'])->middleware('role:company,view');
-            Route::post('/delete', [CompanyController::class, 'delete'])->middleware('role:company,delete');
-            Route::get('/export/excel', [CompanyController::class, 'exportExcel']);
-            Route::get('/export/pdf', [CompanyController::class, 'exportPdf']);
-            Route::get('/sampledownload', [CompanyController::class, 'DownloadSample']);
-            Route::get('/import', [CompanyController::class, 'import'])->middleware('role:company,import');
-            Route::post('/import/submit', [CompanyController::class, 'importSubmit']);
-            Route::post('/status', [CompanyController::class, 'statusChange']);
-            Route::post('/unique', [CompanyController::class, 'Uniquecheck']);
-            Route::post('/passwordchange/{id}', [CompanyController::class, 'PasswordUpdate']);
-            Route::post('/passwordchange/submit', [CompanyController::class, 'PasswordUpdateSubmit']);
-        });
-
-        /**
-         * Location Master
-         */
-
-        Route::get('location/list', [LocationController::class, 'index']);
-        Route::post('location/list', [LocationController::class, 'index']);
-        Route::get('location/add', [LocationController::class, 'add'])->middleware('role:location,add');
-        Route::post('location/add/submit',  [LocationController::class, 'store']);
-        Route::get('location/view/{id}', [LocationController::class, 'view'])->middleware('role:location,view');
-        Route::get('location/edit/{id}',  [LocationController::class, 'edit'])->middleware('role:location,edit');
-        Route::post('location/edit/submit', [LocationController::class, 'update']);
-        Route::post('location/unique', [LocationController::class, 'uniqueCheck']);
-        Route::post('location/status', [LocationController::class, 'statusChange']);
-        Route::post('location/delete',  [LocationController::class, 'delete'])->middleware('role:location,delete');
-        Route::get('location/export/excel', [LocationController::class, 'exportExcel']);
-        Route::get('location/export/pdf', [LocationController::class, 'exportPdf']);
-        Route::get('location/import', [LocationController::class, 'import'])->middleware('role:location,import');
-        Route::post('location/import/submit', [LocationController::class, 'importSubmit']);
-        Route::get('location/alllist/{companyId}', [LocationController::class, 'alllist']);
-        // Route::get('location/ajaxlist', [LocationController::class, 'list']);
-        Route::get('location/ajaxlist/{locationId}/{id}', [LocationController::class, 'list']);
-
-        Route::get('location/sampledownload', [LocationController::class, 'DownloadSample']);
-
-        /**
-         * unit master
-         */
-        Route::group(['prefix' => 'unit'], function () {
-            Route::get('/list', [UnitController::class, 'index']);
-            Route::post('/list', [UnitController::class, 'index']);
-            Route::get('/add', [UnitController::class, 'add'])->middleware('role:unit,add');
-            Route::post('/add/submit', [UnitController::class, 'store']);
-            Route::get('/edit/{id}', [UnitController::class, 'edit'])->middleware('role:unit,edit');
-            Route::post('/edit/submit', [UnitController::class, 'update']);
-            Route::get('/view/{id}', [UnitController::class, 'view'])->middleware('role:unit,view');
-            Route::post('/delete', [UnitController::class, 'delete'])->middleware('role:unit,delete');
-            Route::get('/export/excel', [UnitController::class, 'exportExcel']);
-            Route::get('/export/pdf', [UnitController::class, 'exportPdf']);
-            Route::get('/sampledownload', [UnitController::class, 'DownloadSample']);
-            Route::get('/import', [UnitController::class, 'import'])->middleware('role:unit,import');
-            Route::post('/import/submit', [UnitController::class, 'importSubmit']);
-            Route::post('/status', [UnitController::class, 'statusChange']);
-            Route::post('/unique', [UnitController::class, 'Uniquecheck']);
-            Route::get('/alllist/{locationId}', [UnitController::class, 'alllist']);
-            Route::get('/ajaxlist/{locationId}/{id}', [UnitController::class, 'list']);
-
-            // Route::get('/ajaxlist', [UnitController::class, 'list']);
-        });
-
-        /**
-         *  Department master
-         */
-        Route::group(['prefix' => 'department'], function () {
-            Route::get('/list', [DepartmentController::class, 'index']);
-            Route::post('/list', [DepartmentController::class, 'index']);
-            Route::get('/add', [DepartmentController::class, 'add'])->middleware('role:department,add');
-            Route::post('/add/submit', [DepartmentController::class, 'store']);
-            Route::get('/edit/{id}', [DepartmentController::class, 'edit'])->middleware('role:department,edit');
-            Route::post('/edit/submit', [DepartmentController::class, 'update']);
-            Route::get('/view/{id}', [DepartmentController::class, 'view'])->middleware('role:department,view');
-            Route::post('/delete', [DepartmentController::class, 'delete'])->middleware('role:department,delete');
-            Route::get('/export/excel', [DepartmentController::class, 'exportExcel']);
-            Route::get('/export/pdf', [DepartmentController::class, 'exportPdf']);
-            Route::get('/sampledownload', [DepartmentController::class, 'DownloadSample']);
-            Route::get('/import', [DepartmentController::class, 'import'])->middleware('role:department,import');
-            Route::post('/import/submit', [DepartmentController::class, 'importSubmit']);
-            Route::post('/status', [DepartmentController::class, 'statusChange']);
-            Route::post('/unique', [DepartmentController::class, 'Uniquecheck']);
-            Route::get('/alllist/{unitId}', [DepartmentController::class, 'alllist']);
-            Route::get('/ajaxlist/{unit_id}/{id}', [DepartmentController::class, 'list']);
-
-            // Route::get('/ajaxlist', [DepartmentController::class, 'list']);
-        });
+        Route::get('lang/change/{lang}/{lang_id}', [LocalizationController::class, 'lang_change'])->name('changeLang');
+        Route::get('theme/change', [SettingsController::class, 'theme_change'])->name('changetheme');
 
 
-        Route::group(['prefix' => 'work'], function () {
-            Route::get('/list', [WorkController::class, 'index']);
-            Route::post('/list', [WorkController::class, 'index']);
-            Route::post('/add/submit', [WorkController::class, 'store']);
-            Route::get('/edit/{id}', [WorkController::class, 'edit']);
-            Route::post('/edit/submit', [WorkController::class, 'update']);
-            Route::get('/view/{id}', [WorkController::class, 'view']);
-            Route::get('/export/excel', [WorkController::class, 'exportExcel']);
-            Route::get('/export/pdf', [WorkController::class, 'exportPdf']);
-        });
-        Route::group(['prefix' => 'employee'], function () {
-            Route::get('/list', [EmployeeController::class, 'index']);
-            Route::post('/list', [EmployeeController::class, 'index']);
-            Route::post('/add/submit', [EmployeeController::class, 'store']);
-            Route::get('/edit/{id}', [EmployeeController::class, 'edit']);
-            Route::post('/edit/submit', [EmployeeController::class, 'update']);
-            Route::get('/view/{id}', [EmployeeController::class, 'view']);
-            Route::get('/export/excel', [EmployeeController::class, 'exportExcel']);
-            Route::get('/export/pdf', [EmployeeController::class, 'exportPdf']);
-         
-        });
+        Route::get('Account_Activate/{token}', [LoginController::class, 'Account_Activate']);
+        Route::post('SubmitAccountActivate', [LoginController::class, 'SubmitAccountActivate']);
 
-        Route::group(['prefix' => 'ptw/protectiveequipmentmaster'], function () {
-            Route::get('/list', [ProtectiveEquipController::class, 'index']);
-            Route::post('/list', [ProtectiveEquipController::class, 'index']);
-            Route::get('/add', [ProtectiveEquipController::class, 'add']);
-            Route::post('/add/submit', [ProtectiveEquipController::class, 'store']);
-            Route::get('/edit/{id}', [ProtectiveEquipController::class, 'edit']);
-            Route::post('/edit/submit', [ProtectiveEquipController::class, 'update']);
-            Route::get('/view/{id}', [ProtectiveEquipController::class, 'view']);
-            Route::post('/delete', [ProtectiveEquipController::class, 'delete']);
-            Route::get('/export/excel', [ProtectiveEquipController::class, 'exportExcel']);
-            Route::get('/export/pdf', [ProtectiveEquipController::class, 'exportPdf']);
-            Route::get('/sampledownload', [ProtectiveEquipController::class, 'DownloadSample']);
-            Route::get('/import', [ProtectiveEquipController::class, 'import']);
-            Route::post('/import/submit', [ProtectiveEquipController::class, 'importSubmit']);
-            Route::post('/status', [ProtectiveEquipController::class, 'statusChange']);
-            Route::post('/unique', [ProtectiveEquipController::class, 'Uniquecheck']);
-        });
+        Route::get('login', [LoginController::class, 'showLoginForm']);
+        Route::post('logintry', [LoginController::class, 'authenticate']);
+        Route::post('logout', [LoginController::class, 'logout']);
+        Route::get('reset-password', [LoginController::class, 'showResetForm'])->name('password.reset.form');
+        Route::post('reset-password/store', [LoginController::class, 'resetPassword'])->name('password.reset.store');
+        Route::post('/password/resend-otp', [LoginController::class, 'resendOTP'])->name('password.resend.otp');
+        Route::get('password/forgot', [LoginController::class, 'forgotPassword']);
+        Route::post('password/forgot/submit', [LoginController::class, 'sendOTP'])->name('resetpasswordSend');
+        Route::get('password/otp', [LoginController::class, 'passwordOTP'])->name('otp.page');
+        Route::post('password/otp/submit', [LoginController::class, 'passwordOTPSubmit']);
+        Route::get('password/finalreset/form', [LoginController::class, 'passwordReset']);
+        Route::post('password/reset-password/submit', [LoginController::class, 'passwordResetSubmit']);
 
-      
+        Route::middleware(['islogin', 'language'])->group(function () {
 
-        Route::group(['prefix' => 'ptw/equipinvolvemaster'], function () {
-            Route::get('/list', [EquipInvalveController::class, 'index']);
-            Route::post('/list', [EquipInvalveController::class, 'index']);
-            Route::get('/add', [EquipInvalveController::class, 'add']);
-            Route::post('/add/submit', [EquipInvalveController::class, 'store']);
-            Route::get('/edit/{id}', [EquipInvalveController::class, 'edit']);
-            Route::post('/edit/submit', [EquipInvalveController::class, 'update']);
-            Route::get('/view/{id}', [EquipInvalveController::class, 'view']);
-            Route::post('/delete', [EquipInvalveController::class, 'delete']);
-            Route::get('/export/excel', [EquipInvalveController::class, 'exportExcel']);
-            Route::get('/export/pdf', [EquipInvalveController::class, 'exportPdf']);
-            Route::get('/sampledownload', [EquipInvalveController::class, 'DownloadSample']);
-            Route::get('/import', [EquipInvalveController::class, 'import']);
-            Route::post('/import/submit', [EquipInvalveController::class, 'importSubmit']);
-            Route::post('/status', [EquipInvalveController::class, 'statusChange']);
-            Route::post('/unique', [EquipInvalveController::class, 'Uniquecheck']);
-        });
+            Route::get('dashboard', [AdminController::class, 'index'])->middleware('role:dashboard,view');
+            Route::get('home', [AdminController::class, 'index'])->name('home');
+            Route::get('profile', [AdminController::class, 'profileView']);
+            Route::post('profile/image/update', [AdminController::class, 'profileUpdate']);
+            Route::post('profile/update', [AdminController::class, 'Update']);
+            Route::post('profile/password/update', [AdminController::class, 'changeProfilePassword']);
+
+            /**
+             * User Access Log
+             */
+
+            Route::get('admin/master/userlog/list', [UserLogController::class, 'index']);
+            Route::post('admin/master/userlog/list', [UserLogController::class, 'index']);
+            Route::get('admin/master/userlog/export/excel', [UserLogController::class, 'ExportExcel']);
+
+            Route::get('administration/role/list', [UserRoleController::class, 'index']);
+            Route::post('administration/role/list', [UserRoleController::class, 'index']);
+            Route::get('administration/role/add', [UserRoleController::class, 'add']);
+            Route::post('administration/role/add/submit',  [UserRoleController::class, 'store']);
+            Route::get('administration/role/view/{id}', [UserRoleController::class, 'view']);
+            Route::get('administration/role/edit/{id}',  [UserRoleController::class, 'edit']);
+            Route::post('administration/role/edit/submit', [UserRoleController::class, 'update']);
+            Route::post('administration/role/unique', [UserRoleController::class, 'uniqueCheck']);
+            Route::post('administration/role/status', [UserRoleController::class, 'statusChange']);
+            Route::post('administration/role/delete',  [UserRoleController::class, 'delete']);
+            Route::get('administration/role/export/excel', [UserRoleController::class, 'exportExcel']);
+            Route::get('administration/role/export/pdf', [UserRoleController::class, 'exportPdf']);
+            Route::get('administration/role/import', [UserRoleController::class, 'import']);
+            Route::post('administration/role/import/submit', [UserRoleController::class, 'importSubmit']);
+            Route::get('administration/role/list/{companyId}', [UserRoleController::class, 'list']);
+            Route::get('administration/role/sampledownload', [UserRoleController::class, 'DownloadSample']);
+            /**
+             * User Permission
+             */
+
+            Route::get('administration/permission/list', [UserPermissionController::class, 'index']);
+            Route::post('administration/permission/get', [UserPermissionController::class, 'getUserPermission']);
+            Route::post('administration/permission/update', [UserPermissionController::class, 'updateUserPermission']);
+
+            /**
+             * File Upload Error Log
+             */
+
+            Route::get('uploadlog/list', [UploadLogController::class, 'index']);
+            Route::post('uploadlog/list', [UploadLogController::class, 'index']);
+            Route::get('uploadlog/list/{logid}', [UploadLogController::class, 'view']);
+            Route::post('uploadlog/list/{logid}', [UploadLogController::class, 'view']);
+            Route::get('uploadlog/download/{logid}', [UploadLogController::class, 'download']);
+            Route::get('uploadlog/export/excel/{logid}', [UploadLogController::class, 'ExportExcel']);
+
+            /**
+             * Notification
+             */
+
+            Route::get('notification/list', [NotificationController::class, 'notificationList']);
+            Route::post('notification/list', [NotificationController::class, 'notificationList']);
+            Route::get('notification/read/{id}', [NotificationController::class, 'notificationRead']);
+            Route::get('notification/readall', [NotificationController::class, 'notificationAllRead']);
+            Route::get('notification/view/{id}', [NotificationController::class, 'notificationView']);
+
+            /**
+             * company master
+             */
+            Route::group(['prefix' => 'company'], function () {
+                Route::get('/list', [CompanyController::class, 'index']);
+                Route::post('/list', [CompanyController::class, 'index']);
+                Route::get('/add', [CompanyController::class, 'add'])->middleware('role:company,add');
+                Route::post('/add/submit', [CompanyController::class, 'store']);
+                Route::get('/edit/{id}', [CompanyController::class, 'edit'])->middleware('role:company,edit');
+                Route::post('/edit/submit', [CompanyController::class, 'update']);
+                Route::get('/view/{id}', [CompanyController::class, 'view'])->middleware('role:company,view');
+                Route::post('/delete', [CompanyController::class, 'delete'])->middleware('role:company,delete');
+                Route::get('/export/excel', [CompanyController::class, 'exportExcel']);
+                Route::get('/export/pdf', [CompanyController::class, 'exportPdf']);
+                Route::get('/sampledownload', [CompanyController::class, 'DownloadSample']);
+                Route::get('/import', [CompanyController::class, 'import'])->middleware('role:company,import');
+                Route::post('/import/submit', [CompanyController::class, 'importSubmit']);
+                Route::post('/status', [CompanyController::class, 'statusChange']);
+                Route::post('/unique', [CompanyController::class, 'Uniquecheck']);
+                Route::post('/passwordchange/{id}', [CompanyController::class, 'PasswordUpdate']);
+                Route::post('/passwordchange/submit', [CompanyController::class, 'PasswordUpdateSubmit']);
+            });
+
+            /**
+             * Location Master
+             */
+
+            Route::get('location/list', [LocationController::class, 'index']);
+            Route::post('location/list', [LocationController::class, 'index']);
+            Route::get('location/add', [LocationController::class, 'add'])->middleware('role:location,add');
+            Route::post('location/add/submit',  [LocationController::class, 'store']);
+            Route::get('location/view/{id}', [LocationController::class, 'view'])->middleware('role:location,view');
+            Route::get('location/edit/{id}',  [LocationController::class, 'edit'])->middleware('role:location,edit');
+            Route::post('location/edit/submit', [LocationController::class, 'update']);
+            Route::post('location/unique', [LocationController::class, 'uniqueCheck']);
+            Route::post('location/status', [LocationController::class, 'statusChange']);
+            Route::post('location/delete',  [LocationController::class, 'delete'])->middleware('role:location,delete');
+            Route::get('location/export/excel', [LocationController::class, 'exportExcel']);
+            Route::get('location/export/pdf', [LocationController::class, 'exportPdf']);
+            Route::get('location/import', [LocationController::class, 'import'])->middleware('role:location,import');
+            Route::post('location/import/submit', [LocationController::class, 'importSubmit']);
+            Route::get('location/alllist/{companyId}', [LocationController::class, 'alllist']);
+            // Route::get('location/ajaxlist', [LocationController::class, 'list']);
+            Route::get('location/ajaxlist/{locationId}/{id}', [LocationController::class, 'list']);
+
+            Route::get('location/sampledownload', [LocationController::class, 'DownloadSample']);
+
+            /**
+             * unit master
+             */
+            Route::group(['prefix' => 'unit'], function () {
+                Route::get('/list', [UnitController::class, 'index']);
+                Route::post('/list', [UnitController::class, 'index']);
+                Route::get('/add', [UnitController::class, 'add'])->middleware('role:unit,add');
+                Route::post('/add/submit', [UnitController::class, 'store']);
+                Route::get('/edit/{id}', [UnitController::class, 'edit'])->middleware('role:unit,edit');
+                Route::post('/edit/submit', [UnitController::class, 'update']);
+                Route::get('/view/{id}', [UnitController::class, 'view'])->middleware('role:unit,view');
+                Route::post('/delete', [UnitController::class, 'delete'])->middleware('role:unit,delete');
+                Route::get('/export/excel', [UnitController::class, 'exportExcel']);
+                Route::get('/export/pdf', [UnitController::class, 'exportPdf']);
+                Route::get('/sampledownload', [UnitController::class, 'DownloadSample']);
+                Route::get('/import', [UnitController::class, 'import'])->middleware('role:unit,import');
+                Route::post('/import/submit', [UnitController::class, 'importSubmit']);
+                Route::post('/status', [UnitController::class, 'statusChange']);
+                Route::post('/unique', [UnitController::class, 'Uniquecheck']);
+                Route::get('/alllist/{locationId}', [UnitController::class, 'alllist']);
+                Route::get('/ajaxlist/{locationId}/{id}', [UnitController::class, 'list']);
+
+                // Route::get('/ajaxlist', [UnitController::class, 'list']);
+            });
+
+            /**
+             *  Department master
+             */
+            Route::group(['prefix' => 'department'], function () {
+                Route::get('/list', [DepartmentController::class, 'index']);
+                Route::post('/list', [DepartmentController::class, 'index']);
+                Route::get('/add', [DepartmentController::class, 'add'])->middleware('role:department,add');
+                Route::post('/add/submit', [DepartmentController::class, 'store']);
+                Route::get('/edit/{id}', [DepartmentController::class, 'edit'])->middleware('role:department,edit');
+                Route::post('/edit/submit', [DepartmentController::class, 'update']);
+                Route::get('/view/{id}', [DepartmentController::class, 'view'])->middleware('role:department,view');
+                Route::post('/delete', [DepartmentController::class, 'delete'])->middleware('role:department,delete');
+                Route::get('/export/excel', [DepartmentController::class, 'exportExcel']);
+                Route::get('/export/pdf', [DepartmentController::class, 'exportPdf']);
+                Route::get('/sampledownload', [DepartmentController::class, 'DownloadSample']);
+                Route::get('/import', [DepartmentController::class, 'import'])->middleware('role:department,import');
+                Route::post('/import/submit', [DepartmentController::class, 'importSubmit']);
+                Route::post('/status', [DepartmentController::class, 'statusChange']);
+                Route::post('/unique', [DepartmentController::class, 'Uniquecheck']);
+                Route::get('/alllist/{unitId}', [DepartmentController::class, 'alllist']);
+                Route::get('/ajaxlist/{unit_id}/{id}', [DepartmentController::class, 'list']);
+
+                // Route::get('/ajaxlist', [DepartmentController::class, 'list']);
+            });
 
 
-        Route::group(['prefix' => 'ptw/safeworkmaster'], function () {
-            Route::get('/list', [SafeWorkController::class, 'index']);
-            Route::post('/list', [SafeWorkController::class, 'index']);
-            Route::get('/add', [SafeWorkController::class, 'add']);
-            Route::post('/add/submit', [SafeWorkController::class, 'store']);
-            Route::get('/edit/{id}', [SafeWorkController::class, 'edit']);
-            Route::post('/edit/submit', [SafeWorkController::class, 'update']);
-            Route::get('/view/{id}', [SafeWorkController::class, 'view']);
-            Route::post('/delete', [SafeWorkController::class, 'delete']);
-            Route::get('/export/excel', [SafeWorkController::class, 'exportExcel']);
-            Route::get('/export/pdf', [SafeWorkController::class, 'exportPdf']);
-            Route::get('/sampledownload', [SafeWorkController::class, 'DownloadSample']);
-            Route::get('/import', [SafeWorkController::class, 'import']);
-            Route::post('/import/submit', [SafeWorkController::class, 'importSubmit']);
-            Route::post('/status', [SafeWorkController::class, 'statusChange']);
-            Route::post('/unique', [SafeWorkController::class, 'Uniquecheck']);
-        });
+            Route::group(['prefix' => 'work'], function () {
+                Route::get('/list', [WorkController::class, 'index']);
+                Route::post('/list', [WorkController::class, 'index']);
+                Route::post('/add/submit', [WorkController::class, 'store']);
+                Route::get('/edit/{id}', [WorkController::class, 'edit']);
+                Route::post('/edit/submit', [WorkController::class, 'update']);
+                Route::get('/view/{id}', [WorkController::class, 'view']);
+                Route::get('/export/excel', [WorkController::class, 'exportExcel']);
+                Route::get('/export/pdf', [WorkController::class, 'exportPdf']);
+            });
+            Route::group(['prefix' => 'employee'], function () {
+                Route::get('/list', [EmployeeController::class, 'index']);
+                Route::post('/list', [EmployeeController::class, 'index']);
+                Route::post('/add/submit', [EmployeeController::class, 'store']);
+                Route::get('/edit/{id}', [EmployeeController::class, 'edit']);
+                Route::post('/edit/submit', [EmployeeController::class, 'update']);
+                Route::get('/view/{id}', [EmployeeController::class, 'view']);
+                Route::get('/export/excel', [EmployeeController::class, 'exportExcel']);
+                Route::get('/export/pdf', [EmployeeController::class, 'exportPdf']);
+            });
 
-         /**
-         * Topic master
-         */
-        Route::group(['prefix' => 'topic'], function () {
-            Route::get('/list', [TopicController::class, 'index']);
-            Route::post('/list', [TopicController::class, 'index']);
-            Route::get('/add', [TopicController::class, 'add']);
-            Route::post('/add/submit', [TopicController::class, 'store']);
-            Route::get('/edit/{id}', [TopicController::class, 'edit']);
-            Route::post('/edit/submit', [TopicController::class, 'update']);
-            Route::get('/view/{id}', [TopicController::class, 'view'])->middleware('role:company,view');
-            Route::post('/delete', [TopicController::class, 'delete'])->middleware('role:company,delete');
-            Route::get('/export/excel', [TopicController::class, 'exportExcel']);
-            Route::get('/export/pdf', [TopicController::class, 'exportPdf']);
-            Route::get('/sampledownload', [TopicController::class, 'DownloadSample']);
-            Route::get('/import', [TopicController::class, 'import'])->middleware('role:company,import');
-            Route::post('/import/submit', [TopicController::class, 'importSubmit']);
-            Route::post('/status', [TopicController::class, 'statusChange']);
-            Route::post('/unique', [TopicController::class, 'Uniquecheck']);
-         
-        });
-
-         /**
-         * Venue master
-         */
-        Route::group(['prefix' => 'venue'], function () {
-            Route::get('/list', [VenueController::class, 'index']);
-            Route::post('/list', [VenueController::class, 'index']);
-            Route::get('/add', [VenueController::class, 'add'])->middleware('role:company,add');
-            Route::post('/add/submit', [VenueController::class, 'store']);
-            Route::get('/edit/{id}', [VenueController::class, 'edit'])->middleware('role:company,edit');
-            Route::post('/edit/submit', [VenueController::class, 'update']);
-            Route::get('/view/{id}', [VenueController::class, 'view'])->middleware('role:company,view');
-            Route::post('/delete', [VenueController::class, 'delete'])->middleware('role:company,delete');
-            Route::get('/export/excel', [VenueController::class, 'exportExcel']);
-            Route::get('/export/pdf', [VenueController::class, 'exportPdf']);
-            Route::get('/sampledownload', [VenueController::class, 'DownloadSample']);
-            Route::get('/import', [VenueController::class, 'import'])->middleware('role:company,import');
-            Route::post('/import/submit', [VenueController::class, 'importSubmit']);
-            Route::post('/status', [VenueController::class, 'statusChange']);
-            Route::post('/unique', [VenueController::class, 'Uniquecheck']);
-         
-        });
-
-         /**
-         * Training Matrix 
-         */
-        Route::group(['prefix' => 'training_matrix'], function () {
-            Route::get('/list', [TrainingMatrixController::class, 'index']);
-            Route::post('/list', [TrainingMatrixController::class, 'index']);
-            Route::get('/add', [TrainingMatrixController::class, 'add'])->middleware('role:company,add');
-            Route::post('/add/submit', [TrainingMatrixController::class, 'store']);
-            Route::get('/edit/{id}', [TrainingMatrixController::class, 'edit'])->middleware('role:company,edit');
-            Route::post('/edit/submit', [TrainingMatrixController::class, 'update']);
-            Route::get('/view/{id}', [TrainingMatrixController::class, 'view'])->middleware('role:company,view');
-            Route::post('/delete', [TrainingMatrixController::class, 'delete'])->middleware('role:company,delete');
-            Route::get('/export/excel', [TrainingMatrixController::class, 'exportExcel']);
-            Route::get('/export/pdf', [TrainingMatrixController::class, 'exportPdf']);
-            Route::get('/sampledownload', [TrainingMatrixController::class, 'DownloadSample']);
-            Route::get('/import', [TrainingMatrixController::class, 'import'])->middleware('role:company,import');
-            Route::post('/import/submit', [TrainingMatrixController::class, 'importSubmit']);
-            Route::post('/status', [TrainingMatrixController::class, 'statusChange']);
-            Route::post('/unique', [TrainingMatrixController::class, 'Uniquecheck']);
-         
-        });
-
-         /**
-         * Training  Schedule 
-         */
-        Route::group(['prefix' => 'training_schedule'], function () {
-            Route::get('/list', [TrainingScheduleController::class, 'index']);
-            Route::post('/list', [TrainingScheduleController::class, 'index']);
-            Route::get('/add', [TrainingScheduleController::class, 'add']);
-            Route::post('/add/submit', [TrainingScheduleController::class, 'store']);
-            Route::get('/edit/{id}', [TrainingScheduleController::class, 'edit']);
-            Route::post('/edit/submit', [TrainingScheduleController::class, 'update']);
-            Route::get('/view/{id}', [TrainingScheduleController::class, 'view']);
-            Route::post('/delete', [TrainingScheduleController::class, 'delete'])->middleware('role:company,delete');
-            Route::get('/export/excel', [TrainingScheduleController::class, 'exportExcel']);
-            Route::get('/export/pdf', [TrainingScheduleController::class, 'exportPdf']);
-            Route::get('/sampledownload', [TrainingScheduleController::class, 'DownloadSample']);
-            Route::get('/import', [TrainingScheduleController::class, 'import'])->middleware('role:company,import');
-            Route::post('/import/submit', [TrainingScheduleController::class, 'importSubmit']);
-            Route::post('/status', [TrainingScheduleController::class, 'statusChange']);
-            Route::post('/unique', [TrainingScheduleController::class, 'Uniquecheck']);
-         
-        });
+            Route::group(['prefix' => 'ptw/protectiveequipmentmaster'], function () {
+                Route::get('/list', [ProtectiveEquipController::class, 'index']);
+                Route::post('/list', [ProtectiveEquipController::class, 'index']);
+                Route::get('/add', [ProtectiveEquipController::class, 'add']);
+                Route::post('/add/submit', [ProtectiveEquipController::class, 'store']);
+                Route::get('/edit/{id}', [ProtectiveEquipController::class, 'edit']);
+                Route::post('/edit/submit', [ProtectiveEquipController::class, 'update']);
+                Route::get('/view/{id}', [ProtectiveEquipController::class, 'view']);
+                Route::post('/delete', [ProtectiveEquipController::class, 'delete']);
+                Route::get('/export/excel', [ProtectiveEquipController::class, 'exportExcel']);
+                Route::get('/export/pdf', [ProtectiveEquipController::class, 'exportPdf']);
+                Route::get('/sampledownload', [ProtectiveEquipController::class, 'DownloadSample']);
+                Route::get('/import', [ProtectiveEquipController::class, 'import']);
+                Route::post('/import/submit', [ProtectiveEquipController::class, 'importSubmit']);
+                Route::post('/status', [ProtectiveEquipController::class, 'statusChange']);
+                Route::post('/unique', [ProtectiveEquipController::class, 'Uniquecheck']);
+            });
 
 
 
+            Route::group(['prefix' => 'ptw/equipinvolvemaster'], function () {
+                Route::get('/list', [EquipInvalveController::class, 'index']);
+                Route::post('/list', [EquipInvalveController::class, 'index']);
+                Route::get('/add', [EquipInvalveController::class, 'add']);
+                Route::post('/add/submit', [EquipInvalveController::class, 'store']);
+                Route::get('/edit/{id}', [EquipInvalveController::class, 'edit']);
+                Route::post('/edit/submit', [EquipInvalveController::class, 'update']);
+                Route::get('/view/{id}', [EquipInvalveController::class, 'view']);
+                Route::post('/delete', [EquipInvalveController::class, 'delete']);
+                Route::get('/export/excel', [EquipInvalveController::class, 'exportExcel']);
+                Route::get('/export/pdf', [EquipInvalveController::class, 'exportPdf']);
+                Route::get('/sampledownload', [EquipInvalveController::class, 'DownloadSample']);
+                Route::get('/import', [EquipInvalveController::class, 'import']);
+                Route::post('/import/submit', [EquipInvalveController::class, 'importSubmit']);
+                Route::post('/status', [EquipInvalveController::class, 'statusChange']);
+                Route::post('/unique', [EquipInvalveController::class, 'Uniquecheck']);
+            });
 
 
-        Route::group(['prefix' => 'ptw/precautionmaster'], function () {
-            Route::get('/list', [PrecautionController::class, 'index']);
-            Route::post('/list', [PrecautionController::class, 'index']);
-            Route::get('/add', [PrecautionController::class, 'add']);
-            Route::post('/add/submit', [PrecautionController::class, 'store']);
-            Route::get('/edit/{id}', [PrecautionController::class, 'edit']);
-            Route::post('/edit/submit', [PrecautionController::class, 'update']);
-            Route::get('/view/{id}', [PrecautionController::class, 'view']);
-            Route::post('/delete', [PrecautionController::class, 'delete']);
-            Route::get('/export/excel', [PrecautionController::class, 'exportExcel']);
-            Route::get('/export/pdf', [PrecautionController::class, 'exportPdf']);
-            Route::get('/sample_download', [PrecautionController::class, 'DownloadSample']);
-            Route::get('/import', [PrecautionController::class, 'import']);
-            Route::post('/import/submit', [PrecautionController::class, 'importSubmit']);
-            Route::post('/status', [PrecautionController::class, 'statusChange']);
-            Route::post('/unique', [PrecautionController::class, 'Uniquecheck']);
-        });
+            Route::group(['prefix' => 'ptw/safeworkmaster'], function () {
+                Route::get('/list', [SafeWorkController::class, 'index']);
+                Route::post('/list', [SafeWorkController::class, 'index']);
+                Route::get('/add', [SafeWorkController::class, 'add']);
+                Route::post('/add/submit', [SafeWorkController::class, 'store']);
+                Route::get('/edit/{id}', [SafeWorkController::class, 'edit']);
+                Route::post('/edit/submit', [SafeWorkController::class, 'update']);
+                Route::get('/view/{id}', [SafeWorkController::class, 'view']);
+                Route::post('/delete', [SafeWorkController::class, 'delete']);
+                Route::get('/export/excel', [SafeWorkController::class, 'exportExcel']);
+                Route::get('/export/pdf', [SafeWorkController::class, 'exportPdf']);
+                Route::get('/sampledownload', [SafeWorkController::class, 'DownloadSample']);
+                Route::get('/import', [SafeWorkController::class, 'import']);
+                Route::post('/import/submit', [SafeWorkController::class, 'importSubmit']);
+                Route::post('/status', [SafeWorkController::class, 'statusChange']);
+                Route::post('/unique', [SafeWorkController::class, 'Uniquecheck']);
+            });
 
-        
+            /**
+             * Topic master
+             */
+            Route::group(['prefix' => 'topic'], function () {
+                Route::get('/list', [TopicController::class, 'index']);
+                Route::post('/list', [TopicController::class, 'index']);
+                Route::get('/add', [TopicController::class, 'add']);
+                Route::post('/add/submit', [TopicController::class, 'store']);
+                Route::get('/edit/{id}', [TopicController::class, 'edit']);
+                Route::post('/edit/submit', [TopicController::class, 'update']);
+                Route::get('/view/{id}', [TopicController::class, 'view'])->middleware('role:company,view');
+                Route::post('/delete', [TopicController::class, 'delete'])->middleware('role:company,delete');
+                Route::get('/export/excel', [TopicController::class, 'exportExcel']);
+                Route::get('/export/pdf', [TopicController::class, 'exportPdf']);
+                Route::get('/sampledownload', [TopicController::class, 'DownloadSample']);
+                Route::get('/import', [TopicController::class, 'import'])->middleware('role:company,import');
+                Route::post('/import/submit', [TopicController::class, 'importSubmit']);
+                Route::post('/status', [TopicController::class, 'statusChange']);
+                Route::post('/unique', [TopicController::class, 'Uniquecheck']);
+            });
 
-        Route::group(['prefix' => 'ptw/checklistmaster'], function () {
-            Route::get('/list', [ChecklistController::class, 'index']);
-            Route::post('/list', [ChecklistController::class, 'index']);
-            Route::get('/add', [ChecklistController::class, 'add']);
-            Route::post('/add/submit', [ChecklistController::class, 'store']);
-            Route::get('/edit/{id}', [ChecklistController::class, 'edit']);
-            Route::post('/edit/submit', [ChecklistController::class, 'update']);
-            Route::get('/view/{id}', [ChecklistController::class, 'view']);
-            Route::post('/delete', [ChecklistController::class, 'delete']);
-            Route::get('/export/excel', [ChecklistController::class, 'exportExcel']);
-            Route::get('/export/pdf', [ChecklistController::class, 'exportPdf']);
-            Route::get('/sample_download', [ChecklistController::class, 'DownloadSample']);
-            Route::get('/import', [ChecklistController::class, 'import']);
-            Route::post('/import/Submit', [ChecklistController::class, 'importSubmit']);
-            Route::post('/status', [ChecklistController::class, 'statusChange']);
-            Route::post('/unique', [ChecklistController::class, 'Uniquecheck']);
-        });
+            /**
+             * Venue master
+             */
+            Route::group(['prefix' => 'venue'], function () {
+                Route::get('/list', [VenueController::class, 'index']);
+                Route::post('/list', [VenueController::class, 'index']);
+                Route::get('/add', [VenueController::class, 'add'])->middleware('role:company,add');
+                Route::post('/add/submit', [VenueController::class, 'store']);
+                Route::get('/edit/{id}', [VenueController::class, 'edit'])->middleware('role:company,edit');
+                Route::post('/edit/submit', [VenueController::class, 'update']);
+                Route::get('/view/{id}', [VenueController::class, 'view'])->middleware('role:company,view');
+                Route::post('/delete', [VenueController::class, 'delete'])->middleware('role:company,delete');
+                Route::get('/export/excel', [VenueController::class, 'exportExcel']);
+                Route::get('/export/pdf', [VenueController::class, 'exportPdf']);
+                Route::get('/sampledownload', [VenueController::class, 'DownloadSample']);
+                Route::get('/import', [VenueController::class, 'import'])->middleware('role:company,import');
+                Route::post('/import/submit', [VenueController::class, 'importSubmit']);
+                Route::post('/status', [VenueController::class, 'statusChange']);
+                Route::post('/unique', [VenueController::class, 'Uniquecheck']);
+            });
+
+            /**
+             * Training Matrix
+             */
+            Route::group(['prefix' => 'training_matrix'], function () {
+                Route::get('/list', [TrainingMatrixController::class, 'index']);
+                Route::post('/list', [TrainingMatrixController::class, 'index']);
+                Route::get('/add', [TrainingMatrixController::class, 'add'])->middleware('role:company,add');
+                Route::post('/add/submit', [TrainingMatrixController::class, 'store']);
+                Route::get('/edit/{id}', [TrainingMatrixController::class, 'edit'])->middleware('role:company,edit');
+                Route::post('/edit/submit', [TrainingMatrixController::class, 'update']);
+                Route::get('/view/{id}', [TrainingMatrixController::class, 'view'])->middleware('role:company,view');
+                Route::post('/delete', [TrainingMatrixController::class, 'delete'])->middleware('role:company,delete');
+                Route::get('/export/excel', [TrainingMatrixController::class, 'exportExcel']);
+                Route::get('/export/pdf', [TrainingMatrixController::class, 'exportPdf']);
+                Route::get('/sampledownload', [TrainingMatrixController::class, 'DownloadSample']);
+                Route::get('/import', [TrainingMatrixController::class, 'import'])->middleware('role:company,import');
+                Route::post('/import/submit', [TrainingMatrixController::class, 'importSubmit']);
+                Route::post('/status', [TrainingMatrixController::class, 'statusChange']);
+                Route::post('/unique', [TrainingMatrixController::class, 'Uniquecheck']);
+            });
+
+            /**
+             * Training  Schedule
+             */
+            Route::group(['prefix' => 'training_schedule'], function () {
+                Route::get('/list', [TrainingScheduleController::class, 'index']);
+                Route::post('/list', [TrainingScheduleController::class, 'index']);
+                Route::get('/add', [TrainingScheduleController::class, 'add']);
+                Route::post('/add/submit', [TrainingScheduleController::class, 'store']);
+                Route::get('/edit/{id}', [TrainingScheduleController::class, 'edit']);
+                Route::post('/edit/submit', [TrainingScheduleController::class, 'update']);
+                Route::get('/view/{id}', [TrainingScheduleController::class, 'view']);
+                Route::post('/delete', [TrainingScheduleController::class, 'delete'])->middleware('role:company,delete');
+                Route::get('/export/excel', [TrainingScheduleController::class, 'exportExcel']);
+                Route::get('/export/pdf', [TrainingScheduleController::class, 'exportPdf']);
+                Route::get('/sampledownload', [TrainingScheduleController::class, 'DownloadSample']);
+                Route::get('/import', [TrainingScheduleController::class, 'import'])->middleware('role:company,import');
+                Route::post('/import/submit', [TrainingScheduleController::class, 'importSubmit']);
+                Route::post('/status', [TrainingScheduleController::class, 'statusChange']);
+                Route::post('/unique', [TrainingScheduleController::class, 'Uniquecheck']);
+            });
 
 
-        Route::group(['prefix' => 'ptw/typeofworkmaster'], function () {
-            Route::get('/list', [TypeofWorkController::class, 'index']);
-            Route::post('/list', [TypeofWorkController::class, 'index']);
-            Route::get('/add', [TypeofWorkController::class, 'add']);
-            Route::post('/add/submit', [TypeofWorkController::class, 'store']);
-            Route::get('/edit/{id}', [TypeofWorkController::class, 'edit']);
-            Route::post('/edit/submit', [TypeofWorkController::class, 'update']);
-            Route::get('/view/{id}', [TypeofWorkController::class, 'view']);
-            Route::post('/delete', [TypeofWorkController::class, 'delete']);
-            Route::get('/export/excel', [TypeofWorkController::class, 'exportExcel']);
-            Route::get('/export/pdf', [TypeofWorkController::class, 'exportPdf']);
-            Route::get('/sample_download', [TypeofWorkController::class, 'DownloadSample']);
-            Route::get('/import', [TypeofWorkController::class, 'import']);
-            Route::post('/import/Submit', [TypeofWorkController::class, 'importSubmit']);
-            Route::post('/status', [TypeofWorkController::class, 'statusChange']);
-            Route::post('/unique', [TypeofWorkController::class, 'Uniquecheck']);
+
+
+
+            Route::group(['prefix' => 'ptw/precautionmaster'], function () {
+                Route::get('/list', [PrecautionController::class, 'index']);
+                Route::post('/list', [PrecautionController::class, 'index']);
+                Route::get('/add', [PrecautionController::class, 'add']);
+                Route::post('/add/submit', [PrecautionController::class, 'store']);
+                Route::get('/edit/{id}', [PrecautionController::class, 'edit']);
+                Route::post('/edit/submit', [PrecautionController::class, 'update']);
+                Route::get('/view/{id}', [PrecautionController::class, 'view']);
+                Route::post('/delete', [PrecautionController::class, 'delete']);
+                Route::get('/export/excel', [PrecautionController::class, 'exportExcel']);
+                Route::get('/export/pdf', [PrecautionController::class, 'exportPdf']);
+                Route::get('/sample_download', [PrecautionController::class, 'DownloadSample']);
+                Route::get('/import', [PrecautionController::class, 'import']);
+                Route::post('/import/submit', [PrecautionController::class, 'importSubmit']);
+                Route::post('/status', [PrecautionController::class, 'statusChange']);
+                Route::post('/unique', [PrecautionController::class, 'Uniquecheck']);
+            });
+
+
+
+            Route::group(['prefix' => 'ptw/checklistmaster'], function () {
+                Route::get('/list', [ChecklistController::class, 'index']);
+                Route::post('/list', [ChecklistController::class, 'index']);
+                Route::get('/add', [ChecklistController::class, 'add']);
+                Route::post('/add/submit', [ChecklistController::class, 'store']);
+                Route::get('/edit/{id}', [ChecklistController::class, 'edit']);
+                Route::post('/edit/submit', [ChecklistController::class, 'update']);
+                Route::get('/view/{id}', [ChecklistController::class, 'view']);
+                Route::post('/delete', [ChecklistController::class, 'delete']);
+                Route::get('/export/excel', [ChecklistController::class, 'exportExcel']);
+                Route::get('/export/pdf', [ChecklistController::class, 'exportPdf']);
+                Route::get('/sample_download', [ChecklistController::class, 'DownloadSample']);
+                Route::get('/import', [ChecklistController::class, 'import']);
+                Route::post('/import/Submit', [ChecklistController::class, 'importSubmit']);
+                Route::post('/status', [ChecklistController::class, 'statusChange']);
+                Route::post('/unique', [ChecklistController::class, 'Uniquecheck']);
+            });
+
+
+            Route::group(['prefix' => 'ptw/typeofworkmaster'], function () {
+                Route::get('/list', [TypeofWorkController::class, 'index']);
+                Route::post('/list', [TypeofWorkController::class, 'index']);
+                Route::get('/add', [TypeofWorkController::class, 'add']);
+                Route::post('/add/submit', [TypeofWorkController::class, 'store']);
+                Route::get('/edit/{id}', [TypeofWorkController::class, 'edit']);
+                Route::post('/edit/submit', [TypeofWorkController::class, 'update']);
+                Route::get('/view/{id}', [TypeofWorkController::class, 'view']);
+                Route::post('/delete', [TypeofWorkController::class, 'delete']);
+                Route::get('/export/excel', [TypeofWorkController::class, 'exportExcel']);
+                Route::get('/export/pdf', [TypeofWorkController::class, 'exportPdf']);
+                Route::get('/sample_download', [TypeofWorkController::class, 'DownloadSample']);
+                Route::get('/import', [TypeofWorkController::class, 'import']);
+                Route::post('/import/Submit', [TypeofWorkController::class, 'importSubmit']);
+                Route::post('/status', [TypeofWorkController::class, 'statusChange']);
+                Route::post('/unique', [TypeofWorkController::class, 'Uniquecheck']);
+            });
         });
     });
 });

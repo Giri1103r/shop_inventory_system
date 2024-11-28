@@ -473,4 +473,24 @@ class LocationController extends Controller
             return redirect(admin_url('location/list'));
         }
     }
+
+
+    public function Uniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $location_name = $request->location_name;
+            $company_id = decryptId($request->company_id);
+            $id = $request->id;
+            if ($id == '') {
+                $record = $this->location->uniqueCheck($location_name,$company_id);
+            } else {
+                $id = decryptId($id);
+                $record = $this->location->ExistuniqueCheck($location_name,$company_id, $id);
+            }
+            if ($record->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
+        }
+    }
 }

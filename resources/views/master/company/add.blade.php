@@ -64,8 +64,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company Name</label>
-                                                    <input type="text" name="company_name" class="form-control"
-                                                        placeholder="Company Name">
+                                                    <input type="text" name="company_name" id="company_name"
+                                                        class="form-control" placeholder="Company Name">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
@@ -112,6 +112,15 @@
                     company_name: {
                         required: true,
                         minlength: 3,
+                        remote: {
+                            url: '{{ admin_url('company/unique') }}',
+                            type: 'post',
+                            data: {
+                                location_type_name: function() {
+                                    return $('#company_name').val();
+                                }
+                            }
+                        }
                     },
                     short_name: {
                         required: true,
@@ -125,6 +134,7 @@
                     company_name: {
                         required: "{{ __('Company Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
+                        remote: "{{ __('Company Name should be unique') }}"
                     },
                     short_name: {
                         required: "{{ __('Short Name is Required') }}",

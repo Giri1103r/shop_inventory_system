@@ -92,19 +92,19 @@ class Unit extends Model
         return $datas;
     }
 
-    public function UniqueCheck($data)
+  
+    public function UniqueCheck($unit_name,$location_id,$company_id)
     {
 
-        return $this->where($data['param'],  $data['value'])->get();
+        return $this->where('unit_name',  $unit_name)->where('location_id',$location_id )->where('company_id',$company_id )->get();
     }
 
-    public function ExistuniqueCheck($data)
+    public function ExistuniqueCheck($unit_name,$location_id,$company_id,$id)
     {
-        return $this->where($data['param'],  $data['value'])
-            ->where('id', '!=', decryptId($data['id']))
-            ->get();
+        return $this->where('unit_name',  $unit_name)->where('location_id',$location_id )->where('company_id',$company_id )
+        ->where('id', '!=', $id)
+        ->get();
     }
-
     public function store()
     {
         $request = request();

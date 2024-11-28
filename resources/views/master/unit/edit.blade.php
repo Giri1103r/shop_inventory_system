@@ -71,7 +71,7 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit Name</label>
-                                                    <input type="text" name="unit_name" class="form-control"
+                                                    <input type="text" name="unit_name" id="unit_name" class="form-control"
                                                         placeholder="Unit Name" value="{{ $unit->unit_name }}">
                                                 </div>
                                             </div>
@@ -153,6 +153,26 @@
                     unit_name: {
                         required: true,
                         minlength: 3,
+
+                        remote: {
+                            url: '{{ admin_url('unit/unique') }}',
+                            type: 'post',
+                            data: {
+
+                                company_id: function() {
+                                    return $('#company_id').val();
+                                },
+                                location_id: function() {
+                                    return $('#location_id').val();
+                                },
+                                unit_name: function() {
+                                    return $('#unit_name').val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
+                                }
+                            }
+                        }
                     },
 
                 },
@@ -166,6 +186,7 @@
                     unit_name: {
                         required: "{{ __('Unit Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
+                          remote: "{{ __('Unit Name should be unique') }}"
                     },
 
                 },
