@@ -29,8 +29,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 
 use App\Models\Master\Company;
 
-class ImportCompanyJob implements ShouldQueue
-// class ImportCompanyJob
+// class ImportCompanyJob implements ShouldQueue
+class ImportCompanyJob
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

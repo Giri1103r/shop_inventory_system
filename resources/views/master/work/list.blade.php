@@ -22,11 +22,13 @@
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_id" class="form-label ">Worker ID</label>
-                                            <input type="text" name="emp_id" id="emp_id" class="form-control">
+                                            <input type="text" name="emp_id" id="emp_id" class="form-control"
+                                                placeholder="Worker ID">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">Worker Name</label>
-                                            <input type="text" name="emp_name" id="emp_name" class="form-control">
+                                            <input type="text" name="emp_name" id="emp_name" class="form-control"
+                                                placeholder="Worker Name">
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
@@ -61,7 +63,7 @@
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="unit_id" class="form-label ">Department Name </label>
-                                            <select name="dept_id" id="dept_id" class=" form-control single-select"
+                                            <select name="dept_id" id="department_id" class=" form-control single-select"
                                                 style="width: 100%">
                                                 <option value="">Select Department Name</option>
 
@@ -116,74 +118,79 @@
                 firstTh.removeClass('sorting_asc');
             });
             $(document).on('change', '#company_id', function() {
-                var company_id = $(this).val();
-                if (company_id) {
+                var companyId = $(this).val();
+                if (companyId) {
                     $.ajax({
-                        url: "{{ admin_url('location/alllist/') }}" + company_id,
+                        url: "{{ admin_url('location/ajax-list') }}/" + companyId + "/0",
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
-                            $('#location_id').empty().append(
-                                '<option value="">Select Location Name</option>');
+                            $('#location_id').empty().append('<option value="">Select Location</option>');
                             $.each(data, function(key, value) {
-                                $('#location_id').append('<option value="' + value.id +
-                                    '">' + value.name + '</option>');
+                                $('#location_id').append('<option value="' + value.id + '">' + value
+                                    .name + '</option>');
                             });
-
                             $('#location_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching locations. Please try again.');
                         }
                     });
                 } else {
-                    $('#location_id').empty().append('<option value="">Select Location Name</option>');
+                    $('#location_id').empty().append('<option value="">Select Location</option>');
                     $('#location_id').trigger('change.');
                 }
             });
+
             $(document).on('change', '#location_id', function() {
-                var location_id = $(this).val();
-                if (location_id) {
+                var locationId = $(this).val();
+                if (locationId) {
                     $.ajax({
-                        url: "{{ admin_url('unit/alllist/') }}" + location_id,
+                        url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
-                            $('#unit_id').empty().append(
-                                '<option value="">Select Unit Name</option>');
+                            $('#unit_id').empty().append('<option value="">Select Unit</option>');
                             $.each(data, function(key, value) {
-                                $('#unit_id').append('<option value="' + value.id +
-                                    '">' + value.name + '</option>');
+                                $('#unit_id').append('<option value="' + value.id + '">' + value
+                                    .name + '</option>');
                             });
-
                             $('#unit_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching unit. Please try again.');
                         }
                     });
                 } else {
-                    $('#unit_id').empty().append('<option value="">Select Unit Name</option>');
+                    $('#unit_id').empty().append('<option value="">Select Unit</option>');
                     $('#unit_id').trigger('change.');
                 }
             });
             $(document).on('change', '#unit_id', function() {
                 var unit_id = $(this).val();
-                if (location_id) {
+                if (unit_id) {
                     $.ajax({
-                        url: "{{ admin_url('department/alllist/') }}" + unit_id,
+                        url: "{{ admin_url('department/ajax-list') }}/" + unit_id + "/0",
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
-                            $('#dept_id').empty().append(
-                                '<option value="">Select Department Name</option>');
+                            $('#department_id').empty().append('<option value="">Select Department</option>');
                             $.each(data, function(key, value) {
-                                $('#dept_id').append('<option value="' + value.id +
-                                    '">' + value.name + '</option>');
+                                $('#department_id').append('<option value="' + value.id + '">' + value
+                                    .name + '</option>');
                             });
-
-                            $('#dept_id').trigger('change.');
+                            $('#department_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching department. Please try again.');
                         }
                     });
                 } else {
-                    $('#dept_id').empty().append('<option value="">Select Department Name</option>');
-                    $('#dept_id').trigger('change.');
+                    $('#department_id').empty().append('<option value="">Select Department</option>');
+                    $('#department_id').trigger('change.');
                 }
             });
+        
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -222,7 +229,7 @@
                             d.company_id = $('#company_id').val();
                             d.location_id = $('#location_id').val();
                             d.unit_id = $('#unit_id').val();
-                            d.dept_id = $('#dept_id').val();
+                            d.department_id = $('#department_id').val();
 
                         }
                     },
@@ -290,7 +297,7 @@
                                         company_id = $('#company_id').val();
                                         location_id = $('#location_id').val();
                                         unit_id = $('#unit_id').val();
-                                        dept_id = $('#dept_id').val();
+                                        department_id = $('#department_id').val();
 
 
                                         $(".dt-button").removeClass('processing');
@@ -303,7 +310,7 @@
                                             '&company_id=' + company_id +
                                             '&location_id=' + location_id +
                                             '&unit_id=' + unit_id +
-                                            '&dept_id=' + dept_id
+                                            '&department_id=' + department_id
                                     }
                                 },
                                 {
@@ -316,7 +323,7 @@
                                         company_id = $('#company_id').val();
                                         location_id = $('#location_id').val();
                                         unit_id = $('#unit_id').val();
-                                        dept_id = $('#dept_id').val();
+                                        department_id = $('#department_id').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
@@ -327,7 +334,7 @@
                                             '&company_id=' + company_id +
                                             '&location_id=' + location_id +
                                             '&unit_id=' + unit_id +
-                                            '&dept_id=' + dept_id
+                                            '&department_id=' + department_id
                                     }
                                 },
                             ]

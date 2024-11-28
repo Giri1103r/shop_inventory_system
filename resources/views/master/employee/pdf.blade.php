@@ -31,14 +31,12 @@
                             {{ $value->emp_name }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->mobile_no }}
+                            {{ $value->email }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->unit_name }}
+                            {{ $value->employee_status }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->department_name }}
-                        </td>
+                       
      
                     </tr>
                     @php

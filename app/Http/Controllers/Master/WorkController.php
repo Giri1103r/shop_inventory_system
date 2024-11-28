@@ -289,7 +289,7 @@ class WorkController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Department.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);
