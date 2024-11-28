@@ -207,6 +207,28 @@
                     department_name: {
                         required: true,
                         minlength: 3,
+                        remote: {
+                            url: '{{ admin_url('department/unique') }}',
+                            type: 'post',
+                            data: {
+
+                                company_id: function() {
+                                    return $('#company_id').val();
+                                },
+                                location_id: function() {
+                                    return $('#location_id').val();
+                                },
+                                unit_id: function() {
+                                    return $('#unit_id').val();
+                                },
+                                department_name: function() {
+                                    return $('#department_name').val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
+                                }
+                            }
+                        }
                     },
 
                 },
@@ -224,6 +246,7 @@
                     department_name: {
                         required: "{{ __('Department  Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
+                         remote: "{{ __('Department Name should be unique') }}"
                     },
 
                 },
