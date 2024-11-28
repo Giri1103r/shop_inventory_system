@@ -80,10 +80,9 @@
                                             </select>
                                         </div> --}}
 
-                                        <div class="col-md-3">
+                                        <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
-
                                         </div>
                                     </div>
                                 </div>

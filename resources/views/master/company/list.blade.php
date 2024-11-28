@@ -31,30 +31,29 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">Company ID</label>
+                                            <label for="company_id" class="form-label">Company ID</label>
                                             <input type="text" name="company_id" id="company_id" class="form-control" placeholder="Company ID">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">Company Name</label>
-                                            <input type="text" name="company_name" id="company_name"
-                                                class="form-control" placeholder="Company Name">
+                                            <label for="company_name" class="form-label">Company Name</label>
+                                            <input type="text" name="company_name" id="company_name" class="form-control" placeholder="Company Name">
                                         </div>
-
+                                    
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
-                                                class="form-control single-select">
+                                            <label for="status" class="form-label">{{ __('common.status') }}</label>
+                                            <select name="status" id="status" style="width: 100%" class="form-control single-select">
                                                 <option value="">Select Status</option>
                                                 <option value="{{ encryptId(1) }}">Active</option>
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3">
-                                            <x-button-search></x-button-search>
-                                            <x-button-reset></x-button-reset>
-
+                                        
+                                        <div class="col-md-3 mb-3 d-flex align-items-end gap-2">
+                                            <x-button-search class="me-2"></x-button-search>
+                                            <x-button-reset class="ms-1"></x-button-reset>
                                         </div>
                                     </div>
+                                    
                                 </div>
                             </div>
                         </form>
