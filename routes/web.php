@@ -52,6 +52,14 @@ Route::get('/seed/{className}', function ($className) {
 Route::get('queuehigh', [CronController::class, 'queueHigh']);
 Route::get('queuedefault', [CronController::class, 'queueDefault']);
 Route::get('queueemail', [CronController::class, 'queueEmail']);
+
+Route::get('queueCompanyImport', [CronController::class,'queueCompanyImport']);
+Route::get('queuelocationimport', [CronController::class,'queuelocationimport']);
+Route::get('queueunitimport', [CronController::class,'queueunitimport']);
+Route::get('queueDepartmentuplodimport', [CronController::class,'queueDepartmentuplodimport']);
+
+
+
 Route::get('workmastertemp', [CronController::class, 'workMasterTemp']);
 Route::get('worksave', [CronController::class, 'workSave']);
 
@@ -281,7 +289,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/view/{id}', [WorkController::class, 'view']);
                 Route::get('/export/excel', [WorkController::class, 'exportExcel']);
                 Route::get('/export/pdf', [WorkController::class, 'exportPdf']);
-                Route::post('/status', [WorkController::class, 'statusChange']);
             });
             Route::group(['prefix' => 'employee'], function () {
                 Route::get('/list', [EmployeeController::class, 'index']);
@@ -292,7 +299,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/view/{id}', [EmployeeController::class, 'view']);
                 Route::get('/export/excel', [EmployeeController::class, 'exportExcel']);
                 Route::get('/export/pdf', [EmployeeController::class, 'exportPdf']);
-                Route::post('/status', [EmployeeController::class, 'statusChange']);
             });
 
             Route::group(['prefix' => 'ptw/protectiveequipmentmaster'], function () {
