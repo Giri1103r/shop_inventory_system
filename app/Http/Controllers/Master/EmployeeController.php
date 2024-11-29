@@ -151,6 +151,7 @@ class EmployeeController extends Controller
             $id = decryptId($request->id);
             $rules = [
                 'emp_name' => 'required',
+                'email' => 'required|email',
             ];
             $messages = [
 
@@ -205,6 +206,8 @@ class EmployeeController extends Controller
                 'Employee Name',
                 'Email',
                 'Employee Status',
+                __("common.status"),
+                __("common.created_date"),
             ];
 
             $i = 1;
@@ -216,6 +219,8 @@ class EmployeeController extends Controller
                 $export[] =  $data->emp_name;
                 $export[] =  $data->email;
                 $export[] =  $data->employee_status;
+                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
+                $export[] =  Displaydateformat($data->created_at);
 
                 $exportData[] = $export;
 
@@ -245,6 +250,8 @@ class EmployeeController extends Controller
                 'Employee Name',
                 'Email',
                 'Employee Status',
+                __("common.status"),
+                __("common.created_date"),
             ];
 
             $data = array(

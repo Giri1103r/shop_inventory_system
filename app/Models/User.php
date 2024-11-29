@@ -21,6 +21,9 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+
+     protected $table = 'users';
+
     protected $fillable = [
         'name',
         'first_name',
@@ -78,7 +81,7 @@ class User extends Authenticatable
     {
         $request = request();
         $search = '';
-        $query = $this->select('users.*','template_user_role.role_name',);
+        $query = $this->select('users.*', 'template_user_role.role_name',);
         $query = $query->leftJoin('template_user_role', 'users.role', '=', 'template_user_role.id');
         // dd($query);
         $org_total =  $query;
@@ -124,17 +127,14 @@ class User extends Authenticatable
     }
     public function store($employees)
     {
-        $request = request();
-
-        $data = [];
+        $createdUsers = []; // To store created user objects
 
         foreach ($employees as $item) {
-
-            $data[] = [
+            $userData = [
                 'name' => $item['emp_name'],
                 'first_name' => $item['emp_name'],
                 'last_name' => '',
-                'email' => $request->email,
+                'email' => $item['email'],
                 'role' => $item['user_role'],
                 'user_type' => 1,
                 'employee_id' => $item['emp_id'],
@@ -145,10 +145,18 @@ class User extends Authenticatable
                 'mobile' => $item['mobile_no'],
                 'created_by' => Auth::id(),
             ];
+
+            try {
+                $createdUser = $this->create($userData); 
+                $createdUsers[] = $createdUser; 
+            } catch (\Exception $e) {
+                dd($e);
+            }
         }
 
-        return $this->insert($data);
+        return $createdUsers; 
     }
+
 
 
 
@@ -190,14 +198,14 @@ class User extends Authenticatable
     {
         $request = request();
         $search = '';
-        $query = $this->select('users.*','template_user_role.role_name');
+        $query = $this->select('users.*', 'template_user_role.role_name');
         $query = $query->leftJoin('template_user_role', 'users.role', '=', 'template_user_role.id');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
             $query =  $query->Where(function ($query) use ($search) {
                 $query
-                ->orWhere('name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('name', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('employee_id') && $request->employee_id) {
