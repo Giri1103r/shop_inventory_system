@@ -131,7 +131,7 @@ class UserRoleController extends Controller
 
                 $this->user_role->store();
 
-                Session::flash('success', 'User Role added successfully!');
+                Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
 
 
@@ -200,7 +200,7 @@ class UserRoleController extends Controller
             }
             $this->user_role->updates($id);
 
-            Session::flash('success', 'User Role updated successfully!');
+            Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('administration/role/list'));
         } catch (Exception $ex) {
 
