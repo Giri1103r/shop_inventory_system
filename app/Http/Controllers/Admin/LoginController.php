@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\RateLimiter;
 
 use Illuminate\Support\Facades\Cookie;
 
@@ -60,21 +61,19 @@ class LoginController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
+        $email         = $request->email;
+        $ipAddress     = $request->ip();
+
         $credentials = $request->only('email', 'password');
         $remember = $request->has('remember') ? true : false;
+
         if (Auth::attempt($credentials, $remember)) {
-
-
             $request->session()->regenerate();
 
+            RateLimiter::clear('login:password:' . $email);
+            RateLimiter::clear('login:email:' . $ipAddress);
+
             $user = Auth::user();
-
-            if ($user->status == 0) {
-                Auth::logout();
-                Session::flash('error', 'Your account is inactive. Please contact the admin.');
-                return redirect()->back()->withInput();
-            }
-
 
             if ($user->language == '' || $user->language == null) {
                 session()->put('locale', env('APP_LOCALE'));
