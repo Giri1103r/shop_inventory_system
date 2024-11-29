@@ -50,11 +50,11 @@
                                             </div>
                                         </div>
                                         <hr>
+                                        <div class="submit-button" style="text-align: right;">
 
-                                        <div class="">
-                                            <x-button-submit></x-button-submit>
-                                            <x-button-cancel></x-button-cancel>
-
+                                            <x-button-submit class="submit"></x-button-submit>
+                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-cancel href="{{ admin_url('administration/role/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>

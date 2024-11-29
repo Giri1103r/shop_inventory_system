@@ -10,10 +10,10 @@
 
                 <div class="card">
                     <h4 class="card-title"></h4>
-                    <div class="ms-auto">
+                    <div class="d-flex justify-content-end p-2">
 
-                        <x-button-filter dataId="" class="search" href=""></x-button-filter>
-                        <x-button-add dataId="" class="add btn btn-primary"
+                        <x-button-filter dataId="" class="search  me-1" href=""></x-button-filter>
+                        <x-button-add dataId="" class="add btn btn-primary ms-1"
                             href="{{ admin_url('administration/role/add') }}">Add</x-button-add>
                     </div>
                     <div id="search" class="collapse">

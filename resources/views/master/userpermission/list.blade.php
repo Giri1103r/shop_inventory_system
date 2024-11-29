@@ -8,14 +8,6 @@
 
             <div class="card mainCard permission-cart">
                 <div class="card-body">
-                    <div class="d-lg-flex align-items-center gap-3">
-                        <div class="position-relative">
-                            <h5 class="card-title">User Permission</h5>
-                        </div>
-                        <div class="ms-auto"></div>
-                    </div>
-                    <hr />
-                    
                     <form id="userpermission" action="{{ admin_url('administration/permission/update') }}" method="POST">
                         @csrf
                         <div class="row">

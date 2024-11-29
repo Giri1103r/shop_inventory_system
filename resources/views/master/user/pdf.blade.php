@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Company PDF')
+@section('title', 'Users PDF')
 @section('content')
 
     <div style="width:100%;">
@@ -25,21 +25,18 @@
                             {{ $i }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->company_id }}
+                            {{ $value->employee_id }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->company_name }}
+                            {{ $value->name }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->short_name }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->address}}
-                        </td>
+                            {{ $value->role_name }}
+                        </td>        
                       
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php
-                                $status = $value->userstatus == 1 ? 'Active' : 'In-Active';
+                                $status = $value->status == 1 ? 'Active' : 'In-Active';
                             @endphp
                             {{ $status }}
                         </td>

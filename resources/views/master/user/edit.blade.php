@@ -50,8 +50,7 @@
 
                             <div class="card-body ">
                                 <div class="basic-form">
-                                    <form method="POST" id="employeeedit"
-                                        action="{{ admin_url('employee/edit/submit') }}">
+                                    <form method="POST" id="employeeedit" action="{{ admin_url('employee/edit/submit') }}">
                                         @csrf
                                         <div class="card view_card">
                                             <div class="card-header">
@@ -60,130 +59,72 @@
                                             </div>
                                             <div class="card-body">
 
-                                                <input type="hidden" name="id" id="id" value="{{ encryptId( $employee->id) }}">
+                                                <input type="hidden" name="id" id="id"
+                                                    value="{{ encryptId($employee->id) }}">
                                                 <div class="row">
                                                     <div class="mb-3 col-md-4 form-input">
                                                         <label
                                                             class="form-label required">{{ __('administration.employee_no') }}</label>
-                                                        <input type="text" value="{{ $employee->employee_no }}" class="form-control"
-                                                            placeholder="" name="employee_no" id="employee_no">
+                                                        <input type="text" value="{{ $employee->employee_no }}"
+                                                            class="form-control" placeholder="" name="employee_no"
+                                                            id="employee_no">
                                                     </div>
                                                     <div class="mb-3 col-md-4 form-input">
                                                         <label
                                                             class="form-label required">{{ __('administration.first_name') }}</label>
-                                                        <input type="text" name="first_name" id="first_name" value="{{ $employee->first_name }}"
-                                                            class="form-control" placeholder="">
+                                                        <input type="text" name="first_name" id="first_name"
+                                                            value="{{ $employee->first_name }}" class="form-control"
+                                                            placeholder="">
                                                     </div>
                                                     <div class="mb-3 col-md-4 form-input">
                                                         <label
                                                             class="form-label required">{{ __('administration.last_name') }}</label>
-                                                        <input type="text" name="last_name" id="last_name" value="{{ $employee->last_name }}"
-                                                            class="form-control" placeholder="">
+                                                        <input type="text" name="last_name" id="last_name"
+                                                            value="{{ $employee->last_name }}" class="form-control"
+                                                            placeholder="">
                                                     </div>
                                                     <div class="mb-3 col-md-4 form-input">
                                                         <label
                                                             class="form-label required">{{ __('administration.joining_date') }}</label>
-                                                        <input type="text" name="joining_date" id="joining_date" value="{{ Displaydateformat($employee->joining_date) }}"
+                                                        <input type="text" name="joining_date" id="joining_date"
+                                                            value="{{ Displaydateformat($employee->joining_date) }}"
                                                             class="form-control" placeholder="">
                                                     </div>
 
-                                                    <div class="mb-3 col-md-4 form-input">
-                                                        <label
-                                                            class="form-label required">{{ __('administration.employee_type') }}</label>
-                                                        <select name="employee_type" id="employee_type"
-                                                            class=" form-control  single-select">
-                                                            <option value="">Select Employee Type</option>
-                                                            @foreach ($employeetypelist as $employeetype)
-                                                            
-                                                                <option @if($employee->employee_type == $employeetype->id) selected @endif value="{{ encryptId($employeetype->id) }}">
-                                                                    {{ $employeetype->employee_type }}</option>
-                                                            @endforeach
-                                                        </select>
-
-                                                    </div>
-                                                    <div class="mb-3 col-md-4 form-input">
-                                                        <label
-                                                            class="form-label required">{{ __('administration.date_contract_end') }}</label>
-                                                        <input disabled type="text" name="contract_end_date" value="{{ isset($employee->contract_end_date)?Displaydateformat($employee->contract_end_date):NULL }}"
-                                                            id="date_contract_end" class="form-control" placeholder="">
-                                                    </div>
-
-
-
-                                                    <div class="mb-3 col-md-4 form-input">
-                                                        <label
-                                                            class="form-label required">{{ __('administration.designation') }}</label>
-                                                        <select name="designation_id" id="designation"
-                                                            class=" form-control  single-select">
-                                                            <option value="">Select Designation</option>
-                                                            @foreach ($designationlist as $designation)
-                                                                <option @if($employee->designation_id == $designation->id) selected @endif value="{{ encryptId($designation->id) }}">
-                                                                    {{ $designation->designation }}</option>
-                                                            @endforeach
-                                                        </select>
-
-                                                    </div>
                                                     <div class="mb-3 col-md-4 form-input">
                                                         <label
                                                             class="form-label required">{{ __('administration.department') }}</label>
                                                         <select name="department_id" id="department"
                                                             class=" form-control  single-select">
                                                             <option value="">Select Department</option>
-                                                            @foreach ($departmentlist as $department)
-                                                                <option @if($employee->department_id == $department->id) selected @endif value="{{ encryptId($department->id) }}">
+                                                            {{-- @foreach ($departmentlist as $department)
+                                                                <option @if ($employee->department_id == $department->id) selected @endif
+                                                                    value="{{ encryptId($department->id) }}">
                                                                     {{ $department->department }}</option>
-                                                            @endforeach
+                                                            @endforeach --}}
                                                         </select>
 
                                                     </div>
 
                                                     <div class="col-md-4 form-input">
-                                                        <label for="emp_role_id" class="form-label require">User Role</label>
+                                                        <label for="emp_role_id" class="form-label require">User
+                                                            Role</label>
                                                         @php
-                                                        $roleIds = string_to_array($employee->role_id);
+                                                            $roleIds = string_to_array($employee->role_id);
 
-                                                    @endphp
-                                                        <select name="role_id[]" multiple id="role_id" class="form-control  single-select"
-                                                            required>
+                                                        @endphp
+                                                        <select name="role_id[]" multiple id="role_id"
+                                                            class="form-control  single-select" required>
                                                             <option value="">Select Role</option>
-            
+{{-- 
                                                             @foreach ($rolelist as $role)
-                                                                <option @if (in_array($role->id,$roleIds)) selected @endif value="{{ encryptId($role->id) }}">
+                                                                <option @if (in_array($role->id, $roleIds)) selected @endif
+                                                                    value="{{ encryptId($role->id) }}">
                                                                     {{ $role->role_name }}
                                                                 </option>
-                                                            @endforeach
+                                                            @endforeach --}}
                                                         </select>
                                                     </div>
-
-                                                    <div class="mb-3 col-md-4 form-input">
-                                                        <label
-                                                            class="form-label required">{{ __('administration.reporting_manager') }}</label>
-                                                        <select name="reporting_manager_id" id="reporting_manager_id"
-                                                            class=" form-control  single-select">
-                                                            <option value="">Select Reporting Manager</option>
-                                                            @foreach ($employeelist as $employeelist)
-                                                                <option  @if($employee->reporting_manager_id == $employeelist->id) selected @endif value="{{ encryptId($employeelist->id) }}">
-                                                                    {{ $employeelist->name }}</option>
-                                                            @endforeach
-                                                        </select>
-
-                                                    </div>
-
-                                                    <div class="mb-3 col-md-4 form-input">
-                                                        <label
-                                                            class="form-label required">{{ __('administration.factory') }}</label>
-                                                        <select name="factory_id" id="factory_id"
-                                                            class=" form-control  single-select">
-                                                            <option value="">Select Factory</option>
-                                                            @foreach ($factorylist as $factory)
-                                                                <option @if($employee->factory_id == $factory->id) selected @endif value="{{ encryptId($factory->id) }}">
-                                                                    {{ $factory->factory }}</option>
-                                                            @endforeach
-                                                        </select>
-
-                                                    </div>
-
-
                                                 </div>
                                             </div>
                                         </div>
@@ -198,15 +139,17 @@
                                                     <div class="mb-3 col-md-4 form-input">
                                                         <label
                                                             class="form-label required">{{ __('administration.employee_email') }}</label>
-                                                        <input type="text" name="email" id="email" value="{{ $employee->email }}"
-                                                            class="form-control" placeholder="">
+                                                        <input type="text" name="email" id="email"
+                                                            value="{{ $employee->email }}" class="form-control"
+                                                            placeholder="">
                                                     </div>
 
                                                     <div class="mb-3 col-md-4 form-input">
                                                         <label
                                                             class="form-label required">{{ __('administration.employee_phone') }}</label>
-                                                        <input type="text" name="phone" id="phone" value="{{ $employee->phone }}"
-                                                            class="form-control" placeholder="">
+                                                        <input type="text" name="phone" id="phone"
+                                                            value="{{ $employee->phone }}" class="form-control"
+                                                            placeholder="">
                                                     </div>
                                                 </div>
                                             </div>
@@ -231,9 +174,8 @@
 
 @push('script')
     <script type="text/javascript">
-
         var contractperson = [
-            @foreach($contract_end_date_show['show'] as $emp_type)
+            @foreach ($contract_end_date_show['show'] as $emp_type)
                 "{{ encryptId($emp_type) }}",
             @endforeach
         ];
@@ -278,8 +220,8 @@
                                 value: function() {
                                     return $('#employee_no').val();
                                 },
-                                id : function(){
-                                    return $('#id').val(); 
+                                id: function() {
+                                    return $('#id').val();
                                 }
                             }
                         }
@@ -329,8 +271,8 @@
                                 value: function() {
                                     return $('#email').val();
                                 },
-                                id : function(){
-                                    return $('#id').val(); 
+                                id: function() {
+                                    return $('#id').val();
                                 }
                             }
                         }

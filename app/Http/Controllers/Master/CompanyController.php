@@ -418,8 +418,8 @@ class CompanyController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportCompanyJob($details));
-                //    dispatch((new ImportCompanyJob($details))->onQueue('company'));
+                // dispatch(new ImportCompanyJob($details));
+                   dispatch((new ImportCompanyJob($details))->onQueue('company'));
             }
 
             $insert_data['log_id'] = $insert_id;
@@ -460,7 +460,7 @@ class CompanyController extends Controller
                 $export[] =  $data->company_name;
                 $export[] =  $data->short_name;
                 $export[] =  $data->address;
-                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
+                $export[] =  $data->userstatus == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 

@@ -88,7 +88,7 @@
 
                                         </div>
                                         <hr>
-                                        <div class="submit-button">
+                                        <div class="submit-button" style="text-align: right;">
 
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>

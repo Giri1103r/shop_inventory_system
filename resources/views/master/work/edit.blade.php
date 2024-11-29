@@ -180,7 +180,7 @@
                                             </div>
                                         </div>
                                         <hr>
-                                        <div class="submit-button">
+                                        <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel href="{{ admin_url('work/list') }}"></x-button-cancel>
