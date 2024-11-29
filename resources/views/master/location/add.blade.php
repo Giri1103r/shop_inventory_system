@@ -47,7 +47,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company Name</label>
                                                     <select name="company_id" id="company_id"
-                                                    class=" form-control single-select" style="width: 100%">
+                                                        class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Company Name</option>
                                                         @foreach ($companyList as $company)
                                                             <option value="{{ encryptId($company->id) }}">
@@ -59,8 +59,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Location Name</label>
-                                                    <input type="text" name="location_name" id="location_name" class="form-control"
-                                                        placeholder="Location Name">
+                                                    <input type="text" name="location_name" id="location_name"
+                                                        class="form-control" placeholder="Location Name">
                                                 </div>
                                             </div>
 
@@ -88,6 +88,12 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         $(function() {
 
 
@@ -154,7 +160,7 @@
                 invalidHandler: function(event, validator) {
                     var errors = validator.numberOfInvalids();
                     validator.errorList.forEach(function(error) {
-                     
+
                     });
                 }
             });

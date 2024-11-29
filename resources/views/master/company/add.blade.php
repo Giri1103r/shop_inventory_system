@@ -105,6 +105,12 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         $(function() {
             $('#companyadd').validate({
                 rules: {
@@ -131,6 +137,7 @@
                     },
                     address: {
                         required: true,
+                        maxlength: 300,
                     },
                 },
                 messages: {
@@ -149,6 +156,7 @@
                     },
                     address: {
                         required: "{{ __('Company Address is Required') }}",
+                        maxlength: "Maximum Characters should not exceed 300",
                     },
 
                 },

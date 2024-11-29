@@ -97,6 +97,13 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+     $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault(); 
+                location.reload(); 
+            });
+        });
+
         $(document).on('change', '#company_id', function() {
             let companyId = $(this).val();
 

@@ -1,1 +1,1 @@
-<button type="reset" id="resetform" class="btn btn-primary">{{ __('common.reset') }}</button>
+<button type="button" id="resetform" class="btn btn-primary">Reset</button>

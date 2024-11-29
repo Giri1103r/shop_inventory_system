@@ -45,8 +45,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Role Name</label>
-                                                    <input type="text" name="role_name" id="role_name" class="form-control"
-                                                        placeholder="Role Name">
+                                                    <input type="text" name="role_name" id="role_name"
+                                                        class="form-control" placeholder="Role Name">
                                                 </div>
                                             </div>
                                         </div>
@@ -55,7 +55,8 @@
 
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
-                                            <x-button-cancel href="{{ admin_url('administration/role/list') }}"></x-button-cancel>
+                                            <x-button-cancel
+                                                href="{{ admin_url('administration/role/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -74,6 +75,12 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         $.validator.addMethod("regex", function(value, element, param) {
             return this.optional(element) || param.test(value);
         }, "Invalid input.");
@@ -85,7 +92,7 @@
                         minlength: 3,
                         maxlength: 20,
                         regex: /^[A-Za-z]+$/,
-                        
+
                         remote: {
                             url: '{{ admin_url('administration/role/unique') }}',
                             type: 'post',
@@ -93,7 +100,7 @@
                                 role_name: function() {
                                     return $('#role_name').val();
                                 },
-                               
+
                             }
                         }
                     },
@@ -104,7 +111,7 @@
                         minlength: "{{ __('common.validate_min_length') }}",
                         maxlength: "Maximum length should not exceed 20 characters.",
                         regex: "Only alphabetic characters are allowed (no spaces or special characters).",
-                         remote: "{{ __('Role Name should be unique') }}"
+                        remote: "{{ __('Role Name should be unique') }}"
                     },
                 },
 
@@ -128,7 +135,7 @@
                 invalidHandler: function(event, validator) {
                     var errors = validator.numberOfInvalids();
                     validator.errorList.forEach(function(error) {
-                       
+
                     });
                 }
             });

@@ -91,6 +91,13 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+     $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault(); 
+                location.reload(); 
+            });
+        });
+
         $(function() {
             $('#locationedit').validate({
                 rules: {
@@ -151,7 +158,7 @@
                 invalidHandler: function(event, validator) {
                     var errors = validator.numberOfInvalids();
                     validator.errorList.forEach(function(error) {
-                     
+
                     });
                 }
             });

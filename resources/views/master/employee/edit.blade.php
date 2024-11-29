@@ -78,7 +78,8 @@
                                                         <option value="">Select User Role</option>
                                                         @foreach ($userrole as $role)
                                                             <option @if ($employee->user_role == $role->id) selected @endif
-                                                                value="{{ encryptId($role->id) }}">{{ $role->role_name }}</option>
+                                                                value="{{ encryptId($role->id) }}">{{ $role->role_name }}
+                                                            </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -92,7 +93,7 @@
                                                 </div>
                                             </div>
 
-                                         
+
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Joining Date</label>
@@ -209,12 +210,18 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
-        flatpickr("#joining_date_datetime_datepicker", {
-                enableTime: true, 
-                dateFormat: "d-m-Y H:i",
-                time_24hr: true, 
-                minuteIncrement: 5, 
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
             });
+        });
+        flatpickr("#joining_date_datetime_datepicker", {
+            enableTime: true,
+            dateFormat: "d-m-Y H:i",
+            time_24hr: true,
+            minuteIncrement: 5,
+        });
 
         $(function() {
             $('#employeeedit').validate({
