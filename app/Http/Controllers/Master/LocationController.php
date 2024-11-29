@@ -95,7 +95,7 @@ class LocationController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -349,31 +349,24 @@ class LocationController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Location.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);
         }
     }
-    // public function list(Request $request)
-    // {
-    //     $companyId = decryptId($request->company_id);
-    //     $locationId = decryptId($request->id) ? decryptId($request->id) : 0;
-
-    //     $locations = $this->location->ajaxList($companyId, $locationId);
-
-    //     return response()->json($locations);
-    // }
-    public function list(Request $request)
+  
+    public function list(Request $request ,$companyId)
     {
-        $companyId = decryptId($request->company_id);
-
+        
+        $companyId = decryptId($companyId);
         $id = decryptId($request->id);
         $locations = $this->location->ajaxList($companyId, $id);
 
-
         return response()->json($locations);
     }
+
+    
     public function alllist(Request $request)
     {
         $companyId = decryptId($request->company_id);
@@ -471,6 +464,26 @@ class LocationController extends Controller
 
             Session::flash('error', __('Location upload failed'));
             return redirect(admin_url('location/list'));
+        }
+    }
+
+
+    public function Uniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $location_name = $request->location_name;
+            $company_id = decryptId($request->company_id);
+            $id = $request->id;
+            if ($id == '') {
+                $record = $this->location->uniqueCheck($location_name, $company_id);
+            } else {
+                $id = decryptId($id);
+                $record = $this->location->ExistuniqueCheck($location_name, $company_id, $id);
+            }
+            if ($record->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
         }
     }
 }

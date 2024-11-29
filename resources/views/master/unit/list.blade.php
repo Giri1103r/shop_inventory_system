@@ -28,7 +28,8 @@
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="unit_id" class="form-label ">Unit Id</label>
-                                            <input type="text" name="unit_id" id="unit_id" class="form-control">
+                                            <input type="text" name="unit_id" id="unit_id" class="form-control"
+                                                placeholder="Unit Id">
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
@@ -52,7 +53,8 @@
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="unit_name" class="form-label ">Unit Name</label>
-                                            <input type="text" name="unit_name" id="unit_name" class="form-control">
+                                            <input type="text" name="unit_name" id="unit_name" class="form-control"
+                                                placeholder="Unit Name">
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
@@ -64,7 +66,7 @@
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 
@@ -108,33 +110,32 @@
 
     @push('script')
         <script type="text/javascript" nonce="projectcab">
-            $(document).ready(function() {
-                var firstTh = $('.datatable-list thead th:first');
-                firstTh.removeClass('sorting_asc');
-            });
             $(document).on('change', '#company_id', function() {
-                var company_id = $(this).val();
-                if (company_id) {
+                let companyId = $(this).val();
+
+                if (companyId) {
                     $.ajax({
-                        url: "{{ admin_url('location/alllist/') }}" + company_id,
+                        url: "{{ admin_url('location/ajax-list') }}/" + companyId + "/0",
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
-                            $('#location_id').empty().append(
-                                '<option value="">Select Location Name</option>');
+                            $('#location_id').empty().append('<option value="">Select Location</option>');
                             $.each(data, function(key, value) {
-                                $('#location_id').append('<option value="' + value.id +
-                                    '">' + value.name + '</option>');
+                                $('#location_id').append('<option value="' + value.id + '">' + value
+                                    .name + '</option>');
                             });
-
                             $('#location_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching locations. Please try again.');
                         }
                     });
                 } else {
-                    $('#location_id').empty().append('<option value="">Select Location Name</option>');
+                    $('#location_id').empty().append('<option value="">Select Location</option>');
                     $('#location_id').trigger('change.');
                 }
             });
+    
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -313,12 +314,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Unit Management') }}';
+                        var title = '{{ __('Do You want to In-Activate Unit Details') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Unit Management') }}';
+                        var title = '{{ __('Do You want to Activate Unit Details') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -386,7 +387,7 @@
                     var id = $(this).data('id');
                     var login_id = $(this).data('login_id');
 
-                    var title = '{{ __('Do You want to Delete Unit Management') }}';
+                    var title = '{{ __('Do You want to Delete Unit Details') }}';
                     var text = '{{ __('common.delete') }}';
                     var btncolor = '#dc3545'
 

@@ -163,7 +163,7 @@ class Precaution extends Model
 
             $query = $query->where('masters_ptw_precaution.status', decryptId($request->status));
         }
-
+        $query->orderBy('id', 'DESC');
         return  $query->get();
     }
 

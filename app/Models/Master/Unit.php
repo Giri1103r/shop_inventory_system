@@ -52,7 +52,7 @@ class Unit extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('unit_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('unit_id', 'LIKE', '%' . $search . '%');
             });
         }
 
@@ -67,11 +67,11 @@ class Unit extends Model
             $query = $query->where('masters_unit.location_id', decryptId($request->location_id));
         }
         if ($request->has('unit_name') && $request->unit_name) {
-            $query = $query->where('unit_name', 'LIKE', '%' . $request->unit_name . '%');
+            $query = $query->where('masters_unit.unit_name', 'LIKE', '%' . $request->unit_name . '%');
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('status', decryptId($request->status));
+            $query = $query->where('masters_unit.status', decryptId($request->status));
         }
         $data_count = $query->count();
         $total_records = $data_count;
@@ -92,19 +92,19 @@ class Unit extends Model
         return $datas;
     }
 
-    public function UniqueCheck($data)
+  
+    public function UniqueCheck($unit_name,$location_id,$company_id)
     {
 
-        return $this->where($data['param'],  $data['value'])->get();
+        return $this->where('unit_name',  $unit_name)->where('location_id',$location_id )->where('company_id',$company_id )->get();
     }
 
-    public function ExistuniqueCheck($data)
+    public function ExistuniqueCheck($unit_name,$location_id,$company_id,$id)
     {
-        return $this->where($data['param'],  $data['value'])
-            ->where('id', '!=', decryptId($data['id']))
-            ->get();
+        return $this->where('unit_name',  $unit_name)->where('location_id',$location_id )->where('company_id',$company_id )
+        ->where('id', '!=', $id)
+        ->get();
     }
-
     public function store()
     {
         $request = request();
@@ -194,7 +194,7 @@ class Unit extends Model
 
             $query = $query->where('status', decryptId($request->status));
         }
-
+        $query->orderBy('id', 'DESC');
         return  $query->get();
     }
 

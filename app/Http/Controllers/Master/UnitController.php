@@ -121,6 +121,7 @@ class UnitController extends Controller
             $data = array(
                 'companyList' => $companyList,
             );
+
             return view('master.unit.add', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -284,8 +285,8 @@ class UnitController extends Controller
             $header = [
                 __("common.sno"),
                 'Unit Id',
-                'Location',
                 'Company',
+                'Location',
                 'Unit Name',
                 __("common.status"),
                 __("common.created_by"),
@@ -331,8 +332,8 @@ class UnitController extends Controller
             $header = [
                 __("common.sno"),
                 'Unit Id',
-                'Location',
                 'Company',
+                'Location',
                 'Unit Name',
                 __("common.status"),
                 __("common.created_by"),
@@ -365,7 +366,7 @@ class UnitController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Unit.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);
@@ -454,16 +455,10 @@ class UnitController extends Controller
         }
     }
 
-    // public function list(Request $request)
-    // {
-    //     $locationId = decryptId($request->location_id);
-    //     $unit = $this->unit->ajaxList($locationId);
-
-    //     return response()->json($unit);
-    // }
-    public function list(Request $request)
+    
+    public function list(Request $request, $locationId)
     {
-        $locationId = decryptId($request->location_id);
+        $locationId = decryptId($locationId);
         $id = decryptId($request->id);
         $unit = $this->unit->ajaxList($locationId, $id);
 
@@ -485,5 +480,27 @@ class UnitController extends Controller
 
         //return Response::download($filePath, $customFileName);
         return redirect(url($filePath));
+    }
+
+
+    
+    public function Uniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $unit_name = $request->unit_name;
+            $company_id = decryptId($request->company_id);
+            $location_id = decryptId($request->location_id);
+            $id = $request->id;
+            if ($id == '') {
+                $record = $this->unit->uniqueCheck($unit_name,$location_id,$company_id);
+            } else {
+                $id = decryptId($id);
+                $record = $this->unit->ExistuniqueCheck($unit_name,$location_id,$company_id,$company_id, $id);
+            }
+            if ($record->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
+        }
     }
 }

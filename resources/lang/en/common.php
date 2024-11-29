@@ -4,6 +4,7 @@ return [
     'add' => 'Add',
     'import' => 'Import',
     'export' => 'Export',
+    'sample_export' => 'Sample Excel',
     'pdf' => 'Pdf',
     'email' => 'Email',
     'paid' => 'Paid',

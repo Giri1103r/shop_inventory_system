@@ -114,6 +114,7 @@ class ImportUnitJob implements ShouldQueue
             }
 
             /* Column data validation */
+            
             if ($companyname == '') {
 
                 $cond_error_data = array(
@@ -126,107 +127,104 @@ class ImportUnitJob implements ShouldQueue
 
                 $i++;
                 continue;
-            } else {
+            } 
+            // else {
 
-                $companyExist = Company::where('company_name', $companyname)->get();
-                try {
+            //     $companyExist = Company::where('company_name', $companyname)->get();
+            //     try {
 
-                    if (count($companyExist) <= 0) {
-                        $cond_error_data = array(
-                            'upload_id' => $this->details['log_id'],
-                            'line_no' => $i,
-                            'error' => 'Invalid Company name',
-                        );
-                        UploadLogError::insert($cond_error_data);
-                        $i++;
-                        continue;
-                    }
-                    $companyId = $companyExist['0']->id;
-                } catch (\Exception $ex) {
-                    report($ex);
-                }
-            }
-            if ($locationname == '') {
-
-                $cond_error_data = array(
+            //         if (count($companyExist) <= 0) {
+            //             $cond_error_data = array(
+            //                 'upload_id' => $this->details['log_id'],
+            //                 'line_no' => $i,
+            //                 'error' => 'Invalid Company name',
+            //             );
+            //             UploadLogError::insert($cond_error_data);
+            //             $i++;
+            //             continue;
+            //         }
+            //         $companyId = $companyExist['0']->id;
+            //     } catch (\Exception $ex) {
+            //         report($ex);
+            //     }
+            // }
+            if (empty($locationname)) {
+                $cond_error_data = [
                     'upload_id' => $this->details['log_id'],
                     'line_no' => $i,
                     'error' => 'Location name is missing',
-                );
-
+                ];
+            
                 $cond_error_datas[] = $cond_error_data;
-
                 $i++;
                 continue;
-            } else {
-
-                $locationExist = Location::where('location_name', $locationname)->get();
-                try {
-
-                    if (count($locationExist) <= 0) {
-                        $cond_error_data = array(
-                            'upload_id' => $this->details['log_id'],
-                            'line_no' => $i,
-                            'error' => 'Invalid Location name',
-                        );
-                        UploadLogError::insert($cond_error_data);
-                        $i++;
-                        continue;
-                    }
-                    $locationId = $locationExist['0']->id;
-                } catch (\Exception $ex) {
-                    report($ex);
-                }
             }
-
-
-            if ($unit_name == '') {
-
-                $cond_error_data = array(
+            
+            if (empty($unit_name)) {
+                $cond_error_data = [
                     'upload_id' => $this->details['log_id'],
                     'line_no' => $i,
                     'error' => 'Unit name is missing',
-                );
-
+                ];
+            
                 $cond_error_datas[] = $cond_error_data;
-
                 $i++;
                 continue;
-            } else {
-
-                $unitExist = Unit::where('unit_name', $unit_name)->get();
-                try {
-
-                    if (count($unitExist) > 0) {
-                        $cond_error_data = array(
-                            'upload_id' => $this->details['log_id'],
-                            'line_no' => $i,
-                            'error' => 'Unit Name Already Exist',
-                        );
-                        $cond_error_datas[] = $cond_error_data;
-                        $i++;
-                        continue;
-                    }
-
-                } catch (\Exception $ex) {
-                    $cond_error_data = array(
-                        'upload_id' => $this->details['log_id'],
-                        'line_no' => $i,
-                        'error' => 'Invalid Data',
-                    );
-                    $cond_error_datas[] = $cond_error_data;
-                }
             }
-
-
-
-            $data = array(
-                'company_id' => $companyId,
-                'location_id' => $locationId,
+            
+            // Check if the company exists
+            $companyExist = Company::select('id')->where('company_name', $companyname)->first();
+            if (!$companyExist) {
+                $cond_error_data = [
+                    'upload_id' => $this->details['log_id'],
+                    'line_no' => $i,
+                    'error' => 'Invalid company name',
+                ];
+                $cond_error_datas[] = $cond_error_data;
+                $i++;
+                continue;
+            }
+            
+            // Check if the location exists
+            $locationExist = Location::select('id')->where('location_name', $locationname)->where('company_id', $companyExist->id)->first();
+            if (!$locationExist) {
+                $cond_error_data = [
+                    'upload_id' => $this->details['log_id'],
+                    'line_no' => $i,
+                    'error' => 'Invalid location name',
+                ];
+                $cond_error_datas[] = $cond_error_data;
+                $i++;
+                continue;
+            }
+            
+            // Check if the unit exists within the same company and location
+            $unitExist = Unit::where('unit_name', $unit_name)
+                ->where('company_id', $companyExist->id)
+                ->where('location_id', $locationExist->id)
+                ->exists();
+            
+            if ($unitExist) {
+                $cond_error_data = [
+                    'upload_id' => $this->details['log_id'],
+                    'line_no' => $i,
+                    'error' => 'Unit Name Already Exists for the specified Company and Location',
+                ];
+                $cond_error_datas[] = $cond_error_data;
+                $i++;
+                continue;
+            }
+            
+            // Create the unit if it doesn't exist
+            $data = [
+                'company_id' => $companyExist->id,
+                'location_id' => $locationExist->id,
                 'unit_name' => $unit_name,
-                'created_by' => $this->details['user_id']
-            );
+                'created_by' => $this->details['user_id'],
+            ];
+            
             Unit::create($data);
+            
             // SmpsFactory::create($data);
 
             $i++;

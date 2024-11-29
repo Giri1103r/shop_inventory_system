@@ -88,14 +88,14 @@ class Company extends Model
     public function UniqueCheck($data)
     {
 
-        return $this->where($data['param'],  $data['value'])->get();
+        return $this->where('company_name',  $data)->get();
     }
 
-    public function ExistuniqueCheck($data)
+    public function ExistuniqueCheck($data,$id)
     {
-        return $this->where($data['param'],  $data['value'])
-            ->where('id', '!=', decryptId($data['id']))
-            ->get();
+        return $this->where('company_name',  $data)
+        ->where('id', '!=', $id)
+        ->get();
     }
 
     public function store()
@@ -178,6 +178,7 @@ class Company extends Model
 
             $query = $query->where('company_management.status', decryptId($request->status));
         }
+        $query->orderBy('id', 'DESC');
 
         return  $query->get();
     }

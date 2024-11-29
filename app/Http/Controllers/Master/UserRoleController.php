@@ -46,11 +46,16 @@ class UserRoleController extends Controller
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active<span>";
+                            if ($row->id != 1) {
                             if ($row->status == 1) {
                                 $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
                             } else if ($row->status == 0) {
                                 $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
                             }
+                        }else{
+                            $text = '-';
+                        }
+
                             return $text;
                         })
                         ->addColumn('role_name', function ($row) {
@@ -65,7 +70,14 @@ class UserRoleController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
 
-                            $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
+                            if ($row->id != 1) {
+                                $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete">'
+                                      . '<i class="fa-solid fa-trash text-danger"></i>'
+                                      . '</a>';
+                            } else {
+                                $btn .= '-'; 
+                            }
+                            
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -197,22 +209,27 @@ class UserRoleController extends Controller
         }
     }
 
+
     public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {
-            $email = $request->email;
-            $userid = $request->userid;
-            if ($userid == '') {
-                $user = $this->user->EmailCheck($email);
+            $role_name = $request->role_name;
+            $id = $request->id;
+            if ($id == '') {
+
+   
+                $record = $this->user_role->uniqueCheck($role_name);
             } else {
-                $user = $this->user->ExistEmailCheck($email, $userid);
+                $id = decryptId($id);
+                $record = $this->user_role->ExistuniqueCheck($role_name,$id);
             }
-            if ($user->count()) {
-                return Response::json(array('msg' => 'true'));
+            if ($record->count()) {
+                return Response::json(false);
             }
-            return Response::json(array('msg' => 'false'));
+            return Response::json(true);
         }
     }
+
 
     public function StatusChange(Request $request)
     {

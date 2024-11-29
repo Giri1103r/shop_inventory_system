@@ -46,10 +46,12 @@ class LoginController extends Controller
         $rules = [
             'email' => 'required',
             'password' => 'required',
+            'g-recaptcha-response' => 'required',
         ];
         $messages = [
             'email.required' => 'Please enter your email address!',
             'password.required' => 'Please enter your password',
+            'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification',
         ];
         $validator = Validator::make($request->all(), $rules, $messages);
 
@@ -79,31 +81,9 @@ class LoginController extends Controller
             } else {
                 session()->put('locale', $user->language);
             }
-            $allowedRoles = [1, 2, 3, 6]; // user_type = 1 superadmin, admin, company admin = 3, driver owner = 6
-            if ($user->user_type == 1) {
 
-                $requested_url = session('requested_url');
-                Session::flash('success', 'Login successfully');
-                if ($requested_url != null) {
-                    session()->forget('requested_url');
-                    return redirect()->to($requested_url);
-                }
-
-                return redirect()->intended(admin_url('dashboard'));
-            } elseif (in_array($user->role, $allowedRoles)) {
-                $requested_url = session('requested_url');
-                Session::flash('success', 'Login successfully');
-                if ($requested_url != null) {
-                    session()->forget('requested_url');
-                    return redirect()->to($requested_url);
-                }
-                return redirect()->intended(admin_url('dashboard'));
-            } else {
-                Auth::logout();
-                Session::flash('error', 'You do not have permission to access this application.');
-                return redirect()->back()->withInput();
-            }
-
+            Session::flash('success', 'Login successfully');
+            return redirect()->intended(admin_url('dashboard'));
         }
         Session::flash('error', 'Invalid Email and Password');
         return back()->withErrors([
@@ -208,6 +188,7 @@ class LoginController extends Controller
         }
     }
 
+
     public function resendOTP(Request $request)
     {
         $token = $request->token;
@@ -243,6 +224,8 @@ class LoginController extends Controller
         return redirect(admin_url('password/otp'))->with(['token' => $token, 'email' => $user->email]);
     }
 
+
+
     public function passwordOTP(Request $request)
     {
         $token = Session::get('token');
@@ -267,7 +250,7 @@ class LoginController extends Controller
         }
 
         $createdAt = Carbon::parse($tokenData->created_at);
-        $remainingMinutes = now()->diffInMinutes($createdAt->addMinutes($expire_mins)); // Calculate remaining minutes
+        $remainingMinutes = now()->diffInMinutes($createdAt->addMinutes($expire_mins));
         $data = [
             'email'  => $email,
             'token'  => $token,
@@ -276,7 +259,6 @@ class LoginController extends Controller
 
         return view('auth.passwords.otp', $data);
     }
-
     public function passwordOTPSubmit(Request $request)
     {
         $rules = [
@@ -346,34 +328,27 @@ class LoginController extends Controller
         }
     }
 
+
     public function passwordReset(Request $request)
     {
         try {
 
             $token = Session::get('otp_token');
 
-            if ($token == '' || $token == null) {
-
+            if (empty($token)) {
                 Session::flash('error', 'Access Denied!');
-
                 return redirect(admin_url('password/forgot'));
             }
 
             $expire_mins = env('OTP_EXPIRE', 10);
             $userCheck   = User::where('otp_token', $token)->first();
 
-
-            if ($userCheck == null) {
-                Session::flash('error', 'Page Expired,Please try again');
+            if (!$userCheck) {
+                Session::flash('error', 'Page Expired, Please try again');
                 return redirect(admin_url('password/forgot'));
             }
 
-
-            $data = array(
-                'token' => $token
-            );
-
-            return view('auth.passwords.reset', $data);
+            return view('auth.passwords.reset', ['token' => $token]);
         } catch (Exception $ex) {
 
             Session::flash('error', 'Please try after sometimes!');
@@ -381,8 +356,10 @@ class LoginController extends Controller
         }
     }
 
+
     public function passwordResetSubmit(Request $request)
     {
+
         try {
 
             $rules = [
@@ -410,8 +387,7 @@ class LoginController extends Controller
             $userCheck = User::where('otp_token', $token)->first();
 
 
-
-            if ($userCheck != null && $userCheck != '') {
+            if ($userCheck) {
 
                 $userCheck->password  = Hash::make($password);
                 $userCheck->otp       = null;
@@ -428,7 +404,7 @@ class LoginController extends Controller
                 return redirect(admin_url('login'));
             }
         } catch (Exception $ex) {
-
+            dd($ex);
             Session::flash('error', 'Please try after sometimes!');
             return redirect()->back();
         }
@@ -476,5 +452,4 @@ class LoginController extends Controller
     {
         return view('auth.policy');
     }
-
 }

@@ -15,7 +15,7 @@
                         <div class="card">
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
-                                <div>
+                                <div class="align-back-btc">
                                     <x-button-back href="{{ admin_url('employee/list') }}"></x-button-back>
 
                                 </div>
@@ -51,12 +51,12 @@
                                         </div>
                                     </div>
                                     
-                                    <div class="mb-3 col-md-4 form-input">
+                                    {{-- <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Nationality') }}</label>
                                         <div class="view_data">
                                             {{ isset($employee->nationality) ? $employee->nationality : '' }}
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Employee Email') }}</label>
                                         <div class="view_data">
@@ -66,7 +66,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('User Role') }}</label>
                                         <div class="view_data">
-                                            {{ isset($employee->user_role) ? $employee->user_role : '' }}
+                                            {{ isset($employee->role_name) ? $employee->role_name : '' }}
                                         </div>
                                     </div>
                                   

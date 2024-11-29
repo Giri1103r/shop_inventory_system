@@ -10,7 +10,7 @@
             {{-- <h4 class="text-black">{{ __('Location Add') }}</h4> --}}
 
         </div>
-   
+
     </div>
 
     <div class="content-body  default-height">
@@ -46,20 +46,20 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company Name</label>
-                                                    <select name="company_id" id="company_id" class=" form-control single-select"
-                                                    style="width: 100%">
-                                                    <option value="">Select Company Name</option>
-                                                    @foreach ($companyList as $company)
-                                                        <option value="{{ encryptId($company->id) }}">
-                                                            {{ $company->company_name }}</option>
-                                                    @endforeach
-                                                </select>
+                                                    <select name="company_id" id="company_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Company Name</option>
+                                                        @foreach ($companyList as $company)
+                                                            <option value="{{ encryptId($company->id) }}">
+                                                                {{ $company->company_name }}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Location Name</label>
-                                                    <input type="text" name="location_name" class="form-control"
+                                                    <input type="text" name="location_name" id="location_name" class="form-control"
                                                         placeholder="Location Name">
                                                 </div>
                                             </div>
@@ -67,9 +67,9 @@
                                         </div>
                                         <hr>
                                         <div class="submit-button">
-
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-cancel></x-button-cancel>
+                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-cancel href="{{ admin_url('location/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -97,8 +97,21 @@
                     location_name: {
                         required: true,
                         minlength: 3,
+
+                        remote: {
+                            url: '{{ admin_url('location/unique') }}',
+                            type: 'post',
+                            data: {
+                                location_name: function() {
+                                    return $('#location_name').val();
+                                },
+                                company_id: function() {
+                                    return $('#company_id').val();
+                                },
+                            }
+                        }
                     },
-                   
+
                 },
                 messages: {
                     company_id: {
@@ -107,6 +120,7 @@
                     location_name: {
                         required: "{{ __('Location Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
+                        remote: "{{ __('Location Name should be unique') }}"
                     },
 
                 },

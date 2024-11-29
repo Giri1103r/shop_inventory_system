@@ -376,7 +376,7 @@ class DepartmentController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Department.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);
@@ -475,9 +475,9 @@ class DepartmentController extends Controller
         return redirect(url($filePath));
     }
 
-    public function list(Request $request)
+    public function list(Request $request, $unit_id)
     {
-        $unit_id = decryptId($request->unit_id);
+        $unit_id = decryptId($unit_id);
         $id = decryptId($request->id);
         $departments = $this->department->ajaxList($unit_id, $id);
 
@@ -488,5 +488,31 @@ class DepartmentController extends Controller
         $unitID = decryptId($request->unit_id);
         $unit = $this->department->ajaxallList($unitID);
         return response()->json($unit);
+    }
+
+
+    public function Uniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $unit_id = decryptId($request->unit_id);
+            $company_id = decryptId($request->company_id);
+            $location_id = decryptId($request->location_id);
+            $department_name =$request->department_name;
+            $id = $request->id;
+            if ($id == '') {
+
+                // dd('sdcds');
+                $record = $this->department->uniqueCheck($company_id,$location_id,$unit_id,$department_name);
+            } else {
+
+                // dd('sdcgsed');
+                $id = decryptId($id);
+                $record = $this->department->ExistuniqueCheck($company_id,$location_id,$unit_id,$department_name, $id);
+            }
+            if ($record->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
+        }
     }
 }

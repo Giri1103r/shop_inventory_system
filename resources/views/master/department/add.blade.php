@@ -81,8 +81,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Department Name</label>
-                                                    <input type="text" name="department_name" class="form-control"
-                                                        placeholder="Department Name">
+                                                    <input type="text" name="department_name" id="department_name"
+                                                        class="form-control" placeholder="Department Name">
                                                 </div>
                                             </div>
 
@@ -91,7 +91,8 @@
                                         <div class="submit-button">
 
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-cancel></x-button-cancel>
+                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-cancel href="{{ admin_url('department/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -110,12 +111,11 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
-     
         $(document).on('change', '#company_id', function() {
             var companyId = $(this).val();
             if (companyId) {
                 $.ajax({
-                    url: "{{ admin_url('location/ajaxlist') }}/" + companyId + "/0", 
+                    url: "{{ admin_url('location/ajax-list') }}/" + companyId + "/0",
                     type: 'GET',
                     dataType: 'json',
                     success: function(data) {
@@ -140,7 +140,7 @@
             var locationId = $(this).val();
             if (locationId) {
                 $.ajax({
-                    url: "{{ admin_url('unit/ajaxlist') }}/" + locationId + "/0", 
+                    url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
                     type: 'GET',
                     dataType: 'json',
                     success: function(data) {
@@ -177,6 +177,26 @@
                     department_name: {
                         required: true,
                         minlength: 3,
+
+                        remote: {
+                            url: '{{ admin_url('department/unique') }}',
+                            type: 'post',
+                            data: {
+
+                                company_id: function() {
+                                    return $('#company_id').val();
+                                },
+                                location_id: function() {
+                                    return $('#location_id').val();
+                                },
+                                unit_id: function() {
+                                    return $('#unit_id').val();
+                                },
+                                department_name: function() {
+                                    return $('#department_name').val();
+                                },
+                            }
+                        }
                     },
 
                 },
@@ -194,6 +214,7 @@
                     department_name: {
                         required: "{{ __('Department  Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
+                        remote: "{{ __('Department Name should be unique') }}"
                     },
 
                 },

@@ -163,7 +163,7 @@ class SafeWork extends Model
 
             $query = $query->where('company_management.status', decryptId($request->status));
         }
-
+        $query->orderBy('id', 'DESC');
         return  $query->get();
     }
 

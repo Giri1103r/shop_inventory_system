@@ -82,8 +82,8 @@ class Work extends Model
         if ($request->has('company_id') && $request->company_id) {
             $query = $query->where('masters_work.company', decryptId($request->company_id));
         }
-        if ($request->has('dept_id') && $request->dept_id) {
-            $query = $query->where('masters_work.department', decryptId($request->dept_id));
+        if ($request->has('department_id') && $request->department_id) {
+            $query = $query->where('masters_work.department', decryptId($request->department_id));
         }
 
         if ($request->has('unit_id') && $request->unit_id) {
@@ -161,10 +161,10 @@ class Work extends Model
                     'doi' => DBdatetimeformat($item->doi),
                     'exit_date' => DBdatetimeformat($item->exit_date),
                     'mobile_no' => $item->mobile_no ?? null,
-                    'company' => $companyExists->id,
-                    'location_id' => $locationExists->id,
+                    'company' => $companyExists->id ?? null,
+                    'location_id' => $locationExists->id ?? null,
                     'subdepartment' => $item->subdepartment ?? null,
-                    'unit' => $unitExists->id,
+                    'unit' => $unitExists->id ?? null,
                     'department' => $departmentExists->id,
                     'designation' => $item->designation ?? null,
                     'wfemptype' => $item->wfemptype ?? null,
@@ -290,13 +290,15 @@ class Work extends Model
         if ($request->has('company_id') && $request->company_id) {
             $query = $query->where('masters_work.company', decryptId($request->company_id));
         }
-        if ($request->has('dept_id') && $request->dept_id) {
-            $query = $query->where('masters_work.department', decryptId($request->dept_id));
+        if ($request->has('department_id') && $request->department_id) {
+            $query = $query->where('masters_work.department', decryptId($request->department_id));
         }
 
         if ($request->has('unit_id') && $request->unit_id) {
             $query = $query->where('masters_work.unit', decryptId($request->unit_id));
         }
+
+        $query->orderBy('id', 'DESC');
 
         return  $query->get();
     }

@@ -297,48 +297,23 @@ class CompanyController extends Controller
     //     }
     // }
 
-    // public function Uniquecheck(Request $request)
-    // {
-    //     if ($request->ajax()) {
-
-    //         $type = $request->type;
-    //         $value = $request->value;
-    //         switch ($type) {
-    //             case 'company_email':
-    //                 $param = 'company_email';
-    //                 break;
-    //             case 'company_phone':
-    //                 $param = 'company_phone';
-    //                 break;
-    //             default:
-    //                 $param = $type;
-    //                 break;
-    //         }
-
-    //         $id = $request->id;
-
-    //         if ($id == '') {
-    //             $data = array(
-    //                 'param' => $param,
-    //                 'value' => $value,
-    //             );
-
-    //             $user = $this->company->UniqueCheck($data);
-    //         } else {
-    //             $data = array(
-    //                 'param' => $param,
-    //                 'value' => $value,
-    //                 'id' => $id,
-    //             );
-    //             $user = $this->company->ExistuniqueCheck($data);
-    //         }
-
-    //         if ($user->count()) {
-    //             return "false";
-    //         }
-    //         return "true";
-    //     }
-    // }
+    public function Uniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $company_name = $request->company_name;
+            $id = $request->id;
+            if ($id == '') {
+                $record = $this->company->uniqueCheck($company_name);
+            } else {
+                $id = decryptId($id);
+                $record = $this->company->ExistuniqueCheck($company_name, $id);
+            }
+            if ($record->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
+        }
+    }
 
     public function StatusChange(Request $request)
     {
@@ -443,8 +418,8 @@ class CompanyController extends Controller
                     "path" => $path,
                 ];
 
-                // dispatch(new ImportCompanyJob($details));
-                   dispatch((new ImportCompanyJob($details))->onQueue('company'));
+                dispatch(new ImportCompanyJob($details));
+                //    dispatch((new ImportCompanyJob($details))->onQueue('company'));
             }
 
             $insert_data['log_id'] = $insert_id;
@@ -549,7 +524,7 @@ class CompanyController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Company.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);

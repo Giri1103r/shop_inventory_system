@@ -10,7 +10,7 @@
             {{-- <h4 class="text-black">{{ __('Company Edit') }}</h4> --}}
 
         </div>
-       
+
     </div>
 
     <div class="content-body  default-height">
@@ -33,29 +33,30 @@
                                 <div class="basic-form">
                                     <form method="POST" id="companyedit" action="{{ admin_url('company/edit/submit') }}">
                                         @csrf
-                                        <input type="hidden" name="id" id="id" value="{{ encryptId( $company->id) }}">
+                                        <input type="hidden" name="id" id="id"
+                                            value="{{ encryptId($company->id) }}">
 
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company ID</label>
-                                                    <input type="text" name ="company_id" class="form-control"
-                                                        placeholder="Company ID" value="{{ $company->company_id }}"
-                                                        readonly>
+                                                    <input type="text" name ="company_id" id="company_name"
+                                                        class="form-control" placeholder="Company ID"
+                                                        value="{{ $company->company_id }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company Name</label>
                                                     <input type="text" name="company_name" class="form-control"
-                                                        placeholder="Company Name"  value="{{ $company->company_name }}">
+                                                        placeholder="Company Name" value="{{ $company->company_name }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Short Name</label>
                                                     <input type="text" name="short_name" class="form-control"
-                                                        placeholder="Short Name"  value="{{ $company->short_name }}">
+                                                        placeholder="Short Name" value="{{ $company->short_name }}">
                                                 </div>
                                             </div>
 
@@ -68,9 +69,9 @@
                                         </div>
                                         <hr>
                                         <div class="submit-button">
-
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-cancel></x-button-cancel>
+                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-cancel href="{{ admin_url('company/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -95,6 +96,19 @@
                     company_name: {
                         required: true,
                         minlength: 3,
+
+                        remote: {
+                            url: '{{ admin_url('company/unique') }}',
+                            type: 'post',
+                            data: {
+                                location_type_name: function() {
+                                    return $('#company_name').val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
+                                }
+                            }
+                        }
                     },
                     short_name: {
                         required: true,
@@ -108,6 +122,7 @@
                     company_name: {
                         required: "{{ __('Company Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
+                        remote: "{{ __('Company Name should be unique') }}"
                     },
                     short_name: {
                         required: "{{ __('Short Name is Required') }}",

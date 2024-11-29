@@ -64,8 +64,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company Name</label>
-                                                    <input type="text" name="company_name" class="form-control"
-                                                        placeholder="Company Name">
+                                                    <input type="text" name="company_name" id="company_name"
+                                                        class="form-control" placeholder="Company Name">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
@@ -85,11 +85,10 @@
                                         </div>
                                         <hr>
                                         <div class="submit-button">
-
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-cancel></x-button-cancel>
+                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-cancel href="{{ admin_url('company/list') }}"></x-button-cancel>
                                         </div>
-
                                     </form>
                                 </div>
 
@@ -112,10 +111,21 @@
                     company_name: {
                         required: true,
                         minlength: 3,
+                        maxlength: 100,
+                        remote: {
+                            url: '{{ admin_url('company/unique') }}',
+                            type: 'post',
+                            data: {
+                                location_type_name: function() {
+                                    return $('#company_name').val();
+                                }
+                            }
+                        }
                     },
                     short_name: {
                         required: true,
                         minlength: 3,
+                        maxlength: 10,
                     },
                     address: {
                         required: true,
@@ -125,10 +135,13 @@
                     company_name: {
                         required: "{{ __('Company Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 100",
+                        remote: "{{ __('Company Name should be unique') }}"
                     },
                     short_name: {
                         required: "{{ __('Short Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 10",
                     },
                     address: {
                         required: "{{ __('Company Address is Required') }}",

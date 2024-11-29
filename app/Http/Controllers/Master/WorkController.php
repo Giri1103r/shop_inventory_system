@@ -167,6 +167,8 @@ class WorkController extends Controller
             Session::flash('success', 'Work updated successfully!');
             return redirect(admin_url('work/list'));
         } catch (Exception $ex) {
+
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('work/list'));
@@ -287,7 +289,7 @@ class WorkController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Department.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);

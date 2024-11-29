@@ -9,6 +9,8 @@ use App\Models\Master\Unit;
 use App\Models\Master\Department;
 use App\Models\Master\Topic;
 use App\Models\Master\UserRole;
+use App\Models\Master\Employee;
+use App\Models\Master\Work;
 
 use Illuminate\Support\Str;
 use App\Models\User;
@@ -195,8 +197,23 @@ if (!function_exists('gettotalCount')) {
 
         switch ($type) {
 
+            case 'company':
+                $count = Company::count();
+                break;
+            case 'location':
+                $count = Location::count();
+                break;
+            case 'unit':
+                $count = Unit::count();
+                break;
+            case 'department':
+                $count = Department::count();
+                break;
             case 'employee':
-                $count = 0;
+                $count = Employee::count();
+                break;
+            case 'work':
+                $count = Work::count();
                 break;
             default:
                 $count = 0;

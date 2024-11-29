@@ -9,9 +9,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title') | KARAM</title>
 
-    <link rel="shortcut icon" href="assets/images/favicon.ico">
+    <link rel="shortcut icon" href="{{ url('public/assets/images/logo-dark.png') }}">
 
     <!-- App css -->
+    <link href="{{ url('public/assets/css/roboto-fontface.css') }}" rel="stylesheet" type="text/css"  />
+    <link href="{{ url('public/assets/css/karla.css') }}" rel="stylesheet" type="text/css"  />
     <link href="{{ url('public/assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
     <!-- icons -->
     <link href="{{ url('public/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
@@ -30,7 +32,7 @@
             <div class="row justify-content-center">
                 <div class="col-md-8 col-lg-6 col-xl-4">
                     <div class="text-center">
-                        <a href="index.html">
+                        <a href="{{ url('/') }}">
                             <img src="{{ url('public/assets/images/logo-dark.png') }}" alt="logo" class="mx-auto">
                         </a>
                         <p class="text-muted mt-2 mb-4"></p>

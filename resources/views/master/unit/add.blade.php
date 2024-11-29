@@ -68,17 +68,17 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit Name</label>
-                                                    <input type="text" name="unit_name" class="form-control"
-                                                        placeholder="Unit Name">
+                                                    <input type="text" name="unit_name" id="unit_name"
+                                                        class="form-control" placeholder="Unit Name">
                                                 </div>
                                             </div>
 
                                         </div>
                                         <hr>
                                         <div class="submit-button">
-
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-cancel></x-button-cancel>
+                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-cancel href="{{ admin_url('unit/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -98,10 +98,11 @@
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(document).on('change', '#company_id', function() {
-            var companyId = $(this).val();
+            let companyId = $(this).val();
+
             if (companyId) {
                 $.ajax({
-                    url: "{{ admin_url('location/ajaxlist') }}/" + companyId + "/0",
+                    url: "{{ admin_url('location/ajax-list') }}/" + companyId + "/0",
                     type: 'GET',
                     dataType: 'json',
                     success: function(data) {
@@ -134,6 +135,23 @@
                     unit_name: {
                         required: true,
                         minlength: 3,
+
+                        remote: {
+                            url: '{{ admin_url('unit/unique') }}',
+                            type: 'post',
+                            data: {
+
+                                company_id: function() {
+                                    return $('#company_id').val();
+                                },
+                                location_id: function() {
+                                    return $('#location_id').val();
+                                },
+                                unit_name: function() {
+                                    return $('#unit_name').val();
+                                },
+                            }
+                        }
                     },
 
                 },
@@ -147,6 +165,7 @@
                     unit_name: {
                         required: "{{ __('Unit Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
+                        remote: "{{ __('Unit Name should be unique') }}"
                     },
 
                 },

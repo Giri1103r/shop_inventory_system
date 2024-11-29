@@ -64,7 +64,7 @@ Route::get('test', [TestController::class,  'index']);
 
 
 
-// Route::middleware(['securityheader'])->group(function () {
+Route::middleware(['securityheader'])->group(function () {
 
     Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 
@@ -93,7 +93,7 @@ Route::get('test', [TestController::class,  'index']);
         Route::get('password/otp', [LoginController::class, 'passwordOTP'])->name('otp.page');
         Route::post('password/otp/submit', [LoginController::class, 'passwordOTPSubmit']);
         Route::get('password/finalreset/form', [LoginController::class, 'passwordReset']);
-        Route::post('password/finalreset/submit', [LoginController::class, 'passwordResetSubmit']);
+        Route::post('password/reset-password/submit', [LoginController::class, 'passwordResetSubmit']);
 
         Route::middleware(['islogin', 'language'])->group(function () {
 
@@ -199,9 +199,7 @@ Route::get('test', [TestController::class,  'index']);
             Route::get('location/import', [LocationController::class, 'import'])->middleware('role:location,import');
             Route::post('location/import/submit', [LocationController::class, 'importSubmit']);
             Route::get('location/alllist/{companyId}', [LocationController::class, 'alllist']);
-            // Route::get('location/ajaxlist', [LocationController::class, 'list']);
-            Route::get('location/ajaxlist/{locationId}/{id}', [LocationController::class, 'list']);
-
+            Route::get('location/ajax-list/{companyId}/{id}', [LocationController::class, 'list']);
             Route::get('location/sampledownload', [LocationController::class, 'DownloadSample']);
 
             /**
@@ -224,9 +222,8 @@ Route::get('test', [TestController::class,  'index']);
                 Route::post('/status', [UnitController::class, 'statusChange']);
                 Route::post('/unique', [UnitController::class, 'Uniquecheck']);
                 Route::get('/alllist/{locationId}', [UnitController::class, 'alllist']);
-                Route::get('/ajaxlist/{locationId}/{id}', [UnitController::class, 'list']);
+                Route::get('/ajax-list/{locationId}/{id}', [UnitController::class, 'list']);
 
-                // Route::get('/ajaxlist', [UnitController::class, 'list']);
             });
 
             /**
@@ -249,7 +246,7 @@ Route::get('test', [TestController::class,  'index']);
                 Route::post('/status', [DepartmentController::class, 'statusChange']);
                 Route::post('/unique', [DepartmentController::class, 'Uniquecheck']);
                 Route::get('/alllist/{unitId}', [DepartmentController::class, 'alllist']);
-                Route::get('/ajaxlist/{unit_id}/{id}', [DepartmentController::class, 'list']);
+                Route::get('/ajax-list/{unit_id}/{id}', [DepartmentController::class, 'list']);
 
                 // Route::get('/ajaxlist', [DepartmentController::class, 'list']);
             });
@@ -513,4 +510,4 @@ Route::get('test', [TestController::class,  'index']);
             });
         });
     });
-// });
+});

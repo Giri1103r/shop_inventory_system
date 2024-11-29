@@ -127,7 +127,7 @@
 
     <!-- LOGO -->
     <div class="logo-box">
-        <a href="#" class="logo logo-light text-center">
+        <a href="{{ url('/dashboard') }}" class="logo logo-light text-center">
             <span class="logo-sm">
                 <img src="{{ url('public/assets/images/logo-sm.png') }}" alt="" height="22">
             </span>
@@ -135,7 +135,7 @@
                 <img src="{{ url('public/assets/images/logo-dark.png') }}" alt="" height="16">
             </span>
         </a>
-        <a href="#" class="logo logo-dark text-center">
+        <a href="{{ url('/dashboard') }}" class="logo logo-dark text-center">
             <span class="logo-sm">
                 <img src="{{ url('public/assets/images/logo-sm.png') }}" alt="" height="22">
             </span>

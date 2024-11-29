@@ -26,6 +26,61 @@ class AdminController extends Controller
         if (Auth::check()) {
             $user = Auth::user();
             $data = [];
+            if ((in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())) || in_array(ROLE_ADMIN, getUserRoleId(Auth::id())))) {
+                $masterLink = [
+                    [
+                        'link' => 'company/list',
+                        'name' => 'Company',
+                        'count' => gettotalCount('company'),
+                        'icon' => 'bx bx-message-square-detail',
+                        'icon_color' => 'text-primary',
+                    ],
+                    [
+                        'link' => 'location/list',
+                        'name' => 'Location',
+                        'count' => gettotalCount('location'),
+                        'icon' => 'bx bx-message-square-detail',
+                        'icon_color' => 'text-primary',
+                    ],
+                    [
+                        'link' => 'unit/list',
+                        'name' => 'Unit',
+                        'count' => gettotalCount('unit'),
+                        'icon' => 'bx bx-message-square-detail',
+                        'icon_color' => 'text-primary',
+                    ],
+
+                    [
+                        'link' => 'department/list',
+                        'name' => 'Department',
+                        'count' => gettotalCount('department'),
+                        'icon' => 'bx bx-message-square-detail',
+                        'icon_color' => 'text-primary',
+                    ],
+
+
+                    [
+                        'link' => 'employee/list',
+                        'name' => 'Employees',
+                        'count' => gettotalCount('employee'),
+                        'icon' => 'bx bx-message-square-detail',
+                        'icon_color' => 'text-primary',
+                    ],
+
+                    [
+                        'link' => 'work/list',
+                        'name' => 'Workers',
+                        'count' => gettotalCount('work'),
+                        'icon' => 'bx bx-message-square-detail',
+                        'icon_color' => 'text-primary',
+                    ],
+
+                ];
+
+                $data = [
+                    'masterLink' => $masterLink,
+                ];
+            }
             return view('admin.dashboard', $data);
         }
     }
@@ -125,5 +180,4 @@ class AdminController extends Controller
             return redirect()->back();
         }
     }
-
 }

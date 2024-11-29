@@ -7,8 +7,7 @@ Website: https://coderthemes.com/
 Contact: support@coderthemes.com
 File: Main Css File
 */
-@import url("https://fonts.googleapis.com/css?family=Roboto:400,500,700");
-@import url("https://fonts.googleapis.com/css?family=Karla:400,700");
+
 :root {
   --ct-link-color: #71b6f9;
   --ct-link-hover-color: #609bd4;
@@ -21450,10 +21449,10 @@ body[data-layout-color=dark] .product-thumb.active {
 
 /*!
  * Waves v0.7.6
- * http://fian.my.id/Waves 
- * 
- * Copyright 2014-2018 Alfiana E. Sibuea and other contributors 
- * Released under the MIT license 
+ * http://fian.my.id/Waves
+ *
+ * Copyright 2014-2018 Alfiana E. Sibuea and other contributors
+ * Released under the MIT license
  * https://github.com/fians/Waves/blob/master/LICENSE */
 .waves-effect {
   position: relative;
@@ -24693,5 +24692,5 @@ body[data-layout-color=dark] .datepicker tfoot tr th:hover {
   padding-left: 95%  !important;
 }
 .align-back-import-btc {
-  padding-left: 85%  !important;
+  padding-left: 83%  !important;
 }

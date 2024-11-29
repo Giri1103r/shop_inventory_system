@@ -69,7 +69,7 @@ class Employee extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('masters_employee.emp_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('masters_employee.emp_id', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('emp_id') && $request->emp_id) {
@@ -79,16 +79,27 @@ class Employee extends Model
         if ($request->has('emp_name') && $request->emp_name) {
             $query = $query->where('masters_employee.emp_name', 'LIKE', '%' . $request->emp_name . '%');
         }
-        if ($request->has('company_id') && $request->company_id) {
-            $query = $query->where('masters_employee.company', decryptId($request->company_id));
+        if ($request->has('email') && $request->email) {
+            $query = $query->where('masters_employee.email', 'LIKE', '%' . $request->email . '%');
         }
-        if ($request->has('dept_id') && $request->dept_id) {
-            $query = $query->where('masters_employee.department', decryptId($request->dept_id));
+        if ($request->has('employee_status') && $request->employee_status) {
+            $query = $query->where('masters_employee.employee_status', 'LIKE', '%' . $request->employee_status . '%');
         }
+      
+        // if ($request->has('status') && $request->status) {
 
-        if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('masters_employee.unit', decryptId($request->unit_id));
-        }
+        //     $query = $query->where('masters_employee.status', decryptId($request->status));
+        // }
+        // if ($request->has('company_id') && $request->company_id) {
+        //     $query = $query->where('masters_employee.company', decryptId($request->company_id));
+        // }
+        // if ($request->has('dept_id') && $request->dept_id) {
+        //     $query = $query->where('masters_employee.department', decryptId($request->dept_id));
+        // }
+
+        // if ($request->has('unit_id') && $request->unit_id) {
+        //     $query = $query->where('masters_employee.unit', decryptId($request->unit_id));
+        // }
 
 
         $data_count = $query->count();
@@ -194,6 +205,11 @@ class Employee extends Model
 
         foreach ($emptemp as $item) {
 
+          
+            $role = DB::table('template_user_role')
+            ->where('role_name', $item->user_role)
+            ->first();
+
             $insertArray[] = [
                 'emp_id' => $item->emp_id ?? null,
                 'emp_name' => $item->emp_name ?? null,
@@ -202,7 +218,7 @@ class Employee extends Model
                 'email' => $item->email ?? null,
                 'joining_date' => $item->joining_date ? DBdatetimeformat($item->joining_date) : null,
                 'mobile_no' => $item->mobile_no ?? null,
-                'user_role' => $item->user_role ?? null,
+                'user_role' => $role->id ?? null,
                 'designation' => $item->designation ?? null,
                 'employee_status' => $item->employee_status ?? null,
                 'status' => 1,
@@ -221,7 +237,6 @@ class Employee extends Model
                 $this->insert($chunk); // Perform batch insert
                 $insertedRecords = array_merge($insertedRecords, $chunk);
             }
-
             return $insertedRecords;
         }
 
@@ -232,10 +247,9 @@ class Employee extends Model
 
     public function updates($id)
     {
-
         $request = request();
-
-        $update_array = array(
+    
+        $update_array = [
             'emp_id' => $request->emp_id ?? null,
             'emp_name' => $request->emp_name ?? null,
             'gender' => $request->gender ?? null,
@@ -253,9 +267,14 @@ class Employee extends Model
             'status' => 1,
             'updated_by' => Auth::id(),
             'updated_at' => now(),
-        );
-        return $this->where('id', $id)->update($update_array);
+        ];
+        // Perform the update
+        $this->where('id', $id)->update($update_array);
+    
+        // Retrieve and return the updated record
+        return $this->find($id);
     }
+    
     public function updateErrorStatus($emp_id, $errorMessage)
     {
         $update_data = [
@@ -313,7 +332,7 @@ class Employee extends Model
         if (!empty($request->search)) {
             $search = $request->search;
             $query->where(function ($query) use ($search) {
-                $query->orWhere('masters_employee.emp_name', 'LIKE', '%' . $search . '%');
+                $query->orWhere('masters_employee.emp_id', 'LIKE', '%' . $search . '%');
             });
         }
 
@@ -324,27 +343,24 @@ class Employee extends Model
         if ($request->has('emp_name') && $request->emp_name) {
             $query = $query->where('masters_employee.emp_name', 'LIKE', '%' . $request->emp_name . '%');
         }
-        if ($request->has('company_id') && $request->company_id) {
-            $query = $query->where('masters_employee.company', decryptId($request->company_id));
+        if ($request->has('email') && $request->email) {
+            $query = $query->where('masters_employee.email', 'LIKE', '%' . $request->email . '%');
         }
-        if ($request->has('dept_id') && $request->dept_id) {
-            $query = $query->where('masters_employee.department', decryptId($request->dept_id));
+        if ($request->has('employee_status') && $request->employee_status) {
+            $query = $query->where('masters_employee.employee_status', 'LIKE', '%' . $request->employee_status . '%');
         }
-
-        if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('masters_employee.unit', decryptId($request->unit_id));
-        }
-
+        $query->orderBy('id', 'DESC');
         return  $query->get();
     }
 
     public function selectOne($id)
     {
 
-        $data = $this->select('masters_employee.*', 'company_management.company_name', 'masters_department.department_name', 'masters_unit.unit_name')
+        $data = $this->select('masters_employee.*', 'company_management.company_name', 'masters_department.department_name', 'masters_unit.unit_name','template_user_role.role_name')
             ->leftJoin('company_management', 'masters_employee.company', '=', 'company_management.id')
             ->leftJoin('masters_department', 'masters_employee.department', '=', 'masters_department.id')
             ->leftJoin('masters_unit', 'masters_employee.unit', '=', 'masters_unit.id')
+            ->leftJoin('template_user_role', 'masters_employee.user_role', '=', 'template_user_role.id')
             ->where('masters_employee.id', $id)
             ->first();
         return $data;
