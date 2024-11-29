@@ -1238,4 +1238,19 @@ if (!function_exists('getMonth')) {
         $month_name = Carbon::parse($created_at)->format('F');
         return $month_name;
     }
+
+    if (!function_exists('getPpename')) {
+
+        function getPpename($userid)
+        {
+
+            $ppe_name = DB::table('masters_ppetype')->select('ppe_type')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($ppe_name == null) {
+                return '';
+            } else {
+                return $ppe_name->ppe_type;
+            }
+        }
+    }
 }

@@ -23,7 +23,7 @@
                         <div class="card">
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
-                                <div>
+                                <div class="align-back-btc">
                                     <x-button-back href="{{ admin_url('work/list') }}"></x-button-back>
                                 </div>
                             </div>
@@ -181,9 +181,9 @@
                                         </div>
                                         <hr>
                                         <div class="submit-button">
-
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-cancel></x-button-cancel>
+                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-cancel href="{{ admin_url('work/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>

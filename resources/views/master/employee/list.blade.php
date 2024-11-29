@@ -22,17 +22,25 @@
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_id" class="form-label ">Employee ID</label>
-                                            <input type="text" name="emp_id" id="emp_id" class="form-control">
+                                            <input type="text" name="emp_id" id="emp_id" class="form-control"
+                                                placeholder="Employee ID">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">Employee Name</label>
-                                            <input type="text" name="emp_name" id="emp_name" class="form-control">
+                                            <input type="text" name="emp_name" id="emp_name" class="form-control"
+                                                placeholder="Employee Name">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="email" class="form-label ">Employee Email</label>
-                                            <input type="text" name="email" id="email" class="form-control">
+                                            <input type="text" name="email" id="email" class="form-control"
+                                                placeholder="Employee Email">
                                         </div>
-
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="email" class="form-label ">Employee Status</label>
+                                            <input type="text" name="employee_status" id="employee_status"
+                                                class="form-control" placeholder="Employee Status">
+                                        </div>
+                                       
                                         {{-- <div class="col-md-3 mb-3 form-input">
                                             <label for="company_id" class="form-label ">Company</label>
                                             <select name="company_id" id="company_id" class=" form-control single-select"
@@ -72,10 +80,9 @@
                                             </select>
                                         </div> --}}
 
-                                        <div class="col-md-3">
+                                        <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
-
                                         </div>
                                     </div>
                                 </div>
@@ -223,6 +230,8 @@
                             d.emp_id = $('#emp_id').val();
                             d.emp_name = $('#emp_name').val();
                             d.email = $('#email').val();
+                            d.employee_status = $('#employee_status').val();
+                            d.status = $('#status').val();
 
                         }
                     },
@@ -283,6 +292,8 @@
                                         emp_id = $('#emp_id').val();
                                         emp_name = $('#emp_name').val();
                                         email = $('#email').val();
+                                        employee_status = $('#employee_status').val();
+                                        status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
@@ -291,6 +302,8 @@
                                             '&emp_id=' + emp_id +
                                             '&emp_name=' + emp_name +
                                             '&email=' + email;
+                                        '&employee_status=' + employee_status;
+                                        '&status=' + status;
                                     } // Closing brace for action function
                                 },
                                 {
@@ -301,6 +314,8 @@
                                         emp_id = $('#emp_id').val();
                                         emp_name = $('#emp_name').val();
                                         email = $('#email').val();
+                                        employee_status = $('#employee_status').val();
+                                        status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
@@ -309,6 +324,8 @@
                                             '&emp_id=' + emp_id +
                                             '&emp_name=' + emp_name +
                                             '&email=' + email;
+                                            '&employee_status=' + employee_status;
+                                            '&status=' + status;
                                     } // Closing brace for action function
                                 }
                             ]

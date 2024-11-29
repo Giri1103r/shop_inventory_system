@@ -216,7 +216,7 @@ class TrainingSchedule extends Model
 
             $query = $query->where('masters_training_schedule.status', decryptId($request->status));
         }
-
+        $query->orderBy('id', 'DESC');
         return  $query->get();
     }
 

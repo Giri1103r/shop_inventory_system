@@ -82,8 +82,8 @@ class Work extends Model
         if ($request->has('company_id') && $request->company_id) {
             $query = $query->where('masters_work.company', decryptId($request->company_id));
         }
-        if ($request->has('dept_id') && $request->dept_id) {
-            $query = $query->where('masters_work.department', decryptId($request->dept_id));
+        if ($request->has('department_id') && $request->department_id) {
+            $query = $query->where('masters_work.department', decryptId($request->department_id));
         }
 
         if ($request->has('unit_id') && $request->unit_id) {
@@ -290,13 +290,15 @@ class Work extends Model
         if ($request->has('company_id') && $request->company_id) {
             $query = $query->where('masters_work.company', decryptId($request->company_id));
         }
-        if ($request->has('dept_id') && $request->dept_id) {
-            $query = $query->where('masters_work.department', decryptId($request->dept_id));
+        if ($request->has('department_id') && $request->department_id) {
+            $query = $query->where('masters_work.department', decryptId($request->department_id));
         }
 
         if ($request->has('unit_id') && $request->unit_id) {
             $query = $query->where('masters_work.unit', decryptId($request->unit_id));
         }
+
+        $query->orderBy('id', 'DESC');
 
         return  $query->get();
     }

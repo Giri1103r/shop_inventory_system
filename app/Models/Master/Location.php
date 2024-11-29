@@ -50,7 +50,7 @@ class Location extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('location_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('location_id', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('location_id') && $request->location_id) {
@@ -63,9 +63,9 @@ class Location extends Model
             $query = $query->where('location_name', 'LIKE', '%' . $request->location_name . '%');
         }
         if ($request->has('status') && $request->status) {
-
-            $query = $query->where('status', decryptId($request->status));
+            $query = $query->where('masters_location.status', decryptId($request->status));
         }
+
         $data_count = $query->count();
         $total_records = $data_count;
 
@@ -88,14 +88,14 @@ class Location extends Model
     public function UniqueCheck($location_name, $company_id)
     {
 
-        return $this->where('location_name',  $location_name)->where('company_id',$company_id )->get();
+        return $this->where('location_name',  $location_name)->where('company_id', $company_id)->get();
     }
 
-    public function ExistuniqueCheck($location_name, $company_id,$id)
+    public function ExistuniqueCheck($location_name, $company_id, $id)
     {
-        return $this->where('location_name',  $location_name)->where('company_id',$company_id )
-        ->where('id', '!=', $id)
-        ->get();
+        return $this->where('location_name',  $location_name)->where('company_id', $company_id)
+            ->where('id', '!=', $id)
+            ->get();
     }
 
     public function store()
@@ -160,23 +160,32 @@ class Location extends Model
         $search = '';
         $query = $this->select('masters_location.*', 'company_management.company_name');
         $query = $query->leftJoin('company_management', 'masters_location.company_id', '=', 'company_management.id');
+
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
             $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhereRaw('location_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('location_id LIKE "%' . $search . '%"');
             });
+        }
+        if ($request->has('location_id') && $request->location_id) {
+            $query = $query->where('location_id', 'LIKE', '%' . $request->location_id . '%');
+        }
+        if ($request->has('company_id') && $request->company_id) {
+            $query = $query->where('masters_location.company_id', decryptId($request->company_id));
         }
         if ($request->has('location_name') && $request->location_name) {
             $query = $query->where('location_name', 'LIKE', '%' . $request->location_name . '%');
         }
         if ($request->has('status') && $request->status) {
-
             $query = $query->where('masters_location.status', decryptId($request->status));
         }
 
+        $query->orderBy('id', 'DESC');
+
         return  $query->get();
     }
+
 
     public function selectOne($id)
     {

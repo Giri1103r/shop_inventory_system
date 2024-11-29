@@ -10,7 +10,7 @@
             <h4 class="text-black">{{ __('Role Add') }}</h4>
 
         </div>
-       
+
     </div>
 
     <div class="content-body  default-height">
@@ -46,7 +46,7 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Role Name</label>
-                                                    <input type="text" name="role_name" class="form-control"
+                                                    <input type="text" name="role_name" id="role_name" class="form-control"
                                                         placeholder="Role Name">
                                                 </div>
                                             </div>
@@ -74,19 +74,42 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+        $.validator.addMethod("regex", function(value, element, param) {
+            return this.optional(element) || param.test(value);
+        }, "Invalid input.");
         $(function() {
             $('#roleadd').validate({
                 rules: {
                     role_name: {
                         required: true,
+                        minlength: 3,
+                        maxlength: 20,
+                        regex: /^[A-Za-z]+$/,
+                        
+                        remote: {
+                            url: '{{ admin_url('administration/role/unique') }}',
+                            type: 'post',
+                            data: {
+                                role_name: function() {
+                                    return $('#role_name').val();
+                                },
+                               
+                            }
+                        }
                     },
                 },
                 messages: {
                     role_name: {
                         required: "{{ __('Role Name is Required') }}",
+                        minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum length should not exceed 20 characters.",
+                        regex: "Only alphabetic characters are allowed (no spaces or special characters).",
+                         remote: "{{ __('Role Name should be unique') }}"
                     },
-
                 },
+
+
+
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
                     error.addClass('invalid-feedback');

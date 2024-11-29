@@ -54,7 +54,7 @@ class Department extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('department_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('department_id', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('department_id') && $request->department_id) {
@@ -70,11 +70,11 @@ class Department extends Model
             $query = $query->where('masters_department.unit_id', decryptId($request->unit_id));
         }
         if ($request->has('department_name') && $request->department_name) {
-            $query = $query->where('department_name', 'LIKE', '%' . $request->department_name . '%');
+            $query = $query->where('masters_department.department_name', 'LIKE', '%' . $request->department_name . '%');
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('status', decryptId($request->status));
+            $query = $query->where('masters_department.status', decryptId($request->status));
         }
         $data_count = $query->count();
         $total_records = $data_count;
@@ -249,7 +249,7 @@ class Department extends Model
 
             $query = $query->where('status', decryptId($request->status));
         }
-
+        $query->orderBy('id', 'DESC');
         return  $query->get();
     }
 

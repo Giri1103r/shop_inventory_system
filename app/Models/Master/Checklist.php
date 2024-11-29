@@ -163,7 +163,7 @@ class Checklist extends Model
 
             $query = $query->where('masters_ptw_checklist.status', decryptId($request->status));
         }
-
+        $query->orderBy('id', 'DESC');
         return  $query->get();
     }
 

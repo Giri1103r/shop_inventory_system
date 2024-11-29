@@ -23,7 +23,7 @@
                         <div class="card">
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
-                                <div>
+                                <div class="align-back-btc">
                                     <x-button-back href="{{ admin_url('employee/list') }}"></x-button-back>
                                 </div>
                             </div>
@@ -58,22 +58,32 @@
                                                         style="width: 100%;">
                                                         <option value="">Select Gender</option>
                                                         <option value="Male"
-                                                            {{ $employee->gender === 'Male' ? 'selected' : '' }}>Male</option>
+                                                            {{ $employee->gender === 'Male' ? 'selected' : '' }}>Male
+                                                        </option>
                                                         <option value="Female"
-                                                            {{ $employee->gender === 'Female' ? 'selected' : '' }}>Female</option>
+                                                            {{ $employee->gender === 'Female' ? 'selected' : '' }}>Female
+                                                        </option>
                                                         <option value="Other"
-                                                            {{ $employee->gender === 'Other' ? 'selected' : '' }}>Other</option>
+                                                            {{ $employee->gender === 'Other' ? 'selected' : '' }}>Other
+                                                        </option>
                                                     </select>
                                                 </div>
                                             </div>
 
-                                            {{-- <div class="col-md-4">
+                                            <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Nationality</label>
-                                                    <input type="text" name ="nationality" class="form-control"
-                                                        placeholder="Nationality" value="{{ $employee->nationality }}">
+                                                    <label class="form-label require">User Role</label>
+                                                    <select name="user_role" id="user_role"
+                                                        class="form-control single-select" style="width: 100%;">
+                                                        <option value="">Select User Role</option>
+                                                        @foreach ($userrole as $role)
+                                                            <option @if ($employee->user_role == $role->id) selected @endif
+                                                                value="{{ encryptId($role->id) }}">{{ $role->role_name }}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
-                                            </div> --}}
+                                            </div>
+
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Employee Email</label>
@@ -81,25 +91,14 @@
                                                         placeholder="Employee Email" value="{{ $employee->email }}">
                                                 </div>
                                             </div>
-                                       
-                                            <div class="col-md-4">
-                                                <label class="form-label required">User Role</label>
-                                                <select name="user_role" id="user_role" class="select2 form-control">
 
-                                                    <option value="">Select User Role</option>
-                                                    @foreach ($userrole as $role)
-                                                        <option @if ($employee->user_role == $role->id) selected @endif
-                                                            value="{{ $role->id }}">{{ $role->role_name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-
+                                         
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Joining Date</label>
                                                     <input type="text" name ="joining_date"
-                                                        id="exit-date-datetime-datepicker" class="form-control"
-                                                        placeholder="Exit Date"
+                                                        id="joining_date_datetime_datepicker" class="form-control"
+                                                        placeholder="Joining Date"
                                                         value="{{ Displaydatetimeformat($employee->joining_date) }}">
                                                 </div>
                                             </div>
@@ -107,7 +106,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Employee Status</label>
                                                     <input type="text" name ="employee_status" class="form-control"
-                                                        placeholder="Employee Status" value="{{ $employee->employee_status }}">
+                                                        placeholder="Employee Status"
+                                                        value="{{ $employee->employee_status }}">
                                                 </div>
                                             </div>
                                             {{-- <div class="col-md-4">
@@ -188,9 +188,9 @@
                                         </div>
                                         <hr>
                                         <div class="submit-button">
-
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-cancel></x-button-cancel>
+                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-cancel href="{{ admin_url('employee/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -209,128 +209,12 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
-        // $(document).ready(function() {
-        //     flatpickr("#doi-datetime-datepicker", {
-        //         enableTime: true, 
-        //         dateFormat: "d-m-Y H:i",
-        //         time_24hr: true, 
-        //         minuteIncrement: 5, 
-        //     });
-
-        //     flatpickr("#exit-date-datetime-datepicker", {
-        //         enableTime: true, 
-        //         dateFormat: "d-m-Y H:i", 
-        //         time_24hr: true,
-        //         minuteIncrement: 5, 
-        //     });
-
-        //     var initialCompanyId = $('#company_id').val();
-        //     var preselectedLocationId = "{{ encryptId($employee->location) ?? '0' }}";
-        //     var preselectedUnitId = "{{ encryptId($employee->unit) ?? '0' }}";
-        //     var preselectedDepartmentId = "{{ encryptId($employee->department) ?? '0' }}";
-
-        //     if (initialCompanyId) {
-        //         fetchLocations(initialCompanyId, preselectedLocationId, function() {
-        //             var location_id = preselectedLocationId;
-        //             fetchUnits(location_id, preselectedUnitId, function() {
-        //                 var unit_id = preselectedUnitId;
-        //                 fetchDepartments(unit_id, preselectedDepartmentId);
-        //             });
-        //         });
-        //     }
-
-        //     $('#company_id').on('change', function() {
-        //         var company_id = $(this).val();
-        //         fetchLocations(company_id, preselectedLocationId, function() {
-        //             $('#location_id').trigger('change');
-        //         });
-        //     });
-
-        //     $('#location_id').on('change', function() {
-        //         var location_id = $(this).val();
-        //         fetchUnits(location_id, preselectedUnitId, function() {
-        //             $('#unit_id').trigger('change');
-        //         });
-        //     });
-
-        //     $('#unit_id').on('change', function() {
-        //         var unit_id = $(this).val();
-        //         fetchDepartments(unit_id, preselectedDepartmentId, function() {
-        //             $('#department_id').trigger('change');
-        //         });
-        //     });
-
-        //     function fetchLocations(company_id, preselectedLocationId, callback) {
-        //         if (company_id) {
-        //             $.ajax({
-        //                 url: "{{ admin_url('location/ajax-list/') }}" + company_id + '/' +
-        //                     preselectedLocationId,
-        //                 type: 'GET',
-        //                 dataType: 'json',
-        //                 success: function(data) {
-        //                     $('#location_id').empty().append(
-        //                         '<option value="">Select Location</option>');
-        //                     $.each(data, function(key, value) {
-        //                         var selected = (value.id == preselectedLocationId) ?
-        //                             'selected' : '';
-        //                         $('#location_id').append('<option value="' + value.id + '" ' +
-        //                             selected + '>' + value.name + '</option>');
-        //                     });
-        //                     if (callback) callback();
-        //                 }
-        //             });
-        //         } else {
-        //             $('#location_id').empty().append('<option value="">Select Location</option>');
-        //         }
-        //     }
-
-        //     function fetchUnits(location_id, preselectedUnitId, callback) {
-        //         if (location_id) {
-        //             $.ajax({
-        //                 url: "{{ admin_url('unit/ajax-list/') }}" + location_id + '/' + preselectedUnitId,
-        //                 type: 'GET',
-        //                 dataType: 'json',
-        //                 success: function(data) {
-        //                     $('#unit_id').empty().append('<option value="">Select Unit</option>');
-        //                     $.each(data, function(key, value) {
-        //                         var selected = (value.id == preselectedUnitId) ? 'selected' :
-        //                             '';
-        //                         $('#unit_id').append('<option value="' + value.id + '" ' +
-        //                             selected + '>' + value.name + '</option>');
-        //                     });
-        //                     if (callback) callback();
-        //                 }
-        //             });
-        //         } else {
-        //             $('#unit_id').empty().append('<option value="">Select Unit</option>');
-        //         }
-        //     }
-
-        //     function fetchDepartments(unit_id, preselectedDepartmentId, callback) {
-        //         if (unit_id) {
-        //             $.ajax({
-        //                 url: "{{ admin_url('department/ajax-list/') }}" + unit_id + '/' +
-        //                     preselectedDepartmentId,
-        //                 type: 'GET',
-        //                 dataType: 'json',
-        //                 success: function(data) {
-        //                     $('#department_id').empty().append(
-        //                         '<option value="">Select Department</option>');
-        //                     $.each(data, function(key, value) {
-        //                         var selected = (value.id == preselectedDepartmentId) ?
-        //                             'selected' : '';
-        //                         $('#department_id').append('<option value="' + value.id + '" ' +
-        //                             selected + '>' + value.name + '</option>');
-        //                     });
-        //                     if (callback) callback();
-        //                 }
-        //             });
-        //         } else {
-        //             $('#department_id').empty().append('<option value="">Select Department</option>');
-        //         }
-        //     }
-        // });
-
+        flatpickr("#joining_date_datetime_datepicker", {
+                enableTime: true, 
+                dateFormat: "d-m-Y H:i",
+                time_24hr: true, 
+                minuteIncrement: 5, 
+            });
 
         $(function() {
             $('#employeeedit').validate({
@@ -342,6 +226,9 @@
                         required: true,
                     },
                     user_role: {
+                        required: true,
+                    },
+                    gender: {
                         required: true,
                     },
                     joining_date: {
@@ -362,6 +249,9 @@
                     user_role: {
                         required: "{{ __('User Role is Required') }}",
                     },
+                    gender: {
+                        required: "{{ __('Gender is Required') }}",
+                    },
                     joining_date: {
                         required: "{{ __('Joining Date is Required') }}",
 
@@ -370,7 +260,7 @@
                         required: "{{ __('Employee Status is Required') }}",
 
                     }
-                
+
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {

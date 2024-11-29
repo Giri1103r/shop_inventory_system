@@ -1,1 +1,1 @@
-<button type="submit" class="btn btn-primary ">{{ __('common.submit') }}</button>
+<button type="submit" class="btn btn-success ">{{ __('common.submit') }}</button>

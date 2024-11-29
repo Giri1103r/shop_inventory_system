@@ -28,7 +28,8 @@
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="location_id" class="form-label ">Location Id</label>
-                                            <input type="text" name="location_id" id="location_id" class="form-control">
+                                            <input type="text" name="location_id" id="location_id" class="form-control"
+                                                placeholder="Location Id">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="company_id" class="form-label ">Company Name</label>
@@ -44,7 +45,7 @@
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="location_name" class="form-label ">Location Name</label>
                                             <input type="text" name="location_name" id="location_name"
-                                                class="form-control">
+                                                class="form-control" placeholder="Location Name">
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
@@ -56,14 +57,16 @@
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3">
-                                            <x-button-search></x-button-search>
-                                            <x-button-reset></x-button-reset>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12 mb-3 d-flex justify-content-end align-items-start gap-2">
+                                                <x-button-search class="me-2"></x-button-search>
+                                                <x-button-reset class="ms-1"></x-button-reset>
+                                            </div>
 
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                         </form>
                         <hr>
                     </div>

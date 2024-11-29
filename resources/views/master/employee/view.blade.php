@@ -15,7 +15,7 @@
                         <div class="card">
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
-                                <div>
+                                <div class="align-back-btc">
                                     <x-button-back href="{{ admin_url('employee/list') }}"></x-button-back>
 
                                 </div>

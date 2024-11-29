@@ -23,11 +23,11 @@
                         <div class="card">
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('administration.employee_import') }}</h4> --}}
-                                <div class="align-back-import-btc">
+                                <div class="d-flex justify-content-end p-2 gap-2">
                                     <x-button-download href="{{ admin_url('company/sampledownload') }}"></x-button-download>
                                     <x-button-back href="{{ admin_url('company/list') }}"></x-button-back>
-
                                 </div>
+                                
                             </div>
 
                             <div class="card-body ">

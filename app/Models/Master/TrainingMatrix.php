@@ -217,6 +217,8 @@ class TrainingMatrix extends Model
             $query = $query->where('masters_training_matrix.status', decryptId($request->status));
         }
 
+        $query->orderBy('id', 'DESC');
+
         return  $query->get();
     }
 
