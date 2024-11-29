@@ -431,6 +431,7 @@ class CronController extends Controller
         }
     }
 
+    
     public function EmployeeSave()
     {
 
@@ -441,18 +442,19 @@ class CronController extends Controller
 
                 
                 $employee = $this->employee->store($emp_temp);
-                $user = $this->user->store($employee);
-
-                if (!empty($user) && !empty($user->email)) {
-                    $empdetails = $this->employee->selectOne($employee['emp_id']);
-                // dd($empdetails ,$user->email);
-
-                    if (!empty($empdetails)) {
-                        $emp = $empdetails->toArray();
-                        Mail::to($user->email)->queue(new EmployeeRegisterEmail($emp));
-                    }
-                }
-
+                $users = $this->user->store($employee);
+             
+                // foreach ($users as $user) { 
+                //     if (!empty($user) && isset($user->email)) {
+                //         $empdetails = $this->employee->selectOne($user->employee_id);
+                //         if (!empty($empdetails)) {
+                            
+                //             $emp = $empdetails->toArray();
+                //             Mail::to($user->email)->queue(new EmployeeRegisterEmail($emp));
+                //         }
+                //     }
+                // }
+           
                 if (empty($employee)) {
                     $this->emp_temp->updateAllErrorStatus();
                 } else {
