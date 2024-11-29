@@ -138,7 +138,7 @@
                                     <tr>
                                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; text-align: center" valign="top">
                                             <img style="width:200px"
-                                                src="{{ public_image('common/logo/logo_dark.png') }}"
+                                                src="{{ url('public/assets/images/logo-dark.png') }}"
                                                 alt="Logo Image">
                                                 <br>
                                         </td>
