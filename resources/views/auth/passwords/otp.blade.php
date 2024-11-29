@@ -27,7 +27,7 @@
                 <div class="mb-3 d-grid text-center">
                     <button class="btn btn-primary" type="submit"> Send OTP </button>
                 </div>
-                <p>OTP will expire in <span id="otp-timer">{{ $expire }}</span>.</p>
+                <p>OTP will expire in <span id="otp-timer">{{ $expire }}</span>seconds.</p>
             </form>
             <form action="{{ route('password.resend.otp') }}" method="POST" id="resend-otp-form">
                 @csrf
@@ -77,23 +77,21 @@
                 }
             });
         });
-        var timer = parseInt("{{ $expire * 60 }}", 10);
+        var timer = 30; // Set timer to 30 seconds
 
         function countdown() {
-            var minutes = Math.floor(timer / 60);
-            var seconds = timer % 60;
+            var seconds = timer;
 
-            document.getElementById('otp-timer').innerHTML = minutes + ' min ' + (seconds < 10 ? '0' : '') + seconds +
-                ' sec';
+            document.getElementById('otp-timer').innerHTML = seconds + ' sec';
 
             if (timer > 0) {
                 timer--;
                 setTimeout(countdown, 1000);
             } else {
-                document.getElementById('resend-otp-btn').style.display = 'block';
-
+                document.getElementById('resend-otp-btn').style.display = 'block'; 
             }
         }
+
         countdown();
     </script>
 @endpush

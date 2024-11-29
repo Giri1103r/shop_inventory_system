@@ -145,7 +145,7 @@ class LoginController extends Controller
             $username    = $user->username;
             $otp         = mt_rand(100000, 999999);
             $email       = $user->email;
-            $expire_mins = (int)env('OTP_EXPIRE', 10);
+            $expire_mins = 30;
 
             Cache::put('otp_' . $user->username, $otp, Carbon::now()->addMinutes($expire_mins));
 
@@ -204,9 +204,9 @@ class LoginController extends Controller
         }
 
         $otp = mt_rand(100000, 999999);
-        $expire_mins = (int)env('OTP_EXPIRE', 10);
-
-        Cache::put('otp_' . $user->username, $otp, Carbon::now()->addMinutes($expire_mins));
+        $expire_mins = 30;
+        // Store OTP in the cache with 30-second expiration
+        Cache::put('otp_' . $user->username, $otp, now()->addSeconds($expire_mins));
         $user->otp = $otp;
         $user->save();
 
@@ -301,7 +301,6 @@ class LoginController extends Controller
         if ($userCheck != null && $userCheck != '') {
 
             $cacheKey = 'otp_' . $username;
-
             if (!Cache::has($cacheKey)) {
                 Session::flash('error', 'OTP expired');
 

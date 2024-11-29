@@ -38,7 +38,7 @@
                         <tr>
                             <td colspan="4"
                                 style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                OTP will expire in {{ $details['expire'] }} minutes.
+                                OTP will expire in {{ $details['expire'] }} seconds.
                             </td>
                         </tr>
 
