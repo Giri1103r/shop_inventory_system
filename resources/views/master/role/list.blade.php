@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Role')
+@section('title', ' User Role ')
 @section('pageurl', admin_url('administration/role/list'))
 
 
@@ -22,10 +22,14 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="role_name" class="form-label ">Role</label>
-                                            <input type="text" name="role_name" id="role_name" class="form-control">
+                                            <label for="role_id" class="form-label ">Role Id</label>
+                                            <input type="text" name="role_id" id="role_id" class="form-control" placeholder="Role Id">
                                         </div>
-
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="role_name" class="form-label ">Role Name</label>
+                                            <input type="text" name="role_name" id="role_name" class="form-control" placeholder="Role Name">
+                                        </div>
+                                      
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
@@ -55,6 +59,7 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
+                                        <th>Role ID</th>
                                         <th>Role Name</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
@@ -114,6 +119,7 @@
                                 .attr('content')
                         },
                         data: function(d) {
+                            d.role_id = $('#role_id').val();
                             d.role_name = $('#role_name').val();
                             d.status = $('#status').val();
 
@@ -123,6 +129,10 @@
                             data: 'DT_RowIndex',
                             orderable: false,
                             searchable: true,
+                        },
+                        {
+                            data: 'role_id',
+                            name: 'role_id'
                         },
                         {
                             data: 'role_name',
@@ -169,6 +179,7 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
+                                        role_id = $('#role_id').val();
                                         role_name = $('#role_name').val();
                                         status = $('#status').val();
 
@@ -177,6 +188,7 @@
                                         window.location.href =
                                             "{{ admin_url('administration/role/export/pdf') }}" +
                                             '?search=' + searchValue +
+                                            '&role_id=' + role_id +
                                             '&role_name=' + role_name +
                                             '&status=' + status
                                     }
@@ -186,6 +198,7 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
+                                        role_id = $('#role_id').val();
                                         role_name = $('#role_name').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
@@ -193,6 +206,7 @@
                                         window.location.href =
                                         "{{ admin_url('administration/role/export/excel') }}" +
                                         '?search=' + searchValue +
+                                        '&role_id=' + role_id +
                                         '&role_name=' + role_name +
                                         '&status=' + status
                                     }

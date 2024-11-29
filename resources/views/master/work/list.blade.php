@@ -45,7 +45,7 @@
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="location_id" class="form-label ">Location </label>
-                                            <select name="location_id" id="location_id" class=" form-control single-select"
+                                            <select name="location" id="location_id" class=" form-control single-select"
                                                 style="width: 100%">
                                                 <option value="">Select Location Name</option>
 
@@ -69,7 +69,15 @@
 
                                             </select>
                                         </div>
-
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
+                                            <select name="status" id="status" style="width: 100%"
+                                                class="form-control single-select">
+                                                <option value="">Select Status</option>
+                                                <option value="{{ encryptId(1) }}">Active</option>
+                                                <option value="{{ encryptId(0) }}">In-Active</option>
+                                            </select>
+                                        </div>
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -95,6 +103,7 @@
                                         <th>Phone Number</th>
                                         <th>Unit Name</th>
                                         <th>Department Name</th>
+                                        <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -174,9 +183,11 @@
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
-                            $('#department_id').empty().append('<option value="">Select Department</option>');
+                            $('#department_id').empty().append(
+                                '<option value="">Select Department</option>');
                             $.each(data, function(key, value) {
-                                $('#department_id').append('<option value="' + value.id + '">' + value
+                                $('#department_id').append('<option value="' + value.id + '">' +
+                                    value
                                     .name + '</option>');
                             });
                             $('#department_id').trigger('change.');
@@ -190,7 +201,7 @@
                     $('#department_id').trigger('change.');
                 }
             });
-        
+
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -230,6 +241,7 @@
                             d.location_id = $('#location_id').val();
                             d.unit_id = $('#unit_id').val();
                             d.department_id = $('#department_id').val();
+                            d.status = $('#status').val();
 
                         }
                     },
@@ -258,7 +270,10 @@
                             data: 'department_name',
                             name: 'department_name'
                         },
-
+                        {
+                            data: 'status',
+                            name: 'status'
+                        },
                         {
                             data: 'created_at',
                             name: 'created_at'
@@ -298,7 +313,7 @@
                                         location_id = $('#location_id').val();
                                         unit_id = $('#unit_id').val();
                                         department_id = $('#department_id').val();
-
+                                        status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -310,7 +325,8 @@
                                             '&company_id=' + company_id +
                                             '&location_id=' + location_id +
                                             '&unit_id=' + unit_id +
-                                            '&department_id=' + department_id
+                                            '&department_id=' + department_id +
+                                            '&status=' + status;
                                     }
                                 },
                                 {
@@ -324,6 +340,8 @@
                                         location_id = $('#location_id').val();
                                         unit_id = $('#unit_id').val();
                                         department_id = $('#department_id').val();
+                                        status = $('#status').val();
+
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
@@ -334,12 +352,12 @@
                                             '&company_id=' + company_id +
                                             '&location_id=' + location_id +
                                             '&unit_id=' + unit_id +
-                                            '&department_id=' + department_id
+                                            '&department_id=' + department_id +
+                                            '&status=' + status;
                                     }
-                                },
+                                }
                             ]
                         },
-
                         {
                             "extend": 'pageLength',
                             "text": '{{ __('common.show') }} 10 {{ __('common.records') }}'
@@ -371,12 +389,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Department Management') }}';
+                        var title = '{{ __('Do You want to In-Activate Worker') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Department Management') }}';
+                        var title = '{{ __('Do You want to Activate Worker') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -438,85 +456,6 @@
                 });
 
 
-                /* Delete Record */
-                $(document).on('click', '.recordDelete', function() {
-
-                    var id = $(this).data('id');
-                    var login_id = $(this).data('login_id');
-
-                    var title = '{{ __('Do You want to Delete Department Management') }}';
-                    var text = '{{ __('common.delete') }}';
-                    var btncolor = '#dc3545'
-
-                    Swal.fire({
-                        title: title,
-                        icon: 'warning',
-                        showDenyButton: false,
-                        showCancelButton: true,
-                        confirmButtonText: text,
-                        confirmButtonColor: btncolor,
-                        denyButtonColor: '#28a745',
-                        customClass: {
-                            confirmButton: 'btn-skew',
-                            cancelButton: 'btn-skew'
-                        },
-                    }).then((result) => {
-
-                        if (result.value) {
-                            $.ajax({
-                                url: "{{ admin_url('department/delete') }}",
-                                type: 'post',
-                                headers: {
-                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                                        .attr('content')
-                                },
-                                data: {
-                                    id: id,
-                                    login_id: login_id
-                                },
-                                success: function(response) {
-                                    const Toast = Swal.mixin({
-                                        toast: true,
-                                        position: 'top-right',
-                                        showConfirmButton: false,
-                                        timer: 3000,
-                                        timerProgressBar: true,
-                                        didOpen: (toast) => {
-                                            toast.addEventListener(
-                                                'mouseenter',
-                                                Swal.stopTimer)
-                                            toast.addEventListener(
-                                                'mouseleave',
-                                                Swal.resumeTimer
-                                            )
-                                        }
-                                    });
-                                    Toast.fire({
-                                        icon: 'success',
-                                        title: response.msg
-                                    });
-                                    table.draw();
-                                },
-                                error: function(data) {
-                                    if (data.status === 406 && data.responseJSON.msg ===
-                                        'module_exits') {
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Error',
-                                            text: 'Department Deletion Failed: Module Dependencies Exist.',
-                                        });
-                                    } else {
-                                        $.notify(data.responseJSON.msg, "error");
-                                    }
-                                }
-                            });
-                        } else if (result.isDenied) {
-                            Swal.fire('Something went wrong', '', 'info');
-                        }
-                    })
-
-
-                });
 
             });
         </script>

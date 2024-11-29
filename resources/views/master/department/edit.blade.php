@@ -207,6 +207,8 @@
                     department_name: {
                         required: true,
                         minlength: 3,
+                        maxlength: 30,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
                         remote: {
                             url: '{{ admin_url('department/unique') }}',
                             type: 'post',
@@ -246,6 +248,8 @@
                     department_name: {
                         required: "{{ __('Department  Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 30",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
                          remote: "{{ __('Department Name should be unique') }}"
                     },
 
@@ -262,16 +266,14 @@
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
-                    console.log('test');
+                   
                     form.submit();
 
                 },
                 invalidHandler: function(event, validator) {
                     var errors = validator.numberOfInvalids();
-                    console.log(errors + " field(s) are invalid");
                     validator.errorList.forEach(function(error) {
-                        console.log("Field: " + error.element.name + ", Error: " + error
-                            .message);
+                      
                     });
                 }
             });

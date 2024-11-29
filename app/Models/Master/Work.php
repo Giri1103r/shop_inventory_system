@@ -57,10 +57,11 @@ class Work extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_work.*', 'company_management.company_name', 'masters_department.department_name', 'masters_unit.unit_name');
+        $query = $this->select('masters_work.*', 'company_management.company_name', 'masters_location.location_name', 'masters_department.department_name', 'masters_unit.unit_name');
         $query = $query->leftJoin('company_management', 'masters_work.company', '=', 'company_management.id');
-        $query = $query->leftJoin('masters_department', 'masters_work.department', '=', 'masters_department.id');
+        $query = $query->leftJoin('masters_location', 'masters_work.location', '=', 'masters_location.id');
         $query = $query->leftJoin('masters_unit', 'masters_work.unit', '=', 'masters_unit.id');
+        $query = $query->leftJoin('masters_department', 'masters_work.department', '=', 'masters_department.id');
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -69,7 +70,12 @@ class Work extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('masters_work.emp_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('masters_work.emp_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_work.emp_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('company_management.company_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('emp_id') && $request->emp_id) {
@@ -82,12 +88,18 @@ class Work extends Model
         if ($request->has('company_id') && $request->company_id) {
             $query = $query->where('masters_work.company', decryptId($request->company_id));
         }
+        if ($request->has('location_id') && $request->location_id) {
+            $query = $query->where('masters_work.location', decryptId($request->location_id));
+        }
+        if ($request->has('unit_id') && $request->unit_id) {
+            $query = $query->where('masters_work.unit', decryptId($request->unit_id));
+        }
         if ($request->has('department_id') && $request->department_id) {
             $query = $query->where('masters_work.department', decryptId($request->department_id));
         }
+        if ($request->has('status') && $request->status) {
 
-        if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('masters_work.unit', decryptId($request->unit_id));
+            $query = $query->where('masters_work.status', decryptId($request->status));
         }
 
 
@@ -267,19 +279,25 @@ class Work extends Model
         $request = request();
 
         $search = '';
-        $query = $this->select('masters_work.*', 'company_management.company_name', 'masters_department.department_name', 'masters_unit.unit_name');
+        $query = $this->select('masters_work.*', 'company_management.company_name', 'masters_location.location_name','masters_department.department_name', 'masters_unit.unit_name');
         $query = $query->leftJoin('company_management', 'masters_work.company', '=', 'company_management.id');
-        $query = $query->leftJoin('masters_department', 'masters_work.department', '=', 'masters_department.id');
         $query = $query->leftJoin('masters_unit', 'masters_work.unit', '=', 'masters_unit.id');
+        $query = $query->leftJoin('masters_location', 'masters_work.location', '=', 'masters_location.id');
+        $query = $query->leftJoin('masters_department', 'masters_work.department', '=', 'masters_department.id');
 
 
         if (!empty($request->search)) {
             $search = $request->search;
             $query->where(function ($query) use ($search) {
-                $query->orWhere('masters_work.emp_name', 'LIKE', '%' . $search . '%');
+                $query
+                    ->orWhere('masters_work.emp_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_work.emp_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('company_management.company_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%');
             });
         }
-
         if ($request->has('emp_id') && $request->emp_id) {
             $query = $query->where('masters_work.emp_id', 'LIKE', '%' . $request->emp_id . '%');
         }
@@ -290,12 +308,18 @@ class Work extends Model
         if ($request->has('company_id') && $request->company_id) {
             $query = $query->where('masters_work.company', decryptId($request->company_id));
         }
+        if ($request->has('location_id') && $request->location_id) {
+            $query = $query->where('masters_work.location', decryptId($request->location_id));
+        }
+        if ($request->has('unit_id') && $request->unit_id) {
+            $query = $query->where('masters_work.unit', decryptId($request->unit_id));
+        }
         if ($request->has('department_id') && $request->department_id) {
             $query = $query->where('masters_work.department', decryptId($request->department_id));
         }
+        if ($request->has('status') && $request->status) {
 
-        if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('masters_work.unit', decryptId($request->unit_id));
+            $query = $query->where('masters_work.status', decryptId($request->status));
         }
 
         $query->orderBy('id', 'DESC');
@@ -306,10 +330,11 @@ class Work extends Model
     public function selectOne($id)
     {
 
-        $data = $this->select('masters_work.*', 'company_management.company_name', 'masters_department.department_name', 'masters_unit.unit_name')
+        $data = $this->select('masters_work.*', 'company_management.company_name', 'masters_location.location_name', 'masters_department.department_name', 'masters_unit.unit_name')
             ->leftJoin('company_management', 'masters_work.company', '=', 'company_management.id')
-            ->leftJoin('masters_department', 'masters_work.department', '=', 'masters_department.id')
+            ->leftJoin('masters_location', 'masters_work.location', '=', 'masters_location.id')
             ->leftJoin('masters_unit', 'masters_work.unit', '=', 'masters_unit.id')
+            ->leftJoin('masters_department', 'masters_work.department', '=', 'masters_department.id')
             ->where('masters_work.id', $id)
             ->first();
         return $data;
@@ -318,7 +343,7 @@ class Work extends Model
     public function ajaxList($where, $whereIn = [])
     {
 
-        $query = $this->select('login_id', 'emp_name');
+        $query = $this->select('login_id', 'emp_name')->where('status', 1);
 
         if (count($where) > 0) {
             $query = $query->where($where);

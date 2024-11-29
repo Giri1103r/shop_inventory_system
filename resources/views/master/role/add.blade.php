@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Role')
+@section('title', ' User Role')
 @section('pageurl', admin_url('administration/role/list'))
 
 
@@ -7,7 +7,6 @@
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
-            <h4 class="text-black">{{ __('Role Add') }}</h4>
 
         </div>
 
@@ -122,16 +121,13 @@
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
-                    console.log('test');
                     form.submit();
 
                 },
                 invalidHandler: function(event, validator) {
                     var errors = validator.numberOfInvalids();
-                    console.log(errors + " field(s) are invalid");
                     validator.errorList.forEach(function(error) {
-                        console.log("Field: " + error.element.name + ", Error: " + error
-                            .message);
+                       
                     });
                 }
             });

@@ -177,7 +177,20 @@ class EmployeeController extends Controller
         }
     }
 
+    public function StatusChange(Request $request)
+    {
 
+        try {
+            $id = decryptId($request->id);
+
+            $this->employee->statuschange($id);
+
+            return response()->json(['status' => 'success', 'msg' => 'Employee status changed'], 200);
+        } catch (Exception $ex) {
+
+            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+        }
+    }
 
     public function ExportExcel(Request $request)
     {

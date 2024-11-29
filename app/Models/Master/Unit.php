@@ -52,7 +52,10 @@ class Unit extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('unit_id', 'LIKE', '%' . $search . '%');
+                    ->orWhere('unit_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('company_management.company_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%');
             });
         }
 
@@ -92,18 +95,18 @@ class Unit extends Model
         return $datas;
     }
 
-  
-    public function UniqueCheck($unit_name,$location_id,$company_id)
+
+    public function UniqueCheck($unit_name, $location_id, $company_id)
     {
 
-        return $this->where('unit_name',  $unit_name)->where('location_id',$location_id )->where('company_id',$company_id )->get();
+        return $this->where('unit_name',  $unit_name)->where('location_id', $location_id)->where('company_id', $company_id)->get();
     }
 
-    public function ExistuniqueCheck($unit_name,$location_id,$company_id,$id)
+    public function ExistuniqueCheck($unit_name, $location_id, $company_id, $id)
     {
-        return $this->where('unit_name',  $unit_name)->where('location_id',$location_id )->where('company_id',$company_id )
-        ->where('id', '!=', $id)
-        ->get();
+        return $this->where('unit_name',  $unit_name)->where('location_id', $location_id)->where('company_id', $company_id)
+            ->where('id', '!=', $id)
+            ->get();
     }
     public function store()
     {
@@ -175,9 +178,14 @@ class Unit extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('unit_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('unit_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('company_management.company_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%');
             });
         }
+
+
         if ($request->has('unit_id') && $request->unit_id) {
             $query = $query->where('unit_id', 'LIKE', '%' . $request->unit_id . '%');
         }
@@ -188,12 +196,13 @@ class Unit extends Model
             $query = $query->where('masters_unit.location_id', decryptId($request->location_id));
         }
         if ($request->has('unit_name') && $request->unit_name) {
-            $query = $query->where('unit_name', 'LIKE', '%' . $request->unit_name . '%');
+            $query = $query->where('masters_unit.unit_name', 'LIKE', '%' . $request->unit_name . '%');
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('status', decryptId($request->status));
+            $query = $query->where('masters_unit.status', decryptId($request->status));
         }
+
         $query->orderBy('id', 'DESC');
         return  $query->get();
     }
@@ -208,24 +217,7 @@ class Unit extends Model
         return $data;
     }
 
-    // public function ajaxList($locationId = '')
-    // {
-    //     $query = $this->select('id', 'unit_name')->where('status', 1);
-
-    //     $query->where('location_id', $locationId);
-
-    //     $datas = $query->get();
-
-    //     $list = [];
-    //     foreach ($datas as $data) {
-    //         $listvalue = [];
-    //         $listvalue['id'] = encryptId($data->id);
-    //         $listvalue['name'] = $data->unit_name;
-    //         $list[] = $listvalue;
-    //     }
-
-    //     return $list;
-    // }
+   
     public function ajaxList($locationId = '', $unit_id)
     {
         $query = $this->select('id', 'unit_name')->where('status', 1);
@@ -252,7 +244,7 @@ class Unit extends Model
     }
     public function ajaxallList($locationId = '')
     {
-        $query = $this->select('id', 'unit_name');
+        $query = $this->select('id', 'unit_name')->where('status', 1);
 
         if ($locationId != '') {
 

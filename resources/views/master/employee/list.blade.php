@@ -40,45 +40,16 @@
                                             <input type="text" name="employee_status" id="employee_status"
                                                 class="form-control" placeholder="Employee Status">
                                         </div>
-                                       
-                                        {{-- <div class="col-md-3 mb-3 form-input">
-                                            <label for="company_id" class="form-label ">Company</label>
-                                            <select name="company_id" id="company_id" class=" form-control single-select"
-                                                style="width: 100%">
-                                                <option value="">Select Company Name</option>
-                                                @foreach ($companyList as $company)
-                                                    <option value="{{ encryptId($company->id) }}">
-                                                        {{ $company->company_name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="location_id" class="form-label ">Location </label>
-                                            <select name="location_id" id="location_id" class=" form-control single-select"
-                                                style="width: 100%">
-                                                <option value="">Select Location Name</option>
-
+                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
+                                            <select name="status" id="status" style="width: 100%"
+                                                class="form-control single-select">
+                                                <option value="">Select Status</option>
+                                                <option value="{{ encryptId(1) }}">Active</option>
+                                                <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
-
-                         
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="unit_id" class="form-label ">Unit Name </label>
-                                            <select name="unit_id" id="unit_id" class=" form-control single-select"
-                                                style="width: 100%">
-                                                <option value="">Select Unit Name</option>
-
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="unit_id" class="form-label ">Department Name </label>
-                                            <select name="dept_id" id="dept_id" class=" form-control single-select"
-                                                style="width: 100%">
-                                                <option value="">Select Department Name</option>
-
-                                            </select>
-                                        </div> --}}
 
                                         <div class="col-md-12 d-flex justify-content-end gap-2 mt-3">
                                             <x-button-search></x-button-search>
@@ -103,6 +74,7 @@
                                         <th>Employee Name</th>
                                         <th>Employee Email</th>
                                         <th>Employee Status</th>
+                                        <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -125,75 +97,7 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
-            // $(document).on('change', '#company_id', function() {
-            //     var company_id = $(this).val();
-            //     if (company_id) {
-            //         $.ajax({
-            //             url: "{{ admin_url('location/alllist/') }}" + company_id,
-            //             type: 'GET',
-            //             dataType: 'json',
-            //             success: function(data) {
-            //                 $('#location_id').empty().append(
-            //                     '<option value="">Select Location Name</option>');
-            //                 $.each(data, function(key, value) {
-            //                     $('#location_id').append('<option value="' + value.id +
-            //                         '">' + value.name + '</option>');
-            //                 });
 
-            //                 $('#location_id').trigger('change.');
-            //             }
-            //         });
-            //     } else {
-            //         $('#location_id').empty().append('<option value="">Select Location Name</option>');
-            //         $('#location_id').trigger('change.');
-            //     }
-            // });
-            // $(document).on('change', '#location_id', function() {
-            //     var location_id = $(this).val();
-            //     if (location_id) {
-            //         $.ajax({
-            //             url: "{{ admin_url('unit/alllist/') }}" + location_id,
-            //             type: 'GET',
-            //             dataType: 'json',
-            //             success: function(data) {
-            //                 $('#unit_id').empty().append(
-            //                     '<option value="">Select Unit Name</option>');
-            //                 $.each(data, function(key, value) {
-            //                     $('#unit_id').append('<option value="' + value.id +
-            //                         '">' + value.name + '</option>');
-            //                 });
-
-            //                 $('#unit_id').trigger('change.');
-            //             }
-            //         });
-            //     } else {
-            //         $('#unit_id').empty().append('<option value="">Select Unit Name</option>');
-            //         $('#unit_id').trigger('change.');
-            //     }
-            // });
-            // $(document).on('change', '#unit_id', function() {
-            //     var unit_id = $(this).val();
-            //     if (location_id) {
-            //         $.ajax({
-            //             url: "{{ admin_url('department/alllist/') }}" + unit_id,
-            //             type: 'GET',
-            //             dataType: 'json',
-            //             success: function(data) {
-            //                 $('#dept_id').empty().append(
-            //                     '<option value="">Select Department Name</option>');
-            //                 $.each(data, function(key, value) {
-            //                     $('#dept_id').append('<option value="' + value.id +
-            //                         '">' + value.name + '</option>');
-            //                 });
-
-            //                 $('#dept_id').trigger('change.');
-            //             }
-            //         });
-            //     } else {
-            //         $('#dept_id').empty().append('<option value="">Select Department Name</option>');
-            //         $('#dept_id').trigger('change.');
-            //     }
-            // });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -255,6 +159,10 @@
                         {
                             data: 'employee_status',
                             name: 'employee_status'
+                        },
+                        {
+                            data: 'status',
+                            name: 'status'
                         },
                         {
                             data: 'created_at',
@@ -324,8 +232,8 @@
                                             '&emp_id=' + emp_id +
                                             '&emp_name=' + emp_name +
                                             '&email=' + email;
-                                            '&employee_status=' + employee_status;
-                                            '&status=' + status;
+                                        '&employee_status=' + employee_status;
+                                        '&status=' + status;
                                     } // Closing brace for action function
                                 }
                             ]
@@ -357,6 +265,76 @@
                     }, 150);
                 });
 
+
+            });
+            /* Status Change */
+            $(document).on('click', '.statusChange', function() {
+                var id = $(this).data('id');
+                var types = $(this).data('type');
+                if (types == 1) {
+                    var title = '{{ __('Do You want to In-Activate Employee') }}';
+                    var text = '{{ __('common.inactive') }}';
+                    var btncolor = '#dc3545'
+
+                } else {
+                    var title = '{{ __('Do You want to Activate Employee') }}';
+                    var text = '{{ __('common.active') }}';
+                    var btncolor = '#7ddc35'
+                }
+
+                Swal.fire({
+                    title: title,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: text,
+                    confirmButtonColor: btncolor,
+                    customClass: {
+                        confirmButton: 'btn-skew',
+                        cancelButton: 'btn-skew'
+                    },
+                }).then((result) => {
+
+
+                    if (result.value) {
+                        $.ajax({
+                            url: "{{ admin_url('employee/status') }}",
+                            type: 'post',
+
+                            data: {
+                                id: id,
+                                types: types
+                            },
+                            success: function(response) {
+                                const Toast = Swal.mixin({
+                                    toast: true,
+                                    position: 'top-right',
+                                    showConfirmButton: false,
+                                    timer: 3000,
+                                    timerProgressBar: true,
+                                    didOpen: (toast) => {
+                                        toast.addEventListener(
+                                            'mouseenter',
+                                            Swal.stopTimer)
+                                        toast.addEventListener(
+                                            'mouseleave',
+                                            Swal.resumeTimer
+                                        )
+                                    }
+                                });
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: response.msg
+                                });
+                                table.draw();
+                            },
+                            error: function(data) {
+                                $.notify(data.responseJSON.msg, "error");
+                            }
+                        });
+                    } else if (result.isDenied) {
+                        Swal.fire('Something went wrong', '', 'info');
+                    }
+                })
 
             });
         </script>

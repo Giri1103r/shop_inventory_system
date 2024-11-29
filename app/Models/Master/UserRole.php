@@ -50,9 +50,9 @@ class UserRole extends Model
 
         if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];
-
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhereRaw('role_name LIKE "%' . $search . '%"');
+            $query->where(function ($query) use ($search) {
+                $query->orWhere('role_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('role_name', 'LIKE', '%' . $search . '%');
             });
         }
 
@@ -160,6 +160,7 @@ class UserRole extends Model
                     ->orWhere('role_name', 'LIKE', '%' . $search . '%');
             });
         }
+
         if ($request->has('role_id') && $request->role_id) {
             $query = $query->where('role_id', 'LIKE', '%' . $request->role_id . '%');
         }
@@ -191,11 +192,11 @@ class UserRole extends Model
         return $this->where('role_name',  $role_name)->get();
     }
 
-    public function ExistuniqueCheck($role_name,$id)
+    public function ExistuniqueCheck($role_name, $id)
     {
         return $this->where('role_name',  $role_name)
-        ->where('id', '!=', $id)
-        ->get();
+            ->where('id', '!=', $id)
+            ->get();
     }
     protected static function booted()
     {

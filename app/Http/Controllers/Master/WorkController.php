@@ -49,7 +49,6 @@ class WorkController extends Controller
         $this->department = new Department();
         $this->uploadlog = new UploadLog();
         $this->Work = new Work();
-
     }
 
 
@@ -59,7 +58,6 @@ class WorkController extends Controller
             if ($request->ajax()) {
                 try {
                     $data =  $this->Work->list();
-
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -74,7 +72,7 @@ class WorkController extends Controller
                         ->addColumn('created_at', function ($row) {
                             return Displaydatetimeformat($row->created_at);
                         })
-                     
+
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             if (CheckUserPermission('view')) {
@@ -181,25 +179,11 @@ class WorkController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $this->department->statuschange($id);
+            $this->Work->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => 'Department status changed'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'Work status changed'], 200);
         } catch (Exception $ex) {
 
-            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
-        }
-    }
-
-    public function Delete(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-
-            $this->department->deleterecord($id);
-
-            return response()->json(['status' => 'success', 'msg' => 'Department deleted successfully'], 200);
-        } catch (Exception $ex) {
-            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -217,6 +201,8 @@ class WorkController extends Controller
                 'Worker Id',
                 'Worker Name',
                 'Phone Number',
+                'Company Name',
+                'Location Name',
                 'Unit Name',
                 'Department Name',
             ];
@@ -229,6 +215,8 @@ class WorkController extends Controller
                 $export[] =  $data->emp_id;
                 $export[] =  $data->emp_name;
                 $export[] =  $data->mobile_no;
+                $export[] =  $data->company_name;
+                $export[] =  $data->location_name;
                 $export[] =  $data->unit_name;
                 $export[] =  $data->department_name;
 
@@ -259,6 +247,8 @@ class WorkController extends Controller
                 'Worker Id',
                 'Worker Name',
                 'Phone Number',
+                'Company Name',
+                'Location Name',
                 'Unit Name',
                 'Department Name',
             ];
@@ -288,104 +278,12 @@ class WorkController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Department.pdf";
+            $filename = "Worker.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);
         }
     }
-    public function Import(Request $request)
-    {
-        $data = array();
-        return view('master.department.import', $data);
-    }
-    public function ImportSubmit(Request $request)
-    {
-        try {
-            $file = $request->file('department_upload');
-
-            $rules = [
-                'department_upload' => 'required',
-            ];
-            $messages = [
-                'department_upload.required' => 'Please upload a file',
-            ];
-
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-
-
-            if ($file != null) {
-
-                $uploadpath = 'public/uploads/department';
-
-                $folderPath = public_path('uploads/department');
-
-                if (!File::exists($folderPath)) {
-
-                    File::makeDirectory($folderPath, 0755, true);
-                }
-
-                $filenewname = time() . Str::random('10') . '.' . $file->getClientOriginalExtension();
-
-                $fileName = $file->getClientOriginalName();
-                $fileSize = $file->getSize();
-
-                $fileExt = $file->getClientOriginalExtension();
-
-                $file->move($uploadpath, $filenewname);
-
-                $path = $uploadpath . "/" . $filenewname;
-                $user_id = Auth::id();
-
-                $insert_data = array(
-                    'upload_type' => 1,
-                    'upload_status' => 0,
-                    'file_name' => $filenewname,
-                    'file_orgname' => $fileName,
-                    'file_path' => $path,
-                    'file_size' => $fileSize,
-                    'file_extension' => $fileExt,
-                    'created_by' => $user_id,
-                );
-
-                $insert_id =  $this->uploadlog->create($insert_data)->id;
-
-
-
-                $details = [
-                    "user_id" => $user_id,
-                    "log_id" => $insert_id,
-                    "path" => $path,
-                ];
-
-                dispatch(new ImportdepartmentJob($details));
-                //    dispatch((new ImportdepartmentJob($details))->onQueue('empimport'));
-            }
-
-            $insert_data['log_id'] = $insert_id;
-            $insert_data['Uploded_by'] = Auth::user()->toArray();
-
-            Session::flash('success', __('Department uploaded sucessfully'));
-            return redirect(admin_url('department/list'));
-        } catch (Exception $ex) {
-
-            Session::flash('error', __('Department upload failed'));
-            return redirect(admin_url('department/list'));
-        }
-    }
-    public function DownloadSample(Request $request)
-    {
-
-        $filedetails =  exportsamplefile('department');
-
-        $filePath = $filedetails->sample_file;
-        $customFileName = $filedetails->file_name;
-
-        //return Response::download($filePath, $customFileName);
-        return redirect(url($filePath));
-    }
+ 
 }

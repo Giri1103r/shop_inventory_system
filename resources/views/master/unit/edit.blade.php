@@ -71,8 +71,9 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit Name</label>
-                                                    <input type="text" name="unit_name" id="unit_name" class="form-control"
-                                                        placeholder="Unit Name" value="{{ $unit->unit_name }}">
+                                                    <input type="text" name="unit_name" id="unit_name"
+                                                        class="form-control" placeholder="Unit Name"
+                                                        value="{{ $unit->unit_name }}">
                                                 </div>
                                             </div>
                                         </div>
@@ -139,7 +140,7 @@
                 }
             }
 
-         
+
         });
         $(function() {
             $('#unitedit').validate({
@@ -153,7 +154,8 @@
                     unit_name: {
                         required: true,
                         minlength: 3,
-
+                        maxlength: 20,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
                         remote: {
                             url: '{{ admin_url('unit/unique') }}',
                             type: 'post',
@@ -186,7 +188,9 @@
                     unit_name: {
                         required: "{{ __('Unit Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
-                          remote: "{{ __('Unit Name should be unique') }}"
+                        maxlength: "Maximum Characters should not exceed 20",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+                        remote: "{{ __('Unit Name should be unique') }}"
                     },
 
                 },
@@ -202,16 +206,13 @@
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
-                    console.log('test');
                     form.submit();
 
                 },
                 invalidHandler: function(event, validator) {
                     var errors = validator.numberOfInvalids();
-                    console.log(errors + " field(s) are invalid");
                     validator.errorList.forEach(function(error) {
-                        console.log("Field: " + error.element.name + ", Error: " + error
-                            .message);
+                       
                     });
                 }
             });

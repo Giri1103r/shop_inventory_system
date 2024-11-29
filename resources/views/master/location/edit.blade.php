@@ -62,8 +62,9 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Location Name</label>
-                                                    <input type="text" name="location_name" id="location_name" class="form-control"
-                                                        placeholder="Location Name" value="{{ $location->location_name }}">
+                                                    <input type="text" name="location_name" id="location_name"
+                                                        class="form-control" placeholder="Location Name"
+                                                        value="{{ $location->location_name }}">
                                                 </div>
                                             </div>
                                         </div>
@@ -99,6 +100,8 @@
                     location_name: {
                         required: true,
                         minlength: 3,
+                        maxlength: 20,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
                         remote: {
                             url: '{{ admin_url('location/unique') }}',
                             type: 'post',
@@ -124,6 +127,8 @@
                     location_name: {
                         required: "{{ __('Location Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 20",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
                         remote: "{{ __('Location Name should be unique') }}"
                     },
 
@@ -140,16 +145,13 @@
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
-                    console.log('test');
                     form.submit();
 
                 },
                 invalidHandler: function(event, validator) {
                     var errors = validator.numberOfInvalids();
-                    console.log(errors + " field(s) are invalid");
                     validator.errorList.forEach(function(error) {
-                        console.log("Field: " + error.element.name + ", Error: " + error
-                            .message);
+                     
                     });
                 }
             });

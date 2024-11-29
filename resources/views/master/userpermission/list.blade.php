@@ -10,22 +10,24 @@
                 <div class="card-body">
                     <div class="d-lg-flex align-items-center gap-3">
                         <div class="position-relative">
-                            <h5 class="card-title">User Permission</h5>
+                            {{-- <h5 class="card-title">User Permission</h5> --}}
                         </div>
                         <div class="ms-auto"></div>
                     </div>
-                    <hr />
+                  
                     
                     <form id="userpermission" action="{{ admin_url('administration/permission/update') }}" method="POST">
                         @csrf
                         <div class="row">
-                            <div class="col-md-12">
-                                <div class="col-md-4 mb-3 form-input">
-                                    <select name="role" id="role" style="width: 100%"
-                                        class="form-control single-select">
-                                        <option value="">Select Role</option>
+                            <div class="col-md-4">
+                                <div class="form-group form-input">
+                                    <label class="form-label require">User Role</label>
+                                    <select name="role" id="role"
+                                        class="form-control single-select" style="width: 100%;">
+                                        <option value="">Select User Role</option>
                                         @foreach ($roleList as $role)
-                                            <option value="{{ encryptId($role->id) }}">{{ $role->role_name }}</option>
+                                            <option
+                                                value="{{ encryptId($role->id) }}">{{ $role->role_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>

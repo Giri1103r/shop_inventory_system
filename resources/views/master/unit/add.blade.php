@@ -135,6 +135,8 @@
                     unit_name: {
                         required: true,
                         minlength: 3,
+                        maxlength: 20,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
 
                         remote: {
                             url: '{{ admin_url('unit/unique') }}',
@@ -165,6 +167,8 @@
                     unit_name: {
                         required: "{{ __('Unit Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 20",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
                         remote: "{{ __('Unit Name should be unique') }}"
                     },
 
