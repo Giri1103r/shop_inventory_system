@@ -77,7 +77,7 @@
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-reset class=""></x-button-reset>
                                             <x-button-cancel href="{{ admin_url('unit/list') }}"></x-button-cancel>
                                         </div>
 
@@ -124,6 +124,15 @@
         });
 
         $(function() {
+
+
+            $(document).on('click', '#resetform', function() {
+                $('#unitadd .single-select').val('');
+                $('#unitadd .single-select').trigger('change');
+                setTimeout(function() {
+                    table.draw();
+                }, 150);
+            });
             $('#unitadd').validate({
                 rules: {
                     company_id: {

@@ -143,7 +143,7 @@ class LocationController extends Controller
 
             try {
                 $this->location->store();
-                Session::flash('success', 'Location added successfully!');
+                Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -216,7 +216,7 @@ class LocationController extends Controller
 
             $this->location->updates($id);
 
-            Session::flash('success', 'Location updated successfully!');
+            Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('location/list'));
         } catch (Exception $ex) {
             report($ex);

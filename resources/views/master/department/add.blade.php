@@ -163,6 +163,14 @@
 
 
         $(function() {
+
+            $(document).on('click', '#resetform', function() {
+                $('#departmentadd .single-select').val('');
+                $('#departmentadd .single-select').trigger('change');
+                setTimeout(function() {
+                    table.draw();
+                }, 150);
+            });
             $('#departmentadd').validate({
                 rules: {
                     company_id: {

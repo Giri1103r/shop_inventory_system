@@ -158,7 +158,7 @@ class CompanyController extends Controller
                 //     Mail::to($empdetails->email)->queue(new EmployeeRegisterEmail($emp));
                 // }
 
-                Session::flash('success', 'Company added successfully!');
+                Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -235,7 +235,7 @@ class CompanyController extends Controller
             // $company = $this->company->find($id);
             // $this->user->companyUpdate($company->login_id);
 
-            Session::flash('success', 'Company updated successfully!');
+            Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('company/list'));
         } catch (Exception $ex) {
             report($ex);
@@ -460,7 +460,7 @@ class CompanyController extends Controller
                 $export[] =  $data->company_name;
                 $export[] =  $data->short_name;
                 $export[] =  $data->address;
-                $export[] =  $data->userstatus == 1 ? 'Active' : 'In-Active';
+                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 

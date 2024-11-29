@@ -162,7 +162,7 @@ class WorkController extends Controller
 
             $this->Work->updates($id);
 
-            Session::flash('success', 'Work updated successfully!');
+            Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('work/list'));
         } catch (Exception $ex) {
 
@@ -201,10 +201,11 @@ class WorkController extends Controller
                 'Worker Id',
                 'Worker Name',
                 'Phone Number',
-                'Company Name',
                 'Location Name',
                 'Unit Name',
-                'Department Name',
+                // __("common.status"),
+                __("common.created_by"),
+                __("common.created_date"),
             ];
 
             $i = 1;
@@ -215,11 +216,10 @@ class WorkController extends Controller
                 $export[] =  $data->emp_id;
                 $export[] =  $data->emp_name;
                 $export[] =  $data->mobile_no;
-                $export[] =  $data->company_name;
-                $export[] =  $data->location_name;
                 $export[] =  $data->unit_name;
-                $export[] =  $data->department_name;
-
+                // $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
+                $export[] =  getusername($data->created_by);
+                $export[] =  Displaydateformat($data->created_at);
                 $exportData[] = $export;
 
                 $i++;
@@ -247,10 +247,11 @@ class WorkController extends Controller
                 'Worker Id',
                 'Worker Name',
                 'Phone Number',
-                'Company Name',
                 'Location Name',
                 'Unit Name',
-                'Department Name',
+                // __("common.status"),
+                __("common.created_by"),
+                __("common.created_date"),
             ];
 
             $data = array(
@@ -281,7 +282,7 @@ class WorkController extends Controller
             $filename = "Worker.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
+dd($ex);
             report($ex);
         }
     }

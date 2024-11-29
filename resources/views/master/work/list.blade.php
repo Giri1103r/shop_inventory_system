@@ -102,8 +102,8 @@
                                         <th>Worker Name</th>
                                         <th>Phone Number</th>
                                         <th>Unit Name</th>
-                                        <th>Department Name</th>
-                                        <th>{{ __('common.status') }}</th>
+                                        <th>Worker Type</th>
+                                        {{-- <th>{{ __('common.status') }}</th> --}}
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -267,13 +267,13 @@
                             name: 'unit_name'
                         },
                         {
-                            data: 'department_name',
-                            name: 'department_name'
+                            data: 'wfemptype',
+                            name: 'wfemptype'
                         },
-                        {
-                            data: 'status',
-                            name: 'status'
-                        },
+                        // {
+                        //     data: 'status',
+                        //     name: 'status'
+                        // },
                         {
                             data: 'created_at',
                             name: 'created_at'

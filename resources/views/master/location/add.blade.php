@@ -47,7 +47,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company Name</label>
                                                     <select name="company_id" id="company_id"
-                                                        class=" form-control single-select" style="width: 100%">
+                                                    class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Company Name</option>
                                                         @foreach ($companyList as $company)
                                                             <option value="{{ encryptId($company->id) }}">
@@ -68,7 +68,7 @@
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-reset class=""></x-button-reset>
                                             <x-button-cancel href="{{ admin_url('location/list') }}"></x-button-cancel>
                                         </div>
 
@@ -89,6 +89,15 @@
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(function() {
+
+
+            $(document).on('click', '#resetform', function() {
+                $('#locationadd .single-select').val('');
+                $('#locationadd .single-select').trigger('change');
+                setTimeout(function() {
+                    table.draw();
+                }, 150);
+            });
             $('#locationadd').validate({
                 rules: {
                     company_id: {

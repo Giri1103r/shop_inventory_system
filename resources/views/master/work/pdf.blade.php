@@ -34,18 +34,28 @@
                             {{ $value->mobile_no }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->company_name }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->location_name }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->unit_name }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->department_name }}
+                            {{ $value->wfemptype }}
                         </td>
-                       
+                        
+                        
+                        {{-- <td style='padding: 7px;border: 0.5px solid'>
+                            @php
+                                $status = $value->status == 1 ? 'Active' : 'In-Active';
+                            @endphp
+                            {{ $status }}
+                        </td> --}}
+
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getusername($value->created_by) }}
+                        </td>
+
+
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ Displaydateformat($value->created_at) }}
+                        </td>
      
                     </tr>
                     @php

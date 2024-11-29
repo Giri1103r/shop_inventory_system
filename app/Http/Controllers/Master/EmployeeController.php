@@ -166,7 +166,7 @@ class EmployeeController extends Controller
 
             $userUpdate =  $this->user->userUpdate($employee);
 
-            Session::flash('success', 'Employee updated successfully!');
+            Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('employee/list'));
         } catch (Exception $ex) {
 

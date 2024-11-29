@@ -157,7 +157,7 @@ class DepartmentController extends Controller
 
             try {
                 $this->department->store();
-                Session::flash('success', 'Department added successfully!');
+                Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -238,7 +238,7 @@ class DepartmentController extends Controller
 
             $this->department->updates($id);
 
-            Session::flash('success', 'Department updated successfully!');
+            Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('department/list'));
         } catch (Exception $ex) {
             report($ex);

@@ -178,7 +178,7 @@ class Company extends Model
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('company_management.status', decryptId($request->status));
+            $query = $query->where('status', decryptId($request->status));
         }
         $query->orderBy('id', 'DESC');
 

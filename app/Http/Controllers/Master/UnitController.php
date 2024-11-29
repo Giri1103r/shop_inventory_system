@@ -152,7 +152,7 @@ class UnitController extends Controller
 
             try {
                 $this->unit->store();
-                Session::flash('success', 'Unit added successfully!');
+                Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -229,7 +229,7 @@ class UnitController extends Controller
 
             $this->unit->updates($id);
 
-            Session::flash('success', 'Unit updated successfully!');
+            Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('unit/list'));
         } catch (Exception $ex) {
             report($ex);
