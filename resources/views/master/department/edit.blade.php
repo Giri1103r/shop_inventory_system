@@ -213,8 +213,8 @@
                     department_name: {
                         required: true,
                         minlength: 3,
-                        maxlength: 30,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                        maxlength: 50,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()&]*$/
                         remote: {
                             url: '{{ admin_url('department/unique') }}',
                             type: 'post',
@@ -254,9 +254,9 @@
                     department_name: {
                         required: "{{ __('Department  Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
-                        maxlength: "Maximum Characters should not exceed 30",
-                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
-                        remote: "{{ __('Department Name should be unique') }}"
+                        maxlength: "Maximum Characters should not exceed 50",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () & are allowed",
+                         remote: "{{ __('Department Name should be unique') }}"
                     },
 
                 },

@@ -126,6 +126,8 @@ class WorkController extends Controller
             $id = decryptId($request->id);
 
             $work = $this->Work->find($id);
+
+            // dd($work);
             $companyList  = $this->company->select('id', 'company_name')->where('status', '1')->get();
             $data = array(
                 'companyList' => $companyList,
@@ -201,12 +203,13 @@ class WorkController extends Controller
                 'Worker Id',
                 'Worker Name',
                 'Phone Number',
-                'Location Name',
                 'Unit Name',
+                'Worker Type',
                 // __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];
+
 
             $i = 1;
             foreach ($allData as $data) {
@@ -217,6 +220,7 @@ class WorkController extends Controller
                 $export[] =  $data->emp_name;
                 $export[] =  $data->mobile_no;
                 $export[] =  $data->unit_name;
+                $export[] =  $data->wfemptype;
                 // $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -247,13 +251,12 @@ class WorkController extends Controller
                 'Worker Id',
                 'Worker Name',
                 'Phone Number',
-                'Location Name',
                 'Unit Name',
+                'Worker Type',
                 // __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];
-
             $data = array(
                 'header' => $header,
                 'content' => $allData,

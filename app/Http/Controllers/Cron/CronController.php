@@ -544,4 +544,91 @@ class CronController extends Controller
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
+
+
+    public function queueCompanyImport()
+    {
+        $queueLength = Queue::size('company');
+        if ($queueLength > 0) {
+            $options = [
+                '--sleep' => 3,
+                '--tries' => 3,
+                '--queue' => 'factoryimport',
+                '--timeout' => 600,
+                '--max-jobs' => 10,
+            ];
+
+            $exitCode = Artisan::call('queue:work', $options);
+            Session::invalidate();
+            return response()->json(['message' => 'Queue Company command executed successfully',  'exit_code' => $exitCode]);
+        } else {
+            Session::invalidate();
+            return response()->json(['message' => 'No jobs in the Company Import queue to process', 'exit_code' => 0]);
+        }
+    }
+
+
+    public function queuelocationimport()
+    {
+        $queueLength = Queue::size('location');
+        if ($queueLength > 0) {
+            $options = [
+                '--sleep' => 3,
+                '--tries' => 3,
+                '--queue' => 'factoryimport',
+                '--timeout' => 600,
+                '--max-jobs' => 10,
+            ];
+
+            $exitCode = Artisan::call('queue:work', $options);
+            Session::invalidate();
+            return response()->json(['message' => 'Queue Location command executed successfully',  'exit_code' => $exitCode]);
+        } else {
+            Session::invalidate();
+            return response()->json(['message' => 'No jobs in the Location Import queue to process', 'exit_code' => 0]);
+        }
+    }
+
+    public function queueunitimport()
+    {
+        $queueLength = Queue::size('unit');
+        if ($queueLength > 0) {
+            $options = [
+                '--sleep' => 3,
+                '--tries' => 3,
+                '--queue' => 'factoryimport',
+                '--timeout' => 600,
+                '--max-jobs' => 10,
+            ];
+
+            $exitCode = Artisan::call('queue:work', $options);
+            Session::invalidate();
+            return response()->json(['message' => 'Queue Unit command executed successfully',  'exit_code' => $exitCode]);
+        } else {
+            Session::invalidate();
+            return response()->json(['message' => 'No jobs in the Unit Import queue to process', 'exit_code' => 0]);
+        }
+    }
+
+    public function queueDepartmentuplodimport()
+    {
+        $queueLength = Queue::size('department');
+        if ($queueLength > 0) {
+            $options = [
+                '--sleep' => 3,
+                '--tries' => 3,
+                '--queue' => 'factoryimport',
+                '--timeout' => 600,
+                '--max-jobs' => 10,
+            ];
+
+            $exitCode = Artisan::call('queue:work', $options);
+            Session::invalidate();
+            return response()->json(['message' => 'Queue Unit command executed successfully',  'exit_code' => $exitCode]);
+        } else {
+            Session::invalidate();
+            return response()->json(['message' => 'No jobs in the Unit Import queue to process', 'exit_code' => 0]);
+        }
+    } 
+
 }
