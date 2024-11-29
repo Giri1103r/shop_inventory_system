@@ -442,7 +442,6 @@ class DepartmentController extends Controller
                 $insert_id =  $this->uploadlog->create($insert_data)->id;
 
 
-
                 $details = [
                     "user_id" => $user_id,
                     "log_id" => $insert_id,

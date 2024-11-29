@@ -9,7 +9,7 @@ use App\Http\Controllers\Auth\LoginController as AuthLoginController;
 use App\Http\Controllers\Admin\{LoginController, NotificationController, AdminController};
 use App\Http\Controllers\{SettingsController, LocalizationController, TestController};
 
-use App\Http\Controllers\Master\{UserLogController, UserPermissionController, UploadLogController, UserController, UserRoleController};
+use App\Http\Controllers\Master\{PpeTypeController, PpeTypeMasterController, UserLogController, UserPermissionController, UploadLogController, UserController, UserRoleController};
 use App\Http\Controllers\Cron\CronController;
 use App\Http\Controllers\Master\CompanyController;
 use App\Http\Controllers\Master\TopicController;
@@ -476,6 +476,40 @@ Route::get('test', [TestController::class,  'index']);
                 Route::post('/import/Submit', [TypeofWorkController::class, 'importSubmit']);
                 Route::post('/status', [TypeofWorkController::class, 'statusChange']);
                 Route::post('/unique', [TypeofWorkController::class, 'Uniquecheck']);
+            });
+
+            Route::group(['prefix' => 'ppe_ppetype_master'], function () {
+
+                Route::get('/list',[PpeTypeMasterController::class,'index']);
+                Route::post('/list',[PpeTypeMasterController::class,'index']);
+                Route::get('/add',[PpeTypeMasterController::class,'add']);
+                Route::post('/add/submit',[PpeTypeMasterController::class,'store']);
+                Route::get('/view/{id}',[PpeTypeMasterController::class,'view']);
+                Route::get('/edit/{id}', [PpeTypeMasterController::class, 'edit']);
+                Route::post('/edit/submit', [PpeTypeMasterController::class, 'update']);
+                Route::post('/status', [PpeTypeMasterController::class, 'statusChange']);
+                Route::post('/delete', [PpeTypeMasterController::class, 'delete']);
+                Route::get('/export/excel', [PpeTypeMasterController::class, 'exportExcel']);
+                Route::get('/export/pdf', [PpeTypeMasterController::class, 'exportPdf']);
+
+            });
+            Route::group(['prefix' => 'ppe_type'], function () {
+
+                Route::get('/list',[PpeTypeController::class,'index']);
+                Route::post('/list',[PpeTypeController::class,'index']);
+                Route::get('/add',[PpeTypeController::class,'add']);
+                Route::post('/add/submit',[PpeTypeController::class,'store']);
+                Route::get('/view/{id}',[PpeTypeController::class,'view']);
+                Route::get('/edit/{id}', [PpeTypeController::class, 'edit']);
+                Route::post('/edit/submit', [PpeTypeController::class, 'update']);
+                Route::post('/status', [PpeTypeController::class, 'statusChange']);
+                Route::post('/delete', [PpeTypeController::class, 'delete']);
+                Route::get('/sample_download', [PpeTypeController::class, 'DownloadSample']);
+                Route::get('/import', [PpeTypeController::class, 'import']);
+                Route::post('/import/Submit', [PpeTypeController::class, 'importSubmit']);
+                Route::get('/export/excel', [PpeTypeController::class, 'exportExcel']);
+                Route::get('/export/pdf', [PpeTypeController::class, 'exportPdf']);
+
             });
         });
     });
