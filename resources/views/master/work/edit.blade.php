@@ -82,18 +82,19 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">DOI</label>
-                                                    <input type="text" name ="doi" id="doi-datetime-datepicker"
+                                                    <input type="text" name="doi" id="doi-datetime-datepicker"
                                                         class="form-control" placeholder="DOI"
-                                                        value="{{ Displaydatetimeformat($work->doi) }}">
+                                                        value="{{ $work->doi ? date('Y-m-d', strtotime($work->doi)) : '' }}">
                                                 </div>
                                             </div>
+                                                                                      
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Exit Date</label>
                                                     <input type="text" name ="exit_date"
                                                         id="exit-date-datetime-datepicker" class="form-control"
                                                         placeholder="Exit Date"
-                                                        value="{{ Displaydatetimeformat($work->exit_date) }}">
+                                                        value="{{ $work->exit_date ? Displaydatetimeformat($work->exit_date) : '' }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
