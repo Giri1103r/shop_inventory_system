@@ -44,10 +44,11 @@ class AddSecurityHeaders
         $response->headers->set('Access-Control-Allow-Credentials', env('CORS_ALLOW_CREDENTIALS', 'false'));
 
         // Cache control
-        if ($request->is('api/*')) {
-            $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-        } else {
+        if ($request->is('public/assets/*')) {
             $response->headers->set('Cache-Control', 'public, max-age=31536000');
+        } else {
+            $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+
         }
 
         return $response;
