@@ -12,23 +12,6 @@
 @section('content')
     <div class="content-wrapper">
         <div class="container-full">
-            <div class="content-header">
-                <div class="d-flex align-items-center">
-                    <div class="mr-auto">
-
-                        <div class="d-inline-block align-items-center">
-                            <nav>
-                                <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="{{ url('') }}"><i class="mdi mdi-home-outline"></i></a> </li>
-                                    <li class="breadcrumb-item" aria-current="page">Tables</li>
-                                    <li class="breadcrumb-item active" aria-current="page">Data Tables</li>
-                                </ol>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <section class="content">
                 <div class="row">
 
@@ -38,50 +21,105 @@
                                 <div class="card-header">
                                     <h4 class="card-title">User Add</h4>
                                     <div>
-                                        <x-button-back href="{{ admin_url('admin/master/user/list') }}"></x-button-back>
+                                        <x-button-back href="{{ admin_url('administration/users/list') }}"></x-button-back>
                                     </div>
                                 </div>
 
                                 <div class="card-body ">
                                     <div class="basic-form">
-                                        <form method="POST" id="useradd" action="{{ admin_url('admin/master/user/add/submit') }}">
+                                        <form method="POST" id="useradd"
+                                            action="{{ admin_url('administration/users/add/submit') }}">
                                             @csrf
 
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                      <label>First Name</label>
-                                                      <input type="text" class="form-control" placeholder="First Name">
+                                                        <label>First Name</label>
+                                                        <input type="text" class="form-control" placeholder="First Name">
                                                     </div>
-                                                  </div>
-                                                  <div class="col-md-3">
+                                                </div>
+                                                <div class="col-md-3">
                                                     <div class="form-group">
-                                                      <label>Last Name</label>
-                                                      <input type="text" class="form-control" placeholder="First Name">
+                                                        <label>Last Name</label>
+                                                        <input type="text" class="form-control" placeholder="First Name">
                                                     </div>
-                                                  </div>
-                                                  <div class="col-md-3">
+                                                </div>
+                                                <div class="col-md-3">
                                                     <div class="form-group">
-                                                      <label>Email ID</label>
-                                                      <input type="email" class="form-control" placeholder="First Name">
+                                                        <label>Email ID</label>
+                                                        <input type="email" class="form-control" placeholder="First Name">
                                                     </div>
-                                                  </div>
-                                                  <div class="col-md-3">
+                                                </div>
+                                                <div class="col-md-3">
                                                     <div class="form-group">
-                                                      <label>Role</label>
-                                                      <select name="role" class="form-control single-select" style="width:100%" id="role">
-                                                        <option value="">Please select Role</option>
-                                                      </select>
+                                                        <label>Role</label>
+                                                        <select name="emp_role_id[]" id="emp_role_id"
+                                                            class="select2 form-control">
+
+                                                            <option value="">Select Role</option>
+                                                            @foreach ($rolelist as $role)
+                                                                <option value="{{ encryptId($role->id) }}">
+                                                                    {{ $role->role_name }}</option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
-                                                  </div>
+                                                </div>
+
+
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label class="form-label required">Company</label>
+                                                        <select name="company_id" id="company_id"
+                                                            class="select2 form-control">
+                                                            <option value="">Select Company</option>
+                                                            @foreach ($company as $company)
+                                                                <option value="{{ encryptId($company->id) }}">
+                                                                    {{ $company->company_name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label class="form-label require">Location Name</label>
+                                                        <select name="location_id" id="location_id"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Location Name</option>
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-3">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Unit Name</label>
+                                                        <select name="unit_id" id="unit_id"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Unit Name</option>
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-3">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Department Name</label>
+                                                        <select name="department_id" id="department_id"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Department Name</option>
+
+                                                        </select>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <hr>
                                             <div class="submit-button">
-
                                                 <x-button-submit class="submit"></x-button-submit>
-                                                <x-button-cancel></x-button-cancel>
+                                                <x-button-reset class="submit"></x-button-reset>
+                                                <x-button-cancel
+                                                    href="{{ admin_url('administration/users/list') }}"></x-button-cancel>
                                             </div>
-
                                         </form>
                                     </div>
                                 </div>

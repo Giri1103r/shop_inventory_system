@@ -32,28 +32,31 @@
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="company_id" class="form-label">Company ID</label>
-                                            <input type="text" name="company_id" id="company_id" class="form-control" placeholder="Company ID">
+                                            <input type="text" name="company_id" id="company_id" class="form-control"
+                                                placeholder="Company ID">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="company_name" class="form-label">Company Name</label>
-                                            <input type="text" name="company_name" id="company_name" class="form-control" placeholder="Company Name">
+                                            <input type="text" name="company_name" id="company_name" class="form-control"
+                                                placeholder="Company Name">
                                         </div>
-                                    
+
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%" class="form-control single-select">
+                                            <select name="status" id="status" style="width: 100%"
+                                                class="form-control single-select">
                                                 <option value="">Select Status</option>
                                                 <option value="{{ encryptId(1) }}">Active</option>
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
-                                        
+
                                         <div class="col-md-3 mb-3 d-flex align-items-end gap-2">
                                             <x-button-search class="me-2"></x-button-search>
                                             <x-button-reset class="ms-1"></x-button-reset>
                                         </div>
                                     </div>
-                                    
+
                                 </div>
                             </div>
                         </form>
@@ -85,332 +88,333 @@
                 </div>
             </div>
         </div>
+    </div>
 
 
-    @stop
+@stop
 
-    @push('script')
-        <script type="text/javascript">
-            $(document).ready(function() {
-                var firstTh = $('.datatable-list thead th:first');
-                firstTh.removeClass('sorting_asc');
+@push('script')
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var firstTh = $('.datatable-list thead th:first');
+            firstTh.removeClass('sorting_asc');
+        });
+
+        $(function() {
+            /* Datatable */
+            var table = $('.datatable-list').DataTable({
+                autoWidth: false,
+                responsive: true,
+                processing: false,
+                serverSide: true,
+                searching: true,
+                ordering: true,
+                dom: 'Bfrtip',
+                layout: {
+                    top2Start: 'buttons',
+                    top2End: {
+                        search: {
+                            placeholder: ''
+                        }
+                    },
+                    topStart: '',
+                    topEnd: '',
+                    bottomStart: '',
+                    bottomEnd: '',
+                    bottom2Start: 'info',
+                    bottom2End: 'paging'
+                },
+
+                ajax: {
+                    url: "{{ admin_url('company/list') }}",
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
+                            .attr('content')
+                    },
+                    data: function(d) {
+                        d.company_id = $('#company_id').val();
+                        d.company_name = $('#company_name').val();
+                        d.short_name = $('#short_name').val();
+                        d.status = $('#status').val();
+
+                    }
+                },
+                columns: [{
+                        data: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: true,
+                    },
+                    {
+                        data: 'company_id',
+                        name: 'company_id'
+                    },
+                    {
+                        data: 'company_name',
+                        name: 'company_name'
+                    },
+                    {
+                        data: 'short_name',
+                        name: 'short_name'
+                    },
+
+                    {
+                        data: 'status',
+                        name: 'status'
+                    },
+                    {
+                        data: 'created_by',
+                        name: 'created_by'
+                    },
+                    {
+                        data: 'created_at',
+                        name: 'created_at'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                    },
+                ],
+                language: {
+                    paginate: {
+                        first: '<i title="{{ __('common.first') }}" class="fa fa-angle-double-left" aria-hidden="true"></i>',
+                        last: '<i title="{{ __('common.last') }}" title="Next" class="fa fa-angle-double-right" aria-hidden="true"></i>',
+                        next: '<i title="{{ __('common.next') }}" class="fa fa-angle-right" aria-hidden="true"></i>',
+                        previous: '<i title="{{ __('common.previous') }}" class="fa fa-angle-left" aria-hidden="true"></i>',
+                    },
+                    "info": "{{ __('common.dt_info') }}",
+                    "infoEmpty": "{{ __('common.dt_infoEmpty') }}",
+                    "infoFiltered": "{{ __('common.dt_infoFiltered') }}",
+                },
+                aLengthMenu: [
+                    [10, 25, 50, 100],
+                    [10, 25, 50, 100]
+                ],
+                buttons: [{
+                        extend: 'collection',
+                        text: '{{ __('common.export') }}',
+                        buttons: [{
+                                extend: 'pdf',
+                                text: '{{ __('common.pdf') }}',
+                                action: function(e, dt, button, config) {
+                                    var searchValue = $('#datatable-list_filter input').val();
+                                    company_id = $('#company_id').val();
+                                    company_name = $('#company_name').val();
+                                    short_name = $('#short_name').val();
+                                    status = $('#status').val();
+
+                                    $(".dt-button").removeClass('processing');
+                                    $('body').click();
+                                    window.location.href =
+                                        "{{ admin_url('company/export/pdf') }}" +
+                                        '?search=' + searchValue +
+                                        '&company_id=' + company_id +
+                                        '&company_name=' + company_name +
+                                        '&short_name=' + short_name +
+                                        '&status=' + status
+                                }
+                            },
+                            {
+                                extend: 'excel',
+                                text: '{{ __('common.excel') }}',
+                                action: function(e, dt, button, config) {
+                                    var searchValue = $('#datatable-list_filter input').val();
+                                    company_id = $('#company_id').val();
+                                    company_name = $('#company_name').val();
+                                    short_name = $('#short_name').val();
+                                    status = $('#status').val();
+                                    $(".dt-button").removeClass('processing');
+                                    $('body').click();
+                                    window.location.href =
+                                        "{{ admin_url('company/export/excel') }}" +
+                                        '?search=' + searchValue +
+                                        '&company_id=' + company_id +
+                                        '&company_name=' + company_name +
+                                        '&short_name=' + short_name +
+                                        '&status=' + status
+                                }
+                            },
+                        ]
+                    },
+
+                    {
+                        "extend": 'pageLength',
+                        "text": '{{ __('common.show') }} 10 {{ __('common.records') }}'
+                    }
+                ],
+
             });
 
-            $(function() {
-                /* Datatable */
-                var table = $('.datatable-list').DataTable({
-                    autoWidth: false,
-                    responsive: true,
-                    processing: false,
-                    serverSide: true,
-                    searching: true,
-                    ordering: true,
-                    dom: 'Bfrtip',
-                    layout: {
-                        top2Start: 'buttons',
-                        top2End: {
-                            search: {
-                                placeholder: ''
-                            }
-                        },
-                        topStart: '',
-                        topEnd: '',
-                        bottomStart: '',
-                        bottomEnd: '',
-                        bottom2Start: 'info',
-                        bottom2End: 'paging'
-                    },
+            table.on('length.dt', function(e, settings, len) {
+                var text = '{{ __('common.show') }} ' + len + ' {{ __('common.records') }}';
+                $('.buttons-page-length').find('span').text(text);
+            });
 
-                    ajax: {
-                        url: "{{ admin_url('company/list') }}",
-                        type: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                                .attr('content')
-                        },
-                        data: function(d) {
-                            d.company_id = $('#company_id').val();
-                            d.company_name = $('#company_name').val();
-                            d.short_name = $('#short_name').val();
-                            d.status = $('#status').val();
+            $(document).on('click', '#searchform', function() {
+                table.draw();
+            });
 
-                        }
-                    },
-                    columns: [{
-                            data: 'DT_RowIndex',
-                            orderable: false,
-                            searchable: true,
-                        },
-                        {
-                            data: 'company_id',
-                            name: 'company_id'
-                        },
-                        {
-                            data: 'company_name',
-                            name: 'company_name'
-                        },
-                        {
-                            data: 'short_name',
-                            name: 'short_name'
-                        },
-
-                        {
-                            data: 'status',
-                            name: 'status'
-                        },
-                        {
-                            data: 'created_by',
-                            name: 'created_by'
-                        },
-                        {
-                            data: 'created_at',
-                            name: 'created_at'
-                        },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                        },
-                    ],
-                    language: {
-                        paginate: {
-                            first: '<i title="{{ __('common.first') }}" class="fa fa-angle-double-left" aria-hidden="true"></i>',
-                            last: '<i title="{{ __('common.last') }}" title="Next" class="fa fa-angle-double-right" aria-hidden="true"></i>',
-                            next: '<i title="{{ __('common.next') }}" class="fa fa-angle-right" aria-hidden="true"></i>',
-                            previous: '<i title="{{ __('common.previous') }}" class="fa fa-angle-left" aria-hidden="true"></i>',
-                        },
-                        "info": "{{ __('common.dt_info') }}",
-                        "infoEmpty": "{{ __('common.dt_infoEmpty') }}",
-                        "infoFiltered": "{{ __('common.dt_infoFiltered') }}",
-                    },
-                    aLengthMenu: [
-                        [10, 25, 50, 100],
-                        [10, 25, 50, 100]
-                    ],
-                    buttons: [{
-                            extend: 'collection',
-                            text: '{{ __('common.export') }}',
-                            buttons: [{
-                                    extend: 'pdf',
-                                    text: '{{ __('common.pdf') }}',
-                                    action: function(e, dt, button, config) {
-                                        var searchValue = $('#datatable-list_filter input').val();
-                                        company_id = $('#company_id').val();
-                                        company_name = $('#company_name').val();
-                                        short_name = $('#short_name').val();
-                                        status = $('#status').val();
-
-                                        $(".dt-button").removeClass('processing');
-                                        $('body').click();
-                                        window.location.href =
-                                            "{{ admin_url('company/export/pdf') }}" +
-                                            '?search=' + searchValue +
-                                            '&company_id=' + company_id +
-                                            '&company_name=' + company_name +
-                                            '&short_name=' + short_name +
-                                            '&status=' + status
-                                    }
-                                },
-                                {
-                                    extend: 'excel',
-                                    text: '{{ __('common.excel') }}',
-                                    action: function(e, dt, button, config) {
-                                        var searchValue = $('#datatable-list_filter input').val();
-                                        company_id = $('#company_id').val();
-                                        company_name = $('#company_name').val();
-                                        short_name = $('#short_name').val();
-                                        status = $('#status').val();
-                                        $(".dt-button").removeClass('processing');
-                                        $('body').click();
-                                        window.location.href =
-                                            "{{ admin_url('company/export/excel') }}" +
-                                            '?search=' + searchValue +
-                                            '&company_id=' + company_id +
-                                            '&company_name=' + company_name +
-                                            '&short_name=' + short_name +
-                                            '&status=' + status
-                                    }
-                                },
-                            ]
-                        },
-
-                        {
-                            "extend": 'pageLength',
-                            "text": '{{ __('common.show') }} 10 {{ __('common.records') }}'
-                        }
-                    ],
-
-                });
-
-                table.on('length.dt', function(e, settings, len) {
-                    var text = '{{ __('common.show') }} ' + len + ' {{ __('common.records') }}';
-                    $('.buttons-page-length').find('span').text(text);
-                });
-
-                $(document).on('click', '#searchform', function() {
+            $(document).on('click', '#resetform', function() {
+                $('#formsearch .single-select').val('');
+                $('#formsearch .single-select').trigger('change');
+                setTimeout(function() {
                     table.draw();
-                });
+                }, 150);
+            });
 
-                $(document).on('click', '#resetform', function() {
-                    $('#formsearch .single-select').val('');
-                    $('#formsearch .single-select').trigger('change');
-                    setTimeout(function() {
-                        table.draw();
-                    }, 150);
-                });
-
-                /* Status Change */
-                $(document).on('click', '.statusChange', function() {
-                    var id = $(this).data('id');
-                    var types = $(this).data('type');
-                    if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Company Management') }}';
-                        var text = '{{ __('common.inactive') }}';
-                        var btncolor = '#dc3545'
-
-                    } else {
-                        var title = '{{ __('Do You want to Activate Company Management') }}';
-                        var text = '{{ __('common.active') }}';
-                        var btncolor = '#7ddc35'
-                    }
-
-                    Swal.fire({
-                        title: title,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: text,
-                        confirmButtonColor: btncolor,
-                        customClass: {
-                            confirmButton: 'btn-skew',
-                            cancelButton: 'btn-skew'
-                        },
-                    }).then((result) => {
-
-
-                        if (result.value) {
-                            $.ajax({
-                                url: "{{ admin_url('company/status') }}",
-                                type: 'post',
-
-                                data: {
-                                    id: id,
-                                    types: types
-                                },
-                                success: function(response) {
-                                    const Toast = Swal.mixin({
-                                        toast: true,
-                                        position: 'top-right',
-                                        showConfirmButton: false,
-                                        timer: 3000,
-                                        timerProgressBar: true,
-                                        didOpen: (toast) => {
-                                            toast.addEventListener(
-                                                'mouseenter',
-                                                Swal.stopTimer)
-                                            toast.addEventListener(
-                                                'mouseleave',
-                                                Swal.resumeTimer
-                                            )
-                                        }
-                                    });
-                                    Toast.fire({
-                                        icon: 'success',
-                                        title: response.msg
-                                    });
-                                    table.draw();
-                                },
-                                error: function(data) {
-                                    $.notify(data.responseJSON.msg, "error");
-                                }
-                            });
-                        } else if (result.isDenied) {
-                            Swal.fire('Something went wrong', '', 'info');
-                        }
-                    })
-
-                });
-
-
-                /* Delete Record */
-                $(document).on('click', '.recordDelete', function() {
-
-                    var id = $(this).data('id');
-                    var login_id = $(this).data('login_id');
-
-                    var title = '{{ __('Do You want to Delete Company Details') }}';
-                    var text = '{{ __('common.delete') }}';
+            /* Status Change */
+            $(document).on('click', '.statusChange', function() {
+                var id = $(this).data('id');
+                var types = $(this).data('type');
+                if (types == 1) {
+                    var title = '{{ __('Do You want to In-Activate Company Management') }}';
+                    var text = '{{ __('common.inactive') }}';
                     var btncolor = '#dc3545'
 
-                    Swal.fire({
-                        title: title,
-                        icon: 'warning',
-                        showDenyButton: false,
-                        showCancelButton: true,
-                        confirmButtonText: text,
-                        confirmButtonColor: btncolor,
-                        denyButtonColor: '#28a745',
-                        customClass: {
-                            confirmButton: 'btn-skew',
-                            cancelButton: 'btn-skew'
-                        },
-                    }).then((result) => {
+                } else {
+                    var title = '{{ __('Do You want to Activate Company Management') }}';
+                    var text = '{{ __('common.active') }}';
+                    var btncolor = '#7ddc35'
+                }
 
-                        if (result.value) {
-                            $.ajax({
-                                url: "{{ admin_url('company/delete') }}",
-                                type: 'post',
-                                headers: {
-                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                                        .attr('content')
-                                },
-                                data: {
-                                    id: id,
-                                    login_id: login_id
-                                },
-                                success: function(response) {
-                                    const Toast = Swal.mixin({
-                                        toast: true,
-                                        position: 'top-right',
-                                        showConfirmButton: false,
-                                        timer: 3000,
-                                        timerProgressBar: true,
-                                        didOpen: (toast) => {
-                                            toast.addEventListener(
-                                                'mouseenter',
-                                                Swal.stopTimer)
-                                            toast.addEventListener(
-                                                'mouseleave',
-                                                Swal.resumeTimer
-                                            )
-                                        }
-                                    });
-                                    Toast.fire({
-                                        icon: 'success',
-                                        title: response.msg
-                                    });
-                                    table.draw();
-                                },
-                                error: function(data) {
-                                    if (data.status === 406 && data.responseJSON.msg ===
-                                        'module_exits') {
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Error',
-                                            text: 'Company Deletion Failed: Module Dependencies Exist.',
-                                        });
-                                    } else {
-                                        $.notify(data.responseJSON.msg, "error");
+                Swal.fire({
+                    title: title,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: text,
+                    confirmButtonColor: btncolor,
+                    customClass: {
+                        confirmButton: 'btn-skew',
+                        cancelButton: 'btn-skew'
+                    },
+                }).then((result) => {
+
+
+                    if (result.value) {
+                        $.ajax({
+                            url: "{{ admin_url('company/status') }}",
+                            type: 'post',
+
+                            data: {
+                                id: id,
+                                types: types
+                            },
+                            success: function(response) {
+                                const Toast = Swal.mixin({
+                                    toast: true,
+                                    position: 'top-right',
+                                    showConfirmButton: false,
+                                    timer: 3000,
+                                    timerProgressBar: true,
+                                    didOpen: (toast) => {
+                                        toast.addEventListener(
+                                            'mouseenter',
+                                            Swal.stopTimer)
+                                        toast.addEventListener(
+                                            'mouseleave',
+                                            Swal.resumeTimer
+                                        )
                                     }
-                                }
-                            });
-                        } else if (result.isDenied) {
-                            Swal.fire('Something went wrong', '', 'info');
-                        }
-                    })
-
-
-                });
+                                });
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: response.msg
+                                });
+                                table.draw();
+                            },
+                            error: function(data) {
+                                $.notify(data.responseJSON.msg, "error");
+                            }
+                        });
+                    } else if (result.isDenied) {
+                        Swal.fire('Something went wrong', '', 'info');
+                    }
+                })
 
             });
-        </script>
-    @endpush
+
+
+            /* Delete Record */
+            $(document).on('click', '.recordDelete', function() {
+
+                var id = $(this).data('id');
+                var login_id = $(this).data('login_id');
+
+                var title = '{{ __('Do You want to Delete Company Details') }}';
+                var text = '{{ __('common.delete') }}';
+                var btncolor = '#dc3545'
+
+                Swal.fire({
+                    title: title,
+                    icon: 'warning',
+                    showDenyButton: false,
+                    showCancelButton: true,
+                    confirmButtonText: text,
+                    confirmButtonColor: btncolor,
+                    denyButtonColor: '#28a745',
+                    customClass: {
+                        confirmButton: 'btn-skew',
+                        cancelButton: 'btn-skew'
+                    },
+                }).then((result) => {
+
+                    if (result.value) {
+                        $.ajax({
+                            url: "{{ admin_url('company/delete') }}",
+                            type: 'post',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
+                                    .attr('content')
+                            },
+                            data: {
+                                id: id,
+                                login_id: login_id
+                            },
+                            success: function(response) {
+                                const Toast = Swal.mixin({
+                                    toast: true,
+                                    position: 'top-right',
+                                    showConfirmButton: false,
+                                    timer: 3000,
+                                    timerProgressBar: true,
+                                    didOpen: (toast) => {
+                                        toast.addEventListener(
+                                            'mouseenter',
+                                            Swal.stopTimer)
+                                        toast.addEventListener(
+                                            'mouseleave',
+                                            Swal.resumeTimer
+                                        )
+                                    }
+                                });
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: response.msg
+                                });
+                                table.draw();
+                            },
+                            error: function(data) {
+                                if (data.status === 406 && data.responseJSON.msg ===
+                                    'module_exits') {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Company Deletion Failed: Module Dependencies Exist.',
+                                    });
+                                } else {
+                                    $.notify(data.responseJSON.msg, "error");
+                                }
+                            }
+                        });
+                    } else if (result.isDenied) {
+                        Swal.fire('Something went wrong', '', 'info');
+                    }
+                })
+
+
+            });
+
+        });
+    </script>
+@endpush

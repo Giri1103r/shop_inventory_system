@@ -5,34 +5,6 @@
 
 @section('content')
     <div class="clearfix"></div>
-    <div class="page-titles">
-        <div class="d-flex align-items-center">
-            <h2 class="text-black">{{ __('Upload Log') }}</h2>
-
-        </div>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item active ms-auto">
-                <a class="d-flex align-self-center" href="{{ admin_url('dashboard') }}">
-                    <svg class="me-2 svg-main-icon" xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24"
-                        version="1.1">
-                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                            <rect x="0" y="0" width="24" height="24"></rect>
-                            <path
-                                d="M3.95709826,8.41510662 L11.47855,3.81866389 C11.7986624,3.62303967 12.2013376,3.62303967 12.52145,3.81866389 L20.0429,8.41510557 C20.6374094,8.77841684 21,9.42493654 21,10.1216692 L21,19.0000642 C21,20.1046337 20.1045695,21.0000642 19,21.0000642 L4.99998155,21.0000673 C3.89541205,21.0000673 2.99998155,20.1046368 2.99998155,19.0000673 L2.99999828,10.1216672 C2.99999935,9.42493561 3.36258984,8.77841732 3.95709826,8.41510662 Z M10,13 C9.44771525,13 9,13.4477153 9,14 L9,17 C9,17.5522847 9.44771525,18 10,18 L14,18 C14.5522847,18 15,17.5522847 15,17 L15,14 C15,13.4477153 14.5522847,13 14,13 L10,13 Z"
-                                fill="#16A3A4"></path>
-                        </g>
-                    </svg>
-
-                </a>
-            </li>
-            <li class="breadcrumb-item"><a href="javascript:void(0)">{{ __('leftmenu.menu_2') }}</a></li>
-            <li class="breadcrumb-item"><a href="javascript:void(0)">{{ __('leftmenu.menu_24') }}</a></li>
-            <li class="breadcrumb-item"><a href="javascript:void(0)">{{ __('leftmenu.menu_26') }}</a></li>
-
-        </ol>
-    </div>
-
     <div class="content-body  default-height">
         <div class="container-fluid main-content">
             <!-- row -->
@@ -42,17 +14,19 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">{{ __('Upload Log View') }}</h4>
-                                <div class="ms-auto">
-                                <a href="{{ admin_url('uploadlog/download/'.request()->logid) }}" data-bs-toggle="tooltip" title="Download" class="btn btn-primary">
-                                    Download
-                                </a>
-
-                                <a href="{{ admin_url('uploadlog/list') }}" data-bs-toggle="tooltip" title="Back" class="btn btn-primary">
-                                    Back
-                                </a>
+                                <div class="d-flex justify-content-end p-2">
+                                    <a href="{{ admin_url('uploadlog/download/' . request()->logid) }}"
+                                        data-bs-toggle="tooltip" title="Download" class="btn btn-primary ms-1">
+                                        Download
+                                    </a>
+                                
+                                    <a href="{{ admin_url('uploadlog/list') }}" data-bs-toggle="tooltip" title="Back"
+                                        class="btn btn-primary ms-2">  <!-- Added ms-2 for margin on the left side of the Back button -->
+                                        Back
+                                    </a>
+                                </div>
+                                
                             </div>
-                        </div>
 
                             <div class="card-body ">
                                 <div class="table-responsive">
@@ -113,7 +87,7 @@
 
 
                 ajax: {
-                    url: "{{ admin_url('uploadlog/list/'.request()->logid ) }}",
+                    url: "{{ admin_url('uploadlog/list/' . request()->logid) }}",
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -153,8 +127,7 @@
                     [10, 25, 50, 100],
                     [10, 25, 50, 100]
                 ],
-             buttons: [
-                {
+                buttons: [{
                         extend: 'collection',
                         text: '{{ __('common.export') }}',
                         buttons: [
@@ -185,7 +158,7 @@
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                       "{{ admin_url('uploadlog/export/excel/'.request()->logid ) }}" +
+                                        "{{ admin_url('uploadlog/export/excel/' . request()->logid) }}" +
                                         '?search=' + searchValue;
                                 }
                             },
