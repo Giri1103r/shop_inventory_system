@@ -84,6 +84,7 @@
         $.validator.addMethod("regex", function(value, element, param) {
             return this.optional(element) || param.test(value);
         }, "Invalid input.");
+    
         $(function() {
             $('#roleadd').validate({
                 rules: {
@@ -91,8 +92,8 @@
                         required: true,
                         minlength: 3,
                         maxlength: 20,
-                        regex: /^[A-Za-z]+$/,
-
+                        regex: /^[A-Za-z\s]+$/,
+                        
                         remote: {
                             url: '{{ admin_url('administration/role/unique') }}',
                             type: 'post',
@@ -110,7 +111,7 @@
                         required: "{{ __('Role Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
                         maxlength: "Maximum length should not exceed 20 characters.",
-                        regex: "Only alphabetic characters are allowed (no spaces or special characters).",
+                        regex: "Only alphabetic characters and spaces are allowed.",
                         remote: "{{ __('Role Name should be unique') }}"
                     },
                 },
