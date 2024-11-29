@@ -84,8 +84,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Department Name</label>
-                                                    <input type="text" name="department_name" id = "department_name" class="form-control"
-                                                        placeholder="Department Name"
+                                                    <input type="text" name="department_name" id = "department_name"
+                                                        class="form-control" placeholder="Department Name"
                                                         value="{{ $department->department_name }}">
                                                 </div>
                                             </div>
@@ -113,9 +113,15 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
-        
+       $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault(); 
+                location.reload(); 
+            });
+        });
+
         $(document).ready(function() {
-       
+
             var initialCompanyId = $('#company_id').val();
             var preselectedLocationId = "{{ encryptId($department->location_id) ?? '0' }}";
             var preselectedUnitId = "{{ encryptId($department->unit_id) ?? '0' }}";
@@ -124,7 +130,7 @@
                 fetchLocations(initialCompanyId, preselectedLocationId, function() {
                     var location_id = preselectedLocationId;
                     fetchUnits(location_id, preselectedUnitId);
-                   
+
                 });
             }
 
@@ -142,7 +148,7 @@
                 });
             });
 
-          
+
 
             function fetchLocations(company_id, preselectedLocationId, callback) {
                 if (company_id) {
@@ -190,7 +196,7 @@
                 }
             }
 
-         
+
         });
         $(function() {
             $('#departmentedit').validate({
@@ -266,14 +272,14 @@
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
-                   
+
                     form.submit();
 
                 },
                 invalidHandler: function(event, validator) {
                     var errors = validator.numberOfInvalids();
                     validator.errorList.forEach(function(error) {
-                      
+
                     });
                 }
             });

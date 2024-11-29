@@ -204,18 +204,24 @@
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
+        $(document).ready(function() {
             flatpickr("#doi-datetime-datepicker", {
-                enableTime: true, 
+                enableTime: true,
                 dateFormat: "d-m-Y H:i",
-                time_24hr: true, 
-                minuteIncrement: 5, 
+                time_24hr: true,
+                minuteIncrement: 5,
             });
 
             flatpickr("#exit-date-datetime-datepicker", {
-                enableTime: true, 
-                dateFormat: "d-m-Y H:i", 
+                enableTime: true,
+                dateFormat: "d-m-Y H:i",
                 time_24hr: true,
-                minuteIncrement: 5, 
+                minuteIncrement: 5,
             });
 
             var initialCompanyId = $('#company_id').val();

@@ -14,20 +14,19 @@
                         </div>
                         <div class="ms-auto"></div>
                     </div>
-                  
-                    
+
+
                     <form id="userpermission" action="{{ admin_url('administration/permission/update') }}" method="POST">
                         @csrf
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group form-input">
                                     <label class="form-label require">User Role</label>
-                                    <select name="role" id="role"
-                                        class="form-control single-select" style="width: 100%;">
+                                    <select name="role" id="role" class="form-control single-select"
+                                        style="width: 100%;">
                                         <option value="">Select User Role</option>
                                         @foreach ($roleList as $role)
-                                            <option
-                                                value="{{ encryptId($role->id) }}">{{ $role->role_name }}</option>
+                                            <option value="{{ encryptId($role->id) }}">{{ $role->role_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -38,14 +37,18 @@
                             <h3>Menu</h3>
                             <table id="example2" class="table table-hover mb-0">
 
-                                    {!! $menuList !!}
+                                {!! $menuList !!}
                             </table>
                             <hr>
-                            <div class="card-bottom">
+                            <div class="submit-button" style="text-align: right;">
+                                <x-button-submit class="submit"></x-button-submit>
+                                <x-button-reset class="submit"></x-button-reset>
+                            </div>
+                            {{-- <div class="card-bottom">
                                 <div class="col-12 mt-2 mb-3">
                                     <button class="btn btn-primary" type="submit" data-bs-toggle="tooltip" title="Save">Submit</button>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </form>
                 </div>
@@ -55,8 +58,13 @@
 @stop
 
 @push('script')
-
     <script type="text/javascript">
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         $(function() {
             $('#userpermission').validate({
                 rules: {
@@ -115,9 +123,12 @@
                             id: id
                         },
                         success: function(response) {
-                            if (response.status === "success" && response.userpermission) {
-                                response.userpermission.forEach(function(permissionName) {
-                                    $(":checkbox[name='" + permissionName + "']").prop("checked", true);
+                            if (response.status === "success" && response
+                                .userpermission) {
+                                response.userpermission.forEach(function(
+                                permissionName) {
+                                    $(":checkbox[name='" + permissionName +
+                                        "']").prop("checked", true);
                                 });
                             }
                         },
