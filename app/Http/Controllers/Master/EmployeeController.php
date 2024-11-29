@@ -151,6 +151,7 @@ class EmployeeController extends Controller
             $id = decryptId($request->id);
             $rules = [
                 'emp_name' => 'required',
+                'email' => 'required|email',
             ];
             $messages = [
 

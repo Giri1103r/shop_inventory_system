@@ -224,6 +224,7 @@
                     },
                     email: {
                         required: true,
+                        email: true,
                     },
                     user_role: {
                         required: true,
@@ -245,6 +246,7 @@
                     },
                     email: {
                         required: "{{ __('Employee Email is Required') }}",
+                        email: "Please enter a valid email address",
                     },
                     user_role: {
                         required: "{{ __('User Role is Required') }}",
