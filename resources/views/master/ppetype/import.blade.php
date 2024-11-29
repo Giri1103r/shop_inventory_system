@@ -46,6 +46,7 @@
 
                                         <div class="">
                                             <x-button-submit id="submit"></x-button-submit>
+                                            <x-button-reset class="submit"></x-button-reset>
                                             <a href="{{ url('ppe_type/list') }}">
                                                 <button type="button" class="btn btn-danger">{{ __('common.cancel') }}</button>
                                             </a>
