@@ -97,13 +97,13 @@
                                 class="table primary-table-bordered table-bordered table-striped display responsive nowrap w-100 mt-2 datatable-list">
                                 <thead class="thead-primary">
                                     <tr>
-                                        <th>{{ __('common.sno') }}</th>
+                                        <th>{{ __('common.sno') }}</th> 
                                         <th>Worker Id</th>
                                         <th>Worker Name</th>
                                         <th>Phone Number</th>
                                         <th>Unit Name</th>
                                         <th>Worker Type</th>
-                                        {{-- <th>{{ __('common.status') }}</th> --}}
+                                        <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -270,10 +270,10 @@
                             data: 'wfemptype',
                             name: 'wfemptype'
                         },
-                        // {
-                        //     data: 'status',
-                        //     name: 'status'
-                        // },
+                        {
+                            data: 'status',
+                            name: 'status'
+                        },
                         {
                             data: 'created_at',
                             name: 'created_at'

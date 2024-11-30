@@ -83,8 +83,8 @@ class TrainingSchedule extends Model
         if ($request->has('status') && $request->status) {
             $query = $query->where('status', 'LIKE', '%' . decryptId($request->status) . '%');
         }
-        $data_count = $query->count();
-        $total_records = $data_count;
+        $data_count = $query;
+        $total_records = $data_count->count();
 
         $query->orderBy('id', 'DESC');
 

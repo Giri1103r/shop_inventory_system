@@ -70,7 +70,8 @@ class UserRole extends Model
 
         $data_count = $query;
         $total_records = $data_count->count();
-
+        
+        $query = $query->orderBy('id', 'ASC');
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
@@ -173,7 +174,7 @@ class UserRole extends Model
             $query = $query->where('status', decryptId($request->status));
         }
 
-        $query = $query->orderBy('id', 'Desc');
+        $query = $query->orderBy('id', 'ASC');
         return  $query->get();
     }
 
@@ -204,7 +205,7 @@ class UserRole extends Model
 
         static::created(function ($model) {
 
-            $uniqueId = 'ROL-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
+            $uniqueId = 'ROLE-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
             $model->update(['role_id' => $uniqueId]);
         });
     }

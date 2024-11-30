@@ -289,6 +289,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/view/{id}', [WorkController::class, 'view']);
                 Route::get('/export/excel', [WorkController::class, 'exportExcel']);
                 Route::get('/export/pdf', [WorkController::class, 'exportPdf']);
+                Route::post('/status', [WorkController::class, 'statusChange']);
             });
             Route::group(['prefix' => 'employee'], function () {
                 Route::get('/list', [EmployeeController::class, 'index']);
@@ -299,6 +300,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/view/{id}', [EmployeeController::class, 'view']);
                 Route::get('/export/excel', [EmployeeController::class, 'exportExcel']);
                 Route::get('/export/pdf', [EmployeeController::class, 'exportPdf']);
+                Route::post('/status', [EmployeeController::class, 'statusChange']);
             });
 
             Route::group(['prefix' => 'ptw/protectiveequipmentmaster'], function () {

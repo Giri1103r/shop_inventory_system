@@ -78,7 +78,7 @@ class NotificationController extends Controller
                             'web_link',
                         ])
                         ->rawColumns(['action'])
-                        ->setFilteredRecords($data['total_records'])
+                        ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);

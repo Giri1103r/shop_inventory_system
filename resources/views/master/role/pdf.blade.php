@@ -30,10 +30,15 @@
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->role_name }}
                         </td>
-                        
+
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php
-                                $status = $value->status == 1 ? 'Active' : 'In-Active';
+                                if ($value->id != 1) {
+                                    $status = $value->status == 1 ? 'Active' : 'In-Active';
+                                } else {
+                                    $status = '-'; 
+                                }
+
                             @endphp
                             {{ $status }}
                         </td>

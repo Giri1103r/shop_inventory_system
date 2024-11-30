@@ -84,7 +84,7 @@ class WorkController extends Controller
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
-                        ->setFilteredRecords($data['total_records'])
+                        ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
@@ -205,7 +205,7 @@ class WorkController extends Controller
                 'Phone Number',
                 'Unit Name',
                 'Worker Type',
-                // __("common.status"),
+                __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -221,7 +221,7 @@ class WorkController extends Controller
                 $export[] =  $data->mobile_no;
                 $export[] =  $data->unit_name;
                 $export[] =  $data->wfemptype;
-                // $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
+                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
                 $exportData[] = $export;
@@ -253,7 +253,7 @@ class WorkController extends Controller
                 'Phone Number',
                 'Unit Name',
                 'Worker Type',
-                // __("common.status"),
+                __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -285,7 +285,7 @@ class WorkController extends Controller
             $filename = "Worker.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-dd($ex);
+          
             report($ex);
         }
     }
