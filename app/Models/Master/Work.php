@@ -96,6 +96,9 @@ class Work extends Model
         if ($request->has('department_id') && $request->department_id) {
             $query = $query->where('masters_work.department', decryptId($request->department_id));
         }
+        if ($request->has('wfemptype') && $request->wfemptype) {
+            $query = $query->where('masters_work.wfemptype', 'LIKE', '%' . $request->wfemptype . '%');
+        }
         if ($request->has('status') && $request->status) {
 
             $query = $query->where('masters_work.status', decryptId($request->status));
@@ -278,7 +281,7 @@ class Work extends Model
         $request = request();
 
         $search = '';
-        $query = $this->select('masters_work.*', 'company_management.company_name', 'masters_location.location_name','masters_department.department_name', 'masters_unit.unit_name');
+        $query = $this->select('masters_work.*', 'company_management.company_name', 'masters_location.location_name', 'masters_department.department_name', 'masters_unit.unit_name');
         $query = $query->leftJoin('company_management', 'masters_work.company', '=', 'company_management.id');
         $query = $query->leftJoin('masters_unit', 'masters_work.unit', '=', 'masters_unit.id');
         $query = $query->leftJoin('masters_location', 'masters_work.location', '=', 'masters_location.id');
@@ -316,6 +319,10 @@ class Work extends Model
         if ($request->has('department_id') && $request->department_id) {
             $query = $query->where('masters_work.department', decryptId($request->department_id));
         }
+        if ($request->has('wfemptype') && $request->wfemptype) {
+            $query = $query->where('masters_work.wfemptype', 'LIKE', '%' . $request->wfemptype . '%');
+        }
+       
         if ($request->has('status') && $request->status) {
 
             $query = $query->where('masters_work.status', decryptId($request->status));

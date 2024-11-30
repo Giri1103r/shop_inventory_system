@@ -67,7 +67,7 @@ class UploadLogController extends Controller
                             return $btn;
                         })
                         ->rawColumns(['action', 'uploadstatus', 'created_by', 'status'])
-                        ->setFilteredRecords($data['filter_records'])
+                        ->setFilteredRecords($data['total_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
@@ -96,7 +96,7 @@ class UploadLogController extends Controller
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
                        ->rawColumns(['action', 'uploadstatus', 'created_by', 'status'])
-                        ->setFilteredRecords($data['filter_records'])
+                        ->setFilteredRecords($data['total_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);

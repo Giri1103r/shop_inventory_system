@@ -70,6 +70,11 @@
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
+                                            <label for="wfemptype" class="form-label ">Worker Type</label>
+                                            <input type="text" name="wfemptype" id="wfemptype" class="form-control"
+                                                placeholder="Worker Type">
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
@@ -241,6 +246,7 @@
                             d.location_id = $('#location_id').val();
                             d.unit_id = $('#unit_id').val();
                             d.department_id = $('#department_id').val();
+                            d.wfemptype = $('#wfemptype').val();
                             d.status = $('#status').val();
 
                         }
@@ -313,6 +319,7 @@
                                         location_id = $('#location_id').val();
                                         unit_id = $('#unit_id').val();
                                         department_id = $('#department_id').val();
+                                        wfemptype = $('#wfemptype').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -326,6 +333,7 @@
                                             '&location_id=' + location_id +
                                             '&unit_id=' + unit_id +
                                             '&department_id=' + department_id +
+                                            '&wfemptype=' + wfemptype +
                                             '&status=' + status;
                                     }
                                 },
@@ -340,6 +348,7 @@
                                         location_id = $('#location_id').val();
                                         unit_id = $('#unit_id').val();
                                         department_id = $('#department_id').val();
+                                        wfemptype = $('#wfemptype').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -353,6 +362,7 @@
                                             '&location_id=' + location_id +
                                             '&unit_id=' + unit_id +
                                             '&department_id=' + department_id +
+                                            '&wfemptype=' + wfemptype +
                                             '&status=' + status;
                                     }
                                 }
