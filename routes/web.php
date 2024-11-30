@@ -91,7 +91,7 @@ Route::middleware(['securityheader'])->group(function () {
         Route::post('SubmitAccountActivate', [LoginController::class, 'SubmitAccountActivate']);
 
         Route::get('login', [LoginController::class, 'showLoginForm']);
-        Route::post('logintry', [LoginController::class, 'authenticate']);
+        Route::post('logintry', [LoginController::class, 'authenticate'])->middleware('loginattempt');
         Route::post('logout', [LoginController::class, 'logout']);
         Route::get('reset-password', [LoginController::class, 'showResetForm'])->name('password.reset.form');
         Route::post('reset-password/store', [LoginController::class, 'resetPassword'])->name('password.reset.store');

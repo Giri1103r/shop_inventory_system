@@ -67,20 +67,8 @@ class UserRoleController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
-                        ->addColumn('action', function ($row) {
-                            $btn = '';
-
-                            if ($row->id != 1) {
-                                $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete">'
-                                      . '<i class="fa-solid fa-trash text-danger"></i>'
-                                      . '</a>';
-                            } else {
-                                $btn .= '-'; 
-                            }
-                            
-                            return $btn;
-                        })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
+         
+                        ->rawColumns(['created_date', 'created_by', 'status'])
                         ->setFilteredRecords($data['total_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()

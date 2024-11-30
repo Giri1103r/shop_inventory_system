@@ -64,7 +64,6 @@
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
-                                        <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -150,11 +149,7 @@
                             data: 'created_at',
                             name: 'created_at'
                         },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                        },
+                       
                     ],
                     language: {
                         paginate: {

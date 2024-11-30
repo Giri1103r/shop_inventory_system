@@ -137,8 +137,8 @@
                                 style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;" width="100%">
                                     <tr>
                                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; text-align: center" valign="top">
-                                            <img style="width:200px"
-                                                src="{{ public_image('common/logo/logo_dark.png') }}"
+                                            <img style="width:150px"
+                                                src="{{ url('public/assets/images/logo-dark.png') }}"
                                                 alt="Logo Image">
                                                 <br>
                                         </td>
@@ -172,7 +172,7 @@
                                     style="font-family: sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; color: #999999; font-size: 12px; text-align: center;"
                                     valign="top" align="center">
                                     Powered by 
-                                    Ardhas Technology.
+                                    KARAM.
                                 </td>
                             </tr>
                         </table>
