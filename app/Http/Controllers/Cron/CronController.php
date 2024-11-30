@@ -553,7 +553,7 @@ class CronController extends Controller
             $options = [
                 '--sleep' => 3,
                 '--tries' => 3,
-                '--queue' => 'factoryimport',
+                '--queue' => 'company',
                 '--timeout' => 600,
                 '--max-jobs' => 10,
             ];
@@ -575,7 +575,7 @@ class CronController extends Controller
             $options = [
                 '--sleep' => 3,
                 '--tries' => 3,
-                '--queue' => 'factoryimport',
+                '--queue' => 'location',
                 '--timeout' => 600,
                 '--max-jobs' => 10,
             ];
@@ -596,7 +596,7 @@ class CronController extends Controller
             $options = [
                 '--sleep' => 3,
                 '--tries' => 3,
-                '--queue' => 'factoryimport',
+                '--queue' => 'unit',
                 '--timeout' => 600,
                 '--max-jobs' => 10,
             ];
@@ -617,7 +617,7 @@ class CronController extends Controller
             $options = [
                 '--sleep' => 3,
                 '--tries' => 3,
-                '--queue' => 'factoryimport',
+                '--queue' => 'department',
                 '--timeout' => 600,
                 '--max-jobs' => 10,
             ];
