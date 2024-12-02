@@ -59,14 +59,14 @@ class ImportLocationJob implements ShouldQueue
      */
     public function handle()
     {
-
+        dd(258);
        
         $i = 1;
      
         $update_array = array(
             'upload_status' => 1,
         );
-        dd($update_array);
+      
         UploadLog::where('id', $this->details['log_id'])
             ->update($update_array);
 
