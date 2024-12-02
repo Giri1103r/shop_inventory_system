@@ -106,7 +106,7 @@
                                                     <input type="file" name="ppe_file" id="ppe_file"
                                                         class="form-control form-control-sm" placeholder="Enter the image"
                                                         onchange="validateImage()">
-                                                    <small>Allowed file types: png, jpeg</small>
+                                                    <small>Allowed file types: png, jpeg , jpg</small>
                                                     @if (isset($ppetypemaster) && $ppetypemaster->ppe_image)
                                                         <p>
                                                             <a href="{{ asset('public/' . $ppetypemaster->ppe_image) }}"
@@ -272,7 +272,7 @@
 
                 if (file !== "") {
                     var extension = file.split('.').pop().toLowerCase();
-                    if ($.inArray(extension, ['png', 'jpeg']) === -1) {
+                    if ($.inArray(extension, ['png', 'jpeg','jpg']) === -1) {
                         fileError.text('Allowed file types: png, jpeg.');
                         return false;
                     } else {

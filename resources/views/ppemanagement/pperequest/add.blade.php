@@ -1,9 +1,22 @@
 @extends('admin.layouts.admin')
 @section('title', 'PPE Request Add')
 @section('pageurl', admin_url('ppe_request/list'))
-
-
 @section('content')
+    @push('style')
+        <style>
+            #ppe_image {
+                width: 100%;
+                /* Ensure the container takes the full width */
+            }
+
+            #ppe_image img {
+                width: 100%;
+                /* Make the image fill the container's width */
+                height: auto;
+                /* Maintain the aspect ratio */
+            }
+        </style>
+    @endpush
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
@@ -66,9 +79,10 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group form-input" id="ppe_image">
-
+                                                    <!-- Image will be dynamically added here -->
                                                 </div>
                                             </div>
+
 
 
                                         </div>
@@ -138,11 +152,9 @@
                         $('#ppe_image').empty();
 
                         if (data.image_url) {
-
                             $('#ppe_image').append('<img src="' + data.image_url +
                                 '" alt="PPE Image" />');
                         } else {
-
                             $('#ppe_image').append('No image uploaded for this PPE name.');
                         }
 
@@ -153,10 +165,12 @@
                     }
                 });
             } else {
+                // If no PPE name selected, clear the image container
                 $('#ppe_image').empty().append('No image uploaded for this PPE name.');
                 $('#ppe_image').trigger('change');
             }
         });
+
 
 
 
