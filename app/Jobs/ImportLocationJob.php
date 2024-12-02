@@ -62,6 +62,7 @@ class ImportLocationJob implements ShouldQueue
             'upload_status' => 1,
         );
 
+        dd($update_array);
         UploadLog::where('id', $this->details['log_id'])
             ->update($update_array);
 
