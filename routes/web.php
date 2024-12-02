@@ -301,6 +301,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/export/excel', [EmployeeController::class, 'exportExcel']);
                 Route::get('/export/pdf', [EmployeeController::class, 'exportPdf']);
                 Route::post('/status', [EmployeeController::class, 'statusChange']);
+                Route::post('/unique', [EmployeeController::class, 'Uniquecheck']);
             });
 
             Route::group(['prefix' => 'ptw/protectiveequipmentmaster'], function () {

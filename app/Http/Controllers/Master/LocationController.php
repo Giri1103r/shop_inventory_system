@@ -89,7 +89,7 @@ class LocationController extends Controller
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
-                        ->setFilteredRecords($data['filter_records'])
+                        ->setFilteredRecords($data['total_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
@@ -431,7 +431,7 @@ class LocationController extends Controller
                 $user_id = Auth::id();
 
                 $insert_data = array(
-                    'upload_type' => 2,
+                    'upload_type' => 1,
                     'upload_status' => 0,
                     'file_name' => $filenewname,
                     'file_orgname' => $fileName,
