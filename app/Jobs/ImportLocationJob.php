@@ -47,8 +47,7 @@ class ImportLocationJob implements ShouldQueue
     public function __construct($details)
     {
 
-        
-       
+
         $this->details = $details;
     }
 
@@ -59,19 +58,16 @@ class ImportLocationJob implements ShouldQueue
      */
     public function handle()
     {
-        dd(258);
-       
         $i = 1;
-     
         $update_array = array(
             'upload_status' => 1,
         );
-      
+
         UploadLog::where('id', $this->details['log_id'])
             ->update($update_array);
 
         $xlsx = SimpleXLSX::parse($this->details['path']);
-      
+        // dd($xlsx);
         $cond_error_datas = [];
 
         foreach ($xlsx->rows() as $row) {
@@ -210,7 +206,7 @@ class ImportLocationJob implements ShouldQueue
           
             UploadLogError::insert($cond_error_datas);
         }
-        dd($cond_error_datas,$this->details['log_id']);
+        // dd($cond_error_datas,$this->details['log_id']);
         $final_update_array = array(
             'upload_status' => 2,
         );
