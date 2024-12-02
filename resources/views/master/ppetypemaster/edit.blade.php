@@ -71,6 +71,15 @@
 
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
+                                                    <label class="form-label require">Quantity</label>
+                                                    <input type="text" name="quantity" id="quantity"
+                                                        class="form-control form-control-sm" value="0" readonly>
+                                                    <div class="text-danger" id="quantity_error"></div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
                                                     <label class="form-label require">Protection Category</label>
                                                     <input type="text" name="protection_category"
                                                         id="protection_category" class="form-control form-control-sm"
@@ -116,14 +125,10 @@
                                             </div>
                                         </div>
                                         <hr>
-                                        <div class="submit-button">
-
+                                        <div class="submit-button float-end">
                                             <x-button-submit class="submit" id="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
-                                            <a href="{{ url('ppe_ppetype_master/list') }}">
-                                                <button type="button"
-                                                    class="btn btn-danger">{{ __('common.cancel') }}</button>
-                                            </a>
+                                            <x-button-cancel href="{{ admin_url('ppe_ppetype_master/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>

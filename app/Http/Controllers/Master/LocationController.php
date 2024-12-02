@@ -355,7 +355,7 @@ class LocationController extends Controller
             report($ex);
         }
     }
-  
+
     public function list(Request $request ,$companyId)
     {
         
@@ -366,7 +366,7 @@ class LocationController extends Controller
         return response()->json($locations);
     }
 
-    
+
     public function alllist(Request $request)
     {
         $companyId = decryptId($request->company_id);

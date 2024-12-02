@@ -2,18 +2,23 @@
 
 namespace App\Models\Master;
 
+use App\Models\User;
 use App\Scopes\TrashScope;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-class PpeType extends Model
+class PpeRequest extends Model
 {
-    protected $table = 'masters_ppetype';
+    protected $table = 'ppe_pperequest';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-
-        'ppe_id',
+        'emp_id',
+        'emp_name',
+        'ppe_name',
+        'department',
         'ppe_type',
         'status',
         'trash',
@@ -28,7 +33,7 @@ class PpeType extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_ppetype.*');
+        $query = $this->select('ppe_pperequest.*');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -41,8 +46,8 @@ class PpeType extends Model
             });
         }
 
-        if ($request->has('ppe_id') && $request->ppe_id) {
-            $query = $query->where('ppe_id', 'LIKE', '%' . $request->ppe_id . '%');
+        if ($request->has('ppe_name') && $request->ppe_name) {
+            $query = $query->where('ppe_name', 'LIKE', '%' . $request->ppe_name . '%');
         }
         if ($request->has('ppe_type') && $request->ppe_type) {
             $query = $query->where('ppe_type', 'LIKE', '%' . $request->ppe_type . '%');
@@ -71,56 +76,21 @@ class PpeType extends Model
         return $datas;
     }
 
-    public function uniqueCheck($data)
-    {
-        return $this->where($data['param'], $data['value'])->get();
-    }
-
-
-    public function ExistuniqueCheck($data)
-    {
-        return $this->where($data['param'],  $data['value'])
-            ->where('id', '!=', decryptId($data['id']))
-            ->get();
-    }
-
     public function store()
     {
         $request = request();
 
-
-
         $insert_array = array(
-
+            'emp_id' => $request->emp_id,
+            'emp_name' => $request->emp_name,
+            'department' => $request->department,
             'ppe_type' => $request->ppe_type,
-
+            'ppe_name' => $request->ppe_name,
             'created_by' => Auth::id()
         );
         return $this->create($insert_array);
     }
-    public function updates($id)
-    {
-        $request = request();
 
-
-
-        $update_array = array(
-
-            'ppe_type' => $request->ppe_type,
-            'created_by' => Auth::id(),
-            'updated_by' => Auth::id()
-        );
-        return $this->where('id', $id)->update($update_array);
-    }
-    public function selectOne($id)
-    {
-
-        $data = $this->select('masters_ppetype.*')
-            ->where('masters_ppetype.id', $id)
-            ->first();
-
-        return $data;
-    }
     public function statuschange($id)
     {
         $request = request();
@@ -147,44 +117,109 @@ class PpeType extends Model
             'trash' => 'YES',
         );
 
+
         return $this->where('id', $id)->update($update_data);
     }
+
+    public function updates($id)
+    {
+        $request = request();
+
+        $update_array = array(
+            'emp_id' => $request->emp_id,
+            'emp_name' => $request->emp_name,
+            'department' => $request->department,
+            'ppe_type' => $request->ppe_type,
+            'ppe_name' => $request->ppe_name,
+            'created_by' => Auth::id(),
+            'updated_by' => Auth::id()
+        );
+        return $this->where('id', $id)->update($update_array);
+    }
+
+    public function updateapproval($updateData, $id)
+    {
+        return $this->where('id', $id)->update($updateData);
+    }
+
+    public function findDepartment($id)
+    {
+        return $this->where('id', $id)->select('department')->first();
+    }
+
+    public function getrequestemail($empId)
+    {
+        return User::where('employee_id', $empId)->pluck('email')->first();
+    }
+
+    public function getdepartmenthod($departmentId)
+    {
+
+        $hod =User::where('department_id', $departmentId)
+            ->whereRaw('FIND_IN_SET(?, role)', [4])
+            ->pluck('email')
+            ->first();
+        return $hod;
+    }
+
+    public function getstoremanager()
+    {
+        return User::select('email')
+            ->whereRaw('FIND_IN_SET(?, role)', [5])
+            ->pluck('email')
+            ->first();
+    }
+
+
+    public function selectOne($id)
+    {
+
+        $data = $this->select('ppe_pperequest.*')
+            ->where('ppe_pperequest.id', $id)
+            ->first();
+
+        return $data;
+    }
+
+    public function lastPpeRequest()
+    {
+        $employeeId = Auth::user()->employee_id;
+        $departmentId = Auth::user()->department_id;
+        $lastyear = PpeRequest::where('department', $departmentId)
+            ->where('emp_id', $employeeId)
+            ->orderBy('id', 'DESC')
+            ->first();
+        return $lastyear;
+    }
+
     public function exportdata()
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_ppetype.*');
+        $query = $this->select('ppe_pperequest.*');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
             $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhereRaw('ppe_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('ppe_pperequest.emp_id LIKE "%' . $search . '%"');
             });
         }
 
-        if ($request->has('ppe_id') && $request->ppe_id) {
-            $query = $query->where('ppe_id', 'LIKE', '%' . $request->ppe_id . '%');
-        }
         if ($request->has('ppe_type') && $request->ppe_type) {
-            $query = $query->where('ppe_type', 'LIKE', '%' . $request->ppe_type . '%');
+            $query = $query->where('ppe_pperequest.ppe_type', 'LIKE', '%' . $request->ppe_type . '%');
+        }
+        if ($request->has('ppe_name') && $request->ppe_name) {
+            $query = $query->where('ppe_pperequest.ppe_name', 'LIKE', '%' . $request->ppe_name . '%');
         }
         if ($request->has('ppe_status') && $request->ppe_status) {
 
-            $query = $query->where('status', decryptId($request->ppe_status));
+            $query = $query->where('ppe_pperequest.status', decryptId($request->ppe_status));
         }
 
         return  $query->orderBy('id', 'DESC')->get();
     }
-    public function getPpetypedata(){
-        return PpeType::all();
-    }
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('masters_ppetype'));
-        static::created(function ($model) {
-
-            $uniqueId = 'PPE_TYPE-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
-            $model->update(['ppe_id' => $uniqueId]);
-        });
+        static::addGlobalScope(new TrashScope('ppe_pperequest'));
     }
 }

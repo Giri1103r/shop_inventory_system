@@ -85,7 +85,7 @@ class Employee extends Model
         if ($request->has('employee_status') && $request->employee_status) {
             $query = $query->where('masters_employee.employee_status', 'LIKE', '%' . $request->employee_status . '%');
         }
-      
+
         // if ($request->has('status') && $request->status) {
 
         //     $query = $query->where('masters_employee.status', decryptId($request->status));
@@ -205,7 +205,7 @@ class Employee extends Model
 
         foreach ($emptemp as $item) {
 
-          
+
             $role = DB::table('template_user_role')
             ->where('role_name', $item->user_role)
             ->first();
@@ -248,7 +248,7 @@ class Employee extends Model
     public function updates($id)
     {
         $request = request();
-    
+
         $update_array = [
             'emp_id' => $request->emp_id ?? null,
             'emp_name' => $request->emp_name ?? null,
@@ -270,11 +270,11 @@ class Employee extends Model
         ];
         // Perform the update
         $this->where('id', $id)->update($update_array);
-    
+
         // Retrieve and return the updated record
         return $this->find($id);
     }
-    
+
     public function updateErrorStatus($emp_id, $errorMessage)
     {
         $update_data = [
@@ -394,6 +394,14 @@ class Employee extends Model
         return $list;
     }
 
+    public function getEmployeedata(){
+        $user = Auth::user()->employee_id;
+        return Employee::select('emp_id','emp_name','department')->where('emp_id',$user)->first();
+    }
+
+    public function getEmployeefulldata(){
+        return Employee::all();
+    }
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('masters_employee'));

@@ -1239,17 +1239,45 @@ if (!function_exists('getMonth')) {
         return $month_name;
     }
 
+    if (!function_exists('getPpeType')) {
+
+        function getPpeType($userid)
+        {
+
+            $ppe_type = DB::table('masters_ppetype')->select('ppe_type')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($ppe_type == null) {
+                return '';
+            } else {
+                return $ppe_type->ppe_type;
+            }
+        }
+    }
     if (!function_exists('getPpename')) {
 
         function getPpename($userid)
         {
 
-            $ppe_name = DB::table('masters_ppetype')->select('ppe_type')->where('id', $userid)->where('trash', 'NO')->first();
+            $ppe_name = DB::table('ppe_master_ppetypemaster')->select('ppe_name')->where('id', $userid)->where('trash', 'NO')->first();
 
             if ($ppe_name == null) {
                 return '';
             } else {
-                return $ppe_name->ppe_type;
+                return $ppe_name->ppe_name;
+            }
+        }
+    }
+    if (!function_exists('getDepartment')) {
+
+        function getDepartment($userid)
+        {
+
+            $department_name = DB::table('masters_department')->select('department_name')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($department_name == null) {
+                return '';
+            } else {
+                return $department_name->department_name;
             }
         }
     }

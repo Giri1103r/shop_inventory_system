@@ -13,7 +13,7 @@ class PpeTypeMaster extends Model
     use  HasFactory;
 
 
-    protected $table = 'masters_ppe_ppetypemaster';
+    protected $table = 'ppe_master_ppetypemaster';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -36,7 +36,7 @@ class PpeTypeMaster extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_ppe_ppetypemaster.*');
+        $query = $this->select('ppe_master_ppetypemaster.*');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -107,6 +107,7 @@ class PpeTypeMaster extends Model
             'ppe_category' => $request->protection_category,
             'ppe_standard' => $request->ppe_standard,
             'ppe_image' => $ppe_file_path,
+            'quantity' => $request->quantity,
             'created_by' => Auth::id()
         );
         return $this->create($insert_array);
@@ -115,30 +116,24 @@ class PpeTypeMaster extends Model
     {
         $request = request();
 
-        $destinationPath = 'uploads/ppe_files'; // Directory to store files
-    $ppe_file_path = $request->input('existing_pre_image'); // Default to the existing file path
+        $destinationPath = 'uploads/ppe_files';
+        $ppe_file_path = $request->input('existing_pre_image');
 
-    // Check if a new file is uploaded
-    if ($request->hasFile('ppe_file')) {
-        $ppe_file = $request->file('ppe_file');
-        $ppe_file_name = time() . '_' . $ppe_file->getClientOriginalName();
+        if ($request->hasFile('ppe_file')) {
+            $ppe_file = $request->file('ppe_file');
+            $ppe_file_name = time() . '_' . $ppe_file->getClientOriginalName();
 
-        // Ensure the new file name is unique
-        while (File::exists(public_path($destinationPath . '/' . $ppe_file_name))) {
-            $ppe_file_name = time() . '_' . uniqid() . '_' . $ppe_file->getClientOriginalName();
+            while (File::exists(public_path($destinationPath . '/' . $ppe_file_name))) {
+                $ppe_file_name = time() . '_' . uniqid() . '_' . $ppe_file->getClientOriginalName();
+            }
+
+            $ppe_file->move(public_path($destinationPath), $ppe_file_name);
+            $ppe_file_path = $destinationPath . '/' . $ppe_file_name;
+
+            if ($request->input('existing_pre_image') && File::exists(public_path($request->input('existing_pre_image')))) {
+                File::delete(public_path($request->input('existing_pre_image')));
+            }
         }
-
-        // Move the new file to the destination
-        $ppe_file->move(public_path($destinationPath), $ppe_file_name);
-
-        // Set the file path to the new file
-        $ppe_file_path = $destinationPath . '/' . $ppe_file_name;
-
-
-        if ($request->input('existing_pre_image') && File::exists(public_path($request->input('existing_pre_image')))) {
-            File::delete(public_path($request->input('existing_pre_image')));
-        }
-    }
 
 
         $update_array = array(
@@ -148,6 +143,7 @@ class PpeTypeMaster extends Model
             'ppe_category' => $request->protection_category,
             'ppe_standard' => $request->ppe_standard,
             'ppe_image' => $ppe_file_path,
+            'quantity' => $request->quantity,
             'created_by' => Auth::id(),
             'updated_by' => Auth::id()
         );
@@ -156,8 +152,8 @@ class PpeTypeMaster extends Model
     public function selectOne($id)
     {
 
-        $data = $this->select('masters_ppe_ppetypemaster.*')
-            ->where('masters_ppe_ppetypemaster.id', $id)
+        $data = $this->select('ppe_master_ppetypemaster.*')
+            ->where('ppe_master_ppetypemaster.id', $id)
             ->first();
 
         return $data;
@@ -194,7 +190,7 @@ class PpeTypeMaster extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_ppe_ppetypemaster.*');
+        $query = $this->select('ppe_master_ppetypemaster.*');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -216,8 +212,30 @@ class PpeTypeMaster extends Model
 
         return  $query->orderBy('id', 'DESC')->get();
     }
+
+    public function ajaxlist($PPEtypeId)
+    {
+        return $this->where('ppe_type', $PPEtypeId)->select('id', 'ppe_name')->get();
+    }
+
+
+    public function ImageList($ppeNameId)
+    {
+        $ppeImage = $this->where('id', $ppeNameId)->pluck('ppe_image')->first();
+        if ($ppeImage) {
+            return response()->json(['image_url' => asset('uploads/ppe_type_files/' . $ppeImage)]);
+        } else {
+            return response()->json(['image_url' => null]);
+        }
+    }
+
+
+    public function getppetypemaster()
+    {
+        return PpeTypeMaster::all();
+    }
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('masters_ppe_ppetypemaster'));
+        static::addGlobalScope(new TrashScope('ppe_master_ppetypemaster'));
     }
 }
