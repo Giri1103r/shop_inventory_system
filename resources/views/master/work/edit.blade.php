@@ -82,18 +82,19 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">DOI</label>
-                                                    <input type="text" name ="doi" id="doi-datetime-datepicker"
+                                                    <input type="text" name="doi" id="doi-datetime-datepicker"
                                                         class="form-control" placeholder="DOI"
-                                                        value="{{ Displaydatetimeformat($work->doi) }}">
+                                                        value="{{ $work->doi ? date('Y-m-d', strtotime($work->doi)) : '' }}">
                                                 </div>
                                             </div>
+                                                                                      
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Exit Date</label>
                                                     <input type="text" name ="exit_date"
                                                         id="exit-date-datetime-datepicker" class="form-control"
                                                         placeholder="Exit Date"
-                                                        value="{{ Displaydatetimeformat($work->exit_date) }}">
+                                                        value="{{ $work->exit_date ? Displaydatetimeformat($work->exit_date) : '' }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
@@ -180,7 +181,7 @@
                                             </div>
                                         </div>
                                         <hr>
-                                        <div class="submit-button">
+                                        <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel href="{{ admin_url('work/list') }}"></x-button-cancel>
@@ -203,18 +204,24 @@
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
+        $(document).ready(function() {
             flatpickr("#doi-datetime-datepicker", {
-                enableTime: true, 
+                enableTime: true,
                 dateFormat: "d-m-Y H:i",
-                time_24hr: true, 
-                minuteIncrement: 5, 
+                time_24hr: true,
+                minuteIncrement: 5,
             });
 
             flatpickr("#exit-date-datetime-datepicker", {
-                enableTime: true, 
-                dateFormat: "d-m-Y H:i", 
+                enableTime: true,
+                dateFormat: "d-m-Y H:i",
                 time_24hr: true,
-                minuteIncrement: 5, 
+                minuteIncrement: 5,
             });
 
             var initialCompanyId = $('#company_id').val();

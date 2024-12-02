@@ -10,7 +10,7 @@
             <h2 style="color:#0D173F">Role</h2>
 
         </div>
-    
+
     </div>
 
     <div class="content-body  default-height">
@@ -34,7 +34,8 @@
                                     <form method="POST" id="locationtypeedit"
                                         action="{{ admin_url('administration/role/edit/submit') }}">
                                         @csrf
-                                        <input type="hidden" name="id" id="id" value="{{ encryptId($role->id) }}">
+                                        <input type="hidden" name="id" id="id"
+                                            value="{{ encryptId($role->id) }}">
                                         <div class="row">
                                             <div class="mb-3 col-md-6 form-input">
                                                 <label
@@ -44,17 +45,18 @@
                                             </div>
                                             <div class="mb-3 col-md-6 form-input">
                                                 <label
-                                                    class="form-label required">{{ __('administration.role_name')}}</label>
-                                                <input type="text" name="role_name" value="{{ $role->role_name }}" id="role_name" class="form-control"
-                                                    placeholder="">
+                                                    class="form-label required">{{ __('administration.role_name') }}</label>
+                                                <input type="text" name="role_name" value="{{ $role->role_name }}"
+                                                    id="role_name" class="form-control" placeholder="">
                                             </div>
                                         </div>
                                         <hr>
+                                        <div class="submit-button" style="text-align: right;">
 
-                                        <div class="">
-                                            <x-button-submit></x-button-submit>
-                                            <x-button-cancel></x-button-cancel>
-
+                                            <x-button-submit class="submit"></x-button-submit>
+                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-cancel
+                                                href="{{ admin_url('administration/role/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -72,6 +74,12 @@
 
 @push('script')
     <script type="text/javascript">
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         $(function() {
             $('#locationtypeedit').validate({
                 rules: {
@@ -81,7 +89,7 @@
                         minlength: 3,
 
                         remote: {
-                            url: '{{ admin_url("location_type/unique") }}',
+                            url: '{{ admin_url('location_type/unique') }}',
                             type: 'post',
                             data: {
                                 location_type_name: function() {

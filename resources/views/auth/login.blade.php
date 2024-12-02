@@ -1,6 +1,24 @@
 @extends('layouts.app')
 @section('title', 'Login')
-
+<style>
+    /* Positioning the eye icon */
+    .form-input {
+        position: relative;
+    }
+    
+    .show-pass.eye {
+        position: absolute;
+        top: 70%;
+        right: 10px;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #6c757d; /* Optional: matches Bootstrap input styles */
+    }
+    
+    .show-pass.eye:hover {
+        color: #000; /* Optional: hover effect */
+    }
+    </style>
 @section('content')
     <div class="card">
         <div class="card-body p-4">
@@ -19,14 +37,28 @@
 
                 <div class="mb-3 form-input">
                     <label for="password" class="form-label">Password</label>
-                    <input class="form-control" type="password" name="password" required="" id="password"
+                    <input class="form-control"id="dlab-password" type="password" name="password" required="" id="password"
                         placeholder="Enter your password">
+
+                    <span class="show-pass eye">
+                        <i class="fa fa-eye-slash" id="eye-slash"></i>
+                        <i class="fa fa-eye d-none" id="eye"></i>
+                    </span>
                 </div>
 
-                <div class="mb-3">
+
+                {{-- <div class="mb-3">
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="checkbox-signin" name="remember">
                         <label class="form-check-label" for="checkbox-signin">Remember me</label>
+                    </div>
+                </div> --}}
+
+
+                <div class="mb-3 form-input">
+                    <div class="form-check custom-checkbox mb-0">
+                        <input type="checkbox" class="form-check-input" id="customCheckBox1" name="remember">
+                        <label class="form-check-label remember_me" for="customCheckBox1">Remember me</label>
                     </div>
                 </div>
                 <div class="mb-3">
@@ -67,6 +99,15 @@
                 return true;
             }
         });
+
+        jQuery('.show-pass').on('click',function(){
+			jQuery(this).toggleClass('active');
+			if(jQuery('#dlab-password').attr('type') == 'password'){
+				jQuery('#dlab-password').attr('type','text');
+			}else if(jQuery('#dlab-password').attr('type') == 'text'){
+				jQuery('#dlab-password').attr('type','password');
+			}
+		});
         $(function() {
             $('#login_form_validate').validate({
                 rules: {
@@ -92,7 +133,11 @@
                 errorPlacement: function(error, element) {
                     error.addClass('invalid-feedback');
                     element.closest('.form-input').append(error);
-
+                    if (element.attr('name') === 'password') {
+                    element.closest('.form-input').find('.show-pass.eye').css('top', '40%');
+                
+                }
+                
 
                 },
                 highlight: function(element, errorClass, validClass) {

@@ -47,14 +47,14 @@ class UserRoleController extends Controller
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active<span>";
                             if ($row->id != 1) {
-                            if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
-                            } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
+                                if ($row->status == 1) {
+                                    $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
+                                } else if ($row->status == 0) {
+                                    $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
+                                }
+                            } else {
+                                $text = '-';
                             }
-                        }else{
-                            $text = '-';
-                        }
 
                             return $text;
                         })
@@ -67,21 +67,9 @@ class UserRoleController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
-                        ->addColumn('action', function ($row) {
-                            $btn = '';
 
-                            if ($row->id != 1) {
-                                $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete">'
-                                      . '<i class="fa-solid fa-trash text-danger"></i>'
-                                      . '</a>';
-                            } else {
-                                $btn .= '-'; 
-                            }
-                            
-                            return $btn;
-                        })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
-                        ->setFilteredRecords($data['total_records'])
+                        ->rawColumns(['created_date', 'created_by', 'status'])
+                        ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
@@ -131,7 +119,7 @@ class UserRoleController extends Controller
 
                 $this->user_role->store();
 
-                Session::flash('success', 'User Role added successfully!');
+                Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
 
 
@@ -200,7 +188,7 @@ class UserRoleController extends Controller
             }
             $this->user_role->updates($id);
 
-            Session::flash('success', 'User Role updated successfully!');
+            Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('administration/role/list'));
         } catch (Exception $ex) {
 
@@ -217,11 +205,11 @@ class UserRoleController extends Controller
             $id = $request->id;
             if ($id == '') {
 
-   
+
                 $record = $this->user_role->uniqueCheck($role_name);
             } else {
                 $id = decryptId($id);
-                $record = $this->user_role->ExistuniqueCheck($role_name,$id);
+                $record = $this->user_role->ExistuniqueCheck($role_name, $id);
             }
             if ($record->count()) {
                 return Response::json(false);
@@ -284,7 +272,11 @@ class UserRoleController extends Controller
                 $export['No.'] =  $i;
                 $export['User Role ID'] =  $data->role_id;
                 $export['User Role Name'] =  $data->role_name;
-                $export['User Role Status'] =  $data->status == 1 ? 'Active' : 'In-Active';
+                if ($data->id != 1) {
+                    $export['User Role Status'] = $data->status == 1 ? 'Active' : 'In-Active';
+                } else {
+                    $export['User Role Status'] = '-'; 
+                }
                 $export['Created User'] =  getusername($data->created_by);
                 $export['Created Date'] =  Displaydateformat($data->created_at);
 

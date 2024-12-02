@@ -68,9 +68,9 @@
                                             </div>
                                         </div>
                                         <hr>
-                                        <div class="submit-button">
+                                        <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-reset class=""></x-button-reset>
                                             <x-button-cancel href="{{ admin_url('company/list') }}"></x-button-cancel>
                                         </div>
 
@@ -90,13 +90,20 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         $(function() {
             $('#companyedit').validate({
                 rules: {
                     company_name: {
                         required: true,
                         minlength: 3,
-
+                        maxlength: 100,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
                         remote: {
                             url: '{{ admin_url('company/unique') }}',
                             type: 'post',
@@ -113,23 +120,31 @@
                     short_name: {
                         required: true,
                         minlength: 3,
+                        maxlength: 10,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
                     },
                     address: {
                         required: true,
+                        maxlength: 300,
                     },
                 },
                 messages: {
                     company_name: {
                         required: "{{ __('Company Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 100",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
                         remote: "{{ __('Company Name should be unique') }}"
                     },
                     short_name: {
                         required: "{{ __('Short Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 10",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
                     },
                     address: {
                         required: "{{ __('Company Address is Required') }}",
+                        maxlength: "Maximum Characters should not exceed 300",
                     },
 
                 },
@@ -145,16 +160,13 @@
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
-                    console.log('test');
                     form.submit();
 
                 },
                 invalidHandler: function(event, validator) {
                     var errors = validator.numberOfInvalids();
-                    console.log(errors + " field(s) are invalid");
                     validator.errorList.forEach(function(error) {
-                        console.log("Field: " + error.element.name + ", Error: " + error
-                            .message);
+
                     });
                 }
             });

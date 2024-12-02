@@ -75,9 +75,9 @@
 
                                         </div>
                                         <hr>
-                                        <div class="submit-button">
+                                        <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-reset class=""></x-button-reset>
                                             <x-button-cancel href="{{ admin_url('unit/list') }}"></x-button-cancel>
                                         </div>
 
@@ -97,6 +97,13 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+     $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault(); 
+                location.reload(); 
+            });
+        });
+
         $(document).on('change', '#company_id', function() {
             let companyId = $(this).val();
 
@@ -124,6 +131,15 @@
         });
 
         $(function() {
+
+
+            $(document).on('click', '#resetform', function() {
+                $('#unitadd .single-select').val('');
+                $('#unitadd .single-select').trigger('change');
+                setTimeout(function() {
+                    table.draw();
+                }, 150);
+            });
             $('#unitadd').validate({
                 rules: {
                     company_id: {
@@ -135,6 +151,8 @@
                     unit_name: {
                         required: true,
                         minlength: 3,
+                        maxlength: 20,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
 
                         remote: {
                             url: '{{ admin_url('unit/unique') }}',
@@ -165,6 +183,8 @@
                     unit_name: {
                         required: "{{ __('Unit Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 20",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
                         remote: "{{ __('Unit Name should be unique') }}"
                     },
 

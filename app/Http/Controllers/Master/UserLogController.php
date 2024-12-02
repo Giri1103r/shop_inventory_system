@@ -45,7 +45,7 @@ class UserLogController extends Controller
                             return Displaydatetimeformat($row->created_at);
                         })
                         ->rawColumns(['datetime'])
-                        ->setFilteredRecords($data['total_records'])
+                        ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);

@@ -54,7 +54,11 @@ class Department extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('department_id', 'LIKE', '%' . $search . '%');
+                    ->orWhere('department_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('department_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('company_management.company_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('department_id') && $request->department_id) {
@@ -76,8 +80,8 @@ class Department extends Model
 
             $query = $query->where('masters_department.status', decryptId($request->status));
         }
-        $data_count = $query->count();
-        $total_records = $data_count;
+        $data_count = $query;
+        $total_records = $data_count->count();
 
         $query->orderBy('id', 'DESC');
 
@@ -95,18 +99,18 @@ class Department extends Model
         return $datas;
     }
 
-    public function UniqueCheck($company_id,$location_id,$unit_id,$department_name)
+    public function UniqueCheck($company_id, $location_id, $unit_id, $department_name)
     {
 
-        return $this->where('company_id', $company_id)->where('location_id',$location_id )->where('unit_id',$unit_id)->where('department_name',$department_name)->get();
+        return $this->where('company_id', $company_id)->where('location_id', $location_id)->where('unit_id', $unit_id)->where('department_name', $department_name)->get();
     }
 
-    public function ExistuniqueCheck($company_id,$location_id,$unit_id,$department_name, $id)
+    public function ExistuniqueCheck($company_id, $location_id, $unit_id, $department_name, $id)
     {
 
-        return $this->where('company_id', $company_id)->where('location_id',$location_id )->where('unit_id',$unit_id)->where('department_name',$department_name)
-        ->where('id', '!=', $id)
-        ->get();
+        return $this->where('company_id', $company_id)->where('location_id', $location_id)->where('unit_id', $unit_id)->where('department_name', $department_name)
+            ->where('id', '!=', $id)
+            ->get();
     }
 
     public function store()
@@ -167,7 +171,7 @@ class Department extends Model
 
     public function ajaxallList($unitId = '')
     {
-        $query = $this->select('id', 'department_name');
+        $query = $this->select('id', 'department_name')->where('status', 1);
 
         if ($unitId != '') {
 
@@ -226,8 +230,13 @@ class Department extends Model
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhereRaw('department_name LIKE "%' . $search . '%"');
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('department_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('department_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('company_management.company_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('department_id') && $request->department_id) {
@@ -243,11 +252,11 @@ class Department extends Model
             $query = $query->where('masters_department.unit_id', decryptId($request->unit_id));
         }
         if ($request->has('department_name') && $request->department_name) {
-            $query = $query->where('department_name', 'LIKE', '%' . $request->department_name . '%');
+            $query = $query->where('masters_department.department_name', 'LIKE', '%' . $request->department_name . '%');
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('status', decryptId($request->status));
+            $query = $query->where('masters_department.status', decryptId($request->status));
         }
         $query->orderBy('id', 'DESC');
         return  $query->get();

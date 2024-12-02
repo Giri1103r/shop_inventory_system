@@ -58,6 +58,8 @@ class ImportLocationJob implements ShouldQueue
      */
     public function handle()
     {
+
+        dd(345);
         $i = 1;
         $update_array = array(
             'upload_status' => 1,
@@ -202,9 +204,11 @@ class ImportLocationJob implements ShouldQueue
         }
 
         if (count($cond_error_datas) > 0) {
+
+          
             UploadLogError::insert($cond_error_datas);
         }
-
+        // dd($cond_error_datas,$this->details['log_id']);
         $final_update_array = array(
             'upload_status' => 2,
         );

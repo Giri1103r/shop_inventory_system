@@ -87,13 +87,13 @@ class CompanyController extends Controller
                             // if (CheckUserRole(ROLE_ADMIN)) {
                             //     $btn .= '<a href="' . admin_url('company/passwordchange/' . encryptId($row->id)) . '" class="key-icon" title="passwordchange"><i class="fas fa-key"></i> ';
                             // }
-                            if (CheckUserPermission('delete')) {
-                                $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
-                            }
+                            // if (CheckUserPermission('delete')) {
+                            //     $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
+                            // }
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
-                        ->setFilteredRecords($data['total_records'])
+                        ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
@@ -158,7 +158,7 @@ class CompanyController extends Controller
                 //     Mail::to($empdetails->email)->queue(new EmployeeRegisterEmail($emp));
                 // }
 
-                Session::flash('success', 'Company added successfully!');
+                Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -235,7 +235,7 @@ class CompanyController extends Controller
             // $company = $this->company->find($id);
             // $this->user->companyUpdate($company->login_id);
 
-            Session::flash('success', 'Company updated successfully!');
+            Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('company/list'));
         } catch (Exception $ex) {
             report($ex);
@@ -418,8 +418,8 @@ class CompanyController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportCompanyJob($details));
-                //    dispatch((new ImportCompanyJob($details))->onQueue('company'));
+                // dispatch(new ImportCompanyJob($details));
+                   dispatch((new ImportCompanyJob($details))->onQueue('company'));
             }
 
             $insert_data['log_id'] = $insert_id;

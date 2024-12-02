@@ -50,9 +50,9 @@ class UserRole extends Model
 
         if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];
-
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhereRaw('role_name LIKE "%' . $search . '%"');
+            $query->where(function ($query) use ($search) {
+                $query->orWhere('role_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('role_name', 'LIKE', '%' . $search . '%');
             });
         }
 
@@ -70,7 +70,8 @@ class UserRole extends Model
 
         $data_count = $query;
         $total_records = $data_count->count();
-
+        
+        $query = $query->orderBy('id', 'ASC');
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
@@ -160,6 +161,7 @@ class UserRole extends Model
                     ->orWhere('role_name', 'LIKE', '%' . $search . '%');
             });
         }
+
         if ($request->has('role_id') && $request->role_id) {
             $query = $query->where('role_id', 'LIKE', '%' . $request->role_id . '%');
         }
@@ -172,7 +174,7 @@ class UserRole extends Model
             $query = $query->where('status', decryptId($request->status));
         }
 
-        $query = $query->orderBy('id', 'Desc');
+        $query = $query->orderBy('id', 'ASC');
         return  $query->get();
     }
 
@@ -191,11 +193,11 @@ class UserRole extends Model
         return $this->where('role_name',  $role_name)->get();
     }
 
-    public function ExistuniqueCheck($role_name,$id)
+    public function ExistuniqueCheck($role_name, $id)
     {
         return $this->where('role_name',  $role_name)
-        ->where('id', '!=', $id)
-        ->get();
+            ->where('id', '!=', $id)
+            ->get();
     }
     protected static function booted()
     {
@@ -203,7 +205,7 @@ class UserRole extends Model
 
         static::created(function ($model) {
 
-            $uniqueId = 'ROL-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
+            $uniqueId = 'ROLE-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
             $model->update(['role_id' => $uniqueId]);
         });
     }

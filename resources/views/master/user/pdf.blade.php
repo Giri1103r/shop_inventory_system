@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Employee PDF')
+@section('title', 'Users PDF')
 @section('content')
 
     <div style="width:100%;">
@@ -25,27 +25,30 @@
                             {{ $i }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->emp_id }}
+                            {{ $value->employee_id }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->emp_name }}
+                            {{ $value->name }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->email }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->employee_status }}
-                        </td>
+                            {{ $value->role_name }}
+                        </td>        
+                      
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php
                                 $status = $value->status == 1 ? 'Active' : 'In-Active';
                             @endphp
                             {{ $status }}
                         </td>
+
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getusername($value->created_by) }}
+                        </td>
+
+
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ Displaydateformat($value->created_at) }}
                         </td>
-
                     </tr>
                     @php
                         $i++;

@@ -431,30 +431,30 @@ class CronController extends Controller
         }
     }
 
+    
     public function EmployeeSave()
     {
 
         try {
             $emp_temp = EmployeeTemp::select('*')->where('upload_status', '0')->get();
 
-
             if (!empty($emp_temp)) {
 
                 
                 $employee = $this->employee->store($emp_temp);
-                // dd($employee);
-                $user = $this->user->store($employee);
-
-                // if (!empty($user) && !empty($user->email)) {
-                //     $empdetails = $this->employee->selectOne($employee['emp_id']);
-                
-
-                //     if (!empty($empdetails)) {
-                //         $emp = $empdetails->toArray();
-                //         Mail::to($user->email)->queue(new EmployeeRegisterEmail($emp));
+                $users = $this->user->store($employee);
+             
+                // foreach ($users as $user) { 
+                //     if (!empty($user) && isset($user->email)) {
+                //         $empdetails = $this->employee->selectOne($user->employee_id);
+                //         if (!empty($empdetails)) {
+                            
+                //             $emp = $empdetails->toArray();
+                //             Mail::to($user->email)->queue(new EmployeeRegisterEmail($emp));
+                //         }
                 //     }
                 // }
-
+           
                 if (empty($employee)) {
                     $this->emp_temp->updateAllErrorStatus();
                 } else {
@@ -544,4 +544,91 @@ class CronController extends Controller
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
+
+
+    public function queueCompanyImport()
+    {
+        $queueLength = Queue::size('company');
+        if ($queueLength > 0) {
+            $options = [
+                '--sleep' => 3,
+                '--tries' => 3,
+                '--queue' => 'company',
+                '--timeout' => 600,
+                '--max-jobs' => 10,
+            ];
+
+            $exitCode = Artisan::call('queue:work', $options);
+            Session::invalidate();
+            return response()->json(['message' => 'Queue Company command executed successfully',  'exit_code' => $exitCode]);
+        } else {
+            Session::invalidate();
+            return response()->json(['message' => 'No jobs in the Company Import queue to process', 'exit_code' => 0]);
+        }
+    }
+
+
+    public function queuelocationimport()
+    {
+        $queueLength = Queue::size('location');
+        if ($queueLength > 0) {
+            $options = [
+                '--sleep' => 3,
+                '--tries' => 3,
+                '--queue' => 'location',
+                '--timeout' => 600,
+                '--max-jobs' => 10,
+            ];
+
+            $exitCode = Artisan::call('queue:work', $options);
+            Session::invalidate();
+            return response()->json(['message' => 'Queue Location command executed successfully',  'exit_code' => $exitCode]);
+        } else {
+            Session::invalidate();
+            return response()->json(['message' => 'No jobs in the Location Import queue to process', 'exit_code' => 0]);
+        }
+    }
+
+    public function queueunitimport()
+    {
+        $queueLength = Queue::size('unit');
+        if ($queueLength > 0) {
+            $options = [
+                '--sleep' => 3,
+                '--tries' => 3,
+                '--queue' => 'unit',
+                '--timeout' => 600,
+                '--max-jobs' => 10,
+            ];
+
+            $exitCode = Artisan::call('queue:work', $options);
+            Session::invalidate();
+            return response()->json(['message' => 'Queue Unit command executed successfully',  'exit_code' => $exitCode]);
+        } else {
+            Session::invalidate();
+            return response()->json(['message' => 'No jobs in the Unit Import queue to process', 'exit_code' => 0]);
+        }
+    }
+
+    public function queueDepartmentuplodimport()
+    {
+        $queueLength = Queue::size('department');
+        if ($queueLength > 0) {
+            $options = [
+                '--sleep' => 3,
+                '--tries' => 3,
+                '--queue' => 'department',
+                '--timeout' => 600,
+                '--max-jobs' => 10,
+            ];
+
+            $exitCode = Artisan::call('queue:work', $options);
+            Session::invalidate();
+            return response()->json(['message' => 'Queue Unit command executed successfully',  'exit_code' => $exitCode]);
+        } else {
+            Session::invalidate();
+            return response()->json(['message' => 'No jobs in the Unit Import queue to process', 'exit_code' => 0]);
+        }
+    } 
+
 }

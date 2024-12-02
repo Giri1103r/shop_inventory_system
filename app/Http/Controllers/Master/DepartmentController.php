@@ -88,13 +88,13 @@ class DepartmentController extends Controller
                             if (CheckUserPermission('edit')) {
                                 $btn .= '<a href="' . admin_url('department/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
-                            if (CheckUserPermission('delete')) {
-                                $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
-                            }
+                            // if (CheckUserPermission('delete')) {
+                            //     $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
+                            // }
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
-                        ->setFilteredRecords($data['total_records'])
+                        ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
@@ -157,7 +157,7 @@ class DepartmentController extends Controller
 
             try {
                 $this->department->store();
-                Session::flash('success', 'Department added successfully!');
+                Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -238,7 +238,7 @@ class DepartmentController extends Controller
 
             $this->department->updates($id);
 
-            Session::flash('success', 'Department updated successfully!');
+            Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('department/list'));
         } catch (Exception $ex) {
             report($ex);
@@ -309,7 +309,7 @@ class DepartmentController extends Controller
                 $export[] =  $data->department_id;
                 $export[] =  $data->company_name;
                 $export[] =  $data->location_name;
-                $export[] =  $data->unit_id;
+                $export[] =  $data->unit_name;
                 $export[] =  $data->department_name;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
@@ -429,7 +429,7 @@ class DepartmentController extends Controller
                 $user_id = Auth::id();
 
                 $insert_data = array(
-                    'upload_type' => 1,
+                    'upload_type' => 4,
                     'upload_status' => 0,
                     'file_name' => $filenewname,
                     'file_orgname' => $fileName,

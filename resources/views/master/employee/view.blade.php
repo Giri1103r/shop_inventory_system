@@ -50,7 +50,7 @@
                                             {{ isset($employee->gender) ? $employee->gender : '' }}
                                         </div>
                                     </div>
-                                    
+
                                     {{-- <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Nationality') }}</label>
                                         <div class="view_data">
@@ -66,10 +66,25 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('User Role') }}</label>
                                         <div class="view_data">
-                                            {{ isset($employee->role_name) ? $employee->role_name : '' }}
+                                    
+                                            @php
+                                                $userRoles = explode(',', $employee->user_role ?? '');
+                                                $roleNames = [];
+                                            @endphp
+
+                                            @foreach ($userrole as $role)
+                                                @if (in_array($role->id, $userRoles))
+                                                    @php
+                                                        $roleNames[] = $role->role_name;
+                                                    @endphp
+                                                @endif
+                                            @endforeach
+
+                                            {{ implode(', ', $roleNames) }}
+
                                         </div>
                                     </div>
-                                  
+
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Joining Date') }}</label>
                                         <div class="view_data">

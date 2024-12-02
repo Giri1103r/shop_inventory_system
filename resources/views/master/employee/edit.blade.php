@@ -73,12 +73,25 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">User Role</label>
-                                                    <select name="user_role" id="user_role"
+                                                    {{-- <select name="user_role" id="user_role"
                                                         class="form-control single-select" style="width: 100%;">
                                                         <option value="">Select User Role</option>
                                                         @foreach ($userrole as $role)
                                                             <option @if ($employee->user_role == $role->id) selected @endif
-                                                                value="{{ encryptId($role->id) }}">{{ $role->role_name }}</option>
+                                                                value="{{ encryptId($role->id) }}">{{ $role->role_name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select> --}}
+
+
+                                                    <select name="user_role[]" multiple id="user_role"
+                                                        class="select2 form-control">
+                                                        <option value="">Select User Role</option>
+                                                        @foreach ($userrole as $role)
+                                                            <option value="{{ $role->id }}"
+                                                                @if (in_array($role->id, explode(',', $employee->user_role ?? ''))) selected @endif>
+                                                                {{ $role->role_name }}
+                                                            </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -87,12 +100,12 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Employee Email</label>
-                                                    <input type="email" name ="email" class="form-control"
+                                                    <input type="email" name ="email" id ="email" class="form-control"
                                                         placeholder="Employee Email" value="{{ $employee->email }}">
                                                 </div>
                                             </div>
 
-                                         
+
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Joining Date</label>
@@ -187,7 +200,7 @@
                                             </div> --}}
                                         </div>
                                         <hr>
-                                        <div class="submit-button">
+                                        <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel href="{{ admin_url('employee/list') }}"></x-button-cancel>
@@ -209,13 +222,26 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
-        flatpickr("#joining_date_datetime_datepicker", {
-                enableTime: true, 
-                dateFormat: "d-m-Y H:i",
-                time_24hr: true, 
-                minuteIncrement: 5, 
+        $('#user_role').select2({
+            placeholder: "Select Role",
+            allowClear: true,
+            closeOnSelect: true,
+        });
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
             });
-
+        });
+        flatpickr("#joining_date_datetime_datepicker", {
+            enableTime: true,
+            dateFormat: "d-m-Y H:i",
+            time_24hr: true,
+            minuteIncrement: 5,
+        });
+        jQuery.validator.addMethod("strictEmail", function(value, element) {
+            return this.optional(element) || /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
+        }, "Please enter a valid email address");
         $(function() {
             $('#employeeedit').validate({
                 rules: {
@@ -224,6 +250,20 @@
                     },
                     email: {
                         required: true,
+                        // email: true,
+                        strictEmail: true,
+                        remote: {
+                            url: '{{ admin_url('employee/unique') }}',
+                            type: 'post',
+                            data: {
+                                email: function() {
+                                    return $('#email').val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
+                                }
+                            }
+                        }
                     },
                     user_role: {
                         required: true,
@@ -245,6 +285,9 @@
                     },
                     email: {
                         required: "{{ __('Employee Email is Required') }}",
+                        // email: "Please enter a valid email address",
+                        strictEmail: "Please enter a valid email address",
+                        email: "{{ __('Email should be unique') }}"
                     },
                     user_role: {
                         required: "{{ __('User Role is Required') }}",

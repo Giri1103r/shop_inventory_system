@@ -21,6 +21,9 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+
+     protected $table = 'users';
+
     protected $fillable = [
         'name',
         'first_name',
@@ -73,33 +76,87 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function list()
+    {
+        $request = request();
+        $search = '';
+        $query = $this->select('users.*', 'template_user_role.role_name',);
+        $query = $query->leftJoin('template_user_role', 'users.role', '=', 'template_user_role.id');
+        // dd($query);
+        $org_total =  $query;
+        $org_total_counts = $org_total->count();
+
+        if ($request->search['value'] != null || $request->search['value'] != '') {
+            $search = $request->search['value'];
+
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('name', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+
+        if ($request->has('employee_id') && $request->employee_id) {
+            $query = $query->where('employee_id', 'LIKE', '%' . $request->employee_id . '%');
+        }
+        if ($request->has('name') && $request->name) {
+            $query = $query->where('name', 'LIKE', '%' . $request->name . '%');
+        }
+        if ($request->has('status') && $request->status) {
+
+            $query = $query->where('users.status', decryptId($request->status));
+        }
+        $data_count = $query;
+        $total_records = $data_count->count();
+
+        $query->orderBy('id', 'DESC');
+
+        if ($request->length != -1) {
+            $query->offset($request->start)->limit($request->length);
+        }
+
+        $data = $query->get();
+
+        $datas = array(
+            'data' => $data,
+            'total_records' => $org_total_counts,
+            'filter_records' => $total_records,
+        );
+        return $datas;
+    }
     public function store($employees)
-{
-    $request = request();
+    {
+        $createdUsers = []; // To store created user objects
 
-    $data = []; 
+        foreach ($employees as $item) {
+            $userData = [
+                'name' => $item['emp_name'],
+                'first_name' => $item['emp_name'],
+                'last_name' => '',
+                'email' => $item['email'],
+                'role' => $item['user_role'],
+                'user_type' => 1,
+                'employee_id' => $item['emp_id'],
+                'username' => $item['emp_id'],
+                'password' => Hash::make($item['emp_name'] . "@12345"),
+                'department_id' => null,
+                'designation_id' => $item['designation'],
+                'mobile' => $item['mobile_no'],
+                'created_by' => Auth::id(),
+            ];
 
-    foreach ($employees as $item) {
+            try {
+                $createdUser = $this->create($userData); 
+                $createdUsers[] = $createdUser; 
+            } catch (\Exception $e) {
+                dd($e);
+            }
+        }
 
-        $data[] = [
-            'name' => $item['emp_name'], 
-            'first_name' => $item['emp_name'],
-            'last_name' => '',
-            'email' => $request->email, 
-            'role' => $item['user_role'],
-            'user_type' => 1,
-            'employee_id' => $item['emp_id'],
-            'username' => $item['emp_id'], 
-            'password' => Hash::make($item['emp_name'] . "@12345"),
-            'department_id' => null,
-            'designation_id' => $item['designation'],
-            'mobile' => $item['mobile_no'],
-            'created_by' => Auth::id(),
-        ];
+        return $createdUsers; 
     }
 
-    return $this->insert($data); 
-}
 
 
 
@@ -110,12 +167,16 @@ class User extends Authenticatable
         $request = request();
 
 
-        // $decryptedRoleIds = [];
-        // if ($request->has('emp_role_id')) {
-        //     $decryptedRoleIds = array_map(function ($encryptedId) {
-        //         return $encryptedId;
-        //     }, $request->emp_role_id);
-        // }
+        $decryptedRoleIds = [];
+      
+
+        if ($request->has('user_role')) {
+            $decryptedRoleIds = array_map(function ($encryptedId) {
+                return $encryptedId;
+            }, $request->user_role);
+        
+            $commaSeparatedRoles = implode(',', $decryptedRoleIds);
+        }
 
         // dd($employee);
 
@@ -124,7 +185,7 @@ class User extends Authenticatable
             'first_name' => $employee->emp_name,
             'last_name' => '',
             'email' => $employee->emp_email,
-            'role' => $employee->user_role,
+            'role' => $commaSeparatedRoles ,
             'employee_id' => $employee->emp_id,
             'department_id' => decryptId($employee->emp_department_id),
             'designation_id' => decryptId($employee->emp_designation_id),
@@ -132,12 +193,37 @@ class User extends Authenticatable
             'updated_by' => Auth::id()
         );
 
-       
+
         return $this->where('employee_id', $employee->emp_id)->update($data);
     }
 
 
-  
+    public function exportdata()
+    {
+        $request = request();
+        $search = '';
+        $query = $this->select('users.*', 'template_user_role.role_name');
+        $query = $query->leftJoin('template_user_role', 'users.role', '=', 'template_user_role.id');
+        if ($request->search != null || $request->search != '') {
+            $search = $request->search;
 
-    
+            $query =  $query->Where(function ($query) use ($search) {
+                $query
+                    ->orWhere('name', 'LIKE', '%' . $search . '%');
+            });
+        }
+        if ($request->has('employee_id') && $request->employee_id) {
+            $query = $query->where('employee_id', 'LIKE', '%' . $request->employee_id . '%');
+        }
+        if ($request->has('name') && $request->name) {
+            $query = $query->where('name', 'LIKE', '%' . $request->name . '%');
+        }
+        if ($request->has('status') && $request->status) {
+
+            $query = $query->where('users.status', decryptId($request->status));
+        }
+        $query->orderBy('id', 'DESC');
+
+        return  $query->get();
+    }
 }

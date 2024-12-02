@@ -18,6 +18,7 @@ use DataTables;
 use Response;
 
 use App\Models\Master\Designation;
+use App\Models\Master\Company;
 use App\Models\Master\Department;
 use App\Models\Master\UserRole;
 
@@ -31,6 +32,7 @@ class UserController extends Controller
 {
 
     private $designation;
+    private $company;
     private $department;
     private $Role;
     private $user;
@@ -39,7 +41,8 @@ class UserController extends Controller
     public function __construct()
     {
 
-        $this->designation = new designation();
+        // $this->designation = new designataion();
+        $this->company = new Company();
         $this->department = new department();
         $this->Role = new UserRole();
         $this->user = new User();
@@ -59,20 +62,20 @@ class UserController extends Controller
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active<span>";
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
+                                $text = "<span  class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
+                                $text = "<span class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
                             }
                             return $text;
                         })
                         ->addColumn('user_id', function ($row) {
-                            return Displaydatetimeformat($row->created_at);
+                            return $row->employee_id;
                         })
                         ->addColumn('user_name', function ($row) {
-                            return Displaydatetimeformat($row->created_at);
+                            return $row->name;
                         })
                         ->addColumn('user_role', function ($row) {
-                            return Displaydatetimeformat($row->created_at);
+                            return $row->role_name;
                         })
 
                         ->addColumn('created_at', function ($row) {
@@ -84,21 +87,24 @@ class UserController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('admin/master/user/view/' . encryptId($row->id)) . '"   class="view-icon" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            $btn .= '<a href="' . admin_url('admin/master/user/edit/' . encryptId($row->id)) . '" class="edit-icon" title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            if (CheckUserRole(ROLE_ADMIN)) {
-                                $btn .= '<a href="' . admin_url('admin/master/user/passwordchange/' . encryptId($row->id)) . '" class="key-icon" title="passwordchange"><i class="fas fa-key"></i> ';
-                            }
-                            $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
-                            return $btn;
+                            // $btn = '<a href="' . admin_url('administration/users/view/' . encryptId($row->id)) . '"   class="view-icon" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            // $btn .= '<a href="' . admin_url('administration/users/edit/' . encryptId($row->id)) . '" class="edit-icon" title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            // if (CheckUserRole(ROLE_ADMIN)) {
+                            //     $btn .= '<a href="' . admin_url('administration/users/passwordchange/' . encryptId($row->id)) . '" class="key-icon" title="passwordchange"><i class="fas fa-key"></i> ';
+                            // }
+                            // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
+                            // return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
-                        ->setFilteredRecords($data['total_records'])
+                        ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
+
+
+                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -115,8 +121,10 @@ class UserController extends Controller
 
         try {
             $rolelist = $this->Role->where('status', '1')->get();
+            $company = $this->company->where('status', '1')->get();
             $data = array(
                 'rolelist' => $rolelist,
+                'company' => $company,
             );
             return view('master.user.add', $data);
         } catch (Exception $ex) {
@@ -210,72 +218,7 @@ class UserController extends Controller
 
 
             $employee = $this->user->find($id);
-
-            $designationlist = $this->designation->where('status', 1)
-                ->orWhere(function ($query) use ($employee) {
-                    if ($employee) {
-                        $query->where('id', $employee->designation_id);
-                    }
-                })
-                ->get();
-
-            $departmentlist = $this->department->where('status', 1)
-                ->orWhere(function ($query) use ($employee) {
-                    if ($employee) {
-                        $query->where('id', $employee->department_id);
-                    }
-                })
-                ->get();
-
-            $employeetypelist = $this->employeetype->where('status', 1)
-                ->orWhere(function ($query) use ($employee) {
-                    if ($employee) {
-                        $query->where('id', $employee->employee_type);
-                    }
-                })
-                ->get();
-
-            $factoryList = $this->factory->where('status', 1)
-                ->orWhere(function ($query) use ($employee) {
-                    if ($employee) {
-                        $query->where('id', $employee->factory_id);
-                    }
-                })
-                ->get();
-
-            $rolelist = $this->Role->where('status', 1)
-                ->orWhere(function ($query) use ($employee) {
-                    if ($employee) {
-                        if (!empty($employee->role_id)) {
-                            if (is_string($employee->role_id)) {
-                                $roleIds = explode(',', $employee->role_id);
-                            } elseif (is_int($employee->role_id)) {
-                                $roleIds = [$employee->role_id];
-                            } else {
-                                $roleIds = [];
-                            }
-                            if (!empty($roleIds)) {
-                                $query->whereIn('id', $roleIds);
-                            }
-                        }
-                    }
-                })
-                ->get();
-            $employeelist = $this->user->where('status', 1)
-                ->orWhere(function ($query) use ($employee) {
-                    if ($employee) {
-                        $query->where('id', $employee->reporting_manager_id);
-                    }
-                })
-                ->get();
             $data = array(
-
-                'designationlist' => $designationlist,
-                'departmentlist' => $departmentlist,
-                'employeetypelist' => $employeetypelist,
-                'factorylist' => $factoryList,
-                'rolelist' => $rolelist,
-                'employeelist' => $employeelist,
                 'employee' => $employee
             );
 
@@ -564,25 +507,24 @@ class UserController extends Controller
 
             $allData = $this->user->exportdata();
 
+            // dd($allData);
+
             $header = [
                 __("common.sno"),
-                'Employee  ID',
-                'Employee  Name',
+                'User  ID',
+                'User  Name',
                 'Role',
-                'Location',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];
-
             $i = 1;
             foreach ($allData as $data) {
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->employee_no;
-                $export[] =  $data->emp_name;
-                $export[] =  $data->role_name;
+                $export[] =  $data->employee_id;
+                $export[] =  $data->name;
                 $export[] =  $data->role_name;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
@@ -593,7 +535,7 @@ class UserController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('employee.employee.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Users Details.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -604,6 +546,7 @@ class UserController extends Controller
         }
     }
 
+
     public function ExportPdf(Request $request)
     {
 
@@ -613,10 +556,9 @@ class UserController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Employee  ID',
-                'Employee  Name',
+                'User  ID',
+                'User  Name',
                 'Role',
-                'Location',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -625,7 +567,7 @@ class UserController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Employee Details",
+                'pagetitle' => "User Details",
             );
 
             $property = [
@@ -647,10 +589,9 @@ class UserController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "employee.employee.pdf";
-            $mpdf->Output($filename, 'I');
+            $filename = "master.user.pdf";
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
             report($ex);
         }
     }

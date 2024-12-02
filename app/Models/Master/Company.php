@@ -51,6 +51,7 @@ class Company extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
+                    ->orWhere('company_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('company_name', 'LIKE', '%' . $search . '%');
             });
         }
@@ -66,8 +67,8 @@ class Company extends Model
 
             $query = $query->where('status', decryptId($request->status));
         }
-        $data_count = $query->count();
-        $total_records = $data_count;
+        $data_count = $query;
+        $total_records = $data_count->count();
 
         $query->orderBy('id', 'DESC');
 
@@ -91,11 +92,11 @@ class Company extends Model
         return $this->where('company_name',  $data)->get();
     }
 
-    public function ExistuniqueCheck($data,$id)
+    public function ExistuniqueCheck($data, $id)
     {
         return $this->where('company_name',  $data)
-        ->where('id', '!=', $id)
-        ->get();
+            ->where('id', '!=', $id)
+            ->get();
     }
 
     public function store()
@@ -165,7 +166,8 @@ class Company extends Model
             $search = $request->search;
 
             $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhereRaw('company_name LIKE "%' . $search . '%"');
+                $query->orWhere('company_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('company_name', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('company_id') && $request->company_id) {
@@ -176,7 +178,7 @@ class Company extends Model
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('company_management.status', decryptId($request->status));
+            $query = $query->where('status', decryptId($request->status));
         }
         $query->orderBy('id', 'DESC');
 

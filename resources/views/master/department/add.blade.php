@@ -88,7 +88,7 @@
 
                                         </div>
                                         <hr>
-                                        <div class="submit-button">
+                                        <div class="submit-button" style="text-align: right;">
 
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
@@ -111,6 +111,13 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
+
         $(document).on('change', '#company_id', function() {
             var companyId = $(this).val();
             if (companyId) {
@@ -163,6 +170,14 @@
 
 
         $(function() {
+
+            $(document).on('click', '#resetform', function() {
+                $('#departmentadd .single-select').val('');
+                $('#departmentadd .single-select').trigger('change');
+                setTimeout(function() {
+                    table.draw();
+                }, 150);
+            });
             $('#departmentadd').validate({
                 rules: {
                     company_id: {
@@ -177,12 +192,12 @@
                     department_name: {
                         required: true,
                         minlength: 3,
-
+                        maxlength: 70,
+                        pattern: /^[a-zA-Z0-9\s\-_'"(),&]*$/, 
                         remote: {
                             url: '{{ admin_url('department/unique') }}',
                             type: 'post',
                             data: {
-
                                 company_id: function() {
                                     return $('#company_id').val();
                                 },
@@ -214,9 +229,10 @@
                     department_name: {
                         required: "{{ __('Department  Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
-                        remote: "{{ __('Department Name should be unique') }}"
+                        maxlength: "Maximum Characters should not exceed 70",
+                        pattern: "Only alphanumeric characters and -, _, ', \", (), ,, and & are allowed",
+                        remote: "{{ __('Department Name should be unique') }}",
                     },
-
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
@@ -230,19 +246,15 @@
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
-                    console.log('test');
                     form.submit();
-
                 },
                 invalidHandler: function(event, validator) {
                     var errors = validator.numberOfInvalids();
-                    console.log(errors + " field(s) are invalid");
                     validator.errorList.forEach(function(error) {
-                        console.log("Field: " + error.element.name + ", Error: " + error
-                            .message);
                     });
                 }
             });
+
         });
     </script>
 @endpush

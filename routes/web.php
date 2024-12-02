@@ -53,6 +53,14 @@ Route::get('/seed/{className}', function ($className) {
 Route::get('queuehigh', [CronController::class, 'queueHigh']);
 Route::get('queuedefault', [CronController::class, 'queueDefault']);
 Route::get('queueemail', [CronController::class, 'queueEmail']);
+
+Route::get('queueCompanyImport', [CronController::class,'queueCompanyImport']);
+Route::get('queuelocationimport', [CronController::class,'queuelocationimport']);
+Route::get('queueunitimport', [CronController::class,'queueunitimport']);
+Route::get('queueDepartmentuplodimport', [CronController::class,'queueDepartmentuplodimport']);
+
+
+
 Route::get('workmastertemp', [CronController::class, 'workMasterTemp']);
 Route::get('worksave', [CronController::class, 'workSave']);
 
@@ -84,7 +92,7 @@ Route::middleware(['securityheader'])->group(function () {
         Route::post('SubmitAccountActivate', [LoginController::class, 'SubmitAccountActivate']);
 
         Route::get('login', [LoginController::class, 'showLoginForm']);
-        Route::post('logintry', [LoginController::class, 'authenticate']);
+        Route::post('logintry', [LoginController::class, 'authenticate'])->middleware('loginattempt');
         Route::post('logout', [LoginController::class, 'logout']);
         Route::get('reset-password', [LoginController::class, 'showResetForm'])->name('password.reset.form');
         Route::post('reset-password/store', [LoginController::class, 'resetPassword'])->name('password.reset.store');
@@ -129,6 +137,26 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('administration/role/import/submit', [UserRoleController::class, 'importSubmit']);
             Route::get('administration/role/list/{companyId}', [UserRoleController::class, 'list']);
             Route::get('administration/role/sampledownload', [UserRoleController::class, 'DownloadSample']);
+
+
+
+
+            Route::get('administration/users/list', [UserController::class, 'index']);
+            Route::post('administration/users/list', [UserController::class, 'index']);
+            Route::get('administration/users/add', [UserController::class, 'add']);
+            Route::post('administration/users/add/submit',  [UserController::class, 'store']);
+            Route::get('administration/users/view/{id}', [UserController::class, 'view']);
+            Route::get('administration/users/edit/{id}',  [UserController::class, 'edit']);
+            Route::post('administration/users/edit/submit', [UserController::class, 'update']);
+            Route::post('administration/users/unique', [UserController::class, 'uniqueCheck']);
+            Route::post('administration/users/status', [UserController::class, 'statusChange']);
+            Route::post('administration/users/delete',  [UserController::class, 'delete']);
+            Route::get('administration/users/export/excel', [UserController::class, 'exportExcel']);
+            Route::get('administration/users/export/pdf', [UserController::class, 'exportPdf']);
+            Route::get('administration/users/import', [UserController::class, 'import']);
+            Route::post('administration/users/import/submit', [UserController::class, 'importSubmit']);
+            Route::get('administration/users/list/{companyId}', [UserController::class, 'list']);
+            Route::get('administration/users/sampledownload', [UserController::class, 'DownloadSample']);
             /**
              * User Permission
              */
@@ -261,6 +289,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/view/{id}', [WorkController::class, 'view']);
                 Route::get('/export/excel', [WorkController::class, 'exportExcel']);
                 Route::get('/export/pdf', [WorkController::class, 'exportPdf']);
+                Route::post('/status', [WorkController::class, 'statusChange']);
             });
             Route::group(['prefix' => 'employee'], function () {
                 Route::get('/list', [EmployeeController::class, 'index']);
@@ -271,6 +300,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/view/{id}', [EmployeeController::class, 'view']);
                 Route::get('/export/excel', [EmployeeController::class, 'exportExcel']);
                 Route::get('/export/pdf', [EmployeeController::class, 'exportPdf']);
+                Route::post('/status', [EmployeeController::class, 'statusChange']);
+                Route::post('/unique', [EmployeeController::class, 'Uniquecheck']);
             });
 
             Route::group(['prefix' => 'ptw/protectiveequipmentmaster'], function () {

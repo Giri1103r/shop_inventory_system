@@ -50,7 +50,9 @@ class Location extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('location_id', 'LIKE', '%' . $search . '%');
+                    ->orWhere('location_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('location_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('company_management.company_name', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('location_id') && $request->location_id) {
@@ -66,8 +68,8 @@ class Location extends Model
             $query = $query->where('masters_location.status', decryptId($request->status));
         }
 
-        $data_count = $query->count();
-        $total_records = $data_count;
+        $data_count = $query;
+        $total_records = $data_count->count();
 
         $query->orderBy('id', 'DESC');
 
@@ -164,8 +166,11 @@ class Location extends Model
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhereRaw('location_id LIKE "%' . $search . '%"');
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('location_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('location_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('company_management.company_name', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('location_id') && $request->location_id) {
@@ -221,33 +226,10 @@ class Location extends Model
 
         return $list;
     }
-    // public function ajaxList($companyId = '', $locationId = 0)
-    // {
-    //     $query = $this->select('id', 'location_name')->where('status', 1);
-
-    //     if (!empty($companyId)) {
-    //         $query->where('company_id', $companyId);
-    //     }
-
-    //     if ($locationId > 0) {
-    //         $query->where('id', $locationId);
-    //     }
-
-    //     $datas = $query->get();
-
-    //     $list = [];
-    //     foreach ($datas as $data) {
-    //         $listvalue = [];
-    //         $listvalue['id'] = encryptId($data->id);
-    //         $listvalue['name'] = $data->location_name;
-    //         $list[] = $listvalue;
-    //     }
-
-    //     return $list;
-    // }
+  
     public function ajaxallList($companyId = '')
     {
-        $query = $this->select('id', 'location_name');
+        $query = $this->select('id', 'location_name')->where('status', 1);
 
         if ($companyId != '') {
 

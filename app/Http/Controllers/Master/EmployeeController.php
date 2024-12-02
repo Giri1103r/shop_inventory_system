@@ -88,7 +88,7 @@ class EmployeeController extends Controller
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
-                        ->setFilteredRecords($data['total_records'])
+                        ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
@@ -112,10 +112,13 @@ class EmployeeController extends Controller
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
+
+                $userrole  = $this->userrole->select('id', 'role_name')->where('status', '1')->get();
                 $employee = $this->employee->selectOne($id);
 
                 $data = array(
                     'employee' => $employee,
+                    'userrole' => $userrole,
                 );
             }
             return view('master.employee.view', $data);
@@ -151,6 +154,7 @@ class EmployeeController extends Controller
             $id = decryptId($request->id);
             $rules = [
                 'emp_name' => 'required',
+                'email' => 'required|email',
             ];
             $messages = [
 
@@ -166,7 +170,7 @@ class EmployeeController extends Controller
 
             $userUpdate =  $this->user->userUpdate($employee);
 
-            Session::flash('success', 'Employee updated successfully!');
+            Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('employee/list'));
         } catch (Exception $ex) {
 
@@ -177,7 +181,20 @@ class EmployeeController extends Controller
         }
     }
 
+    public function StatusChange(Request $request)
+    {
 
+        try {
+            $id = decryptId($request->id);
+
+            $this->employee->statuschange($id);
+
+            return response()->json(['status' => 'success', 'msg' => 'Employee status changed'], 200);
+        } catch (Exception $ex) {
+
+            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+        }
+    }
 
     public function ExportExcel(Request $request)
     {
@@ -192,6 +209,8 @@ class EmployeeController extends Controller
                 'Employee Name',
                 'Email',
                 'Employee Status',
+                __("common.status"),
+                __("common.created_date"),
             ];
 
             $i = 1;
@@ -203,6 +222,8 @@ class EmployeeController extends Controller
                 $export[] =  $data->emp_name;
                 $export[] =  $data->email;
                 $export[] =  $data->employee_status;
+                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
+                $export[] =  Displaydateformat($data->created_at);
 
                 $exportData[] = $export;
 
@@ -232,6 +253,8 @@ class EmployeeController extends Controller
                 'Employee Name',
                 'Email',
                 'Employee Status',
+                __("common.status"),
+                __("common.created_date"),
             ];
 
             $data = array(
@@ -264,6 +287,25 @@ class EmployeeController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+        }
+    }
+
+
+    public function Uniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $email = $request->email;
+            $id = $request->id;
+            if ($id == '') {
+                $record = $this->employee->uniqueCheck($email);
+            } else {
+                $id = decryptId($id);
+                $record = $this->employee->ExistuniqueCheck($email, $id);
+            }
+            if ($record->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
         }
     }
 }
