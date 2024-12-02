@@ -58,8 +58,6 @@ class ImportLocationJob implements ShouldQueue
      */
     public function handle()
     {
-
-        dd(345);
         $i = 1;
         $update_array = array(
             'upload_status' => 1,

@@ -96,6 +96,8 @@ class TypeofWorkController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
+
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
                 }
             }
@@ -192,7 +194,11 @@ class TypeofWorkController extends Controller
 
 
 
-                $getprotectivedetails = $this->typeofworkchecklist->getchecklistdetails($typeofwork->id, 'type1');
+                $getprotectivedetails = $this->typeofworkchecklist->getprotectivechecklistdetails($typeofwork->id, 'type1');
+                $getequipmentdetails = $this->typeofworkchecklist->getequipmentchecklistdetails($typeofwork->id, 'type2');
+                $getmanualdetails = $this->typeofworkchecklist->getmanualchecklistdetails($typeofwork->id, 'type3');
+                $getcheckdetails = $this->typeofworkchecklist->getcheckchecklistdetails($typeofwork->id, 'type4');
+                $getinstructiondetails = $this->typeofworkchecklist->getinstructionchecklistdetails($typeofwork->id, 'type5');
 
                 $data = array(
                     'typeofwork' => $typeofwork,
@@ -206,6 +212,11 @@ class TypeofWorkController extends Controller
                     'manual' => $manual,
                     'check' => $check,
                     'instruction' => $instruction,
+                    'getprotectivedetails' => $getprotectivedetails,
+                    'getequipmentdetails' => $getequipmentdetails,
+                    'getmanualdetails' => $getmanualdetails,
+                    'getcheckdetails' => $getcheckdetails,
+                    'getinstructiondetails' => $getinstructiondetails,
                 );
             }
             return view('master.typeofwork.view', $data);

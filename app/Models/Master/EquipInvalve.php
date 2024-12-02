@@ -15,7 +15,7 @@ class EquipInvalve extends Model
     use  HasFactory;
 
 
-    protected $table = 'masters_ptw_equip_involved';
+    protected $table = 'ptw_masters_equip_involved';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -38,7 +38,7 @@ class EquipInvalve extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_ptw_equip_involved.*');
+        $query = $this->select('ptw_masters_equip_involved.*');
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -147,7 +147,7 @@ class EquipInvalve extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_ptw_equip_involved.*');
+        $query = $this->select('ptw_masters_equip_involved.*');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -171,9 +171,9 @@ class EquipInvalve extends Model
     {
 
         $data = $this->select(
-            'masters_ptw_equip_involved.*'
+            'ptw_masters_equip_involved.*'
         )
-            ->where('masters_ptw_equip_involved.id', $id)
+            ->where('ptw_masters_equip_involved.id', $id)
             ->first();
 
         return $data;
@@ -183,9 +183,9 @@ class EquipInvalve extends Model
     public function selectchecklist()
     {
 
-        $data =  $this->select('masters_ptw_equip_involved.*')
-            ->where('masters_ptw_equip_involved.status', '1')
-            ->where('masters_ptw_equip_involved.trash', 'NO')
+        $data =  $this->select('ptw_masters_equip_involved.*')
+            ->where('ptw_masters_equip_involved.status', '1')
+            ->where('ptw_masters_equip_involved.trash', 'NO')
             ->get();
 
         return $data;
@@ -193,7 +193,7 @@ class EquipInvalve extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('masters_ptw_equip_involved'));
+        static::addGlobalScope(new TrashScope('ptw_masters_equip_involved'));
 
         // static::created(function ($model) {
 

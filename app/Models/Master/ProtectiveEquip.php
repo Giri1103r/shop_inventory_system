@@ -15,7 +15,7 @@ class ProtectiveEquip extends Model
     use  HasFactory;
 
 
-    protected $table = 'masters_ptw_protective_equip';
+    protected $table = 'ptw_masters_protective_equip';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -38,7 +38,7 @@ class ProtectiveEquip extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_ptw_protective_equip.*');
+        $query = $this->select('ptw_masters_protective_equip.*');
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -116,9 +116,9 @@ class ProtectiveEquip extends Model
     public function selectchecklist()
     {
 
-        $data =  $this->select('masters_ptw_protective_equip.*')
-            ->where('masters_ptw_protective_equip.status', '1')
-            ->where('masters_ptw_protective_equip.trash', 'NO')
+        $data =  $this->select('ptw_masters_protective_equip.*')
+            ->where('ptw_masters_protective_equip.status', '1')
+            ->where('ptw_masters_protective_equip.trash', 'NO')
             ->get();
 
         return $data;
@@ -156,7 +156,7 @@ class ProtectiveEquip extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_ptw_protective_equip.*');
+        $query = $this->select('ptw_masters_protective_equip.*');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -170,7 +170,7 @@ class ProtectiveEquip extends Model
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('masters_ptw_protective_equip.status', decryptId($request->status));
+            $query = $query->where('ptw_masters_protective_equip.status', decryptId($request->status));
         }
         $query->orderBy('id', 'DESC');
         return  $query->get();
@@ -180,9 +180,9 @@ class ProtectiveEquip extends Model
     {
 
         $data = $this->select(
-            'masters_ptw_protective_equip.*'
+            'ptw_masters_protective_equip.*'
         )
-            ->where('masters_ptw_protective_equip.id', $id)
+            ->where('ptw_masters_protective_equip.id', $id)
             ->first();
 
         return $data;
@@ -191,7 +191,7 @@ class ProtectiveEquip extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('masters_ptw_protective_equip'));
+        static::addGlobalScope(new TrashScope('ptw_masters_protective_equip'));
 
         // static::created(function ($model) {
 

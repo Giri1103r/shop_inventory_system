@@ -15,7 +15,7 @@ class TypeofWorkChecklist extends Model
     use  HasFactory;
 
 
-    protected $table = 'masters_ptw_typeofwork_checklist';
+    protected $table = 'ptw_masters_typeofwork_checklist';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -42,7 +42,7 @@ class TypeofWorkChecklist extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_ptw_safe_work.*');
+        $query = $this->select('ptw_masters_safe_work.*');
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -488,13 +488,69 @@ class TypeofWorkChecklist extends Model
     }
 
 
-    public function getchecklistdetails($id, $type)
+    public function getprotectivechecklistdetails($id, $type)
     {
 
-        $data =  $this->select('masters_ptw_typeofwork_checklist.*', 'masters_ptw_protective_equip.protective_equip')
-            ->leftJoin('masters_ptw_protective_equip', 'masters_ptw_protective_equip.id', '=', 'masters_ptw_typeofwork_checklist.check_points')->where('masters_ptw_typeofwork_checklist.id', $id)
-            ->where('masters_ptw_typeofwork_checklist.type', $type)
+        $data =  $this->select('ptw_masters_typeofwork_checklist.*', 'ptw_masters_protective_equip.protective_equip')
+            ->leftJoin('ptw_masters_protective_equip', 'ptw_masters_protective_equip.id', '=', 'ptw_masters_typeofwork_checklist.check_points')->where('ptw_masters_typeofwork_checklist.typeofwork_id', $id)
+            ->where('ptw_masters_typeofwork_checklist.type', $type)
             ->get();
+
+            // dd($data);
+
+        return $data;
+    }
+
+    public function getequipmentchecklistdetails($id, $type)
+    {
+
+        $data =  $this->select('ptw_masters_typeofwork_checklist.*', 'ptw_masters_equip_involved.equip_involve')
+            ->leftJoin('ptw_masters_equip_involved', 'ptw_masters_equip_involved.id', '=', 'ptw_masters_typeofwork_checklist.check_points')->where('ptw_masters_typeofwork_checklist.typeofwork_id', $id)
+            ->where('ptw_masters_typeofwork_checklist.type', $type)
+            ->get();
+
+            // dd($data);
+
+        return $data;
+    }
+
+
+    public function getmanualchecklistdetails($id, $type)
+    {
+
+        $data =  $this->select('ptw_masters_typeofwork_checklist.*', 'ptw_masters_precaution.precaution')
+            ->leftJoin('ptw_masters_precaution', 'ptw_masters_precaution.id', '=', 'ptw_masters_typeofwork_checklist.check_points')->where('ptw_masters_typeofwork_checklist.typeofwork_id', $id)
+            ->where('ptw_masters_typeofwork_checklist.type', $type)
+            ->get();
+
+            // dd($data);
+
+        return $data;
+    }
+
+    public function getcheckchecklistdetails($id, $type)
+    {
+
+        $data =  $this->select('ptw_masters_typeofwork_checklist.*', 'ptw_masters_checklist.checklist')
+            ->leftJoin('ptw_masters_checklist', 'ptw_masters_checklist.id', '=', 'ptw_masters_typeofwork_checklist.check_points')->where('ptw_masters_typeofwork_checklist.typeofwork_id', $id)
+            ->where('ptw_masters_typeofwork_checklist.type', $type)
+            ->get();
+
+            // dd($data);
+
+        return $data;
+    }
+
+
+    public function getinstructionchecklistdetails($id, $type)
+    {
+
+        $data =  $this->select('ptw_masters_typeofwork_checklist.*', 'ptw_masters_safe_work.safe_work')
+            ->leftJoin('ptw_masters_safe_work', 'ptw_masters_safe_work.id', '=', 'ptw_masters_typeofwork_checklist.check_points')->where('ptw_masters_typeofwork_checklist.typeofwork_id', $id)
+            ->where('ptw_masters_typeofwork_checklist.type', $type)
+            ->get();
+
+            // dd($data);
 
         return $data;
     }
@@ -533,7 +589,7 @@ class TypeofWorkChecklist extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_ptw_safe_work.*');
+        $query = $this->select('ptw_masters_safe_work.*');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -557,9 +613,9 @@ class TypeofWorkChecklist extends Model
     {
 
         $data = $this->select(
-            'masters_ptw_safe_work.*'
+            'ptw_masters_safe_work.*'
         )
-            ->where('masters_ptw_safe_work.id', $id)
+            ->where('ptw_masters_safe_work.id', $id)
             ->first();
 
         return $data;
@@ -568,16 +624,16 @@ class TypeofWorkChecklist extends Model
     public function selectchecklist()
     {
 
-        $data =  $this->select('masters_ptw_safe_work.*')
-            ->where('masters_ptw_safe_work.status', '1')
-            ->where('masters_ptw_safe_work.trash', 'NO')
+        $data =  $this->select('ptw_masters_safe_work.*')
+            ->where('ptw_masters_safe_work.status', '1')
+            ->where('ptw_masters_safe_work.trash', 'NO')
             ->get();
 
         return $data;
     }
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('masters_ptw_typeofwork_checklist'));
+        static::addGlobalScope(new TrashScope('ptw_masters_typeofwork_checklist'));
 
         // static::created(function ($model) {
 
