@@ -4,7 +4,7 @@
             <div class="col-md-6">
                 <script>
                     document.write(new Date().getFullYear())
-                </script> &copy; {{ env('APP_NAME') }}
+                </script> &copy; {{ config('app.name') }}
             </div>
             <div class="col-md-6" style = 'display:none;'>
                 <div class="text-md-end footer-links d-none d-sm-block">
