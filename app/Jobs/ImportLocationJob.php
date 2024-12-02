@@ -57,7 +57,7 @@ class ImportLocationJob implements ShouldQueue
     public function handle()
     {
         $i = 1;
-          dd('gdsbhcerc');
+     
         $update_array = array(
             'upload_status' => 1,
         );
