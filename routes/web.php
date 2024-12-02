@@ -537,7 +537,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/edit/submit', [PpeTypeController::class, 'update']);
                 Route::post('/status', [PpeTypeController::class, 'statusChange']);
                 Route::post('/delete', [PpeTypeController::class, 'delete']);
-                Route::post('/unique', [PpeTypeController::class, 'Uniquecheck']);
+                Route::get('/unique', [PpeTypeController::class, 'Uniquecheck']);
                 Route::get('/sample_download', [PpeTypeController::class, 'DownloadSample']);
                 Route::get('/import', [PpeTypeController::class, 'import']);
                 Route::post('/import/Submit', [PpeTypeController::class, 'importSubmit']);
