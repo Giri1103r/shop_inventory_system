@@ -34,7 +34,7 @@ class EmployeeRegisterEmail extends Mailable
     {
 
         return $this->view('emails.employee.register')
-            ->subject(env('APP_NAME') . " - Registration")
+            ->subject(config('app.name') . " - Registration")
             ->with("details", $this->details);
     }
 }

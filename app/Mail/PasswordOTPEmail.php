@@ -32,7 +32,7 @@ class PasswordOTPEmail extends Mailable
     {
 
         return $this->view('emails.passwords.otp')
-            ->subject(env('APP_NAME') . " - Password Reset OTP")
+            ->subject(config('app.name') . " - Password Reset OTP")
             ->with("details", $this->details);
     }
 }

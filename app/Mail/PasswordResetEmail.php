@@ -33,7 +33,7 @@ class PasswordResetEmail extends Mailable
     {
 
         return $this->view('emails.passwords.reset-password')
-            ->subject(env('APP_NAME') . " - Password Reset Successfully")
+            ->subject(config('app.name') . " - Password Reset Successfully")
             ->with("details", $this->details);
     }
 }
