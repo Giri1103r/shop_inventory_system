@@ -334,6 +334,14 @@ class Employee extends Model
         return $list;
     }
 
+    public function getEmployeedata(){
+        $user = Auth::user()->employee_id;
+        return Employee::select('emp_id','emp_name','department')->where('emp_id',$user)->first();
+    }
+
+    public function getEmployeefulldata(){
+        return Employee::all();
+    }
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('masters_employee'));

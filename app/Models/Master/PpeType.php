@@ -71,11 +71,11 @@ class PpeType extends Model
         return $datas;
     }
 
-    public function UniqueCheck($data)
+    public function uniqueCheck($data)
     {
-
-        return $this->where($data['param'],  $data['value'])->get();
+        return $this->where($data['param'], $data['value'])->get();
     }
+
 
     public function ExistuniqueCheck($data)
     {

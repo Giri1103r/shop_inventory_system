@@ -44,14 +44,10 @@
                                         </div>
                                         <hr>
 
-                                        <div class="">
-                                            <x-button-submit id="submit"></x-button-submit>
+                                        <div class="submit-button float-end">
+                                            <x-button-submit class="submit" id="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
-                                            <a href="{{ url('ppe_type/list') }}">
-                                                <button type="button" class="btn btn-danger">{{ __('common.cancel') }}</button>
-                                            </a>
-
-
+                                            <x-button-cancel href="{{ admin_url('ppe_type/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
