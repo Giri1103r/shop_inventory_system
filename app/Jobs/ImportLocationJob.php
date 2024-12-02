@@ -46,8 +46,6 @@ class ImportLocationJob implements ShouldQueue
      */
     public function __construct($details)
     {
-
-dd('sbdhcjdsc');
         $this->details = $details;
     }
 
@@ -59,6 +57,7 @@ dd('sbdhcjdsc');
     public function handle()
     {
         $i = 1;
+          dd('gdsbhcerc');
         $update_array = array(
             'upload_status' => 1,
         );
@@ -67,7 +66,7 @@ dd('sbdhcjdsc');
             ->update($update_array);
 
         $xlsx = SimpleXLSX::parse($this->details['path']);
-        // dd($xlsx);
+      
         $cond_error_datas = [];
 
         foreach ($xlsx->rows() as $row) {
