@@ -47,7 +47,7 @@ class ImportLocationJob implements ShouldQueue
     public function __construct($details)
     {
 
-
+dd('sbdhcjdsc');
         $this->details = $details;
     }
 
