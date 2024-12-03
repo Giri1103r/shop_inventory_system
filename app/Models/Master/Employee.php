@@ -111,20 +111,18 @@ class Employee extends Model
         );
         return $datas;
     }
-
     public function UniqueCheck($data)
     {
 
-        return $this->where($data['param'],  $data['value'])->get();
+        return $this->where('email',  $data)->get();
     }
 
-    public function ExistuniqueCheck($data)
+    public function ExistuniqueCheck($data, $id)
     {
-        return $this->where($data['param'],  $data['value'])
-            ->where('id', '!=', decryptId($data['id']))
+        return $this->where('email',  $data)
+            ->where('id', '!=', $id)
             ->get();
     }
-
 
     public function store($emptemp)
     {
@@ -136,7 +134,7 @@ class Employee extends Model
             if ($emailExists) {
                 $errorMessage = "Email already exists.";
                 $this->updateErrorStatus($item->emp_id, $errorMessage);
-                continue; // Skip this record
+                continue; 
             }
             $role = DB::table('template_user_role')
                 ->where('role_name', $item->user_role)
@@ -195,7 +193,15 @@ class Employee extends Model
     public function updates($id)
     {
         $request = request();
+        if ($request->has('user_role')) {
+            $decryptedRoleIds = array_map(function ($encryptedId) {
+                return $encryptedId;
+            }, $request->user_role);
 
+            $commaSeparatedRoles = implode(',', $decryptedRoleIds);
+        }
+
+        // dd($decryptedRoleIds);
         $update_array = [
             'emp_id' => $request->emp_id ?? null,
             'emp_name' => $request->emp_name ?? null,
@@ -204,7 +210,7 @@ class Employee extends Model
             'email' => $request->email ?? null,
             'joining_date' => DBdatetimeformat($request->joining_date),
             'mobile_no' => $request->mobile_no ?? null,
-            'user_role' => decryptId($request->user_role),
+            'user_role' => $commaSeparatedRoles,
             'company' => decryptId($request->company),
             'location' => decryptId($request->location),
             'unit' => decryptId($request->unit),
@@ -348,6 +354,14 @@ class Employee extends Model
         return $list;
     }
 
+    public function getEmployeedata(){
+        $user = Auth::user()->employee_id;
+        return Employee::select('emp_id','emp_name','department')->where('emp_id',$user)->first();
+    }
+
+    public function getEmployeefulldata(){
+        return Employee::all();
+    }
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('masters_employee'));

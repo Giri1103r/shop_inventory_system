@@ -112,10 +112,13 @@ class EmployeeController extends Controller
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
+
+                $userrole  = $this->userrole->select('id', 'role_name')->where('status', '1')->get();
                 $employee = $this->employee->selectOne($id);
 
                 $data = array(
                     'employee' => $employee,
+                    'userrole' => $userrole,
                 );
             }
             return view('master.employee.view', $data);
@@ -284,6 +287,25 @@ class EmployeeController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+        }
+    }
+
+
+    public function Uniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $email = $request->email;
+            $id = $request->id;
+            if ($id == '') {
+                $record = $this->employee->uniqueCheck($email);
+            } else {
+                $id = decryptId($id);
+                $record = $this->employee->ExistuniqueCheck($email, $id);
+            }
+            if ($record->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
         }
     }
 }

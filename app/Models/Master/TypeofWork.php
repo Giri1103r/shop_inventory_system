@@ -15,7 +15,7 @@ class TypeofWork extends Model
     use  HasFactory;
 
 
-    protected $table = 'masters_ptw_typeofwork';
+    protected $table = 'ptw_masters_typeofwork';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -39,7 +39,7 @@ class TypeofWork extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_ptw_typeofwork.*');
+        $query = $this->select('ptw_masters_typeofwork.*');
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -152,7 +152,7 @@ class TypeofWork extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_ptw_typeofwork.*');
+        $query = $this->select('ptw_masters_typeofwork.*');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -166,7 +166,7 @@ class TypeofWork extends Model
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('masters_ptw_typeofwork.status', decryptId($request->status));
+            $query = $query->where('ptw_masters_typeofwork.status', decryptId($request->status));
         }
 
         return  $query->get();
@@ -176,9 +176,9 @@ class TypeofWork extends Model
     // {
 
     //     $data = $this->select(
-    //         'masters_ptw_typeofwork.*'
+    //         'ptw_masters_typeofwork.*'
     //     )
-    //         ->where('masters_ptw_typeofwork.id', $id)
+    //         ->where('ptw_masters_typeofwork.id', $id)
     //         ->first();
 
     //     return $data;
@@ -187,8 +187,8 @@ class TypeofWork extends Model
     public function selectOne($id)
     {
 
-        $data =  $this->select('masters_ptw_typeofwork.*', 'masters_ptw_typeofwork_upload.file_path',)->leftjoin('masters_ptw_typeofwork_upload', 'masters_ptw_typeofwork_upload.typeofwork_id', '=', 'masters_ptw_typeofwork.id')
-            ->where('masters_ptw_typeofwork.id', $id)
+        $data =  $this->select('ptw_masters_typeofwork.*', 'ptw_masters_typeofwork_upload.file_path',)->leftjoin('ptw_masters_typeofwork_upload', 'ptw_masters_typeofwork_upload.typeofwork_id', '=', 'ptw_masters_typeofwork.id')
+            ->where('ptw_masters_typeofwork.id', $id)
             ->first();
 
         return $data;
@@ -197,7 +197,7 @@ class TypeofWork extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('masters_ptw_typeofwork'));
+        static::addGlobalScope(new TrashScope('ptw_masters_typeofwork'));
 
         // static::created(function ($model) {
 

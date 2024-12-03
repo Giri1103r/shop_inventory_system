@@ -89,7 +89,7 @@ class LocationController extends Controller
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
-                        ->setFilteredRecords($data['filter_records'])
+                        ->setFilteredRecords($data['total_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
@@ -355,7 +355,7 @@ class LocationController extends Controller
             report($ex);
         }
     }
-  
+
     public function list(Request $request ,$companyId)
     {
         
@@ -366,7 +366,7 @@ class LocationController extends Controller
         return response()->json($locations);
     }
 
-    
+
     public function alllist(Request $request)
     {
         $companyId = decryptId($request->company_id);

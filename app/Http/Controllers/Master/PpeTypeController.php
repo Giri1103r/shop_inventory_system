@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
@@ -216,6 +217,24 @@ class PpeTypeController extends Controller
         }
     }
 
+    public function uniqueCheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $ppe_type = $request->ppe_type;
+            $id = $request->id;
+
+            if (empty($id)) {
+                $record = $this->ppetype->uniqueCheck(['param' => 'ppe_type', 'value' => $ppe_type]);
+            } else {
+                $record = $this->ppetype->existUniqueCheck(['param' => 'ppe_type', 'value' => $ppe_type, 'id' => $id]);
+            }
+
+            return response()->json($record->isEmpty());
+        }
+    }
+
+
+
     public function ExportExcel(Request $request)
     {
 
@@ -379,7 +398,7 @@ class PpeTypeController extends Controller
                     "path" => $path,
                 ];
 
-                try{
+                try {
                     dispatch(new ImportPpeTypeJob($details));
 
                     $insert_data['log_id'] = $insert_id;
@@ -387,14 +406,11 @@ class PpeTypeController extends Controller
 
                     Session::flash('success', 'PPE Type Uploaded Successfully');
                     return redirect(admin_url('ppe_type/list'));
-                } catch(Exception $ex){
+                } catch (Exception $ex) {
                     Session::flash('error', 'PPE Type failed');
                     return redirect(admin_url('ppe_type/list'));
                 }
-
-
             }
-
         } catch (Exception $ex) {
             Session::flash('error', ' PPE Typefailed: ' . $ex->getMessage());
             return redirect(admin_url('ppe_type/list'));

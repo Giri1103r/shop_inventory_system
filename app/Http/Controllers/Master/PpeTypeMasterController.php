@@ -53,7 +53,7 @@ class PpeTypeMasterController extends Controller
                             return getUsername($row->created_by);
                         })
                         ->addColumn('ppe_type', function ($row) {
-                            return getPpename($row->ppe_type);
+                            return getPpeType($row->ppe_type);
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
@@ -83,8 +83,10 @@ class PpeTypeMasterController extends Controller
     public function add(){
 
         $ppetype =$this->ppetype->getPpetypedata();
+        // $quantity =$this->ppetypemaster->getquantity();
         $data =[
             'ppetype'=>$ppetype,
+            // 'quantity'=>$quantity
         ];
         return view('master.ppetypemaster.add',$data);
     }
@@ -189,11 +191,12 @@ class PpeTypeMasterController extends Controller
 
                 Session::flash('success', __('PPE Type master is taken updated successfully'));
             } catch (Exception $ex) {
+                dd($ex);
                 Session::flash('error', __('common.message_error'));
             }
             return redirect(admin_url('ppe_ppetype_master/list'));
         } catch (Exception $ex) {
-
+             dd($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ppe_ppetype_master/list'));
         }
@@ -228,6 +231,8 @@ class PpeTypeMasterController extends Controller
         }
     }
 
+
+
     public function ExportExcel(Request $request)
     {
 
@@ -254,7 +259,7 @@ class PpeTypeMasterController extends Controller
                 $export[] =  $i;
                 $export[] =  $data->item_code;
                 $export[] =  $data->ppe_name;
-                $export[] = getPpename( $data->ppe_type);
+                $export[] = getPpeType( $data->ppe_type);
                 $export[] =  $data->ppe_standard;
                 $export[] =  $data->ppe_category;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
@@ -325,8 +330,29 @@ class PpeTypeMasterController extends Controller
             $filename = "Precation to be takens Details.pdf";
             $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
         }
     }
+
+    public function list(Request $request)
+    {
+        dd(1);
+        if ($request->ajax()) {
+            $PPEtypeId = $request->input('id');
+            return $this->ppetypemaster->ajaxlist($PPEtypeId);
+        }
+    }
+
+
+    public function imageList(Request $request) {
+
+        if ($request->ajax()) {
+            $ppeNameId = $request->input('id');
+            return $this->ppetypemaster->imageList($ppeNameId);
+        }
+
+    }
+
 
 }

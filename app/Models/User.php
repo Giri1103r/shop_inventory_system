@@ -197,12 +197,16 @@ class User extends Authenticatable
         $request = request();
 
 
-        // $decryptedRoleIds = [];
-        // if ($request->has('emp_role_id')) {
-        //     $decryptedRoleIds = array_map(function ($encryptedId) {
-        //         return $encryptedId;
-        //     }, $request->emp_role_id);
-        // }
+        $decryptedRoleIds = [];
+      
+
+        if ($request->has('user_role')) {
+            $decryptedRoleIds = array_map(function ($encryptedId) {
+                return $encryptedId;
+            }, $request->user_role);
+        
+            $commaSeparatedRoles = implode(',', $decryptedRoleIds);
+        }
 
         // dd($employee);
 
@@ -211,7 +215,7 @@ class User extends Authenticatable
             'first_name' => $employee->emp_name,
             'last_name' => '',
             'email' => $employee->emp_email,
-            'role' => $employee->user_role,
+            'role' => $commaSeparatedRoles ,
             'employee_id' => $employee->emp_id,
             'department_id' => decryptId($employee->emp_department_id),
             'designation_id' => decryptId($employee->emp_designation_id),

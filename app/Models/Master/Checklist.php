@@ -15,7 +15,7 @@ class Checklist extends Model
     use  HasFactory;
 
 
-    protected $table = 'masters_ptw_checklist';
+    protected $table = 'ptw_masters_checklist';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -38,7 +38,7 @@ class Checklist extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_ptw_checklist.*');
+        $query = $this->select('ptw_masters_checklist.*');
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -147,7 +147,7 @@ class Checklist extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_ptw_checklist.*');
+        $query = $this->select('ptw_masters_checklist.*');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -161,7 +161,7 @@ class Checklist extends Model
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('masters_ptw_checklist.status', decryptId($request->status));
+            $query = $query->where('ptw_masters_checklist.status', decryptId($request->status));
         }
         $query->orderBy('id', 'DESC');
         return  $query->get();
@@ -171,9 +171,9 @@ class Checklist extends Model
     {
 
         $data = $this->select(
-            'masters_ptw_checklist.*'
+            'ptw_masters_checklist.*'
         )
-            ->where('masters_ptw_checklist.id', $id)
+            ->where('ptw_masters_checklist.id', $id)
             ->first();
 
         return $data;
@@ -181,9 +181,9 @@ class Checklist extends Model
     public function selectchecklist()
     {
 
-        $data =  $this->select('masters_ptw_checklist.*')
-            ->where('masters_ptw_checklist.status', '1')
-            ->where('masters_ptw_checklist.trash', 'NO')
+        $data =  $this->select('ptw_masters_checklist.*')
+            ->where('ptw_masters_checklist.status', '1')
+            ->where('ptw_masters_checklist.trash', 'NO')
             ->get();
 
         return $data;
@@ -191,7 +191,7 @@ class Checklist extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('masters_ptw_checklist'));
+        static::addGlobalScope(new TrashScope('ptw_masters_checklist'));
 
         // static::created(function ($model) {
 

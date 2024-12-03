@@ -15,7 +15,7 @@ class SafeWork extends Model
     use  HasFactory;
 
 
-    protected $table = 'masters_ptw_safe_work';
+    protected $table = 'ptw_masters_safe_work';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -38,7 +38,7 @@ class SafeWork extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_ptw_safe_work.*');
+        $query = $this->select('ptw_masters_safe_work.*');
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -147,7 +147,7 @@ class SafeWork extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_ptw_safe_work.*');
+        $query = $this->select('ptw_masters_safe_work.*');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -171,9 +171,9 @@ class SafeWork extends Model
     {
 
         $data = $this->select(
-            'masters_ptw_safe_work.*'
+            'ptw_masters_safe_work.*'
         )
-            ->where('masters_ptw_safe_work.id', $id)
+            ->where('ptw_masters_safe_work.id', $id)
             ->first();
 
         return $data;
@@ -182,16 +182,16 @@ class SafeWork extends Model
     public function selectchecklist()
     {
 
-        $data =  $this->select('masters_ptw_safe_work.*')
-            ->where('masters_ptw_safe_work.status', '1')
-            ->where('masters_ptw_safe_work.trash', 'NO')
+        $data =  $this->select('ptw_masters_safe_work.*')
+            ->where('ptw_masters_safe_work.status', '1')
+            ->where('ptw_masters_safe_work.trash', 'NO')
             ->get();
 
         return $data;
     }
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('masters_ptw_safe_work'));
+        static::addGlobalScope(new TrashScope('ptw_masters_safe_work'));
 
         // static::created(function ($model) {
 

@@ -15,7 +15,7 @@ class Precaution extends Model
     use  HasFactory;
 
 
-    protected $table = 'masters_ptw_precaution';
+    protected $table = 'ptw_masters_precaution';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -38,7 +38,7 @@ class Precaution extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_ptw_precaution.*');
+        $query = $this->select('ptw_masters_precaution.*');
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -147,7 +147,7 @@ class Precaution extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_ptw_precaution.*');
+        $query = $this->select('ptw_masters_precaution.*');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -161,7 +161,7 @@ class Precaution extends Model
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('masters_ptw_precaution.status', decryptId($request->status));
+            $query = $query->where('ptw_masters_precaution.status', decryptId($request->status));
         }
         $query->orderBy('id', 'DESC');
         return  $query->get();
@@ -171,9 +171,9 @@ class Precaution extends Model
     {
 
         $data = $this->select(
-            'masters_ptw_precaution.*'
+            'ptw_masters_precaution.*'
         )
-            ->where('masters_ptw_precaution.id', $id)
+            ->where('ptw_masters_precaution.id', $id)
             ->first();
 
         return $data;
@@ -181,9 +181,9 @@ class Precaution extends Model
     public function selectchecklist()
     {
 
-        $data =  $this->select('masters_ptw_precaution.*')
-            ->where('masters_ptw_precaution.status', '1')
-            ->where('masters_ptw_precaution.trash', 'NO')
+        $data =  $this->select('ptw_masters_precaution.*')
+            ->where('ptw_masters_precaution.status', '1')
+            ->where('ptw_masters_precaution.trash', 'NO')
             ->get();
 
         return $data;
@@ -191,7 +191,7 @@ class Precaution extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('masters_ptw_precaution'));
+        static::addGlobalScope(new TrashScope('ptw_masters_precaution'));
 
         // static::created(function ($model) {
 

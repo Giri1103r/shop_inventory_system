@@ -43,9 +43,9 @@
                                             </div>
                                         </div>
                                         <hr>
-
-                                        <div class="">
+                                        <div class="submit-button" style="text-align: right;"> <div class="">
                                             <x-button-submit></x-button-submit>
+                                            <x-button-reset class=""></x-button-reset>
                                             <x-button-cancel></x-button-cancel>
 
                                         </div>
@@ -65,6 +65,13 @@
 
 @push('script')
     <script type="text/javascript">
+
+$(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         $(function() {
             $('#companyimport').validate({
                 rules: {

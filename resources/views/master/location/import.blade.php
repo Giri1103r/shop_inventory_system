@@ -23,7 +23,8 @@
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('administration.employee_import') }}</h4> --}}
                                 <div class="d-flex justify-content-end p-2 gap-2">
-                                    <x-button-download href="{{ admin_url('location/sampledownload') }}"></x-button-download>
+                                    <x-button-download
+                                        href="{{ admin_url('location/sampledownload') }}"></x-button-download>
                                     <x-button-back href="{{ admin_url('location/list') }}"></x-button-back>
 
                                 </div>
@@ -38,14 +39,16 @@
                                         <div class="row">
                                             <div class="mb-3 col-md-6 form-input">
                                                 <label class="form-label required">Location File</label>
-                                                <input type="file"  name="location_upload" class="form-control"  placeholder="">
+                                                <input type="file" name="location_upload" class="form-control"
+                                                    placeholder="">
                                             </div>
                                         </div>
                                         <hr>
 
-                                        <div class="">
+                                        <div class="submit-button" style="text-align: right;">
                                             <x-button-submit></x-button-submit>
-                                            <x-button-cancel></x-button-cancel>
+                                            <x-button-reset class=""></x-button-reset>
+                                            <x-button-cancel href="{{ admin_url('location/list') }}"></x-button-cancel>
 
                                         </div>
 
@@ -64,6 +67,12 @@
 
 @push('script')
     <script type="text/javascript">
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         $(function() {
             $('#locationimport').validate({
                 rules: {

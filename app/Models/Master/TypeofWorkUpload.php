@@ -21,7 +21,7 @@ class TypeofWorkUpload extends Model
     use  HasFactory;
 
 
-    protected $table = 'masters_ptw_typeofwork_upload';
+    protected $table = 'ptw_masters_typeofwork_upload';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -140,7 +140,7 @@ class TypeofWorkUpload extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('masters_ptw_typeofwork_upload'));
+        static::addGlobalScope(new TrashScope('ptw_masters_typeofwork_upload'));
 
         // static::created(function ($model) {
 
