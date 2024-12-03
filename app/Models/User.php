@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +23,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
 
-     protected $table = 'users';
+    protected $table = 'users';
 
     protected $fillable = [
         'name',
@@ -127,9 +128,17 @@ class User extends Authenticatable
     }
     public function store($employees)
     {
-        $createdUsers = []; // To store created user objects
+        $createdUsers = [];
 
         foreach ($employees as $item) {
+            $emailExists = $this->where('email', $item['email'])->where('employee_id', '!=', $item['emp_id'])->exists();
+
+            if ($emailExists) {
+                $errorMessage = "Email already exists.";
+                $this->updateErrorStatus($item['emp_id'], $errorMessage);
+                continue; // Skip this record
+            }
+
             $userData = [
                 'name' => $item['emp_name'],
                 'first_name' => $item['emp_name'],
@@ -146,19 +155,40 @@ class User extends Authenticatable
                 'created_by' => Auth::id(),
             ];
 
+            $exists = $this->where('employee_id', $item['emp_id'])->exists();
+
+            if ($exists) {
+                $userData['updated_at'] = now();
+            } else {
+                $userData['created_at'] = now();
+            }
+
             try {
-                $createdUser = $this->create($userData); 
-                $createdUsers[] = $createdUser; 
+                $this->updateOrInsert(
+                    ['employee_id' => $item['emp_id']],
+                    $userData
+                );
+                $createdUsers[] = $userData;
             } catch (\Exception $e) {
-                dd($e);
+                report($e);
             }
         }
 
-        return $createdUsers; 
+        return $createdUsers;
     }
 
 
 
+
+    public function updateErrorStatus($emp_id, $errorMessage)
+    {
+        $update_data = [
+            'error_status' => 1,
+            'error_remarks' => $errorMessage,
+        ];
+
+        return DB::table('masters_employee')->where('emp_id', $emp_id)->update($update_data);
+    }
 
 
     public function userUpdate($employee)

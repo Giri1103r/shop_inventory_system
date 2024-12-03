@@ -137,72 +137,147 @@ class Work extends Model
             ->get();
     }
 
+ 
+    // public function store($worktemp)
+    // {
+    //     $insertArray = [];
+    //     $batchSize = 500;
+
+    //     $worktemp = $worktemp->toArray();
+
+    //     $chunks = array_chunk($worktemp, $batchSize);
+    //     $insertedRecords = [];
+
+    //     foreach ($chunks as $chunk) {
+    //         foreach ($chunk as $item) {
+
+    //             // $companyExists = DB::table('company_management')->where('company_name', $item['company'])->first();
+    //             // $unitExists = DB::table('masters_unit')->where('unit_name', $item['unit'])->first();
+    //             // $departmentExists = DB::table('masters_department')->where('department_name', $item['department'])->first();
+
+    //             $companyExists =DB::table('company_management')->where('company_name', $item['company'])->exists();
+    //             $unitExists =DB::table('masters_unit')->where('unit_name', $item['unit'])->exists();
+    //             $departmentExists =DB::table('masters_department')->where('department_name', $item['department'])->exists();
+
+    //             if ($companyExists) {
+    //                 $errorMessage = "Company does not exist.";
+    //                 $this->updateErrorStatus($item['emp_id'], $errorMessage);
+    //                 continue;
+    //             } elseif ($unitExists) {
+    //                 $errorMessage = "Unit does not exist.";
+    //                 $this->updateErrorStatus($item['emp_id'], $errorMessage);
+    //                  continue;
+    //             } elseif ($departmentExists) {
+    //                 $errorMessage = "Department does not exist.";
+    //                 $this->updateErrorStatus($item['emp_id'], $errorMessage);
+    //                 continue;
+    //             } else {
+    //                 $valuesToInsertOrUpdate = [
+
+    //                     'emp_name' => $item['emp_name'] ?? null,
+    //                     'gender' => $item['gender'] ?? null,
+    //                     'nationality' => $item['nationality'] ?? null,
+    //                     'biometric_code' => $item['biometric_code'] ?? null,
+    //                     'doi' => DBdatetimeformat($item['doi']) ?? null,
+    //                     'exit_date' => DBdatetimeformat($item['exit_date']) ?? null,
+    //                     'mobile_no' => $item['mobile_no'] ?? null,
+    //                     'company' => $companyExists->id ?? null,
+    //                     'subdepartment' => $item['subdepartment'] ?? null,
+    //                     'unit' => $unitExists->id ?? null,
+    //                     'department' => $departmentExists->id ?? null,
+    //                     'designation' => $item['designation'] ?? null,
+    //                     'wfemptype' => $item['wfemptype'] ?? null,
+    //                     'skill' => $item['skill'] ?? null,
+    //                     'status' => 1,
+    //                     'created_by' => Auth::id(),
+    //                 ];
+
+    //                 $exists = $this->where('emp_id', $item['emp_id'])->exists();
+    //                 if ($exists) {
+    //                     $valuesToInsertOrUpdate['updated_at'] = now();
+    //                 } else {
+    //                     $valuesToInsertOrUpdate['created_at'] = now();
+    //                 }
+
+    //                 $insertedRecords = $this->updateOrInsert(
+    //                     ['emp_id' => $item['emp_id']],
+    //                     $valuesToInsertOrUpdate
+    //                 );
+    //                 $insertedRecords[] = array_merge(['emp_id' => $item['emp_id']], $valuesToInsertOrUpdate);
+
+    //             }
+    //         }
+    //     }
+    //     return $insertedRecords;
+    // }
     public function store($worktemp)
     {
-
-        $insertArray = [];
-        foreach ($worktemp as $item) {
-
-            $companyExists = DB::table('company_management')
-                ->where('company_name', $item->company)
-                ->first();
-            $locationExists = DB::table('masters_location')
-                ->where('location_name', $item->location)
-                ->first();
-            $unitExists = DB::table('masters_unit')
-                ->where('unit_name', $item->unit)
-                ->first();
-            $departmentExists = DB::table('masters_department')
-                ->where('department_name', $item->department)
-                ->first();
-            if (!$companyExists) {
-                $errorMessage = "Company does not exist.";
-                $this->updateErrorStatus($item->emp_id, $errorMessage);
-            } elseif (!$unitExists) {
-                $errorMessage = "Unit does not exist.";
-                $this->updateErrorStatus($item->emp_id, $errorMessage);
-            } elseif (!$departmentExists) {
-                $errorMessage = "Department does not exist.";
-                $this->updateErrorStatus($item->emp_id, $errorMessage);
-            } else {
-
-                $insertArray[] = [
-                    'emp_id' => $item->emp_id ?? null,
-                    'emp_name' => $item->emp_name ?? null,
-                    'gender' => $item->gender ?? null,
-                    'nationality' => $item->nationality ?? null,
-                    'biometric_code' => $item->biometric_code ?? null,
-                    'doi' => DBdatetimeformat($item->doi) ?? null,
-                    'exit_date' => DBdatetimeformat($item->exit_date) ?? null,
-                    'mobile_no' => $item->mobile_no ?? null,
+        $insertedRecords = [];
+        $batchSize = 500;
+    
+        // Convert to array
+        $worktemp = $worktemp->toArray();
+    
+        // Process in chunks
+        foreach (array_chunk($worktemp, $batchSize) as $chunk) {
+            foreach ($chunk as $item) {
+                // Check existence of related entities
+                $companyExists = DB::table('company_management')->where('company_name', $item['company'])->first();
+                $unitExists = DB::table('masters_unit')->where('unit_name', $item['unit'])->first();
+                $departmentExists = DB::table('masters_department')->where('department_name', $item['department'])->first();
+    
+                // Validate existence
+                if ($companyExists) {
+                    dd(67);
+                    $this->updateErrorStatus($item['emp_id'], "Company does not exist.");
+                    continue;
+                } elseif ($unitExists) {
+                    $this->updateErrorStatus($item['emp_id'], "Unit does not exist.");
+                    continue;
+                } elseif ($departmentExists) {
+                    $this->updateErrorStatus($item['emp_id'], "Department does not exist.");
+                    continue;
+                }
+    
+                // Prepare data for insertion or update
+                $valuesToInsertOrUpdate = [
+                    'emp_name' => $item['emp_name'] ?? null,
+                    'gender' => $item['gender'] ?? null,
+                    'nationality' => $item['nationality'] ?? null,
+                    'biometric_code' => $item['biometric_code'] ?? null,
+                    'doi' => isset($item['doi']) ? DBdatetimeformat($item['doi']) : null,
+                    'exit_date' => isset($item['exit_date']) ? DBdatetimeformat($item['exit_date']) : null,
+                    'mobile_no' => $item['mobile_no'] ?? null,
                     'company' => $companyExists->id ?? null,
-                    'location_id' => $locationExists->id ?? null,
-                    'subdepartment' => $item->subdepartment ?? null,
+                    'subdepartment' => $item['subdepartment'] ?? null,
                     'unit' => $unitExists->id ?? null,
-                    'department' => $departmentExists->id,
-                    'designation' => $item->designation ?? null,
-                    'wfemptype' => $item->wfemptype ?? null,
-                    'skill' => $item->skill ?? null,
+                    'department' => $departmentExists->id ?? null,
+                    'designation' => $item['designation'] ?? null,
+                    'wfemptype' => $item['wfemptype'] ?? null,
+                    'skill' => $item['skill'] ?? null,
                     'status' => 1,
                     'created_by' => Auth::id(),
-                    'created_at' => now(),
                 ];
+    
+                // Check if record exists
+                if ($this->where('emp_id', $item['emp_id'])->exists()) {
+                    $valuesToInsertOrUpdate['updated_at'] = now();
+                } else {
+                    $valuesToInsertOrUpdate['created_at'] = now();
+                }
+    
+                // Perform update or insert
+                $this->updateOrInsert(['emp_id' => $item['emp_id']], $valuesToInsertOrUpdate);
+    
+                // Add to insertedRecords for tracking
+                $insertedRecords[] = array_merge(['emp_id' => $item['emp_id']], $valuesToInsertOrUpdate);
             }
         }
-
-        if (!empty($insertArray)) {
-            $batchSize = 500;
-            $chunks = array_chunk($insertArray, $batchSize);
-            $insertedRecords = [];
-
-            foreach ($chunks as $chunk) {
-                $this->insert($chunk);
-                $insertedRecords = array_merge($insertedRecords, $chunk);
-            }
-
-            return $insertedRecords;
-        }
+    
+        // Return inserted or updated records
+        return $insertedRecords;
     }
+    
 
 
     public function updates($id)
@@ -322,7 +397,7 @@ class Work extends Model
         if ($request->has('wfemptype') && $request->wfemptype) {
             $query = $query->where('masters_work.wfemptype', 'LIKE', '%' . $request->wfemptype . '%');
         }
-       
+
         if ($request->has('status') && $request->status) {
 
             $query = $query->where('masters_work.status', decryptId($request->status));

@@ -37,6 +37,8 @@ class Worktemp extends Model
         'wfemptype',
         'skill',
         'upload_status',
+        'created_at',
+        'updated_at',
         'error_status',
         'error_remarks',
 
@@ -60,50 +62,60 @@ class Worktemp extends Model
             ->get();
     }
 
+
+
     public function store($data)
     {
-
-
-        $insertArray = [];
-        foreach ($data as $item) {
-
-            $cleanUnit = isset($item['Unit']) ? str_replace(["\r", "\n"], '', trim($item['Unit'])) : null;
-            $insertArray[] = [
-                'emp_id' => isset($item['EmpId']) ? $item['EmpId'] : null,
-                'emp_name' => isset($item['EmpName']) ? $item['EmpName'] : null,
-                'gender' => isset($item['Gender']) ? $item['Gender'] : null,
-                'nationality' => isset($item['Nationality']) ? $item['Nationality'] : null,
-                'biometric_code' => isset($item['BiometricCode']) ? $item['BiometricCode'] : null,
-                'doi' => DBdatetimeformat($item['Doi']),
-                'exit_date' => $item['ExitDate'] != '' ? DBdatetimeformat($item['ExitDate']) : null,
-                'mobile_no' => isset($item['MobileNo']) ? $item['MobileNo'] : null,
-                'company' => isset($item['Company']) ? $item['Company'] : null,
-                'subdepartment' => isset($item['Subdepartment']) ? $item['Subdepartment'] : null,
-                'unit' => $cleanUnit,
-                'department' => isset($item['Dept']) ? $item['Dept'] : null,
-                'designation' => isset($item['Designation']) ? $item['Designation'] : null,
-                'status' => isset($item['Status']) ? $item['Status'] : null,
-                'wfemptype' => isset($item['WfEmpType']) ? $item['WfEmpType'] : null,
-                'skill' => isset($item['Skill']) ? $item['Skill'] : null,
-                'upload_status' => 0,
-                'error_status' => 0,
-                'error_remarks' => null,
-            ];
-        }
         $batchSize = 500;
-        $chunks = array_chunk($insertArray, $batchSize);
-
+        $chunks = array_chunk($data, $batchSize);
         foreach ($chunks as $chunk) {
-            $insert_Array =  $this->insert($chunk);
+            foreach ($chunk as $item) {
+                $cleanUnit = isset($item['Unit']) ? str_replace(["\r", "\n"], '', trim($item['Unit'])) : null;
+
+                $valuesToInsertOrUpdate = [
+                    'emp_name' => isset($item['EmpName']) ? $item['EmpName'] : null,
+                    'gender' => isset($item['Gender']) ? $item['Gender'] : null,
+                    'nationality' => isset($item['Nationality']) ? $item['Nationality'] : null,
+                    'biometric_code' => isset($item['BiometricCode']) ? $item['BiometricCode'] : null,
+                    'doi' => DBdatetimeformat($item['Doi']),
+                    'exit_date' => $item['ExitDate'] != '' ? DBdatetimeformat($item['ExitDate']) : null,
+                    'mobile_no' => isset($item['MobileNo']) ? $item['MobileNo'] : null,
+                    'company' => isset($item['Company']) ? $item['Company'] : null,
+                    'subdepartment' => isset($item['Subdepartment']) ? $item['Subdepartment'] : null,
+                    'unit' => $cleanUnit,
+                    'department' => isset($item['Dept']) ? $item['Dept'] : null,
+                    'designation' => isset($item['Designation']) ? $item['Designation'] : null,
+                    'status' => isset($item['Status']) ? $item['Status'] : null,
+                    'wfemptype' => isset($item['WfEmpType']) ? $item['WfEmpType'] : null,
+                    'skill' => isset($item['Skill']) ? $item['Skill'] : null,
+                    'upload_status' => 0,
+                    'error_status' => 0,
+                    'error_remarks' => null,
+
+                ];
+
+                $exists = $this->where('emp_id', $item['EmpId'])->exists();
+
+                if ($exists) {
+                    $valuesToInsertOrUpdate['updated_at'] = now();
+                } else {
+                    $valuesToInsertOrUpdate['created_at'] = now();
+                }
+
+                $this->updateOrInsert(
+                    ['emp_id' => $item['EmpId']],
+                    $valuesToInsertOrUpdate
+                );
+            }
         }
 
-        return  $insert_Array;
+        return response()->json(['message' => 'Data processed successfully.']);
     }
+
 
     public function updates($workid)
     {
 
-        // dd($workid);
         $request = request();
         $update_data = array(
             'upload_status' => 1,
@@ -119,45 +131,42 @@ class Worktemp extends Model
         return $result;
     }
 
-    public function exportdata()
+
+    public function list()
     {
         $request = request();
         $search = '';
-        $query = $this->select('company_management.*');
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
 
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhereRaw('company_name LIKE "%' . $search . '%"');
+        $query = $this->select('masters_work_temp.*');
+        $query = $this->where('error_status' , 1);
+        if ($request->search['value'] != null || $request->search['value'] != '') {
+            $search = $request->search['value'];
+
+            $query->where(function ($query) use ($search) {
+                $query->orWhere('emp_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('emp_name', 'LIKE', '%' . $search . '%');
             });
         }
-        if ($request->has('company_id') && $request->company_id) {
-            $query = $query->where('company_id', 'LIKE', '%' . $request->company_id . '%');
-        }
-        if ($request->has('company_name') && $request->company_name) {
-            $query = $query->where('company_name', 'LIKE', '%' . $request->company_name . '%');
-        }
-        if ($request->has('status') && $request->status) {
 
-            $query = $query->where('company_management.status', decryptId($request->status));
+        $data_count = $query;
+        $total_records = $data_count->count();
+
+        $query->orderBy('id', 'DESC');
+
+
+        if ($request->length != -1) {
+            $query->offset($request->start)->limit($request->length);
         }
 
-        return  $query->get();
+        $data = $query->get();
+
+        $datas = [
+            'data' => $data,
+            'total_records' => $total_records
+        ];
+
+        return $datas;
     }
-
-    public function selectOne($id)
-    {
-
-        $data = $this->select(
-            'company_management.*'
-        )
-            ->where('company_management.id', $id)
-            ->first();
-
-        return $data;
-    }
-
-
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('masters_work_temp'));

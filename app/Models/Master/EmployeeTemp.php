@@ -40,6 +40,8 @@ class EmployeeTemp extends Model
         'upload_status',
         'error_status',
         'error_remarks',
+        'updated_at',
+        'created_at',
 
     ];
 
@@ -61,75 +63,55 @@ class EmployeeTemp extends Model
             ->get();
     }
 
-  
+
     public function store($data)
-{
-    $insertArray = [];
+    {
+        $batchSize = 500;
+        $insertArray = [];
 
-    foreach ($data['Result'] as $item) {
-        $insertArray[] = [
-            'emp_id' => isset($item['pk_Emp_Code']) ? $item['pk_Emp_Code'] : null,
-            'emp_name' => isset($item['Emp_Name']) ? $item['Emp_Name'] : null,
-            'gender' => isset($item['Emp_Gender']) ? $item['Emp_Gender'] : null,
-            'user_role' => isset($item['Emp_Rolename']) ? $item['Emp_Rolename'] : null,
-            'joining_date' => !empty($item['Emp_JoiningDate']) ? DBdatetimeformat($item['Emp_JoiningDate']) : null,
-            'status' => isset($item['Emp_Active']) ? $item['Emp_Active'] : null,
-            'employee_status' => isset($item['Emp_Status']) ? $item['Emp_Status'] : null,
-            'email' => isset($item['Emp_OfficialMail']) ? $item['Emp_OfficialMail'] : null,
-            'upload_status' => 0,
-            'error_status' => 0,
-            'error_remarks' => null,
-        ];
+        $chunks = array_chunk($data['Result'], $batchSize);
+
+        foreach ($chunks as $chunk) {
+            foreach ($chunk as $item) {
+
+                $emailExists = $this->where('email', $item['Emp_OfficialMail'])->where('emp_id', '!=', $item['pk_Emp_Code'])->exists();
+
+                if ($emailExists) {
+                    $errorMessage = "Email already exists.";
+                    $this->updateErrorStatus($item['pk_Emp_Code'], $errorMessage);
+                    continue; // Skip this record
+                }
+                $valuesToInsertOrUpdate = [
+                    'emp_id' => isset($item['pk_Emp_Code']) ? $item['pk_Emp_Code'] : null,
+                    'emp_name' => isset($item['Emp_Name']) ? $item['Emp_Name'] : null,
+                    'gender' => isset($item['Emp_Gender']) ? $item['Emp_Gender'] : null,
+                    'user_role' => isset($item['Emp_Rolename']) ? $item['Emp_Rolename'] : null,
+                    'joining_date' => !empty($item['Emp_JoiningDate']) ? DBdatetimeformat($item['Emp_JoiningDate']) : null,
+                    'status' => isset($item['Emp_Active']) ? $item['Emp_Active'] : null,
+                    'employee_status' => isset($item['Emp_Status']) ? $item['Emp_Status'] : null,
+                    'email' => isset($item['Emp_OfficialMail']) ? $item['Emp_OfficialMail'] : null,
+                    'upload_status' => 0,
+                    'error_status' => 0,
+                    'error_remarks' => null,
+                ];
+
+                $exists = $this->where('emp_id', $item['pk_Emp_Code'])->exists();
+
+                if ($exists) {
+                    $valuesToInsertOrUpdate['updated_at'] = now();
+                } else {
+                    $valuesToInsertOrUpdate['created_at'] = now();
+                }
+
+                $this->updateOrInsert(
+                    ['emp_id' => $item['pk_Emp_Code']],
+                    $valuesToInsertOrUpdate
+                );
+            }
+        }
+        return response()->json(['message' => 'Data processed successfully.']);
     }
 
-    $batchSize = 500;
-    $chunks = array_chunk($insertArray, $batchSize);
-
-    foreach ($chunks as $chunk) {
-        $this->insert($chunk); 
-    }
-
-    return $chunks;
-}
-
-    // public function store($data)
-    // {
-
-    //     $insertArray = [];
-    //     foreach ($data as $item) {
-
-    //         // $cleanUnit = isset($item['Unit']) ? str_replace(["\r", "\n"], '', trim($item['Unit'])) : null;
-    //         $insertArray[] = [
-    //             'emp_id' => isset($item['pk_Emp_Code']) ? $item['pk_Emp_Code'] : null,
-    //             'emp_name' => isset($item['Emp_Name']) ? $item['Emp_Name'] : null,
-    //             'gender' => isset($item['Emp_Gender']) ? $item['Emp_Gender'] : null,
-    //             // 'nationality' => isset($item['Nationality']) ? $item['Nationality'] : null,
-    //             'user_role' => isset($item['Emp_Rolename']) ? $item['Emp_Rolename'] : null,
-    //             'joining_date' => $item['Emp_JoiningDate'] != '' ? DBdatetimeformat($item['Emp_JoiningDate']) : null,
-    //             // 'mobile_no' => isset($item['MobileNo']) ? $item['MobileNo'] : null,
-    //             // 'company' => isset($item['Company']) ? $item['Company'] : null,
-    //             // 'subdepartment' => isset($item['Subdepartment']) ? $item['Subdepartment'] : null,
-    //             // 'unit' => $cleanUnit,
-    //             // 'department' => isset($item['Dept']) ? $item['Dept'] : null,
-    //             // 'designation' => isset($item['Designation']) ? $item['Designation'] : null,
-    //             'status' => isset($item['Emp_Active']) ? $item['Emp_Active'] : null,
-    //             'employee_status' => isset($item['Emp_Status']) ? $item['Emp_Status'] : null,
-    //             'email' => isset($item['Emp_OfficialMail']) ? $item['Emp_OfficialMail'] : null,
-    //             'upload_status' => 0,
-    //             'error_status' => 0,
-    //             'error_remarks' => null,
-    //         ];
-    //     }
-
-    //     $batchSize = 500;
-    //     $chunks = array_chunk($insertArray, $batchSize);
-
-    //     foreach ($chunks as $chunk) {
-    //         $insert_Array =  $this->insert($chunk);
-    //     }
-
-    //     return  $insert_Array;
-    // }
 
     public function updates($empid)
     {
@@ -142,7 +124,15 @@ class EmployeeTemp extends Model
         );
         return $this->where('emp_id', $empid)->update($update_data);
     }
+    public function updateErrorStatus($emp_id, $errorMessage)
+    {
+        $update_data = [
+            'error_status' => 1,
+            'error_remarks' => $errorMessage,
+        ];
 
+        return $this->where('emp_id', $emp_id)->update($update_data);
+    }
     public function updateAllErrorStatus()
     {
 
@@ -150,42 +140,42 @@ class EmployeeTemp extends Model
         return $result;
     }
 
-    public function exportdata()
+
+    public function list()
     {
         $request = request();
         $search = '';
-        $query = $this->select('company_management.*');
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
 
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhereRaw('company_name LIKE "%' . $search . '%"');
+        $query = $this->select('masters_employee_temp.*');
+        $query = $this->where('error_status', 1);
+
+        if ($request->search['value'] != null || $request->search['value'] != '') {
+            $search = $request->search['value'];
+
+            $query->where(function ($query) use ($search) {
+                $query->orWhere('emp_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('emp_name', 'LIKE', '%' . $search . '%');
             });
         }
-        if ($request->has('company_id') && $request->company_id) {
-            $query = $query->where('company_id', 'LIKE', '%' . $request->company_id . '%');
+
+        $data_count = $query;
+        $total_records = $data_count->count();
+
+        $query->orderBy('id', 'DESC');
+
+
+        if ($request->length != -1) {
+            $query->offset($request->start)->limit($request->length);
         }
-        if ($request->has('company_name') && $request->company_name) {
-            $query = $query->where('company_name', 'LIKE', '%' . $request->company_name . '%');
-        }
-        if ($request->has('status') && $request->status) {
 
-            $query = $query->where('company_management.status', decryptId($request->status));
-        }
+        $data = $query->get();
 
-        return  $query->get();
-    }
+        $datas = [
+            'data' => $data,
+            'total_records' => $total_records
+        ];
 
-    public function selectOne($id)
-    {
-
-        $data = $this->select(
-            'company_management.*'
-        )
-            ->where('company_management.id', $id)
-            ->first();
-
-        return $data;
+        return $datas;
     }
 
 

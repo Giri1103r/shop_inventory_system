@@ -405,6 +405,57 @@ class CronController extends Controller
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
+    public function workSave()
+    {
+
+        try {
+            $worktemp = Worktemp::select('*')->where('upload_status', '0')->get();
+
+
+            if (!empty($worktemp)) {
+
+
+                $work = $this->work->store($worktemp);
+                if (empty($work)) {
+                    $this->worktemp->updateAllErrorStatus();
+                } else {
+                    foreach ($work as $item) {
+                        $emp_id = $item['emp_id'];
+
+                        $worktempdata = $this->worktemp->updates($emp_id);
+                    }
+                }
+              
+                $baseFolderPath = storage_path('app/private/');
+
+                $month = now()->format('F');
+                $date = now()->format('d');
+
+                $folderPath = $baseFolderPath . $month . '/' . $date . '/worker/';
+                if (!File::exists($folderPath)) {
+                    File::makeDirectory($folderPath, 0755, true);
+                }
+
+                $filePath = $folderPath . 'work_data.txt';
+                $content = '';
+                if (!empty($work)) {
+                    foreach ($work as $item) {
+                        $content .= 'Emp ID: ' . $item['emp_id'] . "\n";
+                        $content .= 'Other Data: ' . json_encode($item) . "\n\n";
+                    }
+                }
+
+                File::put($filePath, $content);
+                return response()->json(['message' => 'Data saved successfully.']);
+            } else {
+
+                return response()->json(['message' => 'No data found in API response.']);
+            }
+        } catch (Exception $ex) {
+            dd($ex);
+            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
+        }
+    }
     public function employeeMasterTemp()
     {
         try {
@@ -439,7 +490,6 @@ class CronController extends Controller
             $emp_temp = EmployeeTemp::select('*')->where('upload_status', '0')->get();
 
             if (!empty($emp_temp)) {
-
                 
                 $employee = $this->employee->store($emp_temp);
                 $users = $this->user->store($employee);
@@ -494,56 +544,7 @@ class CronController extends Controller
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
-    public function workSave()
-    {
-
-        try {
-            $worktemp = Worktemp::select('*')->where('upload_status', '0')->get();
-
-
-            if (!empty($worktemp)) {
-
-
-                $work = $this->work->store($worktemp);
-                if (empty($work)) {
-                    $this->worktemp->updateAllErrorStatus();
-                } else {
-                    foreach ($work as $item) {
-                        $emp_id = $item['emp_id'];
-
-                        $worktempdata = $this->worktemp->updates($emp_id);
-                    }
-                }
-                $baseFolderPath = storage_path('app/private/');
-
-                $month = now()->format('F');
-                $date = now()->format('d');
-
-                $folderPath = $baseFolderPath . $month . '/' . $date . '/worker/';
-                if (!File::exists($folderPath)) {
-                    File::makeDirectory($folderPath, 0755, true);
-                }
-
-                $filePath = $folderPath . 'work_data.txt';
-                $content = '';
-                if (!empty($work)) {
-                    foreach ($work as $item) {
-                        $content .= 'Emp ID: ' . $item['emp_id'] . "\n";
-                        $content .= 'Other Data: ' . json_encode($item) . "\n\n";
-                    }
-                }
-
-                File::put($filePath, $content);
-                return response()->json(['message' => 'Data saved successfully.']);
-            } else {
-
-                return response()->json(['message' => 'No data found in API response.']);
-            }
-        } catch (Exception $ex) {
-            dd($ex);
-            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
-        }
-    }
+  
 
 
     public function queueCompanyImport()

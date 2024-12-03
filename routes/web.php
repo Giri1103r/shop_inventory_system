@@ -27,6 +27,8 @@ use App\Http\Controllers\Master\SafeWorkController;
 use App\Http\Controllers\Master\PrecautionController;
 use App\Http\Controllers\Master\ChecklistController;
 use App\Http\Controllers\Master\TypeofWorkController;
+use App\Http\Controllers\Master\WorkerLogController;
+use App\Http\Controllers\Master\EmployeeLogController;
 
 Route::get('cache', function () {
     Artisan::call('optimize:clear');
@@ -174,6 +176,18 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('uploadlog/list/{logid}', [UploadLogController::class, 'view']);
             Route::get('uploadlog/download/{logid}', [UploadLogController::class, 'download']);
             Route::get('uploadlog/export/excel/{logid}', [UploadLogController::class, 'ExportExcel']);
+            /**
+             *Employee Error Log
+             */
+
+            Route::get('employeelog/list', [EmployeeLogController::class, 'index']);
+            Route::post('employeelog/list', [EmployeeLogController::class, 'index']);
+            /**
+             * Worker Error Log
+             */
+
+            Route::get('workerlog/list', [WorkerLogController::class, 'index']);
+            Route::post('workerlog/list', [WorkerLogController::class, 'index']);
 
             /**
              * Notification
