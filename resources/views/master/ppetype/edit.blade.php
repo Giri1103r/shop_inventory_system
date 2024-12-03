@@ -37,9 +37,11 @@
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Type</label>
-                                                    <input type="text"name="ppe_type" id="ppe_type"
-                                                        class="form-control" placeholder="Enter the PPE name"
-                                                        value="{{ $ppetype->ppe_type}}">
+                                                    <input type="text"name="ppe_type" id="ppe_type" class="form-control"
+                                                        placeholder="Enter the PPE name" value="{{ $ppetype->ppe_type }}">
+                                                    @error('ppe_type')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                     <div class="text-danger" id="ppe_type_error"></div>
                                                 </div>
                                             </div>

@@ -57,7 +57,7 @@
                                 <b>Approved By</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ getUsername($details['ehs_approved_by']) }}</td>
+                                valign="top"> {{ getUsername($details['approved_by']) }}</td>
                         </tr>
 
                     </tbody>

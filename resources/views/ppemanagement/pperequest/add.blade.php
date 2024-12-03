@@ -49,6 +49,9 @@
                                                             </option>
                                                         @endforeach
                                                     </select>
+                                                    @error('ppe_type')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                     <div class="text-danger" id="ppe_type_error"></div>
                                                 </div>
                                             </div>
@@ -59,8 +62,10 @@
                                                         class="form-select form-select-sm single-select ">
                                                         <option value="">Select the PPE name</option>
                                                     </select>
+                                                    @error('ppe_name')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                     <div class="text-danger" id="ppe_name_error"></div>
-
                                                 </div>
                                             </div>
 
@@ -183,7 +188,6 @@
             function validatePPEType() {
 
                 var name = $('#ppe_type').val();
-                var regex = /^[a-zA-Z0-9\-_'"()\s]{3,30}$/;
 
                 if (name === "") {
                     $('#ppe_type_error').text('PPE type cannot be empty.');

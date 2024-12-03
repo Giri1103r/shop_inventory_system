@@ -48,6 +48,9 @@
                                                 <input type="text" class="form-control form-conrol-sm" name="from_date"
                                                     value="{{ $ppeexemption->from_date }}" id="from_date"
                                                     placeholder="Enter the From Date">
+                                                    @error('from_date')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
                                                 <div class="text-danger" id="from_date_error"></div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -55,6 +58,9 @@
                                                 <input type="text" class="form-control form-conrol-sm" name="to_date"
                                                     value="{{ $ppeexemption->to_date }}" id="to_date"
                                                     placeholder="Enter the To Date">
+                                                    @error('to_date')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
                                                 <div class="text-danger" id="to_date_error"></div>
 
                                             </div>
@@ -63,11 +69,15 @@
                                                 <label for="reason" class="form-label require">Reason</label>
                                                 <textarea name="reason" id="reason" cols="3" rows="4" class="form-control form-control-sm"
                                                     placeholder="Enter the Reason">{{ $ppeexemption->reason }}</textarea>
+                                                    @error('reason')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
                                                 <div class="text-danger" id="reason_error"></div>
                                             </div>
                                             <div class="col-md-12 mb-2">
                                                 <input type="checkbox" id="checkbox" name="checkbox">
-                                                <label for="checkbox" class="form-label">I agree to the terms and conditions</label>
+                                                <label for="checkbox" class="form-label">I agree to the terms and
+                                                    conditions</label>
                                                 <div class="text-danger" id="checkbox_error"></div>
                                             </div>
                                         </div>
@@ -93,91 +103,88 @@
 @stop
 
 @push('script')
-
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        var fromDatepicker = flatpickr("#from_date", {
-            dateFormat: "d-m-Y",
-            onChange: function(selectedDates) {
-                if (selectedDates.length > 0) {
-                    var startDate = selectedDates[0];
-                    toDatepicker.set('minDate', startDate);
-                    toDatepicker.clear();
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var fromDatepicker = flatpickr("#from_date", {
+                dateFormat: "d-m-Y",
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        var startDate = selectedDates[0];
+                        toDatepicker.set('minDate', startDate);
+                        toDatepicker.clear();
+                    }
                 }
+            });
+
+            var toDatepicker = flatpickr("#to_date", {
+                dateFormat: "d-m-Y",
+                minDate: "today"
+            });
+
+            $('#ppeExemptionForm').on('submit', function(e) {
+                let valid = true;
+
+                if (!validateFromDate()) valid = false;
+                if (!validateToDate()) valid = false;
+                if (!validateReason()) valid = false;
+                if (!validateCheckbox()) valid = false;
+
+                if (!valid) {
+                    e.preventDefault();
+                } else {
+                    $('#submit').prop('disabled', true);
+                }
+            });
+
+            function validateFromDate() {
+                var FromDate = $('#from_date').val();
+                if (FromDate === "") {
+                    $('#from_date_error').text('Please Select the From date.');
+                    return false;
+                }
+                $('#from_date_error').text('');
+                return true;
+            }
+
+            function validateToDate() {
+                var ToDate = $('#to_date').val();
+                if (ToDate === "") {
+                    $('#to_date_error').text('Please Select the to date.');
+                    return false;
+                }
+                $('#to_date_error').text('');
+                return true;
+            }
+
+            function validateReason() {
+                var reason = $('#reason').val();
+                if (reason === "") {
+                    $('#reason_error').text('Reason cannot be empty.');
+                    return false;
+                }
+                if (reason.length < 3 || reason.length > 255) {
+                    $('#reason_error').text('Reason must contain between 3 and 255 characters.');
+                    return false;
+                }
+                if (!/^[a-zA-Z0-9\s]+$/.test(reason)) {
+                    $('#reason_error').text('Reason must contain only letters and numbers.');
+                    return false;
+                }
+                $('#reason_error').text('');
+                return true;
+            }
+
+            function validateCheckbox() {
+                var checkbox = $('#checkbox').is(':checked');
+                if (!checkbox) {
+                    $('#checkbox_error').text('You must agree to the terms and conditions.');
+                    return false;
+                }
+                $('#checkbox_error').text('');
+                return true;
             }
         });
-
-        var toDatepicker = flatpickr("#to_date", {
-            dateFormat: "d-m-Y",
-            minDate: "today"
-        });
-
-        $('#ppeExemptionForm').on('submit', function(e) {
-            let valid = true;
-
-            if (!validateFromDate()) valid = false;
-            if (!validateToDate()) valid = false;
-            if (!validateReason()) valid = false;
-            if (!validateCheckbox()) valid = false;
-
-            if (!valid) {
-                e.preventDefault();
-            } else {
-                $('#submit').prop('disabled', true);
-            }
-        });
-
-        function validateFromDate() {
-            var FromDate = $('#from_date').val();
-            if (FromDate === "") {
-                $('#from_date_error').text('Please Select the From date.');
-                return false;
-            }
-            $('#from_date_error').text('');
-            return true;
-        }
-
-        function validateToDate() {
-            var ToDate = $('#to_date').val();
-            if (ToDate === "") {
-                $('#to_date_error').text('Please Select the to date.');
-                return false;
-            }
-            $('#to_date_error').text('');
-            return true;
-        }
-
-        function validateReason() {
-            var reason = $('#reason').val();
-            if (reason === "") {
-                $('#reason_error').text('Reason cannot be empty.');
-                return false;
-            }
-            if (reason.length < 3 || reason.length > 255) {
-                $('#reason_error').text('Reason must contain between 3 and 255 characters.');
-                return false;
-            }
-            if (!/^[a-zA-Z0-9\s]+$/.test(reason)) {
-                $('#reason_error').text('Reason must contain only letters and numbers.');
-                return false;
-            }
-            $('#reason_error').text('');
-            return true;
-        }
-
-        function validateCheckbox() {
-            var checkbox = $('#checkbox').is(':checked');
-            if (!checkbox) {
-                $('#checkbox_error').text('You must agree to the terms and conditions.');
-                return false;
-            }
-            $('#checkbox_error').text('');
-            return true;
-        }
-    });
-</script>
-
+    </script>
 @endpush
-

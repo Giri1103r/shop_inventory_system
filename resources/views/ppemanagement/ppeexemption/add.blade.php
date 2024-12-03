@@ -29,32 +29,49 @@
 
                             <div class="card-body">
                                 <div class="basic-form">
-                                    <form method="POST" id="ppeExemptionForm" action="{{ admin_url('ppe_exemption/add/submit') }}">
+                                    <form method="POST" id="ppeExemptionForm"
+                                        action="{{ admin_url('ppe_exemption/add/submit') }}">
                                         @csrf
-                                        <input type="hidden" name="emp_id" id="emp_id" value="{{ $userData->employee_id }}">
+                                        <input type="hidden" name="emp_id" id="emp_id"
+                                            value="{{ $userData->employee_id }}">
                                         <input type="hidden" name="emp_name" id="emp_name" value="{{ $userData->name }}">
-                                        <input type="hidden" name="department" id="department" value="{{ $userData->department_id }}">
-                                        <input type="hidden" name="unit" id="unit" value="{{ $userData->unit_id }}">
+                                        <input type="hidden" name="department" id="department"
+                                            value="{{ $userData->department_id }}">
+                                        <input type="hidden" name="unit" id="unit"
+                                            value="{{ $userData->unit_id }}">
                                         <hr>
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <label for="date" class="form-label require">From Date</label>
-                                                <input type="text" class="form-control form-control-sm" name="from_date" id="from_date" placeholder="Enter the From Date">
+                                                <input type="text" class="form-control form-control-sm" name="from_date"
+                                                    id="from_date" placeholder="Enter the From Date">
+                                                @error('from_date')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
                                                 <div class="text-danger" id="from_date_error"></div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <label for="date" class="form-label require">To Date</label>
-                                                <input type="text" class="form-control form-control-sm" name="to_date" id="to_date" placeholder="Enter the To Date">
+                                                <input type="text" class="form-control form-control-sm" name="to_date"
+                                                    id="to_date" placeholder="Enter the To Date">
+                                                @error('to_date')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
                                                 <div class="text-danger" id="to_date_error"></div>
                                             </div>
                                             <div class="col-md-12 mb-2">
                                                 <label for="reason" class="form-label require">Reason</label>
-                                                <textarea name="reason" id="reason" cols="3" rows="4" class="form-control form-control-sm" placeholder="Enter the Reason"></textarea>
+                                                <textarea name="reason" id="reason" cols="3" rows="4" class="form-control form-control-sm"
+                                                    placeholder="Enter the Reason"></textarea>
+                                                @error('reason')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
                                                 <div class="text-danger" id="reason_error"></div>
                                             </div>
                                             <div class="col-md-12 mb-2">
                                                 <input type="checkbox" id="checkbox" name="checkbox">
-                                                <label for="checkbox" class="form-label">I agree to the terms and conditions</label>
+                                                <label for="checkbox" class="form-label">I agree to the terms and
+                                                    conditions</label>
                                                 <div class="text-danger" id="checkbox_error"></div>
                                             </div>
                                         </div>
@@ -163,5 +180,4 @@
             }
         });
     </script>
-
 @endpush

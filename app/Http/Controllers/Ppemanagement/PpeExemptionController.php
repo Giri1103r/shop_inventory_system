@@ -104,17 +104,20 @@ class PpeExemptionController extends Controller
     {
         try {
             $rules = [
-                'from_date' => 'required',
-                'to_date' => 'required',
-                'reason' => 'required',
+                'from_date' => 'required|date_format:d-m-Y',
+                'to_date' => 'required|date_format:d-m-Y|after_or_equal:from_date',
+                'reason' => ['required', 'regex:/^[a-zA-Z0-9\-_\'"()\s]+$/'],
             ];
+
+
             $messages = [
-
                 'from_date.required' => __('From Date is required'),
-                'from_date.required' => __('To Date  is required'),
-                'reason.required' => __('Reason  is required'),
-
-
+                'from_date.date_format' => __('From Date must be in the format Y-m-d'),
+                'to_date.required' => __('To Date is required'),
+                'to_date.date_format' => __('To Date must be in the format Y-m-d'),
+                'to_date.after_or_equal' => __('To Date must be on or after From Date'),
+                'reason.required' => __('Reason is required'),
+                'reason.regex' => __('Reason should be alphanumeric and can include -, _, \', ", (, ).'),
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -180,17 +183,20 @@ class PpeExemptionController extends Controller
         try {
             $id = decryptId($request->id);
             $rules = [
-                'from_date' => 'required',
-                'to_date' => 'required',
-                'reason' => 'required',
+                'from_date' => 'required|date_format:d-m-Y',
+                'to_date' => 'required|date_format:d-m-Y|after_or_equal:from_date',
+                'reason' => ['required', 'regex:/^[a-zA-Z0-9\-_\'"()\s]+$/'],
             ];
+
+
             $messages = [
-
                 'from_date.required' => __('From Date is required'),
-                'from_date.required' => __('To Date  is required'),
-                'reason.required' => __('Reason  is required'),
-
-
+                'from_date.date_format' => __('From Date must be in the format Y-m-d'),
+                'to_date.required' => __('To Date is required'),
+                'to_date.date_format' => __('To Date must be in the format Y-m-d'),
+                'to_date.after_or_equal' => __('To Date must be on or after From Date'),
+                'reason.required' => __('Reason is required'),
+                'reason.regex' => __('Reason should be alphanumeric and can include -, _, \', ", (, ).'),
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
