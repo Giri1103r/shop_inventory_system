@@ -337,6 +337,7 @@ class PpeTypeMasterController extends Controller
 
     public function list(Request $request)
     {
+        dd(1);
         if ($request->ajax()) {
             $PPEtypeId = $request->input('id');
             return $this->ppetypemaster->ajaxlist($PPEtypeId);

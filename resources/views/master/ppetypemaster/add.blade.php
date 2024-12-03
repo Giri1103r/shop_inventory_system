@@ -99,7 +99,7 @@
                                                     <input type="file" name="ppe_file" id="ppe_file"
                                                         class="form-control form-control-sm" placeholder="Enter the image"
                                                         onchange="validateImage()">
-                                                    <small>Allowed file types: png, jpeg , jpg</small>
+                                                    <small>Allowed file types: png, jpeg</small>
                                                     <div id="ppe_file_error" class="text-danger"></div>
                                                 </div>
                                             </div>
@@ -253,7 +253,7 @@
 
                 if (file !== "") {
                     var extension = file.split('.').pop().toLowerCase();
-                    if ($.inArray(extension, ['png', 'jpeg','jpg']) === -1) {
+                    if ($.inArray(extension, ['png', 'jpeg']) === -1) {
                         fileError.text('Allowed file types: png, jpeg.');
                         return false;
                     } else {
