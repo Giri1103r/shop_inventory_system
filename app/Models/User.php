@@ -147,14 +147,14 @@ class User extends Authenticatable
             ];
 
             try {
-                $createdUser = $this->create($userData); 
-                $createdUsers[] = $createdUser; 
+                $createdUser = $this->create($userData);
+                $createdUsers[] = $createdUser;
             } catch (\Exception $e) {
                 dd($e);
             }
         }
 
-        return $createdUsers; 
+        return $createdUsers;
     }
 
 
@@ -168,13 +168,13 @@ class User extends Authenticatable
 
 
         $decryptedRoleIds = [];
-      
+
 
         if ($request->has('user_role')) {
             $decryptedRoleIds = array_map(function ($encryptedId) {
                 return $encryptedId;
             }, $request->user_role);
-        
+
             $commaSeparatedRoles = implode(',', $decryptedRoleIds);
         }
 
@@ -196,6 +196,29 @@ class User extends Authenticatable
 
         return $this->where('employee_id', $employee->emp_id)->update($data);
     }
+
+    public function getUserdata(){
+        $user = Auth::user()->employee_id;
+        $data = User::where('employee_id', $user)->first();
+        return $data;
+    }
+
+    public function findEhsofficer(){
+          return User::whereRaw('FIND_IN_SET(?, role)', [3])
+          ->get();
+    }
+
+    public function findDepartmenthod($departmentId){
+        return User::where('department_id',$departmentId)
+       ->whereRaw('FIND_IN_SET(?, role)', [4])
+       ->pluck('email')
+        ->first();
+    }
+    public function findStoremanager(){
+        return User::select('email')
+       ->whereRaw('FIND_IN_SET(?, role)', [4]);
+    }
+
 
 
     public function exportdata()

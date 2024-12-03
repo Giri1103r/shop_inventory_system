@@ -103,7 +103,8 @@
                     url: "{{ admin_url('ppe_ppetype_master/ajax-list') }}",
                     type: 'GET',
                     data: {
-                        id: PPEtypeId
+                        id: PPEtypeId,
+                        _ts: new Date().getTime() // Add timestamp to the request to prevent caching
                     },
                     success: function(data) {
                         console.log(data);
@@ -123,6 +124,7 @@
                 $('#ppe_name').trigger('change');
             }
         });
+
 
         $(document).on('change', '#ppe_name', function() {
             let PPEnameId = $(this).val();

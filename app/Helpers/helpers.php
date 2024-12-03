@@ -1281,4 +1281,19 @@ if (!function_exists('getMonth')) {
             }
         }
     }
+
+    if (!function_exists('getUnitname')) {
+
+        function getUnitname($userid)
+        {
+
+            $unit_name = DB::table('masters_unit')->select('unit_name')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($unit_name == null) {
+                return '';
+            } else {
+                return $unit_name->unit_name;
+            }
+        }
+    }
 }
