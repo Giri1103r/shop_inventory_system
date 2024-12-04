@@ -49,6 +49,9 @@
                                                             </option>
                                                         @endforeach
                                                     </select>
+                                                    @error('ppe_type')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                     <div class="text-danger" id="ppe_type_error"></div>
                                                 </div>
                                             </div>
@@ -59,8 +62,10 @@
                                                         class="form-select form-select-sm single-select ">
                                                         <option value="">Select the PPE name</option>
                                                     </select>
+                                                    @error('ppe_name')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                     <div class="text-danger" id="ppe_name_error"></div>
-
                                                 </div>
                                             </div>
 
@@ -103,7 +108,8 @@
                     url: "{{ admin_url('ppe_ppetype_master/ajax-list') }}",
                     type: 'GET',
                     data: {
-                        id: PPEtypeId
+                        id: PPEtypeId,
+                        _ts: new Date().getTime() // Add timestamp to the request to prevent caching
                     },
                     success: function(data) {
                         console.log(data);
@@ -123,6 +129,7 @@
                 $('#ppe_name').trigger('change');
             }
         });
+
 
         $(document).on('change', '#ppe_name', function() {
             let PPEnameId = $(this).val();
@@ -181,7 +188,6 @@
             function validatePPEType() {
 
                 var name = $('#ppe_type').val();
-                var regex = /^[a-zA-Z0-9\-_'"()\s]{3,30}$/;
 
                 if (name === "") {
                     $('#ppe_type_error').text('PPE type cannot be empty.');

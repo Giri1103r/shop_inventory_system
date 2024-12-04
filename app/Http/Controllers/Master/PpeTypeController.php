@@ -88,13 +88,16 @@ class PpeTypeController extends Controller
     {
         try {
             $rules = [
-                'ppe_type' => 'required',
+                'ppe_type' => ['required', 'string', 'regex:/^[a-zA-Z0-9\-_\'"()\s]{3,30}$/'],
 
             ];
             $messages = [
 
 
-                'ppe_type.required' => __('PPE Type  is required'),
+                'ppe_type.required' => __('PPE Type is required'),
+                'ppe_type.regex' => __('PPE Type should be alphanumeric and can include -, _, \', ", (, ).'),
+                'ppe_type.min' => __('PPE Type must be at least 3 characters.'),
+                'ppe_type.max' => __('PPE Type  may not be greater than 30 characters.'),
 
 
             ];
@@ -157,13 +160,15 @@ class PpeTypeController extends Controller
         try {
             $id = decryptId($request->id);
             $rules = [
-                'ppe_type' => 'required',
+                'ppe_type' => ['required', 'string', 'regex:/^[a-zA-Z0-9\-_\'"()\s]{3,30}$/'],
 
             ];
             $messages = [
 
-
-                'ppe_type.required' => __('PPE Type  is required'),
+                'ppe_type.required' => __('PPE Type is required'),
+                'ppe_type.regex' => __('PPE Type should be alphanumeric and can include -, _, \', ", (, ).'),
+                'ppe_type.min' => __('PPE Type must be at least 3 characters.'),
+                'ppe_type.max' => __('PPE Type  may not be greater than 30 characters.'),
 
 
             ];

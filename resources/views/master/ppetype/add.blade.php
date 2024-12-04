@@ -39,6 +39,9 @@
                                                     <label class="form-label require">PPE Type</label>
                                                     <input type="text" name="ppe_type" id="ppe_type"
                                                         class="form-control" placeholder="Enter the PPE type">
+                                                        @error('ppe_type')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                     <div class="text-danger" id="ppe_type_error"></div>
                                                 </div>
                                             </div>

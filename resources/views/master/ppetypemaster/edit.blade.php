@@ -40,6 +40,9 @@
                                                         class="form-control" placeholder="Item Code"
                                                         value="{{ $ppetypemaster->item_code }}">
                                                     <div class="text-danger" id="item_code_error"></div>
+                                                    @error('item_code')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">
@@ -48,6 +51,9 @@
                                                     <input type="text" name="ppe_name" id="ppe_name"
                                                         class="form-control" placeholder="Enter the PPE name"
                                                         value="{{ $ppetypemaster->ppe_name }}">
+                                                    @error('ppe_name')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                     <div class="text-danger" id="ppe_name_error"></div>
                                                 </div>
                                             </div>
@@ -65,6 +71,9 @@
                                                         @endforeach
 
                                                     </select>
+                                                    @error('ppe_type')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                     <div class="text-danger" id="ppe_type_error"></div>
                                                 </div>
                                             </div>
@@ -85,6 +94,9 @@
                                                         id="protection_category" class="form-control form-control-sm"
                                                         placeholder="Enter the protection category"
                                                         value="{{ $ppetypemaster->ppe_category }}">
+                                                    @error('protection_category')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                     <div class="text-danger" id="protection_error"></div>
                                                 </div>
                                             </div>
@@ -96,6 +108,9 @@
                                                         class="form-control form-control-sm"
                                                         value="{{ $ppetypemaster->ppe_standard }}"
                                                         placeholder="Enter the ppe standard">
+                                                    @error('ppe_standard')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                     <div class="text-danger" id="ppe_standard_error"></div>
                                                 </div>
                                             </div>
@@ -106,7 +121,7 @@
                                                     <input type="file" name="ppe_file" id="ppe_file"
                                                         class="form-control form-control-sm" placeholder="Enter the image"
                                                         onchange="validateImage()">
-                                                    <small>Allowed file types: png, jpeg</small>
+                                                    <small>Allowed file types: png, jpeg , jpg</small>
                                                     @if (isset($ppetypemaster) && $ppetypemaster->ppe_image)
                                                         <p>
                                                             <a href="{{ asset('public/' . $ppetypemaster->ppe_image) }}"
@@ -119,7 +134,9 @@
                                                     @else
                                                         <p>No file is uploaded</p>
                                                     @endif
-
+                                                    @error('ppe_file')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                     <div id="ppe_file_error" class="text-danger"></div>
                                                 </div>
                                             </div>
@@ -128,7 +145,8 @@
                                         <div class="submit-button float-end">
                                             <x-button-submit class="submit" id="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
-                                            <x-button-cancel href="{{ admin_url('ppe_ppetype_master/list') }}"></x-button-cancel>
+                                            <x-button-cancel
+                                                href="{{ admin_url('ppe_ppetype_master/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -272,7 +290,7 @@
 
                 if (file !== "") {
                     var extension = file.split('.').pop().toLowerCase();
-                    if ($.inArray(extension, ['png', 'jpeg']) === -1) {
+                    if ($.inArray(extension, ['png', 'jpeg', 'jpg']) === -1) {
                         fileError.text('Allowed file types: png, jpeg.');
                         return false;
                     } else {

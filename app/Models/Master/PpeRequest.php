@@ -142,6 +142,12 @@ class PpeRequest extends Model
         return $this->where('id', $id)->update($updateData);
     }
 
+
+    public function updateehsapproval($updateEhsData, $id)
+    {
+        return $this->where('id', $id)->update($updateEhsData);
+    }
+
     public function findDepartment($id)
     {
         return $this->where('id', $id)->select('department')->first();
