@@ -161,7 +161,7 @@ class SafeWork extends Model
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('company_management.status', decryptId($request->status));
+            $query = $query->where('ptw_masters_safe_work.status', decryptId($request->status));
         }
         $query->orderBy('id', 'DESC');
         return  $query->get();

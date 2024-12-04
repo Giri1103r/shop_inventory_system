@@ -26,7 +26,7 @@
                         </td>
                     
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->protective_equip }}
+                            {{ $value->equip_involve }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php

@@ -28,6 +28,7 @@ use App\Http\Controllers\Master\PrecautionController;
 use App\Http\Controllers\Master\ChecklistController;
 use App\Http\Controllers\Master\TypeofWorkController;
 use App\Http\Controllers\Ppemanagement\PpeRequestController;
+use App\Http\Controllers\Safetypermit\SafetyPermitController;
 
 Route::get('cache', function () {
     Artisan::call('optimize:clear');
@@ -54,10 +55,10 @@ Route::get('queuehigh', [CronController::class, 'queueHigh']);
 Route::get('queuedefault', [CronController::class, 'queueDefault']);
 Route::get('queueemail', [CronController::class, 'queueEmail']);
 
-Route::get('queueCompanyImport', [CronController::class,'queueCompanyImport']);
-Route::get('queuelocationimport', [CronController::class,'queuelocationimport']);
-Route::get('queueunitimport', [CronController::class,'queueunitimport']);
-Route::get('queueDepartmentuplodimport', [CronController::class,'queueDepartmentuplodimport']);
+Route::get('queueCompanyImport', [CronController::class, 'queueCompanyImport']);
+Route::get('queuelocationimport', [CronController::class, 'queuelocationimport']);
+Route::get('queueunitimport', [CronController::class, 'queueunitimport']);
+Route::get('queueDepartmentuplodimport', [CronController::class, 'queueDepartmentuplodimport']);
 
 
 
@@ -559,6 +560,22 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/edit/submit', [PpeRequestController::class, 'update']);
                 Route::get('/export/excel', [PpeRequestController::class, 'exportExcel']);
                 Route::get('/export/pdf', [PpeRequestController::class, 'exportPdf']);
+            });
+
+            Route::group(['prefix' => 'safetypermit'], function () {
+
+                Route::get('/list', [SafetyPermitController::class, 'index']);
+                Route::post('/list', [SafetyPermitController::class, 'index']);
+                Route::get('/add', [SafetyPermitController::class, 'add']);
+                Route::post('/add/submit', [SafetyPermitController::class, 'store']);
+                Route::post('/status', [SafetyPermitController::class, 'statusChange']);
+                Route::post('/delete', [SafetyPermitController::class, 'delete']);
+                Route::get('/view/{id}', [SafetyPermitController::class, 'view']);
+                Route::post('/approvereject/submit', [SafetyPermitController::class, 'ApprovalReject']);
+                Route::get('/edit/{id}', [SafetyPermitController::class, 'edit']);
+                Route::post('/edit/submit', [SafetyPermitController::class, 'update']);
+                Route::get('/export/excel', [SafetyPermitController::class, 'exportExcel']);
+                Route::get('/export/pdf', [SafetyPermitController::class, 'exportPdf']);
             });
         });
     });

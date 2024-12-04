@@ -48,10 +48,12 @@
                                             </div>
                                         </div>
                                         <hr>
-                                        <div class="submit-button">
+                                        <div class="submit-button" style="text-align: right;">
 
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-cancel></x-button-cancel>
+                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-cancel
+                                            href="{{ admin_url('ptw/safeworkmaster/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -73,15 +75,17 @@
         $(function() {
             $('#companyedit').validate({
                 rules: {
-                    protective_equip: {
+                    safe_work: {
                         required: true,
                         minlength: 3,
+                        // maxlength: 100,
+                        // pattern: /^[a-zA-Z0-9\s\-_'"(),&]*$/,
                         remote: {
                             url: '{{ admin_url("ptw/safeworkmaster/unique") }}',
                             type: 'post',
                             data: {
                                 location_type_name: function() {
-                                    return $('#protective_equip').val();
+                                    return $('#safe_work').val();
                                 },
                                 id: function() {
                                     return $('#id').val();
@@ -91,10 +95,12 @@
                     },
                 },
                 messages: {
-                    protective_equip: {
+                    safe_work: {
                         required: "{{ __('Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
-                        remote: "{{ __('Name should be unique') }}"
+                        // maxlength: "Maximum Characters should not exceed 10",
+                        remote: "{{ __('Name should be unique') }}",
+                        // pattern: "Only alphanumeric characters and -, _, ', \", (), ,, and & are allowed",
                     },
                 },
                 errorElement: 'span',

@@ -78,18 +78,29 @@ class TypeofWorkController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
+                        ->addColumn('image', function ($row) {
+                            if ($row->file_path) {
+                                $url = asset($row->file_path);
+                                return "
+                                        <img src='" . $url . "' alt='Image' style='width:50px;height:50px;object-fit:cover;'>
+                                ";
+                            }
+                            return "<span style='color:gray'>No Image</span>";
+                        })
+                        
+                        
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // /if (CheckUserPermission('view')) {
-                            $btn = '<a href="' . admin_url('ptw/typeofworkmaster/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('ptw/typeofworkmaster/view/' . encryptId($row->typeid)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
                             // if (CheckUserPermission('edit')) {
-                            $btn .= '<a href="' . admin_url('ptw/typeofworkmaster/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            $btn .= '<a href="' . admin_url('ptw/typeofworkmaster/edit/' . encryptId($row->typeid)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
-                            $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
+                            // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status','image'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -98,7 +109,7 @@ class TypeofWorkController extends Controller
                 } catch (Exception $ex) {
 
                     dd($ex);
-                    return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
+                    return response()->json(['status' => 'error', 'msg' => __('Please try after sometime')], 406);
                 }
             }
         }
@@ -137,7 +148,7 @@ class TypeofWorkController extends Controller
 
             // ];
             // $messages = [
-            //     'checklist.required' => __('Equipment Checklist is required'),
+            //     'checklist.required' => __('Type of work is required'),
 
             // ];
             // $validator = Validator::make($request->all(), $rules, $messages);
@@ -155,7 +166,7 @@ class TypeofWorkController extends Controller
                 $this->typeofworkchecklist->store4($typeofwork->id);
                 $this->typeofworkchecklist->store5($typeofwork->id);
 
-                Session::flash('success', __('Equipment Checklist added successfully'));
+                Session::flash('success', __('Type of work added successfully'));
             } catch (Exception $ex) {
                 dd($ex);
 
@@ -279,7 +290,7 @@ class TypeofWorkController extends Controller
 
             // ];
             // $messages = [
-            //     'checklist.required' => __('Equipment Checklist is required'),
+            //     'checklist.required' => __('Type of work is required'),
 
             // ];
             // $validator = Validator::make($request->all(), $rules, $messages);
@@ -297,7 +308,7 @@ class TypeofWorkController extends Controller
             $this->typeofworkchecklist->update4($updatedRecord->id);
             $this->typeofworkchecklist->update5($updatedRecord->id);
 
-            Session::flash('success', __('Equipment Checklist updated successfully'));
+            Session::flash('success', __('Type of work updated successfully'));
             return redirect(admin_url('ptw/typeofworkmaster/list'));
         } catch (Exception $ex) {
 
@@ -310,13 +321,13 @@ class TypeofWorkController extends Controller
     public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {
-            $equip_involve = $request->equip_involve;
+            $work_name = $request->work_name;
             $id = $request->id;
             if ($id == '') {
-                $record = $this->checklist->uniqueCheck($equip_involve);
+                $record = $this->typeofwork->uniqueCheck($work_name);
             } else {
                 $id = decryptId($id);
-                $record = $this->checklist->ExistuniqueCheck($equip_involve, $id);
+                $record = $this->typeofwork->ExistuniqueCheck($work_name, $id);
             }
             if ($record->count()) {
                 return Response::json(false);
@@ -331,12 +342,12 @@ class TypeofWorkController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $this->checklist->statuschange($id);
+            $this->typeofwork->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => __('Equipment checklist status changed')], 200);
+            return response()->json(['status' => 'success', 'msg' => __('Type of work status changed')], 200);
         } catch (Exception $ex) {
 
-            return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
+            return response()->json(['status' => 'error', 'msg' => __('Please try after sometime')], 406);
         }
     }
 
@@ -347,10 +358,10 @@ class TypeofWorkController extends Controller
 
             $this->checklist->deleterecord($id);
 
-            return response()->json(['status' => 'success', 'msg' => __('Equipment Checklist deleted successfully')], 200);
+            return response()->json(['status' => 'success', 'msg' => __('Type of work deleted successfully')], 200);
         } catch (Exception $ex) {
 
-            return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
+            return response()->json(['status' => 'error', 'msg' => __('Please try after sometime')], 406);
         }
     }
 
@@ -443,10 +454,10 @@ class TypeofWorkController extends Controller
             $insert_data['log_id'] = $insert_id;
             $insert_data['Uploded_by'] = Auth::user()->toArray();
 
-            Session::flash('success', __('Equipment Checklist uploaded sucessfully'));
+            Session::flash('success', __('Type of work uploaded sucessfully'));
             return redirect(admin_url('ptw/typeofworkmaster/list'));
         } catch (Exception $ex) {
-            Session::flash('error', __('Equipment Checklist upload failed'));
+            Session::flash('error', __('Type of work upload failed'));
             return redirect(admin_url('ptw/typeofworkmaster/list'));
         }
     }
@@ -456,11 +467,12 @@ class TypeofWorkController extends Controller
 
         try {
 
-            $allData = $this->checklist->exportdata();
+            $allData = $this->typeofwork->exportdata();
 
             $header = [
                 __("common.sno"),
                 __('Name'),
+                __('Description'),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -471,7 +483,8 @@ class TypeofWorkController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->checklist;
+                $export[] =  $data->work_name;
+                $export[] =  $data->description;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -481,7 +494,7 @@ class TypeofWorkController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Equipment Checklist .xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Type of work .xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -499,11 +512,13 @@ class TypeofWorkController extends Controller
 
             ini_set("pcre.backtrack_limit", "5000000");
 
-            $allData = $this->checklist->exportdata();
+            $allData = $this->typeofwork->exportdata();
 
             $header = [
                 __("common.sno"),
+                __('Image'),
                 __('Name'),
+                __('Description'),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -512,7 +527,7 @@ class TypeofWorkController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Equipment Checklist Details",
+                'pagetitle' => "Type of work Details",
             );
 
             $property = [
@@ -534,8 +549,8 @@ class TypeofWorkController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Equipment Checklist Details.pdf";
-            $mpdf->Output($filename, 'I');
+            $filename = "Type of work Details.pdf";
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);
             report($ex);

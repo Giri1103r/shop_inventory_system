@@ -26,7 +26,16 @@
                         </td>
                     
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->checklist}}
+                            <a href="{{ asset($value->file_path) }}" target="_blank">
+                                <img src="{{ asset($value->file_path) }}" alt="Image"
+                                    style="max-width: 10%;">
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->work_name}}
+                        </td>
+
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->description}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php

@@ -49,7 +49,7 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="safe_workadd" action="{{ admin_url('ptw/checklistmaster/add/submit') }}">
+                                    <form method="POST" id="checklistadd" action="{{ admin_url('ptw/checklistmaster/add/submit') }}">
                                         @csrf
 
                                         <div class="row">
@@ -64,10 +64,11 @@
                                            
                                         </div>
                                         <hr>
-                                        <div class="submit-button">
-
+                                        <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-cancel></x-button-cancel>
+                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-cancel
+                                            href="{{ admin_url('ptw/checklistmaster/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -87,18 +88,25 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+    $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         $(function() {
-            $('#safe_workadd').validate({
+            $('#checklistadd').validate({
                 rules: {
-                    safe_work: {
+                    checklist: {
                         required: true,
-                        
                         minlength: 3,
+                        maxlength: 100,
+                        pattern: /^[a-zA-Z0-9\s\-_'",&().]*$/,
                         remote: {
                             url: '{{ admin_url("ptw/checklistmaster/unique") }}',
                             type: 'post',
                             data: {
-                                location_type_name: function() {
+                                checklist: function() {
                                     return $('#checklist').val();
                                 }
                             }
@@ -107,10 +115,12 @@
                    
                 },
                 messages: {
-                    safe_work: {
+                    checklist: {
                         required: "{{ __('Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
-                        remote: "{{ __('Name should be unique') }}"
+                        maxlength: "Maximum Characters should not exceed 100",
+                        remote: "{{ __('Name should be unique') }}",
+                        pattern: "Only alphanumeric characters and -, _, ', \", (), ,, and & are allowed",
                     },
                     
                 },

@@ -161,7 +161,9 @@ class ProtectiveEquip extends Model
             $search = $request->search;
 
             $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhereRaw('protective_equip LIKE "%' . $search . '%"');
+                $query
+                ->orWhere('protective_equip', 'LIKE', '%' . $search . '%');
+                
             });
         }
 
