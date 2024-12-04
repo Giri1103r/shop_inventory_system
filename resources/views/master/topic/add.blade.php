@@ -10,7 +10,7 @@
             {{-- <h4 class="text-black">Company Add</h4> --}}
 
         </div>
-        
+
     </div>
 
     <div class="content-body  default-height">
@@ -39,8 +39,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Topic ID</label>
                                                     <input type="text" name ="topic_id" class="form-control"
-                                                        placeholder="Topic ID" value="{{ getsequence('topic') }}"
-                                                        readonly>
+                                                        placeholder="Topic ID" value="{{ getsequence('topic') }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
@@ -50,13 +49,13 @@
                                                         placeholder="Topic Name">
                                                 </div>
                                             </div>
-                                          
+
                                         </div>
                                         <hr>
-                                        <div class="submit-button">
-
+                                        <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-cancel></x-button-cancel>
+                                            <x-button-reset class=""></x-button-reset>
+                                            <x-button-cancel href="{{ admin_url('topic/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -75,18 +74,38 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         $(function() {
             $('#topicadd').validate({
                 rules: {
                     topic_name: {
                         required: true,
                         minlength: 3,
+                        maxlength: 100,
+                        pattern: /^[a-zA-Z0-9\s\-_'"(),&]*$/,
+                        remote: {
+                            url: '{{ admin_url('topic/unique') }}',
+                            type: 'post',
+                            data: {
+                                location_type_name: function() {
+                                    return $('#topic_name').val();
+                                }
+                            }
+                        }
                     },
                 },
                 messages: {
                     topic_name: {
                         required: "{{ __('Topic Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 100",
+                        pattern: "Only alphanumeric characters and -, _, ', \", (), ,, and & are allowed",
+                         remote: "{{ __('Topic Name should be unique') }}"
                     },
 
                 },

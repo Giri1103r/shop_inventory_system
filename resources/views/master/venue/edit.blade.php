@@ -40,8 +40,9 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Name of the Conference Hall</label>
-                                                    <input type="text" name ="name_of_the_conference_hall"
-                                                        class="form-control" placeholder="Name of the Conference Hall" value="{{ $venue->name_of_the_conference_hall }}">
+                                                    <input type="text" name ="name_of_the_conference_hall" id="name_of_the_conference_hall"
+                                                        class="form-control" placeholder="Name of the Conference Hall"
+                                                        value="{{ $venue->name_of_the_conference_hall }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
@@ -51,13 +52,14 @@
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Unit Name</option>
                                                         @foreach ($unitList as $unit)
-                                                            <option @if ($venue->unit_id == $unit->id) selected @endif value="{{ encryptId($unit->id) }}">
+                                                            <option @if ($venue->unit_id == $unit->id) selected @endif
+                                                                value="{{ encryptId($unit->id) }}">
                                                                 {{ $unit->unit_name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
                                             </div>
-                                         
+
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Capacity</label>
@@ -72,18 +74,22 @@
                                                         id="projector_or_lcd_availability"
                                                         class="form-control single-select" style="width: 100%;">
                                                         <option value="">Select Projector/LCD Availability</option>
-                                                        <option value="YES"  {{ $venue->projector_or_lcd_availability == 'YES' ? 'selected' : '' }}>YES</option>
-                                                        <option value="NO"  {{ $venue->projector_or_lcd_availability == 'NO' ? 'selected' : '' }}>NO</option>
+                                                        <option value="YES"
+                                                            {{ $venue->projector_or_lcd_availability == 'YES' ? 'selected' : '' }}>
+                                                            YES</option>
+                                                        <option value="NO"
+                                                            {{ $venue->projector_or_lcd_availability == 'NO' ? 'selected' : '' }}>
+                                                            NO</option>
                                                     </select>
                                                 </div>
                                             </div>
 
                                         </div>
                                         <hr>
-                                        <div class="submit-button">
-
+                                        <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-cancel></x-button-cancel>
+                                            <x-button-reset class=""></x-button-reset>
+                                            <x-button-cancel href="{{ admin_url('venue/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -102,12 +108,36 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
+
         $(function() {
             $('#venueedit').validate({
                 rules: {
                     name_of_the_conference_hall: {
                         required: true,
                         minlength: 3,
+                        maxlength: 100,
+                        pattern: /^[a-zA-Z0-9\s\-_'"(),&]*$/,
+                        remote: {
+                            url: '{{ admin_url('venue/unique') }}',
+                            type: 'post',
+                            data: {
+                                name_of_the_conference_hall: function() {
+                                    return $('#name_of_the_conference_hall').val();
+                                },
+                                unit_id: function() {
+                                    return $('#unit_id').val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
+                                }
+                            }
+                        }
                     },
                     unit_id: {
                         required: true,
@@ -124,6 +154,9 @@
                     name_of_the_conference_hall: {
                         required: "{{ __('Name of the Conference Hall is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 100",
+                        pattern: "Only alphanumeric characters and -, _, ', \", (), ,, and & are allowed",
+                        remote: "{{ __('Conference Hall Name should be unique') }}"
                     },
                     unit_id: {
                         required: "{{ __('Unit Name is Required') }}",

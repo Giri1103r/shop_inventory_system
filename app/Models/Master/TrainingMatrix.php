@@ -15,7 +15,7 @@ class TrainingMatrix extends Model
     use  HasFactory;
 
 
-    protected $table = 'masters_training_matrix';
+    protected $table = 'training_matrix';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -44,11 +44,11 @@ class TrainingMatrix extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_training_matrix.*', 'masters_unit.unit_name', 'masters_employee.emp_name', 'masters_department.department_name', 'masters_topic.topic_name');
-        $query = $query->leftJoin('masters_unit', 'masters_training_matrix.unit_id', '=', 'masters_unit.id');
-        $query = $query->leftJoin('masters_employee', 'masters_training_matrix.trainer_id', '=', 'masters_employee.id');
-        $query = $query->leftJoin('masters_department', 'masters_training_matrix.department_id', '=', 'masters_department.id');
-        $query = $query->leftJoin('masters_topic', 'masters_training_matrix.topic_id', '=', 'masters_topic.id');
+        $query = $this->select('training_matrix.*', 'masters_unit.unit_name', 'masters_employee.emp_name', 'masters_department.department_name', 'training_masters_topic.topic_name');
+        $query = $query->leftJoin('masters_unit', 'training_matrix.unit_id', '=', 'masters_unit.id');
+        $query = $query->leftJoin('masters_employee', 'training_matrix.trainer_id', '=', 'masters_employee.id');
+        $query = $query->leftJoin('masters_department', 'training_matrix.department_id', '=', 'masters_department.id');
+        $query = $query->leftJoin('training_masters_topic', 'training_matrix.topic_id', '=', 'training_masters_topic.id');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -63,16 +63,16 @@ class TrainingMatrix extends Model
 
       
         if ($request->has('topic_id') && $request->topic_id) {
-            $query = $query->where('masters_training_matrix.topic_id', decryptId($request->topic_id));
+            $query = $query->where('training_matrix.topic_id', decryptId($request->topic_id));
         }
         if ($request->has('trainer_id') && $request->trainer_id) {
-            $query = $query->where('masters_training_matrix.trainer_id', decryptId($request->trainer_id));
+            $query = $query->where('training_matrix.trainer_id', decryptId($request->trainer_id));
         }
         if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('masters_training_matrix.unit_id', decryptId($request->unit_id));
+            $query = $query->where('training_matrix.unit_id', decryptId($request->unit_id));
         }
         if ($request->has('department_id') && $request->department_id) {
-            $query = $query->where('masters_training_matrix.department_id', decryptId($request->department_id));
+            $query = $query->where('training_matrix.department_id', decryptId($request->department_id));
         }
         if ($request->has('training_offered_for') && $request->training_offered_for) {
             $query = $query->where('training_offered_for', 'LIKE', '%' . $request->training_offered_for . '%');
@@ -185,11 +185,11 @@ class TrainingMatrix extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_training_matrix.*', 'masters_unit.unit_name', 'masters_employee.emp_name', 'masters_department.department_name', 'masters_topic.topic_name');
-        $query = $query->leftJoin('masters_unit', 'masters_training_matrix.unit_id', '=', 'masters_unit.id');
-        $query = $query->leftJoin('masters_employee', 'masters_training_matrix.trainer_id', '=', 'masters_employee.id');
-        $query = $query->leftJoin('masters_department', 'masters_training_matrix.department_id', '=', 'masters_department.id');
-        $query = $query->leftJoin('masters_topic', 'masters_training_matrix.topic_id', '=', 'masters_topic.id');
+        $query = $this->select('training_matrix.*', 'masters_unit.unit_name', 'masters_employee.emp_name', 'masters_department.department_name', 'training_masters_topic.topic_name');
+        $query = $query->leftJoin('masters_unit', 'training_matrix.unit_id', '=', 'masters_unit.id');
+        $query = $query->leftJoin('masters_employee', 'training_matrix.trainer_id', '=', 'masters_employee.id');
+        $query = $query->leftJoin('masters_department', 'training_matrix.department_id', '=', 'masters_department.id');
+        $query = $query->leftJoin('training_masters_topic', 'training_matrix.topic_id', '=', 'training_masters_topic.id');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -204,7 +204,7 @@ class TrainingMatrix extends Model
             $query = $query->where('name_of_the_conference_hall', 'LIKE', '%' . $request->name_of_the_conference_hall . '%');
         }
         if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('masters_training_matrix.unit_id', decryptId($request->unit_id));
+            $query = $query->where('training_matrix.unit_id', decryptId($request->unit_id));
         }
         if ($request->has('capacity') && $request->capacity) {
             $query = $query->where('capacity', 'LIKE', '%' . $request->capacity . '%');
@@ -214,7 +214,7 @@ class TrainingMatrix extends Model
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('masters_training_matrix.status', decryptId($request->status));
+            $query = $query->where('training_matrix.status', decryptId($request->status));
         }
 
         $query->orderBy('id', 'DESC');
@@ -225,8 +225,8 @@ class TrainingMatrix extends Model
     public function selectOne($id)
     {
 
-        $data = $this->select('masters_training_matrix.*', 'masters_unit.unit_name', 'masters_employee.emp_name', 'masters_department.department_name', 'masters_topic.topic_name')->leftJoin('masters_unit', 'masters_training_matrix.unit_id', '=', 'masters_unit.id')->leftJoin('masters_topic', 'masters_training_matrix.topic_id', '=', 'masters_topic.id')->leftJoin('masters_department', 'masters_training_matrix.department_id', '=', 'masters_department.id')->leftJoin('masters_employee', 'masters_training_matrix.trainer_id', '=', 'masters_employee.id')
-            ->where('masters_training_matrix.id', $id)
+        $data = $this->select('training_matrix.*', 'masters_unit.unit_name', 'masters_employee.emp_name', 'masters_department.department_name', 'training_masters_topic.topic_name')->leftJoin('masters_unit', 'training_matrix.unit_id', '=', 'masters_unit.id')->leftJoin('training_masters_topic', 'training_matrix.topic_id', '=', 'training_masters_topic.id')->leftJoin('masters_department', 'training_matrix.department_id', '=', 'masters_department.id')->leftJoin('masters_employee', 'training_matrix.trainer_id', '=', 'masters_employee.id')
+            ->where('training_matrix.id', $id)
             ->first();
 
         return $data;
@@ -235,6 +235,6 @@ class TrainingMatrix extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('masters_training_matrix'));
+        static::addGlobalScope(new TrashScope('training_matrix'));
     }
 }

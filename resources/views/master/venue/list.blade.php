@@ -10,14 +10,14 @@
 
                 <div class="card">
                     <h4 class="card-title"></h4>
-                    <div class="ms-auto">
+                    <div class="d-flex justify-content-end p-2">
 
-                        <x-button-filter dataId="" class="search" href=""></x-button-filter>
+                        <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         @if (CheckUserPermission('import'))
                             <x-button-import href="{{ admin_url('venue/import') }}"></x-button-import>
                         @endif
                         @if (CheckUserPermission('add'))
-                            <x-button-add dataId="" class="add btn btn-primary"
+                            <x-button-add dataId=""  class="add btn btn-primary ms-1"
                                 href="{{ admin_url('venue/add') }}">Add</x-button-add>
                         @endif
                     </div>

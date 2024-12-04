@@ -214,7 +214,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 70,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()&]*$/
+                        pattern: /^[a-zA-Z0-9\s\-_'"()&]*$/,
                         remote: {
                             url: '{{ admin_url('department/unique') }}',
                             type: 'post',
