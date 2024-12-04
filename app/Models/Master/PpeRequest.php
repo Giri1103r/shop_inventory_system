@@ -37,25 +37,48 @@ class PpeRequest extends Model
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
+        $user = Auth::user();
+        $empId = $user->employee_id;
+        $userRole = $user->role;
+        $userRole = string_to_array($userRole);
 
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+        } elseif (in_array(ROLE_HOD, $userRole)) {
+            $departmentId = $user->department_id;
+            $query->where('ppe_pperequest.department', $departmentId);
+        } else {
+            $query->where('emp_id', $empId);
+        }
+
+        if ($request->search['value'] != null) {
+            $search = $request->search['value'];
             $query->where(function ($query) use ($search) {
-                $query
-                    ->orWhere('ppe_name', 'LIKE', '%' . $search . '%');
+                $query->orWhere('emp_name', 'LIKE', '%' . $search . '%');
             });
         }
 
-        if ($request->has('ppe_name') && $request->ppe_name) {
-            $query = $query->where('ppe_name', 'LIKE', '%' . $request->ppe_name . '%');
+        if ($request->has('emp_id') && $request->emp_id) {
+            $query->where('emp_id', 'LIKE', '%' . $request->emp_id . '%');
         }
-        if ($request->has('ppe_type') && $request->ppe_type) {
-            $query = $query->where('ppe_type', 'LIKE', '%' . $request->ppe_type . '%');
+        if ($request->has('emp_name') && $request->emp_name) {
+            $query->where('emp_name', 'LIKE', '%' . $request->emp_name . '%');
         }
         if ($request->has('ppe_status') && $request->ppe_status) {
-
-            $query = $query->where('status', decryptId($request->ppe_status));
+            $query->where('status', decryptId($request->ppe_status));
         }
+
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        } elseif ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('created_at', '>=', $startDate);
+        } elseif ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('created_at', '<=', $endDate);
+        }
+
 
         $data_count = $query->count();
         $total_records = $data_count;
@@ -68,13 +91,15 @@ class PpeRequest extends Model
 
         $data = $query->get();
 
-        $datas = array(
+        $datas = [
             'data' => $data,
             'total_records' => $org_total_counts,
             'filter_records' => $total_records,
-        );
+        ];
+
         return $datas;
     }
+
 
     public function store()
     {
@@ -161,13 +186,14 @@ class PpeRequest extends Model
     public function getdepartmenthod($departmentId)
     {
 
-        $hod =User::where('department_id', $departmentId)
+        $hod = User::where('department_id', $departmentId)
             ->whereRaw('FIND_IN_SET(?, role)', [4])
             ->pluck('email')
             ->first();
         return $hod;
     }
 
+   
     public function getstoremanager()
     {
         return User::select('email')
@@ -187,6 +213,16 @@ class PpeRequest extends Model
         return $data;
     }
 
+    public function laststatus()
+    {
+        $employeeId = Auth::user()->employee_id;
+        $laststatus = PpeRequest::where('emp_id', $employeeId)
+            ->orderBy('id', 'DESC')
+            ->where('status', '=', 1)
+            ->first();
+        return $laststatus;
+    }
+
     public function lastPpeRequest()
     {
         $employeeId = Auth::user()->employee_id;
@@ -196,6 +232,17 @@ class PpeRequest extends Model
             ->orderBy('id', 'DESC')
             ->first();
         return $lastyear;
+    }
+
+    public function lastsixmonthrequest()
+    {
+        $employeeId = Auth::user()->employee_id;
+
+        $lastsixmonths = PpeRequest::where('department', 41)
+            ->where('emp_id', $employeeId)
+            ->orderBy('id', 'DESC')
+            ->first();
+        return $lastsixmonths;
     }
 
     public function exportdata()
@@ -211,15 +258,26 @@ class PpeRequest extends Model
             });
         }
 
-        if ($request->has('ppe_type') && $request->ppe_type) {
-            $query = $query->where('ppe_pperequest.ppe_type', 'LIKE', '%' . $request->ppe_type . '%');
+        if ($request->has('emp_id') && $request->emp_id) {
+            $query->where('emp_id', 'LIKE', '%' . $request->emp_id . '%');
         }
-        if ($request->has('ppe_name') && $request->ppe_name) {
-            $query = $query->where('ppe_pperequest.ppe_name', 'LIKE', '%' . $request->ppe_name . '%');
+        if ($request->has('emp_name') && $request->emp_name) {
+            $query->where('emp_name', 'LIKE', '%' . $request->emp_name . '%');
         }
         if ($request->has('ppe_status') && $request->ppe_status) {
+            $query->where('status', decryptId($request->ppe_status));
+        }
 
-            $query = $query->where('ppe_pperequest.status', decryptId($request->ppe_status));
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        } elseif ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('created_at', '>=', $startDate);
+        } elseif ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('created_at', '<=', $endDate);
         }
 
         return  $query->orderBy('id', 'DESC')->get();

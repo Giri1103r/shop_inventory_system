@@ -50,8 +50,8 @@
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
-                                            <button type="button" class="btn btn-primary" id="searchBtn">Search</button>
-                                            <button type="reset" class="btn btn-secondary" id="resetBtn">Reset</button>
+                                            <x-button-search></x-button-search>
+                                            <x-button-reset></x-button-reset>
                                         </div>
                                     </div>
                                 </div>
@@ -90,6 +90,12 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         $(document).ready(function() {
             var fromDatepicker = flatpickr("#from_date", {
                 dateFormat: "d-m-Y",
@@ -256,11 +262,11 @@
                 $('.buttons-page-length').find('span').text(text);
             });
 
-            $('#searchBtn').on('click', function() {
+            $('#searchform').on('click', function() {
                 table.draw();
             });
 
-            $('#resetBtn').on('click', function() {
+            $('#resetform').on('click', function() {
                 $('#emp_id').val('');
                 $('#emp_name').val('');
                 $('#from_date').val('');

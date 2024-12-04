@@ -48,6 +48,17 @@
                             {{ $value->reason}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
+                            {{isset($value->remarks) ? $value->remarks : 'Null' }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->approved_by ? getusername($value->approved_by) : 'Null' }}
+                        </td>
+
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{isset($value->approve_status) ? $value->approve_status : '' }}
+                        </td>
+
+                        <td style='padding: 7px;border: 0.5px solid'>
                             @php
                                 $status = $value->status == 1 ? 'Active' : 'In-Active';
                             @endphp

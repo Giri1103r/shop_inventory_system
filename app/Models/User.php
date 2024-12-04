@@ -215,7 +215,7 @@ class User extends Authenticatable
             'first_name' => $employee->emp_name,
             'last_name' => '',
             'email' => $employee->emp_email,
-            'role' => $commaSeparatedRoles ,
+            'role' => $commaSeparatedRoles,
             'employee_id' => $employee->emp_id,
             'department_id' => decryptId($employee->emp_department_id),
             'designation_id' => decryptId($employee->emp_designation_id),
@@ -227,28 +227,62 @@ class User extends Authenticatable
         return $this->where('employee_id', $employee->emp_id)->update($data);
     }
 
-    public function getUserdata(){
+    public function getUserdata()
+    {
         $user = Auth::user()->employee_id;
         $data = User::where('employee_id', $user)->first();
         return $data;
     }
 
-    public function findEhsofficer(){
-          return User::whereRaw('FIND_IN_SET(?, role)', [3])
-          ->get();
+    public function findEhsofficer()
+    {
+        return User::whereRaw('FIND_IN_SET(?, role)', [3])
+            ->get();
+    }
+    public function assigneduser($ehsofficer)
+    {
+        return $ehsofficer->pluck('id')->toArray();
     }
 
-    public function findDepartmenthod($departmentId){
-        return User::where('department_id',$departmentId)
-       ->whereRaw('FIND_IN_SET(?, role)', [4])
-       ->pluck('email')
-        ->first();
-    }
-    public function findStoremanager(){
-        return User::select('email')
-       ->whereRaw('FIND_IN_SET(?, role)', [4]);
+    public function finduseremail($empId)
+    {
+        return User::where('employee_id', $empId)
+            ->pluck('email')
+            ->first();
     }
 
+    public function findDepartmenthod($departmentId)
+    {
+        return User::where('department_id', $departmentId)
+            ->whereRaw('FIND_IN_SET(?, role)', [4])
+            ->pluck('email')
+            ->first();
+    }
+    public function requestorId(){
+        return $this->pluck('id')->toArray();
+    }
+    public function findStoremanager()
+    {
+        return User::whereRaw('FIND_IN_SET(?, role)', [5])
+            ->pluck('email')
+            ->first();
+    }
+    public function getdepartmenthodId($departmentId)
+    {
+        return User::where('department_id', $departmentId)
+            ->whereRaw('FIND_IN_SET(?, role)', [4])
+            ->pluck('id')
+            ->toArray();
+    }
+
+    public function getStoreManagerId(){
+        return $this->whereRaw('FIND_IN_SET(?, role)', [5])->pluck('id')->toArray();
+    }
+
+    public function getrequestId($empId)
+    {
+        return User::where('employee_id', $empId)->pluck('id')->toArray();
+    }
 
 
     public function exportdata()

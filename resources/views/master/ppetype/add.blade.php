@@ -69,6 +69,12 @@
 @endsection
 @push('script')
 <script>
+      $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
     $(function() {
         $('#PpeTypeForm').validate({
             rules: {

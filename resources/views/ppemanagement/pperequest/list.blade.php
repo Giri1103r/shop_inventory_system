@@ -10,7 +10,8 @@
                     <h4 class="card-title"></h4>
                     <div class="d-flex justify-content-end p-2 me-2">
                         <x-button-filter dataId="" class="search me-2" href=""></x-button-filter>
-                        <x-button-add dataId="" class="add btn btn-primary" href="{{ admin_url('ppe_request/add') }}">Add</x-button-add>
+                        <x-button-add dataId="" class="add btn btn-primary"
+                            href="{{ admin_url('ppe_request/add') }}">Add</x-button-add>
                     </div>
 
 
@@ -20,28 +21,26 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">PPE Type</label>
-                                            <select name="ppe_type" id="ppe_type" style="width: 100%"
-                                                class="form-select form-select-sm  single-select">
-                                                <option value="">Select the ppe type</option>
-                                                @foreach ($ppetype as $type)
-                                                    <option value="{{ $type->id }}">{{ $type->ppe_type }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
+                                            <label for="emp_id" class="form-label ">Employee ID</label>
+                                            <input type="text" name="emp_id" id="emp_id"
+                                                class="form-control form-control-sm">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">PPE Name</label>
-                                            <select name="ppe_name" id="ppe_name" style="width: 100%"
-                                                class="form-select form-select-sm single-select ">
-                                                <option value="">Select the PPE name</option>
-                                                @foreach ($ppename as $name)
-                                                    <option value="{{ $name->id }}">{{ $name->ppe_name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
+                                            <label for="emp_name" class="form-label ">Employee Name</label>
+                                            <input type="text" name="emp_name" id="emp_name"
+                                                class="form-control form-control-sm">
                                         </div>
 
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="from_date" class="form-label ">From Date</label>
+                                            <input type="text" name="from_date" id="from_date"
+                                                class="form-control form-control-sm">
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="from_date" class="form-label ">To Date</label>
+                                            <input type="text" name="to_date" id="to_date"
+                                                class="form-control form-control-sm">
+                                        </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="ppe_status" id="ppe_status" style="width: 100%"
@@ -52,8 +51,8 @@
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
-                                            <button type="button" class="btn btn-primary" id="searchBtn">Search</button>
-                                            <button type="reset" class="btn btn-secondary" id="resetBtn">Reset</button>
+                                            <x-button-search></x-button-search>
+                                            <x-button-reset></x-button-reset>
                                         </div>
                                     </div>
                                 </div>
@@ -92,8 +91,32 @@
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
+        $(document).ready(function() {
             var firstTh = $('.datatable-list thead th:first');
             firstTh.removeClass('sorting_asc');
+        });
+
+        $(document).ready(function() {
+            var fromDatepicker = flatpickr("#from_date", {
+                dateFormat: "d-m-Y",
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        var startDate = selectedDates[0];
+                        toDatepicker.set('minDate', startDate);
+                        toDatepicker.clear();
+                    }
+                }
+            });
+
+            var toDatepicker = flatpickr("#to_date", {
+                dateFormat: "d-m-Y",
+                minDate: "today"
+            });
         });
 
         $(function() {
@@ -129,8 +152,10 @@
                             .attr('content')
                     },
                     data: function(d) {
-                        d.ppe_name = $('#ppe_name').val();
-                        d.ppe_type = $('#ppe_type').val();
+                        d.emp_id = $('#emp_id').val();
+                        d.emp_name = $('#emp_name').val();
+                        d.from_date = $('#from_date').val();
+                        d.to_date = $('#to_date').val();
                         d.ppe_status = $('#ppe_status').val();
 
                     }
@@ -198,17 +223,21 @@
                                 text: '{{ __('common.pdf') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    ppe_name = $('#ppe_name').val();
-                                    ppe_type = $('#ppe_type').val();
-                                    ppe_status = $('#ppe_status').val();
+                                    var emp_id = $('#emp_id').val();
+                                    var emp_name = $('#emp_name').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
+                                    var ppe_status = $('#ppe_status').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
                                         "{{ admin_url('ppe_request/export/pdf') }}" +
                                         '?search=' + searchValue +
-                                        '&ppe_name=' + ppe_name +
-                                        '&ppe_type=' + ppe_type +
+                                        '&emp_id=' + emp_id +
+                                        '&emp_name=' + emp_name +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&ppe_status=' + ppe_status
 
                                 }
@@ -218,17 +247,21 @@
                                 text: '{{ __('common.excel') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    ppe_name = $('#ppe_name').val();
-                                    ppe_type = $('#ppe_type').val();
-                                    ppe_status = $('#ppe_status').val();
+                                    var emp_id = $('#emp_id').val();
+                                    var emp_name = $('#emp_name').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
+                                    var ppe_status = $('#ppe_status').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
                                         "{{ admin_url('ppe_request/export/excel') }}" +
                                         '?search=' + searchValue +
-                                        '&ppe_name=' + ppe_name +
-                                        '&ppe_type=' + ppe_type +
+                                        '&emp_id=' + emp_id +
+                                        '&emp_name=' + emp_name +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&ppe_status=' + ppe_status
 
                                 }
@@ -249,20 +282,18 @@
                 $('.buttons-page-length').find('span').text(text);
             });
 
-            $(document).on('click', '#searchform', function() {
-                var ppeName = $('#ppe_name').val();
-                var ppeType = $('#ppe_type').val();
-                var ppeStatus = $('#ppe_status').val();
+            $('#searchform').on('click', function() {
                 table.draw();
             });
 
-            $(document).on('click', '#resetform', function() {
-                $('#ppe_name').val('');
-                $('#ppe_type').val('');
-                $('#formsearch .single-select').trigger('change');
-                setTimeout(function() {
-                    table.draw();
-                }, 150);
+            $('#resetform').on('click', function() {
+                $('#emp_id').val('');
+                $('#emp_name').val('');
+                $('#from_date').val('');
+                $('#to_date').val('');
+
+                $('#ppe_status').val('');;
+                table.draw();
             });
 
 

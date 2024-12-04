@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Ppemanagement;
+
 use App\Models\Master\Employee;
 use App\Models\Master\PpeRequest;
 use App\Models\Master\PpeType;
@@ -33,7 +34,6 @@ class PpeExemptionController extends Controller
         $this->uploadlog = new UploadLog();
         $this->user = new User();
         $this->pperequest = new PpeRequest();
-
     }
     public function index(Request $request)
     {
@@ -70,7 +70,7 @@ class PpeExemptionController extends Controller
                             $btn .= '<a href="' . admin_url('ppe_exemption/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
                             if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) && $row->approve_status == 'PENDING') {
-                            $btn .= '<a href="' . admin_url('ppe_exemption/approval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ppe_exemption/approval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
                             }
                             return $btn;
                         })
@@ -91,13 +91,14 @@ class PpeExemptionController extends Controller
     }
 
 
-    public function add(){
+    public function add()
+    {
 
-         $userData = $this->user->getUserdata();
+        $userData = $this->user->getUserdata();
         $data = [
-          'userData'=>$userData,
+            'userData' => $userData,
         ];
-        return view('ppemanagement.ppeexemption.add' ,$data);
+        return view('ppemanagement.ppeexemption.add', $data);
     }
 
     public function store(Request $request)
@@ -127,7 +128,31 @@ class PpeExemptionController extends Controller
 
             try {
 
-                $this->ppeexemption->store();
+                $ppeexemption = $this->ppeexemption->store();
+                $id = $ppeexemption->id;
+                $message = 'New Exemption Request';
+                $ehsofficer = $this->user->findEhsofficer();
+                $assigned_user = $this->user->assigneduser($ehsofficer);
+                $img = admin_url('public/assets/images/ppe-management.jpg');
+                $notificationData = array(
+                    'notification_type' => 1,
+                    'module_type' => 3,
+                    'notification_message' => $message,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $message,
+                        'message' => $ppeexemption->emp_name . ' has requested a PPE Exemption request on ' . displaydateformat($ppeexemption->created_at) . ' from ' .
+                            displaydateformat($ppeexemption->from_date) . ' to ' . displaydateformat($ppeexemption->to_date),
+                        'icon' =>$img,
+                        'module' => 1,
+                    )),
+                    'web_link' => admin_url('ppe_exemption/approval/view/' . encryptId($id)),
+                    'assigned_user' => array_to_string($assigned_user),
+                    'created_by' => Auth::id(),
+                );
+
+                notificationSave($notificationData);
+
+
                 Session::flash('success', __('PPE Exemption is taken  added successfully'));
                 return redirect(admin_url('ppe_exemption/list'));
             } catch (Exception $ex) {
@@ -142,44 +167,46 @@ class PpeExemptionController extends Controller
         }
     }
 
-    public function view(Request $request){
+    public function view(Request $request)
+    {
 
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $ppeexemption = $this->ppeexemption->selectOne($id);
             }
-            $data =[
-              'ppeexemption'=>  $ppeexemption,
-              'encryptid' => $request->id,
+            $data = [
+                'ppeexemption' =>  $ppeexemption,
+                'encryptid' => $request->id,
             ];
-            return view('ppemanagement.ppeexemption.view' ,$data);
+            return view('ppemanagement.ppeexemption.view', $data);
         } catch (Exception $ex) {
             report($ex);
         }
     }
 
-    public function edit(Request $request){
-        try{
+    public function edit(Request $request)
+    {
+        try {
             $id = decryptId($request->id);
             $ppeexemption = $this->ppeexemption->find($id);
             $userData = $this->user->getUserdata();
 
             $data = [
-              'userData'=>$userData,
-              'ppeexemption'=>$ppeexemption,
-              'encryptid' => $request->id,
+                'userData' => $userData,
+                'ppeexemption' => $ppeexemption,
+                'encryptid' => $request->id,
             ];
 
             return view('ppemanagement.ppeexemption.edit', $data);
-        }
-        catch(Exception $ex){
+        } catch (Exception $ex) {
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ppe_exemption/list'));
         }
     }
 
-    public function update(Request $request){
+    public function update(Request $request)
+    {
         try {
             $id = decryptId($request->id);
             $rules = [
@@ -205,7 +232,32 @@ class PpeExemptionController extends Controller
 
             try {
 
-                $this->ppeexemption->updates($id);
+                $ppeexemption =  $this->ppeexemption->updates($id);
+
+                // Notification
+
+                $data = $this->ppeexemption->exemptiondata($id);
+                $message = 'New Exemption Request';
+                $ehsofficer = $this->user->findEhsofficer();
+                $assigned_user = $this->user->assigneduser($ehsofficer);
+                $img = admin_url('public/assets/images/ppe-management.jpg');
+                $notificationData = array(
+                    'notification_type' => 1,
+                    'module_type' => 3,
+                    'notification_message' => $message,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $message,
+                        'message' => $data->emp_name . ' updated has requested a PPE Exemption request on ' . displaydateformat($data->created_at) . ' from ' .
+                            displaydateformat($data->from_date) . ' to ' . displaydateformat($data->to_date),
+                        'icon' =>  $img ,
+                        'module' => 1,
+                    )),
+                    'assigned_user' => array_to_string($assigned_user),
+                    'created_by' => Auth::id(),
+                );
+
+                notificationSave($notificationData);
+
                 Session::flash('success', __('PPE Exemption is taken updated successfully'));
                 return redirect(admin_url('ppe_exemption/list'));
             } catch (Exception $ex) {
@@ -249,23 +301,25 @@ class PpeExemptionController extends Controller
         }
     }
 
-    public function ApprovalReject(Request $request){
+    public function ApprovalReject(Request $request)
+    {
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $ppeexemption = $this->ppeexemption->selectOne($id);
             }
-            $data =[
-              'ppeexemption'=>  $ppeexemption,
-              'encryptid' => $request->id,
+            $data = [
+                'ppeexemption' =>  $ppeexemption,
+                'encryptid' => $request->id,
             ];
-            return view('ppemanagement.ppeexemption.approvereject' ,$data);
+            return view('ppemanagement.ppeexemption.approvereject', $data);
         } catch (Exception $ex) {
             report($ex);
         }
     }
 
-    public function storeapprovereject(Request $request){
+    public function storeapprovereject(Request $request)
+    {
 
         $rules = [
             'remarks' => 'required|min:3|max:255|regex:/^[a-zA-Z].*/',
@@ -287,7 +341,8 @@ class PpeExemptionController extends Controller
         try {
             $emp_details = $this->ppeexemption->find($id);
             $department =  $emp_details->department;
-            $departmentId = $this->ppeexemption->findDepartment( $department)->department;
+            $departmentId = $this->ppeexemption->findDepartment($department, $id);
+
             $action = $request->input('action');
             $remarks = $request->input('remarks');
             $approved_at = $request->input('date');
@@ -303,8 +358,8 @@ class PpeExemptionController extends Controller
             $details = [
                 'emp_id' => $emp_details->emp_id,
                 'emp_name' => $emp_details->emp_name,
-                'remarks' =>$updateData['remarks'],
-                'status' =>$updateData['approve_status'],
+                'remarks' => $updateData['remarks'],
+                'status' => $updateData['approve_status'],
                 'department' => $emp_details->department,
                 'unit' => $emp_details->unit,
                 'approved_by' => $emp_details->approved_by,
@@ -318,10 +373,32 @@ class PpeExemptionController extends Controller
                 Mail::to($recipients)->send(new PpeExemptionEmail($details));
             }
 
+            $message = 'New Exemption Request';
+            $ehsofficer = $this->user->findEhsofficer();
+            $hodId = $this->user->getdepartmenthodId($departmentId);
+            $requestorId = $this->user->getrequestId($empId);
+            $assigned_user = array_merge($hodId, $requestorId);
+            $img = admin_url('public/assets/images/ppe-management.jpg');
+            $notificationData = array(
+                'notification_type' => 1,
+                'module_type' => 3,
+                'notification_message' => $message,
+                'mobile_notification' => json_encode(array(
+                    'title' => $message,
+                    'message' => getUsername($updateData['approved_by']) . " has {$updateData['approve_status']} a PPE Exemption request on " . displaydateformat($emp_details->created_at) . " from " . displaydateformat($emp_details->from_date) . " to " . displaydateformat($emp_details->to_date),
+                    'icon' => $img,
+                    'module' => 1,
+                )),
+                'web_link' => admin_url('ppe_exemption/approval/view/' . encryptId($id)),
+                'assigned_user' => array_to_string($assigned_user),
+                'created_by' => Auth::id(),
+            );
+
+            notificationSave($notificationData);
+
             Session::flash('success', 'PPE Exemption has successfully responded');
             return redirect(admin_url('ppe_exemption/list'));
         } catch (Exception $ex) {
-            dd($ex);
             Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ppe_exemption/list'));
         }
@@ -334,6 +411,10 @@ class PpeExemptionController extends Controller
 
             $allData = $this->ppeexemption->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 __("Emp Id"),
@@ -343,6 +424,9 @@ class PpeExemptionController extends Controller
                 __("From Date"),
                 __("To Date"),
                 __("Reason"),
+                __("Remarks"),
+                __("EHS Officer Approval"),
+                __("Approve Status"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -355,11 +439,14 @@ class PpeExemptionController extends Controller
                 $export[] =  $i;
                 $export[] =  $data->emp_id;
                 $export[] =  $data->emp_name;
-                $export[] = getDepartment($data->department );
+                $export[] = getDepartment($data->department);
                 $export[] =  getUnitname($data->unit);
                 $export[] =  Displaydateformat($data->from_date);
                 $export[] =  Displaydateformat($data->to_date);
                 $export[] =  $data->reason;
+                $export[] =  $data->remarks ? $data->remarks : 'Null';
+                $export[] =  $data->approved_by ? getusername($data->approved_by) : 'Null';
+                $export[] =  $data->approve_status;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -370,10 +457,10 @@ class PpeExemptionController extends Controller
             }
 
             $writer = SimpleExcelWriter::streamDownload('PPE Exemption to be taken .xlsx')
-            ->addHeader($header)
-            ->addRows(
-                $exportData
-            );
+                ->addHeader($header)
+                ->addRows(
+                    $exportData
+                );
         } catch (Exception $ex) {
             report($ex);
         }
@@ -389,6 +476,11 @@ class PpeExemptionController extends Controller
             ini_set("pcre.backtrack_limit", "5000000");
 
             $allData = $this->ppeexemption->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 __("Emp Id"),
@@ -398,6 +490,9 @@ class PpeExemptionController extends Controller
                 __("From Date"),
                 __("To Date"),
                 __("Reason"),
+                __("Remarks"),
+                __("EHS Officer Approval"),
+                __("Approve Status"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -418,6 +513,7 @@ class PpeExemptionController extends Controller
 
             ];
 
+
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
@@ -435,5 +531,4 @@ class PpeExemptionController extends Controller
             report($ex);
         }
     }
-
 }

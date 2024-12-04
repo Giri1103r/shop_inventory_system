@@ -44,7 +44,7 @@
                                                 </div>
                                                 <div class="col-md-4 mb-3">
                                                     <label for="date" class="form-label">Date</label>
-                                                    <input type="text" class="form-control form-control-sm" id="date" name="date" readonly value="{{ today() }}">
+                                                    <input type="text" class="form-control form-control-sm" id="date" name="date" readonly value="{{ date('d-m-Y H:i:s') }}">
                                                 </div>
                                                 <div class="col-md-12 mb-3">
                                                     <div class="mb-1">

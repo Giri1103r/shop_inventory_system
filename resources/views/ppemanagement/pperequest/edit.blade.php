@@ -93,8 +93,8 @@
                                                         @endforeach
                                                     </select>
                                                     @error('ppe_name')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                     <div class="text-danger" id="ppe_name_error"></div>
 
                                                 </div>
@@ -130,6 +130,12 @@
 
 @push('script')
     <script>
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         $(document).ready(function() {
             $(document).on('change', '#ppe_type', function() {
                 var ppeTypeId = $(this).val();

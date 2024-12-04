@@ -65,7 +65,7 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_ADMIN') or define('ROLE_ADMIN', 2);
         defined('ROLE_EHS_OFFICER') or define('ROLE_EHS_OFFICER', 3);
         defined('ROLE_HOD') or define('ROLE_HOD', 4);
-
+        defined('ROLE_STORE_MANAGER') or define('ROLE_STORE_MANAGER', 5);
 
         View::composer('*', function ($view) {
 

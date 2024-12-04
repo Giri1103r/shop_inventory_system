@@ -43,8 +43,14 @@
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <label for="date" class="form-label require">From Date</label>
-                                                <input type="text" class="form-control form-control-sm" name="from_date"
-                                                    id="from_date" placeholder="Enter the From Date">
+                                                <div class="input-group date form-input">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                        name="from_date" id="from_date" placeholder="Enter the From Date"
+                                                        autocomplete="off">
+                                                    <div class="input-group-addon input-group-text">
+                                                        <span class="fa fa-calendar"></span>
+                                                    </div>
+                                                </div>
                                                 @error('from_date')
                                                     <div class="text-danger">{{ $message }}</div>
                                                 @enderror
@@ -52,8 +58,15 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <label for="date" class="form-label require">To Date</label>
-                                                <input type="text" class="form-control form-control-sm" name="to_date"
-                                                    id="to_date" placeholder="Enter the To Date">
+                                                <div class="input-group date form-input">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                        name="to_date" autocomplete="off" id="to_date"
+                                                        placeholder="Enter the To Date">
+                                                    <div class="input-group-addon input-group-text">
+                                                        <span class="fa fa-calendar"></span>
+                                                    </div>
+                                                </div>
+
                                                 @error('to_date')
                                                     <div class="text-danger">{{ $message }}</div>
                                                 @enderror
@@ -74,6 +87,7 @@
                                                     conditions</label>
                                                 <div class="text-danger" id="checkbox_error"></div>
                                             </div>
+
                                         </div>
                                         <hr>
                                         <div class="submit-button float-end">
@@ -100,8 +114,19 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+            $('label[for="checkbox"]').on('click', function(e) {
+                e.preventDefault();
+                $('#checkbox').prop('checked', !$('#checkbox').prop('checked'));
+            });
+        });
+        $(document).ready(function() {
             var fromDatepicker = flatpickr("#from_date", {
                 dateFormat: "d-m-Y",
+                minDate: new Date(),
                 onChange: function(selectedDates) {
                     if (selectedDates.length > 0) {
                         var startDate = selectedDates[0];
@@ -113,8 +138,11 @@
 
             var toDatepicker = flatpickr("#to_date", {
                 dateFormat: "d-m-Y",
-                minDate: "today"
+                minDate: new Date() 
             });
+
+
+
 
             $('#ppeExemptionForm').on('submit', function(e) {
                 let valid = true;
