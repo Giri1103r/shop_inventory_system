@@ -233,12 +233,18 @@
                 location.reload();
             });
         });
+      
         flatpickr("#joining_date_datetime_datepicker", {
             enableTime: true,
             dateFormat: "d-m-Y H:i",
             time_24hr: true,
             minuteIncrement: 5,
+            minDate: "1995-01-01",
+            clickOpens: true,
+            disableMobile: true, 
+            allowInput: false,
         });
+
         jQuery.validator.addMethod("strictEmail", function(value, element) {
             return this.optional(element) || /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
         }, "Please enter a valid email address");
@@ -250,7 +256,6 @@
                     },
                     email: {
                         required: true,
-                        // email: true,
                         strictEmail: true,
                         remote: {
                             url: '{{ admin_url('employee/unique') }}',
@@ -285,9 +290,8 @@
                     },
                     email: {
                         required: "{{ __('Employee Email is Required') }}",
-                        // email: "Please enter a valid email address",
                         strictEmail: "Please enter a valid email address",
-                        email: "{{ __('Email should be unique') }}"
+                        remote: "{{ __('Email should be unique') }}"
                     },
                     user_role: {
                         required: "{{ __('User Role is Required') }}",
