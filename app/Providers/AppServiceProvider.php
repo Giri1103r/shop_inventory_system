@@ -64,6 +64,7 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_SUPERADMIN') or define('ROLE_SUPERADMIN', 1);
         defined('ROLE_ADMIN') or define('ROLE_ADMIN', 2);
         defined('ROLE_EHS_OFFICER') or define('ROLE_EHS_OFFICER', 3);
+        defined('ROLE_TRAINER') or define('ROLE_TRAINER', 8);
 
         View::composer('*', function ($view) {
 

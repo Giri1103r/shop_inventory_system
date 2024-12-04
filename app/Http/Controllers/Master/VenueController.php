@@ -438,7 +438,24 @@ class VenueController extends Controller
             report($ex);
         }
     }
-
+    public function Uniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $name_of_the_conference_hall = $request->name_of_the_conference_hall;
+            $unit_id = decryptId($request->unit_id);
+            $id = $request->id;
+            if ($id == '') {
+                $record = $this->venue->uniqueCheck($name_of_the_conference_hall, $unit_id);
+            } else {
+                $id = decryptId($id);
+                $record = $this->venue->ExistuniqueCheck($name_of_the_conference_hall, $unit_id, $id);
+            }
+            if ($record->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
+        }
+    }
     public function DownloadSample(Request $request)
     {
 

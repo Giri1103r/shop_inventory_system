@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Training Matrix')
-@section('pageurl', admin_url('training_matrix/list'))
+@section('title', 'Training Schedule')
+@section('pageurl', admin_url('training_schedule/list'))
 
 
 @section('content')
@@ -14,11 +14,11 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         @if (CheckUserPermission('import'))
-                            <x-button-import href="{{ admin_url('training_matrix/import') }}"></x-button-import>
+                            <x-button-import href="{{ admin_url('training_schedule/import') }}"></x-button-import>
                         @endif
                         @if (CheckUserPermission('add'))
                             <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('training_matrix/add') }}">Add</x-button-add>
+                                href="{{ admin_url('training_schedule/add') }}">Add</x-button-add>
                         @endif
                     </div>
                     <div id="search" class="collapse">
@@ -26,6 +26,18 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="from_date" class="form-label ">From Date</label>
+                                            <input type="text" name ="from_date" id="from_date_datepicker"
+                                                class="form-control" placeholder="From Date">
+                                        </div>
+
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="to_date" class="form-label ">To Date</label>
+                                            <input type="text" name="to_date" id="to_date_datepicker"
+                                                class="form-control" placeholder="To Date">
+                                        </div>
+
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="topic_id" class="form-label ">Training Topic</label>
                                             <select name="topic_id" id="topic_id" class=" form-control single-select"
@@ -48,48 +60,19 @@
                                                 @endforeach
                                             </select>
                                         </div>
+
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label class="form-label ">Training Offered for</label>
-                                            <select name="training_offered_for" id="training_offered_for"
-                                                class="form-control single-select" style="width: 100%;">
-                                                <option value="">Select Training Offered for</option>
-                                                <option value="1">Worker</option>
-                                                <option value="2">Executive</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="unit_id" class="form-label ">Unit Name</label>
+                                            <label for="unit_id" class="form-label ">Unit</label>
                                             <select name="unit_id" id="unit_id" class=" form-control single-select"
                                                 style="width: 100%">
-                                                <option value="">Select Unit Name</option>
+                                                <option value="">Select Unit</option>
                                                 @foreach ($unitList as $unit)
                                                     <option value="{{ encryptId($unit->id) }}">
                                                         {{ $unit->unit_name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="department_id" class="form-label ">Target Department </label>
-                                            <select name="department_id" id="department_id"
-                                                class=" form-control single-select" style="width: 100%">
-                                                <option value="">Select Target Department </option>
-                                                @foreach ($departmentList as $department)
-                                                    <option value="{{ encryptId($department->id) }}">
-                                                        {{ $department->department_name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-
-
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label class="form-label ">Mode of Training</label>
-                                            <select name="mode_of_training" id="mode_of_training"
-                                                class="form-control single-select" style="width: 100%;">
-                                                <option value="">Select Mode of training</option>
-                                                <option value="1">Online</option>
-                                                <option value="2">Offline</option>
-                                            </select>
-                                        </div>
+                                       
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
@@ -119,10 +102,11 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
+                                        <th>From Date </th>
+                                        <th>To Date </th>
                                         <th>Training Topic</th>
                                         <th>Trainer</th>
-                                        <th>Unit Name</th>
-                                        <th>Department Name</th>
+                                        <th>Unit</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -147,7 +131,12 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
-
+            flatpickr("#from_date_datepicker", {
+                dateFormat: "d-m-Y",
+            });
+            flatpickr("#to_date_datepicker", {
+                dateFormat: "d-m-Y",
+            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -174,16 +163,17 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('training_matrix/list') }}",
+                        url: "{{ admin_url('training_schedule/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                                 .attr('content')
                         },
                         data: function(d) {
+                            d.from_date = $('#from_date').val();
+                            d.to_date = $('#to_date').val();
                             d.topic_id = $('#topic_id').val();
                             d.trainer_id = $('#trainer_id').val();
-                            d.training_offered_for = $('#training_offered_for').val();
                             d.unit_id = $('#unit_id').val();
                             d.status = $('#status').val();
 
@@ -195,6 +185,14 @@
                             searchable: true,
                         },
                         {
+                            data: 'from_date',
+                            name: 'from_date'
+                        },
+                        {
+                            data: 'to_date',
+                            name: 'to_date'
+                        },
+                        {
                             data: 'topic_name',
                             name: 'topic_name'
                         },
@@ -202,14 +200,9 @@
                             data: 'emp_name',
                             name: 'emp_name'
                         },
-
                         {
                             data: 'unit_name',
                             name: 'unit_name'
-                        },
-                        {
-                            data: 'department_name',
-                            name: 'department_name'
                         },
                         {
                             data: 'status',
@@ -252,20 +245,22 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
+                                        from_date = $('#from_date').val();
+                                        to_date = $('#to_date').val();
                                         topic_id = $('#topic_id').val();
                                         trainer_id = $('#trainer_id').val();
-                                        training_offered_for = $('#training_offered_for').val();
                                         unit_id = $('#unit_id').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('training_matrix/export/pdf') }}" +
+                                            "{{ admin_url('training_schedule/export/pdf') }}" +
                                             '?search=' + searchValue +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&topic_id=' + topic_id +
                                             '&trainer_id=' + trainer_id +
-                                            '&training_offered_for=' + training_offered_for +
                                             '&unit_id=' + unit_id +
                                             '&status=' + status
                                     }
@@ -275,19 +270,21 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
+                                        from_date = $('#from_date').val();
+                                        to_date = $('#to_date').val();
                                         topic_id = $('#topic_id').val();
                                         trainer_id = $('#trainer_id').val();
-                                        training_offered_for = $('#training_offered_for').val();
                                         unit_id = $('#unit_id').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('training_matrix/export/excel') }}" +
+                                            "{{ admin_url('training_schedule/export/excel') }}" +
                                             '?search=' + searchValue +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&topic_id=' + topic_id +
                                             '&trainer_id=' + trainer_id +
-                                            '&training_offered_for=' + training_offered_for +
                                             '&unit_id=' + unit_id +
                                             '&status=' + status
                                     }
@@ -325,12 +322,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Training Matrix') }}';
+                        var title = '{{ __('Do You want to In-Activate Training Schedule') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Training Matrix') }}';
+                        var title = '{{ __('Do You want to Activate Training Schedule') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -350,7 +347,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('training_matrix/status') }}",
+                                url: "{{ admin_url('training_schedule/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -398,7 +395,7 @@
                     var id = $(this).data('id');
                     var login_id = $(this).data('login_id');
 
-                    var title = '{{ __('Do You want to Delete Training Matrix') }}';
+                    var title = '{{ __('Do You want to Delete Training Schedule') }}';
                     var text = '{{ __('common.delete') }}';
                     var btncolor = '#dc3545'
 
@@ -418,7 +415,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('training_matrix/delete') }}",
+                                url: "{{ admin_url('training_schedule/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -457,7 +454,7 @@
                                         Swal.fire({
                                             icon: 'error',
                                             title: 'Error',
-                                            text: 'Training Matrix Deletion Failed: Module Dependencies Exist.',
+                                            text: 'Training Schedule Deletion Failed: Module Dependencies Exist.',
                                         });
                                     } else {
                                         $.notify(data.responseJSON.msg, "error");

@@ -15,7 +15,7 @@ class Topic extends Model
     use  HasFactory;
 
 
-    protected $table = 'masters_topic';
+    protected $table = 'training_masters_topic';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -39,7 +39,7 @@ class Topic extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_topic.*');
+        $query = $this->select('training_masters_topic.*');
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -83,16 +83,17 @@ class Topic extends Model
         return $datas;
     }
 
+  
     public function UniqueCheck($data)
     {
 
-        return $this->where($data['param'],  $data['value'])->get();
+        return $this->where('topic_name',  $data)->get();
     }
 
-    public function ExistuniqueCheck($data)
+    public function ExistuniqueCheck($data, $id)
     {
-        return $this->where($data['param'],  $data['value'])
-            ->where('id', '!=', decryptId($data['id']))
+        return $this->where('topic_name',  $data)
+            ->where('id', '!=', $id)
             ->get();
     }
 
@@ -154,7 +155,7 @@ class Topic extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_topic.*');
+        $query = $this->select('training_masters_topic.*');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -170,7 +171,7 @@ class Topic extends Model
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('masters_topic.status', decryptId($request->status));
+            $query = $query->where('training_masters_topic.status', decryptId($request->status));
         }
         $query->orderBy('id', 'DESC');
         return  $query->get();
@@ -180,9 +181,9 @@ class Topic extends Model
     {
 
         $data = $this->select(
-            'masters_topic.*'
+            'training_masters_topic.*'
         )
-            ->where('masters_topic.id', $id)
+            ->where('training_masters_topic.id', $id)
             ->first();
 
         return $data;
@@ -191,7 +192,7 @@ class Topic extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('masters_topic'));
+        static::addGlobalScope(new TrashScope('training_masters_topic'));
 
         static::created(function ($model) {
 
