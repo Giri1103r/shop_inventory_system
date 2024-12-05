@@ -31,7 +31,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use App\Models\Master\Location;
 use App\Models\Master\Company;
 
-class ImportLocationJob implements ShouldQueue
+class ImportLocationJob
 // class ImportLocationJob
 {
 
@@ -63,7 +63,6 @@ class ImportLocationJob implements ShouldQueue
         $update_array = array(
             'upload_status' => 1,
         );
-
         UploadLog::where('id', $this->details['log_id'])
             ->update($update_array);
 
@@ -164,7 +163,7 @@ class ImportLocationJob implements ShouldQueue
             $companyExist = Company::select('id')->where('company_name', $companyname)->first();
 
             if ($companyExist) {
- 
+
                 $locationExist = Location::where('location_name', $location_name)
                     ->where('company_id', $companyExist->id)
                     ->exists();
@@ -213,10 +212,10 @@ class ImportLocationJob implements ShouldQueue
             );
             Session::flash('success', 'Upload completed successfully.');
         }
-        
+
         // dd($cond_error_datas,$this->details['log_id']);
         $final_update_array = array(
-            'upload_status' => 2,
+            'upload_status' => 3,
         );
         UploadLog::where('id', $this->details['log_id'])->update($final_update_array);
     }

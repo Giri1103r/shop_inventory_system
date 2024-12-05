@@ -350,7 +350,7 @@ class CompanyController extends Controller
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
- 
+
     public function Import(Request $request)
     {
         $data = array();
@@ -428,7 +428,7 @@ class CompanyController extends Controller
             Session::flash('success', __('Company uploaded sucessfully'));
             return redirect(admin_url('company/list'));
         } catch (Exception $ex) {
-dd($ex);
+
             Session::flash('error', __('Company upload failed'));
             return redirect(admin_url('company/list'));
         }

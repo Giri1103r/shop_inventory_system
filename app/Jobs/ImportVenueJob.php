@@ -30,7 +30,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use App\Models\Master\Venue;
 use App\Models\Master\Unit;
 
-class ImportVenueJob implements ShouldQueue
+class ImportVenueJob 
 // class ImportVenueJob
 {
 

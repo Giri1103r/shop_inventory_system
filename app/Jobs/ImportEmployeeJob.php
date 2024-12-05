@@ -35,7 +35,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
 
-class ImportEmployeeJob implements ShouldQueue
+class ImportEmployeeJob 
 //class ImportEmployeeJob
 {
 
@@ -196,7 +196,7 @@ class ImportEmployeeJob implements ShouldQueue
                 'created_by' => $this->details['user_id']
             );
 
-           
+
             CompanyEmployee::create($data);
 
             if ($userDetails->email != '' || $userDetails->email != null) {

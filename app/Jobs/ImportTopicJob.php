@@ -29,7 +29,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 
 use App\Models\Master\Topic;
 
-class ImportTopicJob implements ShouldQueue
+class ImportTopicJob 
 // class ImportTopicJob
 {
 

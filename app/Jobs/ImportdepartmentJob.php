@@ -33,7 +33,7 @@ use App\Models\Master\Company;
 use App\Models\Master\Department;
 use App\Models\Master\Unit;
 
-class ImportdepartmentJob implements ShouldQueue
+class ImportdepartmentJob 
 // class ImportdepartmentJob
 {
 
@@ -307,7 +307,7 @@ class ImportdepartmentJob implements ShouldQueue
             );
             Session::flash('success', 'Upload completed successfully.');
         }
-        
+
 
         $final_update_array = array(
             'upload_status' => 2,

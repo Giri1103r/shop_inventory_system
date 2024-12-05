@@ -32,7 +32,7 @@ use App\Models\Master\Location;
 use App\Models\Master\Company;
 use App\Models\Master\Unit;
 
-class ImportUnitJob implements ShouldQueue
+class ImportUnitJob 
 // class ImportUnitJob
 {
 
@@ -115,7 +115,7 @@ class ImportUnitJob implements ShouldQueue
             }
 
             /* Column data validation */
-            
+
             if ($companyname == '') {
 
                 $cond_error_data = array(
@@ -128,7 +128,7 @@ class ImportUnitJob implements ShouldQueue
 
                 $i++;
                 continue;
-            } 
+            }
             // else {
 
             //     $companyExist = Company::where('company_name', $companyname)->get();
@@ -155,24 +155,24 @@ class ImportUnitJob implements ShouldQueue
                     'line_no' => $i,
                     'error' => 'Location name is missing',
                 ];
-            
+
                 $cond_error_datas[] = $cond_error_data;
                 $i++;
                 continue;
             }
-            
+
             if (empty($unit_name)) {
                 $cond_error_data = [
                     'upload_id' => $this->details['log_id'],
                     'line_no' => $i,
                     'error' => 'Unit name is missing',
                 ];
-            
+
                 $cond_error_datas[] = $cond_error_data;
                 $i++;
                 continue;
             }
-            
+
             // Check if the company exists
             $companyExist = Company::select('id')->where('company_name', $companyname)->first();
             if (!$companyExist) {
@@ -185,7 +185,7 @@ class ImportUnitJob implements ShouldQueue
                 $i++;
                 continue;
             }
-            
+
             // Check if the location exists
             $locationExist = Location::select('id')->where('location_name', $locationname)->where('company_id', $companyExist->id)->first();
             if (!$locationExist) {
@@ -198,13 +198,13 @@ class ImportUnitJob implements ShouldQueue
                 $i++;
                 continue;
             }
-            
+
             // Check if the unit exists within the same company and location
             $unitExist = Unit::where('unit_name', $unit_name)
                 ->where('company_id', $companyExist->id)
                 ->where('location_id', $locationExist->id)
                 ->exists();
-            
+
             if ($unitExist) {
                 $cond_error_data = [
                     'upload_id' => $this->details['log_id'],
@@ -215,7 +215,7 @@ class ImportUnitJob implements ShouldQueue
                 $i++;
                 continue;
             }
-            
+
             // Create the unit if it doesn't exist
             $data = [
                 'company_id' => $companyExist->id,
@@ -223,9 +223,9 @@ class ImportUnitJob implements ShouldQueue
                 'unit_name' => $unit_name,
                 'created_by' => $this->details['user_id'],
             ];
-            
+
             Unit::create($data);
-            
+
             // SmpsFactory::create($data);
 
             $i++;
@@ -233,7 +233,7 @@ class ImportUnitJob implements ShouldQueue
 
         if (count($cond_error_datas) > 0) {
             UploadLogError::insert($cond_error_datas);
-            
+
         $final_update_array = array(
             'upload_status' => 3,
         );
@@ -245,7 +245,7 @@ class ImportUnitJob implements ShouldQueue
             );
             Session::flash('success', 'Upload completed successfully.');
         }
-        
+
 
         UploadLog::where('id', $this->details['log_id'])->update($final_update_array);
     }

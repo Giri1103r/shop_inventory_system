@@ -70,7 +70,7 @@ class ImportCompanyJob
         // dd($xlsx);
         $cond_error_datas = [];
         foreach ($xlsx->rows() as $row) {
-           
+
             $sno = trim($row['0']);
             $companyname = trim($row['1']);
             $company_short_name = trim($row['2']);
@@ -79,7 +79,7 @@ class ImportCompanyJob
             /*
          * Header column validation
          */
-       
+
             if ($i == 1) {
 
                 if (count($row) == 4) {
