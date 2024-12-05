@@ -347,9 +347,6 @@
                     doi: {
                         required: true,
                     },
-                    exit_date: {
-                        required: true,
-                    },
                     mobile_no: {
                         required: true,
                     },
@@ -388,9 +385,6 @@
                     },
                     doi: {
                         required: "{{ __('DOI is Required') }}",
-                    },
-                    exit_date: {
-                        required: "{{ __('Exit Date is Required') }}",
                     },
                     mobile_no: {
                         required: "{{ __('Mobile No is Required') }}",

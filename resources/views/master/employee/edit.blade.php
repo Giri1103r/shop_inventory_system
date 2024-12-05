@@ -233,7 +233,7 @@
                 location.reload();
             });
         });
-      
+
         flatpickr("#joining_date_datetime_datepicker", {
             enableTime: true,
             dateFormat: "d-m-Y H:i",
@@ -241,7 +241,7 @@
             minuteIncrement: 5,
             minDate: "1995-01-01",
             clickOpens: true,
-            disableMobile: true, 
+            disableMobile: true,
             allowInput: false,
         });
 
@@ -270,8 +270,8 @@
                             }
                         }
                     },
-                    user_role: {
-                        required: true,
+                    'user_role[]': {
+                        required: true
                     },
                     gender: {
                         required: true,
@@ -293,8 +293,8 @@
                         strictEmail: "Please enter a valid email address",
                         remote: "{{ __('Email should be unique') }}"
                     },
-                    user_role: {
-                        required: "{{ __('User Role is Required') }}",
+                    'user_role[]': {
+                        required: "{{ __('User Role is Required') }}"
                     },
                     gender: {
                         required: "{{ __('Gender is Required') }}",

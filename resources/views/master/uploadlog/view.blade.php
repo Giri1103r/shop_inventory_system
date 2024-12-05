@@ -16,12 +16,12 @@
                             <div class="card-header">
                                 <div class="d-flex justify-content-end p-2">
                                     <a href="{{ admin_url('uploadlog/download/' . request()->logid) }}"
-                                        data-bs-toggle="tooltip" title="Download" class="btn btn-primary ms-1">
+                                        data-bs-toggle="tooltip" title="Download" class="btn btn-secondary ms-1">
                                         Download
                                     </a>
                                 
                                     <a href="{{ admin_url('uploadlog/list') }}" data-bs-toggle="tooltip" title="Back"
-                                        class="btn btn-primary ms-2">  <!-- Added ms-2 for margin on the left side of the Back button -->
+                                        class="btn btn-secondary ms-2">  <!-- Added ms-2 for margin on the left side of the Back button -->
                                         Back
                                     </a>
                                 </div>

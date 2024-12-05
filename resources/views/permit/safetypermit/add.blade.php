@@ -101,16 +101,21 @@
 
                                         <div class="row ">
                                             <div class="col-12">
-                                                <p class="fw-bold fs-5 mt-3">Type of Job: Please Tick Mark (<i class="fas fa-check text-primary"></i>)
+                                                <p class="fw-bold fs-5 mt-3">Type of Job: Please Tick Mark (<i
+                                                        class="fas fa-check text-primary"></i>)
                                                     <span class="text-danger">*</span>
                                                 </p>
                                                 <div class="card p-3 border border-success rounded mb-3">
                                                     <div class="row g-3">
                                                         @foreach ($typeofwork as $typeofwork)
                                                             <div class="col-12 col-md-4 d-flex align-items-center gap-2">
-                                                                <input type="checkbox" id="select-all" class="validate-radio-required">
-                                                                <a href="{{ asset($typeofwork->file_path) }}" target="_blank">
-                                                                    <img src="{{ asset($typeofwork->file_path) }}" alt="Image" class="img-fluid" style="max-width: 50px; object-fit: cover;">
+                                                                <input type="checkbox" id="select-all"
+                                                                    class="validate-radio-required">
+                                                                <a href="{{ asset($typeofwork->file_path) }}"
+                                                                    target="_blank">
+                                                                    <img src="{{ asset($typeofwork->file_path) }}"
+                                                                        alt="Image" class="img-fluid"
+                                                                        style="max-width: 50px; object-fit: cover;">
                                                                 </a>
                                                                 <span>{{ $typeofwork->work_name }}</span>
                                                             </div>
@@ -132,42 +137,50 @@
                                         <div class="row border p-3 mx-1">
                                             <div class="col-12 col-md-6 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
-                                                    <img src="{{ url('public/assets/images/safetypermit/power-off.png') }}" class="img-fluid" style="width: 50px; height: 50px;">
+                                                    <img src="{{ url('public/assets/images/safetypermit/power-off.png') }}"
+                                                        class="img-fluid" style="width: 50px; height: 50px;">
                                                     <label class="form-label mb-0">Shut Down Required (Yes/No)</label>
                                                     <input type="checkbox" class="validate-radio-required">
                                                 </div>
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
-                                                    <img src="{{ url('public/assets/images/safetypermit/profile.png') }}" class="img-fluid" style="width: 50px; height: 50px;">
+                                                    <img src="{{ url('public/assets/images/safetypermit/profile.png') }}"
+                                                        class="img-fluid" style="width: 50px; height: 50px;">
                                                     <label class="form-label mb-0 ">Taken By (Name & Department)</label>
-                                                    <input type="text" name="description" class="form-control" placeholder="Search by Employee Name" disabled>
+                                                    <input type="text" name="description" class="form-control"
+                                                        placeholder="Search by Employee Name" disabled>
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="row border p-3 mx-1">
                                             <div class="col-12 col-md-6 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
-                                                    <img src="{{ url('public/assets/images/safetypermit/process.png') }}" class="img-fluid" style="width: 50px; height: 50px;">
-                                                    <label class="form-label mb-0 ">Isolation/LOTO Required (Yes/No)</label>
+                                                    <img src="{{ url('public/assets/images/safetypermit/process.png') }}"
+                                                        class="img-fluid" style="width: 50px; height: 50px;">
+                                                    <label class="form-label mb-0 ">Isolation/LOTO Required
+                                                        (Yes/No)</label>
                                                     <input type="checkbox" class="validate-radio-required">
                                                 </div>
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
-                                                    <img src="{{ url('public/assets/images/safetypermit/profile.png') }}" class="img-fluid" style="width: 50px; height: 50px;">
+                                                    <img src="{{ url('public/assets/images/safetypermit/profile.png') }}"
+                                                        class="img-fluid" style="width: 50px; height: 50px;">
                                                     <label class="form-label mb-0 ">Taken By (Name & Department)</label>
-                                                    <input type="text" name="description" class="form-control" placeholder="Search by Employee Name" disabled>
+                                                    <input type="text" name="description" class="form-control"
+                                                        placeholder="Search by Employee Name" disabled>
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="row border p-3 mx-1">
                                             <div class="col-12 col-md-4 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
                                                     <label class="form-label mb-0">Loto No</label>
-                                                    <input type="text" name="description" class="form-control" placeholder="Loto No" disabled>
+                                                    <input type="text" name="description" class="form-control"
+                                                        placeholder="Loto No" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-12 col-md-8 mb-3">
@@ -177,75 +190,132 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <p class="fw-bold fs-5 mt-3">
-                                            Type of Job: Please Tick Mark (<i class="fas fa-check text-primary"></i>)
-                                            <span class="text-danger">*</span>
-                                        </p>
+
+                                        <div class="row col-md-12 d-flex mt-3">
+                                            <!-- Left Side: Scrollable on X-Axis -->
+                                            <div class="col-md-4">
+                                                <p class="fw-bold fs-5 mt-3">State of Isolation & Loto</p>
+                                                <div class="scroll-container border p-3" style="overflow-x: auto; white-space: nowrap; width: 100%;">
+                                                    <!-- First Row -->
+                                                    <div class="row mb-3" style="display: flex; flex-wrap: nowrap; justify-content: flex-start;  align-items: center;">
+                                                        <div class="d-inline-block" style="margin: 0; padding: 0; flex-shrink: 0;">
+                                                            <div class="form-group d-flex align-items-center gap-1">
+                                                                <img src="{{ url('public/assets/images/safetypermit/person.png') }}" class="img-fluid" style="width: 50px; height: 50px;">
+                                                                <label class="form-label mb-0">Air</label>
+                                                                <input type="checkbox" class="validate-radio-required">
+                                                            </div>
+                                                        </div>
+                                                        <div class="d-inline-block" style="margin-left: -200px; padding: 0; flex-shrink: 0;">
+                                                            <div class="form-group d-flex align-items-center gap-1">
+                                                                <img src="{{ url('public/assets/images/safetypermit/natural-gas.png') }}" class="img-fluid" style="width: 50px; height: 50px;">
+                                                                <label class="form-label mb-0">Gas</label>
+                                                                <input type="checkbox" class="validate-radio-required">
+                                                            </div>
+                                                        </div>
+                                                        <div class="d-inline-block" style="margin-left: -200px; padding: 0; flex-shrink: 0;">
+                                                            <div class="form-group d-flex align-items-center gap-1">
+                                                                <label class="form-label mb-0">Others if any please specify</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    
+                                                    <!-- Second Row -->
+                                                    <div class="row mb-3" style="display: flex; flex-wrap: nowrap; justify-content: flex-start;  align-items: center;">
+                                                        <div class="d-inline-block" style="margin: 0; padding: 0; flex-shrink: 0;">
+                                                            <div class="form-group d-flex align-items-center gap-1">
+                                                                <img src="{{ url('public/assets/images/safetypermit/electrician.png') }}" class="img-fluid" style="width: 50px; height: 50px;">
+                                                                <label class="form-label mb-0">Electrical</label>
+                                                                <input type="checkbox" class="validate-radio-required">
+                                                            </div>
+                                                        </div>
+                                                        <div class="d-inline-block" style="margin-left: -200px; padding: 0; flex-shrink: 0;">
+                                                            <div class="form-group d-flex align-items-center gap-1">
+                                                                <img src="{{ url('public/assets/images/safetypermit/leak.png') }}" class="img-fluid" style="width: 50px; height: 50px;">
+                                                                <label class="form-label mb-0">Water/Liquid</label>
+                                                                <input type="checkbox" class="validate-radio-required">
+                                                            </div>
+                                                        </div>
+                                                        <div class="d-inline-block" style="margin-left: -200px; padding: 0; flex-shrink: 0;">
+                                                            <div class="form-group d-flex align-items-center gap-1">
+                                                                <textarea class="form-control" placeholder="Search by Employee Name" disabled></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                
+                                            </div>
                                         
-                                     
-                                        <div class="row border rounded p-3 mx-1 ">
-                                            <div class="col-12 col-md-3 mb-3">
-                                                <div class="form-group">
-                                                    <label class="form-label">O2%</label>
-                                                    <input type="text" name="description" class="form-control" placeholder="" disabled>
+                                            <!-- Right Side: Expanded Content -->
+                                            <div class="col-md-8">
+                                                <p class="fw-bold fs-5 mt-3">Applicable for Confined Space Entry</p>
+                                        
+                                                <div class="row border rounded p-2 mx-1">
+                                                    <div class="col-12 col-md-4 mb-3">
+                                                        <div class="form-group">
+                                                            <label class="form-label">O2%</label>
+                                                            <input type="text" name="description" class="form-control" placeholder="" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-md-4 mb-3">
+                                                        <div class="form-group">
+                                                            <label class="form-label">System Isolated</label>
+                                                            <input type="checkbox" class="validate-radio-required">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-md-4 mb-3">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Rescue System Available</label>
+                                                            <input type="checkbox" class="validate-radio-required">
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-12 col-md-3 mb-3">
-                                                <div class="form-group">
-                                                    <label class="form-label">System Isolated</label>
-                                                    <input type="checkbox" class="validate-radio-required">
+                                        
+                                                <div class="row border rounded p-2 mx-1">
+                                                    <div class="col-12 col-md-4 mb-3">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Confined Space Attendant</label>
+                                                            <input type="checkbox" class="validate-radio-required">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-md-4 mb-3">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Attendant Name</label>
+                                                            <input type="text" name="description" class="form-control" placeholder="Search by Employee Name" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-md-4 mb-3">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Register for entry & exits</label>
+                                                            <input type="checkbox" class="validate-radio-required">
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-12 col-md-3 mb-3">
-                                                <div class="form-group">
-                                                    <label class="form-label">Rescue System Available</label>
-                                                    <input type="checkbox" class="validate-radio-required">
+                                        
+                                                <div class="row border rounded p-2 mx-1 mb-3">
+                                                    <div class="col-12 col-md-4 mb-3">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Any Other Gas / PPM</label>
+                                                            <input type="text" name="description" class="form-control" placeholder="Loto No" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-md-4 mb-3">
+                                                        <div class="form-group">
+                                                            <label class="form-label">PPM and is therefore safe to enter from</label>
+                                                            <input type="text" name="description" class="form-control" placeholder="" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-md-4 mb-3">
+                                                        <div class="form-group">
+                                                            <label class="form-label">To</label>
+                                                            <input type="text" name="description" class="form-control" placeholder="" disabled>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                         
-                                        <div class="row border rounded p-3 mx-1 ">
-                                            <div class="col-12 col-md-3 mb-3">
-                                                <div class="form-group">
-                                                    <label class="form-label">Confined Space Attendant</label>
-                                                    <input type="checkbox" class="validate-radio-required">
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-3 mb-3">
-                                                <div class="form-group">
-                                                    <label class="form-label">Attendant Name</label>
-                                                    <input type="text" name="description" class="form-control" placeholder="Search by Employee Name" disabled>
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-3 mb-3">
-                                                <div class="form-group">
-                                                    <label class="form-label">Register for entry & exits</label>
-                                                    <input type="checkbox" class="validate-radio-required">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                      
-                                        <div class="row border rounded p-3 mx-1 mb-3">
-                                            <div class="col-12 col-md-3 mb-3">
-                                                <div class="form-group">
-                                                    <label class="form-label">Any Other Gas / PPM</label>
-                                                    <input type="text" name="description" class="form-control" placeholder="Loto No" disabled>
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-3 mb-3">
-                                                <div class="form-group">
-                                                    <label class="form-label">PPM and is therefore safe to enter from</label>
-                                                    <input type="text" name="description" class="form-control" placeholder="" disabled>
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-3 mb-3">
-                                                <div class="form-group">
-                                                    <label class="form-label">To</label>
-                                                    <input type="text" name="description" class="form-control" placeholder="" disabled>
-                                                </div>
-                                            </div>
-                                        </div>
                                         
                                         <hr>
                                         <div class="submit-button float-end">

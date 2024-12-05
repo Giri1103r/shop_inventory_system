@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Work')
-@section('pageurl', admin_url('department/list'))
+@section('pageurl', admin_url('work/list'))
 
 
 @section('content')
@@ -106,7 +106,11 @@
                                         <th>Worker Id</th>
                                         <th>Worker Name</th>
                                         <th>Phone Number</th>
+                                        <th>Company Name</th>
+                                        <th>Location Name</th>
                                         <th>Unit Name</th>
+                                        <th>Department Name</th>
+                                        <th>Exit Date</th>
                                         <th>Worker Type</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -269,8 +273,20 @@
                             name: 'mobile_no'
                         },
                         {
+                            data: 'company_name',
+                            name: 'company_name'
+                        },
+                        {
+                            data: 'location_name',
+                            name: 'location_name'
+                        },
+                        {
                             data: 'unit_name',
                             name: 'unit_name'
+                        },
+                        {
+                            data: 'department_name',
+                            name: 'department_name'
                         },
                         {
                             data: 'wfemptype',
