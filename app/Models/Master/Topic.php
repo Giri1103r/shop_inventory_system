@@ -49,10 +49,11 @@ class Topic extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
+                    ->orWhere('topic_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('topic_name', 'LIKE', '%' . $search . '%');
             });
         }
-
+     
 
         if ($request->has('topic_id') && $request->topic_id) {
             $query = $query->where('topic_id', 'LIKE', '%' . $request->topic_id . '%');
@@ -62,7 +63,7 @@ class Topic extends Model
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('status', decryptId($request->status));
+            $query = $query->where('training_masters_topic.status', decryptId($request->status));
         }
         $data_count = $query;
         $total_records = $data_count->count();
@@ -156,11 +157,13 @@ class Topic extends Model
         $request = request();
         $search = '';
         $query = $this->select('training_masters_topic.*');
+
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
             $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhereRaw('topic_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('topic_id LIKE "%' . $search . '%"')
+                ->orWhereRaw('topic_name LIKE "%' . $search . '%"');
             });
         }
         if ($request->has('topic_id') && $request->topic_id) {

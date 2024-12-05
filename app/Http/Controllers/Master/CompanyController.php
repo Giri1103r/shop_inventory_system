@@ -469,7 +469,7 @@ class CompanyController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Company Details.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Company Master.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -523,7 +523,7 @@ class CompanyController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Company.pdf";
+            $filename = "Company Master.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 

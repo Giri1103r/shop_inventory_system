@@ -53,6 +53,7 @@
                 serverSide: true,
                 searching: true,
                 ordering: true,
+                dom: 'Bfrtip',
                 layout: {
                     top2Start: 'buttons',
                     top2End: {

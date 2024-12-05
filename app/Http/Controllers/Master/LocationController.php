@@ -295,7 +295,7 @@ class LocationController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Location Details.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Location Master.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -348,7 +348,7 @@ class LocationController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Location.pdf";
+            $filename = "Location Master.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 

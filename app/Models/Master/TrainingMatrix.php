@@ -57,11 +57,14 @@ class TrainingMatrix extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('topic_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('masters_employee.emp_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('training_masters_topic.topic_name', 'LIKE', '%' . $search . '%');
             });
         }
 
-      
+
         if ($request->has('topic_id') && $request->topic_id) {
             $query = $query->where('training_matrix.topic_id', decryptId($request->topic_id));
         }
@@ -81,7 +84,7 @@ class TrainingMatrix extends Model
             $query = $query->where('mode_of_training', 'LIKE', '%' . $request->mode_of_training . '%');
         }
         if ($request->has('status') && $request->status) {
-            $query = $query->where('status', 'LIKE', '%' . decryptId($request->status) . '%');
+            $query = $query->where('training_matrix.status', 'LIKE', '%' . decryptId($request->status) . '%');
         }
         $data_count = $query;
         $total_records = $data_count->count();
@@ -195,28 +198,35 @@ class TrainingMatrix extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('name_of_the_conference_hall', 'LIKE', '%' . $search . '%');
+                    ->orWhere('masters_employee.emp_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('training_masters_topic.topic_name', 'LIKE', '%' . $search . '%');
             });
         }
 
 
-        if ($request->has('name_of_the_conference_hall') && $request->name_of_the_conference_hall) {
-            $query = $query->where('name_of_the_conference_hall', 'LIKE', '%' . $request->name_of_the_conference_hall . '%');
+        if ($request->has('topic_id') && $request->topic_id) {
+            $query = $query->where('training_matrix.topic_id', decryptId($request->topic_id));
+        }
+        if ($request->has('trainer_id') && $request->trainer_id) {
+            $query = $query->where('training_matrix.trainer_id', decryptId($request->trainer_id));
         }
         if ($request->has('unit_id') && $request->unit_id) {
             $query = $query->where('training_matrix.unit_id', decryptId($request->unit_id));
         }
-        if ($request->has('capacity') && $request->capacity) {
-            $query = $query->where('capacity', 'LIKE', '%' . $request->capacity . '%');
+        if ($request->has('department_id') && $request->department_id) {
+            $query = $query->where('training_matrix.department_id', decryptId($request->department_id));
         }
-        if ($request->has('projector_or_lcd_availability') && $request->projector_or_lcd_availability) {
-            $query = $query->where('projector_or_lcd_availability', 'LIKE', '%' . $request->projector_or_lcd_availability . '%');
+        if ($request->has('training_offered_for') && $request->training_offered_for) {
+            $query = $query->where('training_offered_for', 'LIKE', '%' . $request->training_offered_for . '%');
+        }
+        if ($request->has('mode_of_training') && $request->mode_of_training) {
+            $query = $query->where('mode_of_training', 'LIKE', '%' . $request->mode_of_training . '%');
         }
         if ($request->has('status') && $request->status) {
-
-            $query = $query->where('training_matrix.status', decryptId($request->status));
+            $query = $query->where('training_matrix.status', 'LIKE', '%' . decryptId($request->status) . '%');
         }
-
         $query->orderBy('id', 'DESC');
 
         return  $query->get();

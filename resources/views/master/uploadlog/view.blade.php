@@ -5,12 +5,10 @@
 
 @section('content')
     <div class="clearfix"></div>
-    <div class="content-body  default-height">
-        <div class="container-fluid main-content">
+    <div class="container-fluid">
             <!-- row -->
             <div class="row">
-
-                <div class="col-12">
+              
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
@@ -28,7 +26,7 @@
                                 
                             </div>
 
-                            <div class="card-body ">
+                            <div class="card-body">
                                 <div class="table-responsive">
                                     <table id="datatable-list"
                                         class="table primary-table-bordered table-bordered table-striped display responsive nowrap w-100 mt-2 datatable-list">
@@ -45,8 +43,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -70,6 +66,7 @@
                 serverSide: true,
                 searching: true,
                 ordering: true,
+                 dom: 'Bfrtip',
                 layout: {
                     top2Start: 'buttons',
                     top2End: {

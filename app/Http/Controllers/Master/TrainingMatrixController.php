@@ -89,9 +89,6 @@ class TrainingMatrixController extends Controller
                                 $btn .= '<a href="' . admin_url('training_matrix/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
 
-                            if (CheckUserPermission('delete')) {
-                                $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
-                            }
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -101,18 +98,16 @@ class TrainingMatrixController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
         }
-        $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
         $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
         $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
         $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_TRAINER)->where('status', '1')->get();
 
         $data = array(
-            'departmentList' => $departmentList,
             'unitList' => $unitList,
             'topicList' => $topicList,
             'employeeList' => $employeeList,

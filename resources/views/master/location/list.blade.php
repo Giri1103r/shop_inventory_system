@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Location')
+@section('title', 'Location Master')
 @section('pageurl', admin_url('location/list'))
 
 

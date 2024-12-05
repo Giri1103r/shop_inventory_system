@@ -30,8 +30,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use App\Models\Master\Venue;
 use App\Models\Master\Unit;
 
-// class ImportVenueJob implements ShouldQueue
-class ImportVenueJob
+class ImportVenueJob implements ShouldQueue
+// class ImportVenueJob
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -81,12 +81,12 @@ class ImportVenueJob
          */
 
             if ($i == 1) {
-                
+
                 if (count($row) == 5) {
                     if (
                         $sno != 'SNo' ||
                         $name_of_the_conference_hall != 'Conference Hall Name' ||
-                        $unit_name != 'Unit Name' ||
+                        $unit_name != 'Unit' ||
                         $capacity != 'Capacity' ||
                         $projector_or_lcd_availability != 'Projector/LCD Availability'
                     ) {
@@ -125,29 +125,6 @@ class ImportVenueJob
 
                 $i++;
                 continue;
-            } else {
-
-                $venueExist = Venue::where('name_of_the_conference_hall', $name_of_the_conference_hall)->get();
-                try {
-
-                    if (count($venueExist) > 0) {
-                        $cond_error_data = array(
-                            'upload_id' => $this->details['log_id'],
-                            'line_no' => $i,
-                            'error' => 'Conference Hall Name Already Exist',
-                        );
-                        $cond_error_datas[] = $cond_error_data;
-                        $i++;
-                        continue;
-                    }
-                } catch (\Exception $ex) {
-                    $cond_error_data = array(
-                        'upload_id' => $this->details['log_id'],
-                        'line_no' => $i,
-                        'error' => 'Invalid Data',
-                    );
-                    $cond_error_datas[] = $cond_error_data;
-                }
             }
 
             if ($unit_name == '') {
@@ -181,6 +158,40 @@ class ImportVenueJob
                 } catch (\Exception $ex) {
                     report($ex);
                 }
+            }
+            $unitExist = Unit::select('id')->where('unit_name', $unit_name)->first();
+            if ($unitExist) {
+
+                $venueExist = Venue::where('name_of_the_conference_hall', $name_of_the_conference_hall)->where('unit_id', $unitExist->id)->exists();
+                try {
+
+                    if ($venueExist) {
+                        $cond_error_data = array(
+                            'upload_id' => $this->details['log_id'],
+                            'line_no' => $i,
+                            'error' => 'Conference Hall Name Already Exist',
+                        );
+                        $cond_error_datas[] = $cond_error_data;
+                        $i++;
+                        continue;
+                    }
+                } catch (\Exception $ex) {
+                    $cond_error_data = array(
+                        'upload_id' => $this->details['log_id'],
+                        'line_no' => $i,
+                        'error' => 'Invalid Data',
+                    );
+                    $cond_error_datas[] = $cond_error_data;
+                }
+            } else {
+                $cond_error_data = [
+                    'upload_id' => $this->details['log_id'],
+                    'line_no' => $i,
+                    'error' => 'Unit not found',
+                ];
+                $cond_error_datas[] = $cond_error_data;
+                $i++;
+                continue;
             }
 
 

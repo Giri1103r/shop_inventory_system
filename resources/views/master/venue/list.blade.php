@@ -27,9 +27,9 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">Name of the Conference Hall</label>
+                                            <label for="name_of_the_conference_hall" class="form-label ">Name of the Conference Hall</label>
                                             <input type="text" name="name_of_the_conference_hall"
-                                                id="name_of_the_conference_hall" class="form-control">
+                                                id="name_of_the_conference_hall" class="form-control" placeholder="Name of the Conference Hall">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="unit_id" class="form-label ">Unit Name</label>
@@ -43,19 +43,10 @@
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">Capacity</label>
-                                            <input type="text" name="capacity" id="capacity" class="form-control">
+                                            <label for="capacity" class="form-label ">Capacity</label>
+                                            <input type="number" name="capacity" id="capacity" class="form-control" placeholder="Capacity">
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                                <label class="form-label ">Projector/LCD Availability</label>
-                                                <select name="projector_or_lcd_availability"
-                                                    id="projector_or_lcd_availability" class="form-control single-select"
-                                                    style="width: 100%;">
-                                                    <option value="">Select Projector/LCD Availability</option>
-                                                    <option value="YES">YES</option>
-                                                    <option value="NO">NO</option>
-                                                </select>
-                                        </div>
+                                        
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
@@ -65,10 +56,9 @@
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3">
-                                            <x-button-search></x-button-search>
-                                            <x-button-reset></x-button-reset>
-
+                                        <div class="col-md-3 mb-3 d-flex align-items-end gap-2">
+                                            <x-button-search class="me-2"></x-button-search>
+                                            <x-button-reset class="ms-1"></x-button-reset>
                                         </div>
                                     </div>
                                 </div>
@@ -88,7 +78,6 @@
                                         <th>Conference Hall Name</th>
                                         <th>Unit</th>
                                         <th>Capacity</th>
-                                        <th>Projector/LCD Availability</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -150,7 +139,6 @@
                             d.name_of_the_conference_hall = $('#name_of_the_conference_hall').val();
                             d.unit_id = $('#unit_id').val();
                             d.capacity = $('#capacity').val();
-                            d.projector_or_lcd_availability = $('#projector_or_lcd_availability').val();
                             d.status = $('#status').val();
 
                         }
@@ -172,10 +160,7 @@
                             data: 'capacity',
                             name: 'capacity'
                         },
-                        {
-                            data: 'projector_or_lcd_availability',
-                            name: 'projector_or_lcd_availability'
-                        },
+                       
                         {
                             data: 'status',
                             name: 'status'
@@ -221,8 +206,6 @@
                                             '#name_of_the_conference_hall').val();
                                         unit_id = $('#unit_id').val();
                                         capacity = $('#capacity').val();
-                                        projector_or_lcd_availability = $(
-                                            '#projector_or_lcd_availability').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -234,8 +217,6 @@
                                             name_of_the_conference_hall +
                                             '&unit_id=' + unit_id +
                                             '&capacity=' + capacity +
-                                            '&projector_or_lcd_availability=' +
-                                            projector_or_lcd_availability +
                                             '&status=' + status
                                     }
                                 },
@@ -248,8 +229,6 @@
                                             '#name_of_the_conference_hall').val();
                                         unit_id = $('#unit_id').val();
                                         capacity = $('#capacity').val();
-                                        projector_or_lcd_availability = $(
-                                            '#projector_or_lcd_availability').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -260,8 +239,6 @@
                                             name_of_the_conference_hall +
                                             '&unit_id=' + unit_id +
                                             '&capacity=' + capacity +
-                                            '&projector_or_lcd_availability=' +
-                                            projector_or_lcd_availability +
                                             '&status=' + status
                                     }
                                 },

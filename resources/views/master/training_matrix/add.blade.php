@@ -32,7 +32,8 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="training_matrixadd"
-                                        action="{{ admin_url('training_matrix/add/submit') }}"  enctype="multipart/form-data">
+                                        action="{{ admin_url('training_matrix/add/submit') }}"
+                                        enctype="multipart/form-data">
                                         @csrf
 
                                         <div class="row">
@@ -93,10 +94,6 @@
                                                     <select name="department_id" id="department_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Target Department </option>
-                                                        @foreach ($departmentList as $department)
-                                                            <option value="{{ encryptId($department->id) }}">
-                                                                {{ $department->department_name }}</option>
-                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -104,7 +101,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Target Content Upload</label>
                                                     <input type="file" name="target_content" id="target_content"
-                                                        class="form-control" >
+                                                        class="form-control">
                                                     <small class="text-muted">Allowed file types: .xls, .pdf</small>
                                                 </div>
                                             </div>
@@ -137,7 +134,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Upload Questionnaire</label>
                                                     <input type="file" name="questionnaire" id="questionnaire"
-                                                        class="form-control" >
+                                                        class="form-control">
                                                     <small class="text-muted">Allowed file types: .xls, .pdf.</small>
                                                 </div>
                                             </div>
@@ -175,7 +172,33 @@
                     $('#questionnaire_upload_section').addClass('d-none');
                 }
             });
-
+            $(document).on('change', '#unit_id', function() {
+                var unitId = $(this).val();
+                if (unitId) {
+                    $.ajax({
+                        url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#department_id').empty().append(
+                                '<option value="">Select Target Department</option>');
+                            $.each(data, function(key, value) {
+                                $('#department_id').append('<option value="' + value
+                                    .id + '">' + value
+                                    .name + '</option>');
+                            });
+                            $('#department_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching department. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#department_id').empty().append(
+                    '<option value="">Select Target Department</option>');
+                    $('#department_id').trigger('change.');
+                }
+            });
             $('#training_matrixadd').validate({
                 rules: {
                     topic_id: {
@@ -206,7 +229,7 @@
                     questionnaire: {
                         required: function() {
                             return $('#training_evaluation').val() ===
-                            '{{ encryptId(1) }}'; // Only required if "Yes" is selected
+                                '{{ encryptId(1) }}'; // Only required if "Yes" is selected
                         },
                         extension: "xls|pdf",
                     }
