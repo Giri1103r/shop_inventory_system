@@ -33,7 +33,7 @@ use App\Models\Master\Company;
 use App\Models\Master\Department;
 use App\Models\Master\Unit;
 
-class ImportdepartmentJob 
+class ImportdepartmentJob
 // class ImportdepartmentJob
 {
 
@@ -74,48 +74,49 @@ class ImportdepartmentJob
         $cond_error_datas = [];
 
         foreach ($xlsx->rows() as $row) {
+
+            if ($i == 1) {
+                // Header row validation
+                if (
+                    trim($row[0])  != 'SNo' ||
+                       trim($row[1]) != 'Company Name' ||
+                        trim($row[2]) != 'Location Name' ||
+                       trim($row[3])!= 'Unit Name' ||
+                        trim($row[4]) != 'Department Name'
+                ) {
+                    $error_data = array(
+                        'upload_id' => $this->details['log_id'],
+                        'line_no' => $i,
+                        'error' => 'Header Column Name Not Match',
+                    );
+                    $cond_error_datas[] = $error_data;
+                    $i++;
+                    continue;
+                }
+
+                $i++;
+                continue;
+            }
+
+            // Ensure row has enough columns before processing
+            if (count($row) < 5) {
+                $error_data = array(
+                    'upload_id' => $this->details['log_id'],
+                    'line_no' => $i,
+                    'error' => 'Row does not have enough columns',
+                );
+                $cond_error_datas[] = $error_data;
+                $i++;
+                continue;
+            }
+
+
             $sno = trim($row['0']);
             $companyname = trim($row['1']);
             $locationname = trim($row['2']);
             $unitname = trim($row['3']);
             $department_name = trim($row['4']);
 
-            /*
-         * Header column validation
-         */
-
-            if ($i == 1) {
-
-                if (count($row) == 5) {
-                    if (
-                        $sno != 'SNo' ||
-                        $companyname != 'Company Name' ||
-                        $locationname != 'Location Name' ||
-                        $unitname != 'Unit Name' ||
-                        $department_name != 'Department Name'
-                    ) {
-                        $error_data_1 = array(
-                            'upload_id' => $this->details['log_id'],
-                            'line_no' =>  $i,
-                            'error' => 'Header Column Name Not Match',
-                        );
-                        $cond_error_datas[] = $error_data_1;
-                        $i++;
-                        break;
-                    }
-                    $i++;
-                    continue;
-                } else {
-                    $error_data_1 = array(
-                        'upload_id' => $this->details['log_id'],
-                        'line_no' => $i,
-                        'error' => 'Header Column Not Match',
-                    );
-                    $cond_error_datas[] = $error_data_1;
-                    $i++;
-                    break;
-                }
-            }
 
             /* Column data validation */
             if ($companyname == '') {

@@ -29,7 +29,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 
 use App\Models\Master\Topic;
 
-class ImportTopicJob 
+class ImportTopicJob
 // class ImportTopicJob
 {
 
@@ -70,8 +70,7 @@ class ImportTopicJob
         $cond_error_datas = [];
 
         foreach ($xlsx->rows() as $row) {
-            $sno = trim($row['0']);
-            $topicname = trim($row['1']);
+
 
             /*
          * Header column validation
@@ -79,10 +78,10 @@ class ImportTopicJob
 
             if ($i == 1) {
 
-                if (count($row) == 2) {
+
                     if (
-                        $sno != 'SNo' ||
-                        $topicname != 'Topic Name'
+                       trim($row['0']) != 'SNo' ||
+                       trim($row['1']) != 'Topic Name'
                     ) {
                         $error_data_1 = array(
                             'upload_id' => $this->details['log_id'],
@@ -95,17 +94,21 @@ class ImportTopicJob
                     }
                     $i++;
                     continue;
-                } else {
-                    $error_data_1 = array(
-                        'upload_id' => $this->details['log_id'],
-                        'line_no' => $i,
-                        'error' => 'Header Column Not Match',
-                    );
-                    $cond_error_datas[] = $error_data_1;
-                    $i++;
-                    break;
-                }
+
             }
+            if (count($row) < 2) {
+                $error_data = array(
+                    'upload_id' => $this->details['log_id'],
+                    'line_no' => $i,
+                    'error' => 'Row does not have enough columns',
+                );
+                $cond_error_datas[] = $error_data;
+                $i++;
+                continue;
+            }
+
+            $sno = trim($row['0']);
+            $topicname = trim($row['1']);
 
             /* Column data validation */
             if ($topicname == '') {

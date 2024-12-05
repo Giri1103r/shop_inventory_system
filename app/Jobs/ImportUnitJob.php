@@ -32,7 +32,7 @@ use App\Models\Master\Location;
 use App\Models\Master\Company;
 use App\Models\Master\Unit;
 
-class ImportUnitJob 
+class ImportUnitJob
 // class ImportUnitJob
 {
 
@@ -73,10 +73,7 @@ class ImportUnitJob
         $cond_error_datas = [];
 
         foreach ($xlsx->rows() as $row) {
-            $sno = trim($row['0']);
-            $companyname = trim($row['1']);
-            $locationname = trim($row['2']);
-            $unit_name = trim($row['3']);
+
 
             /*
          * Header column validation
@@ -84,12 +81,12 @@ class ImportUnitJob
 
             if ($i == 1) {
 
-                if (count($row) == 4) {
+
                     if (
-                        $sno != 'SNo' ||
-                        $companyname != 'Company Name' ||
-                        $locationname != 'Location Name'||
-                        $unit_name != 'Unit Name'
+                       trim($row['0']) != 'SNo' ||
+                       trim($row['1']) != 'Company Name' ||
+                       trim($row['2']) != 'Location Name'||
+                       trim($row['3']) != 'Unit Name'
                     ) {
                         $error_data_1 = array(
                             'upload_id' => $this->details['log_id'],
@@ -102,17 +99,23 @@ class ImportUnitJob
                     }
                     $i++;
                     continue;
-                } else {
-                    $error_data_1 = array(
-                        'upload_id' => $this->details['log_id'],
-                        'line_no' => $i,
-                        'error' => 'Header Column Not Match',
-                    );
-                    $cond_error_datas[] = $error_data_1;
-                    $i++;
-                    break;
-                }
+
             }
+            if (count($row) < 4) {
+                $error_data = array(
+                    'upload_id' => $this->details['log_id'],
+                    'line_no' => $i,
+                    'error' => 'Row does not have enough columns',
+                );
+                $cond_error_datas[] = $error_data;
+                $i++;
+                continue;
+            }
+
+            $sno = trim($row['0']);
+            $companyname = trim($row['1']);
+            $locationname = trim($row['2']);
+            $unit_name = trim($row['3']);
 
             /* Column data validation */
 
