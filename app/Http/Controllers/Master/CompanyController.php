@@ -418,8 +418,8 @@ class CompanyController extends Controller
                     "path" => $path,
                 ];
 
-                // dispatch(new ImportCompanyJob($details));
-                   dispatch((new ImportCompanyJob($details))->onQueue('company'));
+                dispatch(new ImportCompanyJob($details));
+                //    dispatch((new ImportCompanyJob($details))->onQueue('company'));
             }
 
             $insert_data['log_id'] = $insert_id;
@@ -428,7 +428,7 @@ class CompanyController extends Controller
             Session::flash('success', __('Company uploaded sucessfully'));
             return redirect(admin_url('company/list'));
         } catch (Exception $ex) {
-
+dd($ex);
             Session::flash('error', __('Company upload failed'));
             return redirect(admin_url('company/list'));
         }

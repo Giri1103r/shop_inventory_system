@@ -87,10 +87,10 @@
                                                         value="{{ $work->doi ? date('Y-m-d', strtotime($work->doi)) : '' }}">
                                                 </div>
                                             </div>
-                                                                                      
+
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Exit Date</label>
+                                                    <label class="form-label">Exit Date</label>
                                                     <input type="text" name ="exit_date"
                                                         id="exit-date-datetime-datepicker" class="form-control"
                                                         placeholder="Exit Date"
@@ -210,20 +210,28 @@
             });
         });
         $(document).ready(function() {
+
+
             flatpickr("#doi-datetime-datepicker", {
                 enableTime: true,
                 dateFormat: "d-m-Y H:i",
                 time_24hr: true,
                 minuteIncrement: 5,
+                minDate: "1995-01-01",
+                clickOpens: true,
+                disableMobile: true,
+                allowInput: false,
             });
-
             flatpickr("#exit-date-datetime-datepicker", {
                 enableTime: true,
                 dateFormat: "d-m-Y H:i",
                 time_24hr: true,
                 minuteIncrement: 5,
+                minDate: "1995-01-01",
+                clickOpens: true,
+                disableMobile: true,
+                allowInput: false,
             });
-
             var initialCompanyId = $('#company_id').val();
             var preselectedLocationId = "{{ encryptId($work->location) ?? '0' }}";
             var preselectedUnitId = "{{ encryptId($work->unit) ?? '0' }}";

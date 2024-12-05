@@ -34,7 +34,19 @@
                             {{ $value->mobile_no }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->company_name }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->location_name }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->unit_name }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->department_name }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{  Displaydateformat($value->exit_date) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->wfemptype }}

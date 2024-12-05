@@ -268,12 +268,12 @@
                 var id = $(this).data('id');
                 var types = $(this).data('type');
                 if (types == 1) {
-                    var title = '{{ __('Do You want to In-Activate Company Management') }}';
+                    var title = '{{ __('Do You want to In-Activate Company Details') }}';
                     var text = '{{ __('common.inactive') }}';
                     var btncolor = '#dc3545'
 
                 } else {
-                    var title = '{{ __('Do You want to Activate Company Management') }}';
+                    var title = '{{ __('Do You want to Activate Company Details') }}';
                     var text = '{{ __('common.active') }}';
                     var btncolor = '#7ddc35'
                 }

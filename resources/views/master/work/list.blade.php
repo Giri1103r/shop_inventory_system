@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Work')
+@section('title', 'Worker Master')
 @section('pageurl', admin_url('work/list'))
 
 
@@ -114,7 +114,7 @@
                                         <th>Worker Type</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
-                                        <th>{{ __('common.action') }}</th>
+                                        <th data-priority="5">{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -289,6 +289,10 @@
                             name: 'department_name'
                         },
                         {
+                            data: 'exit_date',
+                            name: 'exit_date'
+                        },
+                        {
                             data: 'wfemptype',
                             name: 'wfemptype'
                         },
@@ -415,12 +419,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Worker') }}';
+                        var title = '{{ __('Do You want to In-Activate Worker Details') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Worker') }}';
+                        var title = '{{ __('Do You want to Activate Worker Details') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }

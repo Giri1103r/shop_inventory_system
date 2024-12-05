@@ -30,8 +30,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 
 use App\Models\Master\Company;
 
-class ImportCompanyJob implements ShouldQueue
-// class ImportCompanyJob
+// class ImportCompanyJob implements ShouldQueue
+class ImportCompanyJob
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -69,8 +69,8 @@ class ImportCompanyJob implements ShouldQueue
         $xlsx = SimpleXLSX::parse($this->details['path']);
         // dd($xlsx);
         $cond_error_datas = [];
-
         foreach ($xlsx->rows() as $row) {
+           
             $sno = trim($row['0']);
             $companyname = trim($row['1']);
             $company_short_name = trim($row['2']);
@@ -79,10 +79,11 @@ class ImportCompanyJob implements ShouldQueue
             /*
          * Header column validation
          */
-
+       
             if ($i == 1) {
 
                 if (count($row) == 4) {
+                    // dd($xlsx);
                     if (
                         $sno != 'SNo' ||
                         $companyname != 'Company Name' ||
