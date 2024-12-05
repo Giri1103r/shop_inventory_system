@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\File;
 use App\Models\Master\Unit;
-
 use Str;
 use PDF;
 use Mail;
@@ -20,6 +19,7 @@ use Response;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
 use App\Models\Master\Topic;
+use App\Models\Master\Venue;
 use App\Models\Master\TrainingSchedule;
 use App\Models\User;
 use App\Models\UploadLog;
@@ -34,6 +34,7 @@ class TrainingScheduleController extends Controller
     private $department;
     private $employee;
     private $topic;
+    private $venue;
     private $training_schedule;
     private $unit;
 
@@ -44,6 +45,7 @@ class TrainingScheduleController extends Controller
         $this->training_schedule = new TrainingSchedule();
         $this->topic = new Topic();
         $this->employee = new Employee();
+        $this->venue = new Venue();
         $this->department = new Department();
         $this->user = new User();
         $this->unit = new Unit();
@@ -85,10 +87,6 @@ class TrainingScheduleController extends Controller
                             if (CheckUserPermission('edit')) {
                                 $btn .= '<a href="' . admin_url('training_schedule/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
-
-                            if (CheckUserPermission('delete')) {
-                                $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
-                            }
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -106,7 +104,7 @@ class TrainingScheduleController extends Controller
         $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
         $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
         $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
-        $employeeList  = $this->employee->select('id', 'emp_name')->where('status', '1')->get();
+        $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_TRAINER)->where('status', '1')->get();
 
         $data = array(
             'departmentList' => $departmentList,
@@ -126,12 +124,14 @@ class TrainingScheduleController extends Controller
             $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
-            $employeeList  = $this->employee->select('id', 'emp_name')->where('status', '1')->get();
+            $venueList  = $this->venue->select('id', 'name_of_the_conference_hall')->where('status', '1')->get();
+            $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_TRAINER)->where('status', '1')->get();
 
             $data = array(
                 'departmentList' => $departmentList,
                 'unitList' => $unitList,
                 'topicList' => $topicList,
+                'venueList' => $venueList,
                 'employeeList' => $employeeList,
             );
             return view('master.training_schedule.add', $data);
@@ -168,7 +168,7 @@ class TrainingScheduleController extends Controller
 
               $this->training_schedule->store();
              
-                Session::flash('success', 'Training Matrix added successfully!');
+                Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -177,7 +177,7 @@ class TrainingScheduleController extends Controller
             return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
 
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('training_schedule/list'));
         }
@@ -207,7 +207,7 @@ class TrainingScheduleController extends Controller
             $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
-            $employeeList  = $this->employee->select('id', 'emp_name')->where('status', '1')->get();
+            $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_TRAINER)->where('status', '1')->get();
             $training_schedule = $this->training_schedule->find($id);
             $data = array(
                 'departmentList' => $departmentList,
@@ -249,7 +249,7 @@ class TrainingScheduleController extends Controller
             }
 
           $this->training_schedule->updates($id);
-            Session::flash('success', 'Training Matrix updated successfully!');
+            Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
             dd($ex);
@@ -361,7 +361,7 @@ class TrainingScheduleController extends Controller
             $insert_data['log_id'] = $insert_id;
             $insert_data['Uploded_by'] = Auth::user()->toArray();
 
-            Session::flash('success', __('Training Matrix uploaded sucessfully'));
+            Session::flash('success', __('Your data has been uploaded sucessfully'));
             return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
 

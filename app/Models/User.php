@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +23,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
 
-     protected $table = 'users';
+    protected $table = 'users';
 
     protected $fillable = [
         'name',
@@ -127,9 +128,17 @@ class User extends Authenticatable
     }
     public function store($employees)
     {
-        $createdUsers = []; // To store created user objects
+        $createdUsers = [];
 
         foreach ($employees as $item) {
+            $emailExists = $this->where('email', $item['email'])->where('employee_id', '!=', $item['emp_id'])->exists();
+
+            if ($emailExists) {
+                $errorMessage = "Email already exists.";
+                $this->updateErrorStatus($item['emp_id'], $errorMessage);
+                continue; // Skip this record
+            }
+
             $userData = [
                 'name' => $item['emp_name'],
                 'first_name' => $item['emp_name'],
@@ -146,19 +155,40 @@ class User extends Authenticatable
                 'created_by' => Auth::id(),
             ];
 
+            $exists = $this->where('employee_id', $item['emp_id'])->exists();
+
+            if ($exists) {
+                $userData['updated_at'] = now();
+            } else {
+                $userData['created_at'] = now();
+            }
+
             try {
-                $createdUser = $this->create($userData); 
-                $createdUsers[] = $createdUser; 
+                $this->updateOrInsert(
+                    ['employee_id' => $item['emp_id']],
+                    $userData
+                );
+                $createdUsers[] = $userData;
             } catch (\Exception $e) {
-                dd($e);
+                report($e);
             }
         }
 
-        return $createdUsers; 
+        return $createdUsers;
     }
 
 
 
+
+    public function updateErrorStatus($emp_id, $errorMessage)
+    {
+        $update_data = [
+            'error_status' => 1,
+            'error_remarks' => $errorMessage,
+        ];
+
+        return DB::table('masters_employee')->where('emp_id', $emp_id)->update($update_data);
+    }
 
 
     public function userUpdate($employee)
@@ -168,13 +198,13 @@ class User extends Authenticatable
 
 
         $decryptedRoleIds = [];
-      
+
 
         if ($request->has('user_role')) {
             $decryptedRoleIds = array_map(function ($encryptedId) {
                 return $encryptedId;
             }, $request->user_role);
-        
+
             $commaSeparatedRoles = implode(',', $decryptedRoleIds);
         }
 
@@ -185,7 +215,7 @@ class User extends Authenticatable
             'first_name' => $employee->emp_name,
             'last_name' => '',
             'email' => $employee->emp_email,
-            'role' => $commaSeparatedRoles ,
+            'role' => $commaSeparatedRoles,
             'employee_id' => $employee->emp_id,
             'department_id' => decryptId($employee->emp_department_id),
             'designation_id' => decryptId($employee->emp_designation_id),
@@ -195,6 +225,63 @@ class User extends Authenticatable
 
 
         return $this->where('employee_id', $employee->emp_id)->update($data);
+    }
+
+    public function getUserdata()
+    {
+        $user = Auth::user()->employee_id;
+        $data = User::where('employee_id', $user)->first();
+        return $data;
+    }
+
+    public function findEhsofficer()
+    {
+        return User::whereRaw('FIND_IN_SET(?, role)', [3])
+            ->get();
+    }
+    public function assigneduser($ehsofficer)
+    {
+        return $ehsofficer->pluck('id')->toArray();
+    }
+
+    public function finduseremail($empId)
+    {
+        return User::where('employee_id', $empId)
+            ->pluck('email')
+            ->first();
+    }
+
+    public function findDepartmenthod($departmentId)
+    {
+        return User::where('department_id', $departmentId)
+            ->whereRaw('FIND_IN_SET(?, role)', [4])
+            ->pluck('email')
+            ->first();
+    }
+    public function requestorId(){
+        return $this->pluck('id')->toArray();
+    }
+    public function findStoremanager()
+    {
+        return User::whereRaw('FIND_IN_SET(?, role)', [5])
+            ->pluck('email')
+            ->first();
+    }
+    public function getdepartmenthodId($departmentId)
+    {
+        return User::where('department_id', $departmentId)
+            ->whereRaw('FIND_IN_SET(?, role)', [4])
+            ->pluck('id')
+            ->toArray();
+    }
+
+    public function getStoreManagerId(){
+        return $this->whereRaw('FIND_IN_SET(?, role)', [5])->pluck('id')->toArray();
+    }
+
+    public function getrequestId($empId)
+    {
+        return User::where('employee_id', $empId)->pluck('id')->toArray();
     }
 
 

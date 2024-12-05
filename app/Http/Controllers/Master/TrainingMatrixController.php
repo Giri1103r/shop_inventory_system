@@ -109,7 +109,7 @@ class TrainingMatrixController extends Controller
         $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
         $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
         $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
-        $employeeList  = $this->employee->select('id', 'emp_name')->where('status', '1')->get();
+        $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_TRAINER)->where('status', '1')->get();
 
         $data = array(
             'departmentList' => $departmentList,
@@ -129,7 +129,7 @@ class TrainingMatrixController extends Controller
             $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
-            $employeeList  = $this->employee->select('id', 'emp_name')->where('status', '1')->get();
+            $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_TRAINER)->where('status', '1')->get();
 
             $data = array(
                 'departmentList' => $departmentList,
@@ -216,7 +216,7 @@ class TrainingMatrixController extends Controller
             $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
-            $employeeList  = $this->employee->select('id', 'emp_name')->where('status', '1')->get();
+            $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_TRAINER)->where('status', '1')->get();
             $training_matrix = $this->training_matrix->find($id);
             $training_matrixFiles_target_content  = $this->training_matrix_file->where('training_matrix_id', $id)->where('file_type', '1')->where('status', '1')->first();
             $training_matrixFiles_questionnaire  = $this->training_matrix_file->where('training_matrix_id', $id)->where('file_type', '2')->where('status', '1')->first();

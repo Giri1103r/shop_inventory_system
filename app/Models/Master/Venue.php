@@ -15,7 +15,7 @@ class Venue extends Model
     use  HasFactory;
 
 
-    protected $table = 'masters_venue';
+    protected $table = 'training_masters_venue';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -41,8 +41,8 @@ class Venue extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_venue.*', 'masters_unit.unit_name');
-        $query = $query->leftJoin('masters_unit', 'masters_venue.unit_id', '=', 'masters_unit.id');
+        $query = $this->select('training_masters_venue.*', 'masters_unit.unit_name');
+        $query = $query->leftJoin('masters_unit', 'training_masters_venue.unit_id', '=', 'masters_unit.id');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -60,7 +60,7 @@ class Venue extends Model
             $query = $query->where('name_of_the_conference_hall', 'LIKE', '%' . $request->name_of_the_conference_hall . '%');
         }
         if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('masters_venue.unit_id', decryptId($request->unit_id));
+            $query = $query->where('training_masters_venue.unit_id', decryptId($request->unit_id));
         }
         if ($request->has('capacity') && $request->capacity) {
             $query = $query->where('capacity', 'LIKE', '%' . $request->capacity . '%');
@@ -91,18 +91,20 @@ class Venue extends Model
         return $datas;
     }
 
-    public function UniqueCheck($data)
+    public function UniqueCheck($name_of_the_conference_hall, $unit_id)
     {
 
-        return $this->where($data['param'],  $data['value'])->get();
+        return $this->where('name_of_the_conference_hall',  $name_of_the_conference_hall)->where('unit_id', $unit_id)->get();
+
     }
 
-    public function ExistuniqueCheck($data)
+    public function ExistuniqueCheck($name_of_the_conference_hall, $unit_id, $id)
     {
-        return $this->where($data['param'],  $data['value'])
-            ->where('id', '!=', decryptId($data['id']))
+        return $this->where('name_of_the_conference_hall',  $name_of_the_conference_hall)->where('unit_id', $unit_id)
+            ->where('id', '!=', $id)
             ->get();
     }
+
 
     public function store()
     {
@@ -166,8 +168,8 @@ class Venue extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_venue.*', 'masters_unit.unit_name');
-        $query = $query->leftJoin('masters_unit', 'masters_venue.unit_id', '=', 'masters_unit.id');
+        $query = $this->select('training_masters_venue.*', 'masters_unit.unit_name');
+        $query = $query->leftJoin('masters_unit', 'training_masters_venue.unit_id', '=', 'masters_unit.id');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -182,7 +184,7 @@ class Venue extends Model
             $query = $query->where('name_of_the_conference_hall', 'LIKE', '%' . $request->name_of_the_conference_hall . '%');
         }
         if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('masters_venue.unit_id', decryptId($request->unit_id));
+            $query = $query->where('training_masters_venue.unit_id', decryptId($request->unit_id));
         }
         if ($request->has('capacity') && $request->capacity) {
             $query = $query->where('capacity', 'LIKE', '%' . $request->capacity . '%');
@@ -192,7 +194,7 @@ class Venue extends Model
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('masters_venue.status', decryptId($request->status));
+            $query = $query->where('training_masters_venue.status', decryptId($request->status));
         }
         $query->orderBy('id', 'DESC');
         return  $query->get();
@@ -201,8 +203,8 @@ class Venue extends Model
     public function selectOne($id)
     {
 
-        $data = $this->select('masters_venue.*', 'masters_unit.unit_name')->leftJoin('masters_unit', 'masters_venue.unit_id', '=', 'masters_unit.id')
-            ->where('masters_venue.id', $id)
+        $data = $this->select('training_masters_venue.*', 'masters_unit.unit_name')->leftJoin('masters_unit', 'training_masters_venue.unit_id', '=', 'masters_unit.id')
+            ->where('training_masters_venue.id', $id)
             ->first();
 
         return $data;
@@ -211,6 +213,6 @@ class Venue extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('masters_venue'));
+        static::addGlobalScope(new TrashScope('training_masters_venue'));
     }
 }

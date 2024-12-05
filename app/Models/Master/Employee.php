@@ -127,15 +127,20 @@ class Employee extends Model
     public function store($emptemp)
     {
         $insertArray = [];
-
         foreach ($emptemp as $item) {
 
+            $emailExists = $this->where('email', $item->email)->where('emp_id','!=', $item->emp_id)->exists();
 
+            if ($emailExists) {
+                $errorMessage = "Email already exists.";
+                $this->updateErrorStatus($item->emp_id, $errorMessage);
+                continue; 
+            }
             $role = DB::table('template_user_role')
                 ->where('role_name', $item->user_role)
                 ->first();
 
-            $insertArray[] = [
+            $data = [
                 'emp_id' => $item->emp_id ?? null,
                 'emp_name' => $item->emp_name ?? null,
                 'gender' => $item->gender ?? null,
@@ -147,27 +152,42 @@ class Employee extends Model
                 'designation' => $item->designation ?? null,
                 'employee_status' => $item->employee_status ?? null,
                 'status' => 1,
+                'error_status' => 0,
+                'error_remarks' => null,
                 'created_by' => Auth::id(),
-                'created_at' => now(),
             ];
+
+            $exists = $this->where('emp_id', $item->emp_id)->exists();
+
+            if ($exists) {
+                $data['updated_at'] = now();
+            } else {
+                $data['created_at'] = now();
+            }
+            $insertArray[] = $data;
         }
 
-        // Insert data in batches if there are valid records
         if (!empty($insertArray)) {
             $batchSize = 500;
             $chunks = array_chunk($insertArray, $batchSize);
             $insertedRecords = [];
 
             foreach ($chunks as $chunk) {
-                $this->insert($chunk); // Perform batch insert
+                foreach ($chunk as $values) {
+                    $this->updateOrInsert(
+                        ['emp_id' => $values['emp_id']],
+                        $values
+                    );
+                }
                 $insertedRecords = array_merge($insertedRecords, $chunk);
             }
+
             return $insertedRecords;
         }
 
-        // Return empty array if no records were inserted
         return [];
     }
+
 
 
     public function updates($id)

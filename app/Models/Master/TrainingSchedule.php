@@ -15,17 +15,19 @@ class TrainingSchedule extends Model
     use  HasFactory;
 
 
-    protected $table = 'masters_training_schedule';
+    protected $table = 'training_schedule';
     protected $primaryKey = 'id';
 
     protected $fillable = [
+        'from_date',
+        'to_date',
         'topic_id',
         'trainer_id',
-        'training_offered_for',
         'unit_id',
         'department_id',
-        'mode_of_training',
-        'training_evaluation',
+        'venue_id',
+        'target_trainees',
+        'training_man_hours',
         'status',
         'trash',
         'created_by',
@@ -44,11 +46,12 @@ class TrainingSchedule extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_training_schedule.*', 'masters_unit.unit_name', 'masters_employee.emp_name', 'masters_department.department_name', 'masters_topic.topic_name');
-        $query = $query->leftJoin('masters_unit', 'masters_training_schedule.unit_id', '=', 'masters_unit.id');
-        $query = $query->leftJoin('masters_employee', 'masters_training_schedule.trainer_id', '=', 'masters_employee.id');
-        $query = $query->leftJoin('masters_department', 'masters_training_schedule.department_id', '=', 'masters_department.id');
-        $query = $query->leftJoin('masters_topic', 'masters_training_schedule.topic_id', '=', 'masters_topic.id');
+        $query = $this->select('training_schedule.*', 'masters_unit.unit_name', 'masters_employee.emp_name', 'masters_department.department_name', 'training_masters_topic.topic_name', 'training_masters_venue.name_of_the_conference_hall');
+        $query = $query->leftJoin('masters_unit', 'training_schedule.unit_id', '=', 'masters_unit.id');
+        $query = $query->leftJoin('masters_employee', 'training_schedule.trainer_id', '=', 'masters_employee.id');
+        $query = $query->leftJoin('masters_department', 'training_schedule.department_id', '=', 'masters_department.id');
+        $query = $query->leftJoin('training_masters_topic', 'training_schedule.topic_id', '=', 'training_masters_topic.id');
+        $query = $query->leftJoin('training_masters_venue', 'training_schedule.venue_id', '=', 'training_masters_venue.id');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -57,31 +60,34 @@ class TrainingSchedule extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('topic_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('from_date', 'LIKE', '%' . $search . '%');
             });
         }
 
-      
+        if ($request->has('from_date') && $request->from_date) {
+            $query = $query->where('from_date', 'LIKE', '%' . $request->from_date . '%');
+        }
+        if ($request->has('to_date') && $request->to_date) {
+            $query = $query->where('to_date', 'LIKE', '%' . $request->to_date . '%');
+        }
         if ($request->has('topic_id') && $request->topic_id) {
-            $query = $query->where('masters_training_schedule.topic_id', decryptId($request->topic_id));
+            $query = $query->where('training_schedule.topic_id', decryptId($request->topic_id));
         }
         if ($request->has('trainer_id') && $request->trainer_id) {
-            $query = $query->where('masters_training_schedule.trainer_id', decryptId($request->trainer_id));
+            $query = $query->where('training_schedule.trainer_id', decryptId($request->trainer_id));
         }
         if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('masters_training_schedule.unit_id', decryptId($request->unit_id));
+            $query = $query->where('training_schedule.unit_id', decryptId($request->unit_id));
         }
         if ($request->has('department_id') && $request->department_id) {
-            $query = $query->where('masters_training_schedule.department_id', decryptId($request->department_id));
+            $query = $query->where('training_schedule.department_id', decryptId($request->department_id));
         }
-        if ($request->has('training_offered_for') && $request->training_offered_for) {
-            $query = $query->where('training_offered_for', 'LIKE', '%' . $request->training_offered_for . '%');
+        if ($request->has('venue_id') && $request->venue_id) {
+            $query = $query->where('training_schedule.venue_id', decryptId($request->venue_id));
         }
-        if ($request->has('mode_of_training') && $request->mode_of_training) {
-            $query = $query->where('mode_of_training', 'LIKE', '%' . $request->mode_of_training . '%');
-        }
+
         if ($request->has('status') && $request->status) {
-            $query = $query->where('status', 'LIKE', '%' . decryptId($request->status) . '%');
+            $query = $query->where('training_schedule.status', 'LIKE', '%' . decryptId($request->status) . '%');
         }
         $data_count = $query;
         $total_records = $data_count->count();
@@ -120,13 +126,15 @@ class TrainingSchedule extends Model
         $request = request();
 
         $insert_array = array(
+            'from_date' => DBdateformat($request->from_date),
+            'to_date' => DBdateformat($request->to_date),
             'topic_id' => decryptId($request->topic_id),
             'trainer_id' => decryptId($request->trainer_id),
-            'training_offered_for' => decryptId($request->training_offered_for),
+            'venue_id' => decryptId($request->venue_id),
             'unit_id' => decryptId($request->unit_id),
             'department_id' => decryptId($request->department_id),
-            'mode_of_training' => decryptId($request->mode_of_training),
-            'training_evaluation' => decryptId($request->training_evaluation),
+            'target_trainees' => $request->target_trainees,
+            'training_man_hours' => $request->training_man_hours,
             'created_by' => Auth::id()
         );
         return $this->create($insert_array);
@@ -138,13 +146,15 @@ class TrainingSchedule extends Model
         $request = request();
 
         $update_array = array(
+            'from_date' => DBdateformat($request->from_date),
+            'to_date' => DBdateformat($request->to_date),
             'topic_id' => decryptId($request->topic_id),
             'trainer_id' => decryptId($request->trainer_id),
-            'training_offered_for' => decryptId($request->training_offered_for),
+            'venue_id' => decryptId($request->venue_id),
             'unit_id' => decryptId($request->unit_id),
             'department_id' => decryptId($request->department_id),
-            'mode_of_training' => decryptId($request->mode_of_training),
-            'training_evaluation' => decryptId($request->training_evaluation),
+            'target_trainees' => $request->target_trainees,
+            'training_man_hours' => $request->training_man_hours,
             'updated_by' => Auth::id(),
             'updated_at' => now(),
         );
@@ -185,36 +195,45 @@ class TrainingSchedule extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_training_schedule.*', 'masters_unit.unit_name', 'masters_employee.emp_name', 'masters_department.department_name', 'masters_topic.topic_name');
-        $query = $query->leftJoin('masters_unit', 'masters_training_schedule.unit_id', '=', 'masters_unit.id');
-        $query = $query->leftJoin('masters_employee', 'masters_training_schedule.trainer_id', '=', 'masters_employee.id');
-        $query = $query->leftJoin('masters_department', 'masters_training_schedule.department_id', '=', 'masters_department.id');
-        $query = $query->leftJoin('masters_topic', 'masters_training_schedule.topic_id', '=', 'masters_topic.id');
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
+        $query = $this->select('training_schedule.*', 'masters_unit.unit_name', 'masters_employee.emp_name', 'masters_department.department_name', 'training_masters_topic.topic_name', 'training_masters_venue.name_of_the_conference_hall');
+        $query = $query->leftJoin('masters_unit', 'training_schedule.unit_id', '=', 'masters_unit.id');
+        $query = $query->leftJoin('masters_employee', 'training_schedule.trainer_id', '=', 'masters_employee.id');
+        $query = $query->leftJoin('masters_department', 'training_schedule.department_id', '=', 'masters_department.id');
+        $query = $query->leftJoin('training_masters_topic', 'training_schedule.topic_id', '=', 'training_masters_topic.id');
+        $query = $query->leftJoin('training_masters_venue', 'training_schedule.venue_id', '=', 'training_masters_venue.id');
+        if ($request->search['value'] != null || $request->search['value'] != '') {
+            $search = $request->search['value'];
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('name_of_the_conference_hall', 'LIKE', '%' . $search . '%');
+                    ->orWhere('from_date', 'LIKE', '%' . $search . '%');
             });
         }
 
-
-        if ($request->has('name_of_the_conference_hall') && $request->name_of_the_conference_hall) {
-            $query = $query->where('name_of_the_conference_hall', 'LIKE', '%' . $request->name_of_the_conference_hall . '%');
+        if ($request->has('from_date') && $request->from_date) {
+            $query = $query->where('from_date', 'LIKE', '%' . $request->from_date . '%');
+        }
+        if ($request->has('to_date') && $request->to_date) {
+            $query = $query->where('to_date', 'LIKE', '%' . $request->to_date . '%');
+        }
+        if ($request->has('topic_id') && $request->topic_id) {
+            $query = $query->where('training_schedule.topic_id', decryptId($request->topic_id));
+        }
+        if ($request->has('trainer_id') && $request->trainer_id) {
+            $query = $query->where('training_schedule.trainer_id', decryptId($request->trainer_id));
         }
         if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('masters_training_schedule.unit_id', decryptId($request->unit_id));
+            $query = $query->where('training_schedule.unit_id', decryptId($request->unit_id));
         }
-        if ($request->has('capacity') && $request->capacity) {
-            $query = $query->where('capacity', 'LIKE', '%' . $request->capacity . '%');
+        if ($request->has('department_id') && $request->department_id) {
+            $query = $query->where('training_schedule.department_id', decryptId($request->department_id));
         }
-        if ($request->has('projector_or_lcd_availability') && $request->projector_or_lcd_availability) {
-            $query = $query->where('projector_or_lcd_availability', 'LIKE', '%' . $request->projector_or_lcd_availability . '%');
+        if ($request->has('venue_id') && $request->venue_id) {
+            $query = $query->where('training_schedule.venue_id', decryptId($request->venue_id));
         }
-        if ($request->has('status') && $request->status) {
 
-            $query = $query->where('masters_training_schedule.status', decryptId($request->status));
+        if ($request->has('status') && $request->status) {
+            $query = $query->where('training_schedule.status', 'LIKE', '%' . decryptId($request->status) . '%');
         }
         $query->orderBy('id', 'DESC');
         return  $query->get();
@@ -223,8 +242,8 @@ class TrainingSchedule extends Model
     public function selectOne($id)
     {
 
-        $data = $this->select('masters_training_schedule.*', 'masters_unit.unit_name', 'masters_employee.emp_name', 'masters_department.department_name', 'masters_topic.topic_name')->leftJoin('masters_unit', 'masters_training_schedule.unit_id', '=', 'masters_unit.id')->leftJoin('masters_topic', 'masters_training_schedule.topic_id', '=', 'masters_topic.id')->leftJoin('masters_department', 'masters_training_schedule.department_id', '=', 'masters_department.id')->leftJoin('masters_employee', 'masters_training_schedule.trainer_id', '=', 'masters_employee.id')
-            ->where('masters_training_schedule.id', $id)
+        $data = $this->select('training_schedule.*', 'masters_unit.unit_name', 'masters_employee.emp_name', 'masters_department.department_name', 'training_masters_topic.topic_name', 'training_masters_venue.name_of_the_conference_hall')->leftJoin('masters_unit', 'training_schedule.unit_id', '=', 'masters_unit.id')->leftJoin('training_masters_topic', 'training_schedule.topic_id', '=', 'training_masters_topic.id')->leftJoin('masters_department', 'training_schedule.department_id', '=', 'masters_department.id')->leftJoin('masters_employee', 'training_schedule.trainer_id', '=', 'masters_employee.id')->leftJoin('training_masters_venue', 'training_schedule.venue_id', '=', 'training_masters_venue.id')
+            ->where('training_schedule.id', $id)
             ->first();
 
         return $data;
@@ -233,6 +252,6 @@ class TrainingSchedule extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('masters_training_schedule'));
+        static::addGlobalScope(new TrashScope('training_schedule'));
     }
 }

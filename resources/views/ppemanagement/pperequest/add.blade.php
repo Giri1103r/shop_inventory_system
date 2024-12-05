@@ -49,6 +49,9 @@
                                                             </option>
                                                         @endforeach
                                                     </select>
+                                                    @error('ppe_type')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                     <div class="text-danger" id="ppe_type_error"></div>
                                                 </div>
                                             </div>
@@ -59,8 +62,10 @@
                                                         class="form-select form-select-sm single-select ">
                                                         <option value="">Select the PPE name</option>
                                                     </select>
+                                                    @error('ppe_name')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                     <div class="text-danger" id="ppe_name_error"></div>
-
                                                 </div>
                                             </div>
 
@@ -94,6 +99,12 @@
 
 @push('script')
     <script>
+         $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         $(document).on('change', '#ppe_type', function() {
             let PPEtypeId = $(this).val();
             console.log(PPEtypeId);
@@ -103,7 +114,8 @@
                     url: "{{ admin_url('ppe_ppetype_master/ajax-list') }}",
                     type: 'GET',
                     data: {
-                        id: PPEtypeId
+                        id: PPEtypeId,
+                        _ts: new Date().getTime()
                     },
                     success: function(data) {
                         console.log(data);
@@ -124,41 +136,6 @@
             }
         });
 
-        $(document).on('change', '#ppe_name', function() {
-            let PPEnameId = $(this).val();
-
-            if (PPEnameId) {
-                $.ajax({
-                    url: "{{ admin_url('ppe_ppetype_master/ajax-image') }}",
-                    type: 'GET',
-                    data: {
-                        id: PPEnameId
-                    },
-                    success: function(data) {
-                        $('#ppe_image').empty();
-
-                        if (data.image_url) {
-
-                            $('#ppe_image').append('<img src="' + data.image_url +
-                                '" alt="PPE Image" />');
-                        } else {
-
-                            $('#ppe_image').append('No image uploaded for this PPE name.');
-                        }
-
-                        $('#ppe_image').trigger('change');
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching PPE Images. Please try again.');
-                    }
-                });
-            } else {
-                $('#ppe_image').empty().append('No image uploaded for this PPE name.');
-                $('#ppe_image').trigger('change');
-            }
-        });
-
-
 
         $(document).ready(function() {
 
@@ -177,11 +154,9 @@
             });
 
 
-
             function validatePPEType() {
 
                 var name = $('#ppe_type').val();
-                var regex = /^[a-zA-Z0-9\-_'"()\s]{3,30}$/;
 
                 if (name === "") {
                     $('#ppe_type_error').text('PPE type cannot be empty.');

@@ -43,12 +43,14 @@
                                             </div>
                                         </div>
                                         <hr>
-                                        <div class="submit-button" style="text-align: right;"> <div class="">
+                                       
+                                        <div class="submit-button" style="text-align: right;">
                                             <x-button-submit></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
-                                            <x-button-cancel></x-button-cancel>
+                                            <x-button-cancel href="{{ admin_url('company/list') }}"></x-button-cancel>
 
                                         </div>
+
 
                                     </form>
                                 </div>

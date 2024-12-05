@@ -39,6 +39,9 @@
                                                     <input type="text" name ="item_code" id="item_code"
                                                         class="form-control" placeholder="Item Code">
                                                     <div class="text-danger" id="item_code_error"></div>
+                                                    @error('item_code')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">
@@ -47,6 +50,9 @@
                                                     <input type="text" name="ppe_name" id="ppe_name"
                                                         class="form-control" placeholder="Enter the PPE name">
                                                     <div class="text-danger" id="ppe_name_error"></div>
+                                                    @error('ppe_name')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">
@@ -61,6 +67,9 @@
                                                         @endforeach
                                                     </select>
                                                     <div class="text-danger" id="ppe_type_error"></div>
+                                                    @error('ppe_type')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
 
@@ -80,6 +89,9 @@
                                                         id="protection_category" class="form-control form-control-sm"
                                                         placeholder="Enter the protection category">
                                                     <div class="text-danger" id="protection_error"></div>
+                                                    @error('protection_error')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
 
@@ -90,6 +102,9 @@
                                                         class="form-control form-control-sm"
                                                         placeholder="Enter the ppe standard">
                                                     <div class="text-danger" id="ppe_standard_error"></div>
+                                                    @error('ppe_standard')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
 
@@ -99,8 +114,11 @@
                                                     <input type="file" name="ppe_file" id="ppe_file"
                                                         class="form-control form-control-sm" placeholder="Enter the image"
                                                         onchange="validateImage()">
-                                                    <small>Allowed file types: png, jpeg</small>
+                                                    <small>Allowed file types: png, jpeg , jpg</small>
                                                     <div id="ppe_file_error" class="text-danger"></div>
+                                                    @error('ppe_file')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                         </div>
@@ -108,10 +126,9 @@
                                         <div class="submit-button float-end">
                                             <x-button-submit class="submit" id="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
-                                            <x-button-cancel href="{{ admin_url('ppe_ppetype_master/list') }}"></x-button-cancel>
+                                            <x-button-cancel
+                                                href="{{ admin_url('ppe_ppetype_master/list') }}"></x-button-cancel>
                                         </div>
-
-
                                     </form>
                                 </div>
 
@@ -127,6 +144,12 @@
 @endsection
 @push('script')
     <script>
+          $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         $(document).ready(function() {
 
             $('#PpeTypeMasterForm').on('submit', function(e) {
@@ -253,7 +276,7 @@
 
                 if (file !== "") {
                     var extension = file.split('.').pop().toLowerCase();
-                    if ($.inArray(extension, ['png', 'jpeg']) === -1) {
+                    if ($.inArray(extension, ['png', 'jpeg', 'jpg']) === -1) {
                         fileError.text('Allowed file types: png, jpeg.');
                         return false;
                     } else {

@@ -73,7 +73,7 @@ class TopicController extends Controller
                             if (CheckUserPermission('edit')) {
                                 $btn .= '<a href="' . admin_url('topic/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
-                        
+
                             if (CheckUserPermission('delete')) {
                                 $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             }
@@ -208,7 +208,7 @@ class TopicController extends Controller
         }
     }
 
-  
+
     public function StatusChange(Request $request)
     {
 
@@ -216,7 +216,7 @@ class TopicController extends Controller
             $id = decryptId($request->id);
 
             $this->topic->statuschange($id);
-          
+
             return response()->json(['status' => 'success', 'msg' => 'Topic status changed'], 200);
         } catch (Exception $ex) {
 
@@ -228,7 +228,7 @@ class TopicController extends Controller
     {
         try {
             $id = decryptId($request->id);
-          
+
             $this->topic->deleterecord($id);
 
             return response()->json(['status' => 'success', 'msg' => 'Topic deleted successfully'], 200);
@@ -410,7 +410,23 @@ class TopicController extends Controller
             report($ex);
         }
     }
-
+    public function Uniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $topic_name = $request->topic_name;
+            $id = $request->id;
+            if ($id == '') {
+                $record = $this->topic->uniqueCheck($topic_name);
+            } else {
+                $id = decryptId($id);
+                $record = $this->topic->ExistuniqueCheck($topic_name, $id);
+            }
+            if ($record->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
+        }
+    }
     public function DownloadSample(Request $request)
     {
 

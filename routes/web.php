@@ -27,6 +27,9 @@ use App\Http\Controllers\Master\SafeWorkController;
 use App\Http\Controllers\Master\PrecautionController;
 use App\Http\Controllers\Master\ChecklistController;
 use App\Http\Controllers\Master\TypeofWorkController;
+use App\Http\Controllers\Ppemanagement\PpeExemptionController;
+use App\Http\Controllers\Master\WorkerLogController;
+use App\Http\Controllers\Master\EmployeeLogController;
 use App\Http\Controllers\Ppemanagement\PpeRequestController;
 use App\Http\Controllers\Safetypermit\SafetyPermitController;
 
@@ -176,6 +179,18 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('uploadlog/list/{logid}', [UploadLogController::class, 'view']);
             Route::get('uploadlog/download/{logid}', [UploadLogController::class, 'download']);
             Route::get('uploadlog/export/excel/{logid}', [UploadLogController::class, 'ExportExcel']);
+            /**
+             *Employee Error Log
+             */
+
+            Route::get('employeelog/list', [EmployeeLogController::class, 'index']);
+            Route::post('employeelog/list', [EmployeeLogController::class, 'index']);
+            /**
+             * Worker Error Log
+             */
+
+            Route::get('workerlog/list', [WorkerLogController::class, 'index']);
+            Route::post('workerlog/list', [WorkerLogController::class, 'index']);
 
             /**
              * Notification
@@ -538,7 +553,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/edit/submit', [PpeTypeController::class, 'update']);
                 Route::post('/status', [PpeTypeController::class, 'statusChange']);
                 Route::post('/delete', [PpeTypeController::class, 'delete']);
-                Route::get('/unique', [PpeTypeController::class, 'Uniquecheck']);
+                Route::post('/unique', [PpeTypeController::class, 'Uniquecheck']);
                 Route::get('/sample_download', [PpeTypeController::class, 'DownloadSample']);
                 Route::get('/import', [PpeTypeController::class, 'import']);
                 Route::post('/import/Submit', [PpeTypeController::class, 'importSubmit']);
@@ -555,7 +570,10 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/status', [PpeRequestController::class, 'statusChange']);
                 Route::post('/delete', [PpeRequestController::class, 'delete']);
                 Route::get('/view/{id}', [PpeRequestController::class, 'view']);
-                Route::post('/approvereject/submit', [PpeRequestController::class, 'ApprovalReject']);
+                Route::get('/hodapproval/view/{id}', [PpeRequestController::class, 'hodApprovalview']);
+                Route::post('/hodapprovereject/submit', [PpeRequestController::class, 'storehodapproval']);
+                Route::get('/ehsapproval/view/{id}', [PpeRequestController::class, 'ehsApprovalview']);
+                Route::post('/ehsapprovereject/submit', [PpeRequestController::class, 'storeehsapproval']);
                 Route::get('/edit/{id}', [PpeRequestController::class, 'edit']);
                 Route::post('/edit/submit', [PpeRequestController::class, 'update']);
                 Route::get('/export/excel', [PpeRequestController::class, 'exportExcel']);
@@ -576,6 +594,22 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/edit/submit', [SafetyPermitController::class, 'update']);
                 Route::get('/export/excel', [SafetyPermitController::class, 'exportExcel']);
                 Route::get('/export/pdf', [SafetyPermitController::class, 'exportPdf']);
+            });
+            Route::group(['prefix' => 'ppe_exemption'], function () {
+
+                Route::get('/list', [PpeExemptionController::class, 'index']);
+                Route::post('/list', [PpeExemptionController::class, 'index']);
+                Route::get('/add', [PpeExemptionController::class, 'add']);
+                Route::post('/add/submit', [PpeExemptionController::class, 'store']);
+                Route::post('/status', [PpeExemptionController::class, 'statusChange']);
+                Route::post('/delete', [PpeExemptionController::class, 'delete']);
+                Route::get('/view/{id}', [PpeExemptionController::class, 'view']);
+                Route::get('/approval/view/{id}', [PpeExemptionController::class, 'ApprovalReject']);
+                Route::post('/approvereject/submit', [PpeExemptionController::class, 'storeapprovereject']);
+                Route::get('/edit/{id}', [PpeExemptionController::class, 'edit']);
+                Route::post('/edit/submit', [PpeExemptionController::class, 'update']);
+                Route::get('/export/excel', [PpeExemptionController::class, 'exportExcel']);
+                Route::get('/export/pdf', [PpeExemptionController::class, 'exportPdf']);
             });
         });
     });
