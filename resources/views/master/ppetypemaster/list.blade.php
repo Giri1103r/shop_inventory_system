@@ -32,6 +32,16 @@
                                             <label for="inspectiontype" class="form-label ">PPE Name</label>
                                             <input type="text" name="ppe_name" id="ppe_name" class="form-control">
                                         </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <input type="text" class="form-control form-control-sm" name="from_date"
+                                                id="from_date">
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <input type="text" class="form-control form-control-sm" name="to_date"
+                                                id="to_date">
+                                        </div>
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
@@ -89,6 +99,30 @@
             firstTh.removeClass('sorting_asc');
         });
 
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
+        $(document).ready(function() {
+            var fromDatepicker = flatpickr("#from_date", {
+                dateFormat: "d-m-Y",
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        var startDate = selectedDates[0];
+                        toDatepicker.set('minDate', startDate);
+                        toDatepicker.clear();
+                    }
+                }
+            });
+
+            var toDatepicker = flatpickr("#to_date", {
+                dateFormat: "d-m-Y",
+                minDate: "today"
+            });
+        });
+
         $(function() {
             /* Datatable */
             var table = $('.datatable-list').DataTable({
@@ -124,6 +158,8 @@
                     data: function(d) {
                         d.item_code = $('#item_code').val();
                         d.ppe_name = $('#ppe_name').val();
+                        d.from_date = $('#from_date').val();
+                        d.to_date = $('#to_date').val();
                         d.ppe_status = $('#ppe_status').val();
 
                     }
@@ -189,6 +225,8 @@
                                     var searchValue = $('#datatable-list_filter input').val();
                                     item_code = $('#item_code').val();
                                     ppe_name = $('#ppe_name').val();
+                                    from_date = $('#from_date').val();
+                                    to_date = $('#to_date').val();
                                     ppe_status = $('#ppe_status').val();
 
                                     $(".dt-button").removeClass('processing');
@@ -198,6 +236,8 @@
                                         '?search=' + searchValue +
                                         '&item_code=' + item_code +
                                         '&ppe_name=' + ppe_name +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&ppe_status=' +ppe_status
 
                                 }
@@ -207,8 +247,10 @@
                                 text: '{{ __('common.excel') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    item_code = $('#item_code').val();
+                                     item_code = $('#item_code').val();
                                     ppe_name = $('#ppe_name').val();
+                                    from_date = $('#from_date').val();
+                                     to_date = $('#to_date').val();
                                     ppe_status = $('#ppe_status').val();
 
 
@@ -219,6 +261,8 @@
                                         '?search=' + searchValue+
                                         '&item_code=' + item_code +
                                         '&ppe_name=' + ppe_name +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&ppe_status=' +ppe_status
                                 }
                             },

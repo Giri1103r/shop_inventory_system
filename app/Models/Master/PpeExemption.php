@@ -4,6 +4,7 @@ namespace App\Models\Master;
 
 use App\Scopes\TrashScope;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class PpeExemption extends Model
@@ -40,6 +41,21 @@ class PpeExemption extends Model
         ->join('masters_unit','ppe_ppeexemption.unit', '=', 'masters_unit.id')
         ->where('masters_department.trash','NO')
         ->where('masters_unit.trash','NO');
+
+        $user = Auth::user();
+        $empId = $user->employee_id;
+        $userRole = $user->role;
+
+        $userRole = string_to_array($userRole);
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole) ) {
+        } elseif(in_array(ROLE_HOD, $userRole)){
+           $departmentId = $user->department_id;
+           $query->where('ppe_ppeexemption.department',$departmentId);
+        }
+        else {
+            $query->where('ppe_ppeexemption.emp_id', $empId);
+        }
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -58,11 +74,14 @@ class PpeExemption extends Model
         if ($request->has('emp_id') && $request->emp_id) {
             $query->where('ppe_ppeexemption.emp_id', 'LIKE', '%' . $request->emp_id . '%');
         }
-        if ($request->has('from_date') && $request->from_date) {
-            $query->where('ppe_ppeexemption.from_date', 'LIKE', '%' . $request->from_date . '%');
+        if ($request->has('from_date') && !empty($request->from_date)) {
+            $fromDate = $request->from_date;
+            $query->where('ppe_ppeexemption.from_date', '>=', $fromDate);
         }
-        if ($request->has('to_date') && $request->to_date) {
-            $query->where('ppe_ppeexemption.to_date', 'LIKE', '%' . $request->to_date . '%');
+
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $toDate =$request->to_date;
+            $query->where('ppe_ppeexemption.to_date', '<=', $toDate);
         }
         if ($request->has('status') && $request->status) {
             $query->where('ppe_ppeexemption.status', decryptId($request->status));
@@ -121,6 +140,10 @@ class PpeExemption extends Model
 
         ];
         return $this->where('id',$id)->update($update_array);
+    }
+
+    public function exemptiondata($id){
+        return $this->where('id',$id)->first();
     }
 
     public function statuschange($id)
@@ -188,11 +211,14 @@ class PpeExemption extends Model
         if ($request->has('emp_id') && $request->emp_id) {
             $query->where('ppe_ppeexemption.emp_id', 'LIKE', '%' . $request->emp_id . '%');
         }
-        if ($request->has('from_date') && $request->from_date) {
-            $query->where('ppe_ppeexemption.from_date', 'LIKE', '%' . $request->from_date . '%');
+        if ($request->has('from_date') && !empty($request->from_date)) {
+            $fromDate = $request->from_date;
+            $query->where('ppe_ppeexemption.from_date', '>=', $fromDate);
         }
-        if ($request->has('to_date') && $request->to_date) {
-            $query->where('ppe_ppeexemption.to_date', 'LIKE', '%' . $request->to_date . '%');
+
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $toDate =$request->to_date;
+            $query->where('ppe_ppeexemption.to_date', '<=', $toDate);
         }
         if ($request->has('status') && $request->status) {
             $query->where('ppe_ppeexemption.status', decryptId($request->status));
@@ -201,9 +227,10 @@ class PpeExemption extends Model
         return  $query->orderBy('id', 'DESC')->get();
     }
 
-    public function findDepartment($department)
+    public function findDepartment($department ,$id)
     {
-        return $this->where('id', $department)->select('department')->first();
+
+        return $this->where('id', $id)->where('department', $department)->pluck('department')->first();
     }
 
     protected static function booted()

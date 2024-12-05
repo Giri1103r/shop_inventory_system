@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Ppemanagement;
 
 use App\Http\Controllers\Controller;
 use App\Mail\PpeEhsRequestEmail;
+use App\Mail\PpeRejectRequestEmail;
 use App\Mail\PpeRequestEmail;
 use App\Models\Master\Employee;
 use App\Models\Master\PpeRequest;
@@ -78,9 +79,7 @@ class PpeRequestController extends Controller
                             if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_HOD)) && $row->approve_status == 'PENDING') {
                                 $btn .= '<a href="' . admin_url('ppe_request/hodapproval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
                             }
-                            // if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) && $row->approve_status == 'APPROVED') {
-                            //     $btn .= '<a href="' . admin_url('ppe_request/ehsapproval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
-                            // }
+
 
                             return $btn;
                         })
@@ -128,47 +127,90 @@ class PpeRequestController extends Controller
             $rules = [
                 'ppe_type' => 'required',
                 'ppe_name' => 'required',
-
             ];
+
             $messages = [
-
                 'ppe_name.required' => __('PPE Name is required'),
-                'ppe_type.required' => __('PPE Type  is required'),
-
+                'ppe_type.required' => __('PPE Type is required'),
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
+
+            $lastStatus = $this->pperequest->laststatus();
             $lastPPERequest = $this->pperequest->lastPpeRequest();
+            $chemicaldepartment = $this->pperequest->lastsixmonthrequest();
 
-            if ($lastPPERequest) {
-                $lastRequestDate = Carbon::parse($lastPPERequest->created_at)->addYear();
-                $currentDate = Carbon::now();
-
-                if (!($lastRequestDate->lt($currentDate))) {
-                    Session::flash('error', __('PPE Request is not allowed within one year'));
+            switch (true) {
+                case $lastStatus && $lastStatus->status == 1:
+                    Session::flash('error', __('Invalid request. Last PPE request is still active.'));
                     return redirect(admin_url('ppe_request/list'));
-                }
+
+                case $chemicaldepartment:
+                    $RequestDate = Carbon::parse($chemicaldepartment->created_at)->addMonths(6);
+                    $currentDate = Carbon::now();
+
+                    if (!$RequestDate->lt($currentDate)) {
+                        Session::flash('error', __('PPE Request is not allowed within six months'));
+                        return redirect(admin_url('ppe_request/list'));
+                    }
+                    break;
+
+                case $lastPPERequest:
+                    $lastRequestDate = Carbon::parse($lastPPERequest->created_at)->addYear();
+                    $currentDate = Carbon::now();
+
+                    if (!$lastRequestDate->lt($currentDate)) {
+                        Session::flash('error', __('PPE Request is not allowed within one year'));
+                        return redirect(admin_url('ppe_request/list'));
+                    }
+                    break;
+
+                default:
+                    break;
             }
 
             try {
+                $pperequest = $this->pperequest->store();
 
-                $this->pperequest->store();
-                Session::flash('success', __('PPE Request is taken  added successfully'));
+                $id = $pperequest->id;
+                $message = 'New PPE Request';
+                $departmentId = $pperequest->department;
+                $hodId = $this->user->getdepartmenthodId($departmentId);
+                $img = admin_url('public/assets/images/ppe-management.jpg');
+
+
+
+                $notificationData = [
+                    'notification_type' => 1,
+                    'module_type' => 3,
+                    'notification_message' => $message,
+                    'mobile_notification' => json_encode([
+                        'title' => $message,
+                        'message' => $pperequest->emp_name . ' has a PPE request at ' . displaydateformat($pperequest->created_at) . ' on ' . getPpename($pperequest->ppe_name) . ' from ' . getDepartment($pperequest->department) . ' DEPARTMENT ',
+                        'icon' => $img,
+                        'module' => 1,
+                    ]),
+                    'web_link' => admin_url('ppe_request/hodapproval/view/' . encryptId($id)),
+                    'assigned_user' => array_to_string($hodId),
+                    'created_by' => Auth::id(),
+                ];
+
+                notificationSave($notificationData);
+                Session::flash('success', __('PPE Request is added successfully'));
                 return redirect(admin_url('ppe_request/list'));
             } catch (Exception $ex) {
-                dd($ex);
                 Session::flash('error', __('common.message_error'));
+                return redirect(admin_url('ppe_request/list'));
             }
-            return redirect(admin_url('ppe_request/list'));
         } catch (Exception $ex) {
-            dd($ex);
-            Session::flash('error',  __('common.message_error'));
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ppe_request/list'));
         }
     }
+
 
     public function view(Request $request)
     {
@@ -236,7 +278,7 @@ class PpeRequestController extends Controller
                 'approved_at' => $approved_at,
                 'approved_by' => Auth::id(),
                 'approve_status' => $action == 'approve' ? 'APPROVED' : 'REJECT',
-
+                'status' => $action == 'approve' ? 1 : 0
             ];
 
             $empDetails->updateapproval($updateData, $id);
@@ -251,12 +293,69 @@ class PpeRequestController extends Controller
                 'reject_link' => url('ppe_request/ehsapproval/view/' . encryptID($id)),
             ];
             $ehsofficer = $this->user->findEhsofficer();
-            if ($action == 'approve' || $action == 'reject') {
+            $empId = $empDetails->emp_id;
+            $requestor = $this->user->finduseremail($empId);
+            if ($action == 'approve') {
                 foreach ($ehsofficer as $officer) {
                     $officer_email = getUseremail($officer->id);
                     Mail::to($officer_email)->send(new PpeRequestEmail($details));
                 }
+                $id = $empDetails->id;
+                $message = 'New PPE Request';
+                $EhsId = $this->user->assigneduser($ehsofficer);
+                $img = admin_url('public/assets/images/ppe-management.jpg');
+
+                $notificationData = [
+                    'notification_type' => 1,
+                    'module_type' => 3,
+                    'notification_message' => $message,
+                    'mobile_notification' => json_encode([
+                        'title' => $message,
+                        'message' => getUsername($updateData['approved_by']) . " has {$updateData['approve_status']} a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
+                        'icon' => $img,
+                        'module' => 1,
+                    ]),
+                    'web_link' => admin_url('ppe_request/ehsapproval/view/' . encryptId($id)),
+                    'assigned_user' => array_to_string($EhsId),
+                    'created_by' => Auth::id(),
+                ];
+
+                notificationSave($notificationData);
+            } else {
+                $details = [
+                    'emp_id' => $empDetails->emp_id,
+                    'emp_name' => $empDetails->emp_name,
+                    'remarks' => $updateData['approve_msg'],
+                    'status' => $updateData['approve_status'],
+                    'department' => $empDetails->department,
+                    'approved_by' => $empDetails->approved_by,
+                ];
+                Mail::to($requestor)->send(new PpeRejectRequestEmail($details));
+
+                $id = $empDetails->id;
+                $message = 'New PPE Request';
+                $requestorId = $this->user->getrequestId($empId);
+                $img = admin_url('public/assets/images/ppe-management.jpg');
+
+                $notificationData = [
+                    'notification_type' => 1,
+                    'module_type' => 3,
+                    'notification_message' => $message,
+                    'mobile_notification' => json_encode([
+                        'title' => $message,
+                        'message' => getUsername($updateData['approved_by']) . " has {$updateData['approve_status']} a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
+                        'icon' => $img,
+                        'module' => 1,
+                    ]),
+                    'web_link' => admin_url('ppe_request/ehsapproval/view/' . encryptId($id)),
+                    'assigned_user' => array_to_string($requestorId),
+                    'created_by' => Auth::id(),
+                ];
+
+                notificationSave($notificationData);
             }
+
+
 
             Session::flash('success', 'PPE Request has successfully responded');
             return redirect(admin_url('ppe_request/list'));
@@ -309,15 +408,20 @@ class PpeRequestController extends Controller
 
         try {
             $empDetails = $this->pperequest->find($id);
-            $departmentId=$empDetails->department;
+            $empId = $empDetails->emp_id;
+            $departmentId = $empDetails->department;
             $hod = $this->user->findDepartmenthod($departmentId);
-            $storemanager= $this->user->findStoremanager();
+            $storemanager = $this->user->findStoremanager();
             $updateEhsData = [
                 'remarks' => $remarks,
                 'ehs_approved_at' => $approved_at,
                 'ehs_approved_by' => Auth::id(),
                 'ehs_approve_status' => $action == 'approve' ? 'APPROVED' : 'REJECT',
             ];
+
+            if ($action == 'approve' || $action == 'reject') {
+                $updateEhsData['status'] = 0;
+            }
 
             $empDetails->updateehsapproval($updateEhsData, $id);
             $details = [
@@ -329,22 +433,64 @@ class PpeRequestController extends Controller
                 'approved_by' => $empDetails->approved_by,
             ];
             $requestor = $empDetails->email;
-            if ($action == 'approve' ) {
+            if ($action == 'approve') {
                 $recipients = array_filter([$requestor, $hod, $storemanager]);
                 Mail::to($recipients)->send(new PpeEhsRequestEmail($details));
-            }
-            else{
+
+                $id = $empDetails->id;
+                $message = 'New PPE Request';
+                $hodId = $this->user->getdepartmenthodId($departmentId);
+                $storemanagerId = $this->user->getStoreManagerId();
+                $img = admin_url('public/assets/images/ppe-management.jpg');
+                $requestorId = $this->user->getrequestId($empId);
+                $assignedUsers = array_filter([$hodId, $storemanagerId, $requestorId]);
+                $assignedUserString = implode(',', $assignedUsers);
+                $notificationData = [
+                    'notification_type' => 1,
+                    'module_type' => 3,
+                    'notification_message' => $message,
+                    'mobile_notification' => json_encode([
+                        'title' => $message,
+                        'message' => getUsername($updateEhsData['ehs_approved_by']) . " has {$updateEhsData['ehs_approve_status']} a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
+                        'icon' => $img,
+                        'module' => 1,
+                    ]),
+                    'assigned_user' =>$assignedUserString,
+                    'created_by' => Auth::id(),
+                ];
+
+                notificationSave($notificationData);
+            } else {
                 Mail::to($requestor)->send(new PpeEhsRequestEmail($details));
+                $id = $empDetails->id;
+                $message = 'New PPE Request';
+                $img = admin_url('public/assets/images/ppe-management.jpg');
+                $requestorId = $this->user->getrequestId($empId);
+                $notificationData = [
+                    'notification_type' => 1,
+                    'module_type' => 3,
+                    'notification_message' => $message,
+                    'mobile_notification' => json_encode([
+                        'title' => $message,
+                        'message' => getUsername($updateEhsData['ehs_approved_by']) . " has {$updateEhsData['ehs_approve_status']} a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
+                        'icon' => $img,
+                        'module' => 1,
+                    ]),
+                    'assigned_user' => implode(',', [$requestorId]),
+                    'created_by' => Auth::id(),
+                ];
+
+                notificationSave($notificationData);
             }
 
             Session::flash('success', 'PPE Request has successfully responded');
             return redirect(admin_url('ppe_request/list'));
         } catch (Exception $ex) {
-            dd($ex);
-            Session::flash('error',  __('common.message_error'));
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ppe_request/list'));
         }
     }
+
 
     public function edit(Request $request)
     {
@@ -393,6 +539,31 @@ class PpeRequestController extends Controller
             try {
 
                 $this->pperequest->updates($id);
+
+                $pperequest = $this->pperequest->selectOne($id);
+                $message = 'New PPE Request';
+                $departmentId = $pperequest->department;
+                $hodId = $this->user->getdepartmenthodId($departmentId);
+                $img = admin_url('public/assets/images/ppe-management.jpg');
+
+
+
+                $notificationData = [
+                    'notification_type' => 1,
+                    'module_type' => 3,
+                    'notification_message' => $message,
+                    'mobile_notification' => json_encode([
+                        'title' => $message,
+                        'message' => $pperequest->emp_name . ' has updated a PPE request at ' . displaydateformat($pperequest->created_at) . ' on ' . getPpename($pperequest->ppe_name) . ' from ' . getDepartment($pperequest->department) . ' DEPARTMENT ',
+                        'icon' => $img,
+                        'module' => 1,
+                    ]),
+                    'web_link' => admin_url('ppe_request/hodapproval/view/' . encryptId($id)),
+                    'assigned_user' => array_to_string($hodId),
+                    'created_by' => Auth::id(),
+                ];
+
+                notificationSave($notificationData);
                 Session::flash('success', __('PPE Request is taken updated successfully'));
                 return redirect(admin_url('ppe_request/list'));
             } catch (Exception $ex) {

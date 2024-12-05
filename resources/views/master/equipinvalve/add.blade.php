@@ -49,27 +49,29 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="equip_involveadd" action="{{ admin_url('ptw/equipinvolvemaster/add/submit') }}">
+                                    <form method="POST" id="equip_involveadd"
+                                        action="{{ admin_url('ptw/equipinvolvemaster/add/submit') }}">
                                         @csrf
 
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Name</label>
-                                                    <input type="text" name="equip_involve" id = "equip_involve" class="form-control"
-                                                        placeholder="Name">
+                                                    <input type="text" name="equip_involve" id = "equip_involve"
+                                                        class="form-control" placeholder="Name">
                                                 </div>
                                             </div>
 
-                                           
+
                                         </div>
                                         <hr>
-                                        <div class="submit-button">
+                                        <div class="submit-button" style="text-align: right;">
 
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-cancel></x-button-cancel>
+                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-cancel
+                                                href="{{ admin_url('ptw/equipinvolvemaster/list') }}"></x-button-cancel>
                                         </div>
-
                                     </form>
                                 </div>
 
@@ -86,15 +88,22 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         $(function() {
             $('#equip_involveadd').validate({
                 rules: {
                     equip_involve: {
                         required: true,
-                        
                         minlength: 3,
+                        maxlength: 50,
+                        pattern: /^[a-zA-Z0-9\s\-_'"(),&]*$/,
                         remote: {
-                            url: '{{ admin_url("ptw/equipinvolvemaster/unique") }}',
+                            url: '{{ admin_url('ptw/equipinvolvemaster/unique') }}',
                             type: 'post',
                             data: {
                                 location_type_name: function() {
@@ -103,15 +112,17 @@
                             }
                         }
                     },
-                   
+
                 },
                 messages: {
                     equip_involve: {
                         required: "{{ __('Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
-                        remote: "{{ __('Name should be unique') }}"
+                        maxlength: "Maximum Characters should not exceed 50",
+                        remote: "{{ __('Name should be unique') }}",
+                        pattern: "Only alphanumeric characters and -, _, ', \", (), ,, and & are allowed",
                     },
-                    
+
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {

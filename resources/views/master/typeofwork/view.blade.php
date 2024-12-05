@@ -54,7 +54,7 @@
                                         <div>
                                         <a href="{{ asset($typeofwork->file_path) }}" target="_blank">
                                             <img src="{{ asset($typeofwork->file_path) }}" alt="Image"
-                                                style="max-width: 30%;">
+                                                style="max-width: 20%;">
                                         </a>
                                         </div>
                                     </div>

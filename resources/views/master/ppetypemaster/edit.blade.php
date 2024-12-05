@@ -165,6 +165,12 @@
 @push('script')
     <script>
         $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
+        $(document).ready(function() {
 
             $('#PpeTypeMasterForm').on('submit', function(e) {
                 let valid = true;

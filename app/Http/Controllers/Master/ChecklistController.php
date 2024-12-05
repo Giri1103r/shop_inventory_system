@@ -65,7 +65,7 @@ class ChecklistController extends Controller
                             // if (CheckUserPermission('edit')) {
                             $btn .= '<a href="' . admin_url('ptw/checklistmaster/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
-                            $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
+                            // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -116,7 +116,7 @@ class ChecklistController extends Controller
 
                 $this->checklist->store();
 
-                Session::flash('success', __('Equipment Checklist added successfully'));
+                Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
                 Session::flash('error', __('common.message_error'));
             }
@@ -180,7 +180,7 @@ class ChecklistController extends Controller
 
             $this->checklist->updates($id);
 
-            Session::flash('success', __('Equipment Checklist updated successfully'));
+            Session::flash('success', __('Your data has beeb updated successfully'));
             return redirect(admin_url('ptw/checklistmaster/list'));
         } catch (Exception $ex) {
 
@@ -192,13 +192,13 @@ class ChecklistController extends Controller
     public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {
-            $equip_involve = $request->equip_involve;
+            $checklist = $request->checklist;
             $id = $request->id;
             if ($id == '') {
-                $record = $this->checklist->uniqueCheck($equip_involve);
+                $record = $this->checklist->uniqueCheck($checklist);
             } else {
                 $id = decryptId($id);
-                $record = $this->checklist->ExistuniqueCheck($equip_involve, $id);
+                $record = $this->checklist->ExistuniqueCheck($checklist, $id);
             }
             if ($record->count()) {
                 return Response::json(false);
@@ -417,7 +417,7 @@ dd($ex);
             $mpdf->WriteHTML($html);
 
             $filename = "Equipment Checklist Details.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
