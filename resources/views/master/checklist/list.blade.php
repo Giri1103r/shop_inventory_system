@@ -10,14 +10,14 @@
 
                 <div class="card">
                     <h4 class="card-title"></h4>
-                    <div class="ms-auto">
+                    <div class="d-flex justify-content-end p-2">
 
-                        <x-button-filter dataId="" class="search" href=""></x-button-filter>
+                        <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         @if (CheckUserPermission('import'))
                             <x-button-import href="{{ admin_url('ptw/checklistmaster/import') }}"></x-button-import>
                         @endif
                         @if (CheckUserPermission('add'))
-                            <x-button-add dataId="" class="add btn btn-primary"
+                            <x-button-add dataId="" class="add btn btn-primary ms-1"
                                 href="{{ admin_url('ptw/checklistmaster/add') }}">Add</x-button-add>
                         @endif
                     </div>
@@ -41,7 +41,7 @@
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 

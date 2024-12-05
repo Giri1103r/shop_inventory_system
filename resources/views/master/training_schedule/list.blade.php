@@ -82,10 +82,9 @@
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3">
-                                            <x-button-search></x-button-search>
-                                            <x-button-reset></x-button-reset>
-
+                                        <div class="col-md-3 mb-3 d-flex align-items-end gap-2">
+                                            <x-button-search class="me-2"></x-button-search>
+                                            <x-button-reset class="ms-1"></x-button-reset>
                                         </div>
                                     </div>
                                 </div>

@@ -65,7 +65,7 @@ class EquipInvalveController extends Controller
                             // if (CheckUserPermission('edit')) {
                             $btn .= '<a href="' . admin_url('ptw/equipinvolvemaster/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
-                            $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
+                            // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -75,7 +75,7 @@ class EquipInvalveController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
+                    return response()->json(['status' => 'error', 'msg' => __('Please try after some time')], 406);
                 }
             }
         }
@@ -116,7 +116,7 @@ class EquipInvalveController extends Controller
 
                 $this->equipinvalve->store();
 
-                Session::flash('success', __('Equipments invalve job added successfully'));
+                Session::flash('success', __('Your data has been added successfully'));
             } catch (Exception $ex) {
                 Session::flash('error', __('common.message_error'));
             }
@@ -178,7 +178,7 @@ class EquipInvalveController extends Controller
 
             $this->equipinvalve->updates($id);
 
-            Session::flash('success', __('Equipments invalve job updated successfully'));
+            Session::flash('success', __('Your data has been updated successfully'));
             return redirect(admin_url('ptw/equipinvolvemaster/list'));
         } catch (Exception $ex) {
 
@@ -216,7 +216,7 @@ class EquipInvalveController extends Controller
             return response()->json(['status' => 'success', 'msg' => __('Equipments invalve job status changed')], 200);
         } catch (Exception $ex) {
 
-            return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
+            return response()->json(['status' => 'error', 'msg' => __('Please try after some time')], 406);
         }
     }
 
@@ -230,7 +230,7 @@ class EquipInvalveController extends Controller
             return response()->json(['status' => 'success', 'msg' => __('Equipments invalve job deleted successfully')], 200);
         } catch (Exception $ex) {
 
-            return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
+            return response()->json(['status' => 'error', 'msg' => __('Please try after some time')], 406);
         }
     }
 
@@ -392,7 +392,7 @@ class EquipInvalveController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Location Details",
+                'pagetitle' => "Equipment involved job Details",
             );
 
             $property = [
@@ -414,7 +414,7 @@ class EquipInvalveController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Equipments Involved Job Details.pdf";
+            $filename = "Equipments involved job details.pdf";
             $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
             dd($ex);

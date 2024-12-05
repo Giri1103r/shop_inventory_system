@@ -99,7 +99,7 @@ class TypeofWorkUpload extends Model
 
         $request = request();
         $typeofwork_upload = $request->file('typeofwork_upload');
-        $this->where('typeofwork_id', $id)->update(['trash' => 'YES']);
+        $this->where('typeofwork_id', $id)->update(['trash' => 'YES'],['status' => 1]);
         if ($typeofwork_upload != null) {
 
 

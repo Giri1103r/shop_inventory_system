@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\File;
-
+use App\Models\Master\TrainingMatrixFile;
 use Str;
 use PDF;
 use Mail;
@@ -28,12 +28,15 @@ class TopicController extends Controller
     private $topic;
     private $user;
     private $uploadlog;
+    private $training_matrix_file;
+
 
 
     public function __construct()
     {
 
         $this->topic = new Topic();
+        $this->training_matrix_file = new TrainingMatrixFile();
         $this->user = new User();
         $this->uploadlog = new UploadLog();
     }
@@ -74,9 +77,6 @@ class TopicController extends Controller
                                 $btn .= '<a href="' . admin_url('topic/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
 
-                            if (CheckUserPermission('delete')) {
-                                $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
-                            }
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -113,11 +113,9 @@ class TopicController extends Controller
         try {
 
             $rules = [
-                'topic_id' => 'required',
                 'topic_name' => 'required',
             ];
             $messages = [
-                'topic_id.required' => 'Please enter Topic ID',
                 'topic_name.required' => 'Please enter Topic Name',
 
             ];
@@ -129,6 +127,8 @@ class TopicController extends Controller
             try {
 
                 $topic = $this->topic->store();
+                $this->training_matrix_file->store2($topic);
+
                 Session::flash('success', 'Topic added successfully!');
             } catch (Exception $ex) {
                 report($ex);
@@ -150,9 +150,11 @@ class TopicController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $topic = $this->topic->selectOne($id);
+                $training_Files_questionnaire  = $this->training_matrix_file->where('topic_id', $id)->where('file_type', '3')->where('status', '1')->first();
 
                 $data = array(
                     'topic' => $topic,
+                    'training_Files_questionnaire' => $training_Files_questionnaire,
                 );
             }
             return view('master.topic.view', $data);
@@ -168,8 +170,11 @@ class TopicController extends Controller
 
 
             $topic = $this->topic->find($id);
+            $training_Files_questionnaire  = $this->training_matrix_file->where('topic_id', $id)->where('file_type', '3')->where('status', '1')->first();
+
             $data = array(
                 'topic' => $topic,
+                'training_Files_questionnaire' => $training_Files_questionnaire,
             );
 
 
@@ -184,11 +189,9 @@ class TopicController extends Controller
         try {
             $id = decryptId($request->id);
             $rules = [
-                'topic_id' => 'required',
                 'topic_name' => 'required',
             ];
             $messages = [
-                'topic_id.required' => 'Please enter Topic ID',
                 'topic_name.required' => 'Please enter Topic Name',
 
             ];
@@ -198,7 +201,7 @@ class TopicController extends Controller
             }
 
             $this->topic->updates($id);
-
+            $this->training_matrix_file->updates2($id);
             Session::flash('success', 'Topic updated successfully!');
             return redirect(admin_url('topic/list'));
         } catch (Exception $ex) {
@@ -304,8 +307,8 @@ class TopicController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportTopicJob($details));
-                //    dispatch((new ImportTopicJob($details))->onQueue('empimport'));
+                // dispatch(new ImportTopicJob($details));
+                   dispatch((new ImportTopicJob($details))->onQueue('topic'));
             }
 
             $insert_data['log_id'] = $insert_id;
@@ -404,7 +407,7 @@ class TopicController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Topic.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);

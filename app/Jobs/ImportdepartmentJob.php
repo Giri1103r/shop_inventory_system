@@ -6,6 +6,7 @@ namespace App\Jobs;
 use DB;
 use Str;
 use Mail;
+use Session;
 use App\Models\User;
 use Shuchkin\SimpleXLSX;
 use App\Models\UploadLog;
@@ -295,7 +296,18 @@ class ImportdepartmentJob implements ShouldQueue
 
         if (count($cond_error_datas) > 0) {
             UploadLogError::insert($cond_error_datas);
+            $final_update_array = array(
+                'upload_status' => 3,
+            );
+            Session::flash('error', 'Failed to upload. Please check the upload log.');
+        } else {
+
+            $final_update_array = array(
+                'upload_status' => 2,
+            );
+            Session::flash('success', 'Upload completed successfully.');
         }
+        
 
         $final_update_array = array(
             'upload_status' => 2,

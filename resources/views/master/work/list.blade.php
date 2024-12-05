@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Work')
-@section('pageurl', admin_url('department/list'))
+@section('title', 'Worker Master')
+@section('pageurl', admin_url('work/list'))
 
 
 @section('content')
@@ -106,11 +106,15 @@
                                         <th>Worker Id</th>
                                         <th>Worker Name</th>
                                         <th>Phone Number</th>
+                                        <th>Company Name</th>
+                                        <th>Location Name</th>
                                         <th>Unit Name</th>
+                                        <th>Department Name</th>
+                                        <th>Exit Date</th>
                                         <th>Worker Type</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
-                                        <th>{{ __('common.action') }}</th>
+                                        <th data-priority="5">{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -269,8 +273,24 @@
                             name: 'mobile_no'
                         },
                         {
+                            data: 'company_name',
+                            name: 'company_name'
+                        },
+                        {
+                            data: 'location_name',
+                            name: 'location_name'
+                        },
+                        {
                             data: 'unit_name',
                             name: 'unit_name'
+                        },
+                        {
+                            data: 'department_name',
+                            name: 'department_name'
+                        },
+                        {
+                            data: 'exit_date',
+                            name: 'exit_date'
                         },
                         {
                             data: 'wfemptype',
@@ -399,12 +419,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Worker') }}';
+                        var title = '{{ __('Do You want to In-Activate Worker Details') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Worker') }}';
+                        var title = '{{ __('Do You want to Activate Worker Details') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }

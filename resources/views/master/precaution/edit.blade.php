@@ -42,18 +42,19 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Name</label>
-                                                    <input type="text" name="precaution" class="form-control"
+                                                    <input type="text" name="precaution"  id="precaution" class="form-control"
                                                         placeholder="Name" value="{{ $precaution->precaution }}">
                                                 </div>
                                             </div>
                                         </div>
                                         <hr>
-                                        <div class="submit-button">
+                                        <div class="submit-button" style="text-align: right;">
 
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-cancel></x-button-cancel>
+                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-cancel
+                                            href="{{ admin_url('ptw/precautionmaster/list') }}"></x-button-cancel>
                                         </div>
-
                                     </form>
                                 </div>
 
@@ -70,18 +71,27 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+
+$(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         $(function() {
             $('#precautionedit').validate({
                 rules: {
-                    protective_equip: {
+                    precaution: {
                         required: true,
                         minlength: 3,
+                        maxlength: 100,
+                        pattern: /^[a-zA-Z0-9\s\-_'",&().]*$/,
                         remote: {
                             url: '{{ admin_url("ptw/precautionmaster/unique") }}',
                             type: 'post',
                             data: {
                                 location_type_name: function() {
-                                    return $('#protective_equip').val();
+                                    return $('#precaution').val();
                                 },
                                 id: function() {
                                     return $('#id').val();
@@ -91,10 +101,12 @@
                     },
                 },
                 messages: {
-                    protective_equip: {
+                    precaution: {
                         required: "{{ __('Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
-                        remote: "{{ __('Name should be unique') }}"
+                        maxlength: "Maximum Characters should not exceed 100",
+                        remote: "{{ __('Name should be unique') }}",
+                        pattern: "Only alphanumeric characters and -, _, ', \", (), ,, and & are allowed",
                     },
                 },
                 errorElement: 'span',

@@ -31,6 +31,7 @@ use App\Http\Controllers\Ppemanagement\PpeExemptionController;
 use App\Http\Controllers\Master\WorkerLogController;
 use App\Http\Controllers\Master\EmployeeLogController;
 use App\Http\Controllers\Ppemanagement\PpeRequestController;
+use App\Http\Controllers\Safetypermit\SafetyPermitController;
 
 Route::get('cache', function () {
     Artisan::call('optimize:clear');
@@ -57,16 +58,15 @@ Route::get('queuehigh', [CronController::class, 'queueHigh']);
 Route::get('queuedefault', [CronController::class, 'queueDefault']);
 Route::get('queueemail', [CronController::class, 'queueEmail']);
 
-Route::get('queueCompanyImport', [CronController::class,'queueCompanyImport']);
-Route::get('queuelocationimport', [CronController::class,'queuelocationimport']);
-Route::get('queueunitimport', [CronController::class,'queueunitimport']);
-Route::get('queueDepartmentuplodimport', [CronController::class,'queueDepartmentuplodimport']);
+Route::get('queueCompanyImport', [CronController::class, 'queueCompanyImport']);
+Route::get('queuelocationimport', [CronController::class, 'queuelocationimport']);
+Route::get('queueunitimport', [CronController::class, 'queueunitimport']);
+Route::get('queueDepartmentuplodimport', [CronController::class, 'queueDepartmentuplodimport']);
 
 
 
 Route::get('workmastertemp', [CronController::class, 'workMasterTemp']);
 Route::get('worksave', [CronController::class, 'workSave']);
-
 Route::get('employee_master_temp', [CronController::class, 'employeeMasterTemp']);
 Route::get('employee_save', [CronController::class, 'EmployeeSave']);
 
@@ -579,6 +579,21 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/export/pdf', [PpeRequestController::class, 'exportPdf']);
             });
 
+            Route::group(['prefix' => 'safetypermit'], function () {
+
+                Route::get('/list', [SafetyPermitController::class, 'index']);
+                Route::post('/list', [SafetyPermitController::class, 'index']);
+                Route::get('/add', [SafetyPermitController::class, 'add']);
+                Route::post('/add/submit', [SafetyPermitController::class, 'store']);
+                Route::post('/status', [SafetyPermitController::class, 'statusChange']);
+                Route::post('/delete', [SafetyPermitController::class, 'delete']);
+                Route::get('/view/{id}', [SafetyPermitController::class, 'view']);
+                Route::post('/approvereject/submit', [SafetyPermitController::class, 'ApprovalReject']);
+                Route::get('/edit/{id}', [SafetyPermitController::class, 'edit']);
+                Route::post('/edit/submit', [SafetyPermitController::class, 'update']);
+                Route::get('/export/excel', [SafetyPermitController::class, 'exportExcel']);
+                Route::get('/export/pdf', [SafetyPermitController::class, 'exportPdf']);
+            });
             Route::group(['prefix' => 'ppe_exemption'], function () {
 
                 Route::get('/list', [PpeExemptionController::class, 'index']);

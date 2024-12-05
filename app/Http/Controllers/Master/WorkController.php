@@ -203,7 +203,11 @@ class WorkController extends Controller
                 'Worker Id',
                 'Worker Name',
                 'Phone Number',
+                'Company Name',
+                'Location Name',
                 'Unit Name',
+                'Department Name',
+                'Exit Date',
                 'Worker Type',
                 __("common.status"),
                 __("common.created_by"),
@@ -219,7 +223,11 @@ class WorkController extends Controller
                 $export[] =  $data->emp_id;
                 $export[] =  $data->emp_name;
                 $export[] =  $data->mobile_no;
+                $export[] =  $data->company_name;
+                $export[] =  $data->location_name;
                 $export[] =  $data->unit_name;
+                $export[] =  $data->department_name;
+                $export[] =  Displaydateformat($data->exit_date);
                 $export[] =  $data->wfemptype;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
@@ -229,7 +237,7 @@ class WorkController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Worker Details.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Worker Master.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -251,7 +259,11 @@ class WorkController extends Controller
                 'Worker Id',
                 'Worker Name',
                 'Phone Number',
+                'Company Name',
+                'Location Name',
                 'Unit Name',
+                'Department Name',
+                'Exit Date',
                 'Worker Type',
                 __("common.status"),
                 __("common.created_by"),
@@ -282,7 +294,7 @@ class WorkController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Worker.pdf";
+            $filename = "Worker Master.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
           

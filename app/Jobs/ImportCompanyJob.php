@@ -6,6 +6,7 @@ namespace App\Jobs;
 use DB;
 use Str;
 use Mail;
+use Session;
 use App\Models\User;
 use Shuchkin\SimpleXLSX;
 use App\Models\UploadLog;
@@ -29,8 +30,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 
 use App\Models\Master\Company;
 
-class ImportCompanyJob implements ShouldQueue
-// class ImportCompanyJob
+// class ImportCompanyJob implements ShouldQueue
+class ImportCompanyJob
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -65,11 +66,11 @@ class ImportCompanyJob implements ShouldQueue
         UploadLog::where('id', $this->details['log_id'])
             ->update($update_array);
 
-       $xlsx = SimpleXLSX::parse($this->details['path']);
+        $xlsx = SimpleXLSX::parse($this->details['path']);
         // dd($xlsx);
         $cond_error_datas = [];
-
         foreach ($xlsx->rows() as $row) {
+           
             $sno = trim($row['0']);
             $companyname = trim($row['1']);
             $company_short_name = trim($row['2']);
@@ -78,15 +79,16 @@ class ImportCompanyJob implements ShouldQueue
             /*
          * Header column validation
          */
-
+       
             if ($i == 1) {
 
                 if (count($row) == 4) {
+                    // dd($xlsx);
                     if (
                         $sno != 'SNo' ||
                         $companyname != 'Company Name' ||
                         $company_short_name != 'Short Name' ||
-                        $company_address != 'Address' 
+                        $company_address != 'Address'
                     ) {
                         $error_data_1 = array(
                             'upload_id' => $this->details['log_id'],
@@ -139,7 +141,6 @@ class ImportCompanyJob implements ShouldQueue
                         $i++;
                         continue;
                     }
-
                 } catch (\Exception $ex) {
                     $cond_error_data = array(
                         'upload_id' => $this->details['log_id'],
@@ -163,10 +164,10 @@ class ImportCompanyJob implements ShouldQueue
 
                 $i++;
                 continue;
-            } 
+            }
 
 
-            
+
             if ($company_address == '') {
 
                 $cond_error_data = array(
@@ -179,7 +180,7 @@ class ImportCompanyJob implements ShouldQueue
 
                 $i++;
                 continue;
-            } 
+            }
 
 
             $data = array(
@@ -196,11 +197,19 @@ class ImportCompanyJob implements ShouldQueue
 
         if (count($cond_error_datas) > 0) {
             UploadLogError::insert($cond_error_datas);
-        }
+            $final_update_array = array(
+                'upload_status' => 3,
+            );
 
-        $final_update_array = array(
-            'upload_status' => 2,
-        );
+            Session::flash('error', 'Failed to upload. Please check the upload log.');
+        } else {
+
+            $final_update_array = array(
+                'upload_status' => 2,
+            );
+
+            Session::flash('success', 'Upload completed successfully.');
+        }
         UploadLog::where('id', $this->details['log_id'])->update($final_update_array);
     }
 }

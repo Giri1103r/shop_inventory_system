@@ -57,12 +57,18 @@ class UploadLogController extends Controller
                                 $text = "<span class='badge bg-warning'>In-Progress</span>";
                             } else if ($row->upload_status == 2) {
                                 $text = "<span class='badge bg-success '>Completed</span>";
+                            }else if ($row->upload_status == 3) {
+                                $text = "<span class='badge bg-danger '>In-complete/Invalid</span>";
                             }
                             return $text;
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('uploadlog/list/' . encryptId($row->id)) . '"   class="view-icon" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            if (CheckUserPermission('view')) {
+                            $btn .= '<a href="' . admin_url('uploadlog/list/' . encryptId($row->id)) . '"   class="view-icon" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            }
+                        
+                            $btn .= '<a href="' . admin_url('uploadlog/download/' . encryptId($row->id)) . '" class="download-icon" title="Download"><i class="fa-solid fa-download"></i></a>';
 
                             return $btn;
                         })

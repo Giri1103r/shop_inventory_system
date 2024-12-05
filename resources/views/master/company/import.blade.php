@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Company Import')
+@section('title', 'Company Master Import')
 @section('pageurl', admin_url('company/list'))
 
 
@@ -10,7 +10,7 @@
             {{-- <h2 class="text-black">{{ __('administration.employee') }}</h2> --}}
 
         </div>
-     
+
     </div>
 
     <div class="content-body  default-height">
@@ -27,7 +27,7 @@
                                     <x-button-download href="{{ admin_url('company/sampledownload') }}"></x-button-download>
                                     <x-button-back href="{{ admin_url('company/list') }}"></x-button-back>
                                 </div>
-                                
+
                             </div>
 
                             <div class="card-body ">
@@ -39,11 +39,12 @@
                                         <div class="row">
                                             <div class="mb-3 col-md-6 form-input">
                                                 <label class="form-label required">Company File</label>
-                                                <input type="file"  name="company_upload" class="form-control"  placeholder="">
+                                                <input type="file" name="company_upload" class="form-control"
+                                                    placeholder="">
                                             </div>
                                         </div>
                                         <hr>
-                                       
+
                                         <div class="submit-button" style="text-align: right;">
                                             <x-button-submit></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
@@ -67,8 +68,7 @@
 
 @push('script')
     <script type="text/javascript">
-
-$(document).ready(function() {
+        $(document).ready(function() {
             $('#resetform').on('click', function(e) {
                 e.preventDefault();
                 location.reload();

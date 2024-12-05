@@ -5,30 +5,28 @@
 
 @section('content')
     <div class="clearfix"></div>
-    <div class="content-body  default-height">
-        <div class="container-fluid main-content">
+    <div class="container-fluid">
             <!-- row -->
             <div class="row">
-
-                <div class="col-12">
+              
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
                                 <div class="d-flex justify-content-end p-2">
                                     <a href="{{ admin_url('uploadlog/download/' . request()->logid) }}"
-                                        data-bs-toggle="tooltip" title="Download" class="btn btn-primary ms-1">
+                                        data-bs-toggle="tooltip" title="Download" class="btn btn-secondary ms-1">
                                         Download
                                     </a>
                                 
                                     <a href="{{ admin_url('uploadlog/list') }}" data-bs-toggle="tooltip" title="Back"
-                                        class="btn btn-primary ms-2">  <!-- Added ms-2 for margin on the left side of the Back button -->
+                                        class="btn btn-secondary ms-2">  <!-- Added ms-2 for margin on the left side of the Back button -->
                                         Back
                                     </a>
                                 </div>
                                 
                             </div>
 
-                            <div class="card-body ">
+                            <div class="card-body">
                                 <div class="table-responsive">
                                     <table id="datatable-list"
                                         class="table primary-table-bordered table-bordered table-striped display responsive nowrap w-100 mt-2 datatable-list">
@@ -45,8 +43,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -70,6 +66,7 @@
                 serverSide: true,
                 searching: true,
                 ordering: true,
+                 dom: 'Bfrtip',
                 layout: {
                     top2Start: 'buttons',
                     top2End: {

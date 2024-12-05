@@ -73,10 +73,7 @@
                                             <select name="department_id" id="department_id"
                                                 class=" form-control single-select" style="width: 100%">
                                                 <option value="">Select Target Department </option>
-                                                @foreach ($departmentList as $department)
-                                                    <option value="{{ encryptId($department->id) }}">
-                                                        {{ $department->department_name }}</option>
-                                                @endforeach
+
                                             </select>
                                         </div>
 
@@ -99,10 +96,9 @@
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3">
-                                            <x-button-search></x-button-search>
-                                            <x-button-reset></x-button-reset>
-
+                                        <div class="col-md-3 mb-3 d-flex align-items-end gap-2">
+                                            <x-button-search class="me-2"></x-button-search>
+                                            <x-button-reset class="ms-1"></x-button-reset>
                                         </div>
                                     </div>
                                 </div>
@@ -147,7 +143,32 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
-
+            $(document).on('change', '#unit_id', function() {
+                var unitId = $(this).val();
+                if (unitId) {
+                    $.ajax({
+                        url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#department_id').empty().append(
+                                '<option value="">Select Target Department</option>');
+                            $.each(data, function(key, value) {
+                                $('#department_id').append('<option value="' + value.id + '">' +
+                                    value
+                                    .name + '</option>');
+                            });
+                            $('#department_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching department. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#department_id').empty().append('<option value="">Select Target Department</option>');
+                    $('#department_id').trigger('change.');
+                }
+            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({

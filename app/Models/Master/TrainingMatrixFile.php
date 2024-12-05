@@ -23,6 +23,7 @@ class TrainingMatrixFile extends Model
     protected $fillable = [
         'training_matrix_id',
         'training_evaluation_id',
+        'topic_id',
         'file_type',
         'file_name',
         'file_orgname',
@@ -128,6 +129,47 @@ class TrainingMatrixFile extends Model
             $this->create($insert_data)->id;
         }
     }
+    public function store2($topic)
+    {
+        $request = request();
+        $intendent = $request->file('questionnaire');
+        if ($intendent != null) {
+
+
+            $uploadpath = 'public/uploads/topic/' . $topic->id;
+
+            $folderPath = public_path('uploads/topic/' . $topic->id);
+
+            if (!File::exists($folderPath)) {
+
+                File::makeDirectory($folderPath, 0755, true);
+            }
+            $filenewname = time() . Str::random('10') . '.' . $intendent->getClientOriginalExtension();
+
+            $fileName = $intendent->getClientOriginalName();
+            $fileSize = $intendent->getSize();
+
+            $fileExt = $intendent->getClientOriginalExtension();
+
+            $intendent->move($uploadpath, $filenewname);
+
+            $path = $uploadpath . "/" . $filenewname;
+            $user_id = Auth::id();
+
+            $insert_data = array(
+
+                'topic_id' => $topic->id,
+                'file_type' => 3,
+                'file_name' => $filenewname,
+                'file_orgname' => $fileName,
+                'file_path' => $path,
+                'file_size' => $fileSize,
+                'file_extension' => $fileExt,
+                'created_by' => $user_id,
+            );
+            $this->create($insert_data)->id;
+        }
+    }
     public function updates($id)
     {
         $request = request();
@@ -217,6 +259,54 @@ class TrainingMatrixFile extends Model
                 'updated_at' => now(),
             );
             $existingData = $this->where('training_matrix_id', $id)->where('file_type', 2)->first();
+
+            if ($existingData) {
+                $existingData->update($insert_data);
+            } else {
+                $this->create($insert_data);
+            }
+        }
+    }
+    public function updates2($id)
+    {
+        $request = request();
+        $intendent = $request->file('questionnaire');
+        if ($intendent != null) {
+
+
+            $uploadpath = 'public/uploads/topic/' . $id;
+
+            $folderPath = public_path('uploads/topic/' . $id);
+
+            if (!File::exists($folderPath)) {
+
+                File::makeDirectory($folderPath, 0755, true);
+            }
+            $filenewname = time() . Str::random('10') . '.' . $intendent->getClientOriginalExtension();
+
+            $fileName = $intendent->getClientOriginalName();
+            $fileSize = $intendent->getSize();
+
+            $fileExt = $intendent->getClientOriginalExtension();
+
+            $intendent->move($uploadpath, $filenewname);
+
+            $path = $uploadpath . "/" . $filenewname;
+            $user_id = Auth::id();
+
+            $insert_data = array(
+
+                'topic_id' => $id,
+                'file_type' => 2,
+                'file_name' => $filenewname,
+                'file_orgname' => $fileName,
+                'file_path' => $path,
+                'file_size' => $fileSize,
+                'file_extension' => $fileExt,
+                'updated_by' => $user_id,
+                'updated_at' => now(),
+            );
+            $existingData = $this->where('topic_id', $id)->where('file_type', 3)->first();
 
             if ($existingData) {
                 $existingData->update($insert_data);

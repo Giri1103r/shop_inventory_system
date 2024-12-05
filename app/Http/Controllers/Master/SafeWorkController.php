@@ -75,7 +75,7 @@ class SafeWorkController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
+                    return response()->json(['status' => 'error', 'msg' => __('Please try after sometime')], 406);
                 }
             }
         }
@@ -116,7 +116,7 @@ class SafeWorkController extends Controller
 
                 $this->safework->store();
 
-                Session::flash('success', __('Safe Work Instruction added successfully'));
+                Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
                 Session::flash('error', __('common.message_error'));
             }
@@ -178,7 +178,7 @@ class SafeWorkController extends Controller
 
             $this->safework->updates($id);
 
-            Session::flash('success', __('Safe Work Instruction updated successfully'));
+            Session::flash('success', __('Your data has been updated successfully'));
             return redirect(admin_url('ptw/safeworkmaster/list'));
         } catch (Exception $ex) {
 
@@ -216,7 +216,7 @@ class SafeWorkController extends Controller
             return response()->json(['status' => 'success', 'msg' => __('Safe Work Instruction status changed')], 200);
         } catch (Exception $ex) {
 
-            return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
+            return response()->json(['status' => 'error', 'msg' => __('Please try after sometime')], 406);
         }
     }
 
@@ -230,7 +230,7 @@ class SafeWorkController extends Controller
             return response()->json(['status' => 'success', 'msg' => __('Safe Work Instruction deleted successfully')], 200);
         } catch (Exception $ex) {
 
-            return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
+            return response()->json(['status' => 'error', 'msg' => __('Please try after sometime')], 406);
         }
     }
 

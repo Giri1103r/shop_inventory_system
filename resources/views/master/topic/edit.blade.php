@@ -31,7 +31,7 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="topicedit" action="{{ admin_url('topic/edit/submit') }}">
+                                    <form method="POST" id="topicedit" action="{{ admin_url('topic/edit/submit') }}" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" name="id" id="id"
                                             value="{{ encryptId($topic->id) }}">
@@ -49,6 +49,22 @@
                                                     <label class="form-label require">Topic Name</label>
                                                     <input type="text" name="topic_name" class="form-control"
                                                         placeholder="Topic Name" value="{{ $topic->topic_name }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label">Upload Questionnaire</label>
+                                                    <input type="file" name="questionnaire" id="questionnaire"
+                                                        class="form-control">
+                                                    <small class="text-muted">Allowed file types: .xls, .pdf.</small>
+                                                    @if ($training_Files_questionnaire)
+                                                        <a href="{{ asset($training_Files_questionnaire->file_path) }}"
+                                                            target="_blank" class="d-block mt-2">
+                                                            <i class="fa-solid fa-eye text-danger"></i> View
+                                                        </a>
+                                                    @else
+                                                        <small class="text-muted">No file uploaded yet.</small>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
@@ -101,6 +117,9 @@
                             }
                         }
                     },
+                    questionnaire: {
+                        extension: "xls|pdf",
+                    },
                 },
                 messages: {
                     topic_name: {
@@ -109,6 +128,9 @@
                         maxlength: "Maximum Characters should not exceed 100",
                         pattern: "Only alphanumeric characters and -, _, ', \", (), ,, and & are allowed",
                         remote: "{{ __('Topic Name should be unique') }}"
+                    },
+                    questionnaire: {
+                        extension: "Only .xls and .pdf file formats are allowed.",
                     },
 
                 },

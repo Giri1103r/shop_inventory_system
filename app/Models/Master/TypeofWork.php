@@ -39,8 +39,19 @@ class TypeofWork extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ptw_masters_typeofwork.*');
-        // dd($query);
+        $query = $this->select(
+            'ptw_masters_typeofwork.*',
+            'ptw_masters_typeofwork_upload.file_path',
+            'ptw_masters_typeofwork.id as typeid'
+        )
+        ->leftJoin(
+            'ptw_masters_typeofwork_upload', 
+            'ptw_masters_typeofwork_upload.typeofwork_id', 
+            '=', 
+            'ptw_masters_typeofwork.id'
+        )
+        ->where('ptw_masters_typeofwork_upload.trash', 'NO');
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -49,12 +60,13 @@ class TypeofWork extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('checklist', 'LIKE', '%' . $search . '%');
+                    ->orWhere('work_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('description', 'LIKE', '%' . $search . '%');
             });
         }
 
-        if ($request->has('checklist') && $request->checklist) {
-            $query = $query->where('checklist', 'LIKE', '%' . $request->checklist . '%');
+        if ($request->has('work_name') && $request->work_name) {
+            $query = $query->where('work_name', 'LIKE', '%' . $request->work_name . '%');
         }
         if ($request->has('status') && $request->status) {
 
@@ -63,7 +75,7 @@ class TypeofWork extends Model
         $data_count = $query;
         $total_records = $data_count->count();
 
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('typeid', 'DESC');
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
@@ -79,17 +91,62 @@ class TypeofWork extends Model
         return $datas;
     }
 
+    //     public function list()
+    // {
+    //     $request = request();
+    //     $search = '';
+    //     $query = $this->select('ptw_masters_typeofwork.*','ptw_masters_typeofwork_upload.file_path');
+    //     $query = $this->leftjoin('ptw_masters_typeofwork_upload' , 'ptw_masters_typeofwork_upload.typeofwork_id' ,'=', 'ptw_masters_typeofwork.id')->where('ptw_masters_typeofwork.trash','YES');
+    //     // dd($query);
+    //     $org_total =  $query;
+    //     $org_total_counts = $org_total->count();
+
+    //     if ($request->search['value'] != null || $request->search['value'] != '') {
+    //         $search = $request->search['value'];
+
+    //         $query->where(function ($query) use ($search) {
+    //             $query
+    //                 ->orWhere('checklist', 'LIKE', '%' . $search . '%');
+    //         });
+    //     }
+
+    //     if ($request->has('checklist') && $request->checklist) {
+    //         $query = $query->where('checklist', 'LIKE', '%' . $request->checklist . '%');
+    //     }
+    //     if ($request->has('status') && $request->status) {
+
+    //         $query = $query->where('status', decryptId($request->status));
+    //     }
+    //     $data_count = $query;
+    //     $total_records = $data_count->count();
+
+    //     $query->orderBy('ptw_masters_typeofwork.id', 'DESC');
+
+    //     if ($request->length != -1) {
+    //         $query->offset($request->start)->limit($request->length);
+    //     }
+
+    //     $data = $query->get();
+
+    //     $datas = array(
+    //         'data' => $data,
+    //         'total_records' => $org_total_counts,
+    //         'filter_records' => $total_records,
+    //     );
+    //     return $datas;
+    // }
+
     public function UniqueCheck($data)
     {
 
-        return $this->where('checklist',  $data)->get();
+        return $this->where('work_name',  $data)->get();
     }
 
-    public function ExistuniqueCheck($data,$id)
+    public function ExistuniqueCheck($data, $id)
     {
-        return $this->where('checklist',  $data)
-        ->where('id', '!=', $id)
-        ->get();
+        return $this->where('work_name',  $data)
+            ->where('id', '!=', $id)
+            ->get();
     }
 
     public function store()
@@ -152,23 +209,36 @@ class TypeofWork extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ptw_masters_typeofwork.*');
+        $query = $this->select(
+            'ptw_masters_typeofwork.*',
+            'ptw_masters_typeofwork_upload.file_path',
+            'ptw_masters_typeofwork.id as typeid'
+        )
+        ->leftJoin(
+            'ptw_masters_typeofwork_upload', 
+            'ptw_masters_typeofwork_upload.typeofwork_id', 
+            '=', 
+            'ptw_masters_typeofwork.id'
+        )
+        ->where('ptw_masters_typeofwork_upload.trash', 'NO');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhereRaw('checklist LIKE "%' . $search . '%"');
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('work_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('description', 'LIKE', '%' . $search . '%');
             });
         }
 
-        if ($request->has('checklist') && $request->checklist) {
-            $query = $query->where('checklist', 'LIKE', '%' . $request->checklist . '%');
+        if ($request->has('work_name') && $request->work_name) {
+            $query = $query->where('work_name', 'LIKE', '%' . $request->work_name . '%');
         }
         if ($request->has('status') && $request->status) {
 
             $query = $query->where('ptw_masters_typeofwork.status', decryptId($request->status));
         }
-
+        $query->orderBy('typeid', 'DESC');
         return  $query->get();
     }
 
@@ -194,6 +264,15 @@ class TypeofWork extends Model
         return $data;
     }
 
+
+    public function gettypework()
+    {
+
+        $data =  $this->select('ptw_masters_typeofwork.*','ptw_masters_typeofwork_upload.file_path')
+        ->leftjoin('ptw_masters_typeofwork_upload', 'ptw_masters_typeofwork_upload.typeofwork_id', '=', 'ptw_masters_typeofwork.id')->where('ptw_masters_typeofwork.status',1)->where('ptw_masters_typeofwork_upload.status',1)
+        ->get();
+        return $data;
+    }
 
     protected static function booted()
     {

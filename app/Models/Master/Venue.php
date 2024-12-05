@@ -51,7 +51,9 @@ class Venue extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('name_of_the_conference_hall', 'LIKE', '%' . $search . '%');
+                    ->orWhere('name_of_the_conference_hall', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('capacity', 'LIKE', '%' . $search . '%');
             });
         }
 
@@ -65,12 +67,10 @@ class Venue extends Model
         if ($request->has('capacity') && $request->capacity) {
             $query = $query->where('capacity', 'LIKE', '%' . $request->capacity . '%');
         }
-        if ($request->has('projector_or_lcd_availability') && $request->projector_or_lcd_availability) {
-            $query = $query->where('projector_or_lcd_availability', 'LIKE', '%' . $request->projector_or_lcd_availability . '%');
-        }
+
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('status', decryptId($request->status));
+            $query = $query->where('training_masters_venue.status', decryptId($request->status));
         }
         $data_count = $query;
         $total_records = $data_count->count();
@@ -95,7 +95,6 @@ class Venue extends Model
     {
 
         return $this->where('name_of_the_conference_hall',  $name_of_the_conference_hall)->where('unit_id', $unit_id)->get();
-
     }
 
     public function ExistuniqueCheck($name_of_the_conference_hall, $unit_id, $id)
@@ -173,9 +172,12 @@ class Venue extends Model
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
+
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('name_of_the_conference_hall', 'LIKE', '%' . $search . '%');
+                    ->orWhere('name_of_the_conference_hall', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('capacity', 'LIKE', '%' . $search . '%');
             });
         }
 
@@ -189,9 +191,7 @@ class Venue extends Model
         if ($request->has('capacity') && $request->capacity) {
             $query = $query->where('capacity', 'LIKE', '%' . $request->capacity . '%');
         }
-        if ($request->has('projector_or_lcd_availability') && $request->projector_or_lcd_availability) {
-            $query = $query->where('projector_or_lcd_availability', 'LIKE', '%' . $request->projector_or_lcd_availability . '%');
-        }
+
         if ($request->has('status') && $request->status) {
 
             $query = $query->where('training_masters_venue.status', decryptId($request->status));

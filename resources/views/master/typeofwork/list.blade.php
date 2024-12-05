@@ -10,14 +10,14 @@
 
                 <div class="card">
                     <h4 class="card-title"></h4>
-                    <div class="ms-auto">
+                    <div class="d-flex justify-content-end p-2">
 
-                        <x-button-filter dataId="" class="search" href=""></x-button-filter>
+                        <x-button-filter dataId="" class="search  me-1" href=""></x-button-filter>
                         @if (CheckUserPermission('import'))
                             <x-button-import href="{{ admin_url('ptw/typeofworkmaster/import') }}"></x-button-import>
                         @endif
                         @if (CheckUserPermission('add'))
-                            <x-button-add dataId="" class="add btn btn-primary"
+                            <x-button-add dataId="" class="add btn btn-primary ms-1"
                                 href="{{ admin_url('ptw/typeofworkmaster/add') }}">Add</x-button-add>
                         @endif
                     </div>
@@ -27,8 +27,8 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="checklist" class="form-label ">Work Name</label>
-                                            <input type="text" name="checklist" id="checklist"
+                                            <label for="work_name" class="form-label ">Work Name</label>
+                                            <input type="text" name="work_name" id="work_name"
                                                 class="form-control">
                                         </div>
 
@@ -41,7 +41,7 @@
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 
@@ -61,6 +61,7 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
+                                        <th>Image</th>
                                         <th>Work Name</th>
                                         <th>Description</th>
                                         <th>{{ __('common.status') }}</th>
@@ -119,7 +120,7 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.checklist = $('#checklist').val();
+                            d.work_name = $('#work_name').val();
                             d.status = $('#status').val();
 
                         }
@@ -128,6 +129,10 @@
                             data: 'DT_RowIndex',
                             orderable: false,
                             searchable: true,
+                        },
+                        {
+                            data: 'image',
+                            name: 'image'
                         },
                         {
                             data: 'work_name',
@@ -171,7 +176,7 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        checklist = $('#checklist').val();
+                                        work_name = $('#work_name').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -179,7 +184,7 @@
                                         window.location.href =
                                             "{{ admin_url('ptw/typeofworkmaster/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&checklist=' + checklist +
+                                            '&work_name=' + work_name +
                                             '&status=' + status
                                     }
                                 },
@@ -188,14 +193,14 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        checklist = $('#checklist').val();
+                                        work_name = $('#work_name').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('ptw/typeofworkmaster/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&checklist=' + checklist +
+                                            '&work_name=' + work_name +
                                             '&status=' + status
                                     }
                                 },
@@ -232,12 +237,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Equipment checklist') }}';
+                        var title = '{{ __('Do You want to In-Activate Type of Work Details') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Equipment checklist') }}';
+                        var title = '{{ __('Do You want to Activate Type of Work Details') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -305,7 +310,7 @@
                     var id = $(this).data('id');
                     var login_id = $(this).data('login_id');
 
-                    var title = '{{ __('Do You want to Delete Equipment checklist') }}';
+                    var title = '{{ __('Do You want to Delete Equipment work_name') }}';
                     var text = '{{ __('common.delete') }}';
                     var btncolor = '#dc3545'
 

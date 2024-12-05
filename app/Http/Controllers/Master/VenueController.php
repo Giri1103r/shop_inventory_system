@@ -77,9 +77,7 @@ class VenueController extends Controller
                                 $btn .= '<a href="' . admin_url('venue/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
 
-                            if (CheckUserPermission('delete')) {
-                                $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
-                            }
+                            
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -326,8 +324,8 @@ class VenueController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportVenueJob($details));
-                //    dispatch((new ImportVenueJob($details))->onQueue('empimport'));
+                // dispatch(new ImportVenueJob($details));
+                   dispatch((new ImportVenueJob($details))->onQueue('venue'));
             }
 
             $insert_data['log_id'] = $insert_id;
@@ -432,7 +430,7 @@ class VenueController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Venue.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);
