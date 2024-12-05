@@ -9,9 +9,13 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class PpeRequestEmail extends Mailable
+class PpeExemptionRequestorEmail extends Mailable
 {
     use Queueable, SerializesModels;
+
+    /**
+     * Create a new message instance.
+     */
     protected $details;
     /**
      * Create a new message instance.
@@ -27,7 +31,7 @@ class PpeRequestEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: ('PPE-Request  - ' . $this->details['status']),
+            subject: ('New PPE Shoe Exemption Request Submitted by   - ' . $this->details['emp_name']),
         );
     }
 
@@ -37,7 +41,7 @@ class PpeRequestEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.pperequest.approvalemail',
+            view: 'emails.ppeexemption.requestoremail',
             with: ['details' => $this->details]
         );
     }

@@ -42,6 +42,18 @@
                             {{ getDepartment($value->department) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
+                            {{ isset($value->approve_msg) ? $value->approve_msg : 'Null'  }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->approve_status}}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ isset($value->remarks) ? $value->remarks : 'Null'  }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{  $value->ehs_approve_status }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
                             @php
                                 $status = $value->status == 1 ? 'Active' : 'In-Active';
                             @endphp

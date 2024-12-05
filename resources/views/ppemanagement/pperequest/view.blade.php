@@ -65,6 +65,24 @@
                                     </div>
                                 </div>
                                 <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('PPE Type') }}</label>
+                                    <div class="view_data">
+                                        {{ getPpeType(isset($pperequest->ppe_type) ? $pperequest->ppe_type : '') }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('HOD Approve Status') }}</label>
+                                    <div class="view_data">
+                                        {{isset($pperequest->approve_status) ? $pperequest->approve_status : ''}}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('EHS Officer Approve Status') }}</label>
+                                    <div class="view_data">
+                                        {{isset($pperequest->ehs_approve_status) ? $pperequest->ehs_approve_status : ''}}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
                                     <label class="form-label view_label">{{ __('Created By') }}</label>
                                     <div class="view_data">
                                         {{ getUsername(isset($pperequest->created_by) ? $pperequest->created_by : '') }}

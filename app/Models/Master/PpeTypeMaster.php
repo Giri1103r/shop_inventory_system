@@ -37,7 +37,10 @@ class PpeTypeMaster extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ppe_master_ppetypemaster.*');
+        $query = $this->select('ppe_master_ppetypemaster.*','masters_ppetype.ppe_type')
+        ->join('masters_ppetype','ppe_master_ppetypemaster.ppe_type', '=', 'masters_ppetype.id')
+        ->where('masters_ppetype.trash','NO');
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 

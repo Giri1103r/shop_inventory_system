@@ -9,6 +9,8 @@ use App\Models\Master\PpeTypeMaster;
 use App\Models\UploadLog;
 use App\Http\Controllers\Controller;
 use App\Mail\PpeExemptionEmail;
+use App\Mail\PpeExemptionRejectEmail;
+use App\Mail\PpeExemptionRequestorEmail;
 use App\Models\Master\PpeExemption;
 use App\Models\User;
 use Exception;
@@ -66,12 +68,17 @@ class PpeExemptionController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn .= '<a href="' . admin_url('ppe_exemption/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            $btn .= '<a href="' . admin_url('ppe_exemption/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
-                            $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
-                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) && $row->approve_status == 'PENDING') {
+                            // if (CheckUserPermission('view')) {
+                                $btn .= '<a href="' . admin_url('ppe_exemption/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            // }
+                            // if (CheckUserPermission('edit') ||($row->approve_status == 'PENDING' && $row->approve_status == 'REJECT') ) {
+                                $btn .= '<a href="' . admin_url('ppe_exemption/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
+                            // }
+                            // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
+
+                            // if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) && $row->approve_status == 'PENDING') {
                                 $btn .= '<a href="' . admin_url('ppe_exemption/approval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
-                            }
+                            // }
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_at', 'created_by', 'status'])
@@ -82,7 +89,7 @@ class PpeExemptionController extends Controller
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
+                    return response()->json(['status' => 'error', 'msg' => __('Please try after some time')], 406);
                 }
             }
         }
@@ -129,9 +136,34 @@ class PpeExemptionController extends Controller
             try {
 
                 $ppeexemption = $this->ppeexemption->store();
+
+                // Mail
+
+                $id = $ppeexemption->id;
+                $ehsofficer = $this->user->findEhsofficer();
+
+                $details = [
+                    'emp_id' => $ppeexemption->emp_id,
+                    'emp_name' => $ppeexemption->emp_name,
+                    'from_date' => $ppeexemption->from_date,
+                    'to_date' => $ppeexemption->to_date,
+                    'reason' => $ppeexemption->reason,
+                    'department' => $ppeexemption->department,
+                    'approve_link' => url('ppe_exemption/approval/view/' . encryptID($id)),
+                    'reject_link' => url('ppe_exemption/approval/view/' . encryptID($id)),
+
+
+                ];
+
+                foreach ($ehsofficer as $officer) {
+                    $officer_email = getUseremail($officer->id);
+                    Mail::to($officer_email)->send(new PpeExemptionRequestorEmail($details));
+                }
+
+                // Notification
                 $id = $ppeexemption->id;
                 $message = 'New Exemption Request';
-                $ehsofficer = $this->user->findEhsofficer();
+
                 $assigned_user = $this->user->assigneduser($ehsofficer);
                 $img = admin_url('public/assets/images/ppe-management.jpg');
                 $notificationData = array(
@@ -142,7 +174,7 @@ class PpeExemptionController extends Controller
                         'title' => $message,
                         'message' => $ppeexemption->emp_name . ' has requested a PPE Exemption request on ' . displaydateformat($ppeexemption->created_at) . ' from ' .
                             displaydateformat($ppeexemption->from_date) . ' to ' . displaydateformat($ppeexemption->to_date),
-                        'icon' =>$img,
+                        'icon' => $img,
                         'module' => 1,
                     )),
                     'web_link' => admin_url('ppe_exemption/approval/view/' . encryptId($id)),
@@ -153,16 +185,16 @@ class PpeExemptionController extends Controller
                 notificationSave($notificationData);
 
 
-                Session::flash('success', __('PPE Exemption is taken  added successfully'));
+                Session::flash('success', __('Your data has been created successfully!'));
                 return redirect(admin_url('ppe_exemption/list'));
             } catch (Exception $ex) {
-                dd($ex);
-                Session::flash('error', __('common.message_error'));
+                report($ex);
+                Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
             return redirect(admin_url('ppe_exemption/list'));
         } catch (Exception $ex) {
-            dd($ex);
-            Session::flash('error',  __('common.message_error'));
+            report($ex);
+            Session::flash('error',  'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_exemption/list'));
         }
     }
@@ -200,7 +232,7 @@ class PpeExemptionController extends Controller
 
             return view('ppemanagement.ppeexemption.edit', $data);
         } catch (Exception $ex) {
-            Session::flash('error',  __('common.message_error'));
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_exemption/list'));
         }
     }
@@ -234,9 +266,32 @@ class PpeExemptionController extends Controller
 
                 $ppeexemption =  $this->ppeexemption->updates($id);
 
+                //Mail
+                $data=$this->ppeexemption->selectOne($id);
+
+                $ehsofficer = $this->user->findEhsofficer();
+
+                $details = [
+                    'emp_id' => $data->emp_id,
+                    'emp_name' => $data->emp_name,
+                    'from_date' => $data->from_date,
+                    'to_date' => $data->to_date,
+                    'reason' => $data->reason,
+                    'department' => $data->department,
+                    'approve_link' => url('ppe_exemption/approval/view/' . encryptID($id)),
+                    'reject_link' => url('ppe_exemption/approval/view/' . encryptID($id)),
+
+
+                ];
+
+                foreach ($ehsofficer as $officer) {
+                    $officer_email = getUseremail($officer->id);
+                    Mail::to($officer_email)->send(new PpeExemptionRequestorEmail($details));
+                }
+
+
                 // Notification
 
-                $data = $this->ppeexemption->exemptiondata($id);
                 $message = 'New Exemption Request';
                 $ehsofficer = $this->user->findEhsofficer();
                 $assigned_user = $this->user->assigneduser($ehsofficer);
@@ -249,7 +304,7 @@ class PpeExemptionController extends Controller
                         'title' => $message,
                         'message' => $data->emp_name . ' updated has requested a PPE Exemption request on ' . displaydateformat($data->created_at) . ' from ' .
                             displaydateformat($data->from_date) . ' to ' . displaydateformat($data->to_date),
-                        'icon' =>  $img ,
+                        'icon' =>  $img,
                         'module' => 1,
                     )),
                     'assigned_user' => array_to_string($assigned_user),
@@ -258,16 +313,16 @@ class PpeExemptionController extends Controller
 
                 notificationSave($notificationData);
 
-                Session::flash('success', __('PPE Exemption is taken updated successfully'));
+                Session::flash('success', __('Your data has been updated successfully!'));
                 return redirect(admin_url('ppe_exemption/list'));
             } catch (Exception $ex) {
-                dd($ex);
-                Session::flash('error', __('common.message_error'));
+                report($ex);
+                Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
             return redirect(admin_url('ppe_exemption/list'));
         } catch (Exception $ex) {
-            dd($ex);
-            Session::flash('error',  __('common.message_error'));
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_exemption/list'));
         }
     }
@@ -280,10 +335,10 @@ class PpeExemptionController extends Controller
 
             $this->ppeexemption->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => __('PPE Exemption  to be taken status changed')], 200);
+            return response()->json(['status' => 'success', 'msg' => __('PPE Exemption  status changed sucessfully')], 200);
         } catch (Exception $ex) {
 
-            return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
+            return response()->json(['status' => 'error', 'msg' => __('Please try after some time')], 406);
         }
     }
 
@@ -294,10 +349,10 @@ class PpeExemptionController extends Controller
             $id = decryptId($request->id);
             $this->ppeexemption->deleterecord($id);
 
-            return response()->json(['status' => 'success', 'msg' => __('PPE Exemption to be taken deleted successfully')], 200);
+            return response()->json(['status' => 'success', 'msg' => __('PPE Exemption  deleted successfully')], 200);
         } catch (Exception $ex) {
 
-            return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
+            return response()->json(['status' => 'error', 'msg' => __('Please try after some time')], 406);
         }
     }
 
@@ -308,6 +363,10 @@ class PpeExemptionController extends Controller
             if (Auth::check()) {
                 $ppeexemption = $this->ppeexemption->selectOne($id);
             }
+            // $status = $ppeexemption->approve_status;
+            // if ($status != 'STATUS_EHS_APPROVAL_PENDING') {
+            //     return redirect(admin_url('ppe_exemption/view/' . encryptId($id)));
+            // }
             $data = [
                 'ppeexemption' =>  $ppeexemption,
                 'encryptid' => $request->id,
@@ -343,16 +402,21 @@ class PpeExemptionController extends Controller
             $department =  $emp_details->department;
             $departmentId = $this->ppeexemption->findDepartment($department, $id);
 
-            $action = $request->input('action');
             $remarks = $request->input('remarks');
             $approved_at = $request->input('date');
+            $action = $request->input('action');
+            $approveStatus = $action == 'approve' ? STATUS_EHS_APPROVED : STATUS_EHS_REJECTED;
 
             $updateData = [
                 'remarks' => $remarks,
                 'approved_by' => Auth::id(),
-                'approve_status' => $action == 'approve' ? 'APPROVED' : 'REJECT',
+                'approve_status' => $approveStatus,
                 'approved_at' => DBdatetimeformat($approved_at),
             ];
+
+            if ($action == 'approve' || $action == 'reject') {
+                $updateData['status'] = 0;
+            }
 
             $emp_details->updateapproval($updateData, $id);
             $details = [
@@ -368,9 +432,12 @@ class PpeExemptionController extends Controller
             $requestor = $this->pperequest->getrequestemail($empId);
             $hod = $this->pperequest->getdepartmenthod($departmentId);
 
-            if ($action == 'approve' || $action == 'reject') {
+            if ($action == 'approve') {
                 $recipients = array_filter([$requestor, $hod]);
                 Mail::to($recipients)->send(new PpeExemptionEmail($details));
+            } else {
+                $recipients = array_filter([$requestor, $hod]);
+                Mail::to($recipients)->send(new PpeExemptionRejectEmail($details));
             }
 
             $message = 'New Exemption Request';
@@ -399,7 +466,8 @@ class PpeExemptionController extends Controller
             Session::flash('success', 'PPE Exemption has successfully responded');
             return redirect(admin_url('ppe_exemption/list'));
         } catch (Exception $ex) {
-            Session::flash('error', __('common.message_error'));
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_exemption/list'));
         }
     }
@@ -456,7 +524,7 @@ class PpeExemptionController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('PPE Exemption to be taken .xlsx')
+            $writer = SimpleExcelWriter::streamDownload('PPE Exemption.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -524,10 +592,10 @@ class PpeExemptionController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Precation to be takens Details.pdf";
+            $filename = "PPE Exemption.pdf";
             $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
         }
     }

@@ -56,10 +56,13 @@ class PpeTypeController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-
+                            if (CheckUserPermission('view')) {
                             $btn = '<a href="' . admin_url('ppe_type/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            }
+                            if (CheckUserPermission('edit')) {
                             $btn .= '<a href="' . admin_url('ppe_type/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
+                            }
+                            // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -69,7 +72,7 @@ class PpeTypeController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
+                    return response()->json(['status' => 'error', 'msg' => __('please try after some time')], 406);
                 }
             }
         }
@@ -110,15 +113,15 @@ class PpeTypeController extends Controller
 
                 $this->ppetype->store();
 
-                Session::flash('success', __('PPE Type is taken  added successfully'));
+                Session::flash('success', __('Your data has been created successfully!'));
             } catch (Exception $ex) {
-                dd($ex);
-                Session::flash('error', __('common.message_error'));
+                report($ex);
+                Session::flash('error','Something went wrong, Please try after sometimes!');
             }
             return redirect(admin_url('ppe_type/list'));
         } catch (Exception $ex) {
 
-            Session::flash('error',  __('common.message_error'));
+            Session::flash('error',  'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_type/list'));
         }
     }
@@ -181,14 +184,14 @@ class PpeTypeController extends Controller
 
                 $this->ppetype->updates($id);
 
-                Session::flash('success', __('PPE Type is taken updated successfully'));
+                Session::flash('success', __('Your data has been updated successfully!'));
             } catch (Exception $ex) {
-                Session::flash('error', __('common.message_error'));
+                Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
             return redirect(admin_url('ppe_type/list'));
         } catch (Exception $ex) {
 
-            Session::flash('error',  __('common.message_error'));
+            Session::flash('error',  'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_type/list'));
         }
     }
@@ -201,10 +204,10 @@ class PpeTypeController extends Controller
 
             $this->ppetype->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => __('PPE Type  to be taken status changed')], 200);
+            return response()->json(['status' => 'success', 'msg' => __('PPE Type status changed sucessfully')], 200);
         } catch (Exception $ex) {
 
-            return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
+            return response()->json(['status' => 'error', 'msg' => __('Please try after some time')], 406);
         }
     }
 
@@ -215,10 +218,10 @@ class PpeTypeController extends Controller
 
             $this->ppetype->deleterecord($id);
 
-            return response()->json(['status' => 'success', 'msg' => __('PPE Type to be taken deleted successfully')], 200);
+            return response()->json(['status' => 'success', 'msg' => __('PPE Type is deleted successfully')], 200);
         } catch (Exception $ex) {
 
-            return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
+            return response()->json(['status' => 'error', 'msg' => __('Please try after some time')], 406);
         }
     }
 
@@ -247,6 +250,10 @@ class PpeTypeController extends Controller
 
             $allData = $this->ppetype->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 __("PPE ID"),
@@ -272,7 +279,7 @@ class PpeTypeController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('PPE Type  to be taken .xlsx')
+            $writer = SimpleExcelWriter::streamDownload('PPEType Details.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -290,6 +297,10 @@ class PpeTypeController extends Controller
             ini_set("pcre.backtrack_limit", "5000000");
 
             $allData = $this->ppetype->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
 
             $header = [
                 __("common.sno"),
@@ -325,10 +336,12 @@ class PpeTypeController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Precation to be takens Details.pdf";
+            $filename = "PPEType Details.pdf";
             $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error','Something went wrong, Please try after sometimes!');
+            return redirect()->back();
         }
     }
 
@@ -337,9 +350,6 @@ class PpeTypeController extends Controller
         $data = array();
         return view('master.ppetype.import', $data);
     }
-
-
-
 
 
     public function ImportSubmit(Request $request)
@@ -412,12 +422,12 @@ class PpeTypeController extends Controller
                     Session::flash('success', 'PPE Type Uploaded Successfully');
                     return redirect(admin_url('ppe_type/list'));
                 } catch (Exception $ex) {
-                    Session::flash('error', 'PPE Type failed');
+                    Session::flash('error', 'Something went wrong, Please try after sometimes!');
                     return redirect(admin_url('ppe_type/list'));
                 }
             }
         } catch (Exception $ex) {
-            Session::flash('error', ' PPE Typefailed: ' . $ex->getMessage());
+            Session::flash('error', 'Something went wrong, Please try after sometimes! ');
             return redirect(admin_url('ppe_type/list'));
         }
     }

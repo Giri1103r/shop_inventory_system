@@ -79,31 +79,52 @@
 @push('script')
     <script>
         $(document).ready(function() {
-            $('#requestApprovalForm').on('submit', function(e) {
-                let valid = true;
+            $('#requestApprovalForm').validate({
+                rules: {
+                    remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 255,
+                        regex: /^[a-zA-Z0-9\s]+$/
+                    },
+                },
+                messages: {
 
-                if (!validateRemarks()) valid = false;
-
-                if (!valid) {
-                    e.preventDefault();
-                } else {
+                    remarks: {
+                        required: " Remarks cannot be empty.",
+                        minlength: "Remarks  must contain between 3 and 255 characters.",
+                        maxlength: "Remarks must contain between 3 and 255 characters.",
+                        regex: "Remarks must contain only letters and numbers."
+                    },
+                },
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    var errorDiv = element.siblings('div.text-danger');
+                    errorDiv.html(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
                     $('#submit').prop('disabled', true);
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log(errors + " field(s) are invalid");
+                    validator.errorList.forEach(function(error) {
+                        console.log("Field: " + error.element.name + ", Error: " + error
+                            .message);
+                    });
                 }
             });
 
-            function validateRemarks() {
-                var remarks = $('#remarks').val();
-
-                if (remarks === "") {
-                    $('#remarks_error').text('Remarks cannot be empty.');
-                    return false;
-                } else if (remarks.length < 3 || remarks.length > 40 || !/^[a-zA-Z\s]+$/.test(remarks)) {
-                    $('#remarks_error').text('Remarks must contain only letters and be between 3 and 40 characters long.');
-                    return false;
-                }
-                $('#remarks_error').text('');
-                return true;
-            }
+            $.validator.addMethod("regex", function(value, element, regexp) {
+                return this.optional(element) || regexp.test(value);
+            }, "Please check your input.");
         });
     </script>
 @endpush

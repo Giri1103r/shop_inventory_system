@@ -4,6 +4,13 @@
 
 
 @section('content')
+    @push('style')
+        <style>
+            .custom-height {
+                height: 30px;
+            }
+        </style>
+    @endpush
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
@@ -14,9 +21,13 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
+                        @if (CheckUserPermission('add'))
+                            {
+                            <x-button-add dataId="" class="add btn btn-primary ms-1"
+                                href="{{ admin_url('ppe_ppetype_master/add') }}">Add</x-button-add>
+                            }
+                        @endif
 
-                        <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('ppe_ppetype_master/add') }}">Add</x-button-add>
                     </div>
 
                     <div id="search" class="collapse">
@@ -34,13 +45,24 @@
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
-                                            <input type="text" class="form-control form-control-sm" name="from_date"
-                                                id="from_date">
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">To Date</label>
-                                            <input type="text" class="form-control form-control-sm" name="to_date"
-                                                id="to_date">
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
@@ -238,7 +260,7 @@
                                         '&ppe_name=' + ppe_name +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
-                                        '&ppe_status=' +ppe_status
+                                        '&ppe_status=' + ppe_status
 
                                 }
                             },
@@ -247,10 +269,10 @@
                                 text: '{{ __('common.excel') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                     item_code = $('#item_code').val();
+                                    item_code = $('#item_code').val();
                                     ppe_name = $('#ppe_name').val();
                                     from_date = $('#from_date').val();
-                                     to_date = $('#to_date').val();
+                                    to_date = $('#to_date').val();
                                     ppe_status = $('#ppe_status').val();
 
 
@@ -258,12 +280,12 @@
                                     $('body').click();
                                     window.location.href =
                                         "{{ admin_url('ppe_ppetype_master/export/excel') }}" +
-                                        '?search=' + searchValue+
+                                        '?search=' + searchValue +
                                         '&item_code=' + item_code +
                                         '&ppe_name=' + ppe_name +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
-                                        '&ppe_status=' +ppe_status
+                                        '&ppe_status=' + ppe_status
                                 }
                             },
                         ]

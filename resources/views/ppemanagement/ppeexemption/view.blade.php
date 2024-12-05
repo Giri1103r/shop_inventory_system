@@ -71,6 +71,12 @@
                                     </div>
                                 </div>
                                 <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('EHS Officer Approve Status') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($ppeexemption->approve_status) ? $ppeexemption->approve_status : '' }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
                                     <label class="form-label view_label">{{ __('Created By') }}</label>
                                     <div class="view_data">
                                         {{ getUsername(isset($ppeexemption->created_by) ? $ppeexemption->created_by : '') }}

@@ -2,8 +2,14 @@
 @section('title', 'PPE Type ')
 @section('pageurl', admin_url('ppe_type/list'))
 
-
 @section('content')
+    @push('style')
+        <style>
+            .custom-height {
+                height: 30px;
+            }
+        </style>
+    @endpush
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
@@ -14,9 +20,17 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
-                        <x-button-import href="{{ admin_url('ppe_type/import') }}"></x-button-import>
-                        <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('ppe_type/add') }}">Add</x-button-add>
+                        @if (CheckUserPermission('import'))
+                            {
+                            <x-button-import href="{{ admin_url('ppe_type/import') }}"></x-button-import>
+                            }
+                        @endif
+                        @if (CheckUserPermission('add'))
+                            {
+                            <x-button-add dataId="" class="add btn btn-primary ms-1"
+                                href="{{ admin_url('ppe_type/add') }}">Add</x-button-add>
+                            }
+                        @endif
                     </div>
 
                     <div id="search" class="collapse">
@@ -34,13 +48,24 @@
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
-                                            <input type="text" class="form-control form-control-sm" name="from_date"
-                                                id="from_date">
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">To Date</label>
-                                            <input type="text" class="form-control form-control-sm" name="to_date"
-                                                id="to_date">
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
@@ -232,7 +257,7 @@
                                         '&ppe_type=' + ppe_type +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
-                                        '&ppe_status=' +ppe_status
+                                        '&ppe_status=' + ppe_status
 
                                 }
                             },
@@ -252,12 +277,12 @@
                                     $('body').click();
                                     window.location.href =
                                         "{{ admin_url('ppe_type/export/excel') }}" +
-                                        '?search=' + searchValue+
+                                        '?search=' + searchValue +
                                         '&ppe_id=' + ppe_id +
                                         '&ppe_type=' + ppe_type +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
-                                        '&ppe_status=' +ppe_status
+                                        '&ppe_status=' + ppe_status
 
                                 }
                             },
