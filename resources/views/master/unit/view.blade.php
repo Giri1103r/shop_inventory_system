@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Unit Show')
+@section('title', 'Unit Master Show')
 @section('pageurl', admin_url('unit/list'))
 
 

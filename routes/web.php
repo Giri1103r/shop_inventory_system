@@ -66,7 +66,6 @@ Route::get('queueDepartmentuplodimport', [CronController::class,'queueDepartment
 
 Route::get('workmastertemp', [CronController::class, 'workMasterTemp']);
 Route::get('worksave', [CronController::class, 'workSave']);
-
 Route::get('employee_master_temp', [CronController::class, 'employeeMasterTemp']);
 Route::get('employee_save', [CronController::class, 'EmployeeSave']);
 

@@ -102,11 +102,6 @@
                                                     <select name="department_id" id="department_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Target Department </option>
-                                                        @foreach ($departmentList as $department)
-                                                            <option @if ($training_matrix->department_id == $department->id) selected @endif
-                                                                value="{{ encryptId($department->id) }}">
-                                                                {{ $department->department_name }}</option>
-                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -201,10 +196,10 @@
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
-            
+
             $('#training_evaluation').on('change', function() {
                 const selectedValue = $(this).val();
-                const showSectionValue = '{{ encryptId(1) }}'; 
+                const showSectionValue = '{{ encryptId(1) }}';
 
                 if (selectedValue === showSectionValue) {
                     $('#questionnaire_upload_section').removeClass('d-none');
@@ -213,7 +208,53 @@
                 }
             });
 
+            $(document).ready(function() {
 
+                var initialUnitId = $('#unit_id').val();
+                var preselectedDepartmentId = "{{ encryptId($training_matrix->department_id) ?? '0' }}";
+
+                if (initialUnitId) {
+                    fetchDepartment(initialUnitId, preselectedDepartmentId, function() {
+                        var department_id = preselectedDepartmentId;
+                        fetchUnits(department_id, preselectedUnitId);
+
+                    });
+                }
+
+                $('#unit_id').on('change', function() {
+                    var unit_id = $(this).val();
+                    fetchDepartment(unit_id, preselectedDepartmentId, function() {
+                        $('#department_id').trigger('change');
+                    });
+                });
+
+
+                function fetchDepartment(unit_id, preselectedDepartmentId, callback) {
+                    if (unit_id) {
+                        $.ajax({
+                            url: "{{ admin_url('department/ajax-list/') }}" + unit_id + '/' +
+                                preselectedDepartmentId,
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function(data) {
+                                $('#department_id').empty().append(
+                                    '<option value="">Select Target Department</option>');
+                                $.each(data, function(key, value) {
+                                    var selected = (value.id == preselectedDepartmentId) ?
+                                        'selected' : '';
+                                    $('#department_id').append('<option value="' + value
+                                        .id + '" ' +
+                                        selected + '>' + value.name + '</option>');
+                                });
+                                if (callback) callback();
+                            }
+                        });
+                    } else {
+                        $('#department_id').empty().append('<option value="">Select Target Department</option>');
+                    }
+                }
+
+            });
             $('#training_matrixedit').validate({
                 rules: {
                     topic_id: {
@@ -237,6 +278,9 @@
                     },
                     training_evaluation: {
                         required: true,
+                    },
+                    questionnaire: {
+                        extension: "xls|pdf",
                     },
 
                 },
@@ -262,6 +306,9 @@
                     },
                     training_evaluation: {
                         required: "Please select Training Evaluation.",
+                    },
+                    questionnaire: {
+                        extension: "Only .xls and .pdf file formats are allowed.",
                     },
 
                 },

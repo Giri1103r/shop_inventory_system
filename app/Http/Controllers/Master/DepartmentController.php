@@ -320,7 +320,7 @@ class DepartmentController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Department Details.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Department Master.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -375,7 +375,7 @@ class DepartmentController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Department.pdf";
+            $filename = "Department Master.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 

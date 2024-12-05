@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Department Edit')
+@section('title', 'Department Master Edit')
 @section('pageurl', admin_url('department/list'))
 
 

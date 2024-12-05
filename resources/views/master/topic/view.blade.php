@@ -51,7 +51,18 @@
                                             {{ isset($topic->topic_name) ? $topic->topic_name : '' }}
                                         </div>
                                     </div>
-
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Questionnaire</label>
+                                        <div class="view_data">
+                                            @if ($training_Files_questionnaire)
+                                                <a href="{{ asset($training_Files_questionnaire->file_path) }}"
+                                                    target="_blank" class="d-block mt-2">
+                                                    <i class="fa-solid fa-eye text-danger"></i> View</a>
+                                            @else
+                                                <small class="text-muted">No file uploaded yet.</small>
+                                            @endif
+                                        </div>
+                                    </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">

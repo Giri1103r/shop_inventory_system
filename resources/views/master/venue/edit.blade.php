@@ -40,8 +40,9 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Name of the Conference Hall</label>
-                                                    <input type="text" name ="name_of_the_conference_hall" id="name_of_the_conference_hall"
-                                                        class="form-control" placeholder="Name of the Conference Hall"
+                                                    <input type="text" name ="name_of_the_conference_hall"
+                                                        id="name_of_the_conference_hall" class="form-control"
+                                                        placeholder="Name of the Conference Hall"
                                                         value="{{ $venue->name_of_the_conference_hall }}">
                                                 </div>
                                             </div>
@@ -75,14 +76,17 @@
                                                         class="form-control single-select" style="width: 100%;">
                                                         <option value="">Select Projector/LCD Availability</option>
                                                         <option value="YES"
-                                                            {{ $venue->projector_or_lcd_availability == 'YES' ? 'selected' : '' }}>
-                                                            YES</option>
+                                                            {{ strtolower($venue->projector_or_lcd_availability ?? '') == 'yes' ? 'selected' : '' }}>
+                                                            YES
+                                                        </option>
                                                         <option value="NO"
-                                                            {{ $venue->projector_or_lcd_availability == 'NO' ? 'selected' : '' }}>
-                                                            NO</option>
+                                                            {{ strtolower($venue->projector_or_lcd_availability ?? '') == 'no' ? 'selected' : '' }}>
+                                                            NO
+                                                        </option>
                                                     </select>
                                                 </div>
                                             </div>
+
 
                                         </div>
                                         <hr>

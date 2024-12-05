@@ -229,7 +229,7 @@ class WorkController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Worker Details.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Worker Master.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -282,7 +282,7 @@ class WorkController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Worker.pdf";
+            $filename = "Worker Master.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
           

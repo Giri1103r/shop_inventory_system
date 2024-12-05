@@ -27,12 +27,12 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">Topic ID</label>
-                                            <input type="text" name="topic_id" id="topic_id" class="form-control">
+                                            <label for="topic_id" class="form-label ">Topic ID</label>
+                                            <input type="text" name="topic_id" id="topic_id" class="form-control" placeholder="Topic ID">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">Topic Name</label>
-                                            <input type="text" name="topic_name" id="topic_name"
+                                            <label for="topic_name" class="form-label ">Topic Name</label>
+                                            <input type="text" name="topic_name" id="topic_name" placeholder="Topic Name"
                                                 class="form-control">
                                         </div>
 
@@ -45,10 +45,9 @@
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3">
-                                            <x-button-search></x-button-search>
-                                            <x-button-reset></x-button-reset>
-
+                                        <div class="col-md-3 mb-3 d-flex align-items-end gap-2">
+                                            <x-button-search class="me-2"></x-button-search>
+                                            <x-button-reset class="ms-1"></x-button-reset>
                                         </div>
                                     </div>
                                 </div>
@@ -250,12 +249,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Topic Management') }}';
+                        var title = '{{ __('Do You want to In-Activate Topic Master') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Topic Management') }}';
+                        var title = '{{ __('Do You want to Activate Topic Master') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -323,7 +322,7 @@
                     var id = $(this).data('id');
                     var login_id = $(this).data('login_id');
 
-                    var title = '{{ __('Do You want to Delete Topic Management') }}';
+                    var title = '{{ __('Do You want to Delete Topic Master') }}';
                     var text = '{{ __('common.delete') }}';
                     var btncolor = '#dc3545'
 

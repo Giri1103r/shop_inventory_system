@@ -311,7 +311,7 @@ class UnitController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Unit Details.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Unit Master.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -365,7 +365,7 @@ class UnitController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Unit.pdf";
+            $filename = "Unit Master.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
