@@ -79,7 +79,18 @@ class ImportEmployeeJob
          * Header column validation
          */
             if ($i == 1) {
+                if (count($row) === 7) {
 
+                }else{
+                    $error_data = array(
+                        'upload_id' => $this->details['log_id'],
+                        'line_no' => $i,
+                        'error' => 'Header Column not match',
+                    );
+                    $cond_error_datas[] = $error_data;
+                    $i++;
+                    break;
+                }
                     if (
                        trim($row['0']) != 'S.No' ||
                        trim($row['1']) != 'Employee ID' ||
@@ -103,16 +114,7 @@ class ImportEmployeeJob
 
             }
 
-             if (count($row) < 7) {
-                $error_data = array(
-                    'upload_id' => $this->details['log_id'],
-                    'line_no' => $i,
-                    'error' => 'Header Column Not Match',
-                );
-                $cond_error_datas[] = $error_data;
-                $i++;
-                continue;
-            }
+
 
             $sno = trim($row['0']);
             $employee_id = trim($row['1']);

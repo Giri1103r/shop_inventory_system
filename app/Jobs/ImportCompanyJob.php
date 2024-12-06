@@ -5,7 +5,6 @@ namespace App\Jobs;
 use DB;
 use Str;
 use Mail;
-use Session;
 use App\Models\User;
 use Shuchkin\SimpleXLSX;
 use App\Models\UploadLog;
@@ -21,8 +20,11 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Models\Master\Company;
+use Illuminate\Support\Facades\Session;
 
-class ImportCompanyJob
+//  class ImportCompanyJob
+
+class ImportCompanyJob implements ShouldQueue
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -60,8 +62,23 @@ class ImportCompanyJob
         $cond_error_datas = [];
 
         foreach ($xlsx->rows() as $row) {
-            if ($i == 1) {
 
+
+
+            // Check if it's the first row (header row)
+            if ($i == 1) {
+                if (count($row) === 4) {
+
+                }else{
+                    $error_data = array(
+                        'upload_id' => $this->details['log_id'],
+                        'line_no' => $i,
+                        'error' => 'Header Column not match',
+                    );
+                    $cond_error_datas[] = $error_data;
+                    $i++;
+                    break;
+                }
                 if (
                     trim($row[0]) != 'SNo' ||
                     trim($row[1]) != 'Company Name' ||
@@ -77,28 +94,18 @@ class ImportCompanyJob
                     $i++;
                     continue;
                 }
-
+                // Move to the next row after processing the header
                 $i++;
                 continue;
             }
 
-            if (count($row) < 4) {
-                $error_data = array(
-                    'upload_id' => $this->details['log_id'],
-                    'line_no' => $i,
-                    'error' => 'Header Column Not Match',
-                );
-                $cond_error_datas[] = $error_data;
-                $i++;
-                continue;
-            }
-
+            // Trim and assign column values to variables
             $sno = trim($row[0]);
             $companyname = trim($row[1]);
             $company_short_name = trim($row[2]);
             $company_address = trim($row[3]);
 
-            // Column data validation
+            // Validate column data
             if ($companyname == '') {
                 $error_data = array(
                     'upload_id' => $this->details['log_id'],
@@ -110,6 +117,7 @@ class ImportCompanyJob
                 continue;
             }
 
+            // Check if company already exists
             $companyExist = Company::where('company_name', $companyname)->get();
             if ($companyExist->isNotEmpty()) {
                 $error_data = array(
@@ -144,17 +152,22 @@ class ImportCompanyJob
                 continue;
             }
 
+            // Prepare data for insertion
             $data = array(
                 'company_name' => $companyname,
                 'short_name' => $company_short_name,
                 'address' => $company_address,
                 'created_by' => $this->details['user_id']
             );
+
+            // Insert data into the Company table
             Company::create($data);
 
+            // Increment the counter
             $i++;
         }
 
+        // Check if there were any errors
         if (count($cond_error_datas) > 0) {
             UploadLogError::insert($cond_error_datas);
             $final_update_array = array(
@@ -167,8 +180,10 @@ class ImportCompanyJob
             );
             Session::flash('success', 'Upload completed successfully.');
         }
+
         UploadLog::where('id', $this->details['log_id'])->update($final_update_array);
     }
+
 
 }
 

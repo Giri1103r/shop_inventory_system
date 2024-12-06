@@ -6,7 +6,6 @@ namespace App\Jobs;
 use DB;
 use Str;
 use Mail;
-use Session;
 use App\Models\User;
 use Shuchkin\SimpleXLSX;
 use App\Models\UploadLog;
@@ -32,8 +31,9 @@ use App\Models\Master\Location;
 use App\Models\Master\Company;
 use App\Models\Master\Department;
 use App\Models\Master\Unit;
+use Illuminate\Support\Facades\Session;
 
-class ImportdepartmentJob
+class ImportdepartmentJob implements ShouldQueue
 // class ImportdepartmentJob
 {
 
@@ -75,14 +75,30 @@ class ImportdepartmentJob
 
         foreach ($xlsx->rows() as $row) {
 
+
+
             if ($i == 1) {
+         // Header Column Validation
+                if (count($row) === 5) {
+
+                }else{
+                    $error_data = array(
+                        'upload_id' => $this->details['log_id'],
+                        'line_no' => $i,
+                        'error' => 'Header Column not match',
+                    );
+                    $cond_error_datas[] = $error_data;
+                    $i++;
+                    break;
+                }
                 // Header row validation
+
                 if (
                     trim($row[0])  != 'SNo' ||
-                       trim($row[1]) != 'Company Name' ||
-                        trim($row[2]) != 'Location Name' ||
-                       trim($row[3])!= 'Unit Name' ||
-                        trim($row[4]) != 'Department Name'
+                    trim($row[1]) != 'Company Name' ||
+                    trim($row[2]) != 'Location Name' ||
+                    trim($row[3]) != 'Unit Name' ||
+                    trim($row[4]) != 'Department Name'
                 ) {
                     $error_data = array(
                         'upload_id' => $this->details['log_id'],
@@ -98,17 +114,7 @@ class ImportdepartmentJob
                 continue;
             }
 
-            // Ensure row has enough columns before processing
-            if (count($row) < 5) {
-                $error_data = array(
-                    'upload_id' => $this->details['log_id'],
-                    'line_no' => $i,
-                    'error' => 'Header Column not match',
-                );
-                $cond_error_datas[] = $error_data;
-                $i++;
-                continue;
-            }
+
 
 
             $sno = trim($row['0']);

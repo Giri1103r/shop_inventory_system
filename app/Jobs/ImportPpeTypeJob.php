@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Shuchkin\SimpleXLSX;
 
-class ImportPpeTypeJob
+class ImportPpeTypeJob implements ShouldQueue
+// class ImportPpeTypeJob
 {
 
 
@@ -49,10 +50,22 @@ class ImportPpeTypeJob
         foreach ($xlsx->rows() as $row) {
 
 
+
+
             // Header column validation
             if ($i == 1) {
 
-
+                if (count($row) === 2) {
+                } else {
+                    $error_data = array(
+                        'upload_id' => $this->details['log_id'],
+                        'line_no' => $i,
+                        'error' => 'Header Column not match',
+                    );
+                    $cond_error_datas[] = $error_data;
+                    $i++;
+                    break;
+                }
                 if (
                     trim($row[0]) != 'Sno' ||
                     trim($row[1]) != 'PPE Type'
@@ -71,72 +84,62 @@ class ImportPpeTypeJob
                 continue;
             }
 
-            if (count($row) < 2) { {
-                    $error_data = array(
-                        'upload_id' => $this->details['log_id'],
-                        'line_no' => $i,
-                        'error' => 'Header Column Not Match',
-                    );
-                    $cond_error_datas[] = $error_data;
-                    $i++;
-                    continue;
-                }
 
 
-                $sno = trim($row[0]);
-                $ppename = trim($row[1]);
 
-                if ($ppename == '') {
+            $sno = trim($row[0]);
+            $ppename = trim($row[1]);
+
+            if ($ppename == '') {
+                $cond_error_data = array(
+                    'upload_id' => $this->details['log_id'],
+                    'line_no' => $i,
+                    'error' => 'PPE Type is missing',
+                );
+
+                $cond_error_datas[] = $cond_error_data;
+
+                $i++;
+                continue;
+            } else {
+                $companyExist = PpeType::where('ppe_type', $ppename)->get();
+                if (count($companyExist) > 0) {
                     $cond_error_data = array(
                         'upload_id' => $this->details['log_id'],
                         'line_no' => $i,
-                        'error' => 'PPE Type is missing',
+                        'error' => 'PPE type Already Exist',
                     );
 
                     $cond_error_datas[] = $cond_error_data;
 
                     $i++;
                     continue;
-                } else {
-                    $companyExist = PpeType::where('ppe_type', $ppename)->get();
-                    if (count($companyExist) > 0) {
-                        $cond_error_data = array(
-                            'upload_id' => $this->details['log_id'],
-                            'line_no' => $i,
-                            'error' => 'PPE type Already Exist',
-                        );
-
-                        $cond_error_datas[] = $cond_error_data;
-
-                        $i++;
-                        continue;
-                    }
                 }
-
-                $data = [
-                    'ppe_type' => $ppename,
-                    'created_by' => Auth::id(),
-                ];
-
-                PpeType::create($data);
-                $i++;
             }
 
+            $data = [
+                'ppe_type' => $ppename,
+                'created_by' => Auth::id(),
+            ];
 
-            if (count($cond_error_datas) > 0) {
-                UploadLogError::insert($cond_error_datas);
-                $final_update_array = array(
-                    'upload_status' => 3,
-                );
-                Session::flash('error', 'Failed to upload. Please check the upload log.');
-            } else {
-                $final_update_array = array(
-                    'upload_status' => 2,
-                );
-                Session::flash('success', 'Upload completed successfully.');
-            }
-
-            UploadLog::where('id', $this->details['log_id'])->update($final_update_array);
+            PpeType::create($data);
+            $i++;
         }
+
+
+        if (count($cond_error_datas) > 0) {
+            UploadLogError::insert($cond_error_datas);
+            $final_update_array = array(
+                'upload_status' => 3,
+            );
+            Session::flash('error', 'Failed to upload. Please check the upload log.');
+        } else {
+            $final_update_array = array(
+                'upload_status' => 2,
+            );
+            Session::flash('success', 'Upload completed successfully.');
+        }
+
+        UploadLog::where('id', $this->details['log_id'])->update($final_update_array);
     }
 }

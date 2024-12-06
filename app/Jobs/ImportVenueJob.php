@@ -29,6 +29,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 
 use App\Models\Master\Venue;
 use App\Models\Master\Unit;
+use Illuminate\Support\Facades\Session;
 
 class ImportVenueJob
 // class ImportVenueJob
@@ -78,7 +79,18 @@ class ImportVenueJob
 
             if ($i == 1) {
 
+                if (count($row) === 5) {
 
+                }else{
+                    $error_data = array(
+                        'upload_id' => $this->details['log_id'],
+                        'line_no' => $i,
+                        'error' => 'Header Column not match',
+                    );
+                    $cond_error_datas[] = $error_data;
+                    $i++;
+                    break;
+                }
                 if (
                     trim($row['0']) != 'SNo' ||
                     trim($row['1']) != 'Conference Hall Name' ||
@@ -99,16 +111,7 @@ class ImportVenueJob
                 continue;
             }
 
-            if (count($row) < 5) {
-                $error_data_1 = array(
-                    'upload_id' => $this->details['log_id'],
-                    'line_no' => $i,
-                    'error' => 'Header Column Not Match',
-                );
-                $cond_error_datas[] = $error_data_1;
-                $i++;
-                break;
-            }
+
 
             $sno = trim($row['0']);
             $name_of_the_conference_hall = trim($row['1']);
