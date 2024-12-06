@@ -6,7 +6,6 @@ namespace App\Jobs;
 use DB;
 use Str;
 use Mail;
-use Session;
 use App\Models\User;
 use Shuchkin\SimpleXLSX;
 use App\Models\UploadLog;
@@ -31,8 +30,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use App\Models\Master\Location;
 use App\Models\Master\Company;
 use App\Models\Master\Unit;
+use Illuminate\Support\Facades\Session;
 
-class ImportUnitJob 
+class ImportUnitJob  implements ShouldQueue
 // class ImportUnitJob
 {
 
@@ -68,15 +68,12 @@ class ImportUnitJob
         UploadLog::where('id', $this->details['log_id'])
             ->update($update_array);
 
-       $xlsx = SimpleXLSX::parse($this->details['path']);
+        $xlsx = SimpleXLSX::parse($this->details['path']);
         // dd($xlsx);
         $cond_error_datas = [];
 
         foreach ($xlsx->rows() as $row) {
-            $sno = trim($row['0']);
-            $companyname = trim($row['1']);
-            $locationname = trim($row['2']);
-            $unit_name = trim($row['3']);
+
 
             /*
          * Header column validation
@@ -84,35 +81,41 @@ class ImportUnitJob
 
             if ($i == 1) {
 
-                if (count($row) == 4) {
-                    if (
-                        $sno != 'SNo' ||
-                        $companyname != 'Company Name' ||
-                        $locationname != 'Location Name'||
-                        $unit_name != 'Unit Name'
-                    ) {
-                        $error_data_1 = array(
-                            'upload_id' => $this->details['log_id'],
-                            'line_no' =>  $i,
-                            'error' => 'Header Column Name Not Match',
-                        );
-                        $cond_error_datas[] = $error_data_1;
-                        $i++;
-                        break;
-                    }
-                    $i++;
-                    continue;
+                if (count($row) === 4) {
                 } else {
-                    $error_data_1 = array(
+                    $error_data = array(
                         'upload_id' => $this->details['log_id'],
                         'line_no' => $i,
-                        'error' => 'Header Column Not Match',
+                        'error' => 'Header Column not match',
+                    );
+                    $cond_error_datas[] = $error_data;
+                    $i++;
+                    break;
+                }
+                if (
+                    trim($row['0']) != 'SNo' ||
+                    trim($row['1']) != 'Company Name' ||
+                    trim($row['2']) != 'Location Name' ||
+                    trim($row['3']) != 'Unit Name'
+                ) {
+                    $error_data_1 = array(
+                        'upload_id' => $this->details['log_id'],
+                        'line_no' =>  $i,
+                        'error' => 'Header Column Name Not Match',
                     );
                     $cond_error_datas[] = $error_data_1;
                     $i++;
                     break;
                 }
+                $i++;
+                continue;
             }
+
+
+            $sno = trim($row['0']);
+            $companyname = trim($row['1']);
+            $locationname = trim($row['2']);
+            $unit_name = trim($row['3']);
 
             /* Column data validation */
 
@@ -234,9 +237,9 @@ class ImportUnitJob
         if (count($cond_error_datas) > 0) {
             UploadLogError::insert($cond_error_datas);
 
-        $final_update_array = array(
-            'upload_status' => 3,
-        );
+            $final_update_array = array(
+                'upload_status' => 3,
+            );
             Session::flash('error', 'Failed to upload. Please check the upload log.');
         } else {
 

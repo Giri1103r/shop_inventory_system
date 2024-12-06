@@ -35,7 +35,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
 
-class ImportEmployeeJob 
+class ImportEmployeeJob
 //class ImportEmployeeJob
 {
 
@@ -74,27 +74,31 @@ class ImportEmployeeJob
         $cond_error_datas = [];
 
         foreach ($xlsx->rows() as $row) {
-            $sno = trim($row['0']);
-            $employee_id = trim($row['1']);
-            $employee_first_name = trim($row['2']);
-            $employee_last_name = trim($row['3']);
-            $employee_email = trim($row['4']);
-            $employee_mobile = trim($row['5']);
-            $employee_sos_number = trim($row['6']);
 
             /*
          * Header column validation
          */
             if ($i == 1) {
-                if (count($row) == 7) {
+                if (count($row) === 7) {
+
+                }else{
+                    $error_data = array(
+                        'upload_id' => $this->details['log_id'],
+                        'line_no' => $i,
+                        'error' => 'Header Column not match',
+                    );
+                    $cond_error_datas[] = $error_data;
+                    $i++;
+                    break;
+                }
                     if (
-                        $sno != 'S.No' ||
-                        $employee_id != 'Employee ID' ||
-                        $employee_first_name != 'First Name' ||
-                        $employee_last_name != 'Last Name' ||
-                        $employee_email != 'Email' ||
-                        $employee_mobile != 'Mobile' ||
-                        $employee_sos_number != 'SOS Number'
+                       trim($row['0']) != 'S.No' ||
+                       trim($row['1']) != 'Employee ID' ||
+                       trim($row['2']) != 'First Name' ||
+                       trim($row['3']) != 'Last Name' ||
+                      trim($row['4']) != 'Email' ||
+                       trim($row['5']) != 'Mobile' ||
+                       trim($row['6']) != 'SOS Number'
                     ) {
                         $error_data_1 = array(
                             'upload_id' => $this->details['log_id'],
@@ -107,17 +111,19 @@ class ImportEmployeeJob
                     }
                     $i++;
                     continue;
-                } else {
-                    $error_data_1 = array(
-                        'upload_id' => $this->details['log_id'],
-                        'line_no' => $i,
-                        'error' => 'Header Column Not Match',
-                    );
-                    $cond_error_datas[] = $error_data_1;
-                    $i++;
-                    break;
-                }
+
             }
+
+
+
+            $sno = trim($row['0']);
+            $employee_id = trim($row['1']);
+            $employee_first_name = trim($row['2']);
+            $employee_last_name = trim($row['3']);
+            $employee_email = trim($row['4']);
+            $employee_mobile = trim($row['5']);
+            $employee_sos_number = trim($row['6']);
+
 
             /* Column data validation */
             if (!is_numeric($sno) || $sno <= 0) {
@@ -214,11 +220,16 @@ class ImportEmployeeJob
 
         if (count($cond_error_datas) > 0) {
             UploadLogError::insert($cond_error_datas);
+            $final_update_array = array(
+                'upload_status' => 3,
+            );
+            Session::flash('error', 'Failed to upload. Please check the upload log.');
+        } else {
+            $final_update_array = array(
+                'upload_status' => 2,
+            );
+            Session::flash('success', 'Upload completed successfully.');
         }
-
-        $final_update_array = array(
-            'upload_status' => 2,
-        );
         UploadLog::where('id', $this->details['log_id'])->update($final_update_array);
-    }
+   }
 }

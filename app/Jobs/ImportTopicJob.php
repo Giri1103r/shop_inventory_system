@@ -28,9 +28,11 @@ use Illuminate\Foundation\Bus\Dispatchable;
 
 
 use App\Models\Master\Topic;
+use Illuminate\Support\Facades\Session;
 
 class ImportTopicJob 
 // class ImportTopicJob implements ShouldQueue
+
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -57,6 +59,8 @@ class ImportTopicJob
      */
     public function handle()
     {
+
+
         $i = 1;
         $update_array = array(
             'upload_status' => 1,
@@ -70,8 +74,7 @@ class ImportTopicJob
         $cond_error_datas = [];
 
         foreach ($xlsx->rows() as $row) {
-            $sno = trim($row['0']);
-            $topicname = trim($row['1']);
+
 
             /*
          * Header column validation
@@ -79,10 +82,21 @@ class ImportTopicJob
 
             if ($i == 1) {
 
-                if (count($row) == 2) {
+                if (count($row) === 2) {
+
+                }else{
+                    $error_data = array(
+                        'upload_id' => $this->details['log_id'],
+                        'line_no' => $i,
+                        'error' => 'Header Column not match',
+                    );
+                    $cond_error_datas[] = $error_data;
+                    $i++;
+                    break;
+                }
                     if (
-                        $sno != 'SNo' ||
-                        $topicname != 'Topic Name'
+                       trim($row['0']) != 'SNo' ||
+                       trim($row['1']) != 'Topic Name'
                     ) {
                         $error_data_1 = array(
                             'upload_id' => $this->details['log_id'],
@@ -95,17 +109,12 @@ class ImportTopicJob
                     }
                     $i++;
                     continue;
-                } else {
-                    $error_data_1 = array(
-                        'upload_id' => $this->details['log_id'],
-                        'line_no' => $i,
-                        'error' => 'Header Column Not Match',
-                    );
-                    $cond_error_datas[] = $error_data_1;
-                    $i++;
-                    break;
-                }
+
             }
+
+
+            $sno = trim($row['0']);
+            $topicname = trim($row['1']);
 
             /* Column data validation */
             if ($topicname == '') {
@@ -157,11 +166,17 @@ class ImportTopicJob
 
         if (count($cond_error_datas) > 0) {
             UploadLogError::insert($cond_error_datas);
+            $final_update_array = array(
+                'upload_status' => 3,
+            );
+            Session::flash('error', 'Failed to upload. Please check the upload log.');
+        } else {
+            $final_update_array = array(
+                'upload_status' => 2,
+            );
+            Session::flash('success', 'Upload completed successfully.');
         }
 
-        $final_update_array = array(
-            'upload_status' => 2,
-        );
         UploadLog::where('id', $this->details['log_id'])->update($final_update_array);
     }
 }

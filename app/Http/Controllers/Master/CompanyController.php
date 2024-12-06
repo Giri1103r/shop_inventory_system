@@ -418,8 +418,8 @@ class CompanyController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportCompanyJob($details));
-                //    dispatch((new ImportCompanyJob($details))->onQueue('company'));
+                // dispatch(new ImportCompanyJob($details));
+                   dispatch((new ImportCompanyJob($details))->onQueue('company'));
             }
 
             $insert_data['log_id'] = $insert_id;
