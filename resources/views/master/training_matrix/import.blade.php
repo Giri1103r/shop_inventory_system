@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Venue Import')
-@section('pageurl', admin_url('venue/list'))
+@section('title', 'Training Matrix Import')
+@section('pageurl', admin_url('training_matrix/list'))
 
 
 @section('content')
@@ -24,8 +24,8 @@
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('administration.employee_import') }}</h4> --}}
                                 <div class="d-flex justify-content-end p-2 gap-2">
-                                    <x-button-download href="{{ admin_url('venue/sampledownload') }}"></x-button-download>
-                                    <x-button-back href="{{ admin_url('venue/list') }}"></x-button-back>
+                                    <x-button-download href="{{ admin_url('training_matrix/sampledownload') }}"></x-button-download>
+                                    <x-button-back href="{{ admin_url('training_matrix/list') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -33,13 +33,13 @@
                             <div class="card-body ">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="venueimport" enctype="multipart/form-data"
-                                        action="{{ admin_url('venue/import/submit') }}">
+                                    <form method="POST" id="training_matriximport" enctype="multipart/form-data"
+                                        action="{{ admin_url('training_matrix/import/submit') }}">
                                         @csrf
                                         <div class="row">
                                             <div class="mb-3 col-md-6 form-input">
-                                                <label class="form-label required">Venue File</label>
-                                                <input type="file"  name="venue_upload" class="form-control"  placeholder="">
+                                                <label class="form-label required">Training Matrix File</label>
+                                                <input type="file"  name="training_matrix_upload" class="form-control"  placeholder="">
                                             </div>
                                         </div>
                                         <hr>
@@ -47,7 +47,7 @@
                                         <div class="submit-button" style="text-align: right;">
                                             <x-button-submit></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
-                                            <x-button-cancel href="{{ admin_url('venue/list') }}"></x-button-cancel>
+                                            <x-button-cancel href="{{ admin_url('training_matrix/list') }}"></x-button-cancel>
 
                                         </div>
 
@@ -67,17 +67,17 @@
 @push('script')
     <script type="text/javascript">
         $(function() {
-            $('#venueimport').validate({
+            $('#training_matriximport').validate({
                 rules: {
 
-                    venue_upload: {
+                    training_matrix_upload: {
                         required: true,
                         extension: "xlsx",
                         filesize: 5242880,
                     },
                 },
                 messages: {
-                    venue_upload: {
+                    training_matrix_upload: {
                         required: "Please upload a file",
                         extension: "Please upload an Excel file (.xlsx)",
                     },

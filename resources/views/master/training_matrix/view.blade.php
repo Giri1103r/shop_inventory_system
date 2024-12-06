@@ -66,7 +66,24 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Target Department</label>
                                         <div class="view_data">
-                                            {{ isset($training_matrix->department_name) ? $training_matrix->department_name : '' }}
+                                            @php
+                                                $selectedDepartmentIds = explode(
+                                                    ',',
+                                                    $training_matrix->department_id ?? '',
+                                                ); // Get selected department IDs
+                                            @endphp
+
+                                            @if (!empty($selectedDepartmentIds))
+                                                <ul>
+                                                    @foreach ($departmentList as $department)
+                                                        @if (in_array($department->id, $selectedDepartmentIds))
+                                                            <li>{{ $department->department_name }}</li>
+                                                        @endif
+                                                    @endforeach
+                                                </ul>
+                                            @else
+                                                No Target Departments Assigned
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">

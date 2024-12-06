@@ -37,6 +37,7 @@
                             {{ $value->unit_name}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
+                            
                             {{ $value->department_name}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>

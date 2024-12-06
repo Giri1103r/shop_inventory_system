@@ -168,6 +168,30 @@ class Department extends Model
 
         return $list;
     }
+    public function multipleAjaxList($unitId, $preselectedIds)
+    {
+        $query = $this->select('id', 'department_name')
+            ->where('status', 1)
+            ->where(function ($query) use ($unitId, $preselectedIds) {
+                $query->where('unit_id', $unitId);
+                if (!empty($preselectedIds)) {
+                    $query->orWhereIn('id', $preselectedIds);
+                }
+            });
+
+        $datas = $query->get();
+
+        $list = [];
+        foreach ($datas as $data) {
+            $list[] = [
+                'id' => encryptId($data->id),
+                'name' => $data->department_name,
+            ];
+        }
+
+        return $list;
+    }
+
 
     public function ajaxallList($unitId = '')
     {

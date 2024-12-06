@@ -30,8 +30,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use App\Models\Master\Topic;
 use Illuminate\Support\Facades\Session;
 
-class ImportTopicJob
-// class ImportTopicJob
+class ImportTopicJob 
+// class ImportTopicJob implements ShouldQueue
+
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
