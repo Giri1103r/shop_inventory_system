@@ -121,31 +121,35 @@ class TrainingMatrix extends Model
     public function store()
     {
         $request = request();
+        $decryptedDepartmentIds = array_map('decryptId', $request->department_id);
 
-        $insert_array = array(
+        $commaSeparatedDepartments = implode(',', $decryptedDepartmentIds);
+
+        $insertArray = [
             'topic_id' => decryptId($request->topic_id),
             'trainer_id' => decryptId($request->trainer_id),
             'training_offered_for' => decryptId($request->training_offered_for),
             'unit_id' => decryptId($request->unit_id),
-            'department_id' => decryptId($request->department_id),
+            'department_id' => $commaSeparatedDepartments,
             'mode_of_training' => decryptId($request->mode_of_training),
             'training_evaluation' => decryptId($request->training_evaluation),
-            'created_by' => Auth::id()
-        );
-        return $this->create($insert_array);
+            'created_by' => Auth::id(),
+        ];
+        return $this->create($insertArray);
     }
 
     public function updates($id)
     {
 
         $request = request();
-
+        $decryptedDepartmentIds = array_map('decryptId', $request->department_id);
+        $commaSeparatedDepartments = implode(',', $decryptedDepartmentIds);
         $update_array = array(
             'topic_id' => decryptId($request->topic_id),
             'trainer_id' => decryptId($request->trainer_id),
             'training_offered_for' => decryptId($request->training_offered_for),
             'unit_id' => decryptId($request->unit_id),
-            'department_id' => decryptId($request->department_id),
+            'department_id' =>  $commaSeparatedDepartments,
             'mode_of_training' => decryptId($request->mode_of_training),
             'training_evaluation' => decryptId($request->training_evaluation),
             'updated_by' => Auth::id(),

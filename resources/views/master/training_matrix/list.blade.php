@@ -118,7 +118,6 @@
                                         <th>Training Topic</th>
                                         <th>Trainer</th>
                                         <th>Unit Name</th>
-                                        <th>Department Name</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -227,10 +226,6 @@
                         {
                             data: 'unit_name',
                             name: 'unit_name'
-                        },
-                        {
-                            data: 'department_name',
-                            name: 'department_name'
                         },
                         {
                             data: 'status',

@@ -30,8 +30,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use App\Models\Master\Venue;
 use App\Models\Master\Unit;
 
-class ImportVenueJob 
-// class ImportVenueJob implements ShouldQueue
+class ImportTrainingMatrixJob 
+// class ImportTrainingMatrixJob implements ShouldQueue
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

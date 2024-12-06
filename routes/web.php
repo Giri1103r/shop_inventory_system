@@ -290,8 +290,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/unique', [DepartmentController::class, 'Uniquecheck']);
                 Route::get('/alllist/{unitId}', [DepartmentController::class, 'alllist']);
                 Route::get('/ajax-list/{unit_id}/{id}', [DepartmentController::class, 'list']);
+                Route::get('/multiple-ajax-list/{unit_id}', [DepartmentController::class, 'multipleList']);
 
-                // Route::get('/ajaxlist', [DepartmentController::class, 'list']);
             });
 
 

@@ -24,7 +24,7 @@ use App\Models\Master\TrainingMatrix;
 use App\Models\Master\TrainingMatrixFile;
 use App\Models\User;
 use App\Models\UploadLog;
-use App\Jobs\ImportVenueJob;
+use App\Jobs\ImportTrainingMatrixJob;
 
 
 class TrainingMatrixController extends Controller
@@ -120,14 +120,11 @@ class TrainingMatrixController extends Controller
     {
 
         try {
-
-            $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
             $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_TRAINER)->where('status', '1')->get();
 
             $data = array(
-                'departmentList' => $departmentList,
                 'unitList' => $unitList,
                 'topicList' => $topicList,
                 'employeeList' => $employeeList,
@@ -147,7 +144,7 @@ class TrainingMatrixController extends Controller
                 'trainer_id' => 'required',
                 'training_offered_for' => 'required',
                 'unit_id' => 'required',
-                'department_id' => 'required',
+                'department_id' => 'required|array',
             ];
 
             $messages = [
@@ -171,13 +168,13 @@ class TrainingMatrixController extends Controller
                 }
                 Session::flash('success', 'Training Matrix added successfully!');
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('training_matrix/list'));
         } catch (Exception $ex) {
-
+            dd($ex);
 
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('training_matrix/list'));
@@ -190,10 +187,12 @@ class TrainingMatrixController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $training_matrix = $this->training_matrix->selectOne($id);
+                $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
                 $training_matrixFiles_target_content  = $this->training_matrix_file->where('training_matrix_id', $id)->where('file_type', '1')->where('status', '1')->first();
                 $training_matrixFiles_questionnaire  = $this->training_matrix_file->where('training_matrix_id', $id)->where('file_type', '2')->where('status', '1')->first();
                 $data = array(
                     'training_matrix' => $training_matrix,
+                    'departmentList' => $departmentList,
                     'training_matrixFiles_target_content' => $training_matrixFiles_target_content,
                     'training_matrixFiles_questionnaire' => $training_matrixFiles_questionnaire,
                 );
@@ -208,7 +207,6 @@ class TrainingMatrixController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
             $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_TRAINER)->where('status', '1')->get();
@@ -216,7 +214,6 @@ class TrainingMatrixController extends Controller
             $training_matrixFiles_target_content  = $this->training_matrix_file->where('training_matrix_id', $id)->where('file_type', '1')->where('status', '1')->first();
             $training_matrixFiles_questionnaire  = $this->training_matrix_file->where('training_matrix_id', $id)->where('file_type', '2')->where('status', '1')->first();
             $data = array(
-                'departmentList' => $departmentList,
                 'unitList' => $unitList,
                 'topicList' => $topicList,
                 'employeeList' => $employeeList,
@@ -348,7 +345,7 @@ class TrainingMatrixController extends Controller
                 $user_id = Auth::id();
 
                 $insert_data = array(
-                    'upload_type' => 1,
+                    'upload_type' => 8,
                     'upload_status' => 0,
                     'file_name' => $filenewname,
                     'file_orgname' => $fileName,
@@ -368,8 +365,8 @@ class TrainingMatrixController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportVenueJob($details));
-                //    dispatch((new ImportVenueJob($details))->onQueue('empimport'));
+                dispatch(new ImportTrainingMatrixJob($details));
+                //    dispatch((new ImportTrainingMatrixJob($details))->onQueue('training_matrix'));
             }
 
             $insert_data['log_id'] = $insert_id;
@@ -389,7 +386,16 @@ class TrainingMatrixController extends Controller
         try {
 
             $allData = $this->training_matrix->exportdata();
+            $departmentList = $this->department->select('id', 'department_name')->where('status', 1)->get();
 
+            $departmentMap = $departmentList->pluck('department_name', 'id')->toArray();
+
+            foreach ($allData as &$row) {
+                $departmentIds = explode(',', $row->department_id ?? '');
+                $row->department_name = implode(', ', array_map(function ($id) use ($departmentMap) {
+                    return $departmentMap[$id] ?? 'Unknown';
+                }, $departmentIds));
+            }
             $header = [
                 __("common.sno"),
                 'Training Topic',
@@ -406,7 +412,7 @@ class TrainingMatrixController extends Controller
 
             $i = 1;
             foreach ($allData as $data) {
-        
+
                 $export = [];
                 $export[] =  $i;
                 $export[] =  $data->topic_name;
@@ -442,7 +448,16 @@ class TrainingMatrixController extends Controller
         try {
 
             $allData = $this->training_matrix->exportdata();
+            $departmentList = $this->department->select('id', 'department_name')->where('status', 1)->get();
 
+            $departmentMap = $departmentList->pluck('department_name', 'id')->toArray();
+
+            foreach ($allData as &$row) {
+                $departmentIds = explode(',', $row->department_id ?? '');
+                $row->department_name = implode(', ', array_map(function ($id) use ($departmentMap) {
+                    return $departmentMap[$id] ?? 'Unknown';
+                }, $departmentIds));
+            }
             $header = [
                 __("common.sno"),
                 'Training Topic',
@@ -483,7 +498,7 @@ class TrainingMatrixController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Training Matrix.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);
@@ -501,4 +516,5 @@ class TrainingMatrixController extends Controller
         //return Response::download($filePath, $customFileName);
         return redirect(url($filePath));
     }
+   
 }
