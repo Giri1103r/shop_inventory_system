@@ -100,7 +100,7 @@ class ImportTopicJob
                 $error_data = array(
                     'upload_id' => $this->details['log_id'],
                     'line_no' => $i,
-                    'error' => 'Row does not have enough columns',
+                    'error' => 'Header Column Not Match',
                 );
                 $cond_error_datas[] = $error_data;
                 $i++;
@@ -162,9 +162,7 @@ class ImportTopicJob
             UploadLogError::insert($cond_error_datas);
         }
 
-        $final_update_array = array(
-            'upload_status' => 2,
-        );
+        
         UploadLog::where('id', $this->details['log_id'])->update($final_update_array);
     }
 }

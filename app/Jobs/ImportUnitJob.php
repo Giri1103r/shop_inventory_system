@@ -105,7 +105,7 @@ class ImportUnitJob
                 $error_data = array(
                     'upload_id' => $this->details['log_id'],
                     'line_no' => $i,
-                    'error' => 'Row does not have enough columns',
+                    'error' => 'Header Column Not Match',
                 );
                 $cond_error_datas[] = $error_data;
                 $i++;

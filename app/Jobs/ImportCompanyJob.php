@@ -61,7 +61,7 @@ class ImportCompanyJob
 
         foreach ($xlsx->rows() as $row) {
             if ($i == 1) {
-                // Header row validation
+
                 if (
                     trim($row[0]) != 'SNo' ||
                     trim($row[1]) != 'Company Name' ||
@@ -82,12 +82,11 @@ class ImportCompanyJob
                 continue;
             }
 
-            // Ensure row has enough columns before processing
             if (count($row) < 4) {
                 $error_data = array(
                     'upload_id' => $this->details['log_id'],
                     'line_no' => $i,
-                    'error' => 'Row does not have enough columns',
+                    'error' => 'Header Column Not Match',
                 );
                 $cond_error_datas[] = $error_data;
                 $i++;
@@ -168,9 +167,6 @@ class ImportCompanyJob
             );
             Session::flash('success', 'Upload completed successfully.');
         }
-        $final_update_array = array(
-            'upload_status' => 3,
-        );
         UploadLog::where('id', $this->details['log_id'])->update($final_update_array);
     }
 

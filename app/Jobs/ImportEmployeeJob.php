@@ -107,7 +107,7 @@ class ImportEmployeeJob
                 $error_data = array(
                     'upload_id' => $this->details['log_id'],
                     'line_no' => $i,
-                    'error' => 'Row does not have enough columns',
+                    'error' => 'Header Column Not Match',
                 );
                 $cond_error_datas[] = $error_data;
                 $i++;
@@ -218,11 +218,16 @@ class ImportEmployeeJob
 
         if (count($cond_error_datas) > 0) {
             UploadLogError::insert($cond_error_datas);
+            $final_update_array = array(
+                'upload_status' => 3,
+            );
+            Session::flash('error', 'Failed to upload. Please check the upload log.');
+        } else {
+            $final_update_array = array(
+                'upload_status' => 2,
+            );
+            Session::flash('success', 'Upload completed successfully.');
         }
-
-        $final_update_array = array(
-            'upload_status' => 2,
-        );
         UploadLog::where('id', $this->details['log_id'])->update($final_update_array);
-    }
+   }
 }

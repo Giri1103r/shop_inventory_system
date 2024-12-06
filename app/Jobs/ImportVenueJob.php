@@ -30,7 +30,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use App\Models\Master\Venue;
 use App\Models\Master\Unit;
 
-class ImportVenueJob 
+class ImportVenueJob
 // class ImportVenueJob
 {
 
@@ -70,11 +70,7 @@ class ImportVenueJob
         $cond_error_datas = [];
 
         foreach ($xlsx->rows() as $row) {
-            $sno = trim($row['0']);
-            $name_of_the_conference_hall = trim($row['1']);
-            $unit_name = trim($row['2']);
-            $capacity = trim($row['3']);
-            $projector_or_lcd_availability = trim($row['4']);
+
 
             /*
          * Header column validation
@@ -82,36 +78,43 @@ class ImportVenueJob
 
             if ($i == 1) {
 
-                if (count($row) == 5) {
-                    if (
-                        $sno != 'SNo' ||
-                        $name_of_the_conference_hall != 'Conference Hall Name' ||
-                        $unit_name != 'Unit' ||
-                        $capacity != 'Capacity' ||
-                        $projector_or_lcd_availability != 'Projector/LCD Availability'
-                    ) {
-                        $error_data_1 = array(
-                            'upload_id' => $this->details['log_id'],
-                            'line_no' =>  $i,
-                            'error' => 'Header Column Name Not Match',
-                        );
-                        $cond_error_datas[] = $error_data_1;
-                        $i++;
-                        break;
-                    }
-                    $i++;
-                    continue;
-                } else {
+
+                if (
+                    trim($row['0']) != 'SNo' ||
+                    trim($row['1']) != 'Conference Hall Name' ||
+                    trim($row['2']) != 'Unit' ||
+                    trim($row['3']) != 'Capacity' ||
+                    trim($row['4']) != 'Projector/LCD Availability'
+                ) {
                     $error_data_1 = array(
                         'upload_id' => $this->details['log_id'],
-                        'line_no' => $i,
-                        'error' => 'Header Column Not Match',
+                        'line_no' =>  $i,
+                        'error' => 'Header Column Name Not Match',
                     );
                     $cond_error_datas[] = $error_data_1;
                     $i++;
                     break;
                 }
+                $i++;
+                continue;
             }
+
+            if (count($row) < 5) {
+                $error_data_1 = array(
+                    'upload_id' => $this->details['log_id'],
+                    'line_no' => $i,
+                    'error' => 'Header Column Not Match',
+                );
+                $cond_error_datas[] = $error_data_1;
+                $i++;
+                break;
+            }
+
+            $sno = trim($row['0']);
+            $name_of_the_conference_hall = trim($row['1']);
+            $unit_name = trim($row['2']);
+            $capacity = trim($row['3']);
+            $projector_or_lcd_availability = trim($row['4']);
             /* Column data validation */
             if ($name_of_the_conference_hall == '') {
 
@@ -249,11 +252,20 @@ class ImportVenueJob
 
         if (count($cond_error_datas) > 0) {
             UploadLogError::insert($cond_error_datas);
-        }
 
         $final_update_array = array(
-            'upload_status' => 2,
+            'upload_status' => 3,
         );
+            Session::flash('error', 'Failed to upload. Please check the upload log.');
+        } else {
+
+            $final_update_array = array(
+                'upload_status' => 2,
+            );
+            Session::flash('success', 'Upload completed successfully.');
+        }
+
+
         UploadLog::where('id', $this->details['log_id'])->update($final_update_array);
     }
 }

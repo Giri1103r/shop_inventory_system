@@ -71,9 +71,6 @@ class ImportLocationJob
         $cond_error_datas = [];
 
         foreach ($xlsx->rows() as $row) {
-            $sno = trim($row['0']);
-            $companyname = trim($row['1']);
-            $location_name = trim($row['2']);
 
             /*
          * Header column validation
@@ -81,34 +78,40 @@ class ImportLocationJob
 
             if ($i == 1) {
 
-                if (count($row) == 3) {
-                    if (
-                        $sno != 'SNo' ||
-                        $companyname != 'Company Name' ||
-                        $location_name != 'Location Name'
-                    ) {
-                        $error_data_1 = array(
-                            'upload_id' => $this->details['log_id'],
-                            'line_no' =>  $i,
-                            'error' => 'Header Column Name Not Match',
-                        );
-                        $cond_error_datas[] = $error_data_1;
-                        $i++;
-                        break;
-                    }
-                    $i++;
-                    continue;
-                } else {
+
+                if (
+                    trim($row['0']) != 'SNo' ||
+                    trim($row['1']) != 'Company Name' ||
+                    trim($row['2']) != 'Location Name'
+                ) {
                     $error_data_1 = array(
                         'upload_id' => $this->details['log_id'],
-                        'line_no' => $i,
-                        'error' => 'Header Column Not Match',
+                        'line_no' =>  $i,
+                        'error' => 'Header Column Name Not Match',
                     );
                     $cond_error_datas[] = $error_data_1;
                     $i++;
                     break;
                 }
+                $i++;
+                continue;
             }
+
+            if (count($row) < 3) {
+                $error_data_1 = array(
+                    'upload_id' => $this->details['log_id'],
+                    'line_no' => $i,
+                    'error' => 'Header Column Not Match',
+                );
+                $cond_error_datas[] = $error_data_1;
+                $i++;
+                break;
+            }
+
+            $sno = trim($row['0']);
+            $companyname = trim($row['1']);
+            $location_name = trim($row['2']);
+
 
             /* Column data validation */
             if ($companyname == '') {
@@ -213,10 +216,6 @@ class ImportLocationJob
             Session::flash('success', 'Upload completed successfully.');
         }
 
-        // dd($cond_error_datas,$this->details['log_id']);
-        $final_update_array = array(
-            'upload_status' => 3,
-        );
         UploadLog::where('id', $this->details['log_id'])->update($final_update_array);
     }
 }
