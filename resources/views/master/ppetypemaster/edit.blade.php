@@ -60,8 +60,8 @@
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Type</label>
-                                                    <select name="ppe_type" id="ppe_type"
-                                                        class="form-select ">
+                                                    <select name="ppe_type" id="ppe_type" style="width: 100%"
+                                                        class="form-select single-select ">
                                                         <option value="">Select the ppe type</option>
                                                         @foreach ($ppetype as $ppetypes)
                                                             <option value="{{ $ppetypes->id }}"

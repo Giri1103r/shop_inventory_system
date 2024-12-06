@@ -44,6 +44,27 @@
                                             <input type="text" name="ppe_name" id="ppe_name" class="form-control">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
+                                            <label for="inspectiontype" class="form-label ">Protection Category</label>
+                                            <input type="text" name="protection_category" id="protection_category"
+                                                class="form-control">
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="inspectiontype" class="form-label ">PPE Standard</label>
+                                            <input type="text" name="ppe_standard" id="ppe_standard"
+                                                class="form-control">
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="inspectiontype" class="form-label ">PPE Type</label>
+                                            <select name="ppe_type" id="ppe_type" style="width: 100%"
+                                                class="form-select   single-select">
+                                                <option value="">Select the ppe type</option>
+                                                @foreach ($ppetype as $name)
+                                                    <option value="{{ $name->id }}">{{ $name->ppe_type }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
@@ -182,6 +203,9 @@
                         d.ppe_name = $('#ppe_name').val();
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
+                        d.ppe_standard = $('#ppe_standard').val();
+                        d.ppe_type = $('#ppe_type').val();
+                        d.protection_category = $('#protection_category').val();
                         d.ppe_status = $('#ppe_status').val();
 
                     }
@@ -249,6 +273,9 @@
                                     ppe_name = $('#ppe_name').val();
                                     from_date = $('#from_date').val();
                                     to_date = $('#to_date').val();
+                                    ppe_type = $('#ppe_type').val();
+                                    ppe_standard = $('#ppe_standard').val();
+                                    protection_category = $('#protection_category').val();
                                     ppe_status = $('#ppe_status').val();
 
                                     $(".dt-button").removeClass('processing');
@@ -260,6 +287,9 @@
                                         '&ppe_name=' + ppe_name +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
+                                        '&ppe_type=' + ppe_type +
+                                        '&protection_category=' + protection_category +
+                                        '&ppe_standard=' + ppe_standard +
                                         '&ppe_status=' + ppe_status
 
                                 }
@@ -273,6 +303,9 @@
                                     ppe_name = $('#ppe_name').val();
                                     from_date = $('#from_date').val();
                                     to_date = $('#to_date').val();
+                                    ppe_type = $('#ppe_type').val();
+                                    ppe_standard = $('#ppe_standard').val();
+                                    protection_category = $('#protection_category').val();
                                     ppe_status = $('#ppe_status').val();
 
 
@@ -285,6 +318,9 @@
                                         '&ppe_name=' + ppe_name +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
+                                        '&ppe_type=' + ppe_type +
+                                        '&protection_category=' + protection_category +
+                                        '&ppe_standard=' + ppe_standard +
                                         '&ppe_status=' + ppe_status
                                 }
                             },

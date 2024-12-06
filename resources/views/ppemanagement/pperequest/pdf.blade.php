@@ -41,17 +41,27 @@
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getDepartment($value->department) }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ isset($value->approve_msg) ? $value->approve_msg : 'Null'  }}
+                        <td style='padding: 7px; border: 0.5px solid'>
+                            @if ($value->approve_status == $hodstatus)
+                                {{  'User Applied For Approval' }}
+                            @else
+                                {{ $value->approve_msg }}
+                            @endif
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->approve_status}}
+                            {{ removeUnderScore(getStatus($value->approve_status)) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ isset($value->remarks) ? $value->remarks : 'Null'  }}
+                            @if ($value->approve_status == $hodstatus)
+                                {{ 'User Applied For Approval' }}
+                            @elseif ($value->ehs_approve_status == $ehsstatus)
+                                {{ 'User Applied For EHS Officer Approval' }}
+                            @else
+                                {{ $value->remarks }}
+                            @endif
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{  $value->ehs_approve_status }}
+                            {{ removeUnderScore(getStatus($value->ehs_approve_status)) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php

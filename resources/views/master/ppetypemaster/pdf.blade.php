@@ -32,7 +32,7 @@
                             {{ $value->ppe_name }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getPpename($value->ppe_type )}}
+                            {{ getPpeType($value->ppe_type )}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->ppe_standard }}

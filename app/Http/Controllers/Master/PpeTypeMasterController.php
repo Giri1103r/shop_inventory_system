@@ -77,8 +77,11 @@ class PpeTypeMasterController extends Controller
                 }
             }
         }
+        $ppetype = $this->ppetype->getPpetypedata();
 
-        $data = array();
+        $data = [
+          'ppetype'=>$ppetype
+        ];
 
         return view('master.ppetypemaster.list', $data);
     }

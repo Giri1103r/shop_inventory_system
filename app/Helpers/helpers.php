@@ -20,6 +20,7 @@ use Kreait\Firebase\Messaging\WebPushConfig;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Str;
 
 
 if (!function_exists('get_encryptVal')) {
@@ -1296,6 +1297,22 @@ if (!function_exists('getMonth')) {
             }
         }
     }
+    if (!function_exists('getStatus')) {
 
-    
+        function getStatus($userid)
+        {
+
+            $status = DB::table('status')->select('approve_status')->where('id', $userid)->first();
+
+            if ($status == null) {
+                return '';
+            } else {
+                return $status->approve_status;
+            }
+        }
+    }
+    function removeUnderScore($string)
+    {
+        return Str::replace('_', " ", $string);
+    }
 }

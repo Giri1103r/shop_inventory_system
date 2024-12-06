@@ -12,12 +12,10 @@
                     <div class="d-flex justify-content-end p-2 me-2">
                         <x-button-filter dataId="" class="search me-2" href=""></x-button-filter>
 
-                        {{-- @if (CheckUserPermission('add')) --}}
-                            {{-- { --}}
+                        @if (CheckUserPermission('add'))
                             <x-button-add dataId="" class="add btn btn-primary"
                                 href="{{ admin_url('ppe_exemption/add') }}">Add</x-button-add>
-                            {{-- } --}}
-                        {{-- @endif --}}
+                        @endif
 
                     </div>
 
@@ -191,30 +189,10 @@
                         name: 'reason'
                     },
                     {
-                            data: 'approve_status',
-                            name: 'approve_status',
-                            render: function(data, type, row) {
-                                var ehsStatusLabels = {
-                                    4: {
-                                        text: 'EHS Approval Pending',
-                                        class: 'badge badge-warning'
-                                    },
-                                    5: {
-                                        text: 'EHS Approved',
-                                        class: 'badge badge-success'
-                                    },
-                                    6: {
-                                        text: 'EHS Rejected',
-                                        class: 'badge badge-danger'
-                                    }
-                                };
-                                if (ehsStatusLabels[data]) {
-                                    return '<span class="' + ehsStatusLabels[data].class +
-                                        '">' + ehsStatusLabels[data].text + '</span>';
-                                }
-                                return data;
-                            }
-                        },
+                        data: 'approve_status',
+                        name: 'approve_status',
+
+                    },
                     {
                         data: 'action',
                         name: 'action',
