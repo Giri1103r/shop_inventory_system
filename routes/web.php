@@ -593,6 +593,9 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/edit/submit', [SafetyPermitController::class, 'update']);
                 Route::get('/export/excel', [SafetyPermitController::class, 'exportExcel']);
                 Route::get('/export/pdf', [SafetyPermitController::class, 'exportPdf']);
+                Route::get('/getprotectivechecklist/{unit_id}/{id}', [SafetyPermitController::class, 'list']);
+
+     
             });
             Route::group(['prefix' => 'ppe_exemption'], function () {
 
