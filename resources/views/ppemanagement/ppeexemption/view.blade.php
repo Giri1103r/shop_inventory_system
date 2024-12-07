@@ -33,73 +33,87 @@
                                     </div>
                                 </div>
 
-                              <div class="row">
-                                <div class="mb-3 col-md-4 form-input">
-                                    <label class="form-label view_label">{{ __('Employee ID') }}</label>
-                                    <div class="view_data">
-                                        {{ isset($ppeexemption->emp_id) ? $ppeexemption->emp_id : '' }}
+                                <div class="row">
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Employee ID') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($ppeexemption->emp_id) ? $ppeexemption->emp_id : '' }}
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="mb-3 col-md-4 form-input">
-                                    <label class="form-label view_label">{{ __('Employee Name') }}</label>
-                                    <div class="view_data">
-                                        {{ isset($ppeexemption->emp_name) ? $ppeexemption->emp_name : '' }}
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Employee Name') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($ppeexemption->emp_name) ? $ppeexemption->emp_name : '' }}
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="mb-3 col-md-4 form-input">
-                                    <label class="form-label view_label">{{ __('Department') }}</label>
-                                    <div class="view_data">
-                                        {{ getDepartment(isset($ppeexemption->department) ? $ppeexemption->department : '') }}
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Department') }}</label>
+                                        <div class="view_data">
+                                            {{ getDepartment(isset($ppeexemption->department) ? $ppeexemption->department : '') }}
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="mb-3 col-md-4 form-input">
-                                    <label class="form-label view_label">{{ __('Unit') }}</label>
-                                    <div class="view_data">
-                                        {{ getUnitname(isset($ppeexemption->unit) ? $ppeexemption->unit : '' )}}
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Unit') }}</label>
+                                        <div class="view_data">
+                                            {{ getUnitname(isset($ppeexemption->unit) ? $ppeexemption->unit : '') }}
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="mb-3 col-md-4 form-input">
-                                    <label class="form-label view_label">{{ __('From Date') }}</label>
-                                    <div class="view_data">
-                                        {{ isset($ppeexemption->from_date) ? $ppeexemption->from_date : '' }}
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('From Date') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($ppeexemption->from_date) ? $ppeexemption->from_date : '' }}
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="mb-3 col-md-4 form-input">
-                                    <label class="form-label view_label">{{ __('To Date') }}</label>
-                                    <div class="view_data">
-                                        {{ isset($ppeexemption->to_date) ? $ppeexemption->to_date : '' }}
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('To Date') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($ppeexemption->to_date) ? $ppeexemption->to_date : '' }}
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="mb-3 col-md-4 form-input">
-                                    <label class="form-label view_label">{{ __('Created By') }}</label>
-                                    <div class="view_data">
-                                        {{ getUsername(isset($ppeexemption->created_by) ? $ppeexemption->created_by : '') }}
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('EHS Officer Approve Status') }}</label>
+                                        <div class="view_data">
+                                            @if ($ppeexemption->approve_status == $ehsapprovalpending)
+                                                <span class="badge bg-warning">EHS Approval Pending</span>
+                                            @elseif($ppeexemption->approve_status == $ehsapproved)
+                                                <span class="badge bg-success">EHS Approved</span>
+                                            @elseif($ppeexemption->approve_status == $ehsrejected)
+                                                <span class="badge bg-danger">EHS Rejected</span>
+                                            @else
+                                                {{ isset($ppeexemption->approve_status) ? $ppeexemption->approve_status : '' }}
+                                            @endif
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="mb-3 col-md-4 form-input">
-                                    <label class="form-label view_label">{{ __('common.created_date') }}</label>
-                                    <div class="view_data">
-                                        {{ displayDateformat($ppeexemption->created_at) }}
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Created By') }}</label>
+                                        <div class="view_data">
+                                            {{ getUsername(isset($ppeexemption->created_by) ? $ppeexemption->created_by : '') }}
+                                        </div>
                                     </div>
-                                </div>
-                                 <div class="mb-3 col-md-4 form-input">
-                                    <label class="form-label view_label">{{ __('Status') }}</label>
-                                    <div class="view_data">
-                                        @if ($ppeexemption->status == 1)
-                                            {{ __('common.active') }}
-                                        @else
-                                            {{ __('common.inactive') }}
-                                        @endif
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('common.created_date') }}</label>
+                                        <div class="view_data">
+                                            {{ displayDateformat($ppeexemption->created_at) }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Status') }}</label>
+                                        <div class="view_data">
+                                            @if ($ppeexemption->status == 1)
+                                                {{ __('common.active') }}
+                                            @else
+                                                {{ __('common.inactive') }}
+                                            @endif
 
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12 form-input">
+                                        <label class="form-label view_label">{{ __('Reason') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($ppeexemption->reason) ? $ppeexemption->reason : '' }}
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="mb-3 col-md-12 form-input">
-                                    <label class="form-label view_label">{{ __('Reason') }}</label>
-                                    <div class="view_data">
-                                        {{ isset($ppeexemption->reason) ? $ppeexemption->reason : '' }}
-                                    </div>
-                                </div>
-                              </div>
 
                             </div>
                         </div>
@@ -110,5 +124,3 @@
     </div>
 
 @stop
-
-

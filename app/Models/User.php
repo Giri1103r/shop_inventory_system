@@ -284,7 +284,10 @@ class User extends Authenticatable
         return User::where('employee_id', $empId)->pluck('id')->toArray();
     }
 
-
+    public function getrequestEmail($empId)
+    {
+        return User::where('employee_id', $empId)->pluck('email')->first();
+    }
     public function exportdata()
     {
         $request = request();

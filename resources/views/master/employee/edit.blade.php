@@ -73,17 +73,6 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">User Role</label>
-                                                    {{-- <select name="user_role" id="user_role"
-                                                        class="form-control single-select" style="width: 100%;">
-                                                        <option value="">Select User Role</option>
-                                                        @foreach ($userrole as $role)
-                                                            <option @if ($employee->user_role == $role->id) selected @endif
-                                                                value="{{ encryptId($role->id) }}">{{ $role->role_name }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select> --}}
-
-
                                                     <select name="user_role[]" multiple id="user_role"
                                                         class="select2 form-control">
                                                         <option value="">Select User Role</option>

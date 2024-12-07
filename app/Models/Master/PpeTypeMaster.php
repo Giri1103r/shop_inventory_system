@@ -37,7 +37,10 @@ class PpeTypeMaster extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ppe_master_ppetypemaster.*');
+        $query = $this->select('ppe_master_ppetypemaster.*', 'masters_ppetype.ppe_type')
+            ->join('masters_ppetype', 'ppe_master_ppetypemaster.ppe_type', '=', 'masters_ppetype.id')
+            ->where('masters_ppetype.trash', 'NO');
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -56,21 +59,30 @@ class PpeTypeMaster extends Model
         if ($request->has('ppe_name') && $request->ppe_name) {
             $query = $query->where('ppe_name', 'LIKE', '%' . $request->ppe_name . '%');
         }
+        if ($request->has('ppe_standard') && $request->ppe_standard) {
+            $query = $query->where('ppe_standard', 'LIKE', '%' . $request->ppe_standard . '%');
+        }
+        if ($request->has('protection_category') && $request->protection_category) {
+            $query = $query->where('ppe_category', 'LIKE', '%' . $request->protection_category . '%');
+        }
+        if ($request->has('ppe_type') && $request->ppe_type) {
+            $query = $query->where('ppe_master_ppetypemaster.ppe_type', 'LIKE', '%' . $request->ppe_type . '%');
+        }
         if ($request->has('ppe_status') && $request->ppe_status) {
 
-            $query = $query->where('status', decryptId($request->ppe_status));
+            $query = $query->where('ppe_master_ppetypemaster.status', decryptId($request->ppe_status));
         }
 
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('created_at', [$startDate, $endDate]);
+            $query->whereBetween('ppe_master_ppetypemaster.created_at', [$startDate, $endDate]);
         } elseif ($request->has('from_date') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('created_at', '>=', $startDate);
+            $query->where('ppe_master_ppetypemaster.created_at', '>=', $startDate);
         } elseif ($request->has('to_date') && !empty($request->to_date)) {
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('created_at', '<=', $endDate);
+            $query->where('ppe_master_ppetypemaster.created_at', '<=', $endDate);
         }
 
         $data_count = $query;
@@ -218,21 +230,32 @@ class PpeTypeMaster extends Model
         if ($request->has('ppe_name') && $request->ppe_name) {
             $query = $query->where('ppe_name', 'LIKE', '%' . $request->ppe_name . '%');
         }
+        if ($request->has('ppe_standard') && $request->ppe_standard) {
+            $query = $query->where('ppe_standard', 'LIKE', '%' . $request->ppe_standard . '%');
+        }
+        if ($request->has('protection_category') && $request->protection_category) {
+            $query = $query->where('ppe_category', 'LIKE', '%' . $request->protection_category . '%');
+        }
+        if ($request->has('ppe_type') && $request->ppe_type) {
+            $query = $query->where('ppe_master_ppetypemaster.ppe_type', 'LIKE', '%' . $request->ppe_type . '%');
+        }
         if ($request->has('ppe_status') && $request->ppe_status) {
 
-            $query = $query->where('status', decryptId($request->ppe_status));
+            $query = $query->where('ppe_master_ppetypemaster.status', decryptId($request->ppe_status));
         }
+
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('created_at', [$startDate, $endDate]);
+            $query->whereBetween('ppe_master_ppetypemaster.created_at', [$startDate, $endDate]);
         } elseif ($request->has('from_date') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('created_at', '>=', $startDate);
+            $query->where('ppe_master_ppetypemaster.created_at', '>=', $startDate);
         } elseif ($request->has('to_date') && !empty($request->to_date)) {
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('created_at', '<=', $endDate);
+            $query->where('ppe_master_ppetypemaster.created_at', '<=', $endDate);
         }
+
 
         return  $query->orderBy('id', 'DESC')->get();
     }
@@ -242,11 +265,11 @@ class PpeTypeMaster extends Model
 
         return response()->json(
             $this->where('ppe_type', $PPEtypeId)
-                 ->select('id', 'ppe_name')
-                 ->get()
+                ->select('id', 'ppe_name')
+                ->get()
         )->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
-         ->header('Pragma', 'no-cache')
-         ->header('Expires', 'Fri, 01 Jan 1990 00:00:00 GMT');
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Fri, 01 Jan 1990 00:00:00 GMT');
     }
 
 

@@ -64,10 +64,10 @@ class UploadLogController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            if (CheckUserPermission('view')) {
+                            // if (CheckUserPermission('view')) {
                             $btn .= '<a href="' . admin_url('uploadlog/list/' . encryptId($row->id)) . '"   class="view-icon" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            }
-                        
+                            // }
+
                             $btn .= '<a href="' . admin_url('uploadlog/download/' . encryptId($row->id)) . '" class="download-icon" title="Download"><i class="fa-solid fa-download"></i></a>';
 
                             return $btn;

@@ -52,15 +52,18 @@ class PpeTypeMasterController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
-                        ->addColumn('ppe_type', function ($row) {
-                            return getPpeType($row->ppe_type);
+                        ->editColumn('ppe_type', function ($row) {
+                            return $row->ppe_type;
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-
+                            if (CheckUserPermission('view')) {
                             $btn = '<a href="' . admin_url('ppe_ppetype_master/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            }
+                            if (CheckUserPermission('edit')) {
                             $btn .= '<a href="' . admin_url('ppe_ppetype_master/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
+                            }
+                            // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -74,8 +77,11 @@ class PpeTypeMasterController extends Controller
                 }
             }
         }
+        $ppetype = $this->ppetype->getPpetypedata();
 
-        $data = array();
+        $data = [
+          'ppetype'=>$ppetype
+        ];
 
         return view('master.ppetypemaster.list', $data);
     }
@@ -128,14 +134,14 @@ class PpeTypeMasterController extends Controller
 
                 $this->ppetypemaster->store();
 
-                Session::flash('success', __('PPE Type master is taken  added successfully'));
+                Session::flash('success', __('Your data has been created successfully!'));
             } catch (Exception $ex) {
-                Session::flash('error', __('common.message_error'));
+                Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
             return redirect(admin_url('ppe_ppetype_master/list'));
         } catch (Exception $ex) {
 
-            Session::flash('error',  __('common.message_error'));
+            Session::flash('error',  'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_ppetype_master/list'));
         }
     }
@@ -210,15 +216,15 @@ class PpeTypeMasterController extends Controller
 
                 $this->ppetypemaster->updates($id);
 
-                Session::flash('success', __('PPE Type master is taken updated successfully'));
+                Session::flash('success', __('Your data has been updated successfully!'));
             } catch (Exception $ex) {
-                dd($ex);
-                Session::flash('error', __('common.message_error'));
+                report($ex);
+                Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
             return redirect(admin_url('ppe_ppetype_master/list'));
         } catch (Exception $ex) {
-            dd($ex);
-            Session::flash('error',  __('common.message_error'));
+            report($ex);
+            Session::flash('error',  'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_ppetype_master/list'));
         }
     }
@@ -231,10 +237,10 @@ class PpeTypeMasterController extends Controller
 
             $this->ppetypemaster->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => __('PPE Type Master to be taken status changed')], 200);
+            return response()->json(['status' => 'success', 'msg' => __('PPE Type Master status changed successfully')], 200);
         } catch (Exception $ex) {
 
-            return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
+            return response()->json(['status' => 'error', 'msg' => __('Please try after some time')], 406);
         }
     }
 
@@ -245,10 +251,10 @@ class PpeTypeMasterController extends Controller
 
             $this->ppetypemaster->deleterecord($id);
 
-            return response()->json(['status' => 'success', 'msg' => __('PPE Type Master to be taken deleted successfully')], 200);
+            return response()->json(['status' => 'success', 'msg' => __('PPE Type Master  deleted successfully')], 200);
         } catch (Exception $ex) {
 
-            return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
+            return response()->json(['status' => 'error', 'msg' => __('Please try after some time')], 406);
         }
     }
 
@@ -260,6 +266,10 @@ class PpeTypeMasterController extends Controller
         try {
 
             $allData = $this->ppetypemaster->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
 
             $header = [
                 __("common.sno"),
@@ -292,7 +302,7 @@ class PpeTypeMasterController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('PPE Type Master to be taken .xlsx')
+            $writer = SimpleExcelWriter::streamDownload('PPEType Master Details.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -310,6 +320,10 @@ class PpeTypeMasterController extends Controller
             ini_set("pcre.backtrack_limit", "5000000");
 
             $allData = $this->ppetypemaster->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
 
             $header = [
                 __("common.sno"),
@@ -348,10 +362,10 @@ class PpeTypeMasterController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Precation to be takens Details.pdf";
+            $filename = "PPEType Master Details.pdf";
             $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
         }
     }
@@ -363,9 +377,6 @@ class PpeTypeMasterController extends Controller
             return $this->ppetypemaster->ajaxlist($PPEtypeId);
         }
     }
-
-
-
 
     public function imageList(Request $request)
     {

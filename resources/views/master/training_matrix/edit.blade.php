@@ -99,8 +99,8 @@
                                                 <div class="form-group form-input">
                                                     <label for="department_id" class="form-label require">Target Department
                                                     </label>
-                                                    <select name="department_id" id="department_id"
-                                                        class=" form-control single-select" style="width: 100%">
+                                                    <select name="department_id[]" multiple id="department_id"
+                                                        class=" form-control select2" style="width: 100%">
                                                         <option value="">Select Target Department </option>
                                                     </select>
                                                 </div>
@@ -192,11 +192,66 @@
     </div>
 
 @stop
-
+@php
+    $preselectedDepartmentIds = array_map('encryptId', explode(',', $training_matrix->department_id ?? ''));
+@endphp
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
+            // Get initial unit ID and preselected department IDs
+            var initialUnitId = $('#unit_id').val();
+            var preselectedDepartmentIds = @json($preselectedDepartmentIds);
 
+            // Fetch departments on page load if unit ID is present
+            if (initialUnitId) {
+                fetchDepartments(initialUnitId, preselectedDepartmentIds);
+            }
+
+            // Fetch departments on unit change
+            $('#unit_id').on('change', function() {
+                var unitId = $(this).val();
+                fetchDepartments(unitId, []);
+            });
+
+            // Function to fetch and populate departments
+            function fetchDepartments(unitId, preselectedIds) {
+                if (unitId) {
+                    $.ajax({
+                        url: "{{ admin_url('department/multiple-ajax-list/') }}" + unitId,
+                        type: 'GET',
+                        data: {
+                            preselected_ids: preselectedIds
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#department_id').empty().append(
+                                '<option value="">Select Target Department</option>'
+                            );
+                            $.each(data, function(key, value) {
+                                var selected = preselectedIds.includes(value.id) ? 'selected' :
+                                    '';
+                                $('#department_id').append('<option value="' + value.id + '" ' +
+                                    selected + '>' + value.name + '</option>');
+                            });
+                            $('#department_id').trigger('change'); // Update select2
+                        },
+                        error: function() {
+                            alert('Error fetching departments. Please try again.');
+                        },
+                    });
+                } else {
+                    $('#department_id').empty().append(
+                        '<option value="">Select Target Department</option>'
+                    );
+                }
+            }
+        });
+        $(document).ready(function() {
+            $('#department_id').select2({
+                placeholder: "Select Target Department",
+                allowClear: true,
+                closeOnSelect: true,
+            });
             $('#training_evaluation').on('change', function() {
                 const selectedValue = $(this).val();
                 const showSectionValue = '{{ encryptId(1) }}';
@@ -206,54 +261,6 @@
                 } else {
                     $('#questionnaire_upload_section').addClass('d-none');
                 }
-            });
-
-            $(document).ready(function() {
-
-                var initialUnitId = $('#unit_id').val();
-                var preselectedDepartmentId = "{{ encryptId($training_matrix->department_id) ?? '0' }}";
-
-                if (initialUnitId) {
-                    fetchDepartment(initialUnitId, preselectedDepartmentId, function() {
-                        var department_id = preselectedDepartmentId;
-                        fetchUnits(department_id, preselectedUnitId);
-
-                    });
-                }
-
-                $('#unit_id').on('change', function() {
-                    var unit_id = $(this).val();
-                    fetchDepartment(unit_id, preselectedDepartmentId, function() {
-                        $('#department_id').trigger('change');
-                    });
-                });
-
-
-                function fetchDepartment(unit_id, preselectedDepartmentId, callback) {
-                    if (unit_id) {
-                        $.ajax({
-                            url: "{{ admin_url('department/ajax-list/') }}" + unit_id + '/' +
-                                preselectedDepartmentId,
-                            type: 'GET',
-                            dataType: 'json',
-                            success: function(data) {
-                                $('#department_id').empty().append(
-                                    '<option value="">Select Target Department</option>');
-                                $.each(data, function(key, value) {
-                                    var selected = (value.id == preselectedDepartmentId) ?
-                                        'selected' : '';
-                                    $('#department_id').append('<option value="' + value
-                                        .id + '" ' +
-                                        selected + '>' + value.name + '</option>');
-                                });
-                                if (callback) callback();
-                            }
-                        });
-                    } else {
-                        $('#department_id').empty().append('<option value="">Select Target Department</option>');
-                    }
-                }
-
             });
             $('#training_matrixedit').validate({
                 rules: {
@@ -269,7 +276,7 @@
                     unit_id: {
                         required: true,
                     },
-                    department_id: {
+                    'department_id[]': {
                         required: true,
                     },
 
@@ -297,7 +304,7 @@
                     unit_id: {
                         required: "Please select a Unit Name.",
                     },
-                    department_id: {
+                    'department_id[]': {
                         required: "Please select a Target Department.",
                     },
 

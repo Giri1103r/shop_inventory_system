@@ -449,7 +449,7 @@ class DepartmentController extends Controller
                 ];
 
                 // dispatch(new ImportdepartmentJob($details));
-                   dispatch((new ImportdepartmentJob($details))->onQueue('department'));
+                dispatch((new ImportdepartmentJob($details))->onQueue('department'));
             }
 
             $insert_data['log_id'] = $insert_id;
@@ -474,6 +474,15 @@ class DepartmentController extends Controller
         //return Response::download($filePath, $customFileName);
         return redirect(url($filePath));
     }
+    public function multipleList(Request $request, $unit_id)
+    {
+        $unit_id = decryptId($unit_id);
+        $preselectedIds = array_map('decryptId', $request->input('preselected_ids', []));
+
+        $departments = $this->department->multipleAjaxList($unit_id, $preselectedIds);
+
+        return response()->json($departments);
+    }
 
     public function list(Request $request, $unit_id)
     {
@@ -497,17 +506,17 @@ class DepartmentController extends Controller
             $unit_id = decryptId($request->unit_id);
             $company_id = decryptId($request->company_id);
             $location_id = decryptId($request->location_id);
-            $department_name =$request->department_name;
+            $department_name = $request->department_name;
             $id = $request->id;
             if ($id == '') {
 
                 // dd('sdcds');
-                $record = $this->department->uniqueCheck($company_id,$location_id,$unit_id,$department_name);
+                $record = $this->department->uniqueCheck($company_id, $location_id, $unit_id, $department_name);
             } else {
 
                 // dd('sdcgsed');
                 $id = decryptId($id);
-                $record = $this->department->ExistuniqueCheck($company_id,$location_id,$unit_id,$department_name, $id);
+                $record = $this->department->ExistuniqueCheck($company_id, $location_id, $unit_id, $department_name, $id);
             }
             if ($record->count()) {
                 return Response::json(false);

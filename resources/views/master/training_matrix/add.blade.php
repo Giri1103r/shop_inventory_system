@@ -87,12 +87,13 @@
                                                     </select>
                                                 </div>
                                             </div>
+
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label for="department_id" class="form-label require">Target Department
                                                     </label>
-                                                    <select name="department_id" id="department_id"
-                                                        class=" form-control single-select" style="width: 100%">
+                                                    <select name="department_id[]" multiple id="department_id"
+                                                        class=" form-control select2" style="width: 100%">
                                                         <option value="">Select Target Department </option>
                                                     </select>
                                                 </div>
@@ -165,6 +166,7 @@
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
+
             $('#training_evaluation').on('change', function() {
                 if ($(this).val() === '{{ encryptId(1) }}') { // "Yes" selected
                     $('#questionnaire_upload_section').removeClass('d-none');
@@ -172,6 +174,13 @@
                     $('#questionnaire_upload_section').addClass('d-none');
                 }
             });
+            $('#department_id').select2({
+                placeholder: "Select Target Department",
+                allowClear: true,
+                closeOnSelect: false, // Allows multiple selections without closing the dropdown
+            });
+
+            // Handle the change event of the Unit dropdown
             $(document).on('change', '#unit_id', function() {
                 var unitId = $(this).val();
                 if (unitId) {
@@ -181,13 +190,13 @@
                         dataType: 'json',
                         success: function(data) {
                             $('#department_id').empty().append(
-                                '<option value="">Select Target Department</option>');
+                                '<option value="">Select Target Department</option>'
+                            );
                             $.each(data, function(key, value) {
                                 $('#department_id').append('<option value="' + value
-                                    .id + '">' + value
-                                    .name + '</option>');
+                                    .id + '">' + value.name + '</option>');
                             });
-                            $('#department_id').trigger('change.');
+                            $('#department_id').trigger('change');
                         },
                         error: function(xhr) {
                             alert('Error fetching department. Please try again.');
@@ -196,9 +205,10 @@
                 } else {
                     $('#department_id').empty().append(
                     '<option value="">Select Target Department</option>');
-                    $('#department_id').trigger('change.');
+                    $('#department_id').trigger('change');
                 }
             });
+
             $('#training_matrixadd').validate({
                 rules: {
                     topic_id: {
@@ -213,7 +223,7 @@
                     unit_id: {
                         required: true,
                     },
-                    department_id: {
+                    'department_id[]': {
                         required: true,
                     },
                     target_content: {
@@ -247,7 +257,7 @@
                     unit_id: {
                         required: "Please select a Unit Name.",
                     },
-                    department_id: {
+                    'department_id[]': {
                         required: "Please select a Target Department.",
                     },
                     target_content: {

@@ -138,45 +138,54 @@
 
 
         $(document).ready(function() {
+            $('#pperequestadd').validate({
+                rules: {
+                    ppe_name: {
+                        required: true,
+                    },
+                    ppe_type: {
+                        required: true,
+                    },
+                },
+                messages: {
 
-            $('#pperequestadd').on('submit', function(e) {
-                let valid = true;
-
-
-                if (!validatePPEName()) valid = false;
-                if (!validatePPEType()) valid = false;
-
-                if (!valid) {
-                    e.preventDefault();
-                } else {
+                    ppe_name: {
+                        required: "Please Select the PPE Name.",
+                    },
+                    ppe_type: {
+                        required: "Please Select the PPE Type.",
+                    },
+                },
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    var errorDiv = element.siblings('div.text-danger');
+                    errorDiv.html(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
                     $('#submit').prop('disabled', true);
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log(errors + " field(s) are invalid");
+                    validator.errorList.forEach(function(error) {
+                        console.log("Field: " + error.element.name + ", Error: " + error
+                            .message);
+                    });
                 }
             });
 
-
-            function validatePPEType() {
-
-                var name = $('#ppe_type').val();
-
-                if (name === "") {
-                    $('#ppe_type_error').text('PPE type cannot be empty.');
-                    return false;
-                }
-
-                $('#ppe_type_error').text('');
-                return true;
-            }
-
-            function validatePPEName() {
-                var ppename = $('#ppe_name').val();
-                if (ppename === "") {
-                    $('#ppe_name_error').text('PPE Name cannot be empty');
-                    return false;
-                }
-                $('#ppe_name_error').text('');
-                return true;
-            }
-
+            $.validator.addMethod("regex", function(value, element, regexp) {
+                return this.optional(element) || regexp.test(value);
+            }, "Please check your input.");
         });
+
+
     </script>
 @endpush

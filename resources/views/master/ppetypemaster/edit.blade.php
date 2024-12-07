@@ -60,8 +60,8 @@
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Type</label>
-                                                    <select name="ppe_type" id="ppe_type"
-                                                        class="form-select form-select-sm">
+                                                    <select name="ppe_type" id="ppe_type" style="width: 100%"
+                                                        class="form-select single-select ">
                                                         <option value="">Select the ppe type</option>
                                                         @foreach ($ppetype as $ppetypes)
                                                             <option value="{{ $ppetypes->id }}"
@@ -82,7 +82,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Quantity</label>
                                                     <input type="text" name="quantity" id="quantity"
-                                                        class="form-control form-control-sm" value="0" readonly>
+                                                        class="form-control " value="0" readonly>
                                                     <div class="text-danger" id="quantity_error"></div>
                                                 </div>
                                             </div>
@@ -91,7 +91,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Protection Category</label>
                                                     <input type="text" name="protection_category"
-                                                        id="protection_category" class="form-control form-control-sm"
+                                                        id="protection_category" class="form-control "
                                                         placeholder="Enter the protection category"
                                                         value="{{ $ppetypemaster->ppe_category }}">
                                                     @error('protection_category')
@@ -105,7 +105,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Standard</label>
                                                     <input type="text" name="ppe_standard" id="ppe_standard"
-                                                        class="form-control form-control-sm"
+                                                        class="form-control "
                                                         value="{{ $ppetypemaster->ppe_standard }}"
                                                         placeholder="Enter the ppe standard">
                                                     @error('ppe_standard')
@@ -119,7 +119,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Image</label>
                                                     <input type="file" name="ppe_file" id="ppe_file"
-                                                        class="form-control form-control-sm" placeholder="Enter the image"
+                                                        class="form-control " placeholder="Enter the image"
                                                         onchange="validateImage()">
                                                     <small>Allowed file types: png, jpeg , jpg</small>
                                                     @if (isset($ppetypemaster) && $ppetypemaster->ppe_image)
@@ -172,142 +172,90 @@
         });
         $(document).ready(function() {
 
-            $('#PpeTypeMasterForm').on('submit', function(e) {
-                let valid = true;
-
-                if (!validateItemCode()) valid = false;
-                if (!validatePPEName()) valid = false;
-                if (!validateProtectionCategory()) valid = false;
-                if (!validateStandard()) valid = false;
-                if (!validatePPEType()) valid = false;
-                if (!validateImage()) valid = false;
-
-                if (!valid) {
-                    e.preventDefault();
-                } else {
-                    $('#submit').prop('disabled', true);
+            $('#PpeTypeMasterForm').validate({
+                rules: {
+                    item_code: {
+                        required: true,
+                        regex: /^[a-zA-Z0-9_]*$/
+                    },
+                    ppe_name: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
+                        regex: /^[a-zA-Z0-9\-_'"()\s]{3,30}$/
+                    },
+                    ppe_type: {
+                        required: true
+                    },
+                    protection_category: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
+                        regex: /^[a-zA-Z0-9\-_'"()\s]{3,30}$/
+                    },
+                    ppe_standard: {
+                        required: true,
+                        regex: /^[a-zA-Z0-9\-_'"()\s]+$/
+                    },
+                    ppe_file: {
+                        extension: "png|jpeg|jpg"
+                    }
+                },
+                messages: {
+                    item_code: {
+                        required: "Item Code cannot be empty.",
+                        regex: "Item code should be alphanumeric."
+                    },
+                    ppe_name: {
+                        required: "PPE Name cannot be empty.",
+                        minlength: "PPE Name must be between 3 and 30 characters.",
+                        maxlength: "PPE Name must be between 3 and 30 characters.",
+                        regex: "PPE Name should be alphanumeric and can include -, _, ', \", (, )."
+                    },
+                    ppe_type: {
+                        required: "Please select the PPE Type."
+                    },
+                    protection_category: {
+                        required: "Protection Category cannot be empty.",
+                        minlength: "Protection Category must be between 3 and 30 characters.",
+                        maxlength: "Protection Category must be between 3 and 30 characters.",
+                        regex: "Protection Category should be alphanumeric and can include -, _, ', \", (, )."
+                    },
+                    ppe_standard: {
+                        required: "PPE Standard cannot be empty.",
+                        regex: "PPE Standard should be alphanumeric and can include -, _, ', \", (, )."
+                    },
+                    ppe_file: {
+                        extension: "Allowed file types: png, jpeg, jpg."
+                    }
+                },
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    var errorDiv = element.siblings('div.text-danger');
+                    errorDiv.html(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log(errors + " field(s) are invalid");
+                    validator.errorList.forEach(function(error) {
+                        console.log("Field: " + error.element.name + ", Error: " + error
+                            .message);
+                    });
                 }
             });
 
-
-            function validateItemCode() {
-                var itemCode = $('#item_code').val();
-                var regex = /^[a-zA-Z0-9_]*$/;
-
-                if (itemCode === "") {
-                    $('#item_code_error').text('Item Code cannot be empty.');
-                    return false;
-                }
-
-                if (!regex.test(itemCode)) {
-                    $('#item_code_error').text('Item code should be alphanumeric.');
-                    return false;
-                }
-
-                $('#item_code_error').text('');
-                return true;
-            }
-
-
-            function validatePPEName() {
-                var name = $('#ppe_name').val();
-                var regex = /^[a-zA-Z0-9\-_'"()\s]{3,30}$/;
-
-                if (name === "") {
-                    $('#ppe_name_error').text('PPE Name cannot be empty.');
-                    return false;
-                }
-
-                if (name.length < 3 || name.length > 30) {
-                    $('#ppe_name_error').text('PPE Name must be between 3 and 30 characters.');
-                    return false;
-                }
-
-                if (!regex.test(name)) {
-                    $('#ppe_name_error').text('PPE Name should be alphanumeric and can include -, _, \', ", (, ).');
-                    return false;
-                }
-
-                $('#ppe_name_error').text('');
-                return true;
-            }
-
-
-
-            function validateProtectionCategory() {
-                var protectionCategory = $('#protection_category').val();
-                var regex = /^[a-zA-Z0-9\-_'"()\s]{3,30}$/;
-
-                if (protectionCategory === "") {
-                    $('#protection_error').text('Protection Category cannot be empty.');
-                    return false;
-                }
-
-                if (protectionCategory.length < 3 || protectionCategory.length > 30) {
-                    $('#protection_error').text('rotection Category must be between 3 and 30 characters.');
-                    return false;
-                }
-
-                if (!regex.test(protectionCategory)) {
-                    $('#protection_error').text(
-                        'Protection Category should be alphanumeric and can include -, _, \', ", (, ).');
-                    return false;
-                }
-
-                $('#protection_error').text('');
-                return true;
-            }
-
-
-            function validateStandard() {
-                var standard = $('#ppe_standard').val();
-                var regex = /^[a-zA-Z0-9\-_'"()\s]+$/;
-
-                if (standard === "") {
-                    $('#ppe_standard_error').text('PPE Standard cannot be empty.');
-                    return false;
-                }
-
-                if (!regex.test(standard)) {
-                    $('#ppe_standard_error').text(
-                        'PPE Standard should be alphanumeric and can include -, _, \', ", (, ).');
-                    return false;
-                }
-
-                $('#ppe_standard_error').text('');
-                return true;
-            }
-
-            function validatePPEType() {
-                var type = $('#ppe_type').val();
-
-                if (type === "") {
-                    $('#ppe_type_error').text('Please select the PPE Type.');
-                    return false;
-                }
-
-                $('#ppe_type_error').text('');
-                return true;
-            }
-
-            function validateImage() {
-                var file = $('#ppe_file').val();
-                var fileError = $('#ppe_file_error');
-
-                if (file !== "") {
-                    var extension = file.split('.').pop().toLowerCase();
-                    if ($.inArray(extension, ['png', 'jpeg', 'jpg']) === -1) {
-                        fileError.text('Allowed file types: png, jpeg.');
-                        return false;
-                    } else {
-                        fileError.text('');
-                        return true;
-                    }
-                } else {
-                    fileError.text('');
-                    return true;
-                }
-            }
+            $.validator.addMethod("regex", function(value, element, regexp) {
+                return this.optional(element) || regexp.test(value);
+            }, "Please check your input.");
 
         });
     </script>

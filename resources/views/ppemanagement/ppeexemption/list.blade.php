@@ -2,6 +2,7 @@
 @section('title', 'PPE Exemption')
 @section('pageurl', admin_url('ppe_exemption/list'))
 @section('content')
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
@@ -10,8 +11,12 @@
                     <h4 class="card-title"></h4>
                     <div class="d-flex justify-content-end p-2 me-2">
                         <x-button-filter dataId="" class="search me-2" href=""></x-button-filter>
-                        <x-button-add dataId="" class="add btn btn-primary"
-                            href="{{ admin_url('ppe_exemption/add') }}">Add</x-button-add>
+
+                        @if (CheckUserPermission('add'))
+                            <x-button-add dataId="" class="add btn btn-primary"
+                                href="{{ admin_url('ppe_exemption/add') }}">Add</x-button-add>
+                        @endif
+
                     </div>
 
                     <div id="search" class="collapse">
@@ -21,24 +26,33 @@
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_id" class="form-label ">Emp Id</label>
-                                            <input type="text" class="form-control form-control-sm" name="emp_id"
-                                                id="emp_id">
+                                            <input type="text" class="form-control " name="emp_id" id="emp_id">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">Emp Name</label>
-                                            <input type="text" class="form-control form-control-sm" name="emp_name"
-                                                id="emp_name">
+                                            <input type="text" class="form-control " name="emp_name" id="emp_name">
 
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
-                                            <input type="text" class="form-control form-control-sm" name="from_date"
-                                                id="from_date">
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">To Date</label>
-                                            <input type="text" class="form-control form-control-sm" name="to_date"
-                                                id="to_date">
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
@@ -74,7 +88,7 @@
                                         <th>From Date</th>
                                         <th>To Date</th>
                                         <th>Reason</th>
-                                        <th>Status</th>
+                                        <th>Approve Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -175,8 +189,9 @@
                         name: 'reason'
                     },
                     {
-                        data: 'status',
-                        name: 'status'
+                        data: 'approve_status',
+                        name: 'approve_status',
+
                     },
                     {
                         data: 'action',

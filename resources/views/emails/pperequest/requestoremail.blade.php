@@ -17,7 +17,7 @@
                     <tr>
                         <td colspan="4" align="center"
                             style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>PPE Request {{ $details['status'] }}</b>
+                            <b>PPE Request</b>
                         </td>
                     </tr>
 
@@ -44,21 +44,7 @@
                             valign="top"> {{ getDepartment($details['department']) }}</td>
                     </tr>
 
-                    <tr>
-                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>Reason</b>
-                        </td>
-                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ $details['remarks'] }}</td>
-                    </tr>
 
-                    <tr>
-                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>Approved By (HOD)</b>
-                        </td>
-                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ getUsername($details['approved_by']) }}</td>
-                    </tr>
                 </tbody>
             </table>
 

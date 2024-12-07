@@ -20,6 +20,8 @@ class PpeRequest extends Model
         'ppe_name',
         'department',
         'ppe_type',
+        'approve_status',
+        'ehs_approve_status',
         'status',
         'trash',
         'created_by',
@@ -33,7 +35,13 @@ class PpeRequest extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ppe_pperequest.*');
+        $query = $this->select('ppe_pperequest.*', 'masters_department.department_name', 'masters_ppetype.ppe_type','ppe_master_ppetypemaster.ppe_name')
+        ->join('masters_department','ppe_pperequest.department', '=', 'masters_department.id')
+        ->join('masters_ppetype','ppe_pperequest.ppe_type', '=', 'masters_ppetype.id')
+        ->join('ppe_master_ppetypemaster','ppe_pperequest.ppe_name', '=', 'ppe_master_ppetypemaster.id')
+        ->where('ppe_master_ppetypemaster.trash','NO')
+        ->where('masters_department.trash','NO')
+        ->where('masters_ppetype.trash','NO');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -70,13 +78,13 @@ class PpeRequest extends Model
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('created_at', [$startDate, $endDate]);
+            $query->whereBetween('ppe_pperequest.created_at', [$startDate, $endDate]);
         } elseif ($request->has('from_date') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('created_at', '>=', $startDate);
+            $query->where('ppe_pperequest.created_at', '>=', $startDate);
         } elseif ($request->has('to_date') && !empty($request->to_date)) {
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('created_at', '<=', $endDate);
+            $query->where('ppe_pperequest.created_at', '<=', $endDate);
         }
 
 
@@ -111,8 +119,11 @@ class PpeRequest extends Model
             'department' => $request->department,
             'ppe_type' => $request->ppe_type,
             'ppe_name' => $request->ppe_name,
+            'approve_status' => STATUS_HOD_APPROVAL_PENDING,
+            'ehs_approve_status' => STATUS_EHS_APPROVAL_PENDING,
             'created_by' => Auth::id()
         );
+
         return $this->create($insert_array);
     }
 
@@ -193,7 +204,7 @@ class PpeRequest extends Model
         return $hod;
     }
 
-   
+
     public function getstoremanager()
     {
         return User::select('email')
@@ -256,6 +267,19 @@ class PpeRequest extends Model
             $query =  $query->Where(function ($query) use ($search) {
                 $query->orWhereRaw('ppe_pperequest.emp_id LIKE "%' . $search . '%"');
             });
+        }
+
+        $user = Auth::user();
+        $empId = $user->employee_id;
+        $userRole = $user->role;
+        $userRole = string_to_array($userRole);
+
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+        } elseif (in_array(ROLE_HOD, $userRole)) {
+            $departmentId = $user->department_id;
+            $query->where('ppe_pperequest.department', $departmentId);
+        } else {
+            $query->where('emp_id', $empId);
         }
 
         if ($request->has('emp_id') && $request->emp_id) {

@@ -49,7 +49,7 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="pperequestadd"
+                                    <form method="POST" id="pperequestedit"
                                         action="{{ admin_url('ppe_request/edit/submit') }}">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $encryptid }}">
@@ -165,76 +165,54 @@
                 }
             });
 
-            $(document).on('change', '#ppe_name', function() {
-                var ppeNameId = $(this).val();
-
-                if (ppeNameId) {
-                    $.ajax({
-                        url: "{{ admin_url('ppe_ppetype_master/ajax-alllist') }}/" + ppeNameId,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            if (data) {
-
-                                $('#ppe_image').empty();
-                                $('#ppe_image').append('<img src="' + data +
-                                    '" alt="PPE Image" class="img-fluid">');
-                            } else {
-                                $('#ppe_image').empty().append('No Image Available');
-                            }
-                        },
-                        error: function(xhr) {
-                            alert('Error fetching PPE Images. Please try again.');
-                        }
-                    });
-                } else {
-                    $('#ppe_image').empty().append('No Image Selected');
-                }
-            });
-
         });
         $(document).ready(function() {
+            $('#pperequestedit').validate({
+                rules: {
+                    ppe_name: {
+                        required: true,
+                    },
+                    ppe_type: {
+                        required: true,
+                    },
+                },
+                messages: {
 
-            $('#pperequestadd').on('submit', function(e) {
-                let valid = true;
-
-
-                if (!validatePPEName()) valid = false;
-                if (!validatePPEType()) valid = false;
-
-                if (!valid) {
-                    e.preventDefault();
-                } else {
+                    ppe_name: {
+                        required: "Please Select the PPE Name.",
+                    },
+                    ppe_type: {
+                        required: "Please Select the PPE Type.",
+                    },
+                },
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    var errorDiv = element.siblings('div.text-danger');
+                    errorDiv.html(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
                     $('#submit').prop('disabled', true);
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log(errors + " field(s) are invalid");
+                    validator.errorList.forEach(function(error) {
+                        console.log("Field: " + error.element.name + ", Error: " + error
+                            .message);
+                    });
                 }
             });
 
-
-
-            function validatePPEType() {
-
-                var name = $('#ppe_type').val();
-                var regex = /^[a-zA-Z0-9\-_'"()\s]{3,30}$/;
-
-                if (name === "") {
-                    $('#ppe_type_error').text('PPE type cannot be empty.');
-                    return false;
-                }
-
-                $('#ppe_type_error').text('');
-                return true;
-            }
-
-            function validatePPEName() {
-                var ppename = $('#ppe_name').val();
-                if (ppename === "") {
-                    $('#ppe_name_error').text('PPE Name cannot be empty');
-                    return false;
-                }
-                $('#ppe_name_error').text('');
-                return true;
-            }
-
+            $.validator.addMethod("regex", function(value, element, regexp) {
+                return this.optional(element) || regexp.test(value);
+            }, "Please check your input.");
         });
     </script>
 @endpush

@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class PpeRejectRequestEmail extends Mailable
+class PpeExemptionRejectEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -31,7 +31,7 @@ class PpeRejectRequestEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: ('PPE Shoe Request Rejected'),
+            subject: ('PPE Shoe Exemption Request Rejected '),
         );
     }
 
@@ -41,7 +41,7 @@ class PpeRejectRequestEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.pperequest.hodrejectemail',
+            view: 'emails.ppeexemption.rejectemail',
             with: ['details' => $this->details]
         );
     }

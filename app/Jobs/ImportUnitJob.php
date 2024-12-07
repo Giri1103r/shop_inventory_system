@@ -6,7 +6,6 @@ namespace App\Jobs;
 use DB;
 use Str;
 use Mail;
-use Session;
 use App\Models\User;
 use Shuchkin\SimpleXLSX;
 use App\Models\UploadLog;
@@ -31,8 +30,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use App\Models\Master\Location;
 use App\Models\Master\Company;
 use App\Models\Master\Unit;
+use Illuminate\Support\Facades\Session;
 
-class ImportUnitJob implements ShouldQueue
+class ImportUnitJob  implements ShouldQueue
 // class ImportUnitJob
 {
 
@@ -68,15 +68,12 @@ class ImportUnitJob implements ShouldQueue
         UploadLog::where('id', $this->details['log_id'])
             ->update($update_array);
 
-       $xlsx = SimpleXLSX::parse($this->details['path']);
+        $xlsx = SimpleXLSX::parse($this->details['path']);
         // dd($xlsx);
         $cond_error_datas = [];
 
         foreach ($xlsx->rows() as $row) {
-            $sno = trim($row['0']);
-            $companyname = trim($row['1']);
-            $locationname = trim($row['2']);
-            $unit_name = trim($row['3']);
+
 
             /*
          * Header column validation
@@ -84,38 +81,44 @@ class ImportUnitJob implements ShouldQueue
 
             if ($i == 1) {
 
-                if (count($row) == 4) {
-                    if (
-                        $sno != 'SNo' ||
-                        $companyname != 'Company Name' ||
-                        $locationname != 'Location Name'||
-                        $unit_name != 'Unit Name'
-                    ) {
-                        $error_data_1 = array(
-                            'upload_id' => $this->details['log_id'],
-                            'line_no' =>  $i,
-                            'error' => 'Header Column Name Not Match',
-                        );
-                        $cond_error_datas[] = $error_data_1;
-                        $i++;
-                        break;
-                    }
-                    $i++;
-                    continue;
+                if (count($row) === 4) {
                 } else {
-                    $error_data_1 = array(
+                    $error_data = array(
                         'upload_id' => $this->details['log_id'],
                         'line_no' => $i,
-                        'error' => 'Header Column Not Match',
+                        'error' => 'Header Column not match',
+                    );
+                    $cond_error_datas[] = $error_data;
+                    $i++;
+                    break;
+                }
+                if (
+                    trim($row['0']) != 'SNo' ||
+                    trim($row['1']) != 'Company Name' ||
+                    trim($row['2']) != 'Location Name' ||
+                    trim($row['3']) != 'Unit Name'
+                ) {
+                    $error_data_1 = array(
+                        'upload_id' => $this->details['log_id'],
+                        'line_no' =>  $i,
+                        'error' => 'Header Column Name Not Match',
                     );
                     $cond_error_datas[] = $error_data_1;
                     $i++;
                     break;
                 }
+                $i++;
+                continue;
             }
 
+
+            $sno = trim($row['0']);
+            $companyname = trim($row['1']);
+            $locationname = trim($row['2']);
+            $unit_name = trim($row['3']);
+
             /* Column data validation */
-            
+
             if ($companyname == '') {
 
                 $cond_error_data = array(
@@ -128,7 +131,7 @@ class ImportUnitJob implements ShouldQueue
 
                 $i++;
                 continue;
-            } 
+            }
             // else {
 
             //     $companyExist = Company::where('company_name', $companyname)->get();
@@ -155,24 +158,24 @@ class ImportUnitJob implements ShouldQueue
                     'line_no' => $i,
                     'error' => 'Location name is missing',
                 ];
-            
+
                 $cond_error_datas[] = $cond_error_data;
                 $i++;
                 continue;
             }
-            
+
             if (empty($unit_name)) {
                 $cond_error_data = [
                     'upload_id' => $this->details['log_id'],
                     'line_no' => $i,
                     'error' => 'Unit name is missing',
                 ];
-            
+
                 $cond_error_datas[] = $cond_error_data;
                 $i++;
                 continue;
             }
-            
+
             // Check if the company exists
             $companyExist = Company::select('id')->where('company_name', $companyname)->first();
             if (!$companyExist) {
@@ -185,7 +188,7 @@ class ImportUnitJob implements ShouldQueue
                 $i++;
                 continue;
             }
-            
+
             // Check if the location exists
             $locationExist = Location::select('id')->where('location_name', $locationname)->where('company_id', $companyExist->id)->first();
             if (!$locationExist) {
@@ -198,13 +201,13 @@ class ImportUnitJob implements ShouldQueue
                 $i++;
                 continue;
             }
-            
+
             // Check if the unit exists within the same company and location
             $unitExist = Unit::where('unit_name', $unit_name)
                 ->where('company_id', $companyExist->id)
                 ->where('location_id', $locationExist->id)
                 ->exists();
-            
+
             if ($unitExist) {
                 $cond_error_data = [
                     'upload_id' => $this->details['log_id'],
@@ -215,7 +218,7 @@ class ImportUnitJob implements ShouldQueue
                 $i++;
                 continue;
             }
-            
+
             // Create the unit if it doesn't exist
             $data = [
                 'company_id' => $companyExist->id,
@@ -223,9 +226,9 @@ class ImportUnitJob implements ShouldQueue
                 'unit_name' => $unit_name,
                 'created_by' => $this->details['user_id'],
             ];
-            
+
             Unit::create($data);
-            
+
             // SmpsFactory::create($data);
 
             $i++;
@@ -233,10 +236,10 @@ class ImportUnitJob implements ShouldQueue
 
         if (count($cond_error_datas) > 0) {
             UploadLogError::insert($cond_error_datas);
-            
-        $final_update_array = array(
-            'upload_status' => 3,
-        );
+
+            $final_update_array = array(
+                'upload_status' => 3,
+            );
             Session::flash('error', 'Failed to upload. Please check the upload log.');
         } else {
 
@@ -245,7 +248,7 @@ class ImportUnitJob implements ShouldQueue
             );
             Session::flash('success', 'Upload completed successfully.');
         }
-        
+
 
         UploadLog::where('id', $this->details['log_id'])->update($final_update_array);
     }

@@ -2,6 +2,7 @@
 @section('title', 'PPE Request')
 @section('pageurl', admin_url('ppe_request/list'))
 @section('content')
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
@@ -10,8 +11,12 @@
                     <h4 class="card-title"></h4>
                     <div class="d-flex justify-content-end p-2 me-2">
                         <x-button-filter dataId="" class="search me-2" href=""></x-button-filter>
+                        @if (CheckUserPermission('add'))
+
                         <x-button-add dataId="" class="add btn btn-primary"
                             href="{{ admin_url('ppe_request/add') }}">Add</x-button-add>
+
+                         @endif 
                     </div>
 
 
@@ -22,24 +27,32 @@
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_id" class="form-label ">Employee ID</label>
-                                            <input type="text" name="emp_id" id="emp_id"
-                                                class="form-control form-control-sm">
+                                            <input type="text" name="emp_id" id="emp_id" class="form-control ">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">Employee Name</label>
-                                            <input type="text" name="emp_name" id="emp_name"
-                                                class="form-control form-control-sm">
+                                            <input type="text" name="emp_name" id="emp_name" class="form-control ">
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="from_date" class="form-label ">From Date</label>
-                                            <input type="text" name="from_date" id="from_date"
-                                                class="form-control form-control-sm">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="from_date" class="form-label ">To Date</label>
-                                            <input type="text" name="to_date" id="to_date"
-                                                class="form-control form-control-sm">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
@@ -72,7 +85,9 @@
                                         <th>Emp Name</th>
                                         <th>PPE Name</th>
                                         <th>PPE Type</th>
-                                        <th>{{ __('common.status') }}</th>
+                                        <th>Department</th>
+                                        <th>HOD Approve Status</th>
+                                        <th>EHS Approve Status</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -121,161 +136,168 @@
 
         $(function() {
             /* Datatable */
-            var table = $('.datatable-list').DataTable({
-                autoWidth: false,
-                responsive: true,
-                processing: false,
-                serverSide: true,
-                searching: true,
-                ordering: true,
-                dom: 'Bfrtip',
-                layout: {
-                    top2Start: 'buttons',
-                    top2End: {
-                        search: {
-                            placeholder: ''
+            $(document).ready(function() {
+                var table = $('.datatable-list').DataTable({
+                    autoWidth: false,
+                    responsive: true,
+                    processing: false,
+                    serverSide: true,
+                    searching: true,
+                    ordering: true,
+                    dom: 'Bfrtip',
+                    layout: {
+                        top2Start: 'buttons',
+                        top2End: {
+                            search: {
+                                placeholder: ''
+                            }
+                        },
+                        topStart: '',
+                        topEnd: '',
+                        bottomStart: '',
+                        bottomEnd: '',
+                        bottom2Start: 'info',
+                        bottom2End: 'paging'
+                    },
+                    ajax: {
+                        url: "{{ admin_url('ppe_request/list') }}",
+                        type: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        data: function(d) {
+                            d.emp_id = $('#emp_id').val();
+                            d.emp_name = $('#emp_name').val();
+                            d.from_date = $('#from_date').val();
+                            d.to_date = $('#to_date').val();
+                            d.ppe_status = $('#ppe_status').val();
                         }
                     },
-                    topStart: '',
-                    topEnd: '',
-                    bottomStart: '',
-                    bottomEnd: '',
-                    bottom2Start: 'info',
-                    bottom2End: 'paging'
-                },
+                    columns: [{
+                            data: 'DT_RowIndex',
+                            orderable: false,
+                            searchable: false
+                        },
+                        {
+                            data: 'emp_id',
+                            name: 'emp_id'
+                        },
+                        {
+                            data: 'emp_name',
+                            name: 'emp_name'
+                        },
+                        {
+                            data: 'ppe_name',
+                            name: 'ppe_name'
+                        },
+                        {
+                            data: 'ppe_type',
+                            name: 'ppe_type'
+                        },
+                        {
+                            data: 'department',
+                            name: 'department'
+                        },
+                        {
+                            data: 'approve_status',
+                            name: 'approve_status',
 
-                ajax: {
-                    url: "{{ admin_url('ppe_request/list') }}",
-                    type: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                            .attr('content')
-                    },
-                    data: function(d) {
-                        d.emp_id = $('#emp_id').val();
-                        d.emp_name = $('#emp_name').val();
-                        d.from_date = $('#from_date').val();
-                        d.to_date = $('#to_date').val();
-                        d.ppe_status = $('#ppe_status').val();
+                        },
+                        {
+                            data: 'ehs_approve_status',
+                            name: 'ehs_approve_status',
 
-                    }
-                },
-                columns: [{
-                        data: 'DT_RowIndex',
-                        orderable: false,
-                        searchable: false
+                        },
+                         {
+                            data: 'created_by',
+                            name: 'created_by'
+                        },
+                        {
+                            data: 'created_at',
+                            name: 'created_at'
+                        },
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                        }
+                    ],
+                    language: {
+                        paginate: {
+                            first: '<i title="{{ __('common.first') }}" class="fa fa-angle-double-left" aria-hidden="true"></i>',
+                            last: '<i title="{{ __('common.last') }}" class="fa fa-angle-double-right" aria-hidden="true"></i>',
+                            next: '<i title="{{ __('common.next') }}" class="fa fa-angle-right" aria-hidden="true"></i>',
+                            previous: '<i title="{{ __('common.previous') }}" class="fa fa-angle-left" aria-hidden="true"></i>',
+                        },
+                        "info": "{{ __('common.dt_info') }}",
+                        "infoEmpty": "{{ __('common.dt_infoEmpty') }}",
+                        "infoFiltered": "{{ __('common.dt_infoFiltered') }}",
                     },
-                    {
-                        data: 'emp_id',
-                        name: 'emp_id'
-                    },
-                    {
-                        data: 'emp_name',
-                        name: 'emp_name'
-                    },
-                    {
-                        data: 'ppe_name',
-                        name: 'ppe_name'
-                    },
-                    {
-                        data: 'ppe_type',
-                        name: 'ppe_type'
-                    },
+                    aLengthMenu: [
+                        [10, 25, 50, 100],
+                        [10, 25, 50, 100]
+                    ],
+                    buttons: [{
+                            extend: 'collection',
+                            text: '{{ __('common.export') }}',
+                            buttons: [{
+                                    extend: 'pdf',
+                                    text: '{{ __('common.pdf') }}',
+                                    action: function(e, dt, button, config) {
+                                        var searchValue = $(
+                                            '#datatable-list_filter input').val();
+                                        var emp_id = $('#emp_id').val();
+                                        var emp_name = $('#emp_name').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
+                                        var ppe_status = $('#ppe_status').val();
 
-                    {
-                        data: 'status',
-                        name: 'status'
-                    },
-                    {
-                        data: 'created_by',
-                        name: 'created_by'
-                    },
-                    {
-                        data: 'created_at',
-                        name: 'created_at'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                    },
-                ],
-                language: {
-                    paginate: {
-                        first: '<i title="{{ __('common.first') }}" class="fa fa-angle-double-left" aria-hidden="true"></i>',
-                        last: '<i title="{{ __('common.last') }}" title="Next" class="fa fa-angle-double-right" aria-hidden="true"></i>',
-                        next: '<i title="{{ __('common.next') }}" class="fa fa-angle-right" aria-hidden="true"></i>',
-                        previous: '<i title="{{ __('common.previous') }}" class="fa fa-angle-left" aria-hidden="true"></i>',
-                    },
-                    "info": "{{ __('common.dt_info') }}",
-                    "infoEmpty": "{{ __('common.dt_infoEmpty') }}",
-                    "infoFiltered": "{{ __('common.dt_infoFiltered') }}",
-                },
-                aLengthMenu: [
-                    [10, 25, 50, 100],
-                    [10, 25, 50, 100]
-                ],
-                buttons: [{
-                        extend: 'collection',
-                        text: '{{ __('common.export') }}',
-                        buttons: [{
-                                extend: 'pdf',
-                                text: '{{ __('common.pdf') }}',
-                                action: function(e, dt, button, config) {
-                                    var searchValue = $('#datatable-list_filter input').val();
-                                    var emp_id = $('#emp_id').val();
-                                    var emp_name = $('#emp_name').val();
-                                    var from_date = $('#from_date').val();
-                                    var to_date = $('#to_date').val();
-                                    var ppe_status = $('#ppe_status').val();
+                                        $(".dt-button").removeClass('processing');
+                                        $('body').click();
+                                        window.location.href =
+                                            "{{ admin_url('ppe_request/export/pdf') }}" +
+                                            '?search=' + searchValue +
+                                            '&emp_id=' + emp_id +
+                                            '&emp_name=' + emp_name +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
+                                            '&ppe_status=' + ppe_status;
+                                    }
+                                },
+                                {
+                                    extend: 'excel',
+                                    text: '{{ __('common.excel') }}',
+                                    action: function(e, dt, button, config) {
+                                        var searchValue = $(
+                                            '#datatable-list_filter input').val();
+                                        var emp_id = $('#emp_id').val();
+                                        var emp_name = $('#emp_name').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
+                                        var ppe_status = $('#ppe_status').val();
 
-                                    $(".dt-button").removeClass('processing');
-                                    $('body').click();
-                                    window.location.href =
-                                        "{{ admin_url('ppe_request/export/pdf') }}" +
-                                        '?search=' + searchValue +
-                                        '&emp_id=' + emp_id +
-                                        '&emp_name=' + emp_name +
-                                        '&from_date=' + from_date +
-                                        '&to_date=' + to_date +
-                                        '&ppe_status=' + ppe_status
-
-                                }
-                            },
-                            {
-                                extend: 'excel',
-                                text: '{{ __('common.excel') }}',
-                                action: function(e, dt, button, config) {
-                                    var searchValue = $('#datatable-list_filter input').val();
-                                    var emp_id = $('#emp_id').val();
-                                    var emp_name = $('#emp_name').val();
-                                    var from_date = $('#from_date').val();
-                                    var to_date = $('#to_date').val();
-                                    var ppe_status = $('#ppe_status').val();
-
-                                    $(".dt-button").removeClass('processing');
-                                    $('body').click();
-                                    window.location.href =
-                                        "{{ admin_url('ppe_request/export/excel') }}" +
-                                        '?search=' + searchValue +
-                                        '&emp_id=' + emp_id +
-                                        '&emp_name=' + emp_name +
-                                        '&from_date=' + from_date +
-                                        '&to_date=' + to_date +
-                                        '&ppe_status=' + ppe_status
-
-                                }
-                            },
-                        ]
-                    },
-
-                    {
-                        "extend": 'pageLength',
-                        "text": '{{ __('common.show') }} 10 {{ __('common.records') }}'
-                    }
-                ],
-
+                                        $(".dt-button").removeClass('processing');
+                                        $('body').click();
+                                        window.location.href =
+                                            "{{ admin_url('ppe_request/export/excel') }}" +
+                                            '?search=' + searchValue +
+                                            '&emp_id=' + emp_id +
+                                            '&emp_name=' + emp_name +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
+                                            '&ppe_status=' + ppe_status;
+                                    }
+                                },
+                            ]
+                        },
+                        {
+                            "extend": 'pageLength',
+                            "text": '{{ __('common.show') }} 10 {{ __('common.records') }}'
+                        }
+                    ]
+                });
             });
+
 
             table.on('length.dt', function(e, settings, len) {
                 var text = '{{ __('common.show') }} ' + len + ' {{ __('common.records') }}';

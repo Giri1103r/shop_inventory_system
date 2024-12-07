@@ -68,6 +68,15 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_HOD') or define('ROLE_HOD', 4);
         defined('ROLE_STORE_MANAGER') or define('ROLE_STORE_MANAGER', 5);
 
+        defined('STATUS_HOD_APPROVAL_PENDING') or define('STATUS_HOD_APPROVAL_PENDING', 1);
+        defined('STATUS_HOD_APPROVED') or define('STATUS_HOD_APPROVED', 2);
+        defined('STATUS_HOD_REJECTED') or define('STATUS_HOD_REJECTED', 3);
+        defined('STATUS_EHS_APPROVAL_PENDING') or define('STATUS_EHS_APPROVAL_PENDING', 4);
+        defined('STATUS_EHS_APPROVED') or define('STATUS_EHS_APPROVED', 5);
+        defined('STATUS_EHS_REJECTED') or define('STATUS_EHS_REJECTED', 6);
+
+
+
         View::composer('*', function ($view) {
 
             /**

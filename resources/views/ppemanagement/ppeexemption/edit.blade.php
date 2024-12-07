@@ -145,68 +145,69 @@
                 minDate: new Date()
             });
 
-            $('#ppeExemptionForm').on('submit', function(e) {
-                let valid = true;
-
-                if (!validateFromDate()) valid = false;
-                if (!validateToDate()) valid = false;
-                if (!validateReason()) valid = false;
-                if (!validateCheckbox()) valid = false;
-
-                if (!valid) {
-                    e.preventDefault();
-                } else {
+            $('#ppeExemptionForm').validate({
+                rules: {
+                    from_date: {
+                        required: true
+                    },
+                    to_date: {
+                        required: true
+                    },
+                    reason: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 255,
+                        regex: /^[a-zA-Z0-9\s]+$/
+                    },
+                    checkbox: {
+                        required: true
+                    }
+                },
+                messages: {
+                    from_date: {
+                        required: "Please Select the From date."
+                    },
+                    to_date: {
+                        required: "Please Select the To date."
+                    },
+                    reason: {
+                        required: "Reason cannot be empty.",
+                        minlength: "Reason must contain between 3 and 255 characters.",
+                        maxlength: "Reason must contain between 3 and 255 characters.",
+                        regex: "Reason must contain only letters and numbers."
+                    },
+                    checkbox: {
+                        required: "You must agree to the terms and conditions."
+                    }
+                },
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    var errorDiv = element.siblings('div.text-danger');
+                    errorDiv.html(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
                     $('#submit').prop('disabled', true);
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log(errors + " field(s) are invalid");
+                    validator.errorList.forEach(function(error) {
+                        console.log("Field: " + error.element.name + ", Error: " + error
+                            .message);
+                    });
                 }
             });
 
-            function validateFromDate() {
-                var FromDate = $('#from_date').val();
-                if (FromDate === "") {
-                    $('#from_date_error').text('Please Select the From date.');
-                    return false;
-                }
-                $('#from_date_error').text('');
-                return true;
-            }
-
-            function validateToDate() {
-                var ToDate = $('#to_date').val();
-                if (ToDate === "") {
-                    $('#to_date_error').text('Please Select the to date.');
-                    return false;
-                }
-                $('#to_date_error').text('');
-                return true;
-            }
-
-            function validateReason() {
-                var reason = $('#reason').val();
-                if (reason === "") {
-                    $('#reason_error').text('Reason cannot be empty.');
-                    return false;
-                }
-                if (reason.length < 3 || reason.length > 255) {
-                    $('#reason_error').text('Reason must contain between 3 and 255 characters.');
-                    return false;
-                }
-                if (!/^[a-zA-Z0-9\s]+$/.test(reason)) {
-                    $('#reason_error').text('Reason must contain only letters and numbers.');
-                    return false;
-                }
-                $('#reason_error').text('');
-                return true;
-            }
-
-            function validateCheckbox() {
-                var checkbox = $('#checkbox').is(':checked');
-                if (!checkbox) {
-                    $('#checkbox_error').text('You must agree to the terms and conditions.');
-                    return false;
-                }
-                $('#checkbox_error').text('');
-                return true;
-            }
+            $.validator.addMethod("regex", function(value, element, regexp) {
+                return this.optional(element) || regexp.test(value);
+            }, "Please check your input.");
         });
     </script>
 @endpush

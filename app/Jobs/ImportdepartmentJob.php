@@ -6,7 +6,6 @@ namespace App\Jobs;
 use DB;
 use Str;
 use Mail;
-use Session;
 use App\Models\User;
 use Shuchkin\SimpleXLSX;
 use App\Models\UploadLog;
@@ -32,6 +31,7 @@ use App\Models\Master\Location;
 use App\Models\Master\Company;
 use App\Models\Master\Department;
 use App\Models\Master\Unit;
+use Illuminate\Support\Facades\Session;
 
 class ImportdepartmentJob implements ShouldQueue
 // class ImportdepartmentJob
@@ -74,48 +74,55 @@ class ImportdepartmentJob implements ShouldQueue
         $cond_error_datas = [];
 
         foreach ($xlsx->rows() as $row) {
+
+
+
+            if ($i == 1) {
+         // Header Column Validation
+                if (count($row) === 5) {
+
+                }else{
+                    $error_data = array(
+                        'upload_id' => $this->details['log_id'],
+                        'line_no' => $i,
+                        'error' => 'Header Column not match',
+                    );
+                    $cond_error_datas[] = $error_data;
+                    $i++;
+                    break;
+                }
+                // Header row validation
+
+                if (
+                    trim($row[0])  != 'SNo' ||
+                    trim($row[1]) != 'Company Name' ||
+                    trim($row[2]) != 'Location Name' ||
+                    trim($row[3]) != 'Unit Name' ||
+                    trim($row[4]) != 'Department Name'
+                ) {
+                    $error_data = array(
+                        'upload_id' => $this->details['log_id'],
+                        'line_no' => $i,
+                        'error' => 'Header Column Name Not Match',
+                    );
+                    $cond_error_datas[] = $error_data;
+                    $i++;
+                    continue;
+                }
+
+                $i++;
+                continue;
+            }
+
+
+
+
             $sno = trim($row['0']);
             $companyname = trim($row['1']);
             $locationname = trim($row['2']);
             $unitname = trim($row['3']);
             $department_name = trim($row['4']);
 
-            /*
-         * Header column validation
-         */
-
-            if ($i == 1) {
-
-                if (count($row) == 5) {
-                    if (
-                        $sno != 'SNo' ||
-                        $companyname != 'Company Name' ||
-                        $locationname != 'Location Name' ||
-                        $unitname != 'Unit Name' ||
-                        $department_name != 'Department Name'
-                    ) {
-                        $error_data_1 = array(
-                            'upload_id' => $this->details['log_id'],
-                            'line_no' =>  $i,
-                            'error' => 'Header Column Name Not Match',
-                        );
-                        $cond_error_datas[] = $error_data_1;
-                        $i++;
-                        break;
-                    }
-                    $i++;
-                    continue;
-                } else {
-                    $error_data_1 = array(
-                        'upload_id' => $this->details['log_id'],
-                        'line_no' => $i,
-                        'error' => 'Header Column Not Match',
-                    );
-                    $cond_error_datas[] = $error_data_1;
-                    $i++;
-                    break;
-                }
-            }
 
             /* Column data validation */
             if ($companyname == '') {
@@ -307,11 +314,7 @@ class ImportdepartmentJob implements ShouldQueue
             );
             Session::flash('success', 'Upload completed successfully.');
         }
-        
 
-        $final_update_array = array(
-            'upload_status' => 2,
-        );
         UploadLog::where('id', $this->details['log_id'])->update($final_update_array);
     }
 }
