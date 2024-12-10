@@ -98,10 +98,7 @@
                                                     <select name="department_id" id="department_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Department </option>
-                                                        @foreach ($departmentList as $department)
-                                                            <option value="{{ encryptId($department->id) }}">
-                                                                {{ $department->department_name }}</option>
-                                                        @endforeach
+
                                                     </select>
                                                 </div>
                                             </div>
@@ -130,10 +127,11 @@
 
                                         </div>
                                         <hr>
-                                        <div class="submit-button">
-
+                                        <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-cancel></x-button-cancel>
+                                            <x-button-reset class=""></x-button-reset>
+                                            <x-button-cancel
+                                                href="{{ admin_url('training_schedule/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -152,29 +150,74 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
-        $(document).ready(function() {
-            $(document).ready(function() {
-                $('#resetform').on('click', function(e) {
-                    e.preventDefault();
-                    location.reload();
+        $(document).on('change', '#unit_id', function() {
+            var unitId = $(this).val();
+            if (unitId) {
+                $.ajax({
+                    url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#department_id').empty().append(
+                            '<option value="">Select Department</option>');
+                        $.each(data, function(key, value) {
+                            $('#department_id').append('<option value="' + value.id + '">' +
+                                value
+                                .name + '</option>');
+                        });
+                        $('#department_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching department. Please try again.');
+                    }
                 });
+            } else {
+                $('#department_id').empty().append('<option value="">Select Department</option>');
+                $('#department_id').trigger('change.');
+            }
+        });
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
             });
             flatpickr("#from_date_datepicker", {
-                dateFormat: "d-m-Y",
+                dateFormat: "d-m-Y H:i",
+                minDate: "today",
+                enableTime: true,
+                time_24hr: true,
+                onChange: function(selectedDates, dateStr, instance) {
+                    const toDatePicker = document.getElementById("to_date_datepicker")._flatpickr;
+                    toDatePicker.set("minDate",
+                        dateStr);
+                    toDatePicker.setDate(dateStr,
+                        false);
+                }
             });
+
             flatpickr("#to_date_datepicker", {
-                dateFormat: "d-m-Y",
+                dateFormat: "d-m-Y H:i",
+                minDate: "today",
+                enableTime: true,
+                time_24hr: true,
             });
+
 
             $('#training_scheduleadd').validate({
                 rules: {
+                    from_date: {
+                        required: true,
+                    },
+                    to_date: {
+                        required: true,
+                    },
                     topic_id: {
                         required: true,
                     },
                     trainer_id: {
                         required: true,
                     },
-                    training_offered_for: {
+                    venue_id: {
                         required: true,
                     },
                     unit_id: {
@@ -183,54 +226,37 @@
                     department_id: {
                         required: true,
                     },
-                    target_content: {
-                        required: true,
-                        extension: "xls|pdf",
-                    },
-                    mode_of_training: {
+                    target_trainees: {
                         required: true,
                     },
-                    training_evaluation: {
-                        required: true,
-                    },
-                    questionnaire: {
-                        required: function() {
-                            return $('#training_evaluation').val() ===
-                                '{{ encryptId(1) }}'; // Only required if "Yes" is selected
-                        },
-                        extension: "xls|pdf",
-                    }
+
                 },
                 messages: {
+                    from_date: {
+                        required: "Select a From Date.",
+                    },
+                    to_date: {
+                        required: "Select a To Date.",
+                    },
                     topic_id: {
-                        required: "Please select a Training Topic.",
+                        required: "Select a Training Topic.",
                     },
                     trainer_id: {
-                        required: "Please select a Trainer.",
+                        required: "Select a Trainer.",
                     },
-                    training_offered_for: {
-                        required: "Please select whom the training is offered for.",
+                    venue_id: {
+                        required: "Select a Venue/Location.",
                     },
                     unit_id: {
-                        required: "Please select a Unit Name.",
+                        required: "Select a Unit.",
                     },
                     department_id: {
-                        required: "Please select a Target Department.",
+                        required: "Select a Department.",
                     },
-                    target_content: {
-                        required: "Please upload Target Content.",
-                        extension: "Only .xls and .pdf file formats are allowed.",
+                    target_trainees: {
+                        required: "Target Trainees is Required.",
                     },
-                    mode_of_training: {
-                        required: "Please select the Mode of Training.",
-                    },
-                    training_evaluation: {
-                        required: "Please select Training Evaluation.",
-                    },
-                    questionnaire: {
-                        required: "Please upload the Questionnaire.",
-                        extension: "Only .xls and .pdf file formats are allowed.",
-                    }
+
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
@@ -255,6 +281,7 @@
                     });
                 }
             });
+         
         });
     </script>
 @endpush
