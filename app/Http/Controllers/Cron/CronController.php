@@ -20,6 +20,7 @@ use App\Models\Master\EmployeeTemp;
 use App\Models\User;
 use App\Models\Master\Work;
 use App\Models\Master\Employee;
+use App\Models\Master\PpeStockinventory;
 
 use App\Mail\EmployeeRegisterEmail;
 
@@ -34,6 +35,7 @@ class CronController extends Controller
     private $work;
     private $employee;
     private $user;
+    private $ppestock;
 
     public function __construct()
     {
@@ -43,6 +45,7 @@ class CronController extends Controller
         $this->work = new Work();
         $this->employee = new Employee();
         $this->user = new User();
+        $this->ppestock = new PpeStockinventory();
     }
     public function queueHigh()
     {
@@ -425,7 +428,7 @@ class CronController extends Controller
                         $worktempdata = $this->worktemp->updates($emp_id);
                     }
                 }
-              
+
                 $baseFolderPath = storage_path('app/private/');
 
                 $month = now()->format('F');
@@ -482,7 +485,7 @@ class CronController extends Controller
         }
     }
 
-    
+
     public function EmployeeSave()
     {
 
@@ -490,21 +493,21 @@ class CronController extends Controller
             $emp_temp = EmployeeTemp::select('*')->where('upload_status', '0')->get();
 
             if (!empty($emp_temp)) {
-                
+
                 $employee = $this->employee->store($emp_temp);
                 $users = $this->user->store($employee);
-             
-                // foreach ($users as $user) { 
+
+                // foreach ($users as $user) {
                 //     if (!empty($user) && isset($user->email)) {
                 //         $empdetails = $this->employee->selectOne($user->employee_id);
                 //         if (!empty($empdetails)) {
-                            
+
                 //             $emp = $empdetails->toArray();
                 //             Mail::to($user->email)->queue(new EmployeeRegisterEmail($emp));
                 //         }
                 //     }
                 // }
-           
+
                 if (empty($employee)) {
                     $this->emp_temp->updateAllErrorStatus();
                 } else {
@@ -544,7 +547,33 @@ class CronController extends Controller
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
-  
+
+
+    public function storeItem()
+    {
+        try {
+
+            $apiUrl = 'https://vmsapi.karam.in/emp.asmx/GetPPEInventory?TokenId=123&Orgid=86&Item=71160-H';
+
+            $response = Http::get($apiUrl);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                if (!empty($data)) {
+                    $work = $this->ppestock->store($data);
+                    return response()->json(['message' => 'Data saved successfully.']);
+                } else {
+                    return response()->json(['message' => 'No data found in API response.']);
+                }
+            } else {
+                return response()->json(['message' => 'Failed to fetch data from API.', 'status' => $response->status()]);
+            }
+        } catch (Exception $ex) {
+            dd($ex);
+            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
+        }
+    }
 
 
     public function queueCompanyImport()
@@ -630,6 +659,5 @@ class CronController extends Controller
             Session::invalidate();
             return response()->json(['message' => 'No jobs in the Unit Import queue to process', 'exit_code' => 0]);
         }
-    } 
-
+    }
 }

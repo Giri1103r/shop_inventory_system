@@ -9,8 +9,10 @@ use App\Mail\PpeRequestEhsRejectEmail;
 use App\Mail\PpeRequestEmail;
 use App\Mail\PpeRequestHodApprovalEmail;
 use App\Mail\PpeRequestRequestorEmail;
+use App\Mail\PpeRequestStoremanagerEmail;
 use App\Models\Master\Employee;
 use App\Models\Master\PpeRequest;
+use App\Models\Master\PpeStockinventory;
 use App\Models\Master\PpeType;
 use App\Models\Master\PpeTypeMaster;
 use App\Models\UploadLog;
@@ -34,6 +36,7 @@ class PpeRequestController extends Controller
     private $employee;
     private $user;
     private $uploadlog;
+    private $ppestock;
 
     public function __construct()
     {
@@ -43,6 +46,8 @@ class PpeRequestController extends Controller
         $this->pperequest = new PpeRequest();
         $this->employee = new Employee();
         $this->user = new User();
+        $this->ppestock = new PpeStockinventory();
+
     }
     public function index(Request $request)
     {
@@ -116,7 +121,7 @@ class PpeRequestController extends Controller
                             $btn .= '<a href="' . admin_url('ppe_request/hodapproval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
                             }
 
-                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) && $row->approve_status == STATUS_HOD_APPROVED) {
+                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) && $row->approve_status == STATUS_HOD_APPROVED && $row->ehs_approve_status == STATUS_EHS_APPROVAL_PENDING) {
                             $btn .= '<a href="' . admin_url('ppe_request/ehsapproval/view/' . encryptId($row->id)) . '" class="" title="EhsApproval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
                             }
                             return $btn;
@@ -137,6 +142,7 @@ class PpeRequestController extends Controller
         }
 
         $ppetype = $this->ppetype->getPpetypedata();
+
         $ppename = $this->ppetypemaster->getppetypemaster();
         $data = [
             'ppetype' => $ppetype,
@@ -223,10 +229,11 @@ class PpeRequestController extends Controller
                     'emp_name' => $pperequest->emp_name,
                     'emp_id' => $pperequest->emp_id,
                     'department' => $pperequest->department,
+                    'item_code' => $pperequest->item_code,
                     'approve_link' => url('ppe_request/hodapproval/view/' . encryptID($id)),
                     'reject_link' => url('ppe_request/hodapproval/view/' . encryptID($id))
                 ];
-                Mail::to($hod)->queue(new PpeRequestRequestorEmail($details));
+                Mail::to($hod)->send(new PpeRequestRequestorEmail($details));
 
                 // Notification
 
@@ -259,7 +266,7 @@ class PpeRequestController extends Controller
                 return redirect(admin_url('ppe_request/list'));
             }
         } catch (Exception $ex) {
-            report($ex);
+           dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }
@@ -374,7 +381,7 @@ class PpeRequestController extends Controller
             if ($action == 'approve') {
                 foreach ($ehsofficer as $officer) {
                     $officer_email = getUseremail($officer->id);
-                    Mail::to($officer_email)->queue(new PpeRequestHodApprovalEmail($details));
+                    Mail::to($officer_email)->send(new PpeRequestHodApprovalEmail($details));
                 }
                 $id = $empDetails->id;
                 $message = 'New PPE Request';
@@ -406,7 +413,7 @@ class PpeRequestController extends Controller
                     'department' => $empDetails->department,
                     'approved_by' => $empDetails->approved_by,
                 ];
-                Mail::to($requestor)->queue(new PpeRejectRequestEmail($details));
+                Mail::to($requestor)->send(new PpeRejectRequestEmail($details));
 
                 $id = $empDetails->id;
                 $message = 'New PPE Request';
@@ -436,7 +443,7 @@ class PpeRequestController extends Controller
             Session::flash('success', 'PPE Request has successfully responded');
             return redirect(admin_url('ppe_request/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error',  'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }
@@ -519,9 +526,27 @@ class PpeRequestController extends Controller
             ];
             $requestor = $this->user->getrequestEmail($empId);
             if ($action == 'approve') {
-                $recipients = array_filter([$requestor, $hod, $storemanager]);
-                Mail::to($recipients)->queue(new PpeEhsRequestEmail($details));
-                //  notification
+
+                $recipients = array_filter([$requestor, $hod]);
+
+
+                Mail::to($recipients)->send(new PpeEhsRequestEmail($details));
+
+
+                if ($storemanager) {
+                    $details = [
+                        'emp_id' => $empDetails->emp_id,
+                        'emp_name' => $empDetails->emp_name,
+                        'remarks' => $updateEhsData['remarks'],
+                        'status' => $updateEhsData['ehs_approve_status'],
+                        'department' => $empDetails->department,
+                        'approved_by' => $empDetails->approved_by,
+                        'item_code' => $empDetails->item_code,
+                        'approve_link' => url('ppe_request/smapproval/submit/'. $empDetails->item_code  . '/approve'),
+                    ];
+                    Mail::to($storemanager)->send(new PpeRequestStoremanagerEmail($details));
+                }
+
 
                 $id = $empDetails->id;
                 $message = 'New PPE Request';
@@ -547,9 +572,9 @@ class PpeRequestController extends Controller
 
                 notificationSave($notificationData);
 
-          
+
             } else {
-                Mail::to($requestor)->queue(new PpeRequestEhsRejectEmail($details));
+                Mail::to($requestor)->send(new PpeRequestEhsRejectEmail($details));
 
                 //  notification
 
@@ -581,6 +606,25 @@ class PpeRequestController extends Controller
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }
+    }
+
+
+
+    public function smapproval(Request $request ,$itemCode , $action){
+       if($action == 'approve'){
+            $quantity = $this->ppestock->getquantity($itemCode, $action);
+            Session::flash('success','Approved Successfully');
+            return redirect('ppe_stock_inventory/list');
+       }else{
+        Session::flash('error','Something went Wrong Please try again after some time');
+        return redirect('ppe_stock_inventory/list');
+       }
+
+    }
+
+    public function statuslog($id){
+        $id = decryptId($id);
+        return view('ppemanagement.pperequest.statuslog');
     }
 
 
@@ -646,7 +690,7 @@ class PpeRequestController extends Controller
                     'approve_link' => url('ppe_request/hodapproval/view/' . encryptID($id)),
                     'reject_link' => url('ppe_request/hodapproval/view/' . encryptID($id))
                 ];
-                Mail::to($hod)->queue(new PpeRequestRequestorEmail($details));
+                Mail::to($hod)->send(new PpeRequestRequestorEmail($details));
 
                 // Notification
 

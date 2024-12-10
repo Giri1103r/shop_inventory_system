@@ -70,15 +70,15 @@ class ImportTrainingMatrixJob
             ->update($update_array);
 
         $xlsx = SimpleXLSX::parse($this->details['path']);
-        // dd($xlsx);
+
         $cond_error_datas = [];
 
         foreach ($xlsx->rows() as $row) {
 
             if ($i == 1) {
+                if (count($row) === 8) {
 
-                if (count($row) == 8) {
-                } else {
+                }else{
                     $error_data = array(
                         'upload_id' => $this->details['log_id'],
                         'line_no' => $i,
@@ -88,8 +88,6 @@ class ImportTrainingMatrixJob
                     $i++;
                     break;
                 }
-
-                // Validate header column names
                 if (
                     trim($row['0']) != 'SNo' ||
                     trim($row['1']) != 'Training Topic' ||
@@ -106,12 +104,15 @@ class ImportTrainingMatrixJob
                         'error' => 'Header Column Name Not Match',
                     );
                     $cond_error_datas[] = $error_data;
-                    break;
+                    $i++;
+                    continue;
                 }
-
+                // Move to the next row after processing the header
                 $i++;
                 continue;
             }
+
+
 
             $sno = trim($row['0']);
             $topic_name = trim($row['1']);
@@ -123,7 +124,8 @@ class ImportTrainingMatrixJob
             $training_evaluation = trim($row['7']);
 
             /* Column data validation */
-            if ($topic_name == '') {
+            $topicId = Topic::where('topic_name', $topic_name)->pluck('id')->first();
+            if ($topicId == '') {
                 $cond_error_data = array(
                     'upload_id' => $this->details['log_id'],
                     'line_no' => $i,
@@ -133,6 +135,7 @@ class ImportTrainingMatrixJob
                 $i++;
                 continue;
             }
+            $trainerId = Employee::where('emp_name', $trainer_name)->pluck('id')->first();
 
             if (empty($trainer_name)) {
                 $cond_error_data = [
@@ -247,7 +250,7 @@ class ImportTrainingMatrixJob
             //     $cond_error_datas[] = $error_data;
             //     $i++;
             //     continue;
-            // } 
+            // }
             if (!$topicExist) {
                 $cond_error_data = [
                     'upload_id' => $this->details['log_id'],
@@ -306,7 +309,7 @@ class ImportTrainingMatrixJob
                 continue;
             }
 
-         
+
             // $unitsExist = Unit::select('id')->where('unit_name', $unit_name)->first();
 
             // if ($unitsExist) {
@@ -336,8 +339,8 @@ class ImportTrainingMatrixJob
             // }
 
             $data = [
-                'topic_name' => $topic_name,
-                'trainer_name' => $trainer_name,
+                'topic_name' =>  $topicId ,
+                'trainer_name' =>  $trainerId,
                 'training_offered_for' => $training_offered_for_value,
                 'unit_name' => $unit_name,
                 'department_name' => $department_name,
@@ -345,6 +348,7 @@ class ImportTrainingMatrixJob
                 'training_evaluation' => $training_evaluation_value,
                 'created_by' => $this->details['user_id'],
             ];
+            dd($data);
 
             TrainingMatrix::create($data);
             $i++;

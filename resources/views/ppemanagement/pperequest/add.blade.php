@@ -38,14 +38,15 @@
                                         <input type="hidden" name="department" id="department"
                                             value="{{ $employee->department }}">
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-6 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">PPE Type</label>
-                                                    <select name="ppe_type" id="ppe_type" style="width: 100%"
+                                                    <label class="form-label require">Item Code</label>
+                                                    <select name="item_code" id="item_code" style="width: 100%"
                                                         class="form-select form-select-sm single-select ">
-                                                        <option value="">Select the PPE type</option>
-                                                        @foreach ($ppetypedata as $ppetype)
-                                                            <option value="{{ $ppetype->id }}">{{ $ppetype->ppe_type }}
+                                                        <option value="">Select the Item Code</option>
+                                                        @foreach ($ppetypemaster as $itemcode)
+                                                            <option value="{{ $itemcode->item_code }}">
+                                                                {{ $itemcode->item_code }}
                                                             </option>
                                                         @endforeach
                                                     </select>
@@ -55,7 +56,20 @@
                                                     <div class="text-danger" id="ppe_type_error"></div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">PPE Type</label>
+                                                    <select name="ppe_type" id="ppe_type" style="width: 100%"
+                                                        class="form-select form-select-sm single-select ">
+                                                        <option value="">Select the PPE type</option>
+                                                    </select>
+                                                    @error('ppe_type')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                    <div class="text-danger" id="ppe_type_error"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Name</label>
                                                     <select name="ppe_name" id="ppe_name" style="width: 100%"
@@ -99,13 +113,13 @@
 
 @push('script')
     <script>
-         $(document).ready(function() {
+        $(document).ready(function() {
             $('#resetform').on('click', function(e) {
                 e.preventDefault();
                 location.reload();
             });
         });
-        $(document).on('change', '#ppe_type', function() {
+        $(document).on('change', '#item_code', function() {
             let PPEtypeId = $(this).val();
             console.log(PPEtypeId);
 
@@ -115,6 +129,37 @@
                     type: 'GET',
                     data: {
                         id: PPEtypeId,
+                        _ts: new Date().getTime()
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        $('#ppe_type').empty().append('<option value="">Select PPE type</option>');
+                        $.each(data, function(key, value) {
+                            $('#ppe_type').append('<option value="' + value.id + '">' + value
+                                .ppe_type + '</option>');
+                        });
+                        $('#ppe_type').trigger('change');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching PPE Types. Please try again.');
+                    }
+                });
+            } else {
+                $('#ppe_type').empty().append('<option value="">Select PPE Type</option>');
+                $('#ppe_type').trigger('change');
+            }
+        });
+
+        $(document).on('change', '#ppe_type', function() {
+            let PPEnameId = $(this).val();
+            console.log(PPEnameId);
+
+            if (PPEnameId) {
+                $.ajax({
+                    url: "{{ admin_url('ppe_ppetype_master/ajax-ppename') }}",
+                    type: 'GET',
+                    data: {
+                        id: PPEnameId,
                         _ts: new Date().getTime()
                     },
                     success: function(data) {
@@ -135,6 +180,7 @@
                 $('#ppe_name').trigger('change');
             }
         });
+
 
 
         $(document).ready(function() {
@@ -185,7 +231,5 @@
                 return this.optional(element) || regexp.test(value);
             }, "Please check your input.");
         });
-
-
     </script>
 @endpush

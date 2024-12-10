@@ -168,7 +168,7 @@ class PpeExemptionController extends Controller
 
                 foreach ($ehsofficer as $officer) {
                     $officer_email = getUseremail($officer->id);
-                    Mail::to($officer_email)->queue(new PpeExemptionRequestorEmail($details));
+                    Mail::to($officer_email)->send(new PpeExemptionRequestorEmail($details));
                 }
 
                 // Notification
@@ -300,7 +300,7 @@ class PpeExemptionController extends Controller
 
                 foreach ($ehsofficer as $officer) {
                     $officer_email = getUseremail($officer->id);
-                    Mail::to($officer_email)->queue(new PpeExemptionRequestorEmail($details));
+                    Mail::to($officer_email)->send(new PpeExemptionRequestorEmail($details));
                 }
 
 
@@ -449,10 +449,10 @@ class PpeExemptionController extends Controller
 
             if ($action == 'approve') {
                 $recipients = array_filter([$requestor, $hod]);
-                Mail::to($recipients)->queue(new PpeExemptionEmail($details));
+                Mail::to($recipients)->send(new PpeExemptionEmail($details));
             } else {
                 $recipients = array_filter([$requestor, $hod]);
-                Mail::to($recipients)->queue(new PpeExemptionRejectEmail($details));
+                Mail::to($recipients)->send(new PpeExemptionRejectEmail($details));
             }
 
             $message = 'New Exemption Request';
@@ -480,7 +480,7 @@ class PpeExemptionController extends Controller
             Session::flash('success', 'PPE Exemption has successfully responded');
             return redirect(admin_url('ppe_exemption/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_exemption/list'));
         }
