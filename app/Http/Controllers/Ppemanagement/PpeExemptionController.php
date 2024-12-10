@@ -87,7 +87,7 @@ class PpeExemptionController extends Controller
                             }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
 
-                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) && $row->approve_status == STATUS_EHS_APPROVAL_PENDING ) {
+                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) && $row->approve_status == STATUS_EHS_APPROVAL_PENDING ) {
                                 $btn .= '<a href="' . admin_url('ppe_exemption/approval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
                             }
                             return $btn;
@@ -151,7 +151,7 @@ class PpeExemptionController extends Controller
                 // Mail
 
                 $id = $ppeexemption->id;
-                $ehsofficer = $this->user->findEhsofficer();
+                $ehsofficer = $this->user->findEhsHead();
 
                 $details = [
                     'emp_id' => $ppeexemption->emp_id,
@@ -283,7 +283,7 @@ class PpeExemptionController extends Controller
                 //Mail
                 $data=$this->ppeexemption->selectOne($id);
 
-                $ehsofficer = $this->user->findEhsofficer();
+                $ehsofficer = $this->user->findEhsHead();
 
                 $details = [
                     'emp_id' => $data->emp_id,
@@ -307,7 +307,7 @@ class PpeExemptionController extends Controller
                 // Notification
 
                 $message = 'New Exemption Request';
-                $ehsofficer = $this->user->findEhsofficer();
+                $ehsofficer = $this->user->findEhsHead();
                 $assigned_user = $this->user->assigneduser($ehsofficer);
                 $img = admin_url('public/assets/images/ppe-management.jpg');
                 $notificationData = array(
@@ -456,7 +456,6 @@ class PpeExemptionController extends Controller
             }
 
             $message = 'New Exemption Request';
-            $ehsofficer = $this->user->findEhsofficer();
             $hodId = $this->user->getdepartmenthodId($departmentId);
             $requestorId = $this->user->getrequestId($empId);
             $assigned_user = array_merge($hodId, $requestorId);

@@ -521,7 +521,6 @@ class PpeRequestController extends Controller
             if ($action == 'approve') {
                 $recipients = array_filter([$requestor, $hod, $storemanager]);
                 Mail::to($recipients)->queue(new PpeEhsRequestEmail($details));
-
                 //  notification
 
                 $id = $empDetails->id;
@@ -547,6 +546,8 @@ class PpeRequestController extends Controller
                 ];
 
                 notificationSave($notificationData);
+
+          
             } else {
                 Mail::to($requestor)->queue(new PpeRequestEhsRejectEmail($details));
 
