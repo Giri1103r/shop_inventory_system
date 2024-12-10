@@ -15,6 +15,8 @@ use App\Models\Master\PpeRequest;
 use App\Models\Master\PpeStockinventory;
 use App\Models\Master\PpeType;
 use App\Models\Master\PpeTypeMaster;
+use App\Models\Statuslog;
+
 use App\Models\UploadLog;
 use App\Models\User;
 use Carbon\Carbon;
@@ -37,6 +39,7 @@ class PpeRequestController extends Controller
     private $user;
     private $uploadlog;
     private $ppestock;
+    private $ppestatus;
 
     public function __construct()
     {
@@ -47,6 +50,7 @@ class PpeRequestController extends Controller
         $this->employee = new Employee();
         $this->user = new User();
         $this->ppestock = new PpeStockinventory();
+        $this->ppestatus = new Statuslog();
 
     }
     public function index(Request $request)
@@ -266,7 +270,6 @@ class PpeRequestController extends Controller
                 return redirect(admin_url('ppe_request/list'));
             }
         } catch (Exception $ex) {
-           dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }
@@ -363,7 +366,7 @@ class PpeRequestController extends Controller
                 $updateData['ehs_approved_by'] = Auth::id();
             }
 
-
+            $statuslog = $this->ppestatus->store($updateData,$empDetails);
             $empDetails->updateapproval($updateData, $id);
             $details = [
                 'emp_id' => $empDetails->emp_id,
@@ -377,10 +380,13 @@ class PpeRequestController extends Controller
             ];
             $ehsofficer = $this->user->findEhsofficer();
             $empId = $empDetails->emp_id;
+
             $requestor = $this->user->finduseremail($empId);
             if ($action == 'approve') {
                 foreach ($ehsofficer as $officer) {
-                    $officer_email = getUseremail($officer->id);
+
+                    $officer_email = $officer->email;
+
                     Mail::to($officer_email)->send(new PpeRequestHodApprovalEmail($details));
                 }
                 $id = $empDetails->id;
@@ -514,7 +520,7 @@ class PpeRequestController extends Controller
             if ($action == 'approve' || $action == 'reject') {
                 $updateEhsData['status'] = 0;
             }
-
+            $statuslog= $this->ppestatus->storeEhsStatus($updateEhsData,$empDetails);
             $empDetails->updateehsapproval($updateEhsData, $id);
             $details = [
                 'emp_id' => $empDetails->emp_id,
@@ -624,7 +630,12 @@ class PpeRequestController extends Controller
 
     public function statuslog($id){
         $id = decryptId($id);
-        return view('ppemanagement.pperequest.statuslog');
+        $ppestatuslog = $this->ppestock->getstatusdetails($id);
+        $data =[
+            'id' => $id,
+            'ppestatuslog'=> $ppestatuslog,
+        ];
+        return view('ppemanagement.pperequest.statuslog',$data);
     }
 
 

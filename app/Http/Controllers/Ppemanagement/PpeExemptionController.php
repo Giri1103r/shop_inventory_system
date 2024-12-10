@@ -12,6 +12,7 @@ use App\Mail\PpeExemptionEmail;
 use App\Mail\PpeExemptionRejectEmail;
 use App\Mail\PpeExemptionRequestorEmail;
 use App\Models\Master\PpeExemption;
+use App\Models\Statuslog;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -28,6 +29,8 @@ class PpeExemptionController extends Controller
     private $ppeexemption;
     private $user;
     private $pperequest;
+    private $ppestatus;
+
     private $uploadlog;
 
     public function __construct()
@@ -36,6 +39,8 @@ class PpeExemptionController extends Controller
         $this->uploadlog = new UploadLog();
         $this->user = new User();
         $this->pperequest = new PpeRequest();
+        $this->ppestatus = new Statuslog();
+
     }
     public function index(Request $request)
     {
@@ -432,7 +437,7 @@ class PpeExemptionController extends Controller
             if ($action == 'approve' || $action == 'reject') {
                 $updateData['status'] = 0;
             }
-
+            $statuslog = $this->ppestatus->storeexemptionstatus($updateData,$emp_details);
             $emp_details->updateapproval($updateData, $id);
             $details = [
                 'emp_id' => $emp_details->emp_id,

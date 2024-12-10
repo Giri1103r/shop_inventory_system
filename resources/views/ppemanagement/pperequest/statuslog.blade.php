@@ -257,5 +257,65 @@
     </style>
 @endpush
 @section('content')
-   
+<div class="content-body  default-height">
+    <div class="container-fluid main-content">
+        <div class="row">
+
+            <div class="col-12">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="align-back-btc">
+                                <x-button-back href="{{ admin_url('ppe_request/view/' . encryptId($id)) }}"></x-button-back>
+
+                            </div>
+                        </div>
+
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="card-header-inner">
+                                    <h4 class="text-white">PPE Request Status Log</h4>
+                                </div>
+                            </div>
+                            <div class="container bootdey mt-2">
+                                <div class="row gutters">
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="timeline">
+                                                    @foreach ( $ppestatuslog as $log )
+                                                        <div class="timeline-row">
+                                                            <div class="timeline-time">
+                                                                {{ formatDateString($log->created_at) }}
+
+                                                                <small>
+                                                                    {{ Displaytimeformat($log->created_at) }}
+                                                                </small>
+                                                            </div>
+                                                            <div class="timeline-dot fb-bg"></div>
+                                                            <div class="timeline-content">
+                                                                <i class="fa fa-map-marker"></i>
+                                                                <h5  class="fw-bold text-white">{{ $log->to_status }}</h5>
+                                                                <p  class="text-white">{{ $log->remarks }}</p>
+                                                                <div class="">
+                                                                    <span
+                                                                        class="badge badge-light">{{getUsername($log->created_by)}}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection

@@ -77,6 +77,9 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_EHS_APPROVED') or define('STATUS_EHS_APPROVED', 5);
         defined('STATUS_EHS_REJECTED') or define('STATUS_EHS_REJECTED', 6);
 
+        defined('TYPE_PPE_REQUEST') or define('TYPE_PPE_REQUEST', 1);
+        defined('TYPE_PPE_EXEMPTION') or define('TYPE_PPE_EXEMPTION', 2);
+
 
 
         View::composer('*', function ($view) {
