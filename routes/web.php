@@ -14,6 +14,7 @@ use App\Http\Controllers\Cron\CronController;
 use App\Http\Controllers\Master\CompanyController;
 use App\Http\Controllers\Master\TopicController;
 use App\Http\Controllers\Master\TrainingMatrixController;
+use App\Http\Controllers\Master\TrainingCalendarController;
 use App\Http\Controllers\Master\TrainingScheduleController;
 use App\Http\Controllers\Master\VenueController;
 use App\Http\Controllers\Master\LocationController;
@@ -459,8 +460,25 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/status', [TrainingScheduleController::class, 'statusChange']);
                 Route::post('/unique', [TrainingScheduleController::class, 'Uniquecheck']);
             });
+            /**
+             * Training Calendar
+             */
+            // Route::group(['prefix' => 'training_calendar'], function () {
+            //     Route::get('/list', [TrainingCalendarController::class, 'index']);
+            //     Route::post('/list', [TrainingCalendarController::class, 'index']);
+            //     Route::get('/fetch', [TrainingCalendarController::class, 'fetchEvents']);
+            //     Route::post('/add/submit', [TrainingCalendarController::class, 'store']);
+            //     Route::get('/edit/{id}', [TrainingCalendarController::class, 'edit']);
+            //     Route::post('/edit/submit', [TrainingCalendarController::class, 'update']);
+            //     Route::get('/view/{id}', [TrainingCalendarController::class, 'view']);
+          
+            // });
 
-
+            Route::prefix('training_calendar')->group(function () {
+                Route::get('/list', [TrainingCalendarController::class, 'index']);
+                Route::get('/fetch/schedule', [TrainingCalendarController::class, 'trainingShow']);
+                Route::put('/update/{id}', [TrainingCalendarController::class, 'updateEvent']);
+            });
 
 
 

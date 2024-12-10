@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Training Matri PDF')
+@section('title', 'Training Schedule PDF')
 @section('content')
 
     <div style="width:100%;">
@@ -25,27 +25,35 @@
                             {{ $i }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
+                            {{ Displaydateformat($value->from_date) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ Displaydateformat($value->to_date) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->topic_name }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->emp_name }}
                         </td>
+
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->training_offered_for == 1 ? 'Worker' : 'Executive' }}
+                            {{ $value->unit_name }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->unit_name}}
+                            {{ $value->department_name }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->department_name}}
+                            {{ $value->target_trainees }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->mode_of_training == 1 ? 'Online' : 'Offline'}}
+                            {{ $value->name_of_the_conference_hall }}
                         </td>
+
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->training_evaluation == 1 ? 'Yes' : 'No' }}
+                            {{ $value->training_man_hours ?? '-'}}
                         </td>
-                      
+
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php
                                 $status = $value->status == 1 ? 'Active' : 'In-Active';

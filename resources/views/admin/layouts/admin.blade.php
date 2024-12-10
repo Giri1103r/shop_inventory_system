@@ -17,25 +17,33 @@
     <link href="{{ url('public/assets/css/app.css') }}" rel="stylesheet" type="text/css" id="app-style" />
     <link href="{{ url('public/assets/css/custom-style.css') }}" rel="stylesheet" type="text/css" id="app-style" />
 
-    <link href="{{ public_plugins('datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ public_plugins('datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ public_plugins('datatables.net-keytable-bs5/css/keyTable.bootstrap5.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ public_plugins('datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ public_plugins('datatables.net-select-bs5/css/select.bootstrap5.min.css') }}"rel="stylesheet" type="text/css" />
-    <link href="{{ public_plugins('admin-resources/rwd-table/rwd-table.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ public_plugins('datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css') }}" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ public_plugins('datatables.net-keytable-bs5/css/keyTable.bootstrap5.min.css') }}" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ public_plugins('datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}"
+        rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('datatables.net-select-bs5/css/select.bootstrap5.min.css') }}"rel="stylesheet"
+        type="text/css" />
+    <link href="{{ public_plugins('admin-resources/rwd-table/rwd-table.min.css') }}" rel="stylesheet"
+        type="text/css" />
 
     <link href="{{ public_plugins('spectrum-colorpicker2/spectrum.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ public_plugins('flatpickr/flatpickr.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ public_plugins('clockpicker/bootstrap-clockpicker.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ public_plugins('bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}" rel="stylesheet"
+        type="text/css" />
     <link href="{{ url('public/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
 
 
     <link href="{{ public_plugins('select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ public_plugins('fontawesome/css/all.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ public_plugins('jasny-bootstrap/css/jasny-bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
-
-     @stack('styless')
+    <link href="{{ public_plugins('jasny-bootstrap/css/jasny-bootstrap.min.css') }}" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ public_plugins('fullcalendar/main.min.css') }}" rel="stylesheet" type="text/css" />
+    @stack('styless')
     <style>
         :root {
             --dt-header-background-color: #b8cde2 !important;
@@ -150,6 +158,24 @@
         label.require::after {
             content: '*';
             color: red;
+        }
+
+
+        /* Tooltip styling */
+        .fc-event:hover .custom-tooltip {
+            display: block;
+        }
+
+        .custom-tooltip {
+            display: none;
+            position: absolute;
+            background-color: #333;
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 1000;
         }
     </style>
     @stack('style')
@@ -271,13 +297,14 @@
 
     <script src="{{ public_plugins('select2/js/select2.full.min.js') }}"></script>
     <script src="{{ public_plugins('jasny-bootstrap/js/jasny-bootstrap.min.js') }}"></script>
-
+    <!--calender-->
+    <script src="{{ public_plugins('fullcalendar/locales-all.min.js') }}"></script>
+    <script src="{{ public_plugins('fullcalendar/main.min.js') }}"></script>
 
 
     @stack('scripts')
 
     <script type="text/javascript" nonce="projectcab">
-
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

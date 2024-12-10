@@ -61,7 +61,6 @@ class TrainingScheduleController extends Controller
                 try {
 
                     $data =  $this->training_schedule->list();
-
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -72,6 +71,12 @@ class TrainingScheduleController extends Controller
                                 $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
                             }
                             return $text;
+                        })
+                        ->addColumn('from_date', function ($row) {
+                            return Displaydateformat($row->from_date);
+                        })
+                        ->addColumn('to_date', function ($row) {
+                            return Displaydateformat($row->to_date);
                         })
                         ->addColumn('created_at', function ($row) {
                             return Displaydatetimeformat($row->created_at);
@@ -89,14 +94,14 @@ class TrainingScheduleController extends Controller
                             }
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['to_date', 'from_date', 'action', 'created_date', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    dd( $ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -147,7 +152,6 @@ class TrainingScheduleController extends Controller
             $rules = [
                 'topic_id' => 'required',
                 'trainer_id' => 'required',
-                'training_offered_for' => 'required',
                 'unit_id' => 'required',
                 'department_id' => 'required',
             ];
@@ -155,7 +159,6 @@ class TrainingScheduleController extends Controller
             $messages = [
                 'topic_id.required' => 'Please select a training topic.',
                 'trainer_id.required' => 'Please select a trainer.',
-                'training_offered_for.required' => 'Please select who the training is offered for.',
                 'unit_id.required' => 'Please select a unit name.',
                 'department_id.required' => 'Please select a target department.',
             ];
@@ -166,8 +169,8 @@ class TrainingScheduleController extends Controller
 
             try {
 
-              $this->training_schedule->store();
-             
+                $this->training_schedule->store();
+
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
                 report($ex);
@@ -189,7 +192,7 @@ class TrainingScheduleController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $training_schedule = $this->training_schedule->selectOne($id);
-               
+
                 $data = array(
                     'training_schedule' => $training_schedule,
                 );
@@ -207,6 +210,7 @@ class TrainingScheduleController extends Controller
             $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
+            $venueList  = $this->venue->select('id', 'name_of_the_conference_hall')->where('status', '1')->get();
             $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_TRAINER)->where('status', '1')->get();
             $training_schedule = $this->training_schedule->find($id);
             $data = array(
@@ -215,7 +219,8 @@ class TrainingScheduleController extends Controller
                 'topicList' => $topicList,
                 'employeeList' => $employeeList,
                 'training_schedule' => $training_schedule,
-             
+                'venueList' => $venueList,
+
             );
 
             return view('master.training_schedule.edit', $data);
@@ -231,7 +236,6 @@ class TrainingScheduleController extends Controller
             $rules = [
                 'topic_id' => 'required',
                 'trainer_id' => 'required',
-                'training_offered_for' => 'required',
                 'unit_id' => 'required',
                 'department_id' => 'required',
             ];
@@ -239,7 +243,6 @@ class TrainingScheduleController extends Controller
             $messages = [
                 'topic_id.required' => 'Please select a training topic.',
                 'trainer_id.required' => 'Please select a trainer.',
-                'training_offered_for.required' => 'Please select who the training is offered for.',
                 'unit_id.required' => 'Please select a unit name.',
                 'department_id.required' => 'Please select a target department.',
             ];
@@ -248,7 +251,7 @@ class TrainingScheduleController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-          $this->training_schedule->updates($id);
+            $this->training_schedule->updates($id);
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
@@ -267,7 +270,7 @@ class TrainingScheduleController extends Controller
 
             $this->training_schedule->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => 'Training Matrix status changed'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'Training Schedule status changed'], 200);
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
@@ -281,7 +284,7 @@ class TrainingScheduleController extends Controller
 
             $this->training_schedule->deleterecord($id);
 
-            return response()->json(['status' => 'success', 'msg' => 'Training Matrix deleted successfully'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'Training Schedule deleted successfully'], 200);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
@@ -365,7 +368,7 @@ class TrainingScheduleController extends Controller
             return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
 
-            Session::flash('error', __('Training Matrix upload failed'));
+            Session::flash('error', __('Training Schedule upload failed'));
             return redirect(admin_url('training_schedule/list'));
         }
     }
@@ -375,16 +378,18 @@ class TrainingScheduleController extends Controller
         try {
 
             $allData = $this->training_schedule->exportdata();
-
+  
             $header = [
                 __("common.sno"),
+                'From Date',
+                'To Date',
                 'Training Topic',
                 'Trainer',
-                'Training Offered for',
-                'Unit Name',
-                'Target Department',
-                'Mode of Training',
-                'Training Evaluation',
+                'Unit',
+                'Department',
+                'Target Trainees',
+                'Venue/Location',
+                'Training Man Hours',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -392,16 +397,18 @@ class TrainingScheduleController extends Controller
 
             $i = 1;
             foreach ($allData as $data) {
-        
+
                 $export = [];
                 $export[] =  $i;
+                $export[] =  Displaydateformat($data->from_date);
+                $export[] =  Displaydateformat($data->to_date);
                 $export[] =  $data->topic_name;
                 $export[] =  $data->emp_name;
-                $export[] =  $data->training_offered_for == 1 ? 'Worker' : 'Executive';
                 $export[] =  $data->unit_name;
                 $export[] =  $data->department_name;
-                $export[] =  $data->mode_of_training == 1 ? 'Online' : 'Offline';
-                $export[] =  $data->training_evaluation == 1 ? 'Yes' : 'No';
+                $export[] =  $data->target_trainees;
+                $export[] =  $data->name_of_the_conference_hall;
+                $export[] =  $data->training_man_hours;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -411,7 +418,7 @@ class TrainingScheduleController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Training Matrix Details.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Training Schedule.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -428,16 +435,17 @@ class TrainingScheduleController extends Controller
         try {
 
             $allData = $this->training_schedule->exportdata();
-
             $header = [
                 __("common.sno"),
+                'From Date',
+                'To Date',
                 'Training Topic',
                 'Trainer',
-                'Training Offered for',
-                'Unit Name',
-                'Target Department',
-                'Mode of Training',
-                'Training Evaluation',
+                'Unit',
+                'Department',
+                'Target Trainees',
+                'Venue/Location',
+                'Training Man Hours',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -446,7 +454,7 @@ class TrainingScheduleController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Training Matrix Details",
+                'pagetitle' => "Training Schedule",
             );
 
             $property = [
@@ -468,11 +476,11 @@ class TrainingScheduleController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Training Matrix.pdf";
-            $mpdf->Output($filename, 'I');
+            $filename = "Training Schedule.pdf";
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
-            report($ex);
+        
+            dd($ex);
         }
     }
 

@@ -197,6 +197,7 @@ class TrainingMatrix extends Model
         $query = $query->leftJoin('masters_employee', 'training_matrix.trainer_id', '=', 'masters_employee.id');
         $query = $query->leftJoin('masters_department', 'training_matrix.department_id', '=', 'masters_department.id');
         $query = $query->leftJoin('training_masters_topic', 'training_matrix.topic_id', '=', 'training_masters_topic.id');
+        
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 

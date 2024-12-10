@@ -107,7 +107,7 @@ class TrainingSchedule extends Model
         );
         return $datas;
     }
-
+  
     public function UniqueCheck($data)
     {
 
@@ -134,7 +134,6 @@ class TrainingSchedule extends Model
             'unit_id' => decryptId($request->unit_id),
             'department_id' => decryptId($request->department_id),
             'target_trainees' => $request->target_trainees,
-            'training_man_hours' => $request->training_man_hours,
             'created_by' => Auth::id()
         );
         return $this->create($insert_array);
@@ -154,7 +153,7 @@ class TrainingSchedule extends Model
             'unit_id' => decryptId($request->unit_id),
             'department_id' => decryptId($request->department_id),
             'target_trainees' => $request->target_trainees,
-            'training_man_hours' => $request->training_man_hours,
+            'training_man_hours' => $request->training_man_hours ?? '',
             'updated_by' => Auth::id(),
             'updated_at' => now(),
         );
@@ -201,21 +200,28 @@ class TrainingSchedule extends Model
         $query = $query->leftJoin('masters_department', 'training_schedule.department_id', '=', 'masters_department.id');
         $query = $query->leftJoin('training_masters_topic', 'training_schedule.topic_id', '=', 'training_masters_topic.id');
         $query = $query->leftJoin('training_masters_venue', 'training_schedule.venue_id', '=', 'training_masters_venue.id');
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
 
-            $query->where(function ($query) use ($search) {
-                $query
-                    ->orWhere('from_date', 'LIKE', '%' . $search . '%');
+        if (!empty($request->search)) {
+            $query->where(function ($subQuery) use ($request) {
+                $search = $request->search;
+                $subQuery->where('from_date', 'LIKE', '%' . $search . '%')
+                    ->orWhere('to_date', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_employee.emp_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('training_masters_topic.topic_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('training_masters_venue.name_of_the_conference_hall', 'LIKE', '%' . $search . '%');
             });
         }
 
-        if ($request->has('from_date') && $request->from_date) {
-            $query = $query->where('from_date', 'LIKE', '%' . $request->from_date . '%');
-        }
-        if ($request->has('to_date') && $request->to_date) {
-            $query = $query->where('to_date', 'LIKE', '%' . $request->to_date . '%');
-        }
+        // Filters
+        // if ($request->has('from_date') && !empty($request->from_date)) {
+        //     $query->whereDate('from_date', '=', $request->from_date);
+        // }
+
+        // if ($request->has('to_date') && !empty($request->to_date)) {
+        //     $query->whereDate('to_date', '=', $request->to_date);
+        // }
         if ($request->has('topic_id') && $request->topic_id) {
             $query = $query->where('training_schedule.topic_id', decryptId($request->topic_id));
         }
@@ -236,6 +242,7 @@ class TrainingSchedule extends Model
             $query = $query->where('training_schedule.status', 'LIKE', '%' . decryptId($request->status) . '%');
         }
         $query->orderBy('id', 'DESC');
+
         return  $query->get();
     }
 
