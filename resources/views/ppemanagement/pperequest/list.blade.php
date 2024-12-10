@@ -11,12 +11,12 @@
                     <h4 class="card-title"></h4>
                     <div class="d-flex justify-content-end p-2 me-2">
                         <x-button-filter dataId="" class="search me-2" href=""></x-button-filter>
-                        {{-- @if (CheckUserPermission('add')) --}}
-                        {{-- { --}}
+                        @if (CheckUserPermission('add'))
+
                         <x-button-add dataId="" class="add btn btn-primary"
                             href="{{ admin_url('ppe_request/add') }}">Add</x-button-add>
-                        {{-- } --}}
-                        {{--  @endif --}}
+
+                         @endif 
                     </div>
 
 
@@ -201,52 +201,12 @@
                         {
                             data: 'approve_status',
                             name: 'approve_status',
-                            render: function(data, type, row) {
-                                var statusLabels = {
-                                    1: {
-                                        text: 'HOD Approval Pending',
-                                        class: 'badge badge-warning'
-                                    },
-                                    2: {
-                                        text: 'HOD Approved',
-                                        class: 'badge badge-success'
-                                    },
-                                    3: {
-                                        text: 'HOD Rejected',
-                                        class: 'badge badge-danger'
-                                    }
-                                };
-                                if (statusLabels[data]) {
-                                    return '<span class="' + statusLabels[data].class +
-                                        '">' + statusLabels[data].text + '</span>';
-                                }
-                                return data;
-                            }
+
                         },
                         {
                             data: 'ehs_approve_status',
                             name: 'ehs_approve_status',
-                            render: function(data, type, row) {
-                                var ehsStatusLabels = {
-                                    4: {
-                                        text: 'EHS Approval Pending',
-                                        class: 'badge badge-warning'
-                                    },
-                                    5: {
-                                        text: 'EHS Approved',
-                                        class: 'badge badge-success'
-                                    },
-                                    6: {
-                                        text: 'EHS Rejected',
-                                        class: 'badge badge-danger'
-                                    }
-                                };
-                                if (ehsStatusLabels[data]) {
-                                    return '<span class="' + ehsStatusLabels[data].class +
-                                        '">' + ehsStatusLabels[data].text + '</span>';
-                                }
-                                return data;
-                            }
+
                         },
                          {
                             data: 'created_by',

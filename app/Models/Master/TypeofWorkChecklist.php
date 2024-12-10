@@ -556,6 +556,72 @@ class TypeofWorkChecklist extends Model
     }
 
 
+    public function getprotectiveequipment($id, $type)
+    {
+
+        $data =  $this->select('ptw_masters_typeofwork_checklist.*', 'ptw_masters_protective_equip.protective_equip')
+            ->leftJoin('ptw_masters_protective_equip', 'ptw_masters_protective_equip.id', '=', 'ptw_masters_typeofwork_checklist.check_points')->where('ptw_masters_typeofwork_checklist.typeofwork_id', $id)
+            ->where('ptw_masters_typeofwork_checklist.type', $type)
+            ->get();
+
+            // dd($data);
+
+        return $data;
+    }
+
+    public function getequipmentinvolved($id, $type)
+    {
+
+        $data =  $this->select('ptw_masters_typeofwork_checklist.*', 'ptw_masters_equip_involved.equip_involve')
+            ->leftJoin('ptw_masters_equip_involved', 'ptw_masters_equip_involved.id', '=', 'ptw_masters_typeofwork_checklist.check_points')->where('ptw_masters_typeofwork_checklist.typeofwork_id', $id)
+            ->where('ptw_masters_typeofwork_checklist.type', $type)
+            ->get();
+
+            // dd($data);
+
+        return $data;
+    }
+
+    public function getprecaution($id, $type)
+    {
+
+        $data =  $this->select('ptw_masters_typeofwork_checklist.*', 'ptw_masters_precaution.precaution')
+            ->leftJoin('ptw_masters_precaution', 'ptw_masters_precaution.id', '=', 'ptw_masters_typeofwork_checklist.check_points')->where('ptw_masters_typeofwork_checklist.typeofwork_id', $id)
+            ->where('ptw_masters_typeofwork_checklist.type', $type)
+            ->get();
+
+            // dd($data);
+
+        return $data;
+    }
+
+    public function getchecklist($id, $type)
+    {
+
+        $data =  $this->select('ptw_masters_typeofwork_checklist.*', 'ptw_masters_checklist.checklist')
+            ->leftJoin('ptw_masters_checklist', 'ptw_masters_checklist.id', '=', 'ptw_masters_typeofwork_checklist.check_points')->where('ptw_masters_typeofwork_checklist.typeofwork_id', $id)
+            ->where('ptw_masters_typeofwork_checklist.type', $type)
+            ->get();
+
+            // dd($data);
+
+        return $data;
+    }
+
+    public function getinstruction($id, $type)
+    {
+
+        $data =  $this->select('ptw_masters_typeofwork_checklist.*', 'ptw_masters_safe_work.safe_work')
+            ->leftJoin('ptw_masters_safe_work', 'ptw_masters_safe_work.id', '=', 'ptw_masters_typeofwork_checklist.check_points')->where('ptw_masters_typeofwork_checklist.typeofwork_id', $id)
+            ->where('ptw_masters_typeofwork_checklist.type', $type)
+            ->get();
+
+            // dd($data);
+
+        return $data;
+    }
+
+
     public function statuschange($id)
     {
         $request = request();

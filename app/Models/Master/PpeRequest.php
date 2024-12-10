@@ -78,13 +78,13 @@ class PpeRequest extends Model
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('created_at', [$startDate, $endDate]);
+            $query->whereBetween('ppe_pperequest.created_at', [$startDate, $endDate]);
         } elseif ($request->has('from_date') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('created_at', '>=', $startDate);
+            $query->where('ppe_pperequest.created_at', '>=', $startDate);
         } elseif ($request->has('to_date') && !empty($request->to_date)) {
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('created_at', '<=', $endDate);
+            $query->where('ppe_pperequest.created_at', '<=', $endDate);
         }
 
 

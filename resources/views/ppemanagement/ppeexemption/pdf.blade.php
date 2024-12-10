@@ -45,17 +45,27 @@
                             {{ Displaydateformat($value->to_date) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->reason}}
+                            {{ $value->reason }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{isset($value->remarks) ? $value->remarks : 'Null' }}
+
+                            @if ($value->approve_status == $ehsstatus)
+                                {{ 'User Applied For Approval' }}
+                            @else
+                                {{ $value->remarks }}
+                            @endif
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->approved_by ? getusername($value->approved_by) : 'Null' }}
+                            @if ($value->approve_status == $ehsstatus)
+                                {{ 'User Applied For Approval' }}
+                            @else
+                                {{ $value->approved_by ? getusername($value->approved_by) : 'Null' }}
+                            @endif
+
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{isset($value->approve_status) ? $value->approve_status : '' }}
+                            {{ removeUnderScore(getStatus($value->approve_status)) }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>

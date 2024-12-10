@@ -558,26 +558,6 @@ Route::middleware(['securityheader'])->group(function () {
 
 
 
-
-            Route::group(['prefix' => 'ppe_type'], function () {
-
-                Route::get('/list', [PpeTypeController::class, 'index']);
-                Route::post('/list', [PpeTypeController::class, 'index']);
-                Route::get('/add', [PpeTypeController::class, 'add']);
-                Route::post('/add/submit', [PpeTypeController::class, 'store']);
-                Route::get('/view/{id}', [PpeTypeController::class, 'view']);
-                Route::get('/edit/{id}', [PpeTypeController::class, 'edit']);
-                Route::post('/edit/submit', [PpeTypeController::class, 'update']);
-                Route::post('/status', [PpeTypeController::class, 'statusChange']);
-                Route::post('/delete', [PpeTypeController::class, 'delete']);
-                Route::post('/unique', [PpeTypeController::class, 'Uniquecheck']);
-                Route::get('/sample_download', [PpeTypeController::class, 'DownloadSample']);
-                Route::get('/import', [PpeTypeController::class, 'import']);
-                Route::post('/import/Submit', [PpeTypeController::class, 'importSubmit']);
-                Route::get('/export/excel', [PpeTypeController::class, 'exportExcel']);
-                Route::get('/export/pdf', [PpeTypeController::class, 'exportPdf']);
-            });
-
             Route::group(['prefix' => 'ppe_request'], function () {
 
                 Route::get('/list', [PpeRequestController::class, 'index']);
@@ -611,6 +591,9 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/edit/submit', [SafetyPermitController::class, 'update']);
                 Route::get('/export/excel', [SafetyPermitController::class, 'exportExcel']);
                 Route::get('/export/pdf', [SafetyPermitController::class, 'exportPdf']);
+                Route::get('/getprotectivechecklist/{unit_id}/{id}', [SafetyPermitController::class, 'list']);
+
+     
             });
             Route::group(['prefix' => 'ppe_exemption'], function () {
 

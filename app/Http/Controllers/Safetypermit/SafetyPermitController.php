@@ -21,18 +21,21 @@ use App\Mail\PTW\HotWorkEmail;
 
 use App\Models\Master\Unit;
 use App\Models\Master\TypeofWork;
+use App\Models\Master\TypeofWorkChecklist;
 
 class SafetyPermitController extends Controller
 {
     private $safetypermit;
     private $unit;
     private $typeofwork;
+    private $typeofworkchecklist;
 
     public function __construct()
     {
         $this->safetypermit = new SafetyPermit();
         $this->unit = new Unit();
         $this->typeofwork = new TypeofWork();
+        $this->typeofworkchecklist = new TypeofWorkChecklist();
     }
 
     public function index(Request $request)
@@ -121,10 +124,22 @@ class SafetyPermitController extends Controller
         try {
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $typeofwork = $this->typeofwork->gettypework();
+           
+            $getprotectiveequipment = $this->typeofworkchecklist->getprotectiveequipment(1, 'type1');
+            $getequipmentinvolved = $this->typeofworkchecklist->getequipmentinvolved(1, 'type2');
+            $getprecaution = $this->typeofworkchecklist->getprecaution(1, 'type3');
+            $getchecklist = $this->typeofworkchecklist->getchecklist(1, 'type4');
+            $getinstruction = $this->typeofworkchecklist->getinstruction(1, 'type5');
 
             $data = array(
                 'unitList' => $unitList,
                 'typeofwork' => $typeofwork,
+                'getprotectiveequipment' => $getprotectiveequipment,
+                'getequipmentinvolved' => $getequipmentinvolved,
+                'getprecaution' => $getprecaution,
+                'typeofwork' => $typeofwork,
+                'getchecklist' => $getchecklist,
+                'getinstruction' => $getinstruction,
             );
             return view('permit.safetypermit.add', $data);
         } catch (Exception $ex) {

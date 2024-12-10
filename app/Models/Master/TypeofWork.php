@@ -274,6 +274,17 @@ class TypeofWork extends Model
         return $data;
     }
 
+
+    public function getprotectiveequip()
+    {
+
+        $data =  $this->select('ptw_masters_typeofwork.*','ptw_masters_typeofwork_upload.file_path')
+        ->leftjoin('ptw_masters_typeofwork_upload', 'ptw_masters_typeofwork_upload.typeofwork_id', '=', 'ptw_masters_typeofwork.id')->where('ptw_masters_typeofwork.status',1)->where('ptw_masters_typeofwork_upload.status',1)
+        ->get();
+        return $data;
+    }
+
+
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('ptw_masters_typeofwork'));

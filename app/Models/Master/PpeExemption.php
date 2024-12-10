@@ -137,6 +137,7 @@ class PpeExemption extends Model
             'from_date' => $request->from_date,
             'to_date' => $request->to_date,
             'reason' => $request->reason,
+            'approve_status' => STATUS_EHS_APPROVAL_PENDING,
             'created_by'=>Auth::id(),
             'updated_by'=>Auth::id(),
 
