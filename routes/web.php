@@ -615,7 +615,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/getprecaution/{workId}', [SafetyPermitController::class, 'getprecaution']);
                 Route::get('/getchecklist/{workId}', [SafetyPermitController::class, 'getchecklist']);
                 Route::get('/getinstruction/{workId}', [SafetyPermitController::class, 'getinstruction']);
-
+                Route::get('/employeename', [SafetyPermitController::class, 'employeename']);
 
             });
             Route::group(['prefix' => 'ppe_exemption'], function () {

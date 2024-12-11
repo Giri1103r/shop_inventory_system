@@ -22,6 +22,12 @@ use App\Mail\PTW\HotWorkEmail;
 use App\Models\Master\Unit;
 use App\Models\Master\TypeofWork;
 use App\Models\Master\TypeofWorkChecklist;
+use App\Models\Master\ProtectiveEquip;
+use App\Models\Master\EquipInvalve;
+use App\Models\Master\SafeWork;
+use App\Models\Master\Precaution;
+use App\Models\Master\Checklist;
+use App\Models\Master\Employee;
 
 class SafetyPermitController extends Controller
 {
@@ -29,6 +35,11 @@ class SafetyPermitController extends Controller
     private $unit;
     private $typeofwork;
     private $typeofworkchecklist;
+    private $protective;
+    private $equipinvalve;
+    private $safework;
+    private $precaution;
+    private $checklist;
 
     public function __construct()
     {
@@ -36,6 +47,11 @@ class SafetyPermitController extends Controller
         $this->unit = new Unit();
         $this->typeofwork = new TypeofWork();
         $this->typeofworkchecklist = new TypeofWorkChecklist();
+        $this->protective = new ProtectiveEquip();
+        $this->equipinvalve = new EquipInvalve();
+        $this->safework = new SafeWork();
+        $this->precaution = new Precaution();
+        $this->checklist = new Checklist();
     }
 
     public function index(Request $request)
@@ -125,19 +141,17 @@ class SafetyPermitController extends Controller
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $typeofwork = $this->typeofwork->gettypework();
 
-            $getprotectiveequipment = $this->typeofworkchecklist->getprotectiveequipment(1, 'type1');
-            $getequipmentinvolved = $this->typeofworkchecklist->getequipmentinvolved(1, 'type2');
-            $getprecaution = $this->typeofworkchecklist->getprecaution(1, 'type3');
-            $getchecklist = $this->typeofworkchecklist->getchecklist(1, 'type4');
-            $getinstruction = $this->typeofworkchecklist->getinstruction(1, 'type5');
-
+            $getprotectiveequipment = $this->protective->selectchecklist();
+            $getequipmentinvolved = $this->equipinvalve->selectchecklist();
+            $getinstruction = $this->safework->selectchecklist();
+            $getprecaution = $this->precaution->selectchecklist();
+            $getchecklist = $this->checklist->selectchecklist();
             $data = array(
                 'unitList' => $unitList,
                 'typeofwork' => $typeofwork,
                 'getprotectiveequipment' => $getprotectiveequipment,
                 'getequipmentinvolved' => $getequipmentinvolved,
                 'getprecaution' => $getprecaution,
-                'typeofwork' => $typeofwork,
                 'getchecklist' => $getchecklist,
                 'getinstruction' => $getinstruction,
             );
@@ -152,99 +166,14 @@ class SafetyPermitController extends Controller
 
 
         try {
-            $rules = [
-                'permit_id' => 'required',
-                'permit_type' => 'required',
-                'location' => 'required',
-                'sub_permit' => 'required',
-                'desc_work' => 'required',
-                'unit' => 'required',
-                'workers' => 'required',
-                'types_hotwork' => 'required',
-                'risk_assess_no' => 'required',
-                'flames_spark' => 'required',
-                'work_from_time' => 'required',
-                'work_to_time' => 'required',
-                'permit_checklist1' => 'required',
-                'cil_cont_name' => 'required',
-                'cil_cont_upload' => 'required',
-                'company_name' => 'required',
-                'cil_cont_time' => 'required',
-
-            ];
-            $messages = [
-                'permit_id.required' => __('ptw.permit_id_is_required'),
-                'permit_type.required' => __('ptw.permit_type_is_required'),
-                'location.required' => __('ptw.location_is_required'),
-                'sub_permit.required' => __('ptw.sub_permit_is_required'),
-                'desc_work.required' => __('ptw.brief_description_of_work_is_required'),
-                'unit.required' => __('ptw.unit_location_is_required'),
-                'workers.required' => __('ptw.no_of_workers_is_required'),
-                'types_hotwork.required' => __('ptw.types_of_hot_work_is_required'),
-                'risk_assess_no.required' => __('ptw.risk_assessment_form_no_is_required'),
-                'flames_spark.required' => __('ptw.flames_sparks_producing_equipment_is_required'),
-                'work_from_time.required' => __('ptw.period_of_work_from_time_is_required'),
-                'work_to_time.required' => __('ptw.period_of_work_to_time_is_required'),
-                'permit_checklist1.required' => __('ptw.permit_checklist_required'),
-                'cil_cont_name.required' => __('ptw.cil_contractor_name_is_required'),
-                'cil_cont_upload.required' => __('ptw.signature_is_required'),
-                'company_name.required' => __('ptw.contractor_company_name_is_required'),
-                'cil_cont_time.required' => __('ptw.time_is_required'),
-
-            ];
-
-
+            
             try {
 
+                $ptw_hot_cold = $this->safetypermit->store();
+                
+                Session::flash('success', __('ptw.hot_work_permit_submitted_successfully'));
 
-                $permit_status = null;
-                if ($request->has('submit')) {
-
-                    $permit_status = 2;
-                } else {
-                    $permit_status = 1;
-                }
-                $ptw_hot_cold = $this->safetypermit->store($permit_status);
-                $id = $ptw_hot_cold->id;
-                $this->permitchecklist->store($id);
-                $this->file->store($ptw_hot_cold);
-
-
-                $subPermit = '';
-                $subpermitDetails = $ptw_hot_cold->sub_permit;
-
-                if ($subpermitDetails != null && $subpermitDetails != '') {
-                    $subpermitArray = $this->safetypermitsubpermit->store($ptw_hot_cold->id, string_to_array($subpermitDetails));
-                    $subPermit = $subpermitArray->sub_permit_id;
-                }
-
-                if ($subPermit == '') {
-                    sendNotificationGeneral($ptw_hot_cold);
-                }
-                if ($subPermit != '') {
-                    switch ($subPermit) {
-                        case 1:
-                            $redirectLink = 'ptw/confined_permit/add/';
-                            break;
-                        case 2:
-                            $redirectLink = 'ptw/lift_permit/add/';
-                            break;
-                        case 3:
-                            $redirectLink = 'ptw/wah/add/';
-                            break;
-                        default:
-                            $redirectLink = 'ptw/hotwork_permit/list/';
-                            Session::flash('success', __('ptw.hot_work_permit_submitted_successfully'));
-                            break;
-                    }
-                    $ptwId = $ptw_hot_cold->id;
-                    $redirectLink = $redirectLink . encryptId($ptwId);
-                } else {
-                    $redirectLink = 'ptw/hotwork_permit/list/';
-                    Session::flash('success', __('ptw.hot_work_permit_submitted_successfully'));
-                }
-
-                return redirect(admin_url($redirectLink));
+                return redirect(admin_url('safetypermit/list'));
             } catch (Exception $ex) {
                 dd($ex);
                 Session::flash('error', __('common.message_error'));
@@ -1021,41 +950,49 @@ class SafetyPermitController extends Controller
 
     public function getprotectivechecklist($workId)
     {
-
-      
         $checkpoints = $this->typeofworkchecklist->getprotectiveequipment($workId, 'type1');
         return response()->json($checkpoints);
     }
     public function getequipmentinvolved($workId)
     {
-
-      
         $getequipmentinvolved = $this->typeofworkchecklist->getequipmentinvolved($workId, 'type2');
         return response()->json($getequipmentinvolved);
     }
     public function getprecaution($workId)
     {
-
-      
         $getprecaution = $this->typeofworkchecklist->getprecaution($workId, 'type3');
         return response()->json($getprecaution);
     }
-    
+
     public function getchecklist($workId)
     {
 
-      
         $getchecklist = $this->typeofworkchecklist->getchecklist($workId, 'type4');
         return response()->json($getchecklist);
     }
 
     public function getinstruction($workId)
     {
-
-      
-    
         $getinstruction = $this->typeofworkchecklist->getinstruction($workId, 'type5');
         return response()->json($getinstruction);
     }
-    
+
+    public function employeename(Request $request)
+    {
+        $name = $request->input('search');
+
+        $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+        return response()->json(
+            $employees->map(function ($employee) {
+                return [
+                    'id' => $employee->id,
+                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+                ];
+            })
+        );
+    }
 }
