@@ -296,6 +296,10 @@ class Department extends Model
         return $data;
     }
 
+    public function getdepartment(){
+        return Department::where('trash','NO')->where('status','!=',0)->get();
+    }
+
 
     protected static function booted()
     {

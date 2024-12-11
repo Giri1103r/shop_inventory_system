@@ -34,6 +34,8 @@
                                         @csrf
                                         <input type="hidden" name="unit" id="unit"
                                             value="{{ $userData->unit_id }}">
+                                            <input type="hidden" name="company" id="company"
+                                            value="{{ $userData->company_id }}">
                                         <hr>
                                         <div class="row">
                                             <div class="col-md-4 mb-3">
@@ -203,8 +205,17 @@
                 },
                 errorElement: 'div',
                 errorPlacement: function(error, element) {
-                    var errorDiv = element.siblings('div.text-danger');
-                    errorDiv.html(error);
+                    if (element.attr("name") == "from_date") {
+                        error.appendTo("#from_date_error");
+                    } else if (element.attr("name") == "to_date") {
+                        error.appendTo("#to_date_error");
+                    } else if (element.attr("name") == "reason") {
+                        error.appendTo("#reason_error");
+                    } else if (element.attr("name") == "checkbox") {
+                        error.appendTo("#checkbox_error");
+                    } else {
+                        error.appendTo(element.siblings('div.text-danger'));
+                    }
                 },
                 highlight: function(element, errorClass, validClass) {
                     $(element).addClass('is-invalid');
@@ -229,6 +240,7 @@
             $.validator.addMethod("regex", function(value, element, regexp) {
                 return this.optional(element) || regexp.test(value);
             }, "Please check your input.");
+
         });
     </script>
 @endpush

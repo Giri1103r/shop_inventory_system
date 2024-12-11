@@ -36,6 +36,8 @@
                                         <input type="hidden" name="id" value="{{ $encryptid }}">
                                         <input type="hidden" name="unit" id="unit"
                                             value="{{ $userData->unit_id }}">
+                                            <input type="hidden" name="company" id="company"
+                                            value="{{ $userData->company_id }}">
                                         <hr>
                                         <div class="row">
                                             <div class="col-md-4 mb-3">

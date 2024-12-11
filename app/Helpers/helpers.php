@@ -1297,6 +1297,21 @@ if (!function_exists('getMonth')) {
             }
         }
     }
+
+    if (!function_exists('getCompanyname')) {
+
+        function getCompanyname($userid)
+        {
+
+            $company_name = DB::table('company_management')->select('company_name')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($company_name == null) {
+                return '';
+            } else {
+                return $company_name->company_name;
+            }
+        }
+    }
     if (!function_exists('getStatus')) {
 
         function getStatus($userid)

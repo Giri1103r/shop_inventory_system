@@ -59,6 +59,12 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Company') }}</label>
+                                        <div class="view_data">
+                                            {{ getCompanyname(isset($ppeexemption->company) ? $ppeexemption->company : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('From Date') }}</label>
                                         <div class="view_data">
                                             {{ isset($ppeexemption->from_date) ? $ppeexemption->from_date : '' }}

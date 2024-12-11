@@ -11,7 +11,10 @@ use App\Http\Controllers\Controller;
 use App\Mail\PpeExemptionEmail;
 use App\Mail\PpeExemptionRejectEmail;
 use App\Mail\PpeExemptionRequestorEmail;
+use App\Models\Master\Company;
+use App\Models\Master\Department;
 use App\Models\Master\PpeExemption;
+use App\Models\Master\Unit;
 use App\Models\Statuslog;
 use App\Models\User;
 use Exception;
@@ -31,7 +34,10 @@ class PpeExemptionController extends Controller
     private $user;
     private $pperequest;
     private $ppestatus;
+    private $department;
+    private $unit;
     private $employee;
+    private $company;
     private $uploadlog;
 
     public function __construct()
@@ -42,6 +48,10 @@ class PpeExemptionController extends Controller
         $this->pperequest = new PpeRequest();
         $this->ppestatus = new Statuslog();
         $this->employee = new Employee();
+        $this->department = new Department();
+        $this->unit = new Unit();
+        $this->company = new Company();
+
     }
     public function index(Request $request)
     {
@@ -111,7 +121,17 @@ class PpeExemptionController extends Controller
             }
         }
 
-        return view('ppemanagement.ppeexemption.list');
+        $department = $this->department->getdepartment();
+        $unit = $this->unit->getunit();
+        $company = $this->company->getcompany();
+
+
+        $data = [
+            'department' => $department,
+            'unit' => $unit,
+            'company'=>$company
+        ];
+        return view('ppemanagement.ppeexemption.list',$data);
     }
 
 
@@ -523,6 +543,7 @@ class PpeExemptionController extends Controller
                 __('Emp Name'),
                 __("Department"),
                 __("Unit"),
+                __("Company"),
                 __("From Date"),
                 __("To Date"),
                 __("Reason"),
@@ -545,6 +566,7 @@ class PpeExemptionController extends Controller
                 $export[] =  $data->emp_name;
                 $export[] = getDepartment($data->department);
                 $export[] =  getUnitname($data->unit);
+                $export[] =  getcompanyname($data->company);
                 $export[] =  Displaydateformat($data->from_date);
                 $export[] =  Displaydateformat($data->to_date);
                 $export[] =  $data->reason;
@@ -601,6 +623,7 @@ class PpeExemptionController extends Controller
                 __('Emp Name'),
                 __("Department"),
                 __("Unit"),
+                __("Company"),
                 __("From Date"),
                 __("To Date"),
                 __("Reason"),
@@ -644,8 +667,8 @@ class PpeExemptionController extends Controller
             $filename = "PPE Exemption.pdf";
             $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
-            report($ex);
-            report($ex);
+
+            dd($ex);
         }
     }
 }
