@@ -242,6 +242,8 @@ class TypeofWorkController extends Controller
     {
         try {
             $id = decryptId($request->id);
+
+            // dd($id);
             $typeofwork = $this->typeofwork->selectone($id);
             $protectivequip_checklist = $this->protective->selectchecklist();
             $equipinvalve_checklist = $this->equipinvalve->selectchecklist();
@@ -249,11 +251,13 @@ class TypeofWorkController extends Controller
             $precaution_checklist = $this->precaution->selectchecklist();
             $equipchecklist_checklist = $this->checklist->selectchecklist();
             $file = $this->typeofworkupload->where('typeofwork_id', $id)->first();
-
+            // dd($precaution_checklist);
 
             $protective = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type1')->get()->KeyBy('check_points');
             $equipment = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type2')->get()->KeyBy('check_points');
             $manual = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type3')->get()->KeyBy('check_points');
+
+            // dd($manual);
             $check = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type4')->get()->KeyBy('check_points');
             $instruction = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type5')->get()->KeyBy('check_points');
 

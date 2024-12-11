@@ -108,10 +108,14 @@
                                                     <div class="row g-3">
                                                         @foreach ($typeofwork as $work)
                                                             <div class="col-12 col-md-4 d-flex align-items-center gap-2">
-                                                                <input type="hidden" name="protective_equip" id="protective_equip" value="{{ $work->id }}">
-                                                                <input type="checkbox" class="work-type-checkbox" data-id="{{ $work->id }}">
+                                                                <input type="hidden" name="protective_equip[]"
+                                                                    value="{{ $work->id }}">
+                                                                <input type="checkbox" class="work-type-checkbox"
+                                                                    data-id="{{ $work->id }}">
                                                                 <a href="{{ asset($work->file_path) }}" target="_blank">
-                                                                    <img src="{{ asset($work->file_path) }}" alt="Image" class="img-fluid" style="max-width: 50px; object-fit: cover;">
+                                                                    <img src="{{ asset($work->file_path) }}" alt="Image"
+                                                                        class="img-fluid"
+                                                                        style="max-width: 50px; object-fit: cover;">
                                                                 </a>
                                                                 <span>{{ $work->work_name }}</span>
                                                             </div>
@@ -120,7 +124,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                
 
                                         <div class="row mb-3 ">
                                             <div class="col-12">
@@ -378,7 +381,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="row g-3">
+                                                    <div id="getprotectivechecklist-container" class="row g-3 mt-3">
                                                         {{-- @foreach ($getprotectiveequipment as $getprotectiveequipment)
                                                             <div
                                                                 class="col-12 col-md-6 col-lg-4 d-flex align-items-center gap-2">
@@ -388,9 +391,7 @@
                                                             </div>
                                                         @endforeach --}}
 
-                                                        <div id="checkpoints-container" class="row g-3 mt-3">
-                                                            <!-- Checkpoints will be loaded here -->
-                                                        </div>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -455,15 +456,16 @@
                                                         </div>
 
                                                         <div class="col-md-5">
-                                                            <div class="row row-cols-2 g-3">
-                                                                @foreach ($getequipmentinvolved as $getequipmentinvolved)
+                                                            {{-- <div class="row row-cols-2 g-3"> --}}
+                                                            <div id="getequipmentinvolved-container" class="row g-3 mt-3">
+                                                                {{-- @foreach ($getequipmentinvolved as $getequipmentinvolved)
                                                                     <div class="d-flex align-items-center gap-2">
                                                                         <input type="checkbox" id="select-all"
                                                                             class="form-check-input">
                                                                         <label for="select-all"
                                                                             class="form-check-label">{{ $getequipmentinvolved->equip_involve }}</label>
                                                                     </div>
-                                                                @endforeach
+                                                                @endforeach --}}
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3">
@@ -485,15 +487,15 @@
                                             <div class="col-12 p-2">
 
                                                 <div class="card p-3  rounded m-2">
-                                                    <div class="row g-3">
-                                                        @foreach ($getprecaution as $getprecaution)
+                                                    <div id="getprecaution-container" class="row g-3 mt-3">
+                                                        {{-- @foreach ($getprecaution as $getprecaution)
                                                             <div class="col-12 col-md-12 d-flex align-items-center gap-2">
                                                                 <input type="checkbox" id="select-all"
                                                                     class="validate-radio-required">
 
                                                                 <label>{{ $getprecaution->precaution }}</label>
                                                             </div>
-                                                        @endforeach
+                                                        @endforeach --}}
                                                     </div>
                                                 </div>
                                             </div>
@@ -506,15 +508,15 @@
                                             <div class="col-12 p-2">
 
                                                 <div class="card p-3 rounded m-2">
-                                                    <div class="row g-3">
-                                                        @foreach ($getchecklist as $getchecklist)
+                                                    <div id="getchecklist-container" class="row g-3 mt-3">
+                                                        {{-- @foreach ($getchecklist as $getchecklist)
                                                             <div class="col-12 col-md-12 d-flex align-items-center gap-2">
                                                                 <input type="checkbox" id="select-all"
                                                                     class="validate-radio-required">
 
                                                                 <label>{{ $getchecklist->checklist }}</label>
                                                             </div>
-                                                        @endforeach
+                                                        @endforeach --}}
                                                     </div>
                                                 </div>
                                             </div>
@@ -539,15 +541,15 @@
                                         <div class="row" style="background: #d6f5e0b0;">
                                             <div class="col-12 p-2">
                                                 <div class="card p-3  rounded m-2">
-                                                    <div class="row g-3">
-                                                        @foreach ($getinstruction as $getinstruction)
+                                                    <div id="getinstruction-container" class="row g-3 mt-3">
+                                                        {{-- @foreach ($getinstruction as $getinstruction)
                                                             <div class="col-12 col-md-12 d-flex align-items-center gap-2">
                                                                 <input type="checkbox" id="select-all"
                                                                     class="validate-radio-required">
 
                                                                 <label>{{ $getinstruction->safe_work }}</label>
                                                             </div>
-                                                        @endforeach
+                                                        @endforeach --}}
                                                     </div>
                                                 </div>
                                             </div>
@@ -645,7 +647,7 @@
                                             </div>
 
                                         </div>
-                                        <div class="card-body">
+                                        {{-- <div class="card-body">
                                             <div class="table-responsive">
                                                 <table id="datatable-list"
                                                     class="table primary-table-bordered table-bordered table-striped display responsive nowrap w-100 mt-2 datatable-list">
@@ -661,7 +663,7 @@
                                                     <tbody></tbody>
                                                 </table>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <div class="row mt-2">
                                             <div class="col-12 col-md-6">
                                                 <div class="p-3 mb-1">
@@ -914,7 +916,7 @@
                 },
 
                 ajax: {
-                    url: "{{ admin_url('uploadlog/list/' . request()->logid) }}",
+                    url: "{{ admin_url('uploadlog/list') }}",
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -993,36 +995,201 @@
 
         });
 
+        $(document).ready(function () {
+    const displayedEquipments = new Set(); // Set to store unique protective equipment
+
+    $('.work-type-checkbox').on('change', function () {
+        const workId = $(this).data('id');
+        const container = $('#getprotectivechecklist-container');
+
+        if ($(this).is(':checked')) {
+            // Fetch protective equipment for the selected work
+            $.ajax({
+                url: "{{ admin_url('safetypermit/getprotectivechecklist') }}/" + workId,
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    let checkpointsHtml = '';
+
+                    data.forEach(function (item) {
+                        // Check if the protective equipment has already been displayed
+                        if (!displayedEquipments.has(item.protective_equip)) {
+                            // If not, add it to the set and create the HTML for this equipment
+                            displayedEquipments.add(item.protective_equip);
+                            checkpointsHtml += `
+                                <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-id="${item.id}">
+                                    <input type="checkbox" class="validate-radio-required" id="checkpoint-${workId}-${item.id}">
+                                    <label for="checkpoint-${workId}-${item.id}">${item.protective_equip}</label>
+                                </div>`;
+                        }
+                    });
+
+                    // Append the new equipment (only unique) to the container
+                    if (checkpointsHtml) {
+                        container.append(checkpointsHtml);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                },
+            });
+        } else {
+            // Remove the protective equipment when the checkbox is unchecked
+            container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
+        }
+    });
+});
 
         $(document).ready(function() {
             $('.work-type-checkbox').on('change', function() {
+
                 const workId = $(this).data('id');
-                const container = $('#checkpoints-container');
+                const container = $('#getequipmentinvolved-container');
 
                 if ($(this).is(':checked')) {
+
                     $.ajax({
-                        url: `/get-checkpoints/${workId}`,
-                        url: "{{ admin_url('safetypermit/getprotectivechecklist/.${workId}') }}",
+                        url: "{{ admin_url('safetypermit/getequipmentinvolved') }}/" + workId,
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
-                            let checkpointsHtml = '';
+                            let checkpointsHtml = `
+                          <div class="row checkpoints-group" data-work-id="${workId}">`;
                             data.forEach(function(item) {
                                 checkpointsHtml += `
-                            <div class="col-12 col-md-6 col-lg-4 d-flex align-items-center gap-2" data-work-id="${workId}">
-                                <input type="checkbox" class="validate-radio-required">
-                                <label>${item.protective_equip}</label>
+                            <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2">
+                                <input type="checkbox" class="validate-radio-required" id="checkpoint-${workId}-${item.id}">
+                                <label for="checkpoint-${workId}-${item.id}">${item.equip_involve}</label>
                             </div>`;
                             });
+
+                            checkpointsHtml += '</div>';
+
                             container.append(checkpointsHtml);
                         },
                         error: function(xhr, status, error) {
                             console.error('Error:', error);
-                        }
+                        },
                     });
+
                 } else {
-                    // Remove checkpoints if unchecked
-                    container.find(`[data-work-id="${workId}"]`).remove();
+
+                    container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
+                }
+            });
+        });
+
+        $(document).ready(function() {
+            $('.work-type-checkbox').on('change', function() {
+
+                const workId = $(this).data('id');
+                const container = $('#getprecaution-container');
+
+                if ($(this).is(':checked')) {
+
+                    $.ajax({
+                        url: "{{ admin_url('safetypermit/getprecaution') }}/" + workId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            let checkpointsHtml = `
+                          <div class="row checkpoints-group" data-work-id="${workId}">`;
+                            data.forEach(function(item) {
+                                checkpointsHtml += `
+                            <div class="col-12 col-md-12 col-lg-12 d-flex align-items-center gap-2">
+                                <input type="checkbox" class="validate-radio-required" id="checkpoint-${workId}-${item.id}">
+                                <label for="checkpoint-${workId}-${item.id}">${item.precaution}</label>
+                            </div>`;
+                            });
+
+                            checkpointsHtml += '</div>';
+
+                            container.append(checkpointsHtml);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error:', error);
+                        },
+                    });
+
+                } else {
+
+                    container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
+                }
+            });
+        });
+        $(document).ready(function() {
+            $('.work-type-checkbox').on('change', function() {
+
+                const workId = $(this).data('id');
+                const container = $('#getchecklist-container');
+
+                if ($(this).is(':checked')) {
+
+                    $.ajax({
+                        url: "{{ admin_url('safetypermit/getchecklist') }}/" + workId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            let checkpointsHtml = `
+                          <div class="row checkpoints-group" data-work-id="${workId}">`;
+                            data.forEach(function(item) {
+                                checkpointsHtml += `
+                            <div class="col-12 col-md-12 col-lg-12 d-flex align-items-center gap-2">
+                                <input type="checkbox" class="validate-radio-required" id="checkpoint-${workId}-${item.id}">
+                                <label for="checkpoint-${workId}-${item.id}">${item.checklist}</label>
+                            </div>`;
+                            });
+
+                            checkpointsHtml += '</div>';
+
+                            container.append(checkpointsHtml);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error:', error);
+                        },
+                    });
+
+                } else {
+
+                    container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
+                }
+            });
+        });
+        $(document).ready(function() {
+            $('.work-type-checkbox').on('change', function() {
+
+                const workId = $(this).data('id');
+                const container = $('#getinstruction-container');
+
+                if ($(this).is(':checked')) {
+
+                    $.ajax({
+                        url: "{{ admin_url('safetypermit/getinstruction') }}/" + workId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            let checkpointsHtml = `
+                          <div class="row checkpoints-group" data-work-id="${workId}">`;
+                            data.forEach(function(item) {
+                                checkpointsHtml += `
+                            <div class="col-12 col-md-12 col-lg-12 d-flex align-items-center gap-2">
+                                <input type="checkbox" class="validate-radio-required" id="checkpoint-${workId}-${item.id}">
+                                <label for="checkpoint-${workId}-${item.id}">${item.safe_work}</label>
+                            </div>`;
+                            });
+
+                            checkpointsHtml += '</div>';
+
+                            container.append(checkpointsHtml);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error:', error);
+                        },
+                    });
+
+                } else {
+
+                    container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
                 }
             });
         });

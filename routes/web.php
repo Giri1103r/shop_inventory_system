@@ -573,7 +573,11 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/edit/submit', [SafetyPermitController::class, 'update']);
                 Route::get('/export/excel', [SafetyPermitController::class, 'exportExcel']);
                 Route::get('/export/pdf', [SafetyPermitController::class, 'exportPdf']);
-                Route::get('/getprotectivechecklist/{unit_id}/{id}', [SafetyPermitController::class, 'list']);
+                Route::get('/getprotectivechecklist/{workId}', [SafetyPermitController::class, 'getprotectivechecklist']);
+                Route::get('/getequipmentinvolved/{workId}', [SafetyPermitController::class, 'getequipmentinvolved']);
+                Route::get('/getprecaution/{workId}', [SafetyPermitController::class, 'getprecaution']);
+                Route::get('/getchecklist/{workId}', [SafetyPermitController::class, 'getchecklist']);
+                Route::get('/getinstruction/{workId}', [SafetyPermitController::class, 'getinstruction']);
 
      
             });
