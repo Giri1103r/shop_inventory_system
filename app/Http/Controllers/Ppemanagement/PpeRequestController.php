@@ -51,7 +51,6 @@ class PpeRequestController extends Controller
         $this->user = new User();
         $this->ppestock = new PpeStockinventory();
         $this->ppestatus = new Statuslog();
-
     }
     public function index(Request $request)
     {
@@ -104,8 +103,7 @@ class PpeRequestController extends Controller
                                 $text = "<span class='badge bg-success'>EHS Approved</span>";
                             } else if ($row->approve_status == STATUS_HOD_REJECTED) {
                                 $text = "<span class='badge bg-danger '>HOD Rejected</span>";
-                            }
-                            else if ($row->ehs_approve_status == STATUS_EHS_REJECTED) {
+                            } else if ($row->ehs_approve_status == STATUS_EHS_REJECTED) {
                                 $text = "<span class='badge bg-danger '>EHS  Rejected</span>";
                             }
                             return $text;
@@ -113,20 +111,19 @@ class PpeRequestController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             if (CheckUserPermission('view')) {
-                            $btn .= '<a href="' . admin_url('ppe_request/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ppe_request/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             }
-                            if (CheckUserPermission('edit')  ) {
-                            $btn .= '<a href="' . admin_url('ppe_request/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
-
+                            if (CheckUserPermission('edit')) {
+                                $btn .= '<a href="' . admin_url('ppe_request/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
 
                             if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_HOD)) && $row->approve_status == STATUS_HOD_APPROVAL_PENDING) {
-                            $btn .= '<a href="' . admin_url('ppe_request/hodapproval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ppe_request/hodapproval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
                             }
 
                             if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) && $row->approve_status == STATUS_HOD_APPROVED && $row->ehs_approve_status == STATUS_EHS_APPROVAL_PENDING) {
-                            $btn .= '<a href="' . admin_url('ppe_request/ehsapproval/view/' . encryptId($row->id)) . '" class="" title="EhsApproval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ppe_request/ehsapproval/view/' . encryptId($row->id)) . '" class="" title="EhsApproval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
                             }
                             return $btn;
                         })
@@ -158,13 +155,15 @@ class PpeRequestController extends Controller
 
     public function add(Request $request)
     {
-        $employee = $this->employee->getEmployeedata();
+        $employee = $this->user->getEmployeedata();
         $ppetypedata = $this->ppetype->getPpetypedata();
         $ppetypemaster = $this->ppetypemaster->getppetypemaster();
+        $userdata = $this->pperequest->userdata();
         $data = [
             'employee' => $employee,
             'ppetypedata' => $ppetypedata,
             'ppetypemaster' => $ppetypemaster,
+            'userdata' => $userdata
 
         ];
         return view('ppemanagement.pperequest.add', $data);
@@ -174,14 +173,18 @@ class PpeRequestController extends Controller
     {
         try {
             $rules = [
+                'item_code'=>'required',
                 'ppe_type' => 'required',
                 'ppe_name' => 'required',
+
+            ];
+            $messages = [
+                'item_code.required' => __('Item Code is required'),
+                'ppe_name.required' => __('PPE Name is required'),
+                'ppe_type.required' => __('PPE Type  is required'),
+
             ];
 
-            $messages = [
-                'ppe_name.required' => __('PPE Name is required'),
-                'ppe_type.required' => __('PPE Type is required'),
-            ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
@@ -224,6 +227,8 @@ class PpeRequestController extends Controller
             try {
                 $pperequest = $this->pperequest->store();
 
+
+
                 // Mail
                 $id = $pperequest->id;
                 $departmentId = $pperequest->department;
@@ -234,6 +239,8 @@ class PpeRequestController extends Controller
                     'emp_id' => $pperequest->emp_id,
                     'department' => $pperequest->department,
                     'item_code' => $pperequest->item_code,
+                    'remarks' => $pperequest->employee_reason,
+
                     'approve_link' => url('ppe_request/hodapproval/view/' . encryptID($id)),
                     'reject_link' => url('ppe_request/hodapproval/view/' . encryptID($id))
                 ];
@@ -270,6 +277,7 @@ class PpeRequestController extends Controller
                 return redirect(admin_url('ppe_request/list'));
             }
         } catch (Exception $ex) {
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }
@@ -284,16 +292,13 @@ class PpeRequestController extends Controller
             if (Auth::check()) {
                 $pperequest = $this->pperequest->selectOne($id);
             }
-
+            $userdata = $this->pperequest->userdata();
+            $ppestatuslog = $this->ppestatus->getstatusdetails($id);
             $data = [
                 'pperequest' =>  $pperequest,
                 'encryptid' => $request->id,
-                'hodapprovalpending'=>STATUS_HOD_APPROVAL_PENDING,
-                'hodapproved'=>STATUS_HOD_APPROVED,
-                'hodrejected'=>STATUS_HOD_REJECTED,
-                'ehsapprovalpending'=>STATUS_EHS_APPROVAL_PENDING,
-                'ehsapproved'=>STATUS_EHS_APPROVED,
-                'ehsrejected'=>STATUS_EHS_REJECTED,
+                'userdata' => $userdata,
+                'ppestatuslog' => $ppestatuslog
             ];
             return view('ppemanagement.pperequest.view', $data);
         } catch (Exception $ex) {
@@ -310,7 +315,7 @@ class PpeRequestController extends Controller
                 $pperequest = $this->pperequest->selectOne($id);
             }
             $hodstatus = STATUS_HOD_APPROVAL_PENDING;
-            $status = $pperequest->approve_status  ;
+            $status = $pperequest->approve_status;
             if ($status !=  $hodstatus) {
                 return redirect(admin_url('ppe_request/view/' . encryptId($id)));
             }
@@ -366,7 +371,7 @@ class PpeRequestController extends Controller
                 $updateData['ehs_approved_by'] = Auth::id();
             }
 
-            $statuslog = $this->ppestatus->store($updateData,$empDetails);
+            $statuslog = $this->ppestatus->store($updateData, $empDetails);
             $empDetails->updateapproval($updateData, $id);
             $details = [
                 'emp_id' => $empDetails->emp_id,
@@ -400,7 +405,7 @@ class PpeRequestController extends Controller
                     'notification_message' => $message,
                     'mobile_notification' => json_encode([
                         'title' => $message,
-                        'message' => getUsername($updateData['approved_by']) . " has {$updateData['approve_status']} a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
+                       'message' => getUsername($updateData['approved_by']) . " has " . getStatus($updateData['approve_status']) . " a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
                         'icon' => $img,
                         'module' => 1,
                     ]),
@@ -520,7 +525,7 @@ class PpeRequestController extends Controller
             if ($action == 'approve' || $action == 'reject') {
                 $updateEhsData['status'] = 0;
             }
-            $statuslog= $this->ppestatus->storeEhsStatus($updateEhsData,$empDetails);
+            $statuslog = $this->ppestatus->storeEhsStatus($updateEhsData, $empDetails);
             $empDetails->updateehsapproval($updateEhsData, $id);
             $details = [
                 'emp_id' => $empDetails->emp_id,
@@ -548,7 +553,7 @@ class PpeRequestController extends Controller
                         'department' => $empDetails->department,
                         'approved_by' => $empDetails->approved_by,
                         'item_code' => $empDetails->item_code,
-                        'approve_link' => url('ppe_request/smapproval/submit/'. $empDetails->item_code  . '/approve'),
+                        'approve_link' => url('ppe_request/smapproval/submit/' . $empDetails->item_code  . '/approve'),
                     ];
                     Mail::to($storemanager)->send(new PpeRequestStoremanagerEmail($details));
                 }
@@ -568,7 +573,7 @@ class PpeRequestController extends Controller
                     'notification_message' => $message,
                     'mobile_notification' => json_encode([
                         'title' => $message,
-                        'message' => getUsername($updateEhsData['ehs_approved_by']) . " has {$updateEhsData['ehs_approve_status']} a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
+                        'message' => getUsername($updateEhsData['ehs_approved_by']) . " has" . getStatus($updateEhsData['ehs_approve_status']) ." a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
                         'icon' => $img,
                         'module' => 1,
                     ]),
@@ -577,8 +582,6 @@ class PpeRequestController extends Controller
                 ];
 
                 notificationSave($notificationData);
-
-
             } else {
                 Mail::to($requestor)->send(new PpeRequestEhsRejectEmail($details));
 
@@ -594,7 +597,7 @@ class PpeRequestController extends Controller
                     'notification_message' => $message,
                     'mobile_notification' => json_encode([
                         'title' => $message,
-                        'message' => getUsername($updateEhsData['ehs_approved_by']) . " has {$updateEhsData['ehs_approve_status']} a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
+                        'message' => getUsername($updateEhsData['ehs_approved_by']) . " has". getStatus($updateEhsData['ehs_approve_status'])." a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
                         'icon' => $img,
                         'module' => 1,
                     ]),
@@ -616,35 +619,24 @@ class PpeRequestController extends Controller
 
 
 
-    public function smapproval(Request $request ,$itemCode , $action){
-       if($action == 'approve'){
+    public function smapproval(Request $request, $itemCode, $action)
+    {
+        if ($action == 'approve') {
             $quantity = $this->ppestock->getquantity($itemCode, $action);
-            Session::flash('success','Approved Successfully');
+            Session::flash('success', 'Approved Successfully');
             return redirect('ppe_stock_inventory/list');
-       }else{
-        Session::flash('error','Something went Wrong Please try again after some time');
-        return redirect('ppe_stock_inventory/list');
-       }
-
+        } else {
+            Session::flash('error', 'Something went Wrong Please try again after some time');
+            return redirect('ppe_stock_inventory/list');
+        }
     }
-
-    public function statuslog($id){
-        $id = decryptId($id);
-        $ppestatuslog = $this->ppestock->getstatusdetails($id);
-        $data =[
-            'id' => $id,
-            'ppestatuslog'=> $ppestatuslog,
-        ];
-        return view('ppemanagement.pperequest.statuslog',$data);
-    }
-
 
     public function edit(Request $request)
     {
         try {
             $id = decryptId($request->id);
             $pperequest = $this->pperequest->find($id);
-            $employee = $this->employee->getEmployeedata();
+            $employee = $this->user->getEmployeedata();
             $ppetypedata = $this->ppetype->getPpetypedata();
             $ppetypemaster = $this->ppetypemaster->getppetypemaster();
             $data = [
@@ -667,12 +659,13 @@ class PpeRequestController extends Controller
         try {
             $id = decryptId($request->id);
             $rules = [
+                'item_code'=>'required',
                 'ppe_type' => 'required',
                 'ppe_name' => 'required',
 
             ];
             $messages = [
-
+                'item_code.required' => __('Item Code is required'),
                 'ppe_name.required' => __('PPE Name is required'),
                 'ppe_type.required' => __('PPE Type  is required'),
 
@@ -698,6 +691,9 @@ class PpeRequestController extends Controller
                     'emp_name' => $pperequest->emp_name,
                     'emp_id' => $pperequest->emp_id,
                     'department' => $pperequest->department,
+                    'item_code' => $pperequest->item_code,
+                    'remarks' => $pperequest->employee_reason,
+
                     'approve_link' => url('ppe_request/hodapproval/view/' . encryptID($id)),
                     'reject_link' => url('ppe_request/hodapproval/view/' . encryptID($id))
                 ];
@@ -706,10 +702,8 @@ class PpeRequestController extends Controller
                 // Notification
 
                 $message = 'New PPE Request';
-                $departmentId = $pperequest->department;
                 $hodId = $this->user->getdepartmenthodId($departmentId);
                 $img = admin_url('public/assets/images/ppe-management.jpg');
-
 
 
                 $notificationData = [
@@ -718,7 +712,7 @@ class PpeRequestController extends Controller
                     'notification_message' => $message,
                     'mobile_notification' => json_encode([
                         'title' => $message,
-                        'message' => $pperequest->emp_name . ' has updated a PPE request at ' . displaydateformat($pperequest->created_at) . ' on ' . getPpename($pperequest->ppe_name) . ' from ' . getDepartment($pperequest->department) . ' DEPARTMENT ',
+                        'message' => $pperequest->emp_name . ' has a PPE request at ' . displaydateformat($pperequest->created_at) . ' on ' . getPpename($pperequest->ppe_name) . ' from ' . getDepartment($pperequest->department) . ' DEPARTMENT ',
                         'icon' => $img,
                         'module' => 1,
                     ]),
@@ -731,12 +725,11 @@ class PpeRequestController extends Controller
                 Session::flash('success', __('Your data has been updated successfully!'));
                 return redirect(admin_url('ppe_request/list'));
             } catch (Exception $ex) {
-                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
             return redirect(admin_url('ppe_request/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error',  'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }
@@ -813,27 +806,19 @@ class PpeRequestController extends Controller
                 $export[] = getPpename($data->ppe_name);
                 $export[] = getDepartment($data->department);
 
-                if ($data->approve_status == $hodstatus)
-                {
+                if ($data->approve_status == $hodstatus) {
                     $export[] = 'User Applied For Approval';
-                }
-                else
-                {
+                } else {
                     $export[] = $data->approve_msg ? $data->approve_msg : 'Null';
                 }
 
                 $export[] = removeUnderScore(getStatus($data->approve_status));
 
-                if ($data->approve_status == $hodstatus)
-                {
+                if ($data->approve_status == $hodstatus) {
                     $export[] = 'User Applied For  Approval';
-                }
-                else if ($data->ehs_approve_status == $ehsstatus)
-                {
+                } else if ($data->ehs_approve_status == $ehsstatus) {
                     $export[] = 'User Applied For EHS Officer Approval';
-                }
-                else
-                {
+                } else {
                     $export[] = $data->remarks ? $data->remarks : 'Null';
                 }
 

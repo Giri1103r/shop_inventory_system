@@ -134,7 +134,7 @@ class Employee extends Model
             if ($emailExists) {
                 $errorMessage = "Email already exists.";
                 $this->updateErrorStatus($item->emp_id, $errorMessage);
-                continue; 
+                continue;
             }
             $role = DB::table('template_user_role')
                 ->where('role_name', $item->user_role)
@@ -354,10 +354,7 @@ class Employee extends Model
         return $list;
     }
 
-    public function getEmployeedata(){
-        $user = Auth::user()->employee_id;
-        return Employee::select('emp_id','emp_name','department')->where('emp_id',$user)->first();
-    }
+   
 
     public function getEmployeefulldata(){
         return Employee::all();

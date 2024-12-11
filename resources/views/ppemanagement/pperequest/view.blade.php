@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Request Show')
+@section('title', 'PPE Shoe Request Show')
 @section('pageurl', admin_url('ppe_request/list'))
 
 
@@ -29,7 +29,7 @@
                             <div class="card-body ">
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">PPE Request </h4>
+                                        <h4 class="text-white">PPE Shoe Request </h4>
                                     </div>
                                 </div>
 
@@ -70,37 +70,7 @@
                                             {{ getPpeType(isset($pperequest->ppe_type) ? $pperequest->ppe_type : '') }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('HOD Approve Status') }}</label>
-                                        <div class="view_data">
-                                            @if ($pperequest->approve_status == $hodapprovalpending)
-                                                <span class="badge bg-warning">HOD Approval Pending</span>
-                                            @elseif($pperequest->approve_status == $hodapproved)
-                                                <span class="badge bg-success">HOD Approved</span>
-                                            @elseif($pperequest->approve_status == $hodrejected)
-                                                <span class="badge bg-danger">HOD Rejected</span>
-                                            @else
-                                                {{ isset($pperequest->ehs_approve_status) ? $pperequest->ehs_approve_status : '' }}
-                                            @endif
-                                        </div>
 
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('EHS Officer Approve Status') }}</label>
-                                        <div class="view_data">
-                                            @if ($pperequest->ehs_approve_status == $ehsapprovalpending)
-                                                <span class="badge bg-warning">EHS Approval Pending</span>
-                                            @elseif($pperequest->ehs_approve_status == $ehsapproved)
-                                                <span class="badge bg-success">EHS Approved</span>
-                                            @elseif($pperequest->approve_status == $hodrejected)
-                                                <span class="badge bg-danger">HOD Rejected</span>
-                                            @elseif($pperequest->ehs_approve_status == $ehsrejected)
-                                                <span class="badge bg-danger">EHS Rejected</span>
-                                            @else
-                                                {{ isset($pperequest->ehs_approve_status) ? $pperequest->ehs_approve_status : '' }}
-                                            @endif
-                                        </div>
-                                    </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Created By') }}</label>
                                         <div class="view_data">
@@ -125,6 +95,86 @@
                                         </div>
                                     </div>
 
+
+                                </div>
+
+                                <div class="row mt-2">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Previous History</h4>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Employee Name</th>
+                                                <th>Employee Id</th>
+                                                <th>Previous applied Date</th>
+                                                <th>HOD Approve status</th>
+                                                <th>Ehs Approve status</th>
+                                                <th>Remarks</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if ($userdata->isEmpty())
+                                                <tr>
+                                                    <td class="text-center" colspan="6">No data is available</td>
+                                                </tr>
+                                            @else
+                                                @foreach ($userdata as $data)
+                                                    <tr class="hover-row">
+                                                        <td>{{ $data['emp_name'] }}</td>
+                                                        <td>{{ $data['emp_id'] }}</td>
+                                                        <td>{{ displaydateformat($data['created_at']) }}</td>
+                                                        <td>{{ removeUnderScore(getStatus($data['approve_status'])) }}</td>
+                                                        <td>{{ removeUnderScore(getStatus($data['ehs_approve_status'])) }}
+                                                        </td>
+                                                        <td>{{ $data['remarks'] }}</td>
+                                                    </tr>
+                                                @endforeach
+                                            @endif
+                                        </tbody>
+                                    </table>
+
+                                </div>
+
+                                <div class="row mt-2">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Status log</h4>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Status</th>
+                                                <th>Approved By</th>
+                                                <th>Remarks</th>
+                                                <th>Date</th>
+
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            @if ($ppestatuslog->isEmpty())
+                                            <tr>
+                                                <td class="text-center" colspan="5">No data is available</td>
+                                            </tr>
+                                        @else
+                                            @foreach ($ppestatuslog as $log)
+                                                <tr class="hover-row">
+                                                    <td>{{ removeUnderScore(getStatus($log['to_status'])) }}</td>
+                                                    <td>{{getUsername($log['created_by'] ) }}</td>
+                                                  <td>{{$log['remarks']}}</td>
+                                                  <td>{{displaydateformat($log['created_at'])}}</td>
+
+                                                </tr>
+                                            @endforeach
+                                        @endif
+                                        </tbody>
+                                    </table>
 
                                 </div>
                             </div>

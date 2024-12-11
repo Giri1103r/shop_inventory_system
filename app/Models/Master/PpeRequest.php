@@ -24,6 +24,7 @@ class PpeRequest extends Model
         'ppe_type',
         'approve_status',
         'ehs_approve_status',
+        'employee_reason',
         'status',
         'trash',
         'created_by',
@@ -44,6 +45,7 @@ class PpeRequest extends Model
         ->where('ppe_master_ppetypemaster.trash','NO')
         ->where('masters_department.trash','NO')
         ->where('masters_ppetype.trash','NO');
+        
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -51,6 +53,7 @@ class PpeRequest extends Model
         $empId = $user->employee_id;
         $userRole = $user->role;
         $userRole = string_to_array($userRole);
+
 
         if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
         } elseif (in_array(ROLE_HOD, $userRole)) {
@@ -118,10 +121,11 @@ class PpeRequest extends Model
         $insert_array = array(
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
-            'department' => $request->department,
+            'department' => Auth::user()->department_id,
             'item_code'=>$request->item_code,
             'ppe_type' => $request->ppe_type,
             'ppe_name' => $request->ppe_name,
+            'employee_reason' => $request->reason,
             'approve_status' => STATUS_HOD_APPROVAL_PENDING,
             'ehs_approve_status' => STATUS_EHS_APPROVAL_PENDING,
             'created_by' => Auth::id()
@@ -167,10 +171,11 @@ class PpeRequest extends Model
         $update_array = array(
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
-            'department' => $request->department,
+            'department' => Auth::user()->department_id,
             'item_code'=>$request->item_code,
             'ppe_type' => $request->ppe_type,
             'ppe_name' => $request->ppe_name,
+            'employee_reason' => $request->reason,
             'created_by' => Auth::id(),
             'updated_by' => Auth::id()
         );
@@ -261,32 +266,12 @@ class PpeRequest extends Model
     }
 
 
-    // public function quantity()
-    // {
-    //     try {
+    public function userdata()
+    {
+        $userId = Auth::user()->employee_id;
 
-    //         $apiUrl = 'https://vmsapi.karam.in/emp.asmx/GetPPEInventory?TokenId=123&Orgid=86&Item=71160-H';
-
-    //         $response = Http::get($apiUrl);
-
-    //         if ($response->successful()) {
-    //             $data = $response->json();
-
-    //             if (!empty($data)) {
-    //                 $work = $this->worktemp->store($data);
-    //                 return response()->json(['message' => 'Data saved successfully.']);
-    //             } else {
-    //                 return response()->json(['message' => 'No data found in API response.']);
-    //             }
-    //         } else {
-    //             return response()->json(['message' => 'Failed to fetch data from API.', 'status' => $response->status()]);
-    //         }
-    //     } catch (Exception $ex) {
-    //         dd($ex);
-    //         return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
-    //     }
-    // }
-
+        return PpeRequest::where('emp_id',$userId)->where('approve_status', '!=',STATUS_HOD_APPROVAL_PENDING)->where('ehs_approve_status','!=',STATUS_EHS_APPROVAL_PENDING)->get();
+    }
     public function exportdata()
     {
         $request = request();

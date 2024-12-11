@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Request Edit')
+@section('title', 'PPE Shoe Request Edit')
 @section('pageurl', admin_url('ppe_request/list'))
 
 
@@ -53,12 +53,51 @@
                                         action="{{ admin_url('ppe_request/edit/submit') }}">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $encryptid }}">
-                                        <input type="hidden" name="emp_id" id="emp_id" value="{{ $employee->emp_id }}">
-                                        <input type="hidden" name="emp_name" id="emp_name"
-                                            value="{{ $employee->emp_name }}">
-                                        <input type="hidden" name="department" id="department"
-                                            value="{{ $employee->department }}">
+
                                         <div class="row">
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="emp_name" class="form-label require">Employee Name</label>
+                                                    <input type="text" name="emp_name"
+                                                        class="form-control form-control-sm " id="emp_name"
+                                                        value="{{ $employee->name }}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="emp_id" class="form-label require">Employee ID</label>
+                                                    <input type="text" name="emp_id"
+                                                        class="form-control form-control-sm "id="emp_id"
+                                                        value="{{ $employee->employee_id }}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="department" class="form-label require">Department</label>
+                                                    <input type="text" name="department" id="department"
+                                                        class="form-control form-control-sm"
+                                                        value="{{ getDepartment($employee->department_id) }}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Item Code</label>
+                                                    <select name="item_code" id="item_code" style="width: 100%"
+                                                        class="form-select form-select-sm single-select ">
+                                                        <option value="">Select the Item Code</option>
+                                                        @foreach ($ppetypemaster as $itemcode)
+                                                            <option value="{{ $itemcode->item_code }}"
+                                                                @if ($pperequest->item_code == $itemcode->item_code) selected @endif>
+                                                                {{ $itemcode->item_code }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error('ppe_type')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                    <div class="text-danger" id="ppe_type_error"></div>
+                                                </div>
+                                            </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Type</label>
@@ -100,13 +139,15 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input" id="ppe_image">
-
-                                                </div>
+                                            <div class="col-md-12 mb-2">
+                                                <label for="reason" class="form-label require">Reason</label>
+                                                <textarea name="reason" id="reason" cols="3" rows="4" class="form-control form-control-sm"
+                                                    placeholder="Enter the Reason">{{ $pperequest->employee_reason }}</textarea>
+                                                @error('reason')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                                <div class="text-danger" id="reason_error"></div>
                                             </div>
-
-
                                         </div>
                                         <hr>
                                         <div class="submit-button float-end">
@@ -137,31 +178,69 @@
             });
         });
         $(document).ready(function() {
-            $(document).on('change', '#ppe_type', function() {
-                var ppeTypeId = $(this).val();
-                if (ppeTypeId) {
+            $(document).on('change', '#item_code', function() {
+                let PPEtypeId = $(this).val();
+                console.log(PPEtypeId);
+
+                if (PPEtypeId) {
                     $.ajax({
-                        url: "{{ admin_url('ppe_ppetype_master/ajax-list') }}/" + ppeTypeId,
+                        url: "{{ admin_url('ppe_ppetype_master/ajax-list') }}",
                         type: 'GET',
-                        dataType: 'json',
+                        data: {
+                            id: PPEtypeId,
+                            _ts: new Date().getTime()
+                        },
                         success: function(data) {
-
-                            $('#ppe_name').empty().append(
-                                '<option value="">Select PPE Name</option>'
-                            );
-
-
+                            console.log(data);
+                            $('#ppe_type').empty().append(
+                                '<option value="">Select PPE type</option>');
                             $.each(data, function(key, value) {
-                                $('#ppe_name').append('<option value="' + value.id +
-                                    '">' + value.ppe_name + '</option>');
+                                $('#ppe_type').append('<option value="' + value.id +
+                                    '">' + value
+                                    .ppe_type + '</option>');
                             });
+                            $('#ppe_type').trigger('change');
                         },
                         error: function(xhr) {
-                            alert('Error fetching PPE Names. Please try again.');
+                            alert('Error fetching PPE Types. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#ppe_type').empty().append('<option value="">Select PPE Type</option>');
+                    $('#ppe_type').trigger('change');
+                }
+            });
+
+            $(document).on('change', '#ppe_type', function() {
+                let PPEnameId = $(this).val();
+                console.log(PPEnameId);
+
+                if (PPEnameId) {
+                    $.ajax({
+                        url: "{{ admin_url('ppe_ppetype_master/ajax-ppename') }}",
+                        type: 'GET',
+                        data: {
+                            id: PPEnameId,
+                            _ts: new Date().getTime()
+                        },
+                        success: function(data) {
+                            console.log(data);
+                            $('#ppe_name').empty().append(
+                                '<option value="">Select PPE Name</option>');
+                            $.each(data, function(key, value) {
+                                $('#ppe_name').append('<option value="' + value.id +
+                                    '">' + value
+                                    .ppe_name + '</option>');
+                            });
+                            $('#ppe_name').trigger('change');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching PPE names. Please try again.');
                         }
                     });
                 } else {
                     $('#ppe_name').empty().append('<option value="">Select PPE Name</option>');
+                    $('#ppe_name').trigger('change');
                 }
             });
 
@@ -169,20 +248,39 @@
         $(document).ready(function() {
             $('#pperequestedit').validate({
                 rules: {
+                    item_code: {
+                        required: true,
+                    },
                     ppe_name: {
                         required: true,
                     },
                     ppe_type: {
                         required: true,
                     },
+                    reason: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 255,
+                        regex: /^[a-zA-Z0-9\s]+$/
+                    },
                 },
                 messages: {
+
+                    item_code: {
+                        required: "Please Select the Item Code.",
+                    },
 
                     ppe_name: {
                         required: "Please Select the PPE Name.",
                     },
                     ppe_type: {
                         required: "Please Select the PPE Type.",
+                    },
+                    reason: {
+                        required: "Reason cannot be empty.",
+                        minlength: "Reason must contain between 3 and 255 characters.",
+                        maxlength: "Reason must contain between 3 and 255 characters.",
+                        regex: "Reason must contain only letters and numbers."
                     },
                 },
                 errorElement: 'div',

@@ -114,7 +114,7 @@ class PpeExemption extends Model
         $insert_array = [
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
-            'department' => $request->department,
+            'department' => Auth::user()->department_id,
             'unit' => $request->unit,
             'from_date' => $request->from_date,
             'to_date' => $request->to_date,
@@ -132,7 +132,7 @@ class PpeExemption extends Model
         $update_array = [
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
-            'department' => $request->department,
+            'department' => Auth::user()->department_id,
             'unit' => $request->unit,
             'from_date' => $request->from_date,
             'to_date' => $request->to_date,
@@ -145,7 +145,15 @@ class PpeExemption extends Model
         return $this->where('id',$id)->update($update_array);
     }
 
-
+    public function laststatus()
+    {
+        $employeeId = Auth::user()->employee_id;
+        $laststatus = PpeExemption::where('emp_id', $employeeId)
+            ->orderBy('id', 'DESC')
+            ->where('status', '=', 1)
+            ->first();
+        return $laststatus;
+    }
 
     public function statuschange($id)
     {

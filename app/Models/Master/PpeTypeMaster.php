@@ -292,6 +292,7 @@ class PpeTypeMaster extends Model
     {
         return PpeTypeMaster::all();
     }
+  
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('ppe_master_ppetypemaster'));
