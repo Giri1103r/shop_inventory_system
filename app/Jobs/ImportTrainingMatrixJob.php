@@ -70,15 +70,15 @@ class ImportTrainingMatrixJob
             ->update($update_array);
 
         $xlsx = SimpleXLSX::parse($this->details['path']);
-        // dd($xlsx);
+
         $cond_error_datas = [];
 
         foreach ($xlsx->rows() as $row) {
 
             if ($i == 1) {
+                if (count($row) === 8) {
 
-                if (count($row) == 8) {
-                } else {
+                }else{
                     $error_data = array(
                         'upload_id' => $this->details['log_id'],
                         'line_no' => $i,
@@ -88,8 +88,6 @@ class ImportTrainingMatrixJob
                     $i++;
                     break;
                 }
-
-                // Validate header column names
                 if (
                     trim($row['0']) != 'SNo' ||
                     trim($row['1']) != 'Training Topic' ||
@@ -106,12 +104,15 @@ class ImportTrainingMatrixJob
                         'error' => 'Header Column Name Not Match',
                     );
                     $cond_error_datas[] = $error_data;
-                    break;
+                    $i++;
+                    continue;
                 }
-
+                // Move to the next row after processing the header
                 $i++;
                 continue;
             }
+
+
 
             $sno = trim($row['0']);
             $topic_name = trim($row['1']);
@@ -122,8 +123,9 @@ class ImportTrainingMatrixJob
             $mode_of_training = trim($row['6']);
             $training_evaluation = trim($row['7']);
 
-            /* Column data validation */
-            if ($topic_name == '') {
+
+            $topicId = Topic::where('topic_name', $topic_name)->pluck('id')->first();
+            if ($topicId == '') {
                 $cond_error_data = array(
                     'upload_id' => $this->details['log_id'],
                     'line_no' => $i,
@@ -133,6 +135,21 @@ class ImportTrainingMatrixJob
                 $i++;
                 continue;
             }
+
+            $topicIdExists = TrainingMatrix::where('topic_name', $topicId)->exists();
+            if (!$topicIdExists) {
+                $cond_error_data = array(
+                    'upload_id' => $this->details['log_id'],
+                    'line_no' => $i,
+                    'error' => 'Training Topic already exists',
+                );
+                $cond_error_datas[] = $cond_error_data;
+                $i++;
+                continue;
+            }
+
+
+            $trainerId = Employee::where('emp_name', $trainer_name)->pluck('id')->first();
 
             if (empty($trainer_name)) {
                 $cond_error_data = [
@@ -237,40 +254,11 @@ class ImportTrainingMatrixJob
                 $i++;
                 continue;
             }
-            $topicExist = Topic::where('topic_name', $topic_name)->first();
-            // if ($topicExist->isNotEmpty()) {
-            //     $error_data = array(
-            //         'upload_id' => $this->details['log_id'],
-            //         'line_no' => $i,
-            //         'error' => 'Training Topic Already Exist',
-            //     );
-            //     $cond_error_datas[] = $error_data;
-            //     $i++;
-            //     continue;
-            // } 
-            if (!$topicExist) {
-                $cond_error_data = [
-                    'upload_id' => $this->details['log_id'],
-                    'line_no' => $i,
-                    'error' => 'Training Topic not found',
-                ];
-                $cond_error_datas[] = $cond_error_data;
-                $i++;
-                continue;
-            }
+
 
             $trainerExist = Employee::where('emp_name', $trainer_name)->where('user_role', 8)->get();
 
-            // if ($trainerExist->isNotEmpty()) {
-            //     $error_data = array(
-            //         'upload_id' => $this->details['log_id'],
-            //         'line_no' => $i,
-            //         'error' => 'Trainer Already Exist',
-            //     );
-            //     $cond_error_datas[] = $error_data;
-            //     $i++;
-            //     continue;
-            // }
+
             if (!$trainerExist) {
                 $cond_error_data = [
                     'upload_id' => $this->details['log_id'],
@@ -282,69 +270,36 @@ class ImportTrainingMatrixJob
                 continue;
             }
 
+            $unitId=Unit::where('unit_name', $unit_name)->pluck('id')->first();
+            $deparmentId = Department::where('department_name',$department_name)->pluck('id')->first();
 
-            $unitExist = Unit::where('unit_name', $unit_name)->get();
+            $unitExist = TrainingMatrix::where('unit_id', $unitId)->exists();
 
-            // if ($unitExist->isNotEmpty()) {
-            //     $error_data = array(
-            //         'upload_id' => $this->details['log_id'],
-            //         'line_no' => $i,
-            //         'error' => 'Unit Already Exist',
-            //     );
-            //     $cond_error_datas[] = $error_data;
-            //     $i++;
-            //     continue;
-            // }
+
             if (!$unitExist) {
                 $cond_error_data = [
                     'upload_id' => $this->details['log_id'],
                     'line_no' => $i,
-                    'error' => 'Unit not found',
+                    'error' => 'Unit is already exist',
                 ];
                 $cond_error_datas[] = $cond_error_data;
                 $i++;
                 continue;
             }
+    //    $departmentExist = Department::where('')
 
-         
-            // $unitsExist = Unit::select('id')->where('unit_name', $unit_name)->first();
-
-            // if ($unitsExist) {
-            //     $deptExist = Department::where('department_name', $department_name)
-            //         ->where('unit_id', $unitsExist->id)
-            //         ->exists();
-
-            //     if ($deptExist) {
-            //         $cond_error_data = [
-            //             'upload_id' => $this->details['log_id'],
-            //             'line_no' => $i,
-            //             'error' => 'Department Already Exists for this Unit',
-            //         ];
-            //         $cond_error_datas[] = $cond_error_data;
-            //         $i++;
-            //         continue;
-            //     }
-            // } else {
-            //     $cond_error_data = [
-            //         'upload_id' => $this->details['log_id'],
-            //         'line_no' => $i,
-            //         'error' => 'Unit not found',
-            //     ];
-            //     $cond_error_datas[] = $cond_error_data;
-            //     $i++;
-            //     continue;
-            // }
 
             $data = [
-                'topic_name' => $topic_name,
-                'trainer_name' => $trainer_name,
+                'topic_id' =>  $topicId ,
+                'trainer_id' =>  $trainerId,
                 'training_offered_for' => $training_offered_for_value,
-                'unit_name' => $unit_name,
-                'department_name' => $department_name,
+                'unit_id' => $unitId,
+                'department_id' => $deparmentId,
                 'mode_of_training' => $mode_of_training_value,
                 'training_evaluation' => $training_evaluation_value,
                 'created_by' => $this->details['user_id'],
             ];
+
 
             TrainingMatrix::create($data);
             $i++;

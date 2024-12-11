@@ -102,7 +102,7 @@ class PpeTypeMasterController extends Controller
     {
         try {
             $rules = [
-                'item_code' => ['required', 'regex:/^[a-zA-Z0-9_]*$/'],
+                'item_code' => ['required', 'regex:/^[a-zA-Z0-9-]*$/'],
                 'ppe_name' => ['required', 'string', 'regex:/^[a-zA-Z0-9\-_\'"()\s]{3,30}$/'],
                 'ppe_type' => 'required|string',
                 'ppe_standard' => ['required', 'regex:/^[a-zA-Z0-9\-_\'"()\s]+$/'],
@@ -184,7 +184,7 @@ class PpeTypeMasterController extends Controller
         try {
             $id = decryptId($request->id);
             $rules = [
-                'item_code' => ['required', 'regex:/^[a-zA-Z0-9_]*$/'],
+                'item_code' => ['required', 'regex:/^[a-zA-Z0-9-]*$/'],
                 'ppe_name' => ['required', 'string', 'regex:/^[a-zA-Z0-9\-_\'"()\s]{3,30}$/'],
                 'ppe_type' => 'required|string',
                 'ppe_standard' => ['required', 'regex:/^[a-zA-Z0-9\-_\'"()\s]+$/'],
@@ -378,12 +378,12 @@ class PpeTypeMasterController extends Controller
         }
     }
 
-    public function imageList(Request $request)
+    public function PPEnamelist(Request $request)
     {
 
         if ($request->ajax()) {
             $ppeNameId = $request->input('id');
-            return $this->ppetypemaster->imageList($ppeNameId);
+            return $this->ppetypemaster->PPEnamelist($ppeNameId);
         }
     }
 }

@@ -33,6 +33,7 @@ use App\Http\Controllers\Ppemanagement\PpeExemptionController;
 use App\Http\Controllers\Master\WorkerLogController;
 use App\Http\Controllers\Master\EmployeeLogController;
 use App\Http\Controllers\Ppemanagement\PpeRequestController;
+use App\Http\Controllers\Ppemanagement\PpeStockInventoryController;
 use App\Http\Controllers\Safetypermit\SafetyPermitController;
 
 Route::get('cache', function () {
@@ -67,6 +68,7 @@ Route::get('queueDepartmentuplodimport', [CronController::class, 'queueDepartmen
 
 
 
+Route::get('stockitem', [CronController::class, 'storeItem']);
 Route::get('workmastertemp', [CronController::class, 'workMasterTemp']);
 Route::get('worksave', [CronController::class, 'workSave']);
 Route::get('employee_master_temp', [CronController::class, 'employeeMasterTemp']);
@@ -560,7 +562,7 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('ppe_ppetype_master/export/excel', [PpeTypeMasterController::class, 'exportExcel']);
             Route::get('ppe_ppetype_master/export/pdf', [PpeTypeMasterController::class, 'exportPdf']);
             Route::get('ppe_ppetype_master/ajax-list', [PpeTypeMasterController::class, 'list']);
-            Route::get('ppe_ppetype_master/ajax-image', [PpeTypeMasterController::class, 'imageList']);
+            Route::get('ppe_ppetype_master/ajax-ppename', [PpeTypeMasterController::class, 'PPEnamelist']);
 
 
 
@@ -578,10 +580,27 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/hodapprovereject/submit', [PpeRequestController::class, 'storehodapproval']);
                 Route::get('/ehsapproval/view/{id}', [PpeRequestController::class, 'ehsApprovalview']);
                 Route::post('/ehsapprovereject/submit', [PpeRequestController::class, 'storeehsapproval']);
+                Route::get('smapproval/submit/{item_code}/{action}', [PpeRequestController::class, 'smapproval']);
+                Route::get('/statuslog/{id}', [PpeRequestController::class, 'statuslog']);
+
                 Route::get('/edit/{id}', [PpeRequestController::class, 'edit']);
                 Route::post('/edit/submit', [PpeRequestController::class, 'update']);
                 Route::get('/export/excel', [PpeRequestController::class, 'exportExcel']);
                 Route::get('/export/pdf', [PpeRequestController::class, 'exportPdf']);
+            });
+
+            Route::group(['prefix' => 'ppe_stock_inventory'], function () {
+
+                Route::get('/list', [PpeStockInventoryController::class, 'index']);
+                Route::post('/list', [PpeStockInventoryController::class, 'index']);
+                Route::post('/status', [PpeStockInventoryController::class, 'statusChange']);
+                Route::get('/view/{id}', [PpeStockInventoryController::class, 'view']);
+                  Route::get('/edit/{id}', [PpeStockInventoryController::class, 'edit']);
+                Route::post('/status', [PpeStockInventoryController::class, 'statusChange']);
+
+                Route::post('/edit/submit', [PpeStockInventoryController::class, 'update']);
+                Route::get('/export/excel', [PpeStockInventoryController::class, 'exportExcel']);
+                Route::get('/export/pdf', [PpeStockInventoryController::class, 'exportPdf']);
             });
 
             Route::group(['prefix' => 'safetypermit'], function () {
@@ -598,7 +617,13 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/edit/submit', [SafetyPermitController::class, 'update']);
                 Route::get('/export/excel', [SafetyPermitController::class, 'exportExcel']);
                 Route::get('/export/pdf', [SafetyPermitController::class, 'exportPdf']);
-                Route::get('/getprotectivechecklist/{unit_id}/{id}', [SafetyPermitController::class, 'list']);
+                Route::get('/getprotectivechecklist/{workId}', [SafetyPermitController::class, 'getprotectivechecklist']);
+                Route::get('/getequipmentinvolved/{workId}', [SafetyPermitController::class, 'getequipmentinvolved']);
+                Route::get('/getprecaution/{workId}', [SafetyPermitController::class, 'getprecaution']);
+                Route::get('/getchecklist/{workId}', [SafetyPermitController::class, 'getchecklist']);
+                Route::get('/getinstruction/{workId}', [SafetyPermitController::class, 'getinstruction']);
+
+
             });
             Route::group(['prefix' => 'ppe_exemption'], function () {
 

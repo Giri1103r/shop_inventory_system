@@ -22,10 +22,10 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
                         @if (CheckUserPermission('add'))
-                            {
+
                             <x-button-add dataId="" class="add btn btn-primary ms-1"
                                 href="{{ admin_url('ppe_ppetype_master/add') }}">Add</x-button-add>
-                            }
+                           
                         @endif
 
                     </div>

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Scopes\TrashScope;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,6 +20,7 @@ class PpeRequest extends Model
         'emp_name',
         'ppe_name',
         'department',
+        'item_code',
         'ppe_type',
         'approve_status',
         'ehs_approve_status',
@@ -117,6 +119,7 @@ class PpeRequest extends Model
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
             'department' => $request->department,
+            'item_code'=>$request->item_code,
             'ppe_type' => $request->ppe_type,
             'ppe_name' => $request->ppe_name,
             'approve_status' => STATUS_HOD_APPROVAL_PENDING,
@@ -165,6 +168,7 @@ class PpeRequest extends Model
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
             'department' => $request->department,
+            'item_code'=>$request->item_code,
             'ppe_type' => $request->ppe_type,
             'ppe_name' => $request->ppe_name,
             'created_by' => Auth::id(),
@@ -255,6 +259,33 @@ class PpeRequest extends Model
             ->first();
         return $lastsixmonths;
     }
+
+
+    // public function quantity()
+    // {
+    //     try {
+
+    //         $apiUrl = 'https://vmsapi.karam.in/emp.asmx/GetPPEInventory?TokenId=123&Orgid=86&Item=71160-H';
+
+    //         $response = Http::get($apiUrl);
+
+    //         if ($response->successful()) {
+    //             $data = $response->json();
+
+    //             if (!empty($data)) {
+    //                 $work = $this->worktemp->store($data);
+    //                 return response()->json(['message' => 'Data saved successfully.']);
+    //             } else {
+    //                 return response()->json(['message' => 'No data found in API response.']);
+    //             }
+    //         } else {
+    //             return response()->json(['message' => 'Failed to fetch data from API.', 'status' => $response->status()]);
+    //         }
+    //     } catch (Exception $ex) {
+    //         dd($ex);
+    //         return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
+    //     }
+    // }
 
     public function exportdata()
     {

@@ -264,8 +264,9 @@ class PpeTypeMaster extends Model
     {
 
         return response()->json(
-            $this->where('ppe_type', $PPEtypeId)
-                ->select('id', 'ppe_name')
+           $data = PpeTypeMaster::where('item_code', $PPEtypeId)
+            ->join('masters_ppetype', 'ppe_master_ppetypemaster.ppe_type', '=', 'masters_ppetype.id')
+                ->select('masters_ppetype.id', 'masters_ppetype.ppe_type')
                 ->get()
         )->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
             ->header('Pragma', 'no-cache')
@@ -273,15 +274,18 @@ class PpeTypeMaster extends Model
     }
 
 
-    public function ImageList($ppeNameId)
+    public function PPEnamelist($ppeNameId)
     {
-        $ppeImage = $this->where('id', $ppeNameId)->pluck('ppe_image')->first();
-        if ($ppeImage) {
-            return response()->json(['image_url' => asset('uploads/ppe_type_files/' . $ppeImage)]);
-        } else {
-            return response()->json(['image_url' => null]);
-        }
+        $data = PpeTypeMaster::where('ppe_type', $ppeNameId)
+            ->select('id', 'ppe_name')
+            ->get();
+
+        return response()->json($data)
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Fri, 01 Jan 1990 00:00:00 GMT');
     }
+
 
 
     public function getppetypemaster()

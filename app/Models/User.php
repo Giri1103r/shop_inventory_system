@@ -239,6 +239,11 @@ class User extends Authenticatable
         return User::whereRaw('FIND_IN_SET(?, role)', [3])
             ->get();
     }
+    public function findEhsHead()
+    {
+        return User::whereRaw('FIND_IN_SET(?, role)', [6])
+            ->get();
+    }
     public function assigneduser($ehsofficer)
     {
         return $ehsofficer->pluck('id')->toArray();

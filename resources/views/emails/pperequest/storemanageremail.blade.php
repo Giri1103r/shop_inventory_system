@@ -17,7 +17,7 @@
                     <tr>
                         <td colspan="4" align="center"
                             style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>PPE Request</b>
+                            <b>PPE Request {{ $details['status'] }}</b>
                         </td>
                     </tr>
 
@@ -38,21 +38,35 @@
 
                     <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>Department</b>
-                        </td>
-                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ getDepartment($details['department']) }}</td>
-                    </tr>
-                    <tr>
-                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                             <b>Item Code</b>
                         </td>
                         <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                             valign="top"> {{ $details['item_code'] }}</td>
                     </tr>
 
+                    <tr>
+                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                            <b>Department</b>
+                        </td>
+                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                            valign="top"> {{ getDepartment($details['department']) }}</td>
+                    </tr>
 
+                    <tr>
+                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                            <b>Reason</b>
+                        </td>
+                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                            valign="top"> {{ $details['remarks'] }}</td>
+                    </tr>
 
+                    <tr>
+                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                            <b>Approved By</b>
+                        </td>
+                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                            valign="top"> {{ getUsername($details['approved_by']) }}</td>
+                    </tr>
                 </tbody>
             </table>
 
@@ -60,7 +74,6 @@
                 <tr>
                     <td align="center" style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                         <a href="{{ $details['approve_link'] }}" style="background-color: green; border: 1px solid green; border-radius: 5px; box-sizing: border-box; color: #ffffff; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 10px 20px; text-align: center; text-decoration: none; text-transform: capitalize;">Approve</a>
-                        <a href="{{ $details['reject_link'] }}" style="background-color: red; border: 1px solid red; border-radius: 5px; box-sizing: border-box; color: #ffffff; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; margin-left: 10px; padding: 10px 20px; text-align: center; text-decoration: none; text-transform: capitalize;">Reject</a>
                     </td>
                 </tr>
             </table>

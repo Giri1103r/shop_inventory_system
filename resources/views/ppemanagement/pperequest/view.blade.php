@@ -22,7 +22,7 @@
                             <div class="card-header">
                                 <div class="align-back-btc">
                                     <x-button-back href="{{ admin_url('ppe_request/list') }}"></x-button-back>
-
+                                    {{-- <x-button-statuslog href="{{ admin_url('ppe_request/statuslog') }}"></x-button-statuslog> --}}
                                 </div>
                             </div>
 
@@ -50,6 +50,12 @@
                                         <label class="form-label view_label">{{ __('Department') }}</label>
                                         <div class="view_data">
                                             {{ getDepartment(isset($pperequest->department) ? $pperequest->department : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Item Code') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($pperequest->item_code) ? $pperequest->item_code : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -127,5 +133,6 @@
                 </div>
             </div>
         </div>
+    </div>
 
-    @stop
+@stop
