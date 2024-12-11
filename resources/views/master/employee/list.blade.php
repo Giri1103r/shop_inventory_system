@@ -36,7 +36,7 @@
                                                 placeholder="Employee Email">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="email" class="form-label ">Employee Status</label>
+                                            <label for="employee_status" class="form-label ">Employee Status</label>
                                             <input type="text" name="employee_status" id="employee_status"
                                                 class="form-control" placeholder="Employee Status">
                                         </div>

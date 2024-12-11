@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Request')
+@section('title', 'PPE Shoe Request')
 @section('pageurl', admin_url('ppe_request/list'))
 @section('content')
 
@@ -16,7 +16,7 @@
                         <x-button-add dataId="" class="add btn btn-primary"
                             href="{{ admin_url('ppe_request/add') }}">Add</x-button-add>
 
-                         @endif 
+                         @endif
                     </div>
 
 

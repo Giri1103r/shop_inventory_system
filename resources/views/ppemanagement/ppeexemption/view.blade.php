@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Exemption Show')
+@section('title', 'PPE Shoe  Exemption Show')
 @section('pageurl', admin_url('ppe_exemption/list'))
 
 
@@ -70,20 +70,7 @@
                                             {{ isset($ppeexemption->to_date) ? $ppeexemption->to_date : '' }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('EHS Officer Approve Status') }}</label>
-                                        <div class="view_data">
-                                            @if ($ppeexemption->approve_status == $ehsapprovalpending)
-                                                <span class="badge bg-warning">EHS Approval Pending</span>
-                                            @elseif($ppeexemption->approve_status == $ehsapproved)
-                                                <span class="badge bg-success">EHS Approved</span>
-                                            @elseif($ppeexemption->approve_status == $ehsrejected)
-                                                <span class="badge bg-danger">EHS Rejected</span>
-                                            @else
-                                                {{ isset($ppeexemption->approve_status) ? $ppeexemption->approve_status : '' }}
-                                            @endif
-                                        </div>
-                                    </div>
+
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Created By') }}</label>
                                         <div class="view_data">
@@ -113,6 +100,46 @@
                                             {{ isset($ppeexemption->reason) ? $ppeexemption->reason : '' }}
                                         </div>
                                     </div>
+                                </div>
+
+
+                                <div class="row mt-2">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Status log</h4>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Status</th>
+                                                <th>Approved By</th>
+                                                <th>Remarks</th>
+                                                <th>Date</th>
+
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            @if ($ppestatuslog->isEmpty())
+                                            <tr>
+                                                <td class="text-center" colspan="5">No data is available</td>
+                                            </tr>
+                                        @else
+                                            @foreach ($ppestatuslog as $log)
+                                                <tr class="hover-row">
+                                                    <td>{{ removeUnderScore(getStatus($log['to_status'])) }}</td>
+                                                    <td>{{getUsername($log['created_by'] ) }}</td>
+                                                  <td>{{$log['remarks']}}</td>
+                                                  <td>{{displaydateformat($log['created_at'])}}</td>
+
+                                                </tr>
+                                            @endforeach
+                                        @endif
+                                        </tbody>
+                                    </table>
+
                                 </div>
 
                             </div>

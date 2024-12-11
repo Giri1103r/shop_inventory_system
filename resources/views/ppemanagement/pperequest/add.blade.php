@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Request Add')
+@section('title', 'PPE Shoe Request Add')
 @section('pageurl', admin_url('ppe_request/list'))
 
 
@@ -32,13 +32,33 @@
                                     <form method="POST" id="pperequestadd"
                                         action="{{ admin_url('ppe_request/add/submit') }}">
                                         @csrf
-                                        <input type="hidden" name="emp_id" id="emp_id" value="{{ $employee->emp_id }}">
-                                        <input type="hidden" name="emp_name" id="emp_name"
-                                            value="{{ $employee->emp_name }}">
-                                        <input type="hidden" name="department" id="department"
-                                            value="{{ $employee->department }}">
+
                                         <div class="row">
-                                            <div class="col-md-6 mb-3">
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="emp_name" class="form-label require">Employee Name</label>
+                                                    <input type="text" name="emp_name"
+                                                        class="form-control form-control-sm " id="emp_name"
+                                                        value="{{ $employee->name }}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="emp_id" class="form-label require">Employee ID</label>
+                                                    <input type="text" name="emp_id"
+                                                        class="form-control form-control-sm "id="emp_id"
+                                                        value="{{ $employee->employee_id }}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="department" class="form-label require">Department</label>
+                                                    <input type="text" name="department" id="department"
+                                                        class="form-control form-control-sm"
+                                                        value="{{ getDepartment($employee->department_id) }}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Item Code</label>
                                                     <select name="item_code" id="item_code" style="width: 100%"
@@ -56,7 +76,7 @@
                                                     <div class="text-danger" id="ppe_type_error"></div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6 mb-3">
+                                            <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Type</label>
                                                     <select name="ppe_type" id="ppe_type" style="width: 100%"
@@ -69,7 +89,7 @@
                                                     <div class="text-danger" id="ppe_type_error"></div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6 mb-3">
+                                            <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Name</label>
                                                     <select name="ppe_name" id="ppe_name" style="width: 100%"
@@ -82,14 +102,15 @@
                                                     <div class="text-danger" id="ppe_name_error"></div>
                                                 </div>
                                             </div>
-
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input" id="ppe_image">
-
-                                                </div>
+                                            <div class="col-md-12 mb-2">
+                                                <label for="reason" class="form-label require">Reason</label>
+                                                <textarea name="reason" id="reason" cols="3" rows="4" class="form-control form-control-sm"
+                                                    placeholder="Enter the Reason"></textarea>
+                                                @error('reason')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                                <div class="text-danger" id="reason_error"></div>
                                             </div>
-
-
                                         </div>
                                         <hr>
                                         <div class="submit-button float-end">
@@ -99,7 +120,6 @@
                                         </div>
                                     </form>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -108,7 +128,6 @@
         </div>
         </form>
     </div>
-
 @stop
 
 @push('script')
@@ -186,20 +205,39 @@
         $(document).ready(function() {
             $('#pperequestadd').validate({
                 rules: {
+                    item_code: {
+                        required: true,
+                    },
                     ppe_name: {
                         required: true,
                     },
                     ppe_type: {
                         required: true,
                     },
+                    reason: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 255,
+                        regex: /^[a-zA-Z0-9\s]+$/
+                    },
                 },
                 messages: {
+
+                    item_code: {
+                        required: "Please Select the Item Code.",
+                    },
 
                     ppe_name: {
                         required: "Please Select the PPE Name.",
                     },
                     ppe_type: {
                         required: "Please Select the PPE Type.",
+                    },
+                    reason: {
+                        required: "Reason cannot be empty.",
+                        minlength: "Reason must contain between 3 and 255 characters.",
+                        maxlength: "Reason must contain between 3 and 255 characters.",
+                        regex: "Reason must contain only letters and numbers."
                     },
                 },
                 errorElement: 'div',

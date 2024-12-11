@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Exemption Add')
+@section('title', 'PPE Shoe Exemption Add')
 @section('pageurl', admin_url('ppe_exemption/list'))
 @section('content')
     @push('style')
@@ -32,15 +32,34 @@
                                     <form method="POST" id="ppeExemptionForm"
                                         action="{{ admin_url('ppe_exemption/add/submit') }}">
                                         @csrf
-                                        <input type="hidden" name="emp_id" id="emp_id"
-                                            value="{{ $userData->employee_id }}">
-                                        <input type="hidden" name="emp_name" id="emp_name" value="{{ $userData->name }}">
-                                        <input type="hidden" name="department" id="department"
-                                            value="{{ $userData->department_id }}">
                                         <input type="hidden" name="unit" id="unit"
                                             value="{{ $userData->unit_id }}">
                                         <hr>
                                         <div class="row">
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="emp_name" class="form-label require">Employee Name</label>
+                                                    <input type="text" name="emp_name"
+                                                        class="form-control form-control-sm " id="emp_name"
+                                                        value="{{ $employee->name }}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="emp_id" class="form-label require">Employee ID</label>
+                                                    <input type="text" name="emp_id"
+                                                        class="form-control form-control-sm "id="emp_id"
+                                                        value="{{ $employee->employee_id }}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="department" class="form-label require">Department</label>
+                                                    <input type="text" name="department" id="department"
+                                                        class="form-control form-control-sm"
+                                                        value="{{ getDepartment($employee->department_id) }}" readonly>
+                                                </div>
+                                            </div>
                                             <div class="col-md-4 mb-2">
                                                 <label for="date" class="form-label require">From Date</label>
                                                 <div class="input-group date form-input">
@@ -51,10 +70,11 @@
                                                         <span class="fa fa-calendar"></span>
                                                     </div>
                                                 </div>
+                                                <div class="text-danger" id="from_date_error"></div>
                                                 @error('from_date')
                                                     <div class="text-danger">{{ $message }}</div>
                                                 @enderror
-                                                <div class="text-danger" id="from_date_error"></div>
+
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <label for="date" class="form-label require">To Date</label>
@@ -65,12 +85,13 @@
                                                     <div class="input-group-addon input-group-text">
                                                         <span class="fa fa-calendar"></span>
                                                     </div>
-                                                </div>
 
+                                                </div>
+                                                <div class="text-danger" id="to_date_error"></div>
                                                 @error('to_date')
                                                     <div class="text-danger">{{ $message }}</div>
                                                 @enderror
-                                                <div class="text-danger" id="to_date_error"></div>
+
                                             </div>
                                             <div class="col-md-12 mb-2">
                                                 <label for="reason" class="form-label require">Reason</label>
@@ -93,7 +114,8 @@
                                         <div class="submit-button float-end">
                                             <x-button-submit class="submit" id="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
-                                            <x-button-cancel href="{{ admin_url('ppe_exemption/list') }}"></x-button-cancel>
+                                            <x-button-cancel
+                                                href="{{ admin_url('ppe_exemption/list') }}"></x-button-cancel>
                                         </div>
                                     </form>
                                 </div>

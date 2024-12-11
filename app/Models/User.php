@@ -234,6 +234,11 @@ class User extends Authenticatable
         return $data;
     }
 
+    public function getEmployeedata(){
+        $user = Auth::user()->employee_id;
+        return User::select('employee_id','name','department_id')->where('employee_id',$user)->first();
+    }
+
     public function findEhsofficer()
     {
         return User::whereRaw('FIND_IN_SET(?, role)', [3])
