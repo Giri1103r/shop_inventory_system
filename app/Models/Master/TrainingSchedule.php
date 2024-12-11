@@ -107,7 +107,7 @@ class TrainingSchedule extends Model
         );
         return $datas;
     }
-  
+
     public function UniqueCheck($data)
     {
 
@@ -126,8 +126,8 @@ class TrainingSchedule extends Model
         $request = request();
 
         $insert_array = array(
-            'from_date' => DBdateformat($request->from_date),
-            'to_date' => DBdateformat($request->to_date),
+            'from_date' => DBdatetimeformat($request->from_date),
+            'to_date' => DBdatetimeformat($request->to_date),
             'topic_id' => decryptId($request->topic_id),
             'trainer_id' => decryptId($request->trainer_id),
             'venue_id' => decryptId($request->venue_id),
@@ -145,8 +145,8 @@ class TrainingSchedule extends Model
         $request = request();
 
         $update_array = array(
-            'from_date' => DBdateformat($request->from_date),
-            'to_date' => DBdateformat($request->to_date),
+            'from_date' => DBdatetimeformat($request->from_date),
+            'to_date' => DBdatetimeformat($request->to_date),
             'topic_id' => decryptId($request->topic_id),
             'trainer_id' => decryptId($request->trainer_id),
             'venue_id' => decryptId($request->venue_id),
@@ -177,6 +177,27 @@ class TrainingSchedule extends Model
         }
 
         return $this->where('id', $id)->update($update_data);
+    }
+    public function calculateTrainingHours()
+    {
+        if ($this->from_date && $this->to_date) {
+            $fromDateTime = Carbon::parse($this->from_date);
+            $toDateTime = Carbon::parse($this->to_date);
+
+            if ($fromDateTime->isSameDay($toDateTime)) {
+                if ($fromDateTime->format('H:i') !== '00:00' || $toDateTime->format('H:i') !== '00:00') {
+                    $hours = $fromDateTime->diffInMinutes($toDateTime) / 60; 
+                    return round($hours, 2); 
+                } else {
+                    return 8;
+                }
+            } else {
+                $days = $fromDateTime->diffInDays($toDateTime) + 1; 
+                return $days * 8;
+            }
+        }
+
+        return 0;
     }
 
     public function deleterecord($id)
