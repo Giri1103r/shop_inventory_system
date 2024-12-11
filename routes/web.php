@@ -16,6 +16,7 @@ use App\Http\Controllers\Master\TopicController;
 use App\Http\Controllers\Master\TrainingMatrixController;
 use App\Http\Controllers\Master\TrainingCalendarController;
 use App\Http\Controllers\Master\TrainingScheduleController;
+use App\Http\Controllers\Master\NominationProcessController;
 use App\Http\Controllers\Master\VenueController;
 use App\Http\Controllers\Master\LocationController;
 use App\Http\Controllers\Master\UnitController;
@@ -292,7 +293,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/alllist/{unitId}', [DepartmentController::class, 'alllist']);
                 Route::get('/ajax-list/{unit_id}/{id}', [DepartmentController::class, 'list']);
                 Route::get('/multiple-ajax-list/{unit_id}', [DepartmentController::class, 'multipleList']);
-
             });
 
 
@@ -460,19 +460,11 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/status', [TrainingScheduleController::class, 'statusChange']);
                 Route::post('/unique', [TrainingScheduleController::class, 'Uniquecheck']);
             });
+
+
             /**
              * Training Calendar
              */
-            // Route::group(['prefix' => 'training_calendar'], function () {
-            //     Route::get('/list', [TrainingCalendarController::class, 'index']);
-            //     Route::post('/list', [TrainingCalendarController::class, 'index']);
-            //     Route::get('/fetch', [TrainingCalendarController::class, 'fetchEvents']);
-            //     Route::post('/add/submit', [TrainingCalendarController::class, 'store']);
-            //     Route::get('/edit/{id}', [TrainingCalendarController::class, 'edit']);
-            //     Route::post('/edit/submit', [TrainingCalendarController::class, 'update']);
-            //     Route::get('/view/{id}', [TrainingCalendarController::class, 'view']);
-          
-            // });
 
             Route::prefix('training_calendar')->group(function () {
                 Route::get('/list', [TrainingCalendarController::class, 'index']);
@@ -481,7 +473,22 @@ Route::middleware(['securityheader'])->group(function () {
             });
 
 
-
+            /**
+             * Nomination Process
+             */
+            Route::group(['prefix' => 'nomination_process'], function () {
+                Route::get('/list', [NominationProcessController::class, 'index']);
+                Route::post('/list', [NominationProcessController::class, 'index']);
+                Route::get('/add', [NominationProcessController::class, 'add']);
+                Route::post('/add/submit', [NominationProcessController::class, 'store']);
+                Route::get('/export/excel', [NominationProcessController::class, 'exportExcel']);
+                Route::get('/export/pdf', [NominationProcessController::class, 'exportPdf']);
+                Route::get('/sampledownload', [NominationProcessController::class, 'DownloadSample']);
+                Route::get('/import', [NominationProcessController::class, 'import']);
+                Route::post('/import/submit', [NominationProcessController::class, 'importSubmit']);
+                Route::post('/status', [NominationProcessController::class, 'statusChange']);
+                Route::post('/unique', [NominationProcessController::class, 'Uniquecheck']);
+            });
             Route::group(['prefix' => 'ptw/precautionmaster'], function () {
                 Route::get('/list', [PrecautionController::class, 'index']);
                 Route::post('/list', [PrecautionController::class, 'index']);
@@ -592,8 +599,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/export/excel', [SafetyPermitController::class, 'exportExcel']);
                 Route::get('/export/pdf', [SafetyPermitController::class, 'exportPdf']);
                 Route::get('/getprotectivechecklist/{unit_id}/{id}', [SafetyPermitController::class, 'list']);
-
-     
             });
             Route::group(['prefix' => 'ppe_exemption'], function () {
 

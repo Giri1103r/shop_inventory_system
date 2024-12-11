@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\File;
-use App\Models\Master\Unit;
 use Str;
 use PDF;
 use Mail;
@@ -19,14 +18,13 @@ use Response;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
 use App\Models\Master\Topic;
-use App\Models\Master\Venue;
-use App\Models\Master\TrainingSchedule;
+use App\Models\Master\NominationProcess;
 use App\Models\User;
 use App\Models\UploadLog;
-use App\Jobs\ImportVenueJob;
+use App\Jobs\ImporNominationProcessJob;
 
 
-class TrainingScheduleController extends Controller
+class NominationProcessController extends Controller
 {
 
     private $user;
@@ -34,21 +32,17 @@ class TrainingScheduleController extends Controller
     private $department;
     private $employee;
     private $topic;
-    private $venue;
-    private $training_schedule;
-    private $unit;
+    private $nomination_process;
 
 
     public function __construct()
     {
 
-        $this->training_schedule = new TrainingSchedule();
         $this->topic = new Topic();
         $this->employee = new Employee();
-        $this->venue = new Venue();
+        $this->nomination_process = new NominationProcess();
         $this->department = new Department();
         $this->user = new User();
-        $this->unit = new Unit();
         $this->uploadlog = new UploadLog();
     }
 
@@ -60,7 +54,7 @@ class TrainingScheduleController extends Controller
 
                 try {
 
-                    $data =  $this->training_schedule->list();
+                    $data =  $this->nomination_process->list();
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -72,11 +66,9 @@ class TrainingScheduleController extends Controller
                             }
                             return $text;
                         })
-                        ->addColumn('from_date', function ($row) {
-                            return Displaydatetimeformat($row->from_date);
-                        })
-                        ->addColumn('to_date', function ($row) {
-                            return Displaydatetimeformat($row->to_date);
+                       
+                        ->addColumn('last_training_attended_on', function ($row) {
+                            return Displaydateformat($row->last_training_attended_on);
                         })
                         ->addColumn('created_at', function ($row) {
                             return Displaydatetimeformat($row->created_at);
@@ -87,14 +79,14 @@ class TrainingScheduleController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             if (CheckUserPermission('view')) {
-                                $btn = '<a href="' . admin_url('training_schedule/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                                $btn = '<a href="' . admin_url('nomination_process/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             }
                             if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('training_schedule/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                                $btn .= '<a href="' . admin_url('nomination_process/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
                             return $btn;
                         })
-                        ->rawColumns(['to_date', 'from_date', 'action', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['last_training_attended_on', 'action', 'created_date', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -107,18 +99,15 @@ class TrainingScheduleController extends Controller
             }
         }
         $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
-        $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
         $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
-        $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_TRAINER)->where('status', '1')->get();
-
+        $employeeList  = $this->employee->select('id', 'emp_id')->where('user_role', ROLE_USER)->where('status', '1')->get();
         $data = array(
             'departmentList' => $departmentList,
-            'unitList' => $unitList,
             'topicList' => $topicList,
             'employeeList' => $employeeList,
         );
 
-        return view('master.training_schedule.list', $data);
+        return view('master.training.nomination_process.list', $data);
     }
 
     public function Add(Request $request)
@@ -130,7 +119,7 @@ class TrainingScheduleController extends Controller
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
             $venueList  = $this->venue->select('id', 'name_of_the_conference_hall')->where('status', '1')->get();
-            $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_TRAINER)->where('status', '1')->get();
+            $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_USER)->where('status', '1')->get();
 
             $data = array(
                 'departmentList' => $departmentList,
@@ -139,7 +128,7 @@ class TrainingScheduleController extends Controller
                 'venueList' => $venueList,
                 'employeeList' => $employeeList,
             );
-            return view('master.training_schedule.add', $data);
+            return view('master.nomination_process.add', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -169,7 +158,7 @@ class TrainingScheduleController extends Controller
 
             try {
 
-                $this->training_schedule->store();
+                $this->nomination_process->store();
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
@@ -177,12 +166,12 @@ class TrainingScheduleController extends Controller
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
-            return redirect(admin_url('training_schedule/list'));
+            return redirect(admin_url('nomination_process/list'));
         } catch (Exception $ex) {
 
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('training_schedule/list'));
+            return redirect(admin_url('nomination_process/list'));
         }
     }
     public function View(Request $request)
@@ -190,17 +179,17 @@ class TrainingScheduleController extends Controller
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
-                $training_schedule = $this->training_schedule->selectOne($id);
+                $nomination_process = $this->nomination_process->selectOne($id);
     
                 // Calculate training hours
-                $training_hours = $training_schedule ? $training_schedule->calculateTrainingHours() : 0;
+                $training_hours = $nomination_process ? $nomination_process->calculateTrainingHours() : 0;
     
                 $data = array(
-                    'training_schedule' => $training_schedule,
+                    'nomination_process' => $nomination_process,
                     'training_hours' => $training_hours,
                 );
             }
-            return view('master.training_schedule.view', $data);
+            return view('master.nomination_process.view', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -215,19 +204,19 @@ class TrainingScheduleController extends Controller
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
             $venueList  = $this->venue->select('id', 'name_of_the_conference_hall')->where('status', '1')->get();
-            $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_TRAINER)->where('status', '1')->get();
-            $training_schedule = $this->training_schedule->find($id);
+            $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_USER)->where('status', '1')->get();
+            $nomination_process = $this->nomination_process->find($id);
             $data = array(
                 'departmentList' => $departmentList,
                 'unitList' => $unitList,
                 'topicList' => $topicList,
                 'employeeList' => $employeeList,
-                'training_schedule' => $training_schedule,
+                'nomination_process' => $nomination_process,
                 'venueList' => $venueList,
 
             );
 
-            return view('master.training_schedule.edit', $data);
+            return view('master.nomination_process.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
         }
@@ -255,13 +244,13 @@ class TrainingScheduleController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            $this->training_schedule->updates($id);
+            $this->nomination_process->updates($id);
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('training_schedule/list'));
+            return redirect(admin_url('nomination_process/list'));
         } catch (Exception $ex) {
             dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('training_schedule/list'));
+            return redirect(admin_url('nomination_process/list'));
         }
     }
 
@@ -272,9 +261,9 @@ class TrainingScheduleController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $this->training_schedule->statuschange($id);
+            $this->nomination_process->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => 'Training Schedule status changed'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'Nomination Process status changed'], 200);
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
@@ -286,9 +275,9 @@ class TrainingScheduleController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $this->training_schedule->deleterecord($id);
+            $this->nomination_process->deleterecord($id);
 
-            return response()->json(['status' => 'success', 'msg' => 'Training Schedule deleted successfully'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'Nomination Process deleted successfully'], 200);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
@@ -297,18 +286,18 @@ class TrainingScheduleController extends Controller
     public function Import(Request $request)
     {
         $data = array();
-        return view('master.training_schedule.import', $data);
+        return view('master.training.nomination_process.import', $data);
     }
     public function ImportSubmit(Request $request)
     {
         try {
-            $file = $request->file('training_schedule_upload');
+            $file = $request->file('nomination_process_upload');
 
             $rules = [
-                'training_schedule_upload' => 'required',
+                'nomination_process_upload' => 'required',
             ];
             $messages = [
-                'training_schedule_upload.required' => 'Please upload a file',
+                'nomination_process_upload.required' => 'Please upload a file',
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -319,9 +308,9 @@ class TrainingScheduleController extends Controller
 
             if ($file != null) {
 
-                $uploadpath = 'public/uploads/training_schedule';
+                $uploadpath = 'public/uploads/nomination_process';
 
-                $folderPath = public_path('uploads/training_schedule');
+                $folderPath = public_path('uploads/nomination_process');
 
                 if (!File::exists($folderPath)) {
 
@@ -341,7 +330,7 @@ class TrainingScheduleController extends Controller
                 $user_id = Auth::id();
 
                 $insert_data = array(
-                    'upload_type' => 1,
+                    'upload_type' => 9,
                     'upload_status' => 0,
                     'file_name' => $filenewname,
                     'file_orgname' => $fileName,
@@ -361,19 +350,19 @@ class TrainingScheduleController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportVenueJob($details));
-                //    dispatch((new ImportVenueJob($details))->onQueue('empimport'));
+                dispatch(new ImporNominationProcessJob($details));
+                //    dispatch((new ImporNominationProcessJob($details))->onQueue('nomination_process'));
             }
 
             $insert_data['log_id'] = $insert_id;
             $insert_data['Uploded_by'] = Auth::user()->toArray();
 
             Session::flash('success', __('Your data has been uploaded sucessfully'));
-            return redirect(admin_url('training_schedule/list'));
+            return redirect(admin_url('nomination_process/list'));
         } catch (Exception $ex) {
 
-            Session::flash('error', __('Training Schedule upload failed'));
-            return redirect(admin_url('training_schedule/list'));
+            Session::flash('error', __('Nomination Process upload failed'));
+            return redirect(admin_url('nomination_process/list'));
         }
     }
     public function ExportExcel(Request $request)
@@ -381,7 +370,7 @@ class TrainingScheduleController extends Controller
 
         try {
 
-            $allData = $this->training_schedule->exportdata();
+            $allData = $this->nomination_process->exportdata();
   
             $header = [
                 __("common.sno"),
@@ -422,7 +411,7 @@ class TrainingScheduleController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Training Schedule.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Nomination Process.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -438,7 +427,7 @@ class TrainingScheduleController extends Controller
 
         try {
 
-            $allData = $this->training_schedule->exportdata();
+            $allData = $this->nomination_process->exportdata();
             $header = [
                 __("common.sno"),
                 'From Date',
@@ -458,7 +447,7 @@ class TrainingScheduleController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Training Schedule",
+                'pagetitle' => "Nomination Process",
             );
 
             $property = [
@@ -473,14 +462,14 @@ class TrainingScheduleController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('master.training_schedule.pdf', $data);
+            $view = view('master.nomination_process.pdf', $data);
             $html = $view->render();
 
 
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Training Schedule.pdf";
+            $filename = "Nomination Process.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
         
@@ -491,8 +480,7 @@ class TrainingScheduleController extends Controller
     public function DownloadSample(Request $request)
     {
 
-        $filedetails =  exportsamplefile('training_schedule');
-
+        $filedetails =  exportsamplefile('nomination_process');
         $filePath = $filedetails->sample_file;
         $customFileName = $filedetails->file_name;
 
