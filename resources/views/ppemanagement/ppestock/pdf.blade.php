@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Training Schedule PDF')
+@section('title', 'Protective equipments to be worn PDF')
 @section('content')
 
     <div style="width:100%;">
@@ -24,36 +24,29 @@
                         <td style='padding: 7px;border: 0.5px solid;text-align:center'>
                             {{ $i }}
                         </td>
+
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydateformat($value->from_date) }}
+                            {{ $value->org }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydateformat($value->to_date) }}
+                            {{ $value->inventory_item_id}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->topic_name }}
+                            {{ $value->item_code }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->emp_name }}
+                            {{ $value->sub}}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{  $value->uom }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->unit_name }}
+                            {{  $value->quantity}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->department_name }}
+                            {{  $value->item_description}}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->target_trainees }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->name_of_the_conference_hall }}
-                        </td>
-
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->training_man_hours ?? '-'}}
-                        </td>
-
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php
                                 $status = $value->status == 1 ? 'Active' : 'In-Active';
@@ -64,8 +57,6 @@
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
                         </td>
-
-
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ Displaydateformat($value->created_at) }}
                         </td>

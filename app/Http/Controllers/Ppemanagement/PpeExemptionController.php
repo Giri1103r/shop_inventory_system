@@ -12,6 +12,7 @@ use App\Mail\PpeExemptionEmail;
 use App\Mail\PpeExemptionRejectEmail;
 use App\Mail\PpeExemptionRequestorEmail;
 use App\Models\Master\PpeExemption;
+use App\Models\Statuslog;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -28,6 +29,8 @@ class PpeExemptionController extends Controller
     private $ppeexemption;
     private $user;
     private $pperequest;
+    private $ppestatus;
+
     private $uploadlog;
 
     public function __construct()
@@ -36,6 +39,8 @@ class PpeExemptionController extends Controller
         $this->uploadlog = new UploadLog();
         $this->user = new User();
         $this->pperequest = new PpeRequest();
+        $this->ppestatus = new Statuslog();
+
     }
     public function index(Request $request)
     {
@@ -87,7 +92,7 @@ class PpeExemptionController extends Controller
                             }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
 
-                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) && $row->approve_status == STATUS_EHS_APPROVAL_PENDING ) {
+                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) && $row->approve_status == STATUS_EHS_APPROVAL_PENDING ) {
                                 $btn .= '<a href="' . admin_url('ppe_exemption/approval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
                             }
                             return $btn;
@@ -151,7 +156,7 @@ class PpeExemptionController extends Controller
                 // Mail
 
                 $id = $ppeexemption->id;
-                $ehsofficer = $this->user->findEhsofficer();
+                $ehsofficer = $this->user->findEhsHead();
 
                 $details = [
                     'emp_id' => $ppeexemption->emp_id,
@@ -168,7 +173,7 @@ class PpeExemptionController extends Controller
 
                 foreach ($ehsofficer as $officer) {
                     $officer_email = getUseremail($officer->id);
-                    Mail::to($officer_email)->queue(new PpeExemptionRequestorEmail($details));
+                    Mail::to($officer_email)->send(new PpeExemptionRequestorEmail($details));
                 }
 
                 // Notification
@@ -283,7 +288,7 @@ class PpeExemptionController extends Controller
                 //Mail
                 $data=$this->ppeexemption->selectOne($id);
 
-                $ehsofficer = $this->user->findEhsofficer();
+                $ehsofficer = $this->user->findEhsHead();
 
                 $details = [
                     'emp_id' => $data->emp_id,
@@ -300,14 +305,14 @@ class PpeExemptionController extends Controller
 
                 foreach ($ehsofficer as $officer) {
                     $officer_email = getUseremail($officer->id);
-                    Mail::to($officer_email)->queue(new PpeExemptionRequestorEmail($details));
+                    Mail::to($officer_email)->send(new PpeExemptionRequestorEmail($details));
                 }
 
 
                 // Notification
 
                 $message = 'New Exemption Request';
-                $ehsofficer = $this->user->findEhsofficer();
+                $ehsofficer = $this->user->findEhsHead();
                 $assigned_user = $this->user->assigneduser($ehsofficer);
                 $img = admin_url('public/assets/images/ppe-management.jpg');
                 $notificationData = array(
@@ -432,7 +437,7 @@ class PpeExemptionController extends Controller
             if ($action == 'approve' || $action == 'reject') {
                 $updateData['status'] = 0;
             }
-
+            $statuslog = $this->ppestatus->storeexemptionstatus($updateData,$emp_details);
             $emp_details->updateapproval($updateData, $id);
             $details = [
                 'emp_id' => $emp_details->emp_id,
@@ -449,14 +454,13 @@ class PpeExemptionController extends Controller
 
             if ($action == 'approve') {
                 $recipients = array_filter([$requestor, $hod]);
-                Mail::to($recipients)->queue(new PpeExemptionEmail($details));
+                Mail::to($recipients)->send(new PpeExemptionEmail($details));
             } else {
                 $recipients = array_filter([$requestor, $hod]);
-                Mail::to($recipients)->queue(new PpeExemptionRejectEmail($details));
+                Mail::to($recipients)->send(new PpeExemptionRejectEmail($details));
             }
 
             $message = 'New Exemption Request';
-            $ehsofficer = $this->user->findEhsofficer();
             $hodId = $this->user->getdepartmenthodId($departmentId);
             $requestorId = $this->user->getrequestId($empId);
             $assigned_user = array_merge($hodId, $requestorId);
@@ -481,7 +485,7 @@ class PpeExemptionController extends Controller
             Session::flash('success', 'PPE Exemption has successfully responded');
             return redirect(admin_url('ppe_exemption/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_exemption/list'));
         }

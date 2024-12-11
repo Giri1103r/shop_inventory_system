@@ -66,7 +66,9 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_EHS_OFFICER') or define('ROLE_EHS_OFFICER', 3);
         defined('ROLE_TRAINER') or define('ROLE_TRAINER', 8);
         defined('ROLE_HOD') or define('ROLE_HOD', 4);
+        defined('ROLE_EHS_HEAD') or define('ROLE_EHS_HEAD', 6);
         defined('ROLE_STORE_MANAGER') or define('ROLE_STORE_MANAGER', 5);
+        defined('ROLE_USER') or define('ROLE_USER', 9);
 
         defined('STATUS_HOD_APPROVAL_PENDING') or define('STATUS_HOD_APPROVAL_PENDING', 1);
         defined('STATUS_HOD_APPROVED') or define('STATUS_HOD_APPROVED', 2);
@@ -74,6 +76,9 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_EHS_APPROVAL_PENDING') or define('STATUS_EHS_APPROVAL_PENDING', 4);
         defined('STATUS_EHS_APPROVED') or define('STATUS_EHS_APPROVED', 5);
         defined('STATUS_EHS_REJECTED') or define('STATUS_EHS_REJECTED', 6);
+
+        defined('TYPE_PPE_REQUEST') or define('TYPE_PPE_REQUEST', 1);
+        defined('TYPE_PPE_EXEMPTION') or define('TYPE_PPE_EXEMPTION', 2);
 
 
 

@@ -176,7 +176,7 @@
                 rules: {
                     item_code: {
                         required: true,
-                        regex: /^[a-zA-Z0-9_]*$/
+                        regex: /^[a-zA-Z0-9-]*$/
                     },
                     ppe_name: {
                         required: true,
