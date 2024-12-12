@@ -398,6 +398,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/submit', [TopicController::class, 'importSubmit']);
                 Route::post('/status', [TopicController::class, 'statusChange']);
                 Route::post('/unique', [TopicController::class, 'Uniquecheck']);
+                Route::get('/sampledownload', [TopicController::class, 'DownloadSample']);
+
             });
 
             /**
@@ -439,7 +441,9 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/import', [TrainingMatrixController::class, 'import'])->middleware('role:company,import');
                 Route::post('/import/submit', [TrainingMatrixController::class, 'importSubmit']);
                 Route::post('/status', [TrainingMatrixController::class, 'statusChange']);
-                Route::post('/unique', [TrainingMatrixController::class, 'Uniquecheck']);
+                Route::get('/topic/ajax-list/{topicId}/{trainerId}', [TrainingMatrixController::class, 'Uniquecheck']);
+
+
             });
 
             /**
@@ -460,7 +464,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/import', [TrainingScheduleController::class, 'import'])->middleware('role:company,import');
                 Route::post('/import/submit', [TrainingScheduleController::class, 'importSubmit']);
                 Route::post('/status', [TrainingScheduleController::class, 'statusChange']);
-                Route::post('/unique', [TrainingScheduleController::class, 'Uniquecheck']);
+                Route::get('/topic/ajax-list', [TrainingScheduleController::class, 'Uniquecheck']);
+
             });
 
 
@@ -644,6 +649,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/edit/submit', [PpeExemptionController::class, 'update']);
                 Route::get('/export/excel', [PpeExemptionController::class, 'exportExcel']);
                 Route::get('/export/pdf', [PpeExemptionController::class, 'exportPdf']);
+                Route::get('/generalpdf/{id}', [PpeExemptionController::class, 'pdf']);
+
             });
         });
     });

@@ -41,7 +41,7 @@
                                                 <div class="form-group form-input">
                                                     <label for="topic_id" class="form-label require">Training Topic</label>
                                                     <select name="topic_id" id="topic_id"
-                                                        class=" form-control single-select" style="width: 100%">
+                                                        class="form-control topic_id  single-select" style="width: 100%">
                                                         <option value="">Select Training Topic</option>
                                                         @foreach ($topicList as $topic)
                                                             <option value="{{ encryptId($topic->id) }}">
@@ -54,7 +54,7 @@
                                                 <div class="form-group form-input">
                                                     <label for="trainer_id" class="form-label require">Trainer</label>
                                                     <select name="trainer_id" id="trainer_id"
-                                                        class=" form-control single-select" style="width: 100%">
+                                                        class="form-control single-select" style="width: 100%">
                                                         <option value="">Select Trainer</option>
                                                         @foreach ($employeeList as $employee)
                                                             <option value="{{ encryptId($employee->id) }}">
@@ -166,6 +166,45 @@
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
+            function checkSelections() {
+                var topicId = $('#topic_id').val();
+                var trainerId = $('#trainer_id').val();
+         
+                if (topicId && trainerId) {
+                    $.ajax({
+                        url: "{{ url('training_matrix/topic/ajax-list') }}/" + topicId + "/" + trainerId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(response) {
+                            $('.text-danger').remove();
+
+                            if (response.exists) {
+                                $('#topic_id').closest('.form-group').append(
+                                    '<div><span class="text-danger">This topic is already assigned to another trainer.</span></div>'
+                                );
+                                $('#training_matrixadd').submit(function(e) {
+                                    e.preventDefault();
+                                });
+                            } else {
+                                $('#training_matrixadd').off(
+                                'submit');
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching data. Please try again.');
+                        }
+                    });
+                } else {
+                    $('.text-danger').remove();
+                    $('#training_matrixadd').off('submit');
+                }
+            }
+
+            $('#topic_id').on('change', checkSelections);
+            $('#trainer_id').on('change', checkSelections);
+        });
+
+        $(document).ready(function() {
 
             $('#training_evaluation').on('change', function() {
                 if ($(this).val() === '{{ encryptId(1) }}') { // "Yes" selected
@@ -181,6 +220,9 @@
             });
 
             // Handle the change event of the Unit dropdown
+
+
+
             $(document).on('change', '#unit_id', function() {
                 var unitId = $(this).val();
                 if (unitId) {
@@ -204,10 +246,14 @@
                     });
                 } else {
                     $('#department_id').empty().append(
-                    '<option value="">Select Target Department</option>');
+                        '<option value="">Select Target Department</option>');
                     $('#department_id').trigger('change');
                 }
             });
+
+
+
+
 
             $('#training_matrixadd').validate({
                 rules: {
