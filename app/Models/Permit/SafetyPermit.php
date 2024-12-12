@@ -81,7 +81,13 @@ class SafetyPermit extends Model
 
         // $employeelocation = Employee::where('login_id', $id)->value('location');
 
-        $query = $this->select('ptw_safety.*');
+        $query = $this->select('ptw_safety.*','masters_unit.unit_name','ptw_status.status_name','ptw_status.bg_color')
+        ->leftJoin(
+            'masters_unit', 
+            'masters_unit.id', 
+            '=', 
+            'ptw_safety.unit_id'
+        )->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -170,77 +176,7 @@ class SafetyPermit extends Model
     }
 
 
-    public function permitextensionlist()
-    {
-
-        $request = request();
-        $search = '';
-
-        $query = $this->select('ptw_safety.*');
-
-        $query = $query->leftJoin('hotcold_permit_extension', 'hotcold_permit_extension.permit_id', '=', 'ptw_safety.id');
-        $query = $query->where('ptw_safety.trash', '=', 'NO');
-        $query = $query->groupBy('hotcold_permit_extension.permit_id');
-        $query = $query->orderBy('hotcold_permit_extension.permit_id', 'desc')
-            ->orderBy('ptw_safety.id', 'desc');
-
-
-        $org_total =  $query;
-        $org_total_counts = $org_total->count();
-
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhereRaw('permit_id LIKE "%' . $search . '%"');
-            });
-        }
-
-        if ($request->has('sub_permit') && $request->sub_permit) {
-            $query = $query->where('ptw_safety.sub_permit', 'LIKE', '%' . $request->sub_permit . '%');
-        }
-
-
-        // if (isset($request->order)) {
-
-        //     $columnName = $request->order[0]['name'];
-        //     $columnorder = $request->order[0]['dir'];
-
-        //     switch ($columnName) {
-
-        //         case "permit_id":
-        //             $query = $query->orderBy('permit_id', $columnorder);
-        //             break;
-        //         case "created_by":
-        //             $query = $query->orderBy('created_by', $columnorder);
-        //             break;
-        //         case "created_date":
-        //             $query = $query->orderBy('created_at', $columnorder);
-        //             break;
-        //         default:
-        //             $query = $query->orderBy('id', 'DESC');
-        //             break;
-        //     }
-        // }
-
-        $data_count = $query;
-        $total_records = $data_count->count();
-
-
-        if ($request->length != -1) {
-            $query->offset($request->start)->limit($request->length);
-        }
-
-        $data = $query->get();
-        $datas = array(
-            'data' => $data,
-            'total_records' => $org_total_counts,
-            'filter_records' => $total_records,
-        );
-
-        return $datas;
-    }
-
+    
     public function store()
     {
         $request = request();
@@ -255,9 +191,7 @@ class SafetyPermit extends Model
         $equipment_checklist = !empty($request->equipment_checklist) ? json_encode($request->equipment_checklist) : null;
         $safework_instruction = !empty($request->safework_instruction) ? json_encode($request->safework_instruction) : null;
 
-        // dd($protective_equip, $equiment_involved, $precaution_taken, $equipment_checklist,  $safework_instruction);
-
-
+    
         $shutdownReq = $request->has('shutdown_req') ? 1 : 0;
         $lotoReq = $request->has('loto_req') ? 1 : 0;
         $tagfield = $request->has('tagfield') ? 1 : 0;
@@ -297,8 +231,6 @@ class SafetyPermit extends Model
             'attendance_toolbox_talk' => $request->attendance_toolbox_talk,
             'permit_status' => 1,
             'created_by' => Auth::id(),
-            'created_at' => now(),
-            'updated_at' => now(),
         );
 
         return $this->create($insert_array);
@@ -442,15 +374,23 @@ class SafetyPermit extends Model
 
     public function selectOne($id)
     {
-
-        $data =  $this->select('ptw_safety.*', 'ptw_hot_cold_file.file_path',)->leftjoin('ptw_hot_cold_file', 'ptw_hot_cold_file.ptw_hot_cold_id', '=', 'ptw_safety.id')
+        $data = $this->select('ptw_safety.*','ptw_masters_typeofwork.work_name','ptw_masters_typeofwork_checklist.id as checklist_id','ptw_masters_typeofwork_checklist.type','ptw_masters_typeofwork_checklist.checked','ptw_masters_typeofwork_checklist.check_points','ptw_masters_typeofwork_checklist.default_enable')
+            ->leftJoin('ptw_safety_workman_involved', 'ptw_safety_workman_involved.permit_id', '=', 'ptw_safety.id')
+            ->leftJoin('ptw_masters_typeofwork', function($join) {
+                $join->on('ptw_masters_typeofwork.id', '=', 'ptw_safety.id')
+                    ->whereRaw('FIND_IN_SET(ptw_masters_typeofwork.id, ptw_safety.id)');  
+            }) ->leftJoin('ptw_masters_typeofwork_checklist', 'ptw_masters_typeofwork_checklist.typeofwork_id', '=', 'ptw_masters_typeofwork.id')
+            // ->leftJoin('ptw_masters_protective_equip', 'ptw_masters_protective_equip.id', '=', 'ptw_masters_typeofwork_checklist.check_points')
+            // ->leftJoin('ptw_masters_equip_involved', 'ptw_masters_equip_involved.id', '=', 'ptw_masters_typeofwork_checklist.check_points')
+            // ->leftJoin('ptw_masters_safe_work', 'ptw_masters_safe_work.id', '=', 'ptw_masters_typeofwork_checklist.check_points')
+            // ->leftJoin('ptw_masters_precaution', 'ptw_masters_precaution.id', '=', 'ptw_masters_typeofwork_checklist.check_points')
+            // ->leftJoin('ptw_masters_checklist', 'ptw_masters_checklist.id', '=', 'ptw_masters_typeofwork_checklist.check_points')
             ->where('ptw_safety.id', $id)
             ->first();
-
+    dd($data);
         return $data;
     }
-
-
+    
 
     public function permitapprovestatus($ptw_status, $id)
     {

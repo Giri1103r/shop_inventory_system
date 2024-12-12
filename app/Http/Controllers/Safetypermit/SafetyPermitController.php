@@ -17,6 +17,7 @@ use DataTables;
 use Mail;
 use App\Models\User;
 use App\Models\Permit\SafetyPermit;
+use App\Models\Permit\WorkmanInvolved;
 use App\Mail\PTW\HotWorkEmail;
 
 use App\Models\Master\Unit;
@@ -28,10 +29,12 @@ use App\Models\Master\SafeWork;
 use App\Models\Master\Precaution;
 use App\Models\Master\Checklist;
 use App\Models\Master\Employee;
+use App\Models\Master\Department;
 
 class SafetyPermitController extends Controller
 {
     private $safetypermit;
+    private $workmaninvolved;
     private $unit;
     private $typeofwork;
     private $typeofworkchecklist;
@@ -40,10 +43,12 @@ class SafetyPermitController extends Controller
     private $safework;
     private $precaution;
     private $checklist;
+    private $department;
 
     public function __construct()
     {
         $this->safetypermit = new SafetyPermit();
+        $this->workmaninvolved = new WorkmanInvolved();
         $this->unit = new Unit();
         $this->typeofwork = new TypeofWork();
         $this->typeofworkchecklist = new TypeofWorkChecklist();
@@ -52,6 +57,7 @@ class SafetyPermitController extends Controller
         $this->safework = new SafeWork();
         $this->precaution = new Precaution();
         $this->checklist = new Checklist();
+        $this->department = new Department();
     }
 
     public function index(Request $request)
@@ -77,20 +83,7 @@ class SafetyPermitController extends Controller
                             return ($row->location_type_name);
                         })
 
-                        ->addColumn('subpermit_type', function ($row) {
-                            $sub_permit_types = [
-                                1 => 'Confined Space Entry Permit',
-                                2 => 'Lifting Work Permit',
-                                3 => 'Work at Height Permit'
-                            ];
-
-                            $sub_permits = explode(',', $row->sub_permit);
-                            $permit_names = array_map(function ($permit) use ($sub_permit_types) {
-                                return $sub_permit_types[$permit] ?? '-';
-                            }, $sub_permits);
-
-                            return implode(', ', $permit_names);
-                        })
+                       
                         ->editColumn('status_batch', function ($row) {
                             return  "<span class='" . $row->bg_color . "' >" . $row->status_name . "</span>";
                         })
@@ -102,10 +95,15 @@ class SafetyPermitController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('ptw/hotwork_permit/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
 
 
-                            $btn .= '<a href="' . admin_url('ptw/hotwork_permit/view/pdf/' . encryptId($row->id)) . '" data-toggle="tooltip" data-placement="top" class="pdficon" title="Pdf"><i class="fas fa-file-pdf" aria-hidden="true"></i> ';
+                            $btn = '<a href="' . admin_url('ppe_exemption/approval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+
+                            $btn .= '<a href="' . admin_url('safetypermit/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+
+                    
+
+                            // $btn .= '<a href="' . admin_url('ptw/hotwork_permit/view/pdf/' . encryptId($row->id)) . '" data-toggle="tooltip" data-placement="top" class="pdficon" title="Pdf"><i class="fas fa-file-pdf" aria-hidden="true"></i> ';
 
 
                             $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="' . __('common.delete') . '"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
@@ -141,6 +139,8 @@ class SafetyPermitController extends Controller
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $typeofwork = $this->typeofwork->gettypework();
 
+            $employeeList = Employee::select('id', 'emp_id', 'emp_name', 'email', 'department', 'employee_status')->where('user_role', ROLE_USER)->where('status', 1)->get();
+
             $getprotectiveequipment = $this->protective->selectchecklist();
             $getequipmentinvolved = $this->equipinvalve->selectchecklist();
             $getinstruction = $this->safework->selectchecklist();
@@ -163,15 +163,14 @@ class SafetyPermitController extends Controller
 
     public function store(Request $request)
     {
-
-
         try {
             
             try {
 
-                 $this->safetypermit->store();
+               $safetpermit =   $this->safetypermit->store();
+               $WorkmanInvolved =   $this->workmaninvolved->store($safetpermit->id);
                 
-                Session::flash('success', __('ptw.hot_work_permit_submitted_successfully'));
+                Session::flash('success', __('Your data has been creted successfully'));
 
                 return redirect(admin_url('safetypermit/list'));
             } catch (Exception $ex) {
@@ -190,103 +189,13 @@ class SafetyPermitController extends Controller
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
-                $hot_permit = $this->safetypermit->selectOne($id);
-                $checklist = $this->checklist->find(1);
-
-                $status_log = $this->statuslog->selectOne($id);
-
-                $sub_permit =  explode(',', $hot_permit->sub_permit);
-                $currentdate = $hot_permit->created_at;
-                $created_at = $hot_permit->created_at;
-                $date = Carbon::parse($currentdate);
-                $dayOfWeek = $date->format('l');
-
-                $holidays = $this->holidays->where('status', 1)->get();
-
-                $holidaysDates = [];
-                foreach ($holidays as $holiday) {
-                    $holidaysDates[] = Displaydateformat($holiday->public_holidays);
-                }
-
-                $checklist_details = $this->checklistdetails->getchecklist(1);
-                $permit_type =  $hot_permit->permit_type;
-                $locationlist = $this->location->where('status', 1)->get();
-                $location =  $hot_permit->location;
-                $permitchecklist = $this->permitchecklist->where('ptw_hot_cold_id', $id)->get()->KeyBy('checklist_name_id');
-
-                $getchecklistdetails = $this->permitchecklist->getchecklistdetails($hot_permit->id, 3);
-                $getEngineerapproval = $this->approvereject->getEngineerapproval($id);
-                $getehsapproval = $this->approvereject->getehsapproval($id);
-                $getworkcompletionapproval = $this->approvereject->getworkcompletionapproval($id);
-                $getClosure = $this->approvereject->getClosure($id);
-                $recordname = $this->recordname->getgasrecordname($id);
-                $record = $this->record->getgasrecorddetails($id);
-                $getIsolation = $this->isolation->getIsolation($id);
-                $getIsolation1 = $this->isolation->getIsolation1($id);
-                $getIsolation2 = $this->isolation->getIsolation2($id);
-                $getIsolation3 = $this->isolation->getIsolation3($id);
-                $getIsolation4 = $this->isolation->getIsolation4($id);
-                $getapprovalWork = $this->approvalstart->getapprovalWork($id);
-                if ($getapprovalWork !== null) {
-                    $approvalData = json_decode($getapprovalWork->approval, true);
-                } else {
-
-                    $approvalData = [
-                        'checks' => [],
-                        'lel' => '',
-                        'hydrogen' => '',
-                        'oxygen' => '',
-                        'hours' => '',
-                        'declaration' => '',
-                        'special_ppe' => '',
-                        'others' => '',
-                        'consideration' => '',
-                    ];
-                }
-                $getapprovalStart = $this->approvereject->getapprovalStart($id);
-                $getElectrical = $this->electrical->getElectrical($id);
-
-                $subpermitDetails =  $this->safetypermitsubpermit->getPermit($id);
-
-                $getpermitextension = $this->extension->getpermitextension($id);
-                $getPermitExtensionsupervisor = $this->approvereject->getPermitExtensionsupervisor($id);
-                $getPermitExtensionsuperintendednt = $this->approvereject->getPermitExtensionsuperintendednt($id);
+                $safetypermit = $this->safetypermit->selectOne($id);
                 $data = array(
-                    'hot_permit' => $hot_permit,
-                    'checklist' => $checklist,
-                    'checklist_details' => $checklist_details,
-                    'permit_type' => $permit_type,
-                    'locationlist' => $locationlist,
-                    'location' => $location,
-                    'sub_permit' => $sub_permit,
-                    'permitchecklist' => $permitchecklist,
-                    'getchecklistdetails' => $getchecklistdetails,
-                    'getEngineerapproval' => $getEngineerapproval,
-                    'recordname' => $recordname,
-                    'record' => $record,
-                    'getapprovalStart' => $getapprovalStart,
-                    'approvalData' => $approvalData,
-                    'getehsapproval' => $getehsapproval,
-                    'getworkcompletionapproval' => $getworkcompletionapproval,
-                    'getElectrical' => $getElectrical,
-                    'getClosure' => $getClosure,
-                    'getIsolation' => $getIsolation,
-                    'getIsolation1' => $getIsolation1,
-                    'getIsolation2' => $getIsolation2,
-                    'getIsolation3' => $getIsolation3,
-                    'getIsolation4' => $getIsolation4,
-                    'subpermitDetails' => $subpermitDetails,
-                    'dayOfWeek' => $dayOfWeek,
-                    'holidaysDates' => $holidaysDates,
-                    'created_at' => $created_at,
-                    'getpermitextension' => $getpermitextension,
-                    'getPermitExtensionsupervisor' => $getPermitExtensionsupervisor,
-                    'getPermitExtensionsuperintendednt' => $getPermitExtensionsuperintendednt,
-                    'status_log' => $status_log,
-
+                    'safetypermit' => $safetypermit,
+                
                 );
             }
-            return view('ptw.main.hotptw.view', $data);
+            return view('permit.safetypermit.view', $data);
         } catch (Exception $ex) {
 
             dd($ex);
@@ -994,5 +903,38 @@ class SafetyPermitController extends Controller
                 ];
             })
         );
+    }
+
+
+    public function employeeid(Request $request)
+    {
+        $name = $request->input('search');
+
+        $employee_code = Employee::where('emp_id', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+        return response()->json(
+            $employee_code->map(function ($employee) {
+                return [
+                    'id' => $employee->id,
+                    'text' => $employee->emp_id,
+                ];
+            })
+        );
+    }
+
+    public function fetchEmployeeDetails($emp_id)
+    {
+        $employee = Employee::select('emp_name', 'email', 'department','designation')
+            ->where('id', $emp_id)
+            ->first();
+
+        $departments = $this->department->select('id', 'department_name')->where('status', '1')->get();
+
+        return response()->json([
+            'employee' => $employee,
+            'departments' => $departments
+        ]);
     }
 }

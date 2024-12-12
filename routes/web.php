@@ -614,6 +614,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/delete', [SafetyPermitController::class, 'delete']);
                 Route::get('/view/{id}', [SafetyPermitController::class, 'view']);
                 Route::post('/approvereject/submit', [SafetyPermitController::class, 'ApprovalReject']);
+                Route::get('/hodapproval/view/{id}', [PpeRequestController::class, 'hodApprovalview']);
                 Route::get('/edit/{id}', [SafetyPermitController::class, 'edit']);
                 Route::post('/edit/submit', [SafetyPermitController::class, 'update']);
                 Route::get('/export/excel', [SafetyPermitController::class, 'exportExcel']);
@@ -624,6 +625,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/getchecklist/{workId}', [SafetyPermitController::class, 'getchecklist']);
                 Route::get('/getinstruction/{workId}', [SafetyPermitController::class, 'getinstruction']);
                 Route::get('/employeename', [SafetyPermitController::class, 'employeename']);
+                Route::get('/employeeid', [SafetyPermitController::class, 'employeeid']);
+                Route::get('fetchEmployeeDetails/{emp_id}', [SafetyPermitController::class, 'fetchEmployeeDetails']);
 
             });
             Route::group(['prefix' => 'ppe_exemption'], function () {
