@@ -107,7 +107,7 @@ class PpeExemptionController extends Controller
                                 $btn .= '<a href="' . admin_url('ppe_exemption/approval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
                             }
 
-                            $btn .= '<a href="' . admin_url('ppe_exemption/generalpdf/' . encryptId($row->id)) . '" class="" title="Pdf"> <i class="fa-solid fa-file-pdf" style="color: #e67265;"></i></a> ';
+                            // $btn .= '<a href="' . admin_url('ppe_exemption/generalpdf/' . encryptId($row->id)) . '" class="" title="Pdf"> <i class="fa-solid fa-file-pdf" style="color: #e67265;"></i></a> ';
 
                             return $btn;
                         })
@@ -273,7 +273,7 @@ class PpeExemptionController extends Controller
 
     public function pdf(Request $request){
         try {
-          
+
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $ppeexemption = $this->ppeexemption->selectOne($id);
