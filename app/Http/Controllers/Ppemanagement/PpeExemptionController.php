@@ -51,7 +51,6 @@ class PpeExemptionController extends Controller
         $this->department = new Department();
         $this->unit = new Unit();
         $this->company = new Company();
-
     }
     public function index(Request $request)
     {
@@ -132,9 +131,9 @@ class PpeExemptionController extends Controller
         $data = [
             'department' => $department,
             'unit' => $unit,
-            'company'=>$company
+            'company' => $company
         ];
-        return view('ppemanagement.ppeexemption.list',$data);
+        return view('ppemanagement.ppeexemption.list', $data);
     }
 
 
@@ -271,22 +270,41 @@ class PpeExemptionController extends Controller
         }
     }
 
-    public function pdf(Request $request){
-        try {
 
+    public function pdf(Request $request)
+    {
+        try {
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $ppeexemption = $this->ppeexemption->selectOne($id);
             }
             $ppestatuslog = $this->ppestatus->getexemptionstatusdetails($id);
             $data = [
-                'ppeexemption' =>  $ppeexemption,
+                'ppeexemption' => $ppeexemption,
                 'ppestatuslog' => $ppestatuslog,
-                'pagetitle' => "PPE Exemption ",
+                'pagetitle' => "PPE Exemption",
             ];
-            return view('ppemanagement.ppeexemption.exportpdf', $data);
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('ppemanagement.ppeexemption.exportpdf', $data)->render();
+            $mpdf->WriteHTML($html);
+
+            $filename = "PPE_Exemption.pdf";
+            return $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
+            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
 
