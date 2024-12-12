@@ -19,6 +19,7 @@ class PpeExemption extends Model
         'unit',
         'from_date',
         'to_date',
+        'company',
         'reason',
         'remarks',
         'approved_by',
@@ -53,6 +54,7 @@ class PpeExemption extends Model
            $departmentId = $user->department_id;
            $query->where('ppe_ppeexemption.department',$departmentId);
         }
+       
         else {
             $query->where('ppe_ppeexemption.emp_id', $empId);
         }
@@ -69,11 +71,23 @@ class PpeExemption extends Model
             });
         }
 
+
+
         if ($request->has('emp_name') && $request->emp_name) {
             $query->where('ppe_ppeexemption.emp_name', 'LIKE', '%' . $request->emp_name . '%');
         }
         if ($request->has('emp_id') && $request->emp_id) {
             $query->where('ppe_ppeexemption.emp_id', 'LIKE', '%' . $request->emp_id . '%');
+        }
+
+        if ($request->has('department') && $request->department) {
+            $query->where('ppe_ppeexemption.department', 'LIKE', '%' . $request->department . '%');
+        }
+        if ($request->has('unit') && $request->unit) {
+            $query->where('ppe_ppeexemption.unit', 'LIKE', '%' . $request->unit . '%');
+        }
+        if ($request->has('company') && $request->company) {
+            $query->where('ppe_ppeexemption.company', 'LIKE', '%' . $request->company . '%');
         }
         if ($request->has('from_date') && !empty($request->from_date)) {
             $fromDate = $request->from_date;
@@ -116,6 +130,7 @@ class PpeExemption extends Model
             'emp_name' => $request->emp_name,
             'department' => Auth::user()->department_id,
             'unit' => $request->unit,
+            'company'=>$request->company,
             'from_date' => $request->from_date,
             'to_date' => $request->to_date,
             'approve_status' => STATUS_EHS_APPROVAL_PENDING,
@@ -134,6 +149,7 @@ class PpeExemption extends Model
             'emp_name' => $request->emp_name,
             'department' => Auth::user()->department_id,
             'unit' => $request->unit,
+            'company'=>$request->company,
             'from_date' => $request->from_date,
             'to_date' => $request->to_date,
             'reason' => $request->reason,
@@ -234,6 +250,15 @@ class PpeExemption extends Model
         }
         if ($request->has('emp_id') && $request->emp_id) {
             $query->where('ppe_ppeexemption.emp_id', 'LIKE', '%' . $request->emp_id . '%');
+        }
+        if ($request->has('department') && $request->department) {
+            $query->where('ppe_ppeexemption.department', 'LIKE', '%' . $request->department . '%');
+        }
+        if ($request->has('unit') && $request->unit) {
+            $query->where('ppe_ppeexemption.unit', 'LIKE', '%' . $request->unit . '%');
+        }
+        if ($request->has('company') && $request->company) {
+            $query->where('ppe_ppeexemption.company', 'LIKE', '%' . $request->company . '%');
         }
         if ($request->has('from_date') && !empty($request->from_date)) {
             $fromDate = $request->from_date;

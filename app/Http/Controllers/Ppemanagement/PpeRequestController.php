@@ -231,6 +231,7 @@ class PpeRequestController extends Controller
 
                 // Mail
                 $id = $pperequest->id;
+
                 $departmentId = $pperequest->department;
 
                 $hod = $this->pperequest->getdepartmenthod($departmentId);
@@ -272,12 +273,12 @@ class PpeRequestController extends Controller
                 Session::flash('success', __('Your data has been created successfully!'));
                 return redirect(admin_url('ppe_request/list'));
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
                 return redirect(admin_url('ppe_request/list'));
             }
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }
@@ -379,7 +380,7 @@ class PpeRequestController extends Controller
                 'remarks' => $updateData['approve_msg'],
                 'status' => $updateData['approve_status'],
                 'department' => $empDetails->department,
-                'approved_by' => $empDetails->approved_by,
+                'approved_by' =>  $updateData['approved_by'],
                 'approve_link' => url('ppe_request/ehsapproval/view/' . encryptID($id)),
                 'reject_link' => url('ppe_request/ehsapproval/view/' . encryptID($id)),
             ];
@@ -538,25 +539,25 @@ class PpeRequestController extends Controller
             $requestor = $this->user->getrequestEmail($empId);
             if ($action == 'approve') {
 
-                $recipients = array_filter([$requestor, $hod]);
+                $recipients = array_filter([$requestor, $hod,$storemanager]);
 
 
                 Mail::to($recipients)->send(new PpeEhsRequestEmail($details));
 
 
-                if ($storemanager) {
-                    $details = [
-                        'emp_id' => $empDetails->emp_id,
-                        'emp_name' => $empDetails->emp_name,
-                        'remarks' => $updateEhsData['remarks'],
-                        'status' => $updateEhsData['ehs_approve_status'],
-                        'department' => $empDetails->department,
-                        'approved_by' => $empDetails->approved_by,
-                        'item_code' => $empDetails->item_code,
-                        'approve_link' => url('ppe_request/smapproval/submit/' . $empDetails->item_code  . '/approve'),
-                    ];
-                    Mail::to($storemanager)->send(new PpeRequestStoremanagerEmail($details));
-                }
+                // if ($storemanager) {
+                //     $details = [
+                //         'emp_id' => $empDetails->emp_id,
+                //         'emp_name' => $empDetails->emp_name,
+                //         'remarks' => $updateEhsData['remarks'],
+                //         'status' => $updateEhsData['ehs_approve_status'],
+                //         'department' => $empDetails->department,
+                //         'approved_by' => $empDetails->approved_by,
+                //         'item_code' => $empDetails->item_code,
+                //         'approve_link' => url('ppe_request/smapproval/submit/' . $empDetails->item_code  . '/approve'),
+                //     ];
+                //     Mail::to($storemanager)->send(new PpeRequestStoremanagerEmail($details));
+                // }
 
 
                 $id = $empDetails->id;
@@ -619,17 +620,17 @@ class PpeRequestController extends Controller
 
 
 
-    public function smapproval(Request $request, $itemCode, $action)
-    {
-        if ($action == 'approve') {
-            $quantity = $this->ppestock->getquantity($itemCode, $action);
-            Session::flash('success', 'Approved Successfully');
-            return redirect('ppe_stock_inventory/list');
-        } else {
-            Session::flash('error', 'Something went Wrong Please try again after some time');
-            return redirect('ppe_stock_inventory/list');
-        }
-    }
+    // public function smapproval(Request $request, $itemCode, $action)
+    // {
+    //     if ($action == 'approve') {
+    //         $quantity = $this->ppestock->getquantity($itemCode, $action);
+    //         Session::flash('success', 'Approved Successfully');
+    //         return redirect('ppe_stock_inventory/list');
+    //     } else {
+    //         Session::flash('error', 'Something went Wrong Please try again after some time');
+    //         return redirect('ppe_stock_inventory/list');
+    //     }
+    // }
 
     public function edit(Request $request)
     {

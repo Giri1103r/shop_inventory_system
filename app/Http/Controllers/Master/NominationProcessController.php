@@ -66,7 +66,7 @@ class NominationProcessController extends Controller
                             }
                             return $text;
                         })
-                       
+
                         ->addColumn('last_training_attended_on', function ($row) {
                             return Displaydateformat($row->last_training_attended_on);
                         })
@@ -93,7 +93,7 @@ class NominationProcessController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd( $ex);
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -116,60 +116,67 @@ class NominationProcessController extends Controller
         try {
 
             $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
-            $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
-            $venueList  = $this->venue->select('id', 'name_of_the_conference_hall')->where('status', '1')->get();
-            $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_USER)->where('status', '1')->get();
+            $employeeList = Employee::select('id', 'emp_id', 'emp_name', 'email', 'department', 'employee_status')->where('user_role', ROLE_USER)->where('status', 1)->get();
 
             $data = array(
                 'departmentList' => $departmentList,
-                'unitList' => $unitList,
                 'topicList' => $topicList,
-                'venueList' => $venueList,
                 'employeeList' => $employeeList,
             );
-            return view('master.nomination_process.add', $data);
+            return view('master.training.nomination_process.add', $data);
         } catch (Exception $ex) {
             report($ex);
         }
+    }
+    public function fetchEmployeeDetails($emp_id)
+    {
+        $employee = Employee::select('emp_name', 'email', 'department', 'employee_status')
+            ->where('id', $emp_id)
+            ->first();
+
+        $departments = $this->department->select('id', 'department_name')->where('status', '1')->get();
+
+        return response()->json([
+            'employee' => $employee,
+            'departments' => $departments
+        ]);
     }
 
     public function Store(Request $request)
     {
         try {
-
             $rules = [
-                'topic_id' => 'required',
-                'trainer_id' => 'required',
-                'unit_id' => 'required',
-                'department_id' => 'required',
+                'employee.*.emp_id' => 'required',
+                // 'employee.*.last_training_attended_on' => 'required',
+                'employee.*.topic_id' => 'required',
+                'employee.*.department_id' => 'required',
             ];
 
             $messages = [
-                'topic_id.required' => 'Please select a training topic.',
-                'trainer_id.required' => 'Please select a trainer.',
-                'unit_id.required' => 'Please select a unit name.',
-                'department_id.required' => 'Please select a target department.',
+                'employee.*.emp_id.required' => 'Please select an Employee ID.',
+                // 'employee.*.last_training_attended_on.required' => 'Please select the last training attended date.',
+                'employee.*.topic_id.required' => 'Please select a topic.',
+                'employee.*.department_id.required' => 'Please select a department.',
             ];
+
             $validator = Validator::make($request->all(), $rules, $messages);
+
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-
             try {
-
-                $this->nomination_process->store();
-
+                $id = decryptId($request->id);
+                $this->nomination_process->storeOrUpdate($id);
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('nomination_process/list'));
         } catch (Exception $ex) {
-
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('nomination_process/list'));
         }
@@ -180,64 +187,65 @@ class NominationProcessController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $nomination_process = $this->nomination_process->selectOne($id);
-    
+
                 // Calculate training hours
                 $training_hours = $nomination_process ? $nomination_process->calculateTrainingHours() : 0;
-    
+
                 $data = array(
                     'nomination_process' => $nomination_process,
                     'training_hours' => $training_hours,
                 );
             }
-            return view('master.nomination_process.view', $data);
+            return view('master.training.nomination_process.view', $data);
         } catch (Exception $ex) {
             report($ex);
         }
     }
- 
 
     public function Edit(Request $request)
     {
         try {
             $id = decryptId($request->id);
+
             $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
-            $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
-            $venueList  = $this->venue->select('id', 'name_of_the_conference_hall')->where('status', '1')->get();
-            $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_USER)->where('status', '1')->get();
-            $nomination_process = $this->nomination_process->find($id);
-            $data = array(
+            $employeeList = Employee::select('id', 'emp_id', 'emp_name', 'email', 'department', 'employee_status')
+                ->where('user_role', ROLE_USER)
+                ->where('status', 1)
+                ->get();
+
+            $nominationProcessList = $this->nomination_process->where('id', $id)->get();
+
+            $data = [
                 'departmentList' => $departmentList,
-                'unitList' => $unitList,
                 'topicList' => $topicList,
                 'employeeList' => $employeeList,
-                'nomination_process' => $nomination_process,
-                'venueList' => $venueList,
+                'nominationProcessList' => $nominationProcessList,
+            ];
 
-            );
-
-            return view('master.nomination_process.edit', $data);
+            return view('master.training.nomination_process.edit', $data);
         } catch (Exception $error) {
-            report($error->getMessage());
+            return back()->withErrors(['error' => $error->getMessage()]);
         }
     }
+
 
     public function Update(Request $request)
     {
         try {
             $id = decryptId($request->id);
             $rules = [
-                'topic_id' => 'required',
-                'trainer_id' => 'required',
-                'unit_id' => 'required',
-                'department_id' => 'required',
+                'employee.*.emp_id' => 'required',
+                // 'employee.*.last_training_attended_on' => 'required',
+                'employee.*.topic_id' => 'required',
+                'employee.*.department_id' => 'required',
             ];
 
             $messages = [
-                'topic_id.required' => 'Please select a training topic.',
-                'trainer_id.required' => 'Please select a trainer.',
-                'unit_id.required' => 'Please select a unit name.',
-                'department_id.required' => 'Please select a target department.',
+                'employee.*.emp_id.required' => 'Please select an Employee ID.',
+                // 'employee.*.last_training_attended_on.required' => 'Please select the last training attended date.',
+                'employee.*.topic_id.required' => 'Please select a topic.',
+                'employee.*.department_id.required' => 'Please select a department.',
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
@@ -371,7 +379,7 @@ class NominationProcessController extends Controller
         try {
 
             $allData = $this->nomination_process->exportdata();
-  
+
             $header = [
                 __("common.sno"),
                 'From Date',
@@ -472,7 +480,7 @@ class NominationProcessController extends Controller
             $filename = "Nomination Process.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-        
+
             dd($ex);
         }
     }
