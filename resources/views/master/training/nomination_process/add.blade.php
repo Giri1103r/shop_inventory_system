@@ -37,94 +37,72 @@
                                         @csrf
 
                                         <div class="row">
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label for="from_date" class="form-label require">From Date</label>
-                                                    <input type="text" name ="from_date" id="from_date_datepicker"
-                                                        class="form-control" placeholder="From Date">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label for="to_date" class="form-label require">To Date</label>
-                                                    <input type="text" name ="to_date" id="to_date_datepicker"
-                                                        class="form-control" placeholder="To Date">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label for="topic_id" class="form-label require">Training Topic</label>
-                                                    <select name="topic_id" id="topic_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Training Topic</option>
-                                                        @foreach ($topicList as $topic)
-                                                            <option value="{{ encryptId($topic->id) }}">
-                                                                {{ $topic->topic_name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label for="trainer_id" class="form-label require">Trainer</label>
-                                                    <select name="trainer_id" id="trainer_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Trainer</option>
-                                                        @foreach ($employeeList as $employee)
-                                                            <option value="{{ encryptId($employee->id) }}">
-                                                                {{ $employee->emp_name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
+                                            <button class="btn btn-primary addmorebutton" data-block='lesson_learned_block'
+                                                data-row='lesson_learned_row' type="button" id="dynamic-add-more"
+                                                style="margin:10px;float:right;width: 84px;">Add</button>
+                                            <table class="table_card" style="margin-top: 20px;">
+                                                <thead>
 
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Unit</label>
-                                                    <select name="unit_id" id="unit_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Unit</option>
-                                                        @foreach ($unitList as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}">
-                                                                {{ $unit->unit_name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label for="department_id" class="form-label require">Department
-                                                    </label>
-                                                    <select name="department_id" id="department_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Department </option>
-
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Target Trainees</label>
-                                                    <input type="text" name="target_trainees" id="target_trainees"
-                                                        class="form-control" placeholder="Target Trainees">
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label for="venue_id" class="form-label require">Venue/Location
-                                                    </label>
-                                                    <select name="venue_id" id="venue_id"
-                                                        class="form-control single-select" style="width: 100%">
-                                                        <option value="">Select Venue/Location </option>
-                                                        @foreach ($venueList as $venue)
-                                                            <option value="{{ encryptId($venue->id) }}">
-                                                                {{ $venue->name_of_the_conference_hall }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-
+                                                    <th class="form-label required">Employee ID</th>
+                                                    <th class="form-label required">Employee Name</th>
+                                                    <th class="form-label required">Email ID</th>
+                                                    <th class="form-label required">Department</th>
+                                                    <th class="form-label required">Employee Type</th>
+                                                    <th class="form-label required">Last training attended on (Date)</th>
+                                                    <th class="form-label required">Last Training Attended on (Topic)</th>
+                                                    <th>Delete</th>
+                                                </thead>
+                                                <tbody id="lesson_learned_block">
+                                                    <tr class="lesson_learned_row">
+                                                        <td>
+                                                            <select name="employee[1][emp_id]" id="emp_id_1"
+                                                                class="form-control single-select validate-select-required"
+                                                                style="width: 100%">
+                                                                <option value="">Select Employee</option>
+                                                                @foreach ($employeeList as $emp)
+                                                                    <option value="{{ $emp->id }}">{{ $emp->emp_id }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </td>
+                                                        <td><input type="text"
+                                                                class="form-control validate-input-required"
+                                                                name="employee[1][emp_name]" id="emp_name_1" readonly></td>
+                                                        <td><input type="email"
+                                                                class="form-control validate-input-required"
+                                                                name="employee[1][email]" id="email_1" readonly></td>
+                                                        <td>
+                                                            <select name="employee[1][department_id]" id="department_1"
+                                                                class="form-control single-select validate-select-required"
+                                                                style="width: 100%">
+                                                                <!-- Department options will be populated by AJAX -->
+                                                            </select>
+                                                        </td>
+                                                        <td><input type="text"
+                                                                class="form-control validate-input-required"
+                                                                name="employee[1][employee_type]" id="employee_type_1"
+                                                                readonly></td>
+                                                        <td><input type="text"
+                                                                class="form-control validate-input-required last_training_attended_on"
+                                                                name="employee[1][last_training_attended_on]"
+                                                                id="last_training_attended_on_1"></td>
+                                                        <td>
+                                                            <select name="employee[1][topic_id]" id="topic_id_1"
+                                                                class="form-control single-select validate-select-required"
+                                                                style="width: 100%">
+                                                                <option value="">Select Topic</option>
+                                                                @foreach ($topicList as $topic)
+                                                                    <option value="{{ encryptId($topic->id) }}">
+                                                                        {{ $topic->topic_name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </td>
+                                                        <td><button class="btn btn-danger removerow" type="button"
+                                                                style="margin:10px;"><i class="fa fa-trash"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
@@ -150,113 +128,222 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
-        $(document).on('change', '#unit_id', function() {
-            var unitId = $(this).val();
-            if (unitId) {
-                $.ajax({
-                    url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                        $('#department_id').empty().append(
-                            '<option value="">Select Department</option>');
-                        $.each(data, function(key, value) {
-                            $('#department_id').append('<option value="' + value.id + '">' +
-                                value
-                                .name + '</option>');
-                        });
-                        $('#department_id').trigger('change.');
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching department. Please try again.');
-                    }
-                });
-            } else {
-                $('#department_id').empty().append('<option value="">Select Department</option>');
-                $('#department_id').trigger('change.');
-            }
-        });
         $(document).ready(function() {
             $('#resetform').on('click', function(e) {
                 e.preventDefault();
                 location.reload();
             });
-            flatpickr("#from_date_datepicker", {
-                dateFormat: "d-m-Y H:i",
-                minDate: "today",
-                enableTime: true,
-                time_24hr: true,
-                onChange: function(selectedDates, dateStr, instance) {
-                    const toDatePicker = document.getElementById("to_date_datepicker")._flatpickr;
-                    toDatePicker.set("minDate",
-                        dateStr);
-                    toDatePicker.setDate(dateStr,
-                        false);
+        });
+        flatpickr("#last_training_attended_on", {
+            dateFormat: "d-m-Y",
+        });
+
+        $(document).ready(function() {
+            $(document).on("change", "[id^=\"emp_id_\"]", function() {
+                var emp_id = $(this).val();
+                var currentRow = $(this).closest("tr");
+                var departmentDropdown = currentRow.find(
+                    'select[name*="[department_id]"]');
+
+                if (emp_id) {
+                    $.ajax({
+                        url: "{{ url('nomination_process/fetchEmployeeDetails') }}/" + emp_id,
+                        type: "GET",
+                        success: function(data) {
+                            if (data.employee) {
+                                // Populate employee details in the current row
+                                currentRow.find('input[name*="[emp_name]"]').val(data.employee
+                                    .emp_name);
+                                currentRow.find('input[name*="[email]"]').val(data.employee
+                                    .email);
+                                currentRow.find('input[name*="[employee_type]"]').val(data
+                                    .employee.employee_status);
+
+                                // Populate the department dropdown
+                                departmentDropdown.empty(); // Clear existing options
+                                departmentDropdown.append(
+                                    '<option value="">Select Department</option>'
+                                ); // Default option
+
+                                data.departments.forEach(function(department) {
+                                    var selected = data.employee.department ==
+                                        department.id ? "selected" : "";
+                                    departmentDropdown.append(
+                                        `<option value="${department.id}" ${selected}>${department.department_name}</option>`
+                                    );
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Error",
+                                    text: "Employee data could not be fetched.",
+                                });
+                            }
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: "An error occurred while fetching employee details.",
+                            });
+                        },
+                    });
+                } else {
+                    // Clear the current row inputs if no employee is selected
+                    currentRow.find('input[name*="[emp_name]"]').val("");
+                    currentRow.find('input[name*="[email]"]').val("");
+                    currentRow.find('input[name*="[employee_type]"]').val("");
+                    departmentDropdown.empty();
+                    departmentDropdown.append('<option value="">Select Department</option>');
                 }
             });
 
-            flatpickr("#to_date_datepicker", {
-                dateFormat: "d-m-Y H:i",
-                minDate: "today",
-                enableTime: true,
-                time_24hr: true,
+            // Event listener for dynamic row addition
+            $("#dynamic-add-more").on("click", function() {
+                var rowCount = $("#lesson_learned_block .lesson_learned_row").length;
+
+                if (rowCount >= 10) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Sorry!",
+                        text: "Maximum 10 records only.",
+                    });
+                    return;
+                }
+
+                var newRow = $(".lesson_learned_row").first().clone();
+
+                // Clear inputs and reset classes
+                newRow.find(".form-input").removeClass("selecterror");
+                newRow.find(".form-control").removeClass("is-invalid");
+                newRow.find(".invalid-feedback").remove();
+
+                var newIndex = rowCount + 1; // Update index for the new row
+
+                // Reset all input values and attributes for the new row
+                newRow.find("input").val("");
+                newRow.find("select").val("");
+
+                newRow.find("input, select").each(function() {
+                    var oldName = $(this).attr("name");
+                    var oldId = $(this).attr("id");
+
+                    if (oldName) {
+                        var newName = oldName.replace(/\[\d+\]/, "[" + newIndex + "]");
+                        $(this).attr("name", newName);
+                    }
+
+                    if (oldId) {
+                        var newId = oldId.replace(/\d+$/, newIndex);
+                        $(this).attr("id", newId);
+                    }
+                });
+
+                // Remove the existing select2 container to prevent duplicate initialization
+                newRow.find(".select2-container").remove();
+
+                // Append the new row to the table
+                $("#lesson_learned_block").append(newRow);
+
+                // Reinitialize select2 for all dropdowns
+                $(".single-select").select2();
+
+                // Disable Add button if row count reaches the maximum limit
+                $("#dynamic-add-more").attr("disabled", rowCount + 1 >= 10);
             });
 
 
+            // Event listener for dynamic row removal
+            $(document).on('click', '.removerow', function() {
+                var rowCount = $("#lesson_learned_block .lesson_learned_row").length;
+                if (rowCount > 1) {
+                    $(this).closest(".lesson_learned_row").remove();
+
+                    // Re-indexing remaining rows
+                    $("#lesson_learned_block .lesson_learned_row").each(function(index) {
+                        var newIndex = index + 1;
+                        $(this).find("input, select").each(function() {
+                            var oldName = $(this).attr("name");
+                            var oldId = $(this).attr("id");
+
+                            if (oldName) {
+                                var newName = oldName.replace(/\[\d+\]/, '[' + newIndex +
+                                    ']');
+                                $(this).attr("name", newName);
+                            }
+
+                            if (oldId) {
+                                var newId = oldId.replace(/\d+$/, newIndex);
+                                $(this).attr("id", newId);
+                            }
+                        });
+
+                        // Reinitialize select2 for each row
+                        $(this).find(".select2-container").remove();
+                        $(this).find(".select2").select2();
+                    });
+
+                    $('#dynamic-add-more').attr("disabled", rowCount - 1 >= 10);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Sorry!',
+                        text: 'At least one record is required.',
+                    });
+                }
+            });
+
+            // AJAX call when emp_id is selected
+
+
+            // Form validation rules
             $('#nomination_processadd').validate({
                 rules: {
-                    from_date: {
-                        required: true,
+                    'emp_id[]': {
+                        required: true
                     },
-                    to_date: {
-                        required: true,
+                   'emp_name[]': {
+                        required: true
                     },
-                    topic_id: {
+                    'email[]': {
                         required: true,
+                        email: true
                     },
-                    trainer_id: {
-                        required: true,
+                    'department_id[]': {
+                        required: true
                     },
-                    venue_id: {
-                        required: true,
+                    'employee_type[]': {
+                        required: true
                     },
-                    unit_id: {
-                        required: true,
+                    'last_training_attended_on[]': {
+                        required: true
                     },
-                    department_id: {
-                        required: true,
-                    },
-                    target_trainees: {
-                        required: true,
-                    },
-
+                    'topic_id[]': {
+                        required: true
+                    }
                 },
                 messages: {
-                    from_date: {
-                        required: "Select a From Date.",
+                    'emp_id[]': {
+                        required: "Select an Employee ID."
                     },
-                    to_date: {
-                        required: "Select a To Date.",
+                    'emp_name[]': {
+                        required: "Employee Name is required."
                     },
-                    topic_id: {
-                        required: "Select a Training Topic.",
+                    'email[]': {
+                        required: "Email ID is required."
                     },
-                    trainer_id: {
-                        required: "Select a Trainer.",
+                    'department_id[]': {
+                        required: "Department is required."
                     },
-                    venue_id: {
-                        required: "Select a Venue/Location.",
+                    'employee_type[]': {
+                        required: "Employee Type is required."
                     },
-                    unit_id: {
-                        required: "Select a Unit.",
+                    'last_training_attended_on[]': {
+                        required: "Last training attended on is required."
                     },
-                    department_id: {
-                        required: "Select a Department.",
-                    },
-                    target_trainees: {
-                        required: "Target Trainees is Required.",
-                    },
-
+                    'topic_id[]': {
+                        required: "Training Topic is required."
+                    }
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
@@ -269,19 +356,7 @@
                 unhighlight: function(element, errorClass, validClass) {
                     $(element).removeClass('is-invalid');
                 },
-                submitHandler: function(form) {
-                    form.submit(); // Submit the form when valid
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                    console.log(errors + " field(s) are invalid");
-                    validator.errorList.forEach(function(error) {
-                        console.log("Field: " + error.element.name + ", Error: " + error
-                            .message);
-                    });
-                }
             });
-         
         });
     </script>
 @endpush

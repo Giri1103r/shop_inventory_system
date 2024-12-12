@@ -221,7 +221,7 @@ class ImporNominationProcessJob
 
 
             $empExist = Employee::select('id', 'emp_id', 'emp_name', 'email', 'department', 'employee_status')
-                ->where('emp_id', $emp_id)
+                ->where('emp_id', $emp_id)->where('user_role', ROLE_USER)
                 ->where('status', 1)
                 ->first();
 

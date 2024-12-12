@@ -452,7 +452,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/add/submit', [TrainingScheduleController::class, 'store']);
                 Route::get('/edit/{id}', [TrainingScheduleController::class, 'edit']);
                 Route::post('/edit/submit', [TrainingScheduleController::class, 'update']);
-                Route::get('/view/{id}', [TrainingScheduleController::class, 'view']);
+                Route::get('/view/{id}', [TrainingScheduleController::class, 'nominationProcess']);
                 Route::post('/delete', [TrainingScheduleController::class, 'delete'])->middleware('role:company,delete');
                 Route::get('/export/excel', [TrainingScheduleController::class, 'exportExcel']);
                 Route::get('/export/pdf', [TrainingScheduleController::class, 'exportPdf']);
@@ -483,6 +483,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/list', [NominationProcessController::class, 'index']);
                 Route::get('/add', [NominationProcessController::class, 'add']);
                 Route::post('/add/submit', [NominationProcessController::class, 'store']);
+                Route::get('/edit/{id}', [NominationProcessController::class, 'edit']);
+                Route::post('/edit/submit', [PrecautionController::class, 'update']);
                 Route::get('/export/excel', [NominationProcessController::class, 'exportExcel']);
                 Route::get('/export/pdf', [NominationProcessController::class, 'exportPdf']);
                 Route::get('/sampledownload', [NominationProcessController::class, 'DownloadSample']);
@@ -490,6 +492,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/submit', [NominationProcessController::class, 'importSubmit']);
                 Route::post('/status', [NominationProcessController::class, 'statusChange']);
                 Route::post('/unique', [NominationProcessController::class, 'Uniquecheck']);
+                Route::get('fetchEmployeeDetails/{emp_id}', [NominationProcessController::class, 'fetchEmployeeDetails']);
             });
             Route::group(['prefix' => 'ptw/precautionmaster'], function () {
                 Route::get('/list', [PrecautionController::class, 'index']);
@@ -595,7 +598,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/list', [PpeStockInventoryController::class, 'index']);
                 Route::post('/status', [PpeStockInventoryController::class, 'statusChange']);
                 Route::get('/view/{id}', [PpeStockInventoryController::class, 'view']);
-                  Route::get('/edit/{id}', [PpeStockInventoryController::class, 'edit']);
+                Route::get('/edit/{id}', [PpeStockInventoryController::class, 'edit']);
                 Route::post('/status', [PpeStockInventoryController::class, 'statusChange']);
 
                 Route::post('/edit/submit', [PpeStockInventoryController::class, 'update']);
@@ -622,8 +625,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/getprecaution/{workId}', [SafetyPermitController::class, 'getprecaution']);
                 Route::get('/getchecklist/{workId}', [SafetyPermitController::class, 'getchecklist']);
                 Route::get('/getinstruction/{workId}', [SafetyPermitController::class, 'getinstruction']);
-
-
             });
             Route::group(['prefix' => 'ppe_exemption'], function () {
 

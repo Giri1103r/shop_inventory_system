@@ -290,6 +290,7 @@
 
     <!-- App js-->
     <script src="{{ url('public/assets/js/app.min.js') }}"></script>
+    <script src="{{ url('public/assets/js/custom-validation.js') }}"></script>
 
     <script src="{{ public_plugins('sweetalert/SweetAlertFull.js') }}"></script>
     <script src="{{ public_plugins('jqueryvalidation/jquery.validate.min.js') }}"></script>
