@@ -107,19 +107,23 @@
                                                 <div class="card p-3 rounded m-3">
                                                     <div class="row g-3">
                                                         @foreach ($typeofwork as $work)
-                                                            <div class="col-12 col-md-4 d-flex align-items-center gap-2">
-                                                                <input type="hidden" name="sub_permit[]"
-                                                                    value="{{ $work->id }}">
-                                                                <input type="checkbox" class="work-type-checkbox"
-                                                                    data-id="{{ $work->id }}">
-                                                                <a href="{{ asset($work->file_path) }}" target="_blank">
-                                                                    <img src="{{ asset($work->file_path) }}" alt="Image"
-                                                                        class="img-fluid"
-                                                                        style="max-width: 50px; object-fit: cover;">
-                                                                </a>
-                                                                <span>{{ $work->work_name }}</span>
-                                                            </div>
-                                                        @endforeach
+                                                        <div class="col-12 col-md-4 d-flex align-items-center gap-2">
+                                                            <input type="hidden" name="" value="{{ $work->id }}">
+                                                            <input 
+                                                                type="checkbox" 
+                                                                class="work-type-checkbox" 
+                                                                data-id="{{ $work->id }}" 
+                                                                name="sub_permit[]" 
+                                                                value="{{ $work->id }}">
+                                                            <a href="{{ asset($work->file_path) }}" target="_blank">
+                                                                <img src="{{ asset($work->file_path) }}" alt="Image"
+                                                                    class="img-fluid"
+                                                                    style="max-width: 50px; object-fit: cover;">
+                                                            </a>
+                                                            <span>{{ $work->work_name }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                    
                                                     </div>
                                                 </div>
                                             </div>
@@ -264,22 +268,22 @@
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">O2%</label>
-                                                            <input type="text" name="confined_space_entry" class="form-control"
+                                                            <input type="text" name="confined_space_entry[]" class="form-control"
                                                                 placeholder="" disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">System Isolated</label>
-                                                            <input type="checkbox" class="validate-radio-required" name = "confined_space_entry"
-                                                                disabled>
+                                                            <input type="hidden" name="confined_space_entry[system_isolated]" value="0">
+                                                            <input type="checkbox" class="validate-radio-required" name="confined_space_entry[system_isolated]" value="1">
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">Rescue System Available</label>
-                                                            <input type="checkbox" class="validate-radio-required" name = "confined_space_entry"
-                                                                disabled>
+                                                            <input type="hidden" name="confined_space_entry[rescue_system]" value="0">
+                                                            <input type="checkbox" class="validate-radio-required" name="confined_space_entry[rescue_system]" value="1">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -288,21 +292,21 @@
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">Confined Space Attendant</label>
-                                                            <input type="checkbox" class="validate-radio-required" name = "confined_space_entry"
-                                                                disabled>
+                                                            <input type="hidden" name="confined_space_entry[confined_attendant]" value="0">
+                                                            <input type="checkbox" class="validate-radio-required" name="confined_space_entry[confined_attendant]" value="1">
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">Attendant Name</label>
-                                                            <input type="text" name="description" class="form-control" name = "confined_space_entry"
+                                                            <input type="text" name="description" class="form-control" name = "confined_space_entry[]"
                                                                 placeholder="Search by Employee Name" disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">Register for entry & exits</label>
-                                                            <input type="checkbox" class="validate-radio-required" name = "confined_space_entry"
+                                                            <input type="checkbox" class="validate-radio-required" name = "confined_space_entry[]"
                                                                 disabled>
                                                         </div>
                                                     </div>
@@ -312,7 +316,7 @@
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">Any Other Gas / PPM</label>
-                                                            <input type="text" name="description" class="form-control" name = "confined_space_entry"
+                                                            <input type="text" name="description" class="form-control" name = "confined_space_entry[]"
                                                                 placeholder="Loto No" disabled>
                                                         </div>
                                                     </div>
@@ -320,14 +324,14 @@
                                                         <div class="form-group">
                                                             <label class="form-label">PPM and is therefore safe to enter
                                                                 from</label>
-                                                            <input type="text" name="description" class="form-control" name = "confined_space_entry"
+                                                            <input type="text" name="description" class="form-control" name = "confined_space_entry[]"
                                                                 placeholder="" disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">To</label>
-                                                            <input type="text"name = "confined_space_entry" class="form-control"
+                                                            <input type="text"name = "confined_space_entry[]" class="form-control"
                                                                 placeholder="" disabled>
                                                         </div>
                                                     </div>
@@ -470,7 +474,7 @@
                                                         <div class="col-md-3">
                                                             <label for="description" class="form-label fw-bold">Other If
                                                                 any</label>
-                                                            <textarea id="description" name="equiment_involved" class="form-control shadow-sm" placeholder=""></textarea>
+                                                            <textarea id="description" name="equiment_involved_others" class="form-control shadow-sm" placeholder=""></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -947,8 +951,8 @@
                                 if (!displayedEquipments.has(item.protective_equip)) {
                                     displayedEquipments.add(item.protective_equip);
                                     checkpointsHtml += `
-                                <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-id="${item.id}">
-                                    <input type="checkbox" class="validate-radio-required" name = "protective_equip[${workId}][]" id="checkpoint-${workId}-${item.id}">
+                                <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
+                                    <input type="checkbox" class="protective-checkbox" name="protective_equip[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
                                     <label for="checkpoint-${workId}-${item.id}">${item.protective_equip}</label>
                                 </div>`;
                                 }
@@ -985,9 +989,10 @@
                             data.forEach(function(item) {
                                 if (!displayedEquipments.has(item.equip_involve)) {
                                     displayedEquipments.add(item.equip_involve);
-                                    checkpointsHtml += `
-                                <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-id="${item.id}">
-                                    <input type="checkbox" class="validate-radio-required" name = "equiment_involved[]" id="checkpoint-${workId}-${item.id}">
+                                   
+                                checkpointsHtml += `
+                                <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
+                                    <input type="checkbox" class="" name="equiment_involved[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
                                     <label for="checkpoint-${workId}-${item.id}">${item.equip_involve}</label>
                                 </div>`;
                                 }
@@ -1024,9 +1029,10 @@
                             data.forEach(function(item) {
                                 if (!displayedEquipments.has(item.precaution)) {
                                     displayedEquipments.add(item.precaution);
-                                    checkpointsHtml += `
-                                <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-id="${item.id}">
-                                    <input type="checkbox" class="validate-radio-required" name = "precaution_taken[]" id="checkpoint-${workId}-${item.id}">
+                                
+                                checkpointsHtml += `
+                                <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
+                                    <input type="checkbox" class="" name="precaution_taken[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
                                     <label for="checkpoint-${workId}-${item.id}">${item.precaution}</label>
                                 </div>`;
                                 }
@@ -1064,9 +1070,10 @@
                             data.forEach(function(item) {
                                 if (!displayedEquipments.has(item.checklist)) {
                                     displayedEquipments.add(item.checklist);
-                                    checkpointsHtml += `
-                                <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-id="${item.id}">
-                                    <input type="checkbox" class="validate-radio-required" name = "equipment_checklist[]" id="checkpoint-${workId}-${item.id}">
+                                  
+                                checkpointsHtml += `
+                                <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
+                                    <input type="checkbox" class="" name="equipment_checklist[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
                                     <label for="checkpoint-${workId}-${item.id}">${item.checklist}</label>
                                 </div>`;
                                 }
@@ -1104,9 +1111,10 @@
                             data.forEach(function(item) {
                                 if (!displayedEquipments.has(item.safe_work)) {
                                     displayedEquipments.add(item.safe_work);
-                                    checkpointsHtml += `
-                                <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-id="${item.id}">
-                                    <input type="checkbox" class="validate-radio-required"  name = "safework_instruction[]" id="checkpoint-${workId}-${item.id}">
+                                  
+                                checkpointsHtml += `
+                                <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
+                                    <input type="checkbox" class="" name="safework_instruction[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
                                     <label for="checkpoint-${workId}-${item.id}">${item.safe_work}</label>
                                 </div>`;
                                 }

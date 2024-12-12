@@ -39,6 +39,7 @@ class SafetyPermit extends Model
         'confined_space_entry',
         'protective_equip',
         'equiment_involved',
+        'equiment_involved_others',
         'precaution_taken',
         'equipment_checklist',
         'equipment_checklist_inspection',
@@ -244,46 +245,65 @@ class SafetyPermit extends Model
     {
         $request = request();
 
-        dd($request);
         $sub_permit = is_array($request->sub_permit) ? implode(',', $request->sub_permit) : $request->sub_permit;
 
+        $state_isolation_loto = !empty($request->state_isolation_loto) ? json_encode($request->state_isolation_loto) : null;
+        $confined_space_entry = !empty($request->confined_space_entry) ? json_encode($request->confined_space_entry) : null;
+        $protective_equip = !empty($request->protective_equip) ? json_encode($request->protective_equip) : null;
+        $equiment_involved = !empty($request->equiment_involved) ? json_encode($request->equiment_involved) : null;
+        $precaution_taken = !empty($request->precaution_taken) ? json_encode($request->precaution_taken) : null;
+        $equipment_checklist = !empty($request->equipment_checklist) ? json_encode($request->equipment_checklist) : null;
+        $safework_instruction = !empty($request->safework_instruction) ? json_encode($request->safework_instruction) : null;
+
+        // dd($protective_equip, $equiment_involved, $precaution_taken, $equipment_checklist,  $safework_instruction);
+
+
         $shutdownReq = $request->has('shutdown_req') ? 1 : 0;
+        $lotoReq = $request->has('loto_req') ? 1 : 0;
+        $tagfield = $request->has('tagfield') ? 1 : 0;
+        $toolboxTalk = $request->has('toolbox_talk') ? 1 : 0;
+        $assignedJob = $request->has('assigned_job') ? 1 : 0;
+        $equipment_checklist_inspection = $request->has('equipment_checklist_inspection') ? 1 : 0;
+
         $insert_array = array(
-            'permit_id' => getsequence('safetypermit'),
+            'permit_id' => $request->permit_id,
             'date' => DBdateformat($request->date),
             'time_from' => $request->time_from,
             'time_to' => $request->time_to,
-            'unit_id' => $request->unit_id,
+            'unit_id' => decryptId($request->unit_id),
             'exact_location_job' => $request->exact_location_job,
             'job_location_area' => $request->job_location_area,
-            'sub_permit' =>  $sub_permit,
+            'sub_permit' => $sub_permit,
             'job_description' => $request->job_description,
-            'shutdown_req' =>  $shutdownReq,
-            'shut_down_takenby' => $request->work_from_time,
-            'loto_req' => DBdateformat($request->work_to_date),
-            'loto_takenby' => $request->work_to_time,
+            'shutdown_req' => $shutdownReq,
+            'shut_down_takenby' => $request->shut_down_takenby,
+            'loto_req' => $lotoReq,
+            'loto_takenby' => $request->loto_takenby,
             'loto_no' => $request->loto_no,
-            'tagfield' => $request->tagfield,
-            'state_isolation_loto' => $request->state_isolation_loto,
-            'confined_space_entry' => $request->confined_space_entry,
-            'protective_equip' => $request->protective_equip,
-            'equiment_involved' => $request->equiment_involved,
-            'precaution_taken' => $request->precaution_taken,
-            'equipment_checklist' => $request->equipment_checklist,
-            'equipment_checklist_inspection' => $request->equipment_checklist_inspection,
-            'safework_instruction' => $request->safework_instruction,
-            'toolbox_talk' => $request->toolbox_talk,
+            'tagfield' => $tagfield,
+            'state_isolation_loto' => $state_isolation_loto,
+            'confined_space_entry' => $confined_space_entry,
+            'description' => $request->description,
+            'protective_equip' => $protective_equip,
+            'equiment_involved' => $equiment_involved,
+            'equiment_involved_others' => $request->equiment_involved_others,
+            'precaution_taken' => $precaution_taken,
+            'equipment_checklist' => $equipment_checklist,
+            'equipment_checklist_inspection' => $equipment_checklist_inspection,
+            'safework_instruction' => $safework_instruction,
+            'toolbox_talk' => $toolboxTalk,
             'talk_givenby' => $request->talk_givenby,
-            'assigned_job' => $request->assigned_job,
+            'assigned_job' => $assignedJob,
             'attendance_toolbox_talk' => $request->attendance_toolbox_talk,
             'permit_status' => 1,
-            'permit_extension' => null,
-            'permit_extended' => null,
-            'permit_extension_status' => null,
-            'created_by' => Auth::id()
+            'created_by' => Auth::id(),
+            'created_at' => now(),
+            'updated_at' => now(),
         );
+
         return $this->create($insert_array);
     }
+
 
     public function updates($id, $ptw_status)
     {

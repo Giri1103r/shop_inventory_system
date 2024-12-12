@@ -22,6 +22,7 @@ use App\Models\Master\Topic;
 use App\Models\Master\Venue;
 use App\Models\Master\TrainingSchedule;
 use App\Models\User;
+use App\Models\Master\NominationProcess;
 use App\Models\UploadLog;
 use App\Jobs\ImportVenueJob;
 use Illuminate\Support\Facades\Session;
@@ -37,6 +38,8 @@ class TrainingScheduleController extends Controller
     private $venue;
     private $training_schedule;
     private $unit;
+    private $nomination_process;
+
 
 
     public function __construct()
@@ -50,6 +53,7 @@ class TrainingScheduleController extends Controller
         $this->user = new User();
         $this->unit = new Unit();
         $this->uploadlog = new UploadLog();
+        $this->nomination_process = new NominationProcess();
     }
 
 
@@ -101,7 +105,7 @@ class TrainingScheduleController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd( $ex);
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -203,19 +207,24 @@ class TrainingScheduleController extends Controller
             return redirect(admin_url('training_schedule/list'));
         }
     }
-    public function View(Request $request)
+    public function nominationProcess(Request $request)
     {
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $training_schedule = $this->training_schedule->selectOne($id);
-
-                // Calculate training hours
                 $training_hours = $training_schedule ? $training_schedule->calculateTrainingHours() : 0;
-
+                $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
+                $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
+                $employeeList = Employee::select('id', 'emp_id', 'emp_name', 'email', 'department', 'employee_status')->where('user_role', ROLE_USER)->where('status', 1)->get();
+                $nominationProcessList = $this->nomination_process->getNomination($training_schedule->id);
                 $data = array(
+                    'departmentList' => $departmentList,
+                    'topicList' => $topicList,
+                    'employeeList' => $employeeList,
                     'training_schedule' => $training_schedule,
                     'training_hours' => $training_hours,
+                    'nominationProcessList' => $nominationProcessList,
                 );
             }
             return view('master.training_schedule.view', $data);
@@ -223,8 +232,7 @@ class TrainingScheduleController extends Controller
             report($ex);
         }
     }
-
-
+   
     public function Edit(Request $request)
     {
         try {
