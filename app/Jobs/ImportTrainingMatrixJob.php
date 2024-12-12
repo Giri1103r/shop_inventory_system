@@ -75,10 +75,10 @@ class ImportTrainingMatrixJob
 
         foreach ($xlsx->rows() as $row) {
 
+
             if ($i == 1) {
                 if (count($row) === 8) {
-
-                }else{
+                } else {
                     $error_data = array(
                         'upload_id' => $this->details['log_id'],
                         'line_no' => $i,
@@ -125,6 +125,7 @@ class ImportTrainingMatrixJob
 
 
             $topicId = Topic::where('topic_name', $topic_name)->pluck('id')->first();
+
             if ($topicId == '') {
                 $cond_error_data = array(
                     'upload_id' => $this->details['log_id'],
@@ -136,20 +137,23 @@ class ImportTrainingMatrixJob
                 continue;
             }
 
-            $topicIdExists = TrainingMatrix::where('topic_name', $topicId)->exists();
-            if (!$topicIdExists) {
-                $cond_error_data = array(
-                    'upload_id' => $this->details['log_id'],
-                    'line_no' => $i,
-                    'error' => 'Training Topic already exists',
-                );
-                $cond_error_datas[] = $cond_error_data;
-                $i++;
-                continue;
-            }
+
+
+            // $topicIdExists = TrainingMatrix::where('topic_name', $topicId)->exists();
+            // if (!$topicIdExists) {
+            //     $cond_error_data = array(
+            //         'upload_id' => $this->details['log_id'],
+            //         'line_no' => $i,
+            //         'error' => 'Training Topic already exists',
+            //     );
+            //     $cond_error_datas[] = $cond_error_data;
+            //     $i++;
+            //     continue;
+            // }
 
 
             $trainerId = Employee::where('emp_name', $trainer_name)->pluck('id')->first();
+
 
             if (empty($trainer_name)) {
                 $cond_error_data = [
@@ -161,6 +165,81 @@ class ImportTrainingMatrixJob
                 $i++;
                 continue;
             }
+
+            // $topicAssigned = TrainingMatrix::where('topic_id', $topicId)->exists();
+
+
+            // $trainerAssigned = TrainingMatrix::where('trainer_id', $trainerId)->exists();
+
+            // // $topicExist = TrainingMatrix::where('topic_id', $topicId)->where('trainer_id', $trainerId)->exists();
+
+            // // if ($topicExist) {
+            // //     $cond_error_data = array(
+            // //         'upload_id' => $this->details['log_id'],
+            // //         'line_no' => $i,
+            // //         'error' => 'Training Topic already exists for this Trainer',
+            // //     );
+            // //     $cond_error_datas[] = $cond_error_data;
+            // //     $i++;
+            // //     continue;
+            // // }
+
+            // if ($topicAssigned) {
+
+            //     $cond_error_data = array(
+            //         'upload_id' => $this->details['log_id'],
+            //         'line_no' => $i,
+            //         'error' => 'Training Topic already assigned to another Trainer',
+            //     );
+            //     $cond_error_datas[] = $cond_error_data;
+            //     $i++;
+            //     continue;
+            // } elseif ($trainerAssigned) {
+
+            //     $cond_error_data = array(
+            //         'upload_id' => $this->details['log_id'],
+            //         'line_no' => $i,
+            //         'error' => 'Trainer already assigned to another Training Topic',
+            //     );
+            //     $cond_error_datas[] = $cond_error_data;
+            //     $i++;
+            //     continue;
+            // }
+
+
+            $topicAssignedToDifferentTrainer = TrainingMatrix::where('topic_id', $topicId)
+                ->where('trainer_id', '!=', $trainerId)
+                ->exists();
+
+
+            $trainerAssignedToDifferentTopic = TrainingMatrix::where('trainer_id', $trainerId)
+                ->where('topic_id', '!=', $topicId)
+                ->exists();
+
+            if ($topicAssignedToDifferentTrainer) {
+
+                $cond_error_data = array(
+                    'upload_id' => $this->details['log_id'],
+                    'line_no' => $i,
+                    'error' => 'Training Topic already assigned to another Trainer',
+                );
+                $cond_error_datas[] = $cond_error_data;
+                $i++;
+                continue;
+            } elseif ($trainerAssignedToDifferentTopic) {
+
+                $cond_error_data = array(
+                    'upload_id' => $this->details['log_id'],
+                    'line_no' => $i,
+                    'error' => 'Trainer already assigned to another Training Topic',
+                );
+                $cond_error_datas[] = $cond_error_data;
+                $i++;
+                continue;
+            }
+
+
+
 
             if (empty($training_offered_for)) {
                 $cond_error_data = [
@@ -270,27 +349,40 @@ class ImportTrainingMatrixJob
                 continue;
             }
 
-            $unitId=Unit::where('unit_name', $unit_name)->pluck('id')->first();
-            $deparmentId = Department::where('department_name',$department_name)->pluck('id')->first();
+            $unitId = Unit::where('unit_name', $unit_name)->pluck('id')->first();
+            $deparmentId = Department::where('department_name', $department_name)->pluck('id')->first();
 
-            $unitExist = TrainingMatrix::where('unit_id', $unitId)->exists();
+            // $unitExist = TrainingMatrix::where('unit_id', $unitId)->exists();
 
 
-            if (!$unitExist) {
+            // if (!$unitExist) {
+            //     $cond_error_data = [
+            //         'upload_id' => $this->details['log_id'],
+            //         'line_no' => $i,
+            //         'error' => 'Unit is already exist',
+            //     ];
+            //     $cond_error_datas[] = $cond_error_data;
+            //     $i++;
+            //     continue;
+            // }
+            //    $departmentExist = Department::where('')
+
+            $unitDepartment = Department::where('unit_id', $unitId)->where('department_name', $department_name)->exists();
+            if (!$unitDepartment) {
                 $cond_error_data = [
                     'upload_id' => $this->details['log_id'],
                     'line_no' => $i,
-                    'error' => 'Unit is already exist',
+                    'error' => 'For Specified Unit Department Not',
                 ];
                 $cond_error_datas[] = $cond_error_data;
                 $i++;
                 continue;
             }
-    //    $departmentExist = Department::where('')
+
 
 
             $data = [
-                'topic_id' =>  $topicId ,
+                'topic_id' =>  $topicId,
                 'trainer_id' =>  $trainerId,
                 'training_offered_for' => $training_offered_for_value,
                 'unit_id' => $unitId,

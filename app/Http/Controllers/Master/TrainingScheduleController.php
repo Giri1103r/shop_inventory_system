@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ImportTrainingSchedulejob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
@@ -12,7 +13,6 @@ use Str;
 use PDF;
 use Mail;
 use Illuminate\Support\Facades\Auth;
-use Session;
 use Exception;
 use DataTables;
 use Response;
@@ -24,7 +24,7 @@ use App\Models\Master\TrainingSchedule;
 use App\Models\User;
 use App\Models\UploadLog;
 use App\Jobs\ImportVenueJob;
-
+use Illuminate\Support\Facades\Session;
 
 class TrainingScheduleController extends Controller
 {
@@ -191,10 +191,10 @@ class TrainingScheduleController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $training_schedule = $this->training_schedule->selectOne($id);
-    
+
                 // Calculate training hours
                 $training_hours = $training_schedule ? $training_schedule->calculateTrainingHours() : 0;
-    
+
                 $data = array(
                     'training_schedule' => $training_schedule,
                     'training_hours' => $training_hours,
@@ -205,7 +205,7 @@ class TrainingScheduleController extends Controller
             report($ex);
         }
     }
- 
+
 
     public function Edit(Request $request)
     {
@@ -361,7 +361,7 @@ class TrainingScheduleController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportVenueJob($details));
+                dispatch(new ImportTrainingSchedulejob($details));
                 //    dispatch((new ImportVenueJob($details))->onQueue('empimport'));
             }
 
@@ -382,7 +382,7 @@ class TrainingScheduleController extends Controller
         try {
 
             $allData = $this->training_schedule->exportdata();
-  
+
             $header = [
                 __("common.sno"),
                 'From Date',
@@ -483,7 +483,7 @@ class TrainingScheduleController extends Controller
             $filename = "Training Schedule.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-        
+
             dd($ex);
         }
     }

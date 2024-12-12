@@ -54,6 +54,7 @@ class PpeExemption extends Model
            $departmentId = $user->department_id;
            $query->where('ppe_ppeexemption.department',$departmentId);
         }
+       
         else {
             $query->where('ppe_ppeexemption.emp_id', $empId);
         }

@@ -159,20 +159,34 @@
 
                                         <tbody>
                                             @if ($ppestatuslog->isEmpty())
-                                            <tr>
-                                                <td class="text-center" colspan="5">No data is available</td>
-                                            </tr>
-                                        @else
-                                            @foreach ($ppestatuslog as $log)
-                                                <tr class="hover-row">
-                                                    <td>{{ removeUnderScore(getStatus($log['to_status'])) }}</td>
-                                                    <td>{{getUsername($log['created_by'] ) }}</td>
-                                                  <td>{{$log['remarks']}}</td>
-                                                  <td>{{displaydateformat($log['created_at'])}}</td>
-
+                                                <tr>
+                                                    <td class="text-center" colspan="5">No data is available</td>
                                                 </tr>
-                                            @endforeach
-                                        @endif
+                                            @else
+                                                @foreach ($ppestatuslog as $log)
+                                                    <tr class="hover-row">
+                                                        <td>
+                                                            @if ($log['to_status'] == STATUS_HOD_APPROVAL_PENDING)
+                                                                <span class='badge bg-warning'>HOD Approval Pending</span>
+                                                            @elseif ($log['to_status'] == STATUS_HOD_APPROVED)
+                                                                <span class='badge bg-success'>HOD Approved</span>
+                                                            @elseif ($log['to_status'] == STATUS_HOD_REJECTED)
+                                                                <span class='badge bg-danger'>HOD Rejected</span>
+                                                            @elseif ($log['to_status'] == STATUS_EHS_APPROVAL_PENDING)
+                                                                <span class='badge bg-warning'>EHS Approval Pending</span>
+                                                            @elseif ($log['to_status'] == STATUS_EHS_APPROVED)
+                                                                <span class='badge bg-success'>EHS Approved</span>
+                                                            @elseif ($log['to_status'] == STATUS_EHS_REJECTED)
+                                                                <span class='badge bg-danger'>EHS Rejected</span>
+                                                            @endif
+                                                        </td>
+                                                        <td>{{ getUsername($log['created_by']) }}</td>
+                                                        <td>{{ $log['remarks'] }}</td>
+                                                        <td>{{ displaydateformat($log['created_at']) }}</td>
+
+                                                    </tr>
+                                                @endforeach
+                                            @endif
                                         </tbody>
                                     </table>
 
