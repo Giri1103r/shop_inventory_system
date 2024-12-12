@@ -106,6 +106,9 @@ class PpeExemptionController extends Controller
                             if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) && $row->approve_status == STATUS_EHS_APPROVAL_PENDING) {
                                 $btn .= '<a href="' . admin_url('ppe_exemption/approval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
                             }
+
+                            $btn .= '<a href="' . admin_url('ppe_exemption/generalpdf/' . encryptId($row->id)) . '" class="" title="Pdf"> <i class="fa-solid fa-file-pdf" style="color: #e67265;"></i></a> ';
+
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_at', 'created_by', 'approve_status'])
@@ -263,6 +266,24 @@ class PpeExemptionController extends Controller
                 'ppestatuslog' => $ppestatuslog,
             ];
             return view('ppemanagement.ppeexemption.view', $data);
+        } catch (Exception $ex) {
+            report($ex);
+        }
+    }
+
+    public function pdf(Request $request){
+        try {
+          
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $ppeexemption = $this->ppeexemption->selectOne($id);
+            }
+            $ppestatuslog = $this->ppestatus->getexemptionstatusdetails($id);
+            $data = [
+                'ppeexemption' =>  $ppeexemption,
+                'ppestatuslog' => $ppestatuslog,
+            ];
+            return view('ppemanagement.ppeexemption.exportpdf', $data);
         } catch (Exception $ex) {
             report($ex);
         }

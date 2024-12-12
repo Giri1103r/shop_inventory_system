@@ -9,12 +9,12 @@ use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\File;
 use App\Models\Master\Unit;
-use Str;
+use Illuminate\Support\Str;
 use PDF;
 use Mail;
 use Illuminate\Support\Facades\Auth;
 use Exception;
-use DataTables;
+use Yajra\DataTables\DataTables;
 use Response;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
@@ -143,6 +143,24 @@ class TrainingScheduleController extends Controller
         } catch (Exception $ex) {
             report($ex);
         }
+    }
+
+    public function Uniquecheck(Request $request) {
+
+
+        $fromDate = $request->input('from_date');
+        $toDate = $request->input('to_date');
+        $topicId = $request->input('topicId');
+        $trainerId = $request->input('trainerId');
+        $unitId = $request->input('unitId');
+        $departmentId = $request->input('departmentId');
+        $venueId = $request->input('venueId');
+
+        $data = $this->training_schedule->getUniqueSchedule($fromDate, $toDate, $topicId, $trainerId, $unitId, $departmentId, $venueId);
+
+        return response()->json([
+            'exists' => $data
+        ]);
     }
 
     public function Store(Request $request)

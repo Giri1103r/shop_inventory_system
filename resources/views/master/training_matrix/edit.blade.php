@@ -198,6 +198,45 @@
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
+            function checkSelections() {
+                var topicId = $('#topic_id').val();
+                var trainerId = $('#trainer_id').val();
+
+                if (topicId && trainerId) {
+                    $.ajax({
+                        url: "{{ url('training_matrix/topic/ajax-list') }}/" + topicId + "/" + trainerId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(response) {
+                            $('.text-danger').remove();
+
+                            if (response.exists) {
+                                $('#topic_id').closest('.form-group').append(
+                                    '<div><span class="text-danger">This topic is already assigned to another trainer.</span></div>'
+                                );
+                                $('#training_matrixedit').submit(function(e) {
+                                    e.preventDefault();
+                                });
+                            } else {
+                                $('#training_matrixedit').off(
+                                    'submit');
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching data. Please try again.');
+                        }
+                    });
+                } else {
+                    $('.text-danger').remove();
+                    $('#training_matrixadd').off('submit');
+                }
+            }
+
+            $('#topic_id').on('change', checkSelections);
+            $('#trainer_id').on('change', checkSelections);
+        });
+
+        $(document).ready(function() {
             // Get initial unit ID and preselected department IDs
             var initialUnitId = $('#unit_id').val();
             var preselectedDepartmentIds = @json($preselectedDepartmentIds);

@@ -150,6 +150,60 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+        $(document).ready(function() {
+            function checkSelections() {
+                var FromDate = $('#from_date_datepicker').val();
+                var ToDate = $('#to_date_datepicker').val();
+                var topicId = $('#topic_id').val();
+                var trainerId = $('#trainer_id').val();
+                var unitId = $('#unit_id').val();
+                var departmentId = $('#department_id').val();
+                var venue_id = $('#venue_id').val();
+
+                if (FromDate && ToDate) {
+                    $.ajax({
+                        url: "{{ url('training_schedule/topic/ajax-list') }}",
+                        type: 'GET',
+                        dataType: 'json',
+                        data: {
+                            from_date: FromDate,
+                            to_date: ToDate,
+                            topicId: topicId,
+                            trainerId: trainerId,
+                            unitId: unitId,
+                            departmentId: departmentId,
+                            venueId: venue_id,
+                        },
+                        success: function(response) {
+                            $('.text-danger').remove();
+
+                            if (response.exists) {
+                                $('#topic_id').closest('.form-group').append(
+                                    '<div><span class="text-danger">For the schedule date, the topic unit trainer, department, and venue are already assigned.</span></div>'
+                                );
+                                $('#training_scheduleadd').submit(function(e) {
+                                    e.preventDefault();
+                                });
+                            } else {
+                                $('#training_scheduleadd').off('submit');
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching data. Please try again.');
+                        }
+                    });
+                } else {
+                    $('.text-danger').remove();
+                    $('#training_scheduleadd').off('submit');
+                }
+            }
+
+            $('#from_date_datepicker').on('change', checkSelections);
+            $('#to_date_datepicker').on('change', checkSelections);
+        });
+
+
+
         $(document).on('change', '#unit_id', function() {
             var unitId = $(this).val();
             if (unitId) {
@@ -281,7 +335,7 @@
                     });
                 }
             });
-         
+
         });
     </script>
 @endpush
