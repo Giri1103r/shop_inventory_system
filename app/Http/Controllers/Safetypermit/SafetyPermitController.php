@@ -169,7 +169,7 @@ class SafetyPermitController extends Controller
             
             try {
 
-                $ptw_hot_cold = $this->safetypermit->store();
+                 $this->safetypermit->store();
                 
                 Session::flash('success', __('ptw.hot_work_permit_submitted_successfully'));
 
