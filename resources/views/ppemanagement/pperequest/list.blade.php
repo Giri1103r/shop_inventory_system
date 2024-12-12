@@ -104,375 +104,181 @@
     </div>
 @stop
 @push('script')
-    <script type="text/javascript" nonce="projectcab">
-        $(document).ready(function() {
-            $('#resetform').on('click', function(e) {
-                e.preventDefault();
-                location.reload();
-            });
-        });
-        $(document).ready(function() {
-            var firstTh = $('.datatable-list thead th:first');
-            firstTh.removeClass('sorting_asc');
+<script type="text/javascript" nonce="projectcab">
+    $(document).ready(function() {
+        // Reset form
+        $('#resetform').on('click', function(e) {
+            e.preventDefault();
+            location.reload();
         });
 
-        $(document).ready(function() {
-            var fromDatepicker = flatpickr("#from_date", {
-                dateFormat: "d-m-Y",
-                onChange: function(selectedDates) {
-                    if (selectedDates.length > 0) {
-                        var startDate = selectedDates[0];
-                        toDatepicker.set('minDate', startDate);
-                        toDatepicker.clear();
-                    }
+        // Remove sorting class from first table header
+        var firstTh = $('.datatable-list thead th:first');
+        firstTh.removeClass('sorting_asc');
+
+        // Initialize flatpickr for date pickers
+        var fromDatepicker = flatpickr("#from_date", {
+            dateFormat: "d-m-Y",
+            onChange: function(selectedDates) {
+                if (selectedDates.length > 0) {
+                    var startDate = selectedDates[0];
+                    toDatepicker.set('minDate', startDate);
+                    toDatepicker.clear();
                 }
-            });
-
-            var toDatepicker = flatpickr("#to_date", {
-                dateFormat: "d-m-Y",
-                minDate: "today"
-            });
+            }
         });
 
-        $(function() {
-            /* Datatable */
-            $(document).ready(function() {
-                var table = $('.datatable-list').DataTable({
-                    autoWidth: false,
-                    responsive: true,
-                    processing: false,
-                    serverSide: true,
-                    searching: true,
-                    ordering: true,
-                    dom: 'Bfrtip',
-                    layout: {
-                        top2Start: 'buttons',
-                        top2End: {
-                            search: {
-                                placeholder: ''
+        var toDatepicker = flatpickr("#to_date", {
+            dateFormat: "d-m-Y",
+            minDate: "today"
+        });
+
+        // Initialize DataTable
+        var table = $('.datatable-list').DataTable({
+            autoWidth: false,
+            responsive: true,
+            processing: false,
+            serverSide: true,
+            searching: true,
+            ordering: true,
+            dom: 'Bfrtip',
+            layout: {
+                top2Start: 'buttons',
+                top2End: {
+                    search: {
+                        placeholder: ''
+                    }
+                },
+                topStart: '',
+                topEnd: '',
+                bottomStart: '',
+                bottomEnd: '',
+                bottom2Start: 'info',
+                bottom2End: 'paging'
+            },
+            ajax: {
+                url: "{{ admin_url('ppe_request/list') }}",
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: function(d) {
+                    d.emp_id = $('#emp_id').val();
+                    d.emp_name = $('#emp_name').val();
+                    d.from_date = $('#from_date').val();
+                    d.to_date = $('#to_date').val();
+                    d.ppe_status = $('#ppe_status').val();
+                }
+            },
+            columns: [
+                { data: 'DT_RowIndex', orderable: false, searchable: false },
+                { data: 'emp_id', name: 'emp_id' },
+                { data: 'emp_name', name: 'emp_name' },
+                { data: 'ppe_name', name: 'ppe_name' },
+                { data: 'ppe_type', name: 'ppe_type' },
+                { data: 'department', name: 'department' },
+                { data: 'approve_status', name: 'approve_status' },
+                { data: 'ehs_approve_status', name: 'ehs_approve_status' },
+                { data: 'created_by', name: 'created_by' },
+                { data: 'created_at', name: 'created_at' },
+                { data: 'action', name: 'action', orderable: false }
+            ],
+            language: {
+                paginate: {
+                    first: '<i title="{{ __('common.first') }}" class="fa fa-angle-double-left" aria-hidden="true"></i>',
+                    last: '<i title="{{ __('common.last') }}" class="fa fa-angle-double-right" aria-hidden="true"></i>',
+                    next: '<i title="{{ __('common.next') }}" class="fa fa-angle-right" aria-hidden="true"></i>',
+                    previous: '<i title="{{ __('common.previous') }}" class="fa fa-angle-left" aria-hidden="true"></i>'
+                },
+                info: "{{ __('common.dt_info') }}",
+                infoEmpty: "{{ __('common.dt_infoEmpty') }}",
+                infoFiltered: "{{ __('common.dt_infoFiltered') }}"
+            },
+            aLengthMenu: [
+                [10, 25, 50, 100],
+                [10, 25, 50, 100]
+            ],
+            buttons: [
+                {
+                    extend: 'collection',
+                    text: '{{ __('common.export') }}',
+                    buttons: [
+                        {
+                            extend: 'pdf',
+                            text: '{{ __('common.pdf') }}',
+                            action: function(e, dt, button, config) {
+                                var searchValue = $('#datatable-list_filter input').val();
+                                var emp_id = $('#emp_id').val();
+                                var emp_name = $('#emp_name').val();
+                                var from_date = $('#from_date').val();
+                                var to_date = $('#to_date').val();
+                                var ppe_status = $('#ppe_status').val();
+
+                                $(".dt-button").removeClass('processing');
+                                $('body').click();
+                                window.location.href =
+                                    "{{ admin_url('ppe_request/export/pdf') }}" +
+                                    '?search=' + searchValue +
+                                    '&emp_id=' + emp_id +
+                                    '&emp_name=' + emp_name +
+                                    '&from_date=' + from_date +
+                                    '&to_date=' + to_date +
+                                    '&ppe_status=' + ppe_status;
                             }
                         },
-                        topStart: '',
-                        topEnd: '',
-                        bottomStart: '',
-                        bottomEnd: '',
-                        bottom2Start: 'info',
-                        bottom2End: 'paging'
-                    },
-                    ajax: {
-                        url: "{{ admin_url('ppe_request/list') }}",
-                        type: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        data: function(d) {
-                            d.emp_id = $('#emp_id').val();
-                            d.emp_name = $('#emp_name').val();
-                            d.from_date = $('#from_date').val();
-                            d.to_date = $('#to_date').val();
-                            d.ppe_status = $('#ppe_status').val();
-                        }
-                    },
-                    columns: [{
-                            data: 'DT_RowIndex',
-                            orderable: false,
-                            searchable: false
-                        },
                         {
-                            data: 'emp_id',
-                            name: 'emp_id'
-                        },
-                        {
-                            data: 'emp_name',
-                            name: 'emp_name'
-                        },
-                        {
-                            data: 'ppe_name',
-                            name: 'ppe_name'
-                        },
-                        {
-                            data: 'ppe_type',
-                            name: 'ppe_type'
-                        },
-                        {
-                            data: 'department',
-                            name: 'department'
-                        },
-                        {
-                            data: 'approve_status',
-                            name: 'approve_status',
+                            extend: 'excel',
+                            text: '{{ __('common.excel') }}',
+                            action: function(e, dt, button, config) {
+                                var searchValue = $('#datatable-list_filter input').val();
+                                var emp_id = $('#emp_id').val();
+                                var emp_name = $('#emp_name').val();
+                                var from_date = $('#from_date').val();
+                                var to_date = $('#to_date').val();
+                                var ppe_status = $('#ppe_status').val();
 
-                        },
-                        {
-                            data: 'ehs_approve_status',
-                            name: 'ehs_approve_status',
-
-                        },
-                         {
-                            data: 'created_by',
-                            name: 'created_by'
-                        },
-                        {
-                            data: 'created_at',
-                            name: 'created_at'
-                        },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                        }
-                    ],
-                    language: {
-                        paginate: {
-                            first: '<i title="{{ __('common.first') }}" class="fa fa-angle-double-left" aria-hidden="true"></i>',
-                            last: '<i title="{{ __('common.last') }}" class="fa fa-angle-double-right" aria-hidden="true"></i>',
-                            next: '<i title="{{ __('common.next') }}" class="fa fa-angle-right" aria-hidden="true"></i>',
-                            previous: '<i title="{{ __('common.previous') }}" class="fa fa-angle-left" aria-hidden="true"></i>',
-                        },
-                        "info": "{{ __('common.dt_info') }}",
-                        "infoEmpty": "{{ __('common.dt_infoEmpty') }}",
-                        "infoFiltered": "{{ __('common.dt_infoFiltered') }}",
-                    },
-                    aLengthMenu: [
-                        [10, 25, 50, 100],
-                        [10, 25, 50, 100]
-                    ],
-                    buttons: [{
-                            extend: 'collection',
-                            text: '{{ __('common.export') }}',
-                            buttons: [{
-                                    extend: 'pdf',
-                                    text: '{{ __('common.pdf') }}',
-                                    action: function(e, dt, button, config) {
-                                        var searchValue = $(
-                                            '#datatable-list_filter input').val();
-                                        var emp_id = $('#emp_id').val();
-                                        var emp_name = $('#emp_name').val();
-                                        var from_date = $('#from_date').val();
-                                        var to_date = $('#to_date').val();
-                                        var ppe_status = $('#ppe_status').val();
-
-                                        $(".dt-button").removeClass('processing');
-                                        $('body').click();
-                                        window.location.href =
-                                            "{{ admin_url('ppe_request/export/pdf') }}" +
-                                            '?search=' + searchValue +
-                                            '&emp_id=' + emp_id +
-                                            '&emp_name=' + emp_name +
-                                            '&from_date=' + from_date +
-                                            '&to_date=' + to_date +
-                                            '&ppe_status=' + ppe_status;
-                                    }
-                                },
-                                {
-                                    extend: 'excel',
-                                    text: '{{ __('common.excel') }}',
-                                    action: function(e, dt, button, config) {
-                                        var searchValue = $(
-                                            '#datatable-list_filter input').val();
-                                        var emp_id = $('#emp_id').val();
-                                        var emp_name = $('#emp_name').val();
-                                        var from_date = $('#from_date').val();
-                                        var to_date = $('#to_date').val();
-                                        var ppe_status = $('#ppe_status').val();
-
-                                        $(".dt-button").removeClass('processing');
-                                        $('body').click();
-                                        window.location.href =
-                                            "{{ admin_url('ppe_request/export/excel') }}" +
-                                            '?search=' + searchValue +
-                                            '&emp_id=' + emp_id +
-                                            '&emp_name=' + emp_name +
-                                            '&from_date=' + from_date +
-                                            '&to_date=' + to_date +
-                                            '&ppe_status=' + ppe_status;
-                                    }
-                                },
-                            ]
-                        },
-                        {
-                            "extend": 'pageLength',
-                            "text": '{{ __('common.show') }} 10 {{ __('common.records') }}'
+                                $(".dt-button").removeClass('processing');
+                                $('body').click();
+                                window.location.href =
+                                    "{{ admin_url('ppe_request/export/excel') }}" +
+                                    '?search=' + searchValue +
+                                    '&emp_id=' + emp_id +
+                                    '&emp_name=' + emp_name +
+                                    '&from_date=' + from_date +
+                                    '&to_date=' + to_date +
+                                    '&ppe_status=' + ppe_status;
+                            }
                         }
                     ]
-                });
-            });
-
-
-            table.on('length.dt', function(e, settings, len) {
-                var text = '{{ __('common.show') }} ' + len + ' {{ __('common.records') }}';
-                $('.buttons-page-length').find('span').text(text);
-            });
-
-            $('#searchform').on('click', function() {
-                table.draw();
-            });
-
-            $('#resetform').on('click', function() {
-                $('#emp_id').val('');
-                $('#emp_name').val('');
-                $('#from_date').val('');
-                $('#to_date').val('');
-
-                $('#ppe_status').val('');;
-                table.draw();
-            });
-
-
-
-
-            /* Status Change */
-            // $(document).on('click', '.statusChange', function() {
-            //     var id = $(this).data('id');
-            //     var types = $(this).data('type');
-            //     if (types == 1) {
-            //         var title = '{{ __('Do You want to In-Activate  PPE Request ') }}';
-            //         var text = '{{ __('common.inactive') }}';
-            //         var btncolor = '#dc3545'
-
-            //     } else {
-            //         var title = '{{ __('Do You want to Activate PPE Request') }}';
-            //         var text = '{{ __('common.active') }}';
-            //         var btncolor = '#7ddc35'
-            //     }
-
-            //     Swal.fire({
-            //         title: title,
-            //         icon: 'warning',
-            //         showCancelButton: true,
-            //         confirmButtonText: text,
-            //         confirmButtonColor: btncolor,
-            //         customClass: {
-            //             confirmButton: 'btn-skew',
-            //             cancelButton: 'btn-skew'
-            //         },
-            //     }).then((result) => {
-
-
-            //         if (result.value) {
-            //             $.ajax({
-            //                 url: "{{ admin_url('ppe_request/status') }}",
-            //                 type: 'post',
-
-            //                 data: {
-            //                     id: id,
-            //                     types: types
-            //                 },
-            //                 success: function(response) {
-            //                     const Toast = Swal.mixin({
-            //                         toast: true,
-            //                         position: 'top-right',
-            //                         showConfirmButton: false,
-            //                         timer: 3000,
-            //                         timerProgressBar: true,
-            //                         didOpen: (toast) => {
-            //                             toast.addEventListener(
-            //                                 'mouseenter',
-            //                                 Swal.stopTimer)
-            //                             toast.addEventListener(
-            //                                 'mouseleave',
-            //                                 Swal.resumeTimer
-            //                             )
-            //                         }
-            //                     });
-            //                     Toast.fire({
-            //                         icon: 'success',
-            //                         title: response.msg
-            //                     });
-            //                     table.draw();
-            //                 },
-            //                 error: function(data) {
-            //                     $.notify(data.responseJSON.msg, "error");
-            //                 }
-            //             });
-            //         } else if (result.isDenied) {
-            //             Swal.fire('Something went wrong', '', 'info');
-            //         }
-            //     })
-
-            // });
-
-
-            // /* Delete Record */
-            // $(document).on('click', '.recordDelete', function() {
-
-            //     var id = $(this).data('id');
-            //     var login_id = $(this).data('login_id');
-
-            //     var title = '{{ __('Do You want to Delete PPE Request') }}';
-            //     var text = '{{ __('common.delete') }}';
-            //     var btncolor = '#dc3545'
-
-            //     Swal.fire({
-            //         title: title,
-            //         icon: 'warning',
-            //         showDenyButton: false,
-            //         showCancelButton: true,
-            //         confirmButtonText: text,
-            //         confirmButtonColor: btncolor,
-            //         denyButtonColor: '#28a745',
-            //         customClass: {
-            //             confirmButton: 'btn-skew',
-            //             cancelButton: 'btn-skew'
-            //         },
-            //     }).then((result) => {
-
-            //         if (result.value) {
-            //             $.ajax({
-            //                 url: "{{ admin_url('ppe_request/delete') }}",
-            //                 type: 'post',
-            //                 headers: {
-            //                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-            //                         .attr('content')
-            //                 },
-            //                 data: {
-            //                     id: id,
-            //                     login_id: login_id
-            //                 },
-            //                 success: function(response) {
-            //                     const Toast = Swal.mixin({
-            //                         toast: true,
-            //                         position: 'top-right',
-            //                         showConfirmButton: false,
-            //                         timer: 3000,
-            //                         timerProgressBar: true,
-            //                         didOpen: (toast) => {
-            //                             toast.addEventListener(
-            //                                 'mouseenter',
-            //                                 Swal.stopTimer)
-            //                             toast.addEventListener(
-            //                                 'mouseleave',
-            //                                 Swal.resumeTimer
-            //                             )
-            //                         }
-            //                     });
-            //                     Toast.fire({
-            //                         icon: 'success',
-            //                         title: response.msg
-            //                     });
-            //                     table.draw();
-            //                 },
-            //                 error: function(data) {
-            //                     if (data.status === 406 && data.responseJSON.msg ===
-            //                         'module_exits') {
-            //                         Swal.fire({
-            //                             icon: 'error',
-            //                             title: 'Error',
-            //                             text: 'Location Deletion Failed: Module Dependencies Exist.',
-            //                         });
-            //                     } else {
-            //                         $.notify(data.responseJSON.msg, "error");
-            //                     }
-            //                 }
-            //             });
-            //         } else if (result.isDenied) {
-            //             Swal.fire('Something went wrong', '', 'info');
-            //         }
-            //     })
-
-
-            // });
-
+                },
+                {
+                    extend: 'pageLength',
+                    text: '{{ __('common.show') }} 10 {{ __('common.records') }}'
+                }
+            ]
         });
-    </script>
+
+        // Change event for length selection
+        table.on('length.dt', function(e, settings, len) {
+            var text = '{{ __('common.show') }} ' + len + ' {{ __('common.records') }}';
+            $('.buttons-page-length').find('span').text(text);
+        });
+
+        // Search form submit event
+        $('#searchform').on('click', function() {
+            table.draw();
+        });
+
+        // Reset form submit event
+        $('#resetform').on('click', function() {
+            $('#emp_id').val('');
+            $('#emp_name').val('');
+            $('#from_date').val('');
+            $('#to_date').val('');
+            $('#ppe_status').val('');
+            table.draw();
+        });
+    });
+</script>
+
 @endpush

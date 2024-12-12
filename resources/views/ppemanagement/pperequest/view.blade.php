@@ -95,7 +95,14 @@
                                         </div>
                                     </div>
 
+                                    <div class="mb-3 col-md-12 form-input">
+                                        <label class="form-label view_label">{{ __('Reason') }}</label>
+                                        <div class="view_data">
+                                            {{isset($pperequest->employee_reason) ? $pperequest->employee_reason : '' }}
 
+
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="row mt-2">

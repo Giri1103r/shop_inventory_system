@@ -1,64 +1,8 @@
-@php
-    $logo =
-        '<img src="' .
-        url('public/assets/images/common/Logo.png') .
-        '" style="width:30%;">
-';
-
-@endphp
 
 <html>
 
 <head>
-    <style>
-        @page {
-            size: auto;
-            /* margin-header: 0mm; */
-            /* margin-footer: 3mm; */
-            odd-header-name: html_myHeader1;
-            even-header-name: html_myHeader2;
-            odd-footer-name: html_myFooter1;
-            even-footer-name: html_myFooter2;
-        }
-
-        @page noheader {
-            odd-header-name: _blank;
-            even-header-name: _blank;
-            odd-footer-name: _blank;
-            even-footer-name: _blank;
-        }
-
-        .table {
-            width: 100%;
-        }
-
-        body {
-
-            font-size: 13px
-        }
-
-        table {
-            border-collapse: collapse;
-
-        }
-
-        .table-bordered {
-            width: 100%;
-            border-collapse: collapse;
-            border: 1px solid black;
-            margin-top: 10px;
-        }
-
-        .table-bordered td {
-            border: 1px solid black;
-            padding: 8px;
-        }
-
-        .table-bordered th {
-            border: 1px solid black;
-            padding: 8px;
-        }
-    </style>
+   
 
 </head>
 

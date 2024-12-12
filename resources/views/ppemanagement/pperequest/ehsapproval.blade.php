@@ -29,22 +29,139 @@
                             <div class="card-body ">
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">PPE Request </h4>
+                                        <h4 class="text-white">User Details</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Employee ID') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($pperequest->emp_id) ? $pperequest->emp_id : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Employee Name') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($pperequest->emp_name) ? $pperequest->emp_name : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Department') }}</label>
+                                        <div class="view_data">
+                                            {{ getDepartment(isset($pperequest->department) ? $pperequest->department : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Item Code') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($pperequest->item_code) ? $pperequest->item_code : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('PPE Name') }}</label>
+                                        <div class="view_data">
+                                            {{ getPpename(isset($pperequest->ppe_name) ? $pperequest->ppe_name : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('PPE Type') }}</label>
+                                        <div class="view_data">
+                                            {{ getPpeType(isset($pperequest->ppe_type) ? $pperequest->ppe_type : '') }}
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Created By') }}</label>
+                                        <div class="view_data">
+                                            {{ getUsername(isset($pperequest->created_by) ? $pperequest->created_by : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('common.created_date') }}</label>
+                                        <div class="view_data">
+                                            {{ displayDateformat($pperequest->created_at) }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Status') }}</label>
+                                        <div class="view_data">
+                                            @if ($pperequest->status == 1)
+                                                {{ __('common.active') }}
+                                            @else
+                                                {{ __('common.inactive') }}
+                                            @endif
+
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12 form-input">
+                                        <label class="form-label view_label">{{ __('Reason') }}</label>
+                                        <div class="view_data">
+                                            {{isset($pperequest->employee_reason) ? $pperequest->employee_reason : '' }}
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">HOD Approval </h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="">Approval Status</label>
+                                        <div class="view_data mt-2">
+                                            @if ($pperequest->approved_by == STATUS_HOD_APPROVAL_PENDING)
+                                                <span class='badge bg-warning'>HOD Approval Pending</span>
+                                            @elseif ($pperequest->approved_by == STATUS_HOD_APPROVED)
+                                                <span class='badge bg-success'>HOD Approved</span>
+                                            @elseif ($pperequest->approved_by == STATUS_HOD_REJECTED)
+                                                <span class='badge bg-danger'>HOD Rejected</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4  form-input">
+                                        <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                        <div class="view_data">
+                                            {{ getUsername(isset($pperequest->approved_by) ? $pperequest->approved_by : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Aprroved Date') }}</label>
+                                        <div class="view_data">
+                                            {{ displayDateformat($pperequest->created_at) }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                        <div class="view_data">
+                                            {{ $pperequest->approve_msg }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">EHS Approval </h4>
                                     </div>
                                 </div>
                                 <div class="basic-form">
-                                    <form method="POST" id="requestApprovalForm" action="{{ admin_url('ppe_request/ehsapprovereject/submit') }}">
+                                    <form method="POST" id="requestApprovalForm"
+                                        action="{{ admin_url('ppe_request/ehsapprovereject/submit') }}">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $encryptid }}">
                                         <div class="">
                                             <div class="mb-3 row">
                                                 <div class="col-md-4 mb-3">
                                                     <label for="approver_name" class="form-label">Approver Name</label>
-                                                    <input type="text" class="form-control form-control-sm" id="approver_name" readonly value="{{ Auth::user()->name }}">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                        id="approver_name" readonly value="{{ Auth::user()->name }}">
                                                 </div>
                                                 <div class="col-md-4 mb-3">
                                                     <label for="date" class="form-label">Date</label>
-                                                    <input type="text" class="form-control form-control-sm" id="date" name="date" readonly value="{{ date('d-m-Y H:i:s') }}">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                        id="date" name="date" readonly
+                                                        value="{{ date('d-m-Y H:i:s') }}">
                                                 </div>
                                                 <div class="col-md-12 mb-3">
                                                     <div class="mb-1">
@@ -52,7 +169,8 @@
                                                         <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks" rows="3"></textarea>
                                                         <div class="text-danger" id="remarks_error"></div>
                                                         @error('remarks')
-                                                            <span id="remark_error" class="text-danger">{{ $message }}</span>
+                                                            <span id="remark_error"
+                                                                class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
                                                 </div>
@@ -60,8 +178,10 @@
                                         </div>
                                         <hr>
                                         <div class="d-flex float-end gap-2 mx-auto">
-                                            <button type="submit" name="action" value="approve" class="btn btn-success w-100">Approve</button>
-                                            <button type="submit" name="action" value="reject" class="btn btn-danger w-100">Reject</button>
+                                            <button type="submit" name="action" value="approve"
+                                                class="btn btn-success w-100">Approve</button>
+                                            <button type="submit" name="action" value="reject"
+                                                class="btn btn-danger w-100">Reject</button>
                                         </div>
                                     </form>
                                 </div>
@@ -126,4 +246,3 @@
         });
     </script>
 @endpush
-

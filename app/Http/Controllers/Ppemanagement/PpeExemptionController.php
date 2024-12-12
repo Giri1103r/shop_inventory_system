@@ -107,7 +107,7 @@ class PpeExemptionController extends Controller
                                 $btn .= '<a href="' . admin_url('ppe_exemption/approval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
                             }
 
-                            // $btn .= '<a href="' . admin_url('ppe_exemption/generalpdf/' . encryptId($row->id)) . '" class="" title="Pdf"> <i class="fa-solid fa-file-pdf" style="color: #e67265;"></i></a> ';
+                            $btn .= '<a href="' . admin_url('ppe_exemption/generalpdf/' . encryptId($row->id)) . '" class="" title="Pdf"> <i class="fa-solid fa-file-pdf" style="color: #e67265;"></i></a> ';
 
                             return $btn;
                         })
@@ -282,6 +282,7 @@ class PpeExemptionController extends Controller
             $data = [
                 'ppeexemption' =>  $ppeexemption,
                 'ppestatuslog' => $ppestatuslog,
+                'pagetitle' => "PPE Exemption ",
             ];
             return view('ppemanagement.ppeexemption.exportpdf', $data);
         } catch (Exception $ex) {
@@ -443,6 +444,7 @@ class PpeExemptionController extends Controller
             if ($status != $ehsstatus) {
                 return redirect(admin_url('ppe_exemption/view/' . encryptId($id)));
             }
+
             $data = [
                 'ppeexemption' =>  $ppeexemption,
                 'encryptid' => $request->id,
