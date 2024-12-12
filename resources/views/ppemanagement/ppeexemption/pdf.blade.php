@@ -39,6 +39,9 @@
                             {{ getUnitname($value->unit) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getCompanyname($value->company) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
                             {{ Displaydateformat($value->from_date) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>

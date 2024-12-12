@@ -11,6 +11,7 @@ use App\Models\Master\Topic;
 use App\Models\Master\UserRole;
 use App\Models\Master\Employee;
 use App\Models\Master\Work;
+use App\Models\Permit\SafetyPermit;
 
 use Illuminate\Support\Str;
 use App\Models\User;
@@ -181,6 +182,11 @@ if (!function_exists('getsequence')) {
                 $count = Topic::withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'TOPIC-' . getautogen($count);
+                break;
+            case 'safetypermit':
+                $count = SafetyPermit::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'ORD/' . getautogen($count);
                 break;
             default:
                 $sequence = Str::random(5);

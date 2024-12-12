@@ -217,7 +217,7 @@ class Unit extends Model
         return $data;
     }
 
-   
+
     public function ajaxList($locationId = '', $unit_id)
     {
         $query = $this->select('id', 'unit_name')->where('status', 1);
@@ -261,6 +261,9 @@ class Unit extends Model
             $list[] = $listvalue;
         }
         return $list;
+    }
+    public function getunit(){
+        return Unit::where('trash','NO')->where('status','!=',0)->get();
     }
     protected static function booted()
     {

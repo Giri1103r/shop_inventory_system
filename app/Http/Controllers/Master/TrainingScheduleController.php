@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ImportTrainingSchedulejob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
@@ -12,7 +13,6 @@ use Str;
 use PDF;
 use Mail;
 use Illuminate\Support\Facades\Auth;
-use Session;
 use Exception;
 use DataTables;
 use Response;
@@ -25,7 +25,7 @@ use App\Models\User;
 use App\Models\Master\NominationProcess;
 use App\Models\UploadLog;
 use App\Jobs\ImportVenueJob;
-
+use Illuminate\Support\Facades\Session;
 
 class TrainingScheduleController extends Controller
 {
@@ -369,7 +369,7 @@ class TrainingScheduleController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportVenueJob($details));
+                dispatch(new ImportTrainingSchedulejob($details));
                 //    dispatch((new ImportVenueJob($details))->onQueue('empimport'));
             }
 

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Exemption')
+@section('title', 'PPE Shoe Exemption')
 @section('pageurl', admin_url('ppe_exemption/list'))
 @section('content')
 
@@ -32,6 +32,39 @@
                                             <label for="emp_name" class="form-label ">Emp Name</label>
                                             <input type="text" class="form-control " name="emp_name" id="emp_name">
 
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">Department</label>
+                                            <select name="department" id="department" style="width: 100%"
+                                                class="form-select single-select">
+                                                <option value="">Select the department name</option>
+                                                @foreach ($department as $name)
+                                                    <option value="{{ $name->id }}">{{ $name->department_name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">Unit</label>
+                                            <select name="unit" id="unit" style="width: 100%"
+                                                class="form-select single-select">
+
+                                                <option value="">Select the unit name</option>
+                                                @foreach ($unit as $name)
+                                                    <option value="{{ $name->id }}">{{ $name->unit_name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">Company</label>
+                                            <select name="company" id="company" style="width: 100%"
+                                                class="form-select single-select">
+                                                <option value="">Select the company name</option>
+                                                @foreach ($company as $name)
+                                                    <option value="{{ $name->id }}">{{ $name->company_name }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
@@ -150,6 +183,9 @@
                     data: function(d) {
                         d.emp_id = $('#emp_id').val();
                         d.emp_name = $('#emp_name').val();
+                        d.department = $('#department').val();
+                        d.unit = $('#unit').val();
+                        d.company = $('#company').val();
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
                         d.status = $('#status').val();
@@ -176,6 +212,7 @@
                         data: 'unit',
                         name: 'unit'
                     },
+
                     {
                         data: 'from_date',
                         name: 'from_date'
@@ -224,6 +261,9 @@
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var emp_id = $('#emp_id').val();
                                     var emp_name = $('#emp_name').val();
+                                    var department = $('#department').val();
+                                    var unit = $('#unit').val();
+                                    var company = $('#company').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
                                     var status = $('#status').val();
@@ -235,6 +275,9 @@
                                         '?search=' + searchValue +
                                         '&emp_id=' + emp_id +
                                         '&emp_name=' + emp_name +
+                                        '&department=' + department +
+                                        '&unit=' + unit +
+                                        '&company=' + company +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
                                         '&status=' + status;
@@ -247,6 +290,9 @@
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var emp_id = $('#emp_id').val();
                                     var emp_name = $('#emp_name').val();
+                                    var department = $('#department').val();
+                                    var unit = $('#unit').val();
+                                    var company = $('#company').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
                                     var status = $('#status').val();
@@ -258,6 +304,9 @@
                                         '?search=' + searchValue +
                                         '&emp_id=' + emp_id +
                                         '&emp_name=' + emp_name +
+                                        '&department=' + department +
+                                        '&unit=' + unit +
+                                        '&company=' + company +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
                                         '&status=' + status;
@@ -284,6 +333,9 @@
             $('#resetform').on('click', function() {
                 $('#emp_id').val('');
                 $('#emp_name').val('');
+                $('#department').val('');
+                $('#unit').val('');
+                $('#company').val('');
                 $('#from_date').val('');
                 $('#to_date').val('');
 
