@@ -111,7 +111,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Image</label>
                                                     <input type="file" name="ppe_file" id="ppe_file"
-                                                        class="form-control form-control-sm" placeholder="Enter the image"
+                                                        class="form-control form-control-sm" accept="image/png, image/jpeg, image/jpg" placeholder="Enter the image"
                                                         onchange="validateImage()">
                                                     <small>Allowed file types: png, jpeg , jpg</small>
                                                     <div id="ppe_file_error" class="text-danger"></div>

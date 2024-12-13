@@ -149,8 +149,8 @@
                 if (data.length > 0) {
                     let ppeType = data[0].ppe_type;
                     let ppeName = data[0].ppe_name;
-                    let ppeTypeId = data[0].ppe_type_id; // masters_ppetype.id
-                    let ppeMasterId = data[0].ppe_master_id; // ppe_master_ppetypemaster.id
+                    let ppeTypeId = data[0].ppe_type_id; 
+                    let ppeMasterId = data[0].ppe_master_id;
 
                     $('#ppe_type').val(ppeType);
                     $('#ppe_name').val(ppeName);

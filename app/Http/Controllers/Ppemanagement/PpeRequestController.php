@@ -87,24 +87,24 @@ class PpeRequestController extends Controller
                         ->addColumn('approve_status', function ($row) {
 
                             if ($row->approve_status == STATUS_HOD_APPROVAL_PENDING) {
-                                $text = "<span class='badge bg-warning'>HOD Approval Pending</span>";
+                                $text = "<span class='badge bg-info'style='font: size 0.5em;'>HOD Approval Pending</span>";
                             } else if ($row->approve_status == STATUS_HOD_APPROVED) {
-                                $text = "<span class='badge bg-success'>HOD Approved</span>";
+                                $text = "<span class='badge bg-success' style='font: size 0.5em;'>HOD Approved</span>";
                             } else if ($row->approve_status == STATUS_HOD_REJECTED) {
-                                $text = "<span class='badge bg-danger'>HOD Rejected</span>";
+                                $text = "<span class='badge bg-danger'style='font: size 0.5em;'>HOD Rejected</span>";
                             }
                             return $text;
                         })
                         ->addColumn('ehs_approve_status', function ($row) {
 
                             if ($row->ehs_approve_status == STATUS_EHS_APPROVAL_PENDING) {
-                                $text = "<span class='badge bg-warning'>EHS Approval Pending</span>";
+                                $text = "<span class='badge bg-info'style='font: size 0.5em;'>EHS Approval Pending</span>";
                             } else if ($row->ehs_approve_status == STATUS_EHS_APPROVED) {
                                 $text = "<span class='badge bg-success'>EHS Approved</span>";
                             } else if ($row->approve_status == STATUS_HOD_REJECTED) {
-                                $text = "<span class='badge bg-danger '>HOD Rejected</span>";
+                                $text = "<span class='badge bg-danger 'style='font: size 0.5em;'>HOD Rejected</span>";
                             } else if ($row->ehs_approve_status == STATUS_EHS_REJECTED) {
-                                $text = "<span class='badge bg-danger '>EHS  Rejected</span>";
+                                $text = "<span class='badge bg-danger 'style='font: size 0.5em;'>EHS  Rejected</span>";
                             }
                             return $text;
                         })
@@ -345,7 +345,7 @@ class PpeRequestController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "PPE_request.pdf";
-            return $mpdf->Output($filename, 'I');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
              report($ex)
 ;
@@ -957,7 +957,7 @@ class PpeRequestController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "PPE Request Details.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
              report($ex)
 ;

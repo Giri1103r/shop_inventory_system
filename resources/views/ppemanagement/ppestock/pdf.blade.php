@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Protective equipments to be worn PDF')
+@section('title', 'PPE Stock Inventory')
 @section('content')
 
     <div style="width:100%;">

@@ -379,8 +379,8 @@ class PpeTypeMasterController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "PPEType Master Details.pdf";
-            $mpdf->Output($filename, 'I');
+            $filename = "PPE Type Master Details.pdf";
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             report($ex);

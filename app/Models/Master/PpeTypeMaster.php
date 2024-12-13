@@ -313,7 +313,7 @@ class PpeTypeMaster extends Model
 
     public function getppetypemaster()
     {
-        return PpeTypeMaster::all();
+        return PpeTypeMaster::where('trash','No')->where('status','=',1)->get();
     }
 
     protected static function booted()

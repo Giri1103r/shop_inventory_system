@@ -225,8 +225,8 @@ class PpeStockInventoryController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "PPE Exemption.pdf";
-            $mpdf->Output($filename, 'I');
+            $filename = "PPE Stock Inventory.pdf";
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
              report($ex)
 ;

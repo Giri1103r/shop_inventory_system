@@ -84,11 +84,11 @@ class PpeExemptionController extends Controller
                         ->addColumn('approve_status', function ($row) {
 
                             if ($row->approve_status ==  STATUS_EHS_APPROVAL_PENDING) {
-                                $text = "<span class='badge bg-warning'>EHS Approval Pending</span>";
+                                $text = "<span class='badge bg-info'style='font: size 0.5em;'>EHS Approval Pending</span>";
                             } else if ($row->approve_status == STATUS_EHS_APPROVED) {
-                                $text = "<span class='badge bg-success'>EHS Approved</span>";
+                                $text = "<span class='badge bg-success'style='font: size 0.5em;'>EHS Approved</span>";
                             } else if ($row->approve_status == STATUS_EHS_REJECTED) {
-                                $text = "<span class='badge bg-danger'>EHS  Rejected</span>";
+                                $text = "<span class='badge bg-danger'style='font: size 0.5em;'>EHS  Rejected</span>";
                             }
                             return $text;
                         })
@@ -303,7 +303,7 @@ class PpeExemptionController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "PPE_Exemption.pdf";
-            return $mpdf->Output($filename, 'I');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
              report($ex)
 ;
@@ -709,7 +709,7 @@ class PpeExemptionController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "PPE Exemption.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
              report($ex)

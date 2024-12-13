@@ -52,6 +52,7 @@ class Statuslog extends Model
             'created_by' => Auth::id(),
 
         ];
+    
         return $this->create($insert_data);
     }
 

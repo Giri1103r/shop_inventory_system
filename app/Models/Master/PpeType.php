@@ -176,7 +176,7 @@ class PpeType extends Model
         return  $query->orderBy('id', 'DESC')->get();
     }
     public function getPpetypedata(){
-        return PpeType::all();
+        return PpeType::where('trash','NO')->where('status','!=',0)->get();
     }
     protected static function booted()
     {
