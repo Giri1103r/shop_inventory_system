@@ -1,18 +1,25 @@
-
 <html>
 
-<head>
-    <style>
 
+<head>
+    <title>PPE Exemption |  KARAM</title>
+    <style>
+        .badge {
+            padding: 1px 9px 2px;
+            font-size: 12.025px;
+            font-weight: bold;
+            white-space: nowrap;
+            color: #ffffff;
+            background-color: #999999;
+            border-radius: 9px;
+        }
 
         @page {
             size: auto;
-            /* margin-header: 0mm; */
-            /* margin-footer: 3mm; */
             odd-header-name: html_myHeader1;
             even-header-name: html_myHeader1;
             odd-footer-name: html_myFooter1;
-            even-footer-name: html_myFoote1;
+            even-footer-name: html_myFooter1;
         }
 
         @page noheader {
@@ -22,28 +29,51 @@
             even-footer-name: _blank;
         }
 
-        table {
+        .table {
             width: 100%;
             border-collapse: collapse;
         }
 
-        table, th, td {
+        .table td,
+        .table th {
+            border: 1px solid black;
+            padding: 5px;
+            word-wrap: break-word;
+            max-width: 100px;
+            /* Adjust as needed */
+        }
+
+        .table-striped tr:nth-of-type(odd) {
+            background-color: rgba(0, 0, 0, .05) !important;
+        }
+
+        body {
+            font-size: 13px;
+        }
+
+        .full-width {
+            width: 100%;
+            font-size: 11px;
+        }
+
+        .tblborder {
             border: 1px solid black;
         }
 
-        th, td {
+        .activity,
+        .activity th,
+        .activity td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        .header-cell {
+            background-color: #ce0f1f;
+            color: #000;
+            font-weight: bold;
             padding: 5px;
         }
-
-        .header-table, .footer-table {
-            border: none;
-        }
-
-        .header-table td {
-            border: none;
-        }
     </style>
-
 </head>
 
 <body>
@@ -56,7 +86,7 @@
                     </td>
                     <td border="0"
                         style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                       PPE Exemption
+                        PPE Exemption
                     </td>
                 </tr>
             </table>
@@ -129,16 +159,18 @@
                     {{ getDepartment(isset($ppeexemption->department) ? $ppeexemption->department : '') }}</td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Unit</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                {{ getUnitname(isset($ppeexemption->unit) ? $ppeexemption->unit : '') }}
-                <td width="48%" style="padding:5px;"></td>
-            </tr>
-            <tr>
                 <td width="50%" style="padding:5px;"><b>Company</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ getCompanyname(isset($ppeexemption->company) ? $ppeexemption->company : '') }}
+                </td>
+
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Unit</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getUnitname(isset($ppeexemption->unit) ? $ppeexemption->unit : '') }}
                 </td>
             </tr>
 
@@ -163,54 +195,48 @@
                 </td>
             </tr>
         </table>
-
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
-                        Status Log
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <table class="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th>Status</th>
-                    <th>Approved By</th>
-                    <th>Remarks</th>
-                    <th>Date</th>
-
-                </tr>
-            </thead>
-
-            <tbody>
-                @if ($ppestatuslog->isEmpty())
-                    <tr>
-                        <td class="text-center" colspan="5">No data is available</td>
-                    </tr>
-                @else
-                    @foreach ($ppestatuslog as $log)
-                        <tr class="hover-row">
-                            <td>
-                                @if ($log['to_status'] == STATUS_EHS_APPROVAL_PENDING)
-                                    <span class='badge bg-warning'>EHS Approval Pending</span>
-                                @elseif ($log['to_status'] == STATUS_EHS_APPROVED)
-                                    <span class='badge bg-success'>EHS Approved</span>
-                                @elseif ($log['to_status'] == STATUS_EHS_REJECTED)
-                                    <span class='badge bg-danger'>EHS Rejected</span>
-                                @endif
-                            </td>
-                            <td>{{ getUsername($log['created_by']) }}</td>
-                            <td>{{ $log['remarks'] }}</td>
-                            <td>{{ displaydateformat($log['created_at']) }}</td>
-
+        @if ($ppeexemption->approve_status != STATUS_EHS_APPROVAL_PENDING)
+            <div>
+                <div style="width:100%;">
+                    <table style="width:100%;">
+                        <tr>
+                            <td class="header-cell">EHS Approval</td>
                         </tr>
-                    @endforeach
-                @endif
-            </tbody>
-        </table>
+                    </table>
+                </div>
+                <br>
+                <table>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ getUsername(isset($ppeexemption->approved_by) ? $ppeexemption->approved_by : '') }}</td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ displaydateformat(isset($ppeexemption->approved_at) ? $ppeexemption->approved_at : '') }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Approve Status</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ removeUnderScore(getStatus(isset($ppeexemption->approve_status) ? $ppeexemption->approve_status : '')) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Reason</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ isset($ppeexemption->remarks) ? $ppeexemption->remarks : '' }}</td>
+                    </tr>
+                </table>
+                <br>
+
+            </div>
+        @endif
 </body>
 
 </html>

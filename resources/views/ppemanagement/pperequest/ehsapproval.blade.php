@@ -54,7 +54,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Item Code') }}</label>
                                         <div class="view_data">
-                                            {{ isset($pperequest->item_code) ? $pperequest->item_code : '' }}
+                                            {{ getItemCode(isset($pperequest->item_code) ? $pperequest->item_code : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -82,17 +82,7 @@
                                             {{ displayDateformat($pperequest->created_at) }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Status') }}</label>
-                                        <div class="view_data">
-                                            @if ($pperequest->status == 1)
-                                                {{ __('common.active') }}
-                                            @else
-                                                {{ __('common.inactive') }}
-                                            @endif
 
-                                        </div>
-                                    </div>
                                     <div class="mb-3 col-md-12 form-input">
                                         <label class="form-label view_label">{{ __('Reason') }}</label>
                                         <div class="view_data">
@@ -112,12 +102,12 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="">Approval Status</label>
                                         <div class="view_data mt-2">
-                                            @if ($pperequest->approved_by == STATUS_HOD_APPROVAL_PENDING)
-                                                <span class='badge bg-warning'>HOD Approval Pending</span>
-                                            @elseif ($pperequest->approved_by == STATUS_HOD_APPROVED)
-                                                <span class='badge bg-success'>HOD Approved</span>
-                                            @elseif ($pperequest->approved_by == STATUS_HOD_REJECTED)
-                                                <span class='badge bg-danger'>HOD Rejected</span>
+                                            @if ($pperequest->approve_status == STATUS_HOD_APPROVAL_PENDING)
+                                                <span class='badge bg-info' style='font: size 0.5em;'>HOD Approval Pending</span>
+                                            @elseif ($pperequest->approve_status == STATUS_HOD_APPROVED)
+                                                <span class='badge bg-success' style='font: size 0.5em;'>HOD Approved</span>
+                                            @elseif ($pperequest->approve_status == STATUS_HOD_REJECTED)
+                                                <span class='badge bg-danger' style='font: size 0.5em;'>HOD Rejected</span>
                                             @endif
                                         </div>
                                     </div>
@@ -203,7 +193,8 @@
                         required: true,
                         minlength: 3,
                         maxlength: 255,
-                        regex: /^[a-zA-Z0-9\s]+$/
+                        regex:/^[a-zA-Z\s][a-zA-Z\s.]*$/
+
                     },
                 },
                 messages: {

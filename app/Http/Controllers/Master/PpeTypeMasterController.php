@@ -162,6 +162,23 @@ class PpeTypeMasterController extends Controller
         }
     }
 
+    public function uniqueCheck(Request $request)
+    {
+
+        if ($request->ajax()) {
+            $ppe_type = $request->item_code;
+            $id = $request->id;
+
+            if (empty($id)) {
+                $record = $this->ppetypemaster->uniqueCheck(['param' => 'item_code', 'value' => $ppe_type]);
+            } else {
+                $record = $this->ppetypemaster->existUniqueCheck(['param' => 'item_code', 'value' => $ppe_type, 'id' => $id]);
+            }
+
+            return response()->json($record->isEmpty());
+        }
+    }
+
     public function edit(Request $request)
     {
         try {
@@ -362,8 +379,8 @@ class PpeTypeMasterController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "PPEType Master Details.pdf";
-            $mpdf->Output($filename, 'I');
+            $filename = "PPE Type Master Details.pdf";
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             report($ex);

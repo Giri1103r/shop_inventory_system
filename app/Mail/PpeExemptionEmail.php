@@ -31,7 +31,8 @@ class PpeExemptionEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: ('PPE-Exemption  - ' . $this->details['status']),
+            $subject = 'PPE-Exemption - ' . $this->getStatus($details['status']);
+
         );
     }
 

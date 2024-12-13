@@ -80,6 +80,9 @@ class AppServiceProvider extends ServiceProvider
         defined('TYPE_PPE_REQUEST') or define('TYPE_PPE_REQUEST', 1);
         defined('TYPE_PPE_EXEMPTION') or define('TYPE_PPE_EXEMPTION', 2);
 
+        defined('CHEMICAL_DEPARTMENT') or define('CHEMICAL_DEPARTMENT', 53);
+
+
 
         defined('STATUS_EHS_VERIFICATION_PENDING') or define('STATUS_EHS_VERIFICATION_PENDING', 1);
         defined('STATUS_EHS_APPROVE_PENDING') or define('STATUS_EHS_APPROVE_PENDING', 2);

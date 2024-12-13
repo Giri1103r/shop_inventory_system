@@ -84,11 +84,11 @@ class PpeExemptionController extends Controller
                         ->addColumn('approve_status', function ($row) {
 
                             if ($row->approve_status ==  STATUS_EHS_APPROVAL_PENDING) {
-                                $text = "<span class='badge bg-warning'>EHS Approval Pending</span>";
+                                $text = "<span class='badge bg-info'style='font: size 0.5em;'>EHS Approval Pending</span>";
                             } else if ($row->approve_status == STATUS_EHS_APPROVED) {
-                                $text = "<span class='badge bg-success'>EHS Approved</span>";
+                                $text = "<span class='badge bg-success'style='font: size 0.5em;'>EHS Approved</span>";
                             } else if ($row->approve_status == STATUS_EHS_REJECTED) {
-                                $text = "<span class='badge bg-danger'>EHS  Rejected</span>";
+                                $text = "<span class='badge bg-danger'style='font: size 0.5em;'>EHS  Rejected</span>";
                             }
                             return $text;
                         })
@@ -97,13 +97,13 @@ class PpeExemptionController extends Controller
                             if (CheckUserPermission('view')) {
                                 $btn .= '<a href="' . admin_url('ppe_exemption/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             }
-                            if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('ppe_exemption/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
-                            }
+                            // if (CheckUserPermission('edit')) {
+                            //     $btn .= '<a href="' . admin_url('ppe_exemption/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
+                            // }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
 
                             if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) && $row->approve_status == STATUS_EHS_APPROVAL_PENDING) {
-                                $btn .= '<a href="' . admin_url('ppe_exemption/approval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ppe_exemption/approval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
                             $btn .= '<a href="' . admin_url('ppe_exemption/generalpdf/' . encryptId($row->id)) . '" class="" title="Pdf"> <i class="fa-solid fa-file-pdf" style="color: #e67265;"></i></a> ';
@@ -239,12 +239,14 @@ class PpeExemptionController extends Controller
                 Session::flash('success', __('Your data has been created successfully!'));
                 return redirect(admin_url('ppe_exemption/list'));
             } catch (Exception $ex) {
-                dd($ex);
+                 report($ex)
+;
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
             return redirect(admin_url('ppe_exemption/list'));
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex)
+;
             Session::flash('error',  'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_exemption/list'));
         }
@@ -301,9 +303,10 @@ class PpeExemptionController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "PPE_Exemption.pdf";
-            return $mpdf->Output($filename, 'I');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex)
+;
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
@@ -706,10 +709,11 @@ class PpeExemptionController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "PPE Exemption.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+             report($ex)
+;
         }
     }
 }

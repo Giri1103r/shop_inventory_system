@@ -61,13 +61,10 @@
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Item Code</label>
-                                                    <select name="item_code" id="item_code" style="width: 100%"
-                                                        class="form-select form-select-sm single-select ">
+                                                    <select name="item_code" id="item_code" style="width: 100%" class="form-select form-select-sm single-select">
                                                         <option value="">Select the Item Code</option>
                                                         @foreach ($ppetypemaster as $itemcode)
-                                                            <option value="{{ $itemcode->item_code }}">
-                                                                {{ $itemcode->item_code }}
-                                                            </option>
+                                                            <option value="{{ $itemcode->id }}">{{ $itemcode->item_code }}</option>
                                                         @endforeach
                                                     </select>
                                                     @error('ppe_type')
@@ -79,10 +76,8 @@
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Type</label>
-                                                    <select name="ppe_type" id="ppe_type" style="width: 100%"
-                                                        class="form-select form-select-sm single-select ">
-                                                        <option value="">Select the PPE type</option>
-                                                    </select>
+                                                    <input type="text" name="ppe_type" id="ppe_type" class="form-control form-control-sm">
+                                                    <input type="hidden" name="ppe_type_id" id="ppe_type_id">
                                                     @error('ppe_type')
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
@@ -92,16 +87,15 @@
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Name</label>
-                                                    <select name="ppe_name" id="ppe_name" style="width: 100%"
-                                                        class="form-select form-select-sm single-select ">
-                                                        <option value="">Select the PPE name</option>
-                                                    </select>
+                                                    <input type="text" name="ppe_name" id="ppe_name" class="form-control form-control-sm">
+                                                    <input type="hidden" name="ppe_name_id" id="ppe_name_id">
                                                     @error('ppe_name')
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
                                                     <div class="text-danger" id="ppe_name_error"></div>
                                                 </div>
                                             </div>
+
                                             <div class="col-md-12 mb-2">
                                                 <label for="reason" class="form-label require">Reason</label>
                                                 <textarea name="reason" id="reason" cols="3" rows="4" class="form-control form-control-sm"
@@ -139,66 +133,53 @@
             });
         });
         $(document).on('change', '#item_code', function() {
-            let PPEtypeId = $(this).val();
-            console.log(PPEtypeId);
+    let PPEtypeId = $(this).val();
+    console.log(PPEtypeId);
 
-            if (PPEtypeId) {
-                $.ajax({
-                    url: "{{ admin_url('ppe_ppetype_master/ajax-list') }}",
-                    type: 'GET',
-                    data: {
-                        id: PPEtypeId,
-                        _ts: new Date().getTime()
-                    },
-                    success: function(data) {
-                        console.log(data);
-                        $('#ppe_type').empty().append('<option value="">Select PPE type</option>');
-                        $.each(data, function(key, value) {
-                            $('#ppe_type').append('<option value="' + value.id + '">' + value
-                                .ppe_type + '</option>');
-                        });
-                        $('#ppe_type').trigger('change');
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching PPE Types. Please try again.');
-                    }
-                });
-            } else {
-                $('#ppe_type').empty().append('<option value="">Select PPE Type</option>');
-                $('#ppe_type').trigger('change');
+    if (PPEtypeId) {
+        $.ajax({
+            url: "{{ admin_url('ppe_ppetype_master/ajax-list') }}",
+            type: 'GET',
+            data: {
+                id: PPEtypeId,
+                _ts: new Date().getTime()
+            },
+            success: function(data) {
+                console.log(data);
+                if (data.length > 0) {
+                    let ppeType = data[0].ppe_type;
+                    let ppeName = data[0].ppe_name;
+                    let ppeTypeId = data[0].ppe_type_id; 
+                    let ppeMasterId = data[0].ppe_master_id;
+
+                    $('#ppe_type').val(ppeType);
+                    $('#ppe_name').val(ppeName);
+
+                    $('#ppe_type_id').val(ppeTypeId);
+                    $('#ppe_name_id').val(ppeMasterId);
+                } else {
+                    $('#ppe_type').val('');
+                    $('#ppe_name').val('');
+                    $('#ppe_type_id').val('');
+                    $('#ppe_name_id').val('');
+                }
+            },
+            error: function(xhr) {
+                alert('Error fetching PPE Types. Please try again.');
             }
         });
+    } else {
+        $('#ppe_type').val('');
+        $('#ppe_name').val('');
+        $('#ppe_type_id').val('');
+        $('#ppe_name_id').val('');
+    }
+});
 
-        $(document).on('change', '#ppe_type', function() {
-            let PPEnameId = $(this).val();
-            console.log(PPEnameId);
 
-            if (PPEnameId) {
-                $.ajax({
-                    url: "{{ admin_url('ppe_ppetype_master/ajax-ppename') }}",
-                    type: 'GET',
-                    data: {
-                        id: PPEnameId,
-                        _ts: new Date().getTime()
-                    },
-                    success: function(data) {
-                        console.log(data);
-                        $('#ppe_name').empty().append('<option value="">Select PPE Name</option>');
-                        $.each(data, function(key, value) {
-                            $('#ppe_name').append('<option value="' + value.id + '">' + value
-                                .ppe_name + '</option>');
-                        });
-                        $('#ppe_name').trigger('change');
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching PPE names. Please try again.');
-                    }
-                });
-            } else {
-                $('#ppe_name').empty().append('<option value="">Select PPE Name</option>');
-                $('#ppe_name').trigger('change');
-            }
-        });
+
+
+
 
 
 
@@ -218,7 +199,8 @@
                         required: true,
                         minlength: 3,
                         maxlength: 255,
-                        regex: /^[a-zA-Z0-9\s]+$/
+                        regex: /^[a-zA-Z\s][a-zA-Z\s.]*$/
+
                     },
                 },
                 messages: {

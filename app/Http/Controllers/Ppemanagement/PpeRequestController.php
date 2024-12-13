@@ -87,24 +87,24 @@ class PpeRequestController extends Controller
                         ->addColumn('approve_status', function ($row) {
 
                             if ($row->approve_status == STATUS_HOD_APPROVAL_PENDING) {
-                                $text = "<span class='badge bg-warning'>HOD Approval Pending</span>";
+                                $text = "<span class='badge bg-info'style='font: size 0.5em;'>HOD Approval Pending</span>";
                             } else if ($row->approve_status == STATUS_HOD_APPROVED) {
-                                $text = "<span class='badge bg-success'>HOD Approved</span>";
+                                $text = "<span class='badge bg-success' style='font: size 0.5em;'>HOD Approved</span>";
                             } else if ($row->approve_status == STATUS_HOD_REJECTED) {
-                                $text = "<span class='badge bg-danger'>HOD Rejected</span>";
+                                $text = "<span class='badge bg-danger'style='font: size 0.5em;'>HOD Rejected</span>";
                             }
                             return $text;
                         })
                         ->addColumn('ehs_approve_status', function ($row) {
 
                             if ($row->ehs_approve_status == STATUS_EHS_APPROVAL_PENDING) {
-                                $text = "<span class='badge bg-warning'>EHS Approval Pending</span>";
+                                $text = "<span class='badge bg-info'style='font: size 0.5em;'>EHS Approval Pending</span>";
                             } else if ($row->ehs_approve_status == STATUS_EHS_APPROVED) {
                                 $text = "<span class='badge bg-success'>EHS Approved</span>";
                             } else if ($row->approve_status == STATUS_HOD_REJECTED) {
-                                $text = "<span class='badge bg-danger '>HOD Rejected</span>";
+                                $text = "<span class='badge bg-danger 'style='font: size 0.5em;'>HOD Rejected</span>";
                             } else if ($row->ehs_approve_status == STATUS_EHS_REJECTED) {
-                                $text = "<span class='badge bg-danger '>EHS  Rejected</span>";
+                                $text = "<span class='badge bg-danger 'style='font: size 0.5em;'>EHS  Rejected</span>";
                             }
                             return $text;
                         })
@@ -113,17 +113,17 @@ class PpeRequestController extends Controller
                             if (CheckUserPermission('view')) {
                                 $btn .= '<a href="' . admin_url('ppe_request/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             }
-                            if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('ppe_request/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
-                            }
+                            // if (CheckUserPermission('edit')) {
+                            //     $btn .= '<a href="' . admin_url('ppe_request/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
+                            // }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
 
                             if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_HOD)) && $row->approve_status == STATUS_HOD_APPROVAL_PENDING) {
-                                $btn .= '<a href="' . admin_url('ppe_request/hodapproval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ppe_request/hodapproval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
                             if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) && $row->approve_status == STATUS_HOD_APPROVED && $row->ehs_approve_status == STATUS_EHS_APPROVAL_PENDING) {
-                                $btn .= '<a href="' . admin_url('ppe_request/ehsapproval/view/' . encryptId($row->id)) . '" class="" title="EhsApproval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ppe_request/ehsapproval/view/' . encryptId($row->id)) . '" class="" title="EhsApproval"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             $btn .= '<a href="' . admin_url('ppe_request/generalpdf/' . encryptId($row->id)) . '" class="" title="Pdf"> <i class="fa-solid fa-file-pdf" style="color: #e67265;"></i></a> ';
 
@@ -275,12 +275,15 @@ class PpeRequestController extends Controller
                 Session::flash('success', __('Your data has been created successfully!'));
                 return redirect(admin_url('ppe_request/list'));
             } catch (Exception $ex) {
-                dd($ex);
+                  report($ex)
+
+;
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
                 return redirect(admin_url('ppe_request/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex)
+;
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }
@@ -341,10 +344,11 @@ class PpeRequestController extends Controller
             $html = view('ppemanagement.pperequest.exportpdf', $data)->render();
             $mpdf->WriteHTML($html);
 
-            $filename = "PPE_Exemption.pdf";
-            return $mpdf->Output($filename, 'I');
+            $filename = "PPE_request.pdf";
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex)
+;
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
@@ -360,6 +364,7 @@ class PpeRequestController extends Controller
             $hodstatus = STATUS_HOD_APPROVAL_PENDING;
             $status = $pperequest->approve_status;
             if ($status !=  $hodstatus) {
+                Session::flash('success','You Have already responded to the user');
                 return redirect(admin_url('ppe_request/view/' . encryptId($id)));
             }
             $data = [
@@ -497,7 +502,8 @@ class PpeRequestController extends Controller
             Session::flash('success', 'PPE Request has successfully responded');
             return redirect(admin_url('ppe_request/list'));
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex)
+;
             Session::flash('error',  'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }
@@ -515,6 +521,7 @@ class PpeRequestController extends Controller
 
             $status = $pperequest->ehs_approve_status;
             if ($status !=  $ehsstatus) {
+                Session::flash('success','You Have already responded to the user');
                 return redirect(admin_url('ppe_request/view/' . encryptId($id)));
             }
 
@@ -626,7 +633,9 @@ class PpeRequestController extends Controller
 
                 notificationSave($notificationData);
             } else {
-                Mail::to($requestor)->send(new PpeRequestEhsRejectEmail($details));
+
+                $recipients = array_filter([$requestor, $hod,$storemanager]);
+                Mail::to($recipients)->send(new PpeRequestEhsRejectEmail($details));
 
                 //  notification
 
@@ -634,6 +643,10 @@ class PpeRequestController extends Controller
                 $message = 'New PPE Request';
                 $img = admin_url('public/assets/images/ppe-management.jpg');
                 $requestorId = $this->user->getrequestId($empId);
+                $hodId = $this->user->getdepartmenthodId($departmentId);
+                $storemanagerId = $this->user->getStoreManagerId();
+                $assignedUsers = array_filter(array_merge($hodId, $storemanagerId, $requestorId));
+                $assignedUserString = implode(',', $assignedUsers);
                 $notificationData = [
                     'notification_type' => 1,
                     'module_type' => 3,
@@ -644,7 +657,7 @@ class PpeRequestController extends Controller
                         'icon' => $img,
                         'module' => 1,
                     ]),
-                    'assigned_user' => array_to_string($requestorId),
+                    'assigned_user' =>  $assignedUserString,
                     'created_by' => Auth::id(),
                 ];
 
@@ -772,7 +785,8 @@ class PpeRequestController extends Controller
             }
             return redirect(admin_url('ppe_request/list'));
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex)
+;
             Session::flash('error',  'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }
@@ -943,9 +957,10 @@ class PpeRequestController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "PPE Request Details.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex)
+;
         }
     }
 }

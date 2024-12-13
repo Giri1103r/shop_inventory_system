@@ -1298,6 +1298,21 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('getItemCode')) {
+
+        function getItemCode($userid)
+        {
+
+            $item_code = DB::table('ppe_master_ppetypemaster')->select('item_code')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($item_code == null) {
+                return '';
+            } else {
+                return $item_code->item_code;
+            }
+        }
+    }
+
     if (!function_exists('getCompanyname')) {
 
         function getCompanyname($userid)

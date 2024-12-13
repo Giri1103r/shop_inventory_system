@@ -1,16 +1,9 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Type Master')
-@section('pageurl', admin_url('ppe_ppetype_master/list'))
+@section('title', 'PPE Type ')
+@section('pageurl', admin_url('ppe_type/list'))
 
 
 @section('content')
-    @push('style')
-        <style>
-            .custom-height {
-                height: 30px;
-            }
-        </style>
-    @endpush
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
@@ -21,13 +14,9 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
-
-
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('ppe_ppetype_master/add') }}">Add</x-button-add>
-
-            
-
+                        <x-button-import href="{{ admin_url('ppe_type/import') }}"></x-button-import>
+                        <x-button-add dataId="" class="add btn btn-primary ms-1"
+                            href="{{ admin_url('ppe_type/add') }}">Add</x-button-add>
                     </div>
 
                     <div id="search" class="collapse">
@@ -36,54 +25,12 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">Item Code</label>
-                                            <input type="text" name="item_code" id="item_code" class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">PPE Name</label>
-                                            <input type="text" name="ppe_name" id="ppe_name" class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">Protection Category</label>
-                                            <input type="text" name="protection_category" id="protection_category"
-                                                class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">PPE Standard</label>
-                                            <input type="text" name="ppe_standard" id="ppe_standard"
-                                                class="form-control">
+                                            <label for="inspectiontype" class="form-label ">PPE ID</label>
+                                            <input type="text" name="ppe_id" id="ppe_id" class="form-control">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspectiontype" class="form-label ">PPE Type</label>
-                                            <select name="ppe_type" id="ppe_type" style="width: 100%"
-                                                class="form-select   single-select">
-                                                <option value="">Select the ppe type</option>
-                                                @foreach ($ppetype as $name)
-                                                    <option value="{{ $name->id }}">{{ $name->ppe_type }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">From Date</label>
-                                            <div class="input-group date form-input custom-height">
-                                                <input type="text" class="form-control " name="from_date" id="from_date"
-                                                    autocomplete="off">
-                                                <div class="input-group-addon input-group-text">
-                                                    <span class="fa fa-calendar"></span>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">To Date</label>
-                                            <div class="input-group date form-input  custom-height">
-                                                <input type="text" class="form-control " name="to_date" id="to_date"
-                                                    autocomplete="off">
-                                                <div class="input-group-addon input-group-text">
-                                                    <span class="fa fa-calendar"></span>
-                                                </div>
-                                            </div>
+                                            <input type="text" name="ppe_type" id="ppe_type" class="form-control">
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
@@ -116,8 +63,7 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Item Code</th>
-                                        <th>PPE Name</th>
+                                        <th>PPE ID</th>
                                         <th>PPE Type</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
@@ -140,30 +86,6 @@
         $(document).ready(function() {
             var firstTh = $('.datatable-list thead th:first');
             firstTh.removeClass('sorting_asc');
-        });
-
-        $(document).ready(function() {
-            $('#resetform').on('click', function(e) {
-                e.preventDefault();
-                location.reload();
-            });
-        });
-        $(document).ready(function() {
-            var fromDatepicker = flatpickr("#from_date", {
-                dateFormat: "d-m-Y",
-                onChange: function(selectedDates) {
-                    if (selectedDates.length > 0) {
-                        var startDate = selectedDates[0];
-                        toDatepicker.set('minDate', startDate);
-                        toDatepicker.clear();
-                    }
-                }
-            });
-
-            var toDatepicker = flatpickr("#to_date", {
-                dateFormat: "d-m-Y",
-                minDate: "today"
-            });
         });
 
         $(function() {
@@ -192,20 +114,15 @@
                 },
 
                 ajax: {
-                    url: "{{ admin_url('ppe_ppetype_master/list') }}",
+                    url: "{{ admin_url('ppe_type/list') }}",
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                             .attr('content')
                     },
                     data: function(d) {
-                        d.item_code = $('#item_code').val();
-                        d.ppe_name = $('#ppe_name').val();
-                        d.from_date = $('#from_date').val();
-                        d.to_date = $('#to_date').val();
-                        d.ppe_standard = $('#ppe_standard').val();
+                        d.ppe_id = $('#ppe_id').val();
                         d.ppe_type = $('#ppe_type').val();
-                        d.protection_category = $('#protection_category').val();
                         d.ppe_status = $('#ppe_status').val();
 
                     }
@@ -216,12 +133,8 @@
                         searchable: false
                     },
                     {
-                        data: 'item_code',
-                        name: 'item_code'
-                    },
-                    {
-                        data: 'ppe_name',
-                        name: 'ppe_name'
+                        data: 'ppe_id',
+                        name: 'ppe_id'
                     },
                     {
                         data: 'ppe_type',
@@ -269,28 +182,18 @@
                                 text: '{{ __('common.pdf') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    item_code = $('#item_code').val();
-                                    ppe_name = $('#ppe_name').val();
-                                    from_date = $('#from_date').val();
-                                    to_date = $('#to_date').val();
+                                    ppe_id = $('#ppe_id').val();
                                     ppe_type = $('#ppe_type').val();
-                                    ppe_standard = $('#ppe_standard').val();
-                                    protection_category = $('#protection_category').val();
                                     ppe_status = $('#ppe_status').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('ppe_ppetype_master/export/pdf') }}" +
+                                        "{{ admin_url('ppe_type/export/pdf') }}" +
                                         '?search=' + searchValue +
-                                        '&item_code=' + item_code +
-                                        '&ppe_name=' + ppe_name +
-                                        '&from_date=' + from_date +
-                                        '&to_date=' + to_date +
+                                        '&ppe_id=' + ppe_id +
                                         '&ppe_type=' + ppe_type +
-                                        '&protection_category=' + protection_category +
-                                        '&ppe_standard=' + ppe_standard +
-                                        '&ppe_status=' + ppe_status
+                                        '&ppe_status=' +ppe_status
 
                                 }
                             },
@@ -299,29 +202,20 @@
                                 text: '{{ __('common.excel') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    item_code = $('#item_code').val();
-                                    ppe_name = $('#ppe_name').val();
-                                    from_date = $('#from_date').val();
-                                    to_date = $('#to_date').val();
+                                    ppe_id = $('#ppe_id').val();
                                     ppe_type = $('#ppe_type').val();
-                                    ppe_standard = $('#ppe_standard').val();
-                                    protection_category = $('#protection_category').val();
                                     ppe_status = $('#ppe_status').val();
 
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('ppe_ppetype_master/export/excel') }}" +
-                                        '?search=' + searchValue +
-                                        '&item_code=' + item_code +
-                                        '&ppe_name=' + ppe_name +
-                                        '&from_date=' + from_date +
-                                        '&to_date=' + to_date +
+                                        "{{ admin_url('ppe_type/export/excel') }}" +
+                                        '?search=' + searchValue+
+                                        '&ppe_id=' + ppe_id +
                                         '&ppe_type=' + ppe_type +
-                                        '&protection_category=' + protection_category +
-                                        '&ppe_standard=' + ppe_standard +
-                                        '&ppe_status=' + ppe_status
+                                        '&ppe_status=' +ppe_status
+
                                 }
                             },
                         ]
@@ -345,8 +239,8 @@
             });
 
             $(document).on('click', '#resetform', function() {
-                $('#item_code').val('');
-                $('#ppe_name').val('');
+                $('#ppe_id').val('');
+                $('#ppe_type').val('');
                 $('#formsearch .single-select').trigger('change');
                 setTimeout(function() {
                     table.draw();
@@ -361,12 +255,12 @@
                 var id = $(this).data('id');
                 var types = $(this).data('type');
                 if (types == 1) {
-                    var title = '{{ __('Do You want to In-Activate  PPE Type master') }}';
+                    var title = '{{ __('Do You want to In-Activate  PPE Type ') }}';
                     var text = '{{ __('common.inactive') }}';
                     var btncolor = '#dc3545'
 
                 } else {
-                    var title = '{{ __('Do You want to Activate PPE Type master') }}';
+                    var title = '{{ __('Do You want to Activate PPE Type ') }}';
                     var text = '{{ __('common.active') }}';
                     var btncolor = '#7ddc35'
                 }
@@ -386,7 +280,7 @@
 
                     if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('ppe_ppetype_master/status') }}",
+                            url: "{{ admin_url('ppe_type/status') }}",
                             type: 'post',
 
                             data: {
@@ -454,7 +348,7 @@
 
                     if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('ppe_ppetype_master/delete') }}",
+                            url: "{{ admin_url('ppe_type/delete') }}",
                             type: 'post',
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
