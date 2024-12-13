@@ -632,7 +632,9 @@ class PpeRequestController extends Controller
 
                 notificationSave($notificationData);
             } else {
-                Mail::to($requestor)->send(new PpeRequestEhsRejectEmail($details));
+
+                $recipients = array_filter([$requestor, $hod,$storemanager]);
+                Mail::to($recipients)->send(new PpeRequestEhsRejectEmail($details));
 
                 //  notification
 
@@ -640,6 +642,10 @@ class PpeRequestController extends Controller
                 $message = 'New PPE Request';
                 $img = admin_url('public/assets/images/ppe-management.jpg');
                 $requestorId = $this->user->getrequestId($empId);
+                $hodId = $this->user->getdepartmenthodId($departmentId);
+                $storemanagerId = $this->user->getStoreManagerId();
+                $assignedUsers = array_filter(array_merge($hodId, $storemanagerId, $requestorId));
+                $assignedUserString = implode(',', $assignedUsers);
                 $notificationData = [
                     'notification_type' => 1,
                     'module_type' => 3,
@@ -650,7 +656,7 @@ class PpeRequestController extends Controller
                         'icon' => $img,
                         'module' => 1,
                     ]),
-                    'assigned_user' => array_to_string($requestorId),
+                    'assigned_user' =>  $assignedUserString,
                     'created_by' => Auth::id(),
                 ];
 
