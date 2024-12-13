@@ -174,7 +174,8 @@
                         required: true,
                         minlength: 3,
                         maxlength: 255,
-                        regex: /^[a-zA-Z0-9\s]+$/
+                        regex:/^[a-zA-Z\s][a-zA-Z\s.]*$/
+
                     },
                 },
                 messages: {

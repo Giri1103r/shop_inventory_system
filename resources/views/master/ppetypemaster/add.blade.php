@@ -73,14 +73,14 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4 mb-3">
+                                            {{-- <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Quantity</label>
                                                     <input type="text" name="quantity" id="quantity"
                                                         class="form-control " value="0" readonly>
                                                     <div class="text-danger" id="quantity_error"></div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
 
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">

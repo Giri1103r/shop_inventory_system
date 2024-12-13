@@ -113,17 +113,17 @@ class PpeRequestController extends Controller
                             if (CheckUserPermission('view')) {
                                 $btn .= '<a href="' . admin_url('ppe_request/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             }
-                            if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('ppe_request/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
-                            }
+                            // if (CheckUserPermission('edit')) {
+                            //     $btn .= '<a href="' . admin_url('ppe_request/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
+                            // }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
 
                             if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_HOD)) && $row->approve_status == STATUS_HOD_APPROVAL_PENDING) {
-                                $btn .= '<a href="' . admin_url('ppe_request/hodapproval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ppe_request/hodapproval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
                             if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) && $row->approve_status == STATUS_HOD_APPROVED && $row->ehs_approve_status == STATUS_EHS_APPROVAL_PENDING) {
-                                $btn .= '<a href="' . admin_url('ppe_request/ehsapproval/view/' . encryptId($row->id)) . '" class="" title="EhsApproval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ppe_request/ehsapproval/view/' . encryptId($row->id)) . '" class="" title="EhsApproval"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             $btn .= '<a href="' . admin_url('ppe_request/generalpdf/' . encryptId($row->id)) . '" class="" title="Pdf"> <i class="fa-solid fa-file-pdf" style="color: #e67265;"></i></a> ';
 
@@ -341,7 +341,7 @@ class PpeRequestController extends Controller
             $html = view('ppemanagement.pperequest.exportpdf', $data)->render();
             $mpdf->WriteHTML($html);
 
-            $filename = "PPE_Exemption.pdf";
+            $filename = "PPE_request.pdf";
             return $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
             dd($ex);
@@ -360,6 +360,7 @@ class PpeRequestController extends Controller
             $hodstatus = STATUS_HOD_APPROVAL_PENDING;
             $status = $pperequest->approve_status;
             if ($status !=  $hodstatus) {
+                Session::flash('success','You Have already responded to the user');
                 return redirect(admin_url('ppe_request/view/' . encryptId($id)));
             }
             $data = [
@@ -515,6 +516,7 @@ class PpeRequestController extends Controller
 
             $status = $pperequest->ehs_approve_status;
             if ($status !=  $ehsstatus) {
+                Session::flash('success','You Have already responded to the user');
                 return redirect(admin_url('ppe_request/view/' . encryptId($id)));
             }
 

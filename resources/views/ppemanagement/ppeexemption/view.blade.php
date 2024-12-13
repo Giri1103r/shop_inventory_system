@@ -109,54 +109,59 @@
                                     </div>
                                 </div>
 
+                                @if ($ppeexemption->approve_status != STATUS_EHS_APPROVAL_PENDING)
 
-                                <div class="row mt-2">
-                                    <div class="card-header-inner">
-                                        <h4 class="text-white">Status log</h4>
-                                    </div>
-                                </div>
+                                    <div>
+                                        <div class="row mt-2">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">Status log</h4>
+                                            </div>
+                                        </div>
 
-                                <div class="col-md-12">
-                                    <table class="table table-bordered table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Status</th>
-                                                <th>Approved By</th>
-                                                <th>Remarks</th>
-                                                <th>Date</th>
-
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-                                            @if ($ppestatuslog->isEmpty())
-                                                <tr>
-                                                    <td class="text-center" colspan="5">No data is available</td>
-                                                </tr>
-                                            @else
-                                                @foreach ($ppestatuslog as $log)
-                                                    <tr class="hover-row">
-                                                        <td>
-                                                            @if ($log['to_status'] == STATUS_EHS_APPROVAL_PENDING)
-                                                                <span class='badge bg-warning'>EHS Approval Pending</span>
-                                                            @elseif ($log['to_status'] == STATUS_EHS_APPROVED)
-                                                                <span class='badge bg-success'>EHS Approved</span>
-                                                            @elseif ($log['to_status'] == STATUS_EHS_REJECTED)
-                                                                <span class='badge bg-danger'>EHS Rejected</span>
-                                                            @endif
-                                                        </td>
-                                                        <td>{{ getUsername($log['created_by']) }}</td>
-                                                        <td>{{ $log['remarks'] }}</td>
-                                                        <td>{{ displaydateformat($log['created_at']) }}</td>
+                                        <div class="col-md-12">
+                                            <table class="table table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Status</th>
+                                                        <th>Approved By</th>
+                                                        <th>Remarks</th>
+                                                        <th>Date</th>
 
                                                     </tr>
-                                                @endforeach
-                                            @endif
-                                        </tbody>
-                                    </table>
+                                                </thead>
 
-                                </div>
+                                                <tbody>
+                                                    @if ($ppestatuslog->isEmpty())
+                                                        <tr>
+                                                            <td class="text-center" colspan="5">No data is available</td>
+                                                        </tr>
+                                                    @else
+                                                        @foreach ($ppestatuslog as $log)
+                                                            <tr class="hover-row">
+                                                                <td>
+                                                                    @if ($log['to_status'] == STATUS_EHS_APPROVAL_PENDING)
+                                                                        <span class='badge bg-warning'>EHS Approval
+                                                                            Pending</span>
+                                                                    @elseif ($log['to_status'] == STATUS_EHS_APPROVED)
+                                                                        <span class='badge bg-success'>EHS Approved</span>
+                                                                    @elseif ($log['to_status'] == STATUS_EHS_REJECTED)
+                                                                        <span class='badge bg-danger'>EHS Rejected</span>
+                                                                    @endif
+                                                                </td>
+                                                                <td>{{ getUsername($log['created_by']) }}</td>
+                                                                <td>{{ $log['remarks'] }}</td>
+                                                                <td>{{ displaydateformat($log['created_at']) }}</td>
 
+                                                            </tr>
+                                                        @endforeach
+                                                    @endif
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+
+                                @endif
                             </div>
                         </div>
                     </div>

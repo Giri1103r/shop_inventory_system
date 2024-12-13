@@ -557,6 +557,26 @@ Route::middleware(['securityheader'])->group(function () {
             });
 
 
+            Route::group(['prefix' => 'ppe_type'], function () {
+
+                Route::get('/list', [PpeTypeController::class, 'index']);
+                Route::post('/list', [PpeTypeController::class, 'index']);
+                Route::get('/add', [PpeTypeController::class, 'add']);
+                Route::post('/add/submit', [PpeTypeController::class, 'store']);
+                Route::get('/view/{id}', [PpeTypeController::class, 'view']);
+                Route::get('/edit/{id}', [PpeTypeController::class, 'edit']);
+                Route::post('/edit/submit', [PpeTypeController::class, 'update']);
+                Route::post('/status', [PpeTypeController::class, 'statusChange']);
+                Route::post('/delete', [PpeTypeController::class, 'delete']);
+                Route::post('/unique', [PpeTypeController::class, 'Uniquecheck']);
+                Route::get('/sample_download', [PpeTypeController::class, 'DownloadSample']);
+                Route::get('/import', [PpeTypeController::class, 'import']);
+                Route::post('/import/Submit', [PpeTypeController::class, 'importSubmit']);
+                Route::get('/export/excel', [PpeTypeController::class, 'exportExcel']);
+                Route::get('/export/pdf', [PpeTypeController::class, 'exportPdf']);
+            });
+
+
 
             Route::get('ppe_ppetype_master/list', [PpeTypeMasterController::class, 'index']);
             Route::post('ppe_ppetype_master/list', [PpeTypeMasterController::class, 'index']);

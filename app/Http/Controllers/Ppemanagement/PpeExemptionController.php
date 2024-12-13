@@ -97,13 +97,13 @@ class PpeExemptionController extends Controller
                             if (CheckUserPermission('view')) {
                                 $btn .= '<a href="' . admin_url('ppe_exemption/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             }
-                            if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('ppe_exemption/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
-                            }
+                            // if (CheckUserPermission('edit')) {
+                            //     $btn .= '<a href="' . admin_url('ppe_exemption/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
+                            // }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
 
                             if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) && $row->approve_status == STATUS_EHS_APPROVAL_PENDING) {
-                                $btn .= '<a href="' . admin_url('ppe_exemption/approval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ppe_exemption/approval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
                             $btn .= '<a href="' . admin_url('ppe_exemption/generalpdf/' . encryptId($row->id)) . '" class="" title="Pdf"> <i class="fa-solid fa-file-pdf" style="color: #e67265;"></i></a> ';
