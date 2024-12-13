@@ -45,7 +45,7 @@ class PpeRequest extends Model
         ->where('ppe_master_ppetypemaster.trash','NO')
         ->where('masters_department.trash','NO')
         ->where('masters_ppetype.trash','NO');
-        
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -117,14 +117,13 @@ class PpeRequest extends Model
     public function store()
     {
         $request = request();
-
         $insert_array = array(
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
             'department' => Auth::user()->department_id,
             'item_code'=>$request->item_code,
-            'ppe_type' => $request->ppe_type,
-            'ppe_name' => $request->ppe_name,
+            'ppe_type' => $request->ppe_type_id,
+            'ppe_name' => $request->ppe_name_id,
             'employee_reason' => $request->reason,
             'approve_status' => STATUS_HOD_APPROVAL_PENDING,
             'ehs_approve_status' => STATUS_EHS_APPROVAL_PENDING,
@@ -258,7 +257,7 @@ class PpeRequest extends Model
     {
         $employeeId = Auth::user()->employee_id;
 
-        $lastsixmonths = PpeRequest::where('department', 41)
+        $lastsixmonths = PpeRequest::where('department', CHEMICAL_DEPARTMENT)
             ->where('emp_id', $employeeId)
             ->orderBy('id', 'DESC')
             ->first();

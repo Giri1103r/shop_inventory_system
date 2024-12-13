@@ -55,7 +55,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Item Code') }}</label>
                                         <div class="view_data">
-                                            {{ isset($pperequest->item_code) ? $pperequest->item_code : '' }}
+                                            {{ getItemCode(isset($pperequest->item_code) ? $pperequest->item_code : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
