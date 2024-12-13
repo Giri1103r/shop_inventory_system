@@ -1,10 +1,11 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Shoe  Exemption Show')
+@section('title', 'PPE Shoe Exemption Show')
 @section('pageurl', admin_url('ppe_exemption/list'))
 
 
 @section('content')
-    <div class="clearfix"></div>
+    <div class="clearfix">
+    </div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
 
@@ -129,27 +130,28 @@
 
                                         <tbody>
                                             @if ($ppestatuslog->isEmpty())
-                                            <tr>
-                                                <td class="text-center" colspan="5">No data is available</td>
-                                            </tr>
-                                        @else
-                                            @foreach ($ppestatuslog as $log)
-                                                <tr class="hover-row">
-                                                    <td>   @if ($log['to_status'] == STATUS_EHS_APPROVAL_PENDING)
-                                                       
-                                                        <span class='badge bg-warning'>EHS Approval Pending</span>
-                                                    @elseif ($log['to_status'] == STATUS_EHS_APPROVED)
-                                                        <span class='badge bg-success'>EHS Approved</span>
-                                                    @elseif ($log['to_status'] == STATUS_EHS_REJECTED)
-                                                        <span class='badge bg-danger'>EHS Rejected</span>
-                                                    @endif</td>
-                                                    <td>{{getUsername($log['created_by'] ) }}</td>
-                                                  <td>{{$log['remarks']}}</td>
-                                                  <td>{{displaydateformat($log['created_at'])}}</td>
-
+                                                <tr>
+                                                    <td class="text-center" colspan="5">No data is available</td>
                                                 </tr>
-                                            @endforeach
-                                        @endif
+                                            @else
+                                                @foreach ($ppestatuslog as $log)
+                                                    <tr class="hover-row">
+                                                        <td>
+                                                            @if ($log['to_status'] == STATUS_EHS_APPROVAL_PENDING)
+                                                                <span class='badge bg-warning'>EHS Approval Pending</span>
+                                                            @elseif ($log['to_status'] == STATUS_EHS_APPROVED)
+                                                                <span class='badge bg-success'>EHS Approved</span>
+                                                            @elseif ($log['to_status'] == STATUS_EHS_REJECTED)
+                                                                <span class='badge bg-danger'>EHS Rejected</span>
+                                                            @endif
+                                                        </td>
+                                                        <td>{{ getUsername($log['created_by']) }}</td>
+                                                        <td>{{ $log['remarks'] }}</td>
+                                                        <td>{{ displaydateformat($log['created_at']) }}</td>
+
+                                                    </tr>
+                                                @endforeach
+                                            @endif
                                         </tbody>
                                     </table>
 

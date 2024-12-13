@@ -125,6 +125,8 @@ class PpeRequestController extends Controller
                             if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) && $row->approve_status == STATUS_HOD_APPROVED && $row->ehs_approve_status == STATUS_EHS_APPROVAL_PENDING) {
                                 $btn .= '<a href="' . admin_url('ppe_request/ehsapproval/view/' . encryptId($row->id)) . '" class="" title="EhsApproval"><i class="fa-solid fa-check-to-slot text-warning"></i></a> ';
                             }
+                            $btn .= '<a href="' . admin_url('ppe_request/generalpdf/' . encryptId($row->id)) . '" class="" title="Pdf"> <i class="fa-solid fa-file-pdf" style="color: #e67265;"></i></a> ';
+
                             return $btn;
                         })
 
@@ -304,6 +306,46 @@ class PpeRequestController extends Controller
             return view('ppemanagement.pperequest.view', $data);
         } catch (Exception $ex) {
             report($ex);
+        }
+    }
+
+    public function pdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $pperequest = $this->pperequest->selectOne($id);
+            }
+            $ppestatuslog = $this->ppestatus->getstatusdetails($id);
+            $userdata = $this->pperequest->userdata();
+
+            $data = [
+                'userdata'=>$userdata,
+                'pperequest' => $pperequest,
+                'ppestatuslog' => $ppestatuslog,
+                'pagetitle' => "PPE request",
+            ];
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('ppemanagement.pperequest.exportpdf', $data)->render();
+            $mpdf->WriteHTML($html);
+
+            $filename = "PPE_Exemption.pdf";
+            return $mpdf->Output($filename, 'I');
+        } catch (Exception $ex) {
+            dd($ex);
+            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
 

@@ -594,6 +594,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/edit/submit', [PpeRequestController::class, 'update']);
                 Route::get('/export/excel', [PpeRequestController::class, 'exportExcel']);
                 Route::get('/export/pdf', [PpeRequestController::class, 'exportPdf']);
+                Route::get('/generalpdf/{id}', [PpeRequestController::class, 'pdf']);
+
             });
 
             Route::group(['prefix' => 'ppe_stock_inventory'], function () {
