@@ -239,12 +239,14 @@ class PpeExemptionController extends Controller
                 Session::flash('success', __('Your data has been created successfully!'));
                 return redirect(admin_url('ppe_exemption/list'));
             } catch (Exception $ex) {
-                dd($ex);
+                 report($ex)
+;
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
             return redirect(admin_url('ppe_exemption/list'));
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex)
+;
             Session::flash('error',  'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_exemption/list'));
         }
@@ -303,7 +305,8 @@ class PpeExemptionController extends Controller
             $filename = "PPE_Exemption.pdf";
             return $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex)
+;
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
@@ -709,7 +712,8 @@ class PpeExemptionController extends Controller
             $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
 
-            dd($ex);
+             report($ex)
+;
         }
     }
 }

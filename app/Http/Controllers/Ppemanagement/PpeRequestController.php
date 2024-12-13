@@ -275,12 +275,14 @@ class PpeRequestController extends Controller
                 Session::flash('success', __('Your data has been created successfully!'));
                 return redirect(admin_url('ppe_request/list'));
             } catch (Exception $ex) {
-                dd($ex);
+                 report($ex)
+;
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
                 return redirect(admin_url('ppe_request/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex)
+;
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }
@@ -344,7 +346,8 @@ class PpeRequestController extends Controller
             $filename = "PPE_request.pdf";
             return $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex)
+;
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
@@ -498,7 +501,8 @@ class PpeRequestController extends Controller
             Session::flash('success', 'PPE Request has successfully responded');
             return redirect(admin_url('ppe_request/list'));
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex)
+;
             Session::flash('error',  'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }
@@ -774,7 +778,8 @@ class PpeRequestController extends Controller
             }
             return redirect(admin_url('ppe_request/list'));
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex)
+;
             Session::flash('error',  'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }
@@ -947,7 +952,8 @@ class PpeRequestController extends Controller
             $filename = "PPE Request Details.pdf";
             $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex)
+;
         }
     }
 }
