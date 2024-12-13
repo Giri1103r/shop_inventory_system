@@ -591,6 +591,7 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('ppe_ppetype_master/export/pdf', [PpeTypeMasterController::class, 'exportPdf']);
             Route::get('ppe_ppetype_master/ajax-list', [PpeTypeMasterController::class, 'list']);
             Route::get('ppe_ppetype_master/ajax-ppename', [PpeTypeMasterController::class, 'PPEnamelist']);
+            Route::get('ppe_ppetype_master/unique', [PpeTypeMasterController::class, 'Uniquecheck']);
 
 
 

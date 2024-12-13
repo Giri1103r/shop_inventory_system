@@ -104,6 +104,23 @@ class PpeTypeMaster extends Model
         return $datas;
     }
 
+
+    public function uniqueCheck($data)
+    {
+
+       $unique =PpeTypeMaster::where($data['param'], $data['value'])->get();
+       return $unique;
+    }
+
+    public function ExistuniqueCheck($data)
+    {
+        return $this->where($data['param'],  $data['value'])
+            ->where('id', '!=', decryptId($data['id']))
+            ->get();
+    }
+
+
+
     public function store()
     {
         $request = request();
@@ -292,7 +309,7 @@ class PpeTypeMaster extends Model
     {
         return PpeTypeMaster::all();
     }
-  
+
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('ppe_master_ppetypemaster'));
