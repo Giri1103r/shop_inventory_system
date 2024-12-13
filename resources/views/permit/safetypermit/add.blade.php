@@ -285,96 +285,76 @@
                                                 </div>
                                             </div>
 
-
-                                            <!-- Right Side: Expanded Content -->
                                             <div id="section-1" class="col-md-8">
                                                 <p class="fw-bold fs-5 mt-3">Applicable for Confined Space Entry</p>
-
+                                            
                                                 <div class="row border rounded p-2 mx-1">
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">O2%</label>
-                                                            <input type="text" name="confined_space_entry[]"
-                                                                class="form-control" placeholder="" disabled>
+                                                            <input type="text" name="confined_space_entry[o2_percentage]" class="form-control" placeholder="" disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">System Isolated</label>
-                                                            <input type="hidden"
-                                                                name="confined_space_entry[system_isolated]"
-                                                                value="0">
-                                                            <input type="checkbox" class="validate-radio-required"
-                                                                name="confined_space_entry[system_isolated]"
-                                                                value="1">
+                                                            <input type="hidden" name="confined_space_entry[system_isolated]" value="0">
+                                                            <input type="checkbox" class="validate-radio-required" name="confined_space_entry[system_isolated]" value="1">
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">Rescue System Available</label>
-                                                            <input type="hidden"
-                                                                name="confined_space_entry[rescue_system]" value="0">
-                                                            <input type="checkbox" class="validate-radio-required"
-                                                                name="confined_space_entry[rescue_system]" value="1">
+                                                            <input type="hidden" name="confined_space_entry[rescue_system]" value="0">
+                                                            <input type="checkbox" class="validate-radio-required" name="confined_space_entry[rescue_system]" value="1">
                                                         </div>
                                                     </div>
                                                 </div>
-
+                                            
                                                 <div class="row border rounded p-2 mx-1">
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">Confined Space Attendant</label>
-                                                            <input type="hidden"
-                                                                name="confined_space_entry[confined_attendant]"
-                                                                value="0">
-                                                            <input type="checkbox" class="validate-radio-required"
-                                                                name="confined_space_entry[confined_attendant]"
-                                                                value="1">
+                                                            <input type="hidden" name="confined_space_entry[confined_attendant]" value="0">
+                                                            <input type="checkbox" class="validate-radio-required" name="confined_space_entry[confined_attendant]" value="1">
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">Attendant Name</label>
-                                                            <input type="text" name="description" class="form-control"
-                                                                name = "confined_space_entry[]"
-                                                                placeholder="Search by Employee Name" disabled>
+                                                            <input type="text" name="confined_space_entry[attendant_name]" class="form-control" placeholder="Search by Employee Name" disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">Register for entry & exits</label>
-                                                            <input type="checkbox" class="validate-radio-required"
-                                                                name = "confined_space_entry[]" disabled>
+                                                            <input type="checkbox" class="validate-radio-required" name="confined_space_entry[register_entry_exits]" disabled>
                                                         </div>
                                                     </div>
                                                 </div>
-
+                                            
                                                 <div class="row border rounded p-2 mx-1 mb-3">
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">Any Other Gas / PPM</label>
-                                                            <input type="text" name="description" class="form-control"
-                                                                name = "confined_space_entry[]" placeholder="Loto No"
-                                                                disabled>
+                                                            <input type="text" name="confined_space_entry[other_gas]" class="form-control" placeholder="Loto No" disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
-                                                            <label class="form-label">PPM and is therefore safe to enter
-                                                                from</label>
-                                                            <input type="text" name="description" class="form-control"
-                                                                name = "confined_space_entry[]" placeholder="" disabled>
+                                                            <label class="form-label">PPM and is therefore safe to enter from</label>
+                                                            <input type="text" name="confined_space_entry[ppm_safe_to_enter]" class="form-control" placeholder="" disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">To</label>
-                                                            <input type="text"name="confined_space_entry[]"
-                                                                class="form-control" placeholder="" disabled>
+                                                            <input type="text" name="confined_space_entry[to]" class="form-control" placeholder="" disabled>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            
                                         </div>
 
                                         <p class="fw-bold fs-5 mt-3">Protective Equipment's to be Worn (<i
@@ -706,7 +686,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="workman-list-entries">
-                                                    <!-- Appended list entries will go here -->
+                                                
                                                 </tbody>
                                             </table>
                                         </div>

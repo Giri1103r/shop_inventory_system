@@ -620,8 +620,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/status', [SafetyPermitController::class, 'statusChange']);
                 Route::post('/delete', [SafetyPermitController::class, 'delete']);
                 Route::get('/view/{id}', [SafetyPermitController::class, 'view']);
-                Route::post('/approvereject/submit', [SafetyPermitController::class, 'ApprovalReject']);
-                Route::get('/hodapproval/view/{id}', [PpeRequestController::class, 'hodApprovalview']);
+                Route::get('/approvereject/{id}', [SafetyPermitController::class, 'approvereject']);
+                Route::post('/ehsverification/submit', [SafetyPermitController::class, 'ehsverification']);
                 Route::get('/edit/{id}', [SafetyPermitController::class, 'edit']);
                 Route::post('/edit/submit', [SafetyPermitController::class, 'update']);
                 Route::get('/export/excel', [SafetyPermitController::class, 'exportExcel']);

@@ -7,6 +7,7 @@ use App\Models\Master\ContractorCompanyUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 use App\Scopes\TrashScope;
 
@@ -81,13 +82,13 @@ class SafetyPermit extends Model
 
         // $employeelocation = Employee::where('login_id', $id)->value('location');
 
-        $query = $this->select('ptw_safety.*','masters_unit.unit_name','ptw_status.status_name','ptw_status.bg_color')
-        ->leftJoin(
-            'masters_unit', 
-            'masters_unit.id', 
-            '=', 
-            'ptw_safety.unit_id'
-        )->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
+        $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')
+            ->leftJoin(
+                'masters_unit',
+                'masters_unit.id',
+                '=',
+                'ptw_safety.unit_id'
+            )->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -176,7 +177,7 @@ class SafetyPermit extends Model
     }
 
 
-    
+
     public function store()
     {
         $request = request();
@@ -191,7 +192,7 @@ class SafetyPermit extends Model
         $equipment_checklist = !empty($request->equipment_checklist) ? json_encode($request->equipment_checklist) : null;
         $safework_instruction = !empty($request->safework_instruction) ? json_encode($request->safework_instruction) : null;
 
-    
+
         $shutdownReq = $request->has('shutdown_req') ? 1 : 0;
         $lotoReq = $request->has('loto_req') ? 1 : 0;
         $tagfield = $request->has('tagfield') ? 1 : 0;
@@ -229,7 +230,7 @@ class SafetyPermit extends Model
             'talk_givenby' => $request->talk_givenby,
             'assigned_job' => $assignedJob,
             'attendance_toolbox_talk' => $request->attendance_toolbox_talk,
-            'permit_status' => 1,
+            'permit_status' => STATUS_EHS_VERIFICATION_PENDING,
             'created_by' => Auth::id(),
         );
 
@@ -273,11 +274,11 @@ class SafetyPermit extends Model
     public function permitstatus($ptw_status, $id)
     {
 
-        $confined_status = [
+        $permit_status = [
             'permit_status' => $ptw_status,
         ];
 
-        return $this->where('id', $id)->update($confined_status);
+        return $this->where('id', $id)->update($permit_status);
     }
 
     public function subpermitstatus($ptwID, $subpermitstatus)
@@ -374,23 +375,215 @@ class SafetyPermit extends Model
 
     public function selectOne($id)
     {
-        $data = $this->select('ptw_safety.*','ptw_masters_typeofwork.work_name','ptw_masters_typeofwork_checklist.id as checklist_id','ptw_masters_typeofwork_checklist.type','ptw_masters_typeofwork_checklist.checked','ptw_masters_typeofwork_checklist.check_points','ptw_masters_typeofwork_checklist.default_enable')
-            ->leftJoin('ptw_safety_workman_involved', 'ptw_safety_workman_involved.permit_id', '=', 'ptw_safety.id')
-            ->leftJoin('ptw_masters_typeofwork', function($join) {
-                $join->on('ptw_masters_typeofwork.id', '=', 'ptw_safety.id')
-                    ->whereRaw('FIND_IN_SET(ptw_masters_typeofwork.id, ptw_safety.id)');  
-            }) ->leftJoin('ptw_masters_typeofwork_checklist', 'ptw_masters_typeofwork_checklist.typeofwork_id', '=', 'ptw_masters_typeofwork.id')
-            // ->leftJoin('ptw_masters_protective_equip', 'ptw_masters_protective_equip.id', '=', 'ptw_masters_typeofwork_checklist.check_points')
-            // ->leftJoin('ptw_masters_equip_involved', 'ptw_masters_equip_involved.id', '=', 'ptw_masters_typeofwork_checklist.check_points')
-            // ->leftJoin('ptw_masters_safe_work', 'ptw_masters_safe_work.id', '=', 'ptw_masters_typeofwork_checklist.check_points')
-            // ->leftJoin('ptw_masters_precaution', 'ptw_masters_precaution.id', '=', 'ptw_masters_typeofwork_checklist.check_points')
-            // ->leftJoin('ptw_masters_checklist', 'ptw_masters_checklist.id', '=', 'ptw_masters_typeofwork_checklist.check_points')
+        $data = $this->select(
+            'ptw_safety.*',
+            'shut_down_takenby_employee.emp_name as shut_down_takenby',
+            'loto_takenby_employee.emp_name as loto_takenby',
+            DB::raw("(SELECT GROUP_CONCAT(work_name SEPARATOR ', ')
+                      FROM ptw_masters_typeofwork
+                      WHERE FIND_IN_SET(ptw_masters_typeofwork.id, ptw_safety.sub_permit)
+                     ) as sub_permit_names"),
+            'ptw_masters_typeofwork_checklist.id as checklist_id',
+            'ptw_masters_typeofwork_checklist.type',
+            'ptw_masters_typeofwork_checklist.checked',
+            'ptw_masters_typeofwork_checklist.check_points',
+            'ptw_masters_typeofwork_checklist.default_enable',
+            DB::raw("(SELECT GROUP_CONCAT(file_path SEPARATOR ', ')
+                      FROM ptw_masters_typeofwork_upload
+                      WHERE FIND_IN_SET(ptw_masters_typeofwork_upload.typeofwork_id, ptw_safety.sub_permit)
+                      AND ptw_masters_typeofwork_upload.trash = 'NO'
+                     ) as sub_permit_images")
+        )
+
+            ->leftJoin('ptw_masters_typeofwork', function ($join) {
+                $join->on('ptw_masters_typeofwork.id', '=', DB::raw('SUBSTRING_INDEX(ptw_safety.sub_permit, ",", 1)'));
+            })
+            ->leftJoin('ptw_masters_typeofwork_checklist', 'ptw_masters_typeofwork_checklist.typeofwork_id', '=', 'ptw_masters_typeofwork.id')
+            ->leftJoin('ptw_masters_typeofwork_upload', 'ptw_masters_typeofwork_upload.typeofwork_id', '=', 'ptw_masters_typeofwork.id')
+            ->leftJoin('masters_employee as shut_down_takenby_employee', 'shut_down_takenby_employee.id', '=', 'ptw_safety.shut_down_takenby')
+            ->leftJoin('masters_employee as loto_takenby_employee', 'loto_takenby_employee.id', '=', 'ptw_safety.loto_takenby')
             ->where('ptw_safety.id', $id)
+            ->where('ptw_safety.trash', 'NO')
+            ->where('ptw_masters_typeofwork_upload.trash', 'NO')
             ->first();
-    dd($data);
+
+
+        if ($data) {
+
+            if (isset($data->sub_permit_names)) {
+                $data->sub_permit_names = explode(', ', $data->sub_permit_names);
+            }
+
+            if (isset($data->sub_permit_images)) {
+                $data->sub_permit_images = explode(', ', $data->sub_permit_images);
+            }
+            $protectiveEquip = json_decode($data->protective_equip, true);
+            $mappedProtectiveEquip = [];
+
+            if ($protectiveEquip) {
+                foreach ($protectiveEquip as $typeofWorkId => $checklistIds) {
+                    $workName = DB::table('ptw_masters_typeofwork')
+                        ->where('id', $typeofWorkId)
+                        ->value('work_name');
+
+                    $checkpoints = DB::table('ptw_masters_typeofwork_checklist')
+                        ->whereIn('id', $checklistIds)
+                        ->pluck('check_points')
+                        ->toArray();
+
+                    $checkPointNames = DB::table('ptw_masters_protective_equip')
+                        ->whereIn('id', $checkpoints)
+                        ->pluck('protective_equip')
+                        ->toArray();
+
+                    $mappedProtectiveEquip[$workName] = [
+                        'checkpoints' => $checkpoints,
+                        'checkpoint_names' => $checkPointNames
+                    ];
+                }
+            }
+
+
+            $data->mapped_protective_equip = $mappedProtectiveEquip;
+
+
+            $equiment_involved = json_decode($data->equiment_involved, true);
+            $mappedequiment_involved = [];
+
+            if ($equiment_involved) {
+                foreach ($equiment_involved as $typeofWorkId => $checklistIds) {
+                    $workName = DB::table('ptw_masters_typeofwork')
+                        ->where('id', $typeofWorkId)
+                        ->value('work_name');
+                    $checkpoints = DB::table('ptw_masters_typeofwork_checklist')
+                        ->whereIn('id', $checklistIds)
+                        ->pluck('check_points')
+                        ->toArray();
+
+                    $checkPointNames = DB::table('ptw_masters_equip_involved')
+                        ->whereIn('id', $checkpoints)
+                        ->pluck('equip_involve')
+                        ->toArray();
+
+                    $mappedequiment_involved[$workName] = [
+                        'checkpoints' => $checkpoints,
+                        'checkpoint_names' => $checkPointNames
+                    ];
+                }
+            }
+
+            $data->mapped_equiment_involved = $mappedequiment_involved;
+
+
+            $precaution_taken = json_decode($data->precaution_taken, true);
+            $mappeprecaution_taken = [];
+
+            if ($precaution_taken) {
+                foreach ($precaution_taken as $typeofWorkId => $checklistIds) {
+                    $workName = DB::table('ptw_masters_typeofwork')
+                        ->where('id', $typeofWorkId)
+                        ->value('work_name');
+                    $checkpoints = DB::table('ptw_masters_typeofwork_checklist')
+                        ->whereIn('id', $checklistIds)
+                        ->pluck('check_points')
+                        ->toArray();
+
+                    $checkPointNames = DB::table('ptw_masters_precaution')
+                        ->whereIn('id', $checkpoints)
+                        ->pluck('precaution')
+                        ->toArray();
+                    $mappeprecaution_taken[$workName] = [
+                        'checkpoints' => $checkpoints,
+                        'checkpoint_names' => $checkPointNames
+                    ];
+                }
+            }
+
+            $data->mapped_precaution_taken = $mappeprecaution_taken;
+
+            $equipment_checklist = json_decode($data->equipment_checklist, true);
+            $mappeequipment_checklist = [];
+
+            if ($equipment_checklist) {
+                foreach ($equipment_checklist as $typeofWorkId => $checklistIds) {
+                    $workName = DB::table('ptw_masters_typeofwork')
+                        ->where('id', $typeofWorkId)
+                        ->value('work_name');
+                    $checkpoints = DB::table('ptw_masters_typeofwork_checklist')
+                        ->whereIn('id', $checklistIds)
+                        ->pluck('check_points')
+                        ->toArray();
+
+                    $checkPointNames = DB::table('ptw_masters_checklist')
+                        ->whereIn('id', $checkpoints)
+                        ->pluck('checklist')
+                        ->toArray();
+
+
+
+                    $mappeequipment_checklist[$workName] = [
+                        'checkpoints' => $checkpoints,
+                        'checkpoint_names' => $checkPointNames
+                    ];
+                }
+            }
+
+            $data->mapped_equipment_checklist = $mappeequipment_checklist;
+
+
+            $safework_instruction = json_decode($data->safework_instruction, true);
+            $mappesafework_instruction = [];
+
+            if ($safework_instruction) {
+                foreach ($safework_instruction as $typeofWorkId => $checklistIds) {
+                    $workName = DB::table('ptw_masters_typeofwork')
+                        ->where('id', $typeofWorkId)
+                        ->value('work_name');
+                    $checkpoints = DB::table('ptw_masters_typeofwork_checklist')
+                        ->whereIn('id', $checklistIds)
+                        ->pluck('check_points')
+                        ->toArray();
+
+                    $checkPointNames = DB::table('ptw_masters_safe_work')
+                        ->whereIn('id', $checkpoints)
+                        ->pluck('safe_work')
+                        ->toArray();
+
+
+                    $mappesafework_instruction[$workName] = [
+                        'checkpoints' => $checkpoints,
+                        'checkpoint_names' => $checkPointNames
+                    ];
+                }
+            }
+
+            $data->mapped_safework_instruction = $mappesafework_instruction;
+        }
+
         return $data;
     }
-    
+
+    public function workmaninvolved($id)
+    {
+
+        $data =  $this->select('ptw_safety_workman_involved.*', 'masters_employee.emp_id as employee_id', 'masters_department.department_name')
+            ->leftJoin('ptw_safety_workman_involved', 'ptw_safety_workman_involved.permit_id', '=', 'ptw_safety.id')
+            ->leftJoin('masters_employee', 'masters_employee.id', '=', 'ptw_safety_workman_involved.emp_id')
+            ->leftJoin('masters_department', 'masters_department.id', '=', 'ptw_safety_workman_involved.workman_dept')
+            ->where('ptw_safety.id', $id)
+            ->get();
+
+        return $data;
+    }
+
+    public function selectmail($id)
+    {
+        $data =  $this->select('ptw_safety.permit_id','ptw_safety.unit_id','ptw_safety.date','ptw_safety.time_from','ptw_safety.time_to','ptw_safety.exact_location_job','ptw_safety.job_location_area')
+            ->where('ptw_safety.id', $id)
+            ->first();
+
+        return $data;
+    }
 
     public function permitapprovestatus($ptw_status, $id)
     {

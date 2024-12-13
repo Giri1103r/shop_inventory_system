@@ -81,6 +81,14 @@ class AppServiceProvider extends ServiceProvider
         defined('TYPE_PPE_EXEMPTION') or define('TYPE_PPE_EXEMPTION', 2);
 
 
+        defined('STATUS_EHS_VERIFICATION_PENDING') or define('STATUS_EHS_VERIFICATION_PENDING', 1);
+        defined('STATUS_EHS_APPROVE_PENDING') or define('STATUS_EHS_APPROVE_PENDING', 2);
+        defined('STATUS_EHS_HOLD') or define('STATUS_EHS_HOLD', 3);
+        defined('STATUS_EHS_DECLINE') or define('STATUS_EHS_DECLINE', 4);
+        defined('STATUS_EHS_REASSIGN') or define('STATUS_EHS_REASSIGN', 5);
+        defined('STATUS_PLANT_HEAD_PENDING') or define('STATUS_PLANT_HEAD_PENDING', 6);
+
+
 
         View::composer('*', function ($view) {
 
