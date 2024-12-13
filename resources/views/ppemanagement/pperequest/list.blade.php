@@ -11,12 +11,12 @@
                     <h4 class="card-title"></h4>
                     <div class="d-flex justify-content-end p-2 me-2">
                         <x-button-filter dataId="" class="search me-2" href=""></x-button-filter>
-                        @if (CheckUserPermission('add'))
+
 
                         <x-button-add dataId="" class="add btn btn-primary"
                             href="{{ admin_url('ppe_request/add') }}">Add</x-button-add>
 
-                         @endif
+                       
                     </div>
 
 
