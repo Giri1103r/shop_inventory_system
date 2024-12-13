@@ -109,7 +109,8 @@ class PpeTypeController extends Controller
 
                 Session::flash('success', __('PPE Type is taken  added successfully'));
             } catch (Exception $ex) {
-                dd($ex);
+                 report($ex)
+;
                 Session::flash('error', __('common.message_error'));
             }
             return redirect(admin_url('ppe_type/list'));
