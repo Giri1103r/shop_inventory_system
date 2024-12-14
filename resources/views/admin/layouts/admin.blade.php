@@ -166,6 +166,8 @@
             display: block;
         }
 
+      
+
         .custom-tooltip {
             display: none;
             position: absolute;
@@ -290,17 +292,14 @@
 
     <!-- App js-->
     <script src="{{ url('public/assets/js/app.min.js') }}"></script>
-    <script src="{{ url('public/assets/js/custom-validation.js') }}"></script>
 
     <script src="{{ public_plugins('sweetalert/SweetAlertFull.js') }}"></script>
     <script src="{{ public_plugins('jqueryvalidation/jquery.validate.min.js') }}"></script>
     <script src="{{ public_plugins('jqueryvalidation/additional-methods.min.js') }}"></script>
+    <script src="{{ url('public/assets/js/custom-validation.js') }}"></script>
 
     <script src="{{ public_plugins('select2/js/select2.full.min.js') }}"></script>
     <script src="{{ public_plugins('jasny-bootstrap/js/jasny-bootstrap.min.js') }}"></script>
-    <!--calender-->
-    <script src="{{ public_plugins('fullcalendar/locales-all.min.js') }}"></script>
-    <script src="{{ public_plugins('fullcalendar/main.min.js') }}"></script>
 
 
     @stack('scripts')

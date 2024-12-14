@@ -13,13 +13,7 @@
                     <div class="d-flex justify-content-end p-2">
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
-                        {{-- @if (CheckUserPermission('import'))
-                            <x-button-import href="{{ admin_url('nomination_process/import') }}"></x-button-import>
-                        @endif
-                        @if (CheckUserPermission('add'))
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('nomination_process/add') }}">Add</x-button-add>
-                        @endif --}}
+
                     </div>
                     <div id="search" class="collapse">
                         <form action="" id="formsearch">
@@ -29,7 +23,7 @@
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_id" class="form-label ">Employee ID</label>
-                                            <select name="emp_id" id="emp_id" class=" form-control single-select"
+                                            <select name="employee_id" id="emp_id" class=" form-control single-select"
                                                 style="width: 100%">
                                                 <option value="">Select Employee ID</option>
                                                 @foreach ($employeeList as $emp)
@@ -50,14 +44,14 @@
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="email" class="form-label ">Employee Type</label>
-                                                <select name="employee_type" id="employee_type" class=" form-control single-select"
-                                                style="width: 100%">
+                                            <select name="employee_type" id="employee_type"
+                                                class=" form-control single-select" style="width: 100%">
                                                 <option value="">Select Employee Type</option>
                                                 <option value="Permanent">Permanent</option>
                                                 <option value="Probationary">Probationary</option>
                                             </select>
                                         </div>
-                                   
+
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="from_date" class="form-label ">Last training
                                                 attended on(Date) </label>
@@ -103,7 +97,7 @@
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
-                                        <th>{{ __('common.action') }}</th>
+                                        <th data-priority="1">{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -166,11 +160,11 @@
                             d.email = $('#email').val();
                             d.department_id = $('#department_id').val();
                             d.employee_type = $('#employee_type').val();
-                            d.last_training_attended_on = $('#last_training_attended_on').val();
+                            d.last_training_attended_on = $('#last_training_attended_on_datepicker').val();
                             d.topic_id = $('#topic_id').val();
                             d.status = $('#status').val();
-
                         }
+
                     },
                     columns: [{
                             data: 'DT_RowIndex',
@@ -250,7 +244,8 @@
                                         emp_name = $('#emp_name').val();
                                         email = $('#email').val();
                                         employee_type = $('#employee_type').val();
-                                        last_training_attended_on = $('#last_training_attended_on').val();
+                                        last_training_attended_on = $(
+                                            '#last_training_attended_on_datepicker').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -262,7 +257,8 @@
                                             '&emp_name=' + emp_name +
                                             '&email=' + email +
                                             '&employee_type=' + employee_type +
-                                            '&last_training_attended_on=' + last_training_attended_on +
+                                            '&last_training_attended_on=' +
+                                            last_training_attended_on +
                                             '&status=' + status
                                     }
                                 },
@@ -275,7 +271,8 @@
                                         emp_name = $('#emp_name').val();
                                         email = $('#email').val();
                                         employee_type = $('#employee_type').val();
-                                        last_training_attended_on = $('#last_training_attended_on').val();
+                                        last_training_attended_on = $(
+                                            '#last_training_attended_on_datepicker').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -286,7 +283,8 @@
                                             '&emp_name=' + emp_name +
                                             '&email=' + email +
                                             '&employee_type=' + employee_type +
-                                            '&last_training_attended_on=' + last_training_attended_on +
+                                            '&last_training_attended_on=' +
+                                            last_training_attended_on +
                                             '&status=' + status
                                     }
                                 },

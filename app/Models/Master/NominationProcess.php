@@ -45,50 +45,63 @@ class NominationProcess extends Model
     public function list()
     {
         $request = request();
-        $search = '';
-        $query = $this->select('training_nomination_process.*', 'masters_employee.emp_id', 'masters_department.department_name', 'training_masters_topic.topic_name');
-        $query = $query->leftJoin('masters_employee', 'training_nomination_process.employee_id', '=', 'masters_employee.id');
-        $query = $query->leftJoin('masters_department', 'training_nomination_process.department_id', '=', 'masters_department.id');
-        $query = $query->leftJoin('training_masters_topic', 'training_nomination_process.topic_id', '=', 'training_masters_topic.id');
-        $org_total =  $query;
-        $org_total_counts = $org_total->count();
+        $search = $request->search['value'] ?? null;
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
+        $query = $this->select(
+            'training_nomination_process.*',
+            'masters_employee.emp_id',
+            'masters_employee.emp_name',
+            'masters_employee.email',
+            'masters_department.department_name',
+            'training_masters_topic.topic_name'
+        )
+            ->leftJoin('masters_employee', 'training_nomination_process.employee_id', '=', 'masters_employee.id')
+            ->leftJoin('masters_department', 'training_nomination_process.department_id', '=', 'masters_department.id')
+            ->leftJoin('training_masters_topic', 'training_nomination_process.topic_id', '=', 'training_masters_topic.id');
 
-            $query->where(function ($query) use ($search) {
-                $query
-                    ->orWhere('masters_employee.emp_id', 'LIKE', '%' . $search . '%');
+        $org_total_counts = $query->count();
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->orWhere('masters_employee.emp_id', 'LIKE', "%{$search}%")
+                    ->orWhere('masters_employee.emp_name', 'LIKE', "%{$search}%")
+                    ->orWhere('masters_employee.email', 'LIKE', "%{$search}%")
+                    ->orWhere('masters_department.department_name', 'LIKE', "%{$search}%")
+                    ->orWhere('training_masters_topic.topic_name', 'LIKE', "%{$search}%");
             });
         }
-        if ($request->has('email') && $request->email) {
-            $query = $query->where('training_nomination_process.email', 'LIKE', '%' . $request->email . '%');
-        }
-        if ($request->has('topic_id') && $request->topic_id) {
-            $query = $query->where('training_nomination_process.topic_id', decryptId($request->topic_id));
-        }
-        if ($request->has('emp_id') && $request->emp_id) {
-            $query = $query->where('training_nomination_process.employee_id', decryptId($request->emp_id));
-        }
-        if ($request->has('emp_name') && $request->emp_name) {
-            $query = $query->where('training_nomination_process.emp_name', decryptId($request->emp_name));
+
+        if ($request->has('employee_type') && $request->employee_type) {
+            $query->where('employee_type', 'LIKE', "%{$request->employee_type}%");
         }
 
-        if ($request->has('department_id') && $request->department_id) {
-            $query = $query->where('training_nomination_process.department_id', decryptId($request->department_id));
+        if ($request->has('email') && $request->email) {
+            $query->where('masters_employee.email', 'LIKE', "%{$request->email}%");
+        }
+
+        if ($request->has('employee_id') && $request->employee_id) {
+            $query->where('training_nomination_process.employee_id', decryptId($request->employee_id));
+        }
+
+        if ($request->has('emp_name') && $request->emp_name) {
+            $query->where('masters_employee.emp_name', 'LIKE', "%{$request->emp_name}%");
+        }
+        if ($request->has('last_training_attended_on') && $request->last_training_attended_on) {
+            $query->whereDate('training_nomination_process.last_training_attended_on', '=', DBdateformat($request->last_training_attended_on));
         }
 
         if ($request->has('status') && $request->status) {
-            $query = $query->where('training_nomination_process.status', 'LIKE', '%' . decryptId($request->status) . '%');
+            $query->where('training_nomination_process.status', decryptId($request->status));
         }
-        $data_count = $query;
-        $total_records = $data_count->count();
 
-        $query->orderBy('id', 'DESC');
+
+        $total_records = $query->count();
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
         }
+
+        $query->orderBy('id', 'DESC');
 
         $data = $query->get();
 
@@ -100,7 +113,7 @@ class NominationProcess extends Model
         return $datas;
     }
 
-    public function storeOrUpdate($id)
+    public function storeOrUpdate()
     {
         $request = request();
         $employees = $request->input('employee');
@@ -108,9 +121,7 @@ class NominationProcess extends Model
         if (!empty($employees) && is_array($employees)) {
             foreach ($employees as $employeeData) {
                 if (!empty($employeeData)) {
-                    // Check if it's a new record or an update
                     if (empty($employeeData['id'])) {
-                    //   dd( $employeeData['emp_id']);
                         $insertArray = [
                             'training_schedule_id' => decryptId($request->training_schedule_id),
                             'employee_id' => $employeeData['emp_id'],
@@ -124,14 +135,13 @@ class NominationProcess extends Model
                         ];
                         $this->create($insertArray);
                     } else {
-                        // Update existing record
                         $trainingScheduleId = decryptId($request->training_schedule_id);
 
                         $conditions = [
-                            'id' => $employeeData['id'], // Match by the primary key
+                            'id' => $employeeData['id'],
                             'training_schedule_id' => $trainingScheduleId,
                         ];
-                        // dd($conditions);
+
                         $updateArray = [
                             'employee_id' => $employeeData['emp_id'],
                             'emp_name' => $employeeData['emp_name'],
@@ -151,58 +161,37 @@ class NominationProcess extends Model
     }
 
 
-    // public function storeOrUpdate($id)
-    // {
-    //     $request = request();
-    //     $employees = $request->input('employee');
-    //     if (!empty($employees) && is_array($employees)) {
-    //         foreach ($employees as $employeeData) {
-    //             if (!empty($employeeData)) {
-    //                 $insert_array = [
-    //                     'training_schedule_id' => decryptId($request->training_schedule_id),
-    //                     'employee_id' => $employeeData['emp_id'],
-    //                     'emp_name' => $employeeData['emp_name'],
-    //                     'email' => $employeeData['email'],
-    //                     'department_id' => $employeeData['department_id'],
-    //                     'employee_type' => $employeeData['employee_type'],
-    //                     'last_training_attended_on' => DBdateformat($employeeData['last_training_attended_on']),
-    //                     'topic_id' => decryptId($employeeData['topic_id']),
-    //                     'created_by' => Auth::id(),
-    //                 ];
-    //                 $this->updateorcreate($insert_array);
-    //             }
-    //         }
-    //     }
-    // }
     public function getNomination($training_schedule)
     {
-        $data = $this->select('training_nomination_process.*', 'masters_employee.emp_id',  'masters_department.department_name', 'training_masters_topic.topic_name')->leftJoin('masters_employee', 'training_nomination_process.employee_id', '=', 'masters_employee.id')
+        $data = $this->select('training_nomination_process.*', 'masters_employee.emp_id',  'masters_department.department_name', 'training_masters_topic.topic_name', 'training_schedule.from_date', 'training_schedule.to_date', 'training_schedule.venue_id', 'training_masters_venue.name_of_the_conference_hall')->leftJoin('masters_employee', 'training_nomination_process.employee_id', '=', 'masters_employee.id')
             ->leftJoin('masters_department', 'training_nomination_process.department_id', '=', 'masters_department.id')
             ->leftJoin('training_masters_topic', 'training_nomination_process.topic_id', '=', 'training_masters_topic.id')
+            ->leftJoin('training_schedule', 'training_nomination_process.training_schedule_id', '=', 'training_schedule.id')
+            ->leftJoin('training_masters_venue', 'training_schedule.venue_id', '=', 'training_masters_venue.id')
             ->where('training_nomination_process.status', 1)->where('training_nomination_process.training_schedule_id', $training_schedule)
             ->get();
         return $data;
     }
-    public function updates($id)
+
+    public function selectOne($id)
     {
 
-        $request = request();
+        $data = $this->select(
+            'training_nomination_process.*',
+            'masters_employee.emp_id',
+            'masters_employee.emp_name',
+            'masters_employee.email',
+            'masters_department.department_name',
+            'training_masters_topic.topic_name'
+        )
+            ->leftJoin('masters_employee', 'training_nomination_process.employee_id', '=', 'masters_employee.id')
+            ->leftJoin('masters_department', 'training_nomination_process.department_id', '=', 'masters_department.id')
+            ->leftJoin('training_masters_topic', 'training_nomination_process.topic_id', '=', 'training_masters_topic.id')
+            ->where('training_nomination_process.id', $id)
+            ->first();
 
-        $update_array = array(
-            'emp_id' => decryptId($request->emp_id),
-            'emp_name' => $request->emp_name,
-            'email' => $request->email,
-            'department_id' => decryptId($request->department_id),
-            'employee_type' => $request->employee_type,
-            'last_training_attended_on' => DBdateformat($request->last_training_attended_on),
-            'topic_id' => decryptId($request->topic_id),
-            'updated_by' => Auth::id(),
-            'updated_at' => now(),
-        );
-
-        return $this->where('id', $id)->update($update_array);
+        return $data;
     }
-
     public function statuschange($id)
     {
         $request = request();
@@ -225,37 +214,48 @@ class NominationProcess extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('training_nomination_process.*', 'masters_employee.emp_id', 'masters_employee.emp_name', 'masters_department.department_name', 'training_masters_topic.topic_name');
-        $query = $query->leftJoin('masters_employee', 'training_nomination_process.employee_id', '=', 'masters_employee.id');
-        $query = $query->leftJoin('masters_department', 'training_nomination_process.department_id', '=', 'masters_department.id');
-        $query = $query->leftJoin('training_masters_topic', 'training_nomination_process.topic_id', '=', 'training_masters_topic.id');
+        $query = $this->select(
+            'training_nomination_process.*',
+            'masters_employee.emp_id',
+            'masters_employee.emp_name',
+            'masters_employee.email',
+            'masters_department.department_name',
+            'training_masters_topic.topic_name'
+        )
+            ->leftJoin('masters_employee', 'training_nomination_process.employee_id', '=', 'masters_employee.id')
+            ->leftJoin('masters_department', 'training_nomination_process.department_id', '=', 'masters_department.id')
+            ->leftJoin('training_masters_topic', 'training_nomination_process.topic_id', '=', 'training_masters_topic.id');
         if (!empty($request->search)) {
-            $query->where(function ($subQuery) use ($request) {
-                $search = $request->search;
-                $subQuery
-                    ->orWhere('masters_employee.emp_name', 'LIKE', '%' . $search . '%');
+            $query->where(function ($q) use ($search) {
+                $q->orWhere('masters_employee.emp_id', 'LIKE', "%{$search}%")
+                    ->orWhere('masters_employee.emp_name', 'LIKE', "%{$search}%")
+                    ->orWhere('masters_employee.email', 'LIKE', "%{$search}%")
+                    ->orWhere('masters_department.department_name', 'LIKE', "%{$search}%")
+                    ->orWhere('training_masters_topic.topic_name', 'LIKE', "%{$search}%");
             });
         }
 
-        if ($request->has('email') && $request->email) {
-            $query = $query->where('training_nomination_process.email', 'LIKE', '%' . $request->email . '%');
-        }
-        if ($request->has('topic_id') && $request->topic_id) {
-            $query = $query->where('training_nomination_process.topic_id', decryptId($request->topic_id));
-        }
-        if ($request->has('emp_id') && $request->emp_id) {
-            $query = $query->where('training_nomination_process.employee_id', decryptId($request->emp_id));
-        }
-        if ($request->has('emp_name') && $request->emp_name) {
-            $query = $query->where('training_nomination_process.emp_name', decryptId($request->emp_name));
+        if ($request->has('employee_type') && $request->employee_type) {
+            $query->where('employee_type', 'LIKE', "%{$request->employee_type}%");
         }
 
-        if ($request->has('department_id') && $request->department_id) {
-            $query = $query->where('training_nomination_process.department_id', decryptId($request->department_id));
+        if ($request->has('email') && $request->email) {
+            $query->where('masters_employee.email', 'LIKE', "%{$request->email}%");
+        }
+
+        if ($request->has('employee_id') && $request->employee_id) {
+            $query->where('training_nomination_process.employee_id', decryptId($request->employee_id));
+        }
+
+        if ($request->has('emp_name') && $request->emp_name) {
+            $query->where('masters_employee.emp_name', 'LIKE', "%{$request->emp_name}%");
+        }
+        if ($request->has('last_training_attended_on') && $request->last_training_attended_on) {
+            $query->whereDate('training_nomination_process.last_training_attended_on', '=', DBdateformat($request->last_training_attended_on));
         }
 
         if ($request->has('status') && $request->status) {
-            $query = $query->where('training_nomination_process.status', 'LIKE', '%' . decryptId($request->status) . '%');
+            $query->where('training_nomination_process.status', decryptId($request->status));
         }
         $query->orderBy('id', 'DESC');
 

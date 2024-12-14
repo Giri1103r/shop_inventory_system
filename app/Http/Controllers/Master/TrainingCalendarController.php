@@ -18,7 +18,6 @@ use DataTables;
 use Response;
 
 
-use App\Models\Master\TrainingCalendar;
 use App\Models\Master\Venue;
 use App\Models\Master\TrainingSchedule;
 use App\Models\User;
@@ -37,14 +36,12 @@ class TrainingCalendarController extends Controller
     private $employee;
     private $topic;
     private $training_schedule;
-    private $training_calendar;
 
 
     public function __construct()
     {
 
         $this->training_schedule = new TrainingSchedule();
-        $this->training_calendar = new TrainingCalendar();
         $this->topic = new Topic();
         $this->employee = new Employee();
         $this->venue = new Venue();

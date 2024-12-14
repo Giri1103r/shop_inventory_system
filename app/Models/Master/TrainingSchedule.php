@@ -28,6 +28,7 @@ class TrainingSchedule extends Model
         'venue_id',
         'target_trainees',
         'training_man_hours',
+        'training_status',
         'status',
         'trash',
         'created_by',
@@ -134,9 +135,21 @@ class TrainingSchedule extends Model
             'unit_id' => decryptId($request->unit_id),
             'department_id' => decryptId($request->department_id),
             'target_trainees' => $request->target_trainees,
+            'training_status' => 1,
             'created_by' => Auth::id()
         );
         return $this->create($insert_array);
+    }
+    public function updateStatus($trainingScheduleId,$training_status)
+    {
+        $request = request();
+
+        $update_array = array(
+            'training_status' => $training_status ,
+            'updated_by' => Auth::id(),
+            'updated_at' => now(),
+        );
+        return $this->where('id', $trainingScheduleId)->update($update_array);
     }
 
     public function updates($id)
@@ -186,13 +199,13 @@ class TrainingSchedule extends Model
 
             if ($fromDateTime->isSameDay($toDateTime)) {
                 if ($fromDateTime->format('H:i') !== '00:00' || $toDateTime->format('H:i') !== '00:00') {
-                    $hours = $fromDateTime->diffInMinutes($toDateTime) / 60; 
-                    return round($hours, 2); 
+                    $hours = $fromDateTime->diffInMinutes($toDateTime) / 60;
+                    return round($hours, 2);
                 } else {
                     return 8;
                 }
             } else {
-                $days = $fromDateTime->diffInDays($toDateTime) + 1; 
+                $days = $fromDateTime->diffInDays($toDateTime) + 1;
                 return $days * 8;
             }
         }
@@ -271,7 +284,7 @@ class TrainingSchedule extends Model
     {
 
         $data = $this->select('training_schedule.*', 'masters_unit.unit_name', 'masters_employee.emp_name', 'masters_department.department_name', 'training_masters_topic.topic_name', 'training_masters_venue.name_of_the_conference_hall')->leftJoin('masters_unit', 'training_schedule.unit_id', '=', 'masters_unit.id')->leftJoin('training_masters_topic', 'training_schedule.topic_id', '=', 'training_masters_topic.id')->leftJoin('masters_department', 'training_schedule.department_id', '=', 'masters_department.id')->leftJoin('masters_employee', 'training_schedule.trainer_id', '=', 'masters_employee.id')->leftJoin('training_masters_venue', 'training_schedule.venue_id', '=', 'training_masters_venue.id')
-            ->where('training_schedule.id', $id)
+            ->where('training_schedule.id', $id)->where('training_schedule.status',1)
             ->first();
 
         return $data;

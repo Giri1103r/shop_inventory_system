@@ -1273,12 +1273,26 @@ if (!function_exists('getMonth')) {
         function getDepartment($userid)
         {
 
-            $department_name = DB::table('masters_department')->select('department_name')->where('id', $userid)->where('trash', 'NO')->first();
+            $department_name = DB::table('masters_department')->select('department_name')->where('id', $userid)->where('status', 1)->where('trash', 'NO')->first();
 
             if ($department_name == null) {
                 return '';
             } else {
                 return $department_name->department_name;
+            }
+        }
+    }
+    if (!function_exists('getTopic')) {
+
+        function getTopic($userid)
+        {
+
+            $topic_name = DB::table('training_masters_topic')->select('topic_name')->where('id', $userid)->where('status', 1)->where('trash', 'NO')->first();
+
+            if ($topic_name == null) {
+                return '';
+            } else {
+                return $topic_name->topic_name;
             }
         }
     }
