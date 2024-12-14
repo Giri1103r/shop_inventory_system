@@ -49,6 +49,9 @@ class SafetyPermit extends Model
         'talk_givenby',
         'assigned_job',
         'attendance_toolbox_talk',
+        'verified_by',
+        'reassign_to',
+        'approved_by',
         'permit_status',
         'status',
         'trash',
@@ -270,7 +273,35 @@ class SafetyPermit extends Model
 
         return $this->where('id', $id)->update($update_array);
     }
+    public function verifiedby($verifiedby, $id)
+    {
 
+        $verifiedby = [
+            'verified_by' => $verifiedby,
+        ];
+
+        return $this->where('id', $id)->update($verifiedby);
+    }
+
+    public function reassignto($reassignto, $id)
+    {
+
+        $reassignto = [
+            'reassign_to' => $reassignto,
+        ];
+
+        return $this->where('id', $id)->update($reassignto);
+    }
+
+    public function approved_by($approved_by, $id)
+    {
+
+        $approved_by = [
+            'approved_by' => $approved_by,
+        ];
+
+        return $this->where('id', $id)->update($approved_by);
+    }
     public function permitstatus($ptw_status, $id)
     {
 

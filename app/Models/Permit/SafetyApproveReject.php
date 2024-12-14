@@ -129,6 +129,40 @@ class SafetyApproveReject extends Model
         return $this->create($insert_array);
     }
 
+    public function plantheadApproval($ptw_status)
+    {
+        $request = request();
+    
+        $insert_array = array(
+            'permit_id' => $request->permit_id,
+            'approve_reject_type' => 1,
+            'approve_reject_by' => $request->approver_name,
+            'date' => DBdatetimeformat($request->date),
+            'remarks' => $request->planthead_approval_remarks,
+            'approve_reject_status' => $ptw_status,
+            'created_by' => Auth::id()
+        );
+        return $this->create($insert_array);
+    }
+
+
+    public function ehsapproval($ptw_status)
+    {
+        $request = request();
+    
+        $insert_array = array(
+            'permit_id' => $request->permit_id,
+            'approve_reject_type' => 2,
+            'approve_reject_by' => $request->approver_name,
+            'date' => DBdatetimeformat($request->date),
+            'remarks' => $request->ehs_approval_remarks,
+            'approve_reject_status' => $ptw_status,
+            'created_by' => Auth::id()
+        );
+        return $this->create($insert_array);
+    }
+
+
   
     public function getEhSverification($ptw_id) {
         $data = $this->select('ptw_aprove_reject.*')
@@ -139,61 +173,16 @@ class SafetyApproveReject extends Model
         return $data;
     }
 
-    public function getapprovalStart($ptw_id) {
-        $data = $this->select('ptwhotpermit_approve_reject.*','ptwhot_approve_reject_file.file_path')->leftjoin('ptwhot_approve_reject_file','ptwhot_approve_reject_file.permit_id','=','ptwhotpermit_approve_reject.permit_id')
-                    ->where('ptwhotpermit_approve_reject.permit_id', $ptw_id)
-                    ->where('ptwhotpermit_approve_reject.approve_reject_status', 6) ->where('ptwhotpermit_approve_reject.approve_reject_type', 3)->where('ptwhot_approve_reject_file.approve_type', 3)->where('ptwhot_approve_reject_file.permit_status', 6)->where('ptwhot_approve_reject_file.trash', 'NO')->where('ptwhotpermit_approve_reject.trash', 'NO')
-                    ->get();
-
-        return $data;
-    }
-
-    public function getehsapproval($ptw_id) {
-        $data = $this->select('ptwhotpermit_approve_reject.*','ptwhot_approve_reject_file.file_path')->leftjoin('ptwhot_approve_reject_file','ptwhot_approve_reject_file.permit_id','=','ptwhotpermit_approve_reject.permit_id')
-                    ->where('ptwhotpermit_approve_reject.permit_id', $ptw_id)
-                    ->where('ptwhotpermit_approve_reject.approve_reject_status', 7) ->where('ptwhotpermit_approve_reject.approve_reject_type', 4)->where('ptwhot_approve_reject_file.approve_type', 4)->where('ptwhot_approve_reject_file.permit_status', 7)
-                    ->get();
-
-        return $data;
-    }
-
-    public function getworkcompletionapproval($ptw_id) {
-        $data = $this->select('ptwhotpermit_approve_reject.*','ptwhot_approve_reject_file.file_path')->leftjoin('ptwhot_approve_reject_file','ptwhot_approve_reject_file.permit_id','=','ptwhotpermit_approve_reject.permit_id')
-                    ->where('ptwhotpermit_approve_reject.permit_id', $ptw_id)
-                    ->where('ptwhotpermit_approve_reject.approve_reject_status', 8) ->where('ptwhotpermit_approve_reject.approve_reject_type', 5)->where('ptwhot_approve_reject_file.approve_type', 5)->where('ptwhot_approve_reject_file.permit_status', 8)
-                    ->get();
-
-        return $data;
-    }
-
-    public function getClosure($ptw_id) {
-        $data = $this->select('ptwhotpermit_approve_reject.*','ptwhot_approve_reject_file.file_path')->leftjoin('ptwhot_approve_reject_file','ptwhot_approve_reject_file.permit_id','=','ptwhotpermit_approve_reject.permit_id')
-                    ->where('ptwhotpermit_approve_reject.permit_id', $ptw_id)
-                    ->where('ptwhotpermit_approve_reject.approve_reject_status', 9) ->where('ptwhotpermit_approve_reject.approve_reject_type', 6)->where('ptwhot_approve_reject_file.approve_type', 6)->where('ptwhot_approve_reject_file.permit_status', 9)
-                    ->get();
-
-        return $data;
-    }
-
-    public function getPermitExtensionsupervisor($ptw_id) {
-        $data = $this->select('ptwhotpermit_approve_reject.*','ptwhot_approve_reject_file.file_path')->leftjoin('ptwhot_approve_reject_file','ptwhot_approve_reject_file.permit_id','=','ptwhotpermit_approve_reject.permit_id')
-                    ->where('ptwhotpermit_approve_reject.permit_id', $ptw_id)
-                    ->where('ptwhotpermit_approve_reject.approve_reject_status', 15) ->where('ptwhotpermit_approve_reject.approve_reject_type', 8)->where('ptwhot_approve_reject_file.approve_type', 8)->where('ptwhot_approve_reject_file.permit_status', 15)
-                    ->orderBy('ptwhotpermit_approve_reject.id', 'desc') 
+    public function getEhsapproval($ptw_id) {
+        $data = $this->select('ptw_aprove_reject.*')
+                    ->where('ptw_aprove_reject.permit_id', $ptw_id)
+                    ->where('ptw_aprove_reject.approve_reject_status', 6) ->where('ptw_aprove_reject.approve_reject_type', 2)->where('ptw_aprove_reject.trash', 'NO')
                     ->first();
 
         return $data;
     }
 
-    public function getPermitExtensionsuperintendednt($ptw_id) {
-        $data = $this->select('ptwhotpermit_approve_reject.*','ptwhot_approve_reject_file.file_path')->leftjoin('ptwhot_approve_reject_file','ptwhot_approve_reject_file.permit_id','=','ptwhotpermit_approve_reject.permit_id')
-                    ->where('ptwhotpermit_approve_reject.permit_id', $ptw_id)
-                    ->where('ptwhotpermit_approve_reject.approve_reject_status', 8) ->where('ptwhotpermit_approve_reject.approve_reject_type', 9)->where('ptwhot_approve_reject_file.approve_type', 9)->where('ptwhot_approve_reject_file.permit_status', 8)
-                    ->orderBy('ptwhotpermit_approve_reject.id', 'desc') 
-                    ->first();
-
-        return $data;
-    }
+   
     public function updates($id)
     {
         $request = request();
