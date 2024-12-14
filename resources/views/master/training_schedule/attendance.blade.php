@@ -102,7 +102,7 @@
                                             {{ isset($training_schedule->name_of_the_conference_hall) ? $training_schedule->name_of_the_conference_hall : '' }}
                                         </div>
                                     </div>
-                                    <form method="POST" id="nomination_processadd"
+                                    <form method="POST" id="attendance"
                                         action="{{ admin_url('training_schedule/attendance/submit') }}"
                                         enctype="multipart/form-data">
                                         @csrf
@@ -124,7 +124,7 @@
                                             <thead>
                                                 <tr>
                                                     <th class="form-label">Employee Name</th>
-                                                    <th class="form-label required">Attendance Status</th>
+                                                    <th class="form-label required">Attendance(present /absent)</th>
                                                 </tr>
                                             </thead>
 
@@ -140,12 +140,13 @@
                                                             {{ isset($nomination_process->emp_name) ? $nomination_process->emp_name : '' }}
                                                         </td>
                                                         <td>
-
+                                                            <input type="hidden"
+                                                                name="attendance_status[{{ $loop->index }}]"
+                                                                value="0">
                                                             <input type="checkbox" id="attendance_status"
-                                                                name="attendance_status[]" value="1">
-
+                                                                name="attendance_status[{{ $loop->index }}]"
+                                                                value="1">
                                                         </td>
-
                                                     </tr>
                                                 @endforeach
                                             </tbody>
@@ -192,6 +193,60 @@
 
             flatpickr("#date_datepicker", {
                 dateFormat: "d-m-Y",
+            });
+            $(function() {
+                $('#attendance').validate({
+                    rules: {
+                        attendance_date: {
+                            required: true,
+                            remote: {
+                                url: '{{ admin_url('training_schedule/attendance/unique') }}',
+                                type: 'post',
+                                data: {
+                                    _token: '{{ csrf_token() }}',
+                                    attendance_date: function() {
+                                        return $('#date_datepicker').val();
+                                    },
+                                    training_schedule_id: function() {
+                                        return $('#training_schedule_id').val();
+                                    }
+                                }
+                            }
+                        },
+                    },
+                    messages: {
+                        attendance_date: {
+                            required: "Select a Date.",
+                            remote: "This attendance date already exists."
+                        },
+
+                    },
+                    errorElement: 'span',
+                    errorPlacement: function(error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-input').append(error);
+                    },
+                    highlight: function(element, errorClass, validClass) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function(element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid');
+                    },
+                    submitHandler: function(form) {
+                        console.log('test');
+                        form.submit();
+
+                    },
+                    invalidHandler: function(event, validator) {
+                        var errors = validator.numberOfInvalids();
+                        console.log(errors + " field(s) are invalid");
+                        validator.errorList.forEach(function(error) {
+                            console.log("Field: " + error.element.name + ", Error: " +
+                                error
+                                .message);
+                        });
+                    }
+                });
             });
         });
     </script>

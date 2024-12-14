@@ -16,7 +16,6 @@ use App\Http\Controllers\Master\TopicController;
 use App\Http\Controllers\Master\TrainingMatrixController;
 use App\Http\Controllers\Master\TrainingCalendarController;
 use App\Http\Controllers\Master\TrainingScheduleController;
-use App\Http\Controllers\Master\TrainingAttendanceController;
 use App\Http\Controllers\Master\NominationProcessController;
 use App\Http\Controllers\Master\VenueController;
 use App\Http\Controllers\Master\LocationController;
@@ -457,13 +456,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/add/submit', [TrainingScheduleController::class, 'store']);
                 Route::get('/edit/{id}', [TrainingScheduleController::class, 'edit']);
                 Route::post('/edit/submit', [TrainingScheduleController::class, 'update']);
-                Route::get('/nominationProcess/{id}', [TrainingScheduleController::class, 'nominationProcess']);
-                Route::get('/start/{id}', [TrainingScheduleController::class, 'startTraining']);
-                Route::get('/end/{id}', [TrainingScheduleController::class, 'endTraining']);
-                Route::get('/attendance/{id}', [TrainingScheduleController::class, 'attendance']);
-                Route::post('/attendance/submit', [TrainingScheduleController::class, 'storeAttendance']);
                 Route::get('/view/{id}', [TrainingScheduleController::class, 'view']);
-                Route::post('/delete', [TrainingScheduleController::class, 'delete'])->middleware('role:company,delete');
                 Route::get('/export/excel', [TrainingScheduleController::class, 'exportExcel']);
                 Route::get('/export/pdf', [TrainingScheduleController::class, 'exportPdf']);
                 Route::get('/sampledownload', [TrainingScheduleController::class, 'DownloadSample']);
@@ -471,6 +464,14 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/submit', [TrainingScheduleController::class, 'importSubmit']);
                 Route::post('/status', [TrainingScheduleController::class, 'statusChange']);
                 Route::get('/topic/ajax-list', [TrainingScheduleController::class, 'Uniquecheck']);
+                Route::get('/nominationProcess/{id}', [TrainingScheduleController::class, 'nominationProcess']);
+                Route::post('/delete', [TrainingScheduleController::class, 'delete']);
+                Route::get('/start/{id}', [TrainingScheduleController::class, 'startTraining']);
+                Route::get('/end/{id}', [TrainingScheduleController::class, 'endTraining']);
+                Route::get('/attendance/{id}', [TrainingScheduleController::class, 'attendance']);
+                Route::post('/attendance/submit', [TrainingScheduleController::class, 'storeAttendance']);
+                Route::post('/attendance/unique', [TrainingScheduleController::class, 'checkUniqueAttendanceDate']);
+
 
             });
 
@@ -505,31 +506,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('fetchEmployeeDetails/{emp_id}', [NominationProcessController::class, 'fetchEmployeeDetails']);
             });
 
-            /**
-             * Training Attendance
-             */
-         
-            Route::group(['prefix' => 'training_attendance'], function () {
-                Route::get('/list', [TrainingAttendanceController::class, 'index']);
-                Route::post('/list', [TrainingAttendanceController::class, 'index']);
-                Route::get('/add', [TrainingAttendanceController::class, 'add']);
-                Route::post('/add/submit', [TrainingAttendanceController::class, 'store']);
-                Route::get('/edit/{id}', [TrainingScheduleController::class, 'edit']);
-                Route::post('/edit/submit', [TrainingScheduleController::class, 'update']);
-                Route::get('/nominationProcess/{id}', [TrainingScheduleController::class, 'nominationProcess']);
-                Route::get('/start/{id}', [TrainingScheduleController::class, 'startTraining']);
-                Route::get('/end/{id}', [TrainingScheduleController::class, 'endTraining']);
-                Route::get('/view/{id}', [TrainingScheduleController::class, 'view']);
-                Route::post('/delete', [TrainingScheduleController::class, 'delete'])->middleware('role:company,delete');
-                Route::get('/export/excel', [TrainingScheduleController::class, 'exportExcel']);
-                Route::get('/export/pdf', [TrainingScheduleController::class, 'exportPdf']);
-                Route::get('/sampledownload', [TrainingScheduleController::class, 'DownloadSample']);
-                Route::get('/import', [TrainingScheduleController::class, 'import'])->middleware('role:company,import');
-                Route::post('/import/submit', [TrainingScheduleController::class, 'importSubmit']);
-                Route::post('/status', [TrainingScheduleController::class, 'statusChange']);
-                Route::post('/unique', [TrainingScheduleController::class, 'Uniquecheck']);
-            });
-
+      
 
             Route::group(['prefix' => 'ptw/precautionmaster'], function () {
                 Route::get('/list', [PrecautionController::class, 'index']);
