@@ -55,7 +55,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Item Code') }}</label>
                                         <div class="view_data">
-                                            {{ isset($pperequest->item_code) ? $pperequest->item_code : '' }}
+                                            {{ getItemCode(isset($pperequest->item_code) ? $pperequest->item_code : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -83,19 +83,14 @@
                                             {{ displayDateformat($pperequest->created_at) }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Status') }}</label>
+                                    <div class="mb-3 col-md-12 form-input">
+                                        <label class="form-label view_label">{{ __('Reason') }}</label>
                                         <div class="view_data">
-                                            @if ($pperequest->status == 1)
-                                                {{ __('common.active') }}
-                                            @else
-                                                {{ __('common.inactive') }}
-                                            @endif
+                                            {{isset($pperequest->employee_reason) ? $pperequest->employee_reason : '' }}
+
 
                                         </div>
                                     </div>
-
-
                                 </div>
 
                                 <div class="row mt-2">

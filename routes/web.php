@@ -399,6 +399,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/submit', [TopicController::class, 'importSubmit']);
                 Route::post('/status', [TopicController::class, 'statusChange']);
                 Route::post('/unique', [TopicController::class, 'Uniquecheck']);
+                Route::get('/sampledownload', [TopicController::class, 'DownloadSample']);
+
             });
 
             /**
@@ -440,7 +442,9 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/import', [TrainingMatrixController::class, 'import'])->middleware('role:company,import');
                 Route::post('/import/submit', [TrainingMatrixController::class, 'importSubmit']);
                 Route::post('/status', [TrainingMatrixController::class, 'statusChange']);
-                Route::post('/unique', [TrainingMatrixController::class, 'Uniquecheck']);
+                Route::get('/topic/ajax-list/{topicId}/{trainerId}', [TrainingMatrixController::class, 'Uniquecheck']);
+
+
             });
 
             /**
@@ -466,7 +470,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/import', [TrainingScheduleController::class, 'import'])->middleware('role:company,import');
                 Route::post('/import/submit', [TrainingScheduleController::class, 'importSubmit']);
                 Route::post('/status', [TrainingScheduleController::class, 'statusChange']);
-                Route::post('/unique', [TrainingScheduleController::class, 'Uniquecheck']);
+                Route::get('/topic/ajax-list', [TrainingScheduleController::class, 'Uniquecheck']);
+
             });
 
 
@@ -584,6 +589,26 @@ Route::middleware(['securityheader'])->group(function () {
             });
 
 
+            Route::group(['prefix' => 'ppe_type'], function () {
+
+                Route::get('/list', [PpeTypeController::class, 'index']);
+                Route::post('/list', [PpeTypeController::class, 'index']);
+                Route::get('/add', [PpeTypeController::class, 'add']);
+                Route::post('/add/submit', [PpeTypeController::class, 'store']);
+                Route::get('/view/{id}', [PpeTypeController::class, 'view']);
+                Route::get('/edit/{id}', [PpeTypeController::class, 'edit']);
+                Route::post('/edit/submit', [PpeTypeController::class, 'update']);
+                Route::post('/status', [PpeTypeController::class, 'statusChange']);
+                Route::post('/delete', [PpeTypeController::class, 'delete']);
+                Route::post('/unique', [PpeTypeController::class, 'Uniquecheck']);
+                Route::get('/sample_download', [PpeTypeController::class, 'DownloadSample']);
+                Route::get('/import', [PpeTypeController::class, 'import']);
+                Route::post('/import/Submit', [PpeTypeController::class, 'importSubmit']);
+                Route::get('/export/excel', [PpeTypeController::class, 'exportExcel']);
+                Route::get('/export/pdf', [PpeTypeController::class, 'exportPdf']);
+            });
+
+
 
             Route::get('ppe_ppetype_master/list', [PpeTypeMasterController::class, 'index']);
             Route::post('ppe_ppetype_master/list', [PpeTypeMasterController::class, 'index']);
@@ -598,6 +623,7 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('ppe_ppetype_master/export/pdf', [PpeTypeMasterController::class, 'exportPdf']);
             Route::get('ppe_ppetype_master/ajax-list', [PpeTypeMasterController::class, 'list']);
             Route::get('ppe_ppetype_master/ajax-ppename', [PpeTypeMasterController::class, 'PPEnamelist']);
+            Route::get('ppe_ppetype_master/unique', [PpeTypeMasterController::class, 'Uniquecheck']);
 
 
 
@@ -621,6 +647,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/edit/submit', [PpeRequestController::class, 'update']);
                 Route::get('/export/excel', [PpeRequestController::class, 'exportExcel']);
                 Route::get('/export/pdf', [PpeRequestController::class, 'exportPdf']);
+                Route::get('/generalpdf/{id}', [PpeRequestController::class, 'pdf']);
+
             });
 
             Route::group(['prefix' => 'ppe_stock_inventory'], function () {
@@ -645,7 +673,10 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/status', [SafetyPermitController::class, 'statusChange']);
                 Route::post('/delete', [SafetyPermitController::class, 'delete']);
                 Route::get('/view/{id}', [SafetyPermitController::class, 'view']);
-                Route::post('/approvereject/submit', [SafetyPermitController::class, 'ApprovalReject']);
+                Route::get('/approvereject/{id}', [SafetyPermitController::class, 'approvereject']);
+                Route::post('/ehsverification/submit', [SafetyPermitController::class, 'ehsverification']);
+                Route::post('/ehsapproval/submit', [SafetyPermitController::class, 'ehsapproval']);
+                Route::post('/plantheadapproval/submit', [SafetyPermitController::class, 'plantheadapproval']);
                 Route::get('/edit/{id}', [SafetyPermitController::class, 'edit']);
                 Route::post('/edit/submit', [SafetyPermitController::class, 'update']);
                 Route::get('/export/excel', [SafetyPermitController::class, 'exportExcel']);
@@ -656,6 +687,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/getchecklist/{workId}', [SafetyPermitController::class, 'getchecklist']);
                 Route::get('/getinstruction/{workId}', [SafetyPermitController::class, 'getinstruction']);
                 Route::get('/employeename', [SafetyPermitController::class, 'employeename']);
+                Route::get('/employeeid', [SafetyPermitController::class, 'employeeid']);
+                Route::get('fetchEmployeeDetails/{emp_id}', [SafetyPermitController::class, 'fetchEmployeeDetails']);
 
             });
             Route::group(['prefix' => 'ppe_exemption'], function () {
@@ -673,6 +706,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/edit/submit', [PpeExemptionController::class, 'update']);
                 Route::get('/export/excel', [PpeExemptionController::class, 'exportExcel']);
                 Route::get('/export/pdf', [PpeExemptionController::class, 'exportPdf']);
+                Route::get('/generalpdf/{id}', [PpeExemptionController::class, 'pdf']);
+
             });
         });
     });

@@ -9,14 +9,13 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\File;
 use App\Models\Master\Unit;
 
-use Str;
+use Illuminate\Support\Str;
 use PDF;
 use Mail;
 use Illuminate\Support\Facades\Auth;
-use Session;
 use Exception;
-use DataTables;
 use Response;
+use Yajra\DataTables\DataTables;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
 use App\Models\Master\Topic;
@@ -25,7 +24,7 @@ use App\Models\Master\TrainingMatrixFile;
 use App\Models\User;
 use App\Models\UploadLog;
 use App\Jobs\ImportTrainingMatrixJob;
-
+use Illuminate\Support\Facades\Session;
 
 class TrainingMatrixController extends Controller
 {
@@ -88,6 +87,7 @@ class TrainingMatrixController extends Controller
                             if (CheckUserPermission('edit')) {
                                 $btn .= '<a href="' . admin_url('training_matrix/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
+                                $btn .= '<a href="' . admin_url('training_matrix/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
 
                             return $btn;
                         })
@@ -179,6 +179,18 @@ class TrainingMatrixController extends Controller
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('training_matrix/list'));
         }
+    }
+
+    public function Uniquecheck($topicId, $trainerId) {
+
+        $topicId = decryptId($topicId);
+        $trainerId = decryptId($trainerId);
+
+
+        $data = $this->training_matrix->getuique($trainerId, $topicId);
+        return response()->json([
+            'exists' => $data
+        ]);
     }
 
     public function View(Request $request)
@@ -516,5 +528,5 @@ class TrainingMatrixController extends Controller
         //return Response::download($filePath, $customFileName);
         return redirect(url($filePath));
     }
-   
+
 }

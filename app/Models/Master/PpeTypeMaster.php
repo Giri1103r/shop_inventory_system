@@ -104,6 +104,23 @@ class PpeTypeMaster extends Model
         return $datas;
     }
 
+
+    public function uniqueCheck($data)
+    {
+
+       $unique =PpeTypeMaster::where($data['param'], $data['value'])->get();
+       return $unique;
+    }
+
+    public function ExistuniqueCheck($data)
+    {
+        return $this->where($data['param'],  $data['value'])
+            ->where('id', '!=', decryptId($data['id']))
+            ->get();
+    }
+
+
+
     public function store()
     {
         $request = request();
@@ -262,16 +279,22 @@ class PpeTypeMaster extends Model
 
     public function ajaxlist($PPEtypeId)
     {
-
-        return response()->json(
-           $data = PpeTypeMaster::where('item_code', $PPEtypeId)
+        $data = PpeTypeMaster::where('ppe_master_ppetypemaster.id', $PPEtypeId)
             ->join('masters_ppetype', 'ppe_master_ppetypemaster.ppe_type', '=', 'masters_ppetype.id')
-                ->select('masters_ppetype.id', 'masters_ppetype.ppe_type')
-                ->get()
-        )->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->select(
+                'masters_ppetype.id as ppe_type_id',
+                'masters_ppetype.ppe_type',
+                'ppe_master_ppetypemaster.ppe_name',
+                'ppe_master_ppetypemaster.id as ppe_master_id'
+            )
+            ->get();
+
+        return response()->json($data)
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
             ->header('Pragma', 'no-cache')
             ->header('Expires', 'Fri, 01 Jan 1990 00:00:00 GMT');
     }
+
 
 
     public function PPEnamelist($ppeNameId)
@@ -290,9 +313,9 @@ class PpeTypeMaster extends Model
 
     public function getppetypemaster()
     {
-        return PpeTypeMaster::all();
+        return PpeTypeMaster::where('trash','No')->where('status','=',1)->get();
     }
-  
+
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('ppe_master_ppetypemaster'));

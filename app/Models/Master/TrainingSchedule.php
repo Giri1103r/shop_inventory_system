@@ -109,10 +109,19 @@ class TrainingSchedule extends Model
         return $datas;
     }
 
-    public function UniqueCheck($data)
-    {
+    public function getUniqueSchedule($fromDate, $toDate, $topicId, $trainerId, $unitId, $departmentId, $venueId) {
 
-        return $this->where($data['param'],  $data['value'])->get();
+        if ($fromDate && $toDate) {
+            return TrainingMatrix::where('topic_id', $topicId)
+            ->where('trainer_id', $trainerId)
+            ->where('venue_id', $venueId)
+            ->where('unit_id', $unitId)
+            ->where('department_id',$departmentId)
+            ->where('from_date', '<=', $toDate)
+            ->where('to_date', '>=', $fromDate)
+            ->exists();
+        }
+        return false;
     }
 
     public function ExistuniqueCheck($data)

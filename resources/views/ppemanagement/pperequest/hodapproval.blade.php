@@ -27,9 +27,75 @@
                             </div>
 
                             <div class="card-body ">
+
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">PPE Request </h4>
+                                        <h4 class="text-white">User Details</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Employee ID') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($pperequest->emp_id) ? $pperequest->emp_id : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Employee Name') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($pperequest->emp_name) ? $pperequest->emp_name : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Department') }}</label>
+                                        <div class="view_data">
+                                            {{ getDepartment(isset($pperequest->department) ? $pperequest->department : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Item Code') }}</label>
+                                        <div class="view_data">
+                                            {{ getItemCode(isset($pperequest->item_code) ? $pperequest->item_code : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('PPE Name') }}</label>
+                                        <div class="view_data">
+                                            {{ getPpename(isset($pperequest->ppe_name) ? $pperequest->ppe_name : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('PPE Type') }}</label>
+                                        <div class="view_data">
+                                            {{ getPpeType(isset($pperequest->ppe_type) ? $pperequest->ppe_type : '') }}
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Created By') }}</label>
+                                        <div class="view_data">
+                                            {{ getUsername(isset($pperequest->created_by) ? $pperequest->created_by : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('common.created_date') }}</label>
+                                        <div class="view_data">
+                                            {{ displayDateformat($pperequest->created_at) }}
+                                        </div>
+                                    </div>
+                                  
+                                    <div class="mb-3 col-md-12 form-input">
+                                        <label class="form-label view_label">{{ __('Reason') }}</label>
+                                        <div class="view_data">
+                                            {{isset($pperequest->employee_reason) ? $pperequest->employee_reason : '' }}
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">HOD Approval</h4>
                                     </div>
                                 </div>
                                 <div class="basic-form">
@@ -85,7 +151,8 @@
                         required: true,
                         minlength: 3,
                         maxlength: 255,
-                        regex: /^[a-zA-Z0-9\s]+$/
+                        regex:/^[a-zA-Z\s][a-zA-Z\s.]*$/
+
                     },
                 },
                 messages: {

@@ -76,9 +76,6 @@
                                         <th>Status</th> 
                                         <th>Verified By</th> 
                                         <th>Approved By</th> 
-                                        <th>Declined remark</th>
-                                        <th>Remark</th>
-                                        <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -146,49 +143,41 @@
                         searchable: false
                     },
                     {
-                        data: 'emp_id',
-                        name: 'emp_id'
+                        data: 'permit_id',
+                        name: 'permit_id'
                     },
                     {
-                        data: 'emp_name',
-                        name: 'emp_name'
+                        data: 'unit_name',
+                        name: 'unit_name'
                     },
                     {
-                        data: 'ppe_name',
-                        name: 'ppe_name'
+                        data: 'date',
+                        name: 'date'
                     },
                     {
-                        data: 'ppe_type',
-                        name: 'ppe_type'
+                        data: 'exact_location_job',
+                        name: 'exact_location_job'
                     },
                     {
-                        data: 'ppe_type',
-                        name: 'ppe_type'
+                        data: 'status_batch',
+                        name: 'status_batch'
                     },
                     {
-                        data: 'ppe_type',
-                        name: 'ppe_type'
+                        data: 'verified_by',
+                        name: 'verified_by'
                     },
                     {
-                        data: 'ppe_type',
-                        name: 'ppe_type'
-                    },
-                    {
-                        data: 'ppe_type',
-                        name: 'ppe_type'
+                        data: 'approved_by',
+                        name: 'approved_by'
                     },
 
-                    {
-                        data: 'status',
-                        name: 'status'
-                    },
                     {
                         data: 'created_by',
                         name: 'created_by'
                     },
                     {
-                        data: 'created_at',
-                        name: 'created_at'
+                        data: 'created_date',
+                        name: 'created_date'
                     },
                     {
                         data: 'action',

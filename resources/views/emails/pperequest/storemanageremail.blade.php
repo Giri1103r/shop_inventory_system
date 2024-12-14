@@ -41,7 +41,7 @@
                             <b>Item Code</b>
                         </td>
                         <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ $details['item_code'] }}</td>
+                            valign="top"> {{ getItemCode($details['item_code'] )}}</td>
                     </tr>
 
                     <tr>

@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'PPE Type Master')
+@section('title', 'PPE Type')
 @section('content')
 
     <div style="width:100%;">
@@ -25,20 +25,12 @@
                             {{ $i }}
                         </td>
 
+
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->item_code }}
+                            {{ $value->ppe_id }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->ppe_name }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getPpeType($value->ppe_type )}}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->ppe_standard }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->ppe_category }}
+                            {{ $value->ppe_type }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php
