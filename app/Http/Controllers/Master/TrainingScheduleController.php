@@ -180,22 +180,24 @@ class TrainingScheduleController extends Controller
 
     public function Uniquecheck(Request $request)
     {
-
-
+        $ids = decryptId($request->input('id'));
         $fromDate = $request->input('from_date');
         $toDate = $request->input('to_date');
-        $topicId = $request->input('topicId');
-        $trainerId = $request->input('trainerId');
-        $unitId = $request->input('unitId');
-        $departmentId = $request->input('departmentId');
-        $venueId = $request->input('venueId');
+        $topicId = decryptId($request->input('topicId'));
+        $trainerId = decryptId($request->input('trainerId'));
+        $unitId = decryptId($request->input('unitId'));
+        $departmentId = decryptId($request->input('departmentId'));
+        $venueId = decryptId($request->input('venueId'));
 
-        $data = $this->training_schedule->getUniqueSchedule($fromDate, $toDate, $topicId, $trainerId, $unitId, $departmentId, $venueId);
+        if (empty($ids)) {
+            $conflicts = $this->training_schedule->getUniqueSchedule($fromDate, $toDate, $topicId, $trainerId, $unitId, $departmentId, $venueId);
+        } else {
+            $conflicts = $this->training_schedule->getExistUniqueSchedule($fromDate, $toDate, $topicId, $trainerId, $unitId, $departmentId, $venueId, $ids);
+        }
 
-        return response()->json([
-            'exists' => $data
-        ]);
+        return response()->json(['conflicts' => $conflicts]);
     }
+
 
     public function Store(Request $request)
     {
@@ -393,8 +395,8 @@ class TrainingScheduleController extends Controller
                 $training_schedule = $this->training_schedule->selectOne($id);
                 $nominationProcessList = $this->nomination_process->getNomination($training_schedule->id);
 
-                $attendanceDate = $request->attendance_date; 
-                
+                $attendanceDate = $request->attendance_date;
+
                 $trainingAttendanceList = $this->training_attendance
                     ->where('status', 1)
                     ->where('training_schedule_id', $training_schedule->id)

@@ -122,7 +122,7 @@ class TrainingMatrix extends Model
 
         if ($trainerId && $topicId) {
             return TrainingMatrix::where('topic_id', $topicId)
-                ->where('trainer_id', '!=', $trainerId)
+                ->where('trainer_id', '=', $trainerId)
                 ->exists();
         }
         return false;

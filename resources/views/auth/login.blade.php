@@ -5,7 +5,7 @@
     .form-input {
         position: relative;
     }
-    
+
     .show-pass.eye {
         position: absolute;
         top: 70%;
@@ -14,7 +14,7 @@
         cursor: pointer;
         color: #6c757d; /* Optional: matches Bootstrap input styles */
     }
-    
+
     .show-pass.eye:hover {
         color: #000; /* Optional: hover effect */
     }
@@ -135,9 +135,9 @@
                     element.closest('.form-input').append(error);
                     if (element.attr('name') === 'password') {
                     element.closest('.form-input').find('.show-pass.eye').css('top', '40%');
-                
+
                 }
-                
+
 
                 },
                 highlight: function(element, errorClass, validClass) {
