@@ -93,6 +93,7 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_EHS_REASSIGN') or define('STATUS_EHS_REASSIGN', 5);
         defined('STATUS_PLANT_HEAD_PENDING') or define('STATUS_PLANT_HEAD_PENDING', 6);
         defined('STATUS_PLANT_HEAD_APPROVED') or define('STATUS_PLANT_HEAD_APPROVED', 7);
+        defined('STATUS_EHS_RESUME') or define('STATUS_EHS_RESUME', 8);
 
 
 
