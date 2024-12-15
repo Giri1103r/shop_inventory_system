@@ -781,16 +781,24 @@
                                         </div>
                                     </div>
                                     <hr>
-                                    <div class="d-flex float-end gap-2 mx-auto">
-                                        <button type="submit" name="hold" value="hold"
-                                            class="btn btn-info w-100">Hold</button>
-                                        <button type="submit" name="decline" value="decline"
-                                            class="btn btn-danger w-100">Decline</button>
-                                        <button type="submit" name="reassign" value="reassign"
-                                            class="btn btn-secondary w-100 reassign-btn">Reassign</button>
-                                        <button type="submit" name="forward" value="forward"
-                                            class="btn btn-success w-100">Forward</button>
-                                    </div>
+
+                                    @if ($safetypermit['permit_status'] == 3)
+                                        <div class="d-flex float-end gap-2 mx-auto">
+                                            <button type="submit" name="resume" value="resume"
+                                                class="btn btn-info w-100">Resume</button>
+                                        </div>
+                                    @else
+                                        <div class="d-flex float-end gap-2 mx-auto">
+                                            <button type="submit" name="hold" value="hold"
+                                                class="btn btn-info w-100">Hold</button>
+                                            <button type="submit" name="decline" value="decline"
+                                                class="btn btn-danger w-100">Decline</button>
+                                            <button type="submit" name="reassign" value="reassign"
+                                                class="btn btn-secondary w-100 reassign-btn">Reassign</button>
+                                            <button type="submit" name="forward" value="forward"
+                                                class="btn btn-success w-100">Forward</button>
+                                        </div>
+                                    @endif
                                 </form>
                             </div>
                         </div>
@@ -826,7 +834,7 @@
                         </div>
                     @endif
 
-                    
+
                     @if ($safetypermit['permit_status'] == 6)
                         <div class="card-body ">
                             <div class="row">
@@ -858,8 +866,8 @@
                                             <div class="col-md-12 mb-3">
                                                 <div class="mb-1">
                                                     <label for="remarks" class="form-label">Remarks</label>
-                                                    <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="planthead_approval_remarks"
-                                                        rows="3"></textarea>
+                                                    <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks"
+                                                        name="planthead_approval_remarks" rows="3"></textarea>
                                                     <div class="text-danger" id="remarks_error"></div>
                                                     @error('remarks')
                                                         <span id="remark_error"
@@ -1039,7 +1047,7 @@
                 minimumInputLength: 1,
                 dropdownCssClass: 'form-control',
                 selectionCssClass: 'form-control',
-                 width: '100%'
+                width: '100%'
             });
 
 
