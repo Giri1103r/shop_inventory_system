@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Training Schedule Show')
+@section('title', 'Nomination Process')
 @section('pageurl', admin_url('training_schedule/list'))
 
 
@@ -123,18 +123,15 @@
 
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="d-flex align-items-center">
-                                        <h4 class="text-black">Nomination Process</h4>
-                                        <a href="{{ admin_url('nomination_process/import') }}">
-                                            <button type="button" class="btn btn-success" style="margin-left: 22px;"><span
-                                                    class="btn-icon-start text-success"><i
-                                                        class="fa fa-upload text-secondary "></i>
-                                                </span>{{ __('common.import') }}</button>
-                                        </a>
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Nomination Process</h4>
                                     </div>
+                                </div>
+                                <div style="padding-left: 88% !important">
+                                    <x-button-import href="{{ admin_url('nomination_process/import') }}"></x-button-import>
 
                                 </div>
-                               
+
                                 <div class="basic-form">
                                     <form method="POST" id="nomination_processadd"
                                         action="{{ admin_url('nomination_process/add/submit') }}"
@@ -142,9 +139,13 @@
                                         @csrf
 
                                         <div class="row">
-                                            <button class="btn btn-primary addmorebutton" data-block='lesson_learned_block'
-                                                data-row='lesson_learned_row' type="button" id="dynamic-add-more"
-                                                style="margin:10px;float:right;width: 84px;">Add</button>
+                                            <div style="padding-left: 79% !important;margin-top: -46px;">
+                                                <button class="btn btn-primary addmorebutton"
+                                                    data-block='lesson_learned_block' data-row='lesson_learned_row'
+                                                    type="button" id="dynamic-add-more"
+                                                    style="margin:10px;width: 84px;">Add</button>
+
+                                            </div>
                                             <table class="table_card" style="margin-top: 20px;">
                                                 <thead>
 
@@ -189,7 +190,6 @@
                                                                     id="department_1"
                                                                     class="form-control single-select validate-select-required"
                                                                     style="width: 100%">
-                                                                    <!-- Department options will be populated by AJAX -->
                                                                 </select>
                                                             </td>
                                                             <td><input type="text"
@@ -211,8 +211,8 @@
                                                                     @endforeach
                                                                 </select>
                                                             </td>
-                                                            <td><button class="btn btn-danger removerow" type="button"
-                                                                    style="margin:10px;"><i
+                                                            <td><button class="btn btn-danger removerowdata"
+                                                                    type="button" style="margin:10px;"><i
                                                                         class="fa fa-trash"></i></button>
                                                             </td>
                                                         </tr>
@@ -426,9 +426,18 @@
 
                 newRow.find(".select2-container").remove();
 
+                newRow.find("[id^='last_training_attended_on_']").each(function() {
+                    if (this._flatpickr) {
+                        this._flatpickr.destroy(); // Destroy existing flatpickr instance
+                    }
+                });
                 $("#lesson_learned_block").append(newRow);
 
-                $("[id^='last_training_attended_on_']").flatpickr();
+                $("[id^='last_training_attended_on_']").each(function() {
+                    flatpickr(this, {
+                        dateFormat: "d-m-Y",
+                    });
+                });
 
                 $(".single-select").select2();
             });
@@ -449,7 +458,8 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: "{{ url('nomination_process/delete') }}/" + rowId,
+                            url: "{{ url('nomination_process/delete') }}/" +
+                                rowId,
                             type: 'DELETE',
                             data: {
                                 _token: '{{ csrf_token() }}',
@@ -483,293 +493,136 @@
                     }
                 });
             });
+
+            $(document).on("change", "[name^='employee'][name$='[emp_id]']", function() {
+                var empIds = [];
+                var isDuplicate = false;
+
+                $("[name^='employee'][name$='[emp_id]']").each(function() {
+                    var empId = $(this).val();
+                    if (empId) {
+                        if (empIds.includes(empId)) {
+                            isDuplicate = true; // Duplicate found
+                        }
+                        empIds.push(empId);
+                    }
+                });
+
+                if (isDuplicate) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Duplicate Employee ID!",
+                        text: "Each Employee ID must be unique.",
+                    });
+
+                    // Clear the current field
+                    $(this).val("");
+                }
+            });
+            $('#lesson_learned_block').on('change', '[name^="employee"][name$="[emp_id]"]', function() {
+                var rowId = $(this).attr('name').match(/\d+/)[
+                    0]; // Extract row number from name attribute
+                var empIdField = `[name="employee[${rowId}][emp_id]"]`;
+
+                $(empIdField).rules('add', {
+                    required: true,
+                    remote: {
+                        url: '{{ admin_url('training_schedule/nomination_process/unique') }}',
+                        type: 'post',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            emp_id: function() {
+                                return $(empIdField)
+                                    .val(); // Fetch Employee ID dynamically
+                            },
+                            training_schedule_id: function() {
+                                return $('#training_schedule_id').val();
+                            }
+                        }
+                    },
+                    messages: {
+                        required: "Employee ID is required.",
+                        remote: "This Employee ID is already nominated for this training."
+                    }
+                });
+            });
+            var rowId = $(this).attr('name').match(/\d+/)[
+                    0]; // Extract row number from name attribute
+                var empIdField = `[name="employee[${rowId}][emp_id]"]`;
             $('#nomination_processadd').validate({
+
                 rules: {
-                    'emp_id': {
+                    empIdField: {
+                        required: true,
+                    },
+                    'employee[1][emp_name]': {
                         required: true
                     },
-                    'emp_name': {
-                        required: true
-                    },
-                    'email[]': {
+                    'employee[1][email]': {
                         required: true,
                         email: true
                     },
-                    'department_id[]': {
+                    'employee[1][department_id]': {
                         required: true
                     },
-                    'employee_type[]': {
+                    'employee[1][employee_type]': {
                         required: true
                     },
-                    'last_training_attended_on[]': {
+                    'employee[1][last_training_attended_on]': {
                         required: true
                     },
-                    'topic_id[]': {
+                    'employee[1][topic_id]': {
                         required: true
                     }
                 },
                 messages: {
-                    'emp_id': {
+                    'employee[1][emp_id]': {
                         required: "Select an Employee ID."
                     },
-                    'emp_name': {
+                    'employee[1][emp_name]': {
                         required: "Employee Name is required."
                     },
-                    'email[]': {
-                        required: "Email ID is required."
+                    'employee[1][email]': {
+                        required: "Email ID is required.",
+                        email: "Enter a valid Email ID."
                     },
-                    'department_id[]': {
+                    'employee[1][department_id]': {
                         required: "Department is required."
                     },
-                    'employee_type[]': {
+                    'employee[1][employee_type]': {
                         required: "Employee Type is required."
                     },
-                    'last_training_attended_on[]': {
+                    'employee[1][last_training_attended_on]': {
                         required: "Last training attended on is required."
                     },
-                    'topic_id[]': {
+                    'employee[1][topic_id]': {
                         required: "Training Topic is required."
                     }
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
                     error.addClass('invalid-feedback');
-                    element.closest('.form-input').append(error);
+                    if (element.hasClass('single-select')) {
+                        element.next('.select2-container').append(
+                            error);
+                    } else {
+                        element.closest('td').append(error);
+                    }
                 },
-                highlight: function(element, errorClass, validClass) {
+                highlight: function(element) {
                     $(element).addClass('is-invalid');
                 },
-                unhighlight: function(element, errorClass, validClass) {
+                unhighlight: function(element) {
                     $(element).removeClass('is-invalid');
-                },
+                }
+            });
+            $(document).on('click', '.removerowdata', function() {
+                $(this).closest('tr').remove();
+            });
+
+            $('#lesson_learned_block').on('change', 'input, select', function() {
+                $(this).valid();
             });
         });
-
-
-        // $(document).ready(function() {
-        //     flatpickr("[id^=\"last_training_attended_on_\"]", {
-        //         dateFormat: "d-m-Y",
-        //     });
-        //     $(document).on("change", "[id^=\"emp_id_\"]", function() {
-        //         var emp_id = $(this).val();
-        //         var currentRow = $(this).closest("tr");
-        //         var departmentDropdown = currentRow.find(
-        //             'select[name*="[department_id]"]');
-
-        //         if (emp_id) {
-        //             $.ajax({
-        //                 url: "{{ url('nomination_process/fetchEmployeeDetails') }}/" + emp_id,
-        //                 type: "GET",
-        //                 success: function(data) {
-        //                     if (data.employee) {
-        //                         // Populate employee details in the current row
-        //                         currentRow.find('input[name*="[emp_name]"]').val(data.employee
-        //                             .emp_name);
-        //                         currentRow.find('input[name*="[email]"]').val(data.employee
-        //                             .email);
-        //                         currentRow.find('input[name*="[employee_type]"]').val(data
-        //                             .employee.employee_status);
-
-        //                         // Populate the department dropdown
-        //                         departmentDropdown.empty(); // Clear existing options
-        //                         departmentDropdown.append(
-        //                             '<option value="">Select Department</option>'
-        //                         ); // Default option
-
-        //                         data.departments.forEach(function(department) {
-        //                             var selected = data.employee.department ==
-        //                                 department.id ? "selected" : "";
-        //                             departmentDropdown.append(
-        //                                 `<option value="${department.id}" ${selected}>${department.department_name}</option>`
-        //                             );
-        //                         });
-        //                     } else {
-        //                         Swal.fire({
-        //                             icon: "error",
-        //                             title: "Error",
-        //                             text: "Employee data could not be fetched.",
-        //                         });
-        //                     }
-        //                 },
-        //                 error: function() {
-        //                     Swal.fire({
-        //                         icon: "error",
-        //                         title: "Error",
-        //                         text: "An error occurred while fetching employee details.",
-        //                     });
-        //                 },
-        //             });
-        //         } else {
-        //             // Clear the current row inputs if no employee is selected
-        //             currentRow.find('input[name*="[emp_name]"]').val("");
-        //             currentRow.find('input[name*="[email]"]').val("");
-        //             currentRow.find('input[name*="[employee_type]"]').val("");
-        //             departmentDropdown.empty();
-        //             departmentDropdown.append('<option value="">Select Department</option>');
-        //         }
-        //     });
-
-        //     // Event listener for dynamic row addition
-        //     $("#dynamic-add-more").on("click", function() {
-        //         var rowCount = $("#lesson_learned_block .lesson_learned_row").length;
-
-        //         if (rowCount >= 10) {
-        //             Swal.fire({
-        //                 icon: "error",
-        //                 title: "Sorry!",
-        //                 text: "Maximum 10 records only.",
-        //             });
-        //             return;
-        //         }
-
-        //         var newRow = $(".lesson_learned_row").first().clone();
-
-        //         // Clear inputs and reset classes
-        //         newRow.find(".form-input").removeClass("selecterror");
-        //         newRow.find(".form-control").removeClass("is-invalid");
-        //         newRow.find(".invalid-feedback").remove();
-
-        //         var newIndex = rowCount + 1; // Update index for the new row
-
-        //         // Reset all input values and attributes for the new row
-        //         newRow.find("input").val("");
-        //         newRow.find("select").val("");
-
-        //         newRow.find("input, select").each(function() {
-        //             var oldName = $(this).attr("name");
-        //             var oldId = $(this).attr("id");
-
-        //             if (oldName) {
-        //                 var newName = oldName.replace(/\[\d+\]/, "[" + newIndex + "]");
-        //                 $(this).attr("name", newName);
-        //             }
-
-        //             if (oldId) {
-        //                 var newId = oldId.replace(/\d+$/, newIndex);
-        //                 $(this).attr("id", newId);
-        //             }
-        //         });
-
-        //         // Remove the existing select2 container to prevent duplicate initialization
-        //         newRow.find(".select2-container").remove();
-
-        //         // Append the new row to the table
-        //         $("#lesson_learned_block").append(newRow);
-
-        //         $(".single-select").select2();
-
-        //         // Reinitialize Flatpickr for date fields
-        //         $("[id^=\"last_training_attended_on_\"]").flatpickr();
-
-        //         // Disable Add button if row count reaches the maximum limit
-        //         $("#dynamic-add-more").attr("disabled", rowCount + 1 >= 10);
-        //     });
-
-
-        //     // Event listener for dynamic row removal
-        //     $(document).on('click', '.removerow', function() {
-        //         var rowCount = $("#lesson_learned_block .lesson_learned_row").length;
-        //         if (rowCount > 1) {
-        //             $(this).closest(".lesson_learned_row").remove();
-
-        //             // Re-indexing remaining rows
-        //             $("#lesson_learned_block .lesson_learned_row").each(function(index) {
-        //                 var newIndex = index + 1;
-        //                 $(this).find("input, select").each(function() {
-        //                     var oldName = $(this).attr("name");
-        //                     var oldId = $(this).attr("id");
-
-        //                     if (oldName) {
-        //                         var newName = oldName.replace(/\[\d+\]/, '[' + newIndex +
-        //                             ']');
-        //                         $(this).attr("name", newName);
-        //                     }
-
-        //                     if (oldId) {
-        //                         var newId = oldId.replace(/\d+$/, newIndex);
-        //                         $(this).attr("id", newId);
-        //                     }
-        //                 });
-
-        //                 // Reinitialize select2 for each row
-        //                 $(this).find(".select2-container").remove();
-        //                 $(this).find(".select2").select2();
-        //             });
-
-        //             $('#dynamic-add-more').attr("disabled", rowCount - 1 >= 10);
-        //         } else {
-        //             Swal.fire({
-        //                 icon: 'error',
-        //                 title: 'Sorry!',
-        //                 text: 'At least one record is required.',
-        //             });
-        //         }
-        //     });
-
-        //     // AJAX call when emp_id is selected
-
-
-        //     // Form validation rules
-        //     $('#nomination_processadd').validate({
-        //         rules: {
-        //             'emp_id[]': {
-        //                 required: true
-        //             },
-        //             'emp_name[]': {
-        //                 required: true
-        //             },
-        //             'email[]': {
-        //                 required: true,
-        //                 email: true
-        //             },
-        //             'department_id[]': {
-        //                 required: true
-        //             },
-        //             'employee_type[]': {
-        //                 required: true
-        //             },
-        //             'last_training_attended_on[]': {
-        //                 required: true
-        //             },
-        //             'topic_id[]': {
-        //                 required: true
-        //             }
-        //         },
-        //         messages: {
-        //             'emp_id[]': {
-        //                 required: "Select an Employee ID."
-        //             },
-        //             'emp_name[]': {
-        //                 required: "Employee Name is required."
-        //             },
-        //             'email[]': {
-        //                 required: "Email ID is required."
-        //             },
-        //             'department_id[]': {
-        //                 required: "Department is required."
-        //             },
-        //             'employee_type[]': {
-        //                 required: "Employee Type is required."
-        //             },
-        //             'last_training_attended_on[]': {
-        //                 required: "Last training attended on is required."
-        //             },
-        //             'topic_id[]': {
-        //                 required: "Training Topic is required."
-        //             }
-        //         },
-        //         errorElement: 'span',
-        //         errorPlacement: function(error, element) {
-        //             error.addClass('invalid-feedback');
-        //             element.closest('.form-input').append(error);
-        //         },
-        //         highlight: function(element, errorClass, validClass) {
-        //             $(element).addClass('is-invalid');
-        //         },
-        //         unhighlight: function(element, errorClass, validClass) {
-        //             $(element).removeClass('is-invalid');
-        //         },
-        //     });
-        // });
     </script>
 @endpush

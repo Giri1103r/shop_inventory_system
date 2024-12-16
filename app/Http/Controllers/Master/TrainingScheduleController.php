@@ -98,6 +98,9 @@ class TrainingScheduleController extends Controller
                                             <i class="fa fa-calendar" ></i>
                                          </a> ';
                             }
+                            if ($row->training_status == 4) {
+                            $btn .= '<a href="' . admin_url('training_schedule/pdf/' . encryptId($row->id)) . '"  class="pdficon" title="Pdf"><i class="fas fa-file-pdf" aria-hidden="true"></i> ';
+                            }
                             if ($row->training_status == 3) {
                                 $btn .= '<a href="' . admin_url('training_schedule/attendance/' . encryptId($row->id)) . '" title="Attendance">
                                             <i class="fas fa-portrait" style="color: black;font-size: 15px;"></i>
@@ -119,11 +122,11 @@ class TrainingScheduleController extends Controller
                                              </a> ';
                                 }
                             }
-                            if (CheckUserPermission('edit')  && $row->training_status == 2) {
-                                $btn .= '<a href="' . admin_url('training_schedule/edit/' . encryptId($row->id)) . '" title="Edit">
-                                            <i class="fa-solid fa-pen-to-square"></i>
-                                         </a> ';
-                            }
+                            // if (CheckUserPermission('edit')  && $row->training_status == 2) {
+                            //     $btn .= '<a href="' . admin_url('training_schedule/edit/' . encryptId($row->id)) . '" title="Edit">
+                            //                 <i class="fa-solid fa-pen-to-square"></i>
+                            //              </a> ';
+                            // }
 
                             return $btn;
                         })
@@ -367,7 +370,22 @@ class TrainingScheduleController extends Controller
 
         return response()->json(true);
     }
+    public function checkUniqueNomination(Request $request)
+    {
+        $empId = $request->input('emp_id');
+        $trainingScheduleId = decryptId($request->training_schedule_id);
 
+        $exists =  $this->nomination_process
+            ->where('training_schedule_id', $trainingScheduleId)
+            ->where('employee_id', $empId)
+            ->exists();
+
+        if ($exists) {
+            return response()->json(false);
+        }
+
+        return response()->json(true);
+    }
     public function endTraining($id)
     {
         try {
@@ -393,8 +411,8 @@ class TrainingScheduleController extends Controller
                 $training_schedule = $this->training_schedule->selectOne($id);
                 $nominationProcessList = $this->nomination_process->getNomination($training_schedule->id);
 
-                $attendanceDate = $request->attendance_date; 
-                
+                $attendanceDate = $request->attendance_date;
+
                 $trainingAttendanceList = $this->training_attendance
                     ->where('status', 1)
                     ->where('training_schedule_id', $training_schedule->id)
@@ -414,30 +432,6 @@ class TrainingScheduleController extends Controller
             report($ex);
         }
     }
-
-    // public function View(Request $request)
-    // {
-    //     try {
-    //         $id = decryptId($request->id);
-    //         if (Auth::check()) {
-    //             $training_schedule = $this->training_schedule->selectOne($id);
-    //             $nominationProcessList = $this->nomination_process->getNomination($training_schedule->id);
-
-    //             $trainingAttendanceList = $this->training_attendance->where('status', 1)->where('training_schedule_id', $training_schedule->id)
-    //             ->get();
-
-    //             $data = array(
-    //                 'training_schedule' => $training_schedule,
-    //                 'nominationProcessList' => $nominationProcessList,
-    //                 'trainingAttendanceList' => $trainingAttendanceList,
-    //             );
-    //         }
-    //         return view('master.training_schedule.view', $data);
-    //     } catch (Exception $ex) {
-    //         report($ex);
-    //     }
-    // }
-
     public function nominationProcess(Request $request)
     {
         try {
@@ -745,6 +739,82 @@ class TrainingScheduleController extends Controller
         }
     }
 
+    public function View1(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $training_schedule = $this->training_schedule->selectOne($id);
+                $nominationProcessList = $this->nomination_process->getNomination($training_schedule->id);
+
+                $attendanceDate = $request->attendance_date;
+
+                $trainingAttendanceList = $this->training_attendance
+                    ->where('status', 1)
+                    ->where('training_schedule_id', $training_schedule->id)
+                    ->when($attendanceDate, function ($query, $attendanceDate) {
+                        return $query->whereDate('attendance_date', DBdateformat($attendanceDate));
+                    })
+                    ->get();
+
+                $data = array(
+                    'training_schedule' => $training_schedule,
+                    'nominationProcessList' => $nominationProcessList,
+                    'trainingAttendanceList' => $trainingAttendanceList,
+                );
+            }
+            return view('master.training_schedule.view', $data);
+        } catch (Exception $ex) {
+            report($ex);
+        }
+    }
+    public function exportViewPdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $training_schedule = $this->training_schedule->selectOne($id);
+            $nominationProcessList = $this->nomination_process->getNomination($training_schedule->id);
+
+            $attendanceDate = $request->attendance_date;
+
+            $trainingAttendanceList = $this->training_attendance
+                ->where('status', 1)
+                ->where('training_schedule_id', $training_schedule->id)
+                ->when($attendanceDate, function ($query, $attendanceDate) {
+                    return $query->whereDate('attendance_date', DBdateformat($attendanceDate));
+                })
+                ->get();
+
+            $data = array(
+                'training_schedule' => $training_schedule,
+                'nominationProcessList' => $nominationProcessList,
+                'trainingAttendanceList' => $trainingAttendanceList,
+            );
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+                'default_font' => 'arial',
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+            $view = view('master.training_schedule.training_pdf', $data);
+            $html = $view->render();
+
+
+
+            $mpdf->WriteHTML($html);
+
+            $filename = "Training.pdf";
+            $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            dd($ex);
+        }
+    }
     public function DownloadSample(Request $request)
     {
 

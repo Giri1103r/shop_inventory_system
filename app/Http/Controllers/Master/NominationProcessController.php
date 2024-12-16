@@ -162,11 +162,11 @@ class NominationProcessController extends Controller
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
-            return redirect(admin_url('nomination_process/list'));
+            return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
             dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('nomination_process/list'));
+            return redirect(admin_url('training_schedule/list'));
         }
     }
     public function View(Request $request)
