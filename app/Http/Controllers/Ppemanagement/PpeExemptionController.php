@@ -590,11 +590,7 @@ class PpeExemptionController extends Controller
                 __("Company"),
                 __("From Date"),
                 __("To Date"),
-                __("Reason"),
-                __("Remarks"),
-                __("EHS Officer Approval"),
                 __("Approve Status"),
-                __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -613,21 +609,7 @@ class PpeExemptionController extends Controller
                 $export[] =  getcompanyname($data->company);
                 $export[] =  Displaydateformat($data->from_date);
                 $export[] =  Displaydateformat($data->to_date);
-                $export[] =  $data->reason;
-                if ($data->approve_status == $ehsstatus) {
-                    $export[] = 'User Applied For Approval';
-                } else {
-                    $export[] =  $data->remarks ? $data->remarks : 'Null';
-                }
-
-                if ($data->approve_status == $ehsstatus) {
-                    $export[] = 'User Applied For Approval';
-                } else {
-                    $export[] =  $data->approved_by ? getusername($data->approved_by) : 'Null';
-                }
-
                 $export[] =  removeUnderScore(getStatus($data->approve_status));
-                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 
@@ -670,11 +652,7 @@ class PpeExemptionController extends Controller
                 __("Company"),
                 __("From Date"),
                 __("To Date"),
-                __("Reason"),
-                __("Remarks"),
-                __("EHS Officer Approval"),
                 __("Approve Status"),
-                __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];

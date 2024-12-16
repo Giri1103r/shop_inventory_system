@@ -48,36 +48,8 @@
                             {{ Displaydateformat($value->to_date) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->reason }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-
-                            @if ($value->approve_status == $ehsstatus)
-                                {{ 'User Applied For Approval' }}
-                            @else
-                                {{ $value->remarks }}
-                            @endif
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            @if ($value->approve_status == $ehsstatus)
-                                {{ 'User Applied For Approval' }}
-                            @else
-                                {{ $value->approved_by ? getusername($value->approved_by) : 'Null' }}
-                            @endif
-
-                        </td>
-
-                        <td style='padding: 7px;border: 0.5px solid'>
                             {{ removeUnderScore(getStatus($value->approve_status)) }}
                         </td>
-
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            @php
-                                $status = $value->status == 1 ? 'Active' : 'In-Active';
-                            @endphp
-                            {{ $status }}
-                        </td>
-
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
                         </td>

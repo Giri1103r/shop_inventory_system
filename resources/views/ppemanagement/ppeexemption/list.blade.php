@@ -15,7 +15,7 @@
 
                             <x-button-add dataId="" class="add btn btn-primary"
                                 href="{{ admin_url('ppe_exemption/add') }}">Add</x-button-add>
-                      
+
 
                     </div>
 
@@ -86,15 +86,6 @@
                                                     <span class="fa fa-calendar"></span>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
-                                                class="form-control single-select">
-                                                <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
-                                            </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
