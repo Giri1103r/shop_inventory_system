@@ -86,7 +86,7 @@
                                     <div class="mb-3 col-md-12 form-input">
                                         <label class="form-label view_label">{{ __('Reason') }}</label>
                                         <div class="view_data">
-                                            {{isset($pperequest->employee_reason) ? $pperequest->employee_reason : '' }}
+                                            {{ isset($pperequest->employee_reason) ? $pperequest->employee_reason : '' }}
 
 
                                         </div>
@@ -161,13 +161,15 @@
                                                     <tr class="hover-row">
                                                         <td>
                                                             @if ($log['to_status'] == STATUS_HOD_APPROVAL_PENDING)
-                                                                <span class='badge bg-warning'>HOD Approval Pending</span>
+                                                                <span class='badge bg-info'>HOD Approval Pending</span>
                                                             @elseif ($log['to_status'] == STATUS_HOD_APPROVED)
                                                                 <span class='badge bg-success'>HOD Approved</span>
+                                                            @elseif ($log['to_status'] == STATUS_USER_APPLIED)
+                                                                <span class='badge bg-primary'>User Applied</span>
                                                             @elseif ($log['to_status'] == STATUS_HOD_REJECTED)
                                                                 <span class='badge bg-danger'>HOD Rejected</span>
                                                             @elseif ($log['to_status'] == STATUS_EHS_APPROVAL_PENDING)
-                                                                <span class='badge bg-warning'>EHS Approval Pending</span>
+                                                                <span class='badge bg-info'>EHS Approval Pending</span>
                                                             @elseif ($log['to_status'] == STATUS_EHS_APPROVED)
                                                                 <span class='badge bg-success'>EHS Approved</span>
                                                             @elseif ($log['to_status'] == STATUS_EHS_REJECTED)

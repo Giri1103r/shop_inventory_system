@@ -508,7 +508,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('fetchEmployeeDetails/{emp_id}', [NominationProcessController::class, 'fetchEmployeeDetails']);
             });
 
-      
+
 
             Route::group(['prefix' => 'ptw/precautionmaster'], function () {
                 Route::get('/list', [PrecautionController::class, 'index']);

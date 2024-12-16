@@ -32,7 +32,7 @@ class Statuslog extends Model
             'type' => TYPE_PPE_REQUEST,
             'reference_id' => $id,
             'from_status' => $pperequest->approve_status,
-            'to_status' => $pperequest->approve_status,
+            'to_status' => STATUS_USER_APPLIED,
             'remarks' => $pperequest->employee_reason,
             'created_by' => Auth::id(),
         ];
@@ -46,7 +46,7 @@ class Statuslog extends Model
         $insert_data = [
             'type' => TYPE_PPE_REQUEST,
             'reference_id' => $empDetails->id,
-            'from_status' => $empDetails->approve_status,
+            'from_status' =>$updateData['approve_status'],
             'to_status' => $updateData['approve_status'],
             'remarks' => $updateData['remarks'],
             'created_by' => Auth::id(),
@@ -66,7 +66,7 @@ class Statuslog extends Model
         $insert_data = [
             'type' => TYPE_PPE_REQUEST,
             'reference_id' => $empDetails->id,
-            'from_status' => $empDetails->ehs_approve_status,
+            'from_status' => STATUS_EHS_APPROVAL_PENDING,
             'to_status' => $updateEhsData['approve_status'],
             'remarks' => $updateEhsData['remarks'],
             'created_by' => Auth::id(),
@@ -82,8 +82,8 @@ class Statuslog extends Model
         $insert_data = [
             'type' => TYPE_PPE_EXEMPTION,
             'reference_id' => $ppeexemption->id,
-            'from_status' => $ppeexemption->approve_status,
-            'to_status' => $ppeexemption->approve_status,
+            'from_status' => STATUS_EHS_APPROVAL_PENDING,
+            'to_status' => STATUS_USER_APPLIED,
             'remarks' => $ppeexemption->reason,
             'created_by' => Auth::id(),
 

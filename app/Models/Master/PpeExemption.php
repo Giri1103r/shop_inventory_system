@@ -54,7 +54,7 @@ class PpeExemption extends Model
            $departmentId = $user->department_id;
            $query->where('ppe_ppeexemption.department',$departmentId);
         }
-       
+
         else {
             $query->where('ppe_ppeexemption.emp_id', $empId);
         }
@@ -269,9 +269,9 @@ class PpeExemption extends Model
             $toDate =$request->to_date;
             $query->where('ppe_ppeexemption.to_date', '<=', $toDate);
         }
-        if ($request->has('status') && $request->status) {
-            $query->where('ppe_ppeexemption.status', decryptId($request->status));
-        }
+        // if ($request->has('status') && $request->status) {
+        //     $query->where('ppe_ppeexemption.status', decryptId($request->status));
+        // }
 
         return  $query->orderBy('id', 'DESC')->get();
     }

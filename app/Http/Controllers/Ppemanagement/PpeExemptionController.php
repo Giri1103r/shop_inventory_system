@@ -191,6 +191,7 @@ class PpeExemptionController extends Controller
 
                 // Mail
                 $id = $ppeexemption->id;
+                $statuslog = $this->ppestatus->exemptionstatus($ppeexemption);
                 $ehsofficer = $this->user->findEhsHead();
 
                 $details = [
@@ -609,7 +610,12 @@ class PpeExemptionController extends Controller
                 $export[] =  getcompanyname($data->company);
                 $export[] =  Displaydateformat($data->from_date);
                 $export[] =  Displaydateformat($data->to_date);
-                $export[] =  removeUnderScore(getStatus($data->approve_status));
+                if($data->approve_status ==  $ehsstatus){
+                    $export[] = 'User Applied';
+                } else{
+                    $export[] = removeUnderScore(getStatus($data->approve_status));
+
+                }
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 

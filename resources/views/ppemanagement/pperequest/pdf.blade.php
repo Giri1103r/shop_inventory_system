@@ -43,8 +43,15 @@
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ removeUnderScore(getStatus($value->approve_status)) }}
+                            @if($value->approve_status == $hodstatus)
+                                <p>{{ 'User Applied' }}</p>
+                            @elseif($value->approve_status == $ehsstatus)
+                                <p>{{ 'Hod Approved' }}</p>
+                            @else
+                                {{ removeUnderScore(getStatus($value->approve_status)) }}
+                            @endif
                         </td>
+
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
                         </td>

@@ -130,6 +130,23 @@ class PpeStockinventory extends Model
         return true;
     }
 
+    public function updates($id)
+    {
+        $request = request();
+         $update_array =[
+            'org'=>$request->org,
+            'item_code'=>$request->item_code,
+            'inventory_item_id'=>$request->item_inventory_id,
+            'uom'=>$request->uom,
+            'sub'=>$request->sub,
+            'quantity'=>$request->quantity,
+            'item_description'=>$request->item_description,
+            'created_by'=>Auth::id(),
+            'updated_by'=>Auth::id(),
+         ];
+       $this->where('id',$id)->update( $update_array);
+    }
+
     public function getquantity($itemCode, $action)
     {
         $request = request();
