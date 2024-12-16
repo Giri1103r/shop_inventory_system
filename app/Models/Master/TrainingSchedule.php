@@ -4,6 +4,7 @@ namespace App\Models\Master;
 
 use Carbon\Carbon;
 use App\Scopes\TrashScope;
+use DateTime;
 use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\Auth;
@@ -28,6 +29,7 @@ class TrainingSchedule extends Model
         'venue_id',
         'target_trainees',
         'training_man_hours',
+        // 'training_status',
         'status',
         'trash',
         'created_by',
@@ -108,20 +110,98 @@ class TrainingSchedule extends Model
         return $datas;
     }
 
-    public function getUniqueSchedule($fromDate, $toDate, $topicId, $trainerId, $unitId, $departmentId, $venueId) {
+    public function getUniqueSchedule($fromDate, $toDate, $topicId, $trainerId, $unitId, $departmentId, $venueId)
+    {
+        $fromdate = (new DateTime($fromDate))->format('Y-m-d');
+        $todate = (new DateTime($toDate))->format('Y-m-d');
 
-        if ($fromDate && $toDate) {
-            return TrainingMatrix::where('topic_id', $topicId)
-            ->where('trainer_id', $trainerId)
-            ->where('venue_id', $venueId)
-            ->where('unit_id', $unitId)
-            ->where('department_id',$departmentId)
-            ->where('from_date', '<=', $toDate)
-            ->where('to_date', '>=', $fromDate)
-            ->exists();
+        $conflicts = [];
+
+        if ($fromdate && $todate) {
+            $query = TrainingSchedule::where(function ($query) use ($topicId, $trainerId, $unitId, $departmentId, $venueId, $fromdate, $todate) {
+                $query->where('topic_id', '=', $topicId)
+                    ->orWhere('trainer_id', '=', $trainerId)
+                    ->orWhere('unit_id', '=', $unitId)
+                    ->orWhere('department_id', '=', $departmentId)
+                    ->orWhere('venue_id', '=', $venueId);
+            })
+                ->where('from_date', '<=', $todate)
+                ->where('to_date', '>=', $fromdate);
+
+            if ($query->exists()) {
+                $schedules = $query->get();
+                foreach ($schedules as $schedule) {
+                    if ($schedule->topic_id == $topicId) {
+                        $conflicts['topic_id'] = 'The selected topic is already scheduled within this date range.';
+                    }
+                    if ($schedule->trainer_id == $trainerId) {
+                        $conflicts['trainer_id'] = 'The selected trainer is already scheduled within this date range.';
+                    }
+                    if ($schedule->unit_id == $unitId) {
+                        $conflicts['unit_id'] = 'The selected unit is already scheduled within this date range.';
+                    }
+                    if ($schedule->department_id == $departmentId) {
+                        $conflicts['department_id'] = 'The selected department is already scheduled within this date range.';
+                    }
+                    if ($schedule->venue_id == $venueId) {
+                        $conflicts['venue_id'] = 'The selected venue is already scheduled within this date range.';
+                    }
+                }
+            }
         }
-        return false;
+
+        return $conflicts;
     }
+
+    public function getExistUniqueSchedule($fromDate, $toDate, $topicId, $trainerId, $unitId, $departmentId, $venueId, $ids)
+    {
+        $fromdate = (new DateTime($fromDate))->format('Y-m-d');
+        $todate = (new DateTime($toDate))->format('Y-m-d');
+
+        $conflicts = [];
+
+        if ($fromdate && $todate) {
+            $query = TrainingSchedule::where(function ($query) use ($topicId, $trainerId, $unitId, $departmentId, $venueId, $fromdate, $todate, $ids) {
+                $query->where(function ($query) use ($topicId, $trainerId, $unitId, $departmentId, $venueId) {
+                    $query->where('topic_id', '=', $topicId)
+                        ->orWhere('trainer_id', '=', $trainerId)
+                        ->orWhere('unit_id', '=', $unitId)
+                        ->orWhere('department_id', '=', $departmentId)
+                        ->orWhere('venue_id', '=', $venueId);
+                })
+                ->where('from_date', '<=', $todate)
+                ->where('to_date', '>=', $fromdate)
+                ->where('id', '!=', $ids); // Exclude the current record
+            });
+
+            if ($query->exists()) {
+                $schedules = $query->get();
+                foreach ($schedules as $schedule) {
+                    if ($schedule->topic_id == $topicId) {
+                        $conflicts['topic_id'] = 'The selected topic is already scheduled within this date range.';
+                    }
+                    if ($schedule->trainer_id == $trainerId) {
+                        $conflicts['trainer_id'] = 'The selected trainer is already scheduled within this date range.';
+                    }
+                    if ($schedule->unit_id == $unitId) {
+                        $conflicts['unit_id'] = 'The selected unit is already scheduled within this date range.';
+                    }
+                    if ($schedule->department_id == $departmentId) {
+                        $conflicts['department_id'] = 'The selected department is already scheduled within this date range.';
+                    }
+                    if ($schedule->venue_id == $venueId) {
+                        $conflicts['venue_id'] = 'The selected venue is already scheduled within this date range.';
+                    }
+                }
+            }
+        }
+
+        return $conflicts;
+    }
+
+
+
+
 
     public function ExistuniqueCheck($data)
     {
@@ -143,9 +223,21 @@ class TrainingSchedule extends Model
             'unit_id' => decryptId($request->unit_id),
             'department_id' => decryptId($request->department_id),
             'target_trainees' => $request->target_trainees,
+            // 'training_status' => 1,
             'created_by' => Auth::id()
         );
         return $this->create($insert_array);
+    }
+    public function updateStatus($trainingScheduleId, $training_status)
+    {
+        $request = request();
+
+        $update_array = array(
+            'training_status' => $training_status,
+            'updated_by' => Auth::id(),
+            'updated_at' => now(),
+        );
+        return $this->where('id', $trainingScheduleId)->update($update_array);
     }
 
     public function updates($id)
@@ -280,7 +372,7 @@ class TrainingSchedule extends Model
     {
 
         $data = $this->select('training_schedule.*', 'masters_unit.unit_name', 'masters_employee.emp_name', 'masters_department.department_name', 'training_masters_topic.topic_name', 'training_masters_venue.name_of_the_conference_hall')->leftJoin('masters_unit', 'training_schedule.unit_id', '=', 'masters_unit.id')->leftJoin('training_masters_topic', 'training_schedule.topic_id', '=', 'training_masters_topic.id')->leftJoin('masters_department', 'training_schedule.department_id', '=', 'masters_department.id')->leftJoin('masters_employee', 'training_schedule.trainer_id', '=', 'masters_employee.id')->leftJoin('training_masters_venue', 'training_schedule.venue_id', '=', 'training_masters_venue.id')
-            ->where('training_schedule.id', $id)
+            ->where('training_schedule.id', $id)->where('training_schedule.status', 1)
             ->first();
 
         return $data;

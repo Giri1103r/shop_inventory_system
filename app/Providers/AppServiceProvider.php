@@ -67,8 +67,10 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_TRAINER') or define('ROLE_TRAINER', 8);
         defined('ROLE_HOD') or define('ROLE_HOD', 4);
         defined('ROLE_EHS_HEAD') or define('ROLE_EHS_HEAD', 6);
+        defined('ROLE_PLANT_HEAD') or define('ROLE_PLANT_HEAD', 7);
         defined('ROLE_STORE_MANAGER') or define('ROLE_STORE_MANAGER', 5);
         defined('ROLE_USER') or define('ROLE_USER', 9);
+
 
         defined('STATUS_HOD_APPROVAL_PENDING') or define('STATUS_HOD_APPROVAL_PENDING', 1);
         defined('STATUS_HOD_APPROVED') or define('STATUS_HOD_APPROVED', 2);
@@ -82,6 +84,16 @@ class AppServiceProvider extends ServiceProvider
 
         defined('CHEMICAL_DEPARTMENT') or define('CHEMICAL_DEPARTMENT', 53);
 
+
+
+        defined('STATUS_EHS_VERIFICATION_PENDING') or define('STATUS_EHS_VERIFICATION_PENDING', 1);
+        defined('STATUS_EHS_APPROVE_PENDING') or define('STATUS_EHS_APPROVE_PENDING', 2);
+        defined('STATUS_EHS_HOLD') or define('STATUS_EHS_HOLD', 3);
+        defined('STATUS_EHS_DECLINE') or define('STATUS_EHS_DECLINE', 4);
+        defined('STATUS_EHS_REASSIGN') or define('STATUS_EHS_REASSIGN', 5);
+        defined('STATUS_PLANT_HEAD_PENDING') or define('STATUS_PLANT_HEAD_PENDING', 6);
+        defined('STATUS_PLANT_HEAD_APPROVED') or define('STATUS_PLANT_HEAD_APPROVED', 7);
+        defined('STATUS_EHS_RESUME') or define('STATUS_EHS_RESUME', 8);
 
 
 

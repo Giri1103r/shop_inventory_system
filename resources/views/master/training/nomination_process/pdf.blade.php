@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Training Schedule PDF')
+@section('title', 'Nomination Process PDF')
 @section('content')
 
     <div style="width:100%;">
@@ -25,33 +25,27 @@
                             {{ $i }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydatetimeformat($value->from_date) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydatetimeformat($value->to_date) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->topic_name }}
+                            {{ $value->emp_id }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->emp_name }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->unit_name }}
+                            {{ $value->email }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->department_name }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->target_trainees }}
+                            {{ $value->employee_type }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->name_of_the_conference_hall }}
+                            {{ displayDateformat($value->last_training_attended_on) }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->training_man_hours ?? '-'}}
+                            {{ $value->topic_name }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>

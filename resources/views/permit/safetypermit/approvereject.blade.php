@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Permit Show')
+@section('title', '')
 @section('pageurl', admin_url('safetypermit/list'))
 
 
@@ -648,9 +648,451 @@
                             </div>
                         </div>
                     </div>
+                    @if ($safetypermit['permit_status'] == 1)
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="card-header-inner">
+                                    <h4 class="text-white">EHS Verification</h4>
+                                </div>
+                            </div>
+                            <div class="basic-form">
+                                <form method="POST" id="ehs_verification"
+                                    action="{{ admin_url('safetypermit/ehsverification/submit') }}"
+                                    enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="">
+                                        <input type="hidden" id= "permit_id" name="permit_id"
+                                            value="{{ $safetypermit->id }}">
+                                        <div class="mb-3 row">
+                                            <div class="col-md-4 mb-3">
+                                                <label for="approver_name" class="form-label">Approver Name</label>
+                                                <input type="text" class="form-control form-control-sm"
+                                                    name= "approver_name" id="approver_name" readonly
+                                                    value="{{ Auth::user()->name }}">
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label for="date" class="form-label">Date</label>
+                                                <input type="text" class="form-control form-control-sm"
+                                                    id="date" name="date" readonly
+                                                    value="{{ date('d-m-Y H:i:s') }}">
+                                            </div>
+                                            <div class="col-md-12 mb-3">
+                                                <div class="mb-1">
+                                                    <label for="remarks" class="form-label">Remarks</label>
+                                                    <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="ehs_verification_remarks"
+                                                        rows="3"></textarea>
+                                                    <div class="text-danger" id="remarks_error"></div>
+                                                    @error('remarks')
+                                                        <span id="remark_error"
+                                                            class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex float-end gap-2 mx-auto">
+                                        <button type="submit" name="verify" value="verify"
+                                            class="btn btn-success w-100">Verify</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    @else
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="card-header-inner">
+                                    <h4 class="text-white">EHS Verification</h4>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($getEhSverification->approve_reject_by) ? $getEhSverification->approve_reject_by : '' }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Date') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($getEhSverification->date) ? Displaydateformat($getEhSverification->date) : '' }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($getEhSverification->remarks) ? $getEhSverification->remarks : '' }}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    @endif
+
+
+                    @if ($safetypermit['permit_status'] == 2)
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="card-header-inner">
+                                    <h4 class="text-white">EHS Approval</h4>
+                                </div>
+                            </div>
+                            <div class="basic-form">
+                                <form method="POST" id="ehs_approval"
+                                    action="{{ admin_url('safetypermit/ehsapproval/submit') }}"
+                                    enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="">
+                                        <input type="hidden" id= "permit_id" name="permit_id"
+                                            value="{{ $safetypermit->id }}">
+                                        <div class="mb-3 row">
+                                            <div class="col-md-4 mb-3">
+                                                <label for="approver_name" class="form-label">Approver Name</label>
+                                                <input type="text" class="form-control form-control-sm"
+                                                    name= "approver_name" id="approver_name" readonly
+                                                    value="{{ Auth::user()->name }}">
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label for="date" class="form-label">Date</label>
+                                                <input type="text" class="form-control form-control-sm"
+                                                    id="date" name="date" readonly
+                                                    value="{{ date('d-m-Y H:i:s') }}">
+                                            </div>
+                                            <div class="col-md-4 mb-3 reassign-div" style = "display:none;">
+                                                <label for="reassign_to" class="form-label">Reassign To</label>
+                                                <select name="reassign_to" id="reassign_to"
+                                                    class="form-control reassign_to">
+                                                    <option value="">Select Person</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-12 mb-3">
+                                                <div class="mb-1">
+                                                    <label for="remarks" class="form-label">Remarks</label>
+                                                    <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="ehs_approval_remarks"
+                                                        rows="3"></textarea>
+                                                    <div class="text-danger" id="remarks_error"></div>
+                                                    @error('remarks')
+                                                        <span id="remark_error"
+                                                            class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+
+                                    @if ($safetypermit['permit_status'] == 3)
+                                        <div class="d-flex float-end gap-2 mx-auto">
+                                            <button type="submit" name="resume" value="resume"
+                                                class="btn btn-info w-100">Resume</button>
+                                        </div>
+                                    @else
+                                        <div class="d-flex float-end gap-2 mx-auto">
+                                            <button type="submit" name="hold" value="hold"
+                                                class="btn btn-info w-100">Hold</button>
+                                            <button type="submit" name="decline" value="decline"
+                                                class="btn btn-danger w-100">Decline</button>
+                                            <button type="submit" name="reassign" value="reassign"
+                                                class="btn btn-secondary w-100 reassign-btn">Reassign</button>
+                                            <button type="submit" name="forward" value="forward"
+                                                class="btn btn-success w-100">Forward</button>
+                                        </div>
+                                    @endif
+                                </form>
+                            </div>
+                        </div>
+                    @else
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="card-header-inner">
+                                    <h4 class="text-white">EHS Approval</h4>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($getEhsapproval->approve_reject_by) ? $getEhsapproval->approve_reject_by : '' }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Date') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($getEhsapproval->date) ? Displaydateformat($getEhsapproval->date) : '' }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($getEhsapproval->remarks) ? $getEhsapproval->remarks : '' }}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    @endif
+
+
+                    @if ($safetypermit['permit_status'] == 6)
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="card-header-inner">
+                                    <h4 class="text-white">Plant Head Approval</h4>
+                                </div>
+                            </div>
+                            <div class="basic-form">
+                                <form method="POST" id="planthead_approval"
+                                    action="{{ admin_url('safetypermit/plantheadapproval/submit') }}"
+                                    enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="">
+                                        <input type="hidden" id= "permit_id" name="permit_id"
+                                            value="{{ $safetypermit->id }}">
+                                        <div class="mb-3 row">
+                                            <div class="col-md-4 mb-3">
+                                                <label for="approver_name" class="form-label">Approver Name</label>
+                                                <input type="text" class="form-control form-control-sm"
+                                                    name= "approver_name" id="approver_name" readonly
+                                                    value="{{ Auth::user()->name }}">
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label for="date" class="form-label">Date</label>
+                                                <input type="text" class="form-control form-control-sm"
+                                                    id="date" name="date" readonly
+                                                    value="{{ date('d-m-Y H:i:s') }}">
+                                            </div>
+                                            <div class="col-md-12 mb-3">
+                                                <div class="mb-1">
+                                                    <label for="remarks" class="form-label">Remarks</label>
+                                                    <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks"
+                                                        name="planthead_approval_remarks" rows="3"></textarea>
+                                                    <div class="text-danger" id="remarks_error"></div>
+                                                    @error('remarks')
+                                                        <span id="remark_error"
+                                                            class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex float-end gap-2 mx-auto">
+                                        <button type="submit" name="approve" value="approve"
+                                            class="btn btn-info w-100">Approve</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    @else
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="card-header-inner">
+                                    <h4 class="text-white">EHS Approval</h4>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($getEhsapproval->approve_reject_by) ? $getEhsapproval->approve_reject_by : '' }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Date') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($getEhsapproval->date) ? Displaydateformat($getEhsapproval->date) : '' }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($getEhsapproval->remarks) ? $getEhsapproval->remarks : '' }}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    @endif
                 </div>
 
             </div>
+
         </div>
     </div>
 @stop
+
+@push('script')
+    <script>
+        $(document).ready(function() {
+            $('#ehs_verification').validate({
+                rules: {
+                    ehs_verification_remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 255,
+                        regex: /^[a-zA-Z0-9\s]+$/
+                    },
+                },
+                messages: {
+
+                    ehs_verification_remarks: {
+                        required: " Remarks cannot be empty.",
+                        minlength: "Remarks  must contain between 3 and 255 characters.",
+                        maxlength: "Remarks must contain between 3 and 255 characters.",
+                        regex: "Remarks must contain only letters and numbers."
+                    },
+                },
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    var errorDiv = element.siblings('div.text-danger');
+                    errorDiv.html(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    $('#submit').prop('disabled', true);
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log(errors + " field(s) are invalid");
+                    validator.errorList.forEach(function(error) {
+                        console.log("Field: " + error.element.name + ", Error: " + error
+                            .message);
+                    });
+                }
+            });
+
+            $.validator.addMethod("regex", function(value, element, regexp) {
+                return this.optional(element) || regexp.test(value);
+            }, "Please check your input.");
+
+
+            $('.reassign-btn').on('click', function() {
+
+                $('.reassign-div').show();
+            });
+
+
+            $('#ehs_approval').validate({
+                rules: {
+                    ehs_approval_remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 255,
+                        regex: /^[a-zA-Z0-9\s]+$/
+                    },
+                },
+                messages: {
+
+                    ehs_approval_remarks: {
+                        required: " Remarks cannot be empty.",
+                        minlength: "Remarks  must contain between 3 and 255 characters.",
+                        maxlength: "Remarks must contain between 3 and 255 characters.",
+                        regex: "Remarks must contain only letters and numbers."
+                    },
+                },
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    var errorDiv = element.siblings('div.text-danger');
+                    errorDiv.html(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    $('#submit').prop('disabled', true);
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log(errors + " field(s) are invalid");
+                    validator.errorList.forEach(function(error) {
+                        console.log("Field: " + error.element.name + ", Error: " + error
+                            .message);
+                    });
+                }
+            });
+            $('#reassign_to').select2({
+                ajax: {
+                    url: '{{ admin_url('safetypermit/employeename') }}',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.id,
+                                    text: item.text
+                                };
+                            })
+                        };
+                    }
+                },
+                minimumInputLength: 1,
+                dropdownCssClass: 'form-control',
+                selectionCssClass: 'form-control',
+                width: '100%'
+            });
+
+
+            $('#planthead_approval').validate({
+                rules: {
+                    planthead_approval_remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 255,
+                        regex: /^[a-zA-Z0-9\s]+$/
+                    },
+                },
+                messages: {
+
+                    planthead_approval_remarks: {
+                        required: " Remarks cannot be empty.",
+                        minlength: "Remarks  must contain between 3 and 255 characters.",
+                        maxlength: "Remarks must contain between 3 and 255 characters.",
+                        regex: "Remarks must contain only letters and numbers."
+                    },
+                },
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    var errorDiv = element.siblings('div.text-danger');
+                    errorDiv.html(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    $('#submit').prop('disabled', true);
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log(errors + " field(s) are invalid");
+                    validator.errorList.forEach(function(error) {
+                        console.log("Field: " + error.element.name + ", Error: " + error
+                            .message);
+                    });
+                }
+            });
+        });
+    </script>
+@endpush

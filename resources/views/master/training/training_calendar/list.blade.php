@@ -57,6 +57,10 @@
 
 
 @push('script')
+    <!--calender-->
+    <script src="{{ public_plugins('fullcalendar/locales-all.min.js') }}"></script>
+    <script src="{{ public_plugins('fullcalendar/main.min.js') }}"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const calendarEl = document.getElementById('calendar');
@@ -103,6 +107,7 @@
                     const editUrl = `{{ url('training_schedule/edit/') }}/${info.event.id}`;
                     window.location.href = editUrl;
                 },
+             
             });
 
             calendar.render();

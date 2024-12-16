@@ -456,8 +456,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/add/submit', [TrainingScheduleController::class, 'store']);
                 Route::get('/edit/{id}', [TrainingScheduleController::class, 'edit']);
                 Route::post('/edit/submit', [TrainingScheduleController::class, 'update']);
-                Route::get('/view/{id}', [TrainingScheduleController::class, 'nominationProcess']);
-                Route::post('/delete', [TrainingScheduleController::class, 'delete'])->middleware('role:company,delete');
+                Route::get('/view/{id}', [TrainingScheduleController::class, 'view']);
                 Route::get('/export/excel', [TrainingScheduleController::class, 'exportExcel']);
                 Route::get('/export/pdf', [TrainingScheduleController::class, 'exportPdf']);
                 Route::get('/sampledownload', [TrainingScheduleController::class, 'DownloadSample']);
@@ -465,6 +464,14 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/submit', [TrainingScheduleController::class, 'importSubmit']);
                 Route::post('/status', [TrainingScheduleController::class, 'statusChange']);
                 Route::get('/topic/ajax-list', [TrainingScheduleController::class, 'Uniquecheck']);
+                Route::get('/nominationProcess/{id}', [TrainingScheduleController::class, 'nominationProcess']);
+                Route::post('/delete', [TrainingScheduleController::class, 'delete']);
+                Route::get('/start/{id}', [TrainingScheduleController::class, 'startTraining']);
+                Route::get('/end/{id}', [TrainingScheduleController::class, 'endTraining']);
+                Route::get('/attendance/{id}', [TrainingScheduleController::class, 'attendance']);
+                Route::post('/attendance/submit', [TrainingScheduleController::class, 'storeAttendance']);
+                Route::post('/attendance/unique', [TrainingScheduleController::class, 'checkUniqueAttendanceDate']);
+
 
             });
 
@@ -486,10 +493,7 @@ Route::middleware(['securityheader'])->group(function () {
             Route::group(['prefix' => 'nomination_process'], function () {
                 Route::get('/list', [NominationProcessController::class, 'index']);
                 Route::post('/list', [NominationProcessController::class, 'index']);
-                Route::get('/add', [NominationProcessController::class, 'add']);
                 Route::post('/add/submit', [NominationProcessController::class, 'store']);
-                Route::get('/edit/{id}', [NominationProcessController::class, 'edit']);
-                Route::post('/edit/submit', [PrecautionController::class, 'update']);
                 Route::get('/export/excel', [NominationProcessController::class, 'exportExcel']);
                 Route::get('/export/pdf', [NominationProcessController::class, 'exportPdf']);
                 Route::get('/sampledownload', [NominationProcessController::class, 'DownloadSample']);
@@ -497,8 +501,13 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/submit', [NominationProcessController::class, 'importSubmit']);
                 Route::post('/status', [NominationProcessController::class, 'statusChange']);
                 Route::post('/unique', [NominationProcessController::class, 'Uniquecheck']);
+                Route::delete('/delete/{id}', [NominationProcessController::class, 'delete']);
+                Route::get('/view/{id}', [NominationProcessController::class, 'view']);
                 Route::get('fetchEmployeeDetails/{emp_id}', [NominationProcessController::class, 'fetchEmployeeDetails']);
             });
+
+      
+
             Route::group(['prefix' => 'ptw/precautionmaster'], function () {
                 Route::get('/list', [PrecautionController::class, 'index']);
                 Route::post('/list', [PrecautionController::class, 'index']);
@@ -641,8 +650,10 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/status', [SafetyPermitController::class, 'statusChange']);
                 Route::post('/delete', [SafetyPermitController::class, 'delete']);
                 Route::get('/view/{id}', [SafetyPermitController::class, 'view']);
-                Route::post('/approvereject/submit', [SafetyPermitController::class, 'ApprovalReject']);
-                Route::get('/hodapproval/view/{id}', [PpeRequestController::class, 'hodApprovalview']);
+                Route::get('/approvereject/{id}', [SafetyPermitController::class, 'approvereject']);
+                Route::post('/ehsverification/submit', [SafetyPermitController::class, 'ehsverification']);
+                Route::post('/ehsapproval/submit', [SafetyPermitController::class, 'ehsapproval']);
+                Route::post('/plantheadapproval/submit', [SafetyPermitController::class, 'plantheadapproval']);
                 Route::get('/edit/{id}', [SafetyPermitController::class, 'edit']);
                 Route::post('/edit/submit', [SafetyPermitController::class, 'update']);
                 Route::get('/export/excel', [SafetyPermitController::class, 'exportExcel']);
