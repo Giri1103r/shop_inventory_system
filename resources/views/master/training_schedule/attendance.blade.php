@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Training Schedule Show')
+@section('title', 'Training Attendance')
 @section('pageurl', admin_url('training_schedule/list'))
 
 

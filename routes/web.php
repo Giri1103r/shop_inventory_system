@@ -471,6 +471,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/attendance/{id}', [TrainingScheduleController::class, 'attendance']);
                 Route::post('/attendance/submit', [TrainingScheduleController::class, 'storeAttendance']);
                 Route::post('/attendance/unique', [TrainingScheduleController::class, 'checkUniqueAttendanceDate']);
+                Route::post('/nomination_process/unique', [TrainingScheduleController::class, 'checkUniqueNomination']);
+                Route::get('/pdf/{id}', [TrainingScheduleController::class, 'exportViewPdf']);
 
 
             });

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Shoe Exemption Show')
+@section('title', 'PPE Shoe Exemption View')
 @section('pageurl', admin_url('ppe_exemption/list'))
 
 
@@ -90,7 +90,7 @@
                                             {{ displayDateformat($ppeexemption->created_at) }}
                                         </div>
                                     </div>
-                                  
+
                                     <div class="mb-3 col-md-12 form-input">
                                         <label class="form-label view_label">{{ __('Reason') }}</label>
                                         <div class="view_data">
@@ -133,9 +133,9 @@
                                                                         <span class='badge bg-warning'>EHS Approval
                                                                             Pending</span>
                                                                     @elseif ($log['to_status'] == STATUS_EHS_APPROVED)
-                                                                        <span class='badge bg-success'>EHS Approved</span>
+                                                                        <span class='badge bg-success'>EHS Head Approved</span>
                                                                     @elseif ($log['to_status'] == STATUS_EHS_REJECTED)
-                                                                        <span class='badge bg-danger'>EHS Rejected</span>
+                                                                        <span class='badge bg-danger'>EHS  Head Rejected</span>
                                                                     @endif
                                                                 </td>
                                                                 <td>{{ getUsername($log['created_by']) }}</td>

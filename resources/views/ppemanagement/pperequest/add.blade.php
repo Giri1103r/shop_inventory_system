@@ -110,7 +110,7 @@
                                         <div class="submit-button float-end">
                                             <x-button-submit class="submit" id="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
-                                            <x-button-cancel href="{{ admin_url('ppe_type/list') }}"></x-button-cancel>
+                                            <x-button-cancel href="{{ admin_url('ppe_request/list') }}"></x-button-cancel>
                                         </div>
                                     </form>
                                 </div>
@@ -149,7 +149,7 @@
                 if (data.length > 0) {
                     let ppeType = data[0].ppe_type;
                     let ppeName = data[0].ppe_name;
-                    let ppeTypeId = data[0].ppe_type_id; 
+                    let ppeTypeId = data[0].ppe_type_id;
                     let ppeMasterId = data[0].ppe_master_id;
 
                     $('#ppe_type').val(ppeType);

@@ -86,7 +86,6 @@ class NotificationController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
                     dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
