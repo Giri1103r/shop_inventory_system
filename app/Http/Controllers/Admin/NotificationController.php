@@ -78,12 +78,13 @@ class NotificationController extends Controller
                             'web_link',
                         ])
                         ->rawColumns(['action'])
-                        ->setFilteredRecords($data['filter_records'])
+                        // ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }

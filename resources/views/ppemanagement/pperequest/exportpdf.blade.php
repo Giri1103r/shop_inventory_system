@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>PPE Request |  KARAM</title>
+    <title>PPE Request | KARAM</title>
 
     <style>
         .badge {
@@ -159,7 +159,7 @@
             <div style="width:100%;">
                 <table style="width:100%;">
                     <tr>
-                        <td class="header-cell">HOD Approval</td>
+                        <td class="header-cell">Approval Status</td>
                     </tr>
                 </table>
             </div>
@@ -169,7 +169,7 @@
                     <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{ getUsername(isset($pperequest->approved_by) ? $pperequest->approved_by : '') }}</td>
+                        {{ isset($ppestatuslog->created_by) ? getUsername($ppestatuslog->created_by) : '' }}</td>
                 </tr>
                 <tr>
                     <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
@@ -181,109 +181,61 @@
                     <td width="50%" style="padding:5px;"><b>Approve Status</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{ removeUnderScore(getStatus(isset($pperequest->approve_status) ? $pperequest->approve_status : '')) }}
+                        {{ removeUnderScore(getStatus(isset($ppestatuslog->to_status) ? $ppestatuslog->to_status : '')) }}
                     </td>
                 </tr>
                 <tr>
                     <td width="50%" style="padding:5px;"><b>Reason</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{ isset($pperequest->approve_msg) ? $pperequest->approve_msg : '' }}</td>
+                        {{ isset($ppestatuslog->remarks) ? $ppestatuslog->remarks : '' }}</td>
                 </tr>
             </table>
             <br>
         </div>
     @endif
     <br>
-    @if (
-        $pperequest->approve_status != STATUS_HOD_APPROVAL_PENDING &&
-            $pperequest->ehs_approve_status != STATUS_EHS_APPROVAL_PENDING)
+
+    @if ($pperequest->approve_status != STATUS_HOD_APPROVAL_PENDING)
         <div>
             <div style="width:100%;">
                 <table style="width:100%;">
                     <tr>
-                        <td class="header-cell">EHS Approval</td>
+                        <td class="header-cell">Previous History</td>
                     </tr>
                 </table>
             </div>
             <br>
-            <table>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ getUsername(isset($pperequest->ehs_approved_by) ? $pperequest->ehs_approved_by : '') }}</td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ displaydateformat(isset($pperequest->ehs_approved_at) ? $pperequest->ehs_approved_at : '') }}
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Approve Status</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ removeUnderScore(getStatus(isset($pperequest->ehs_approve_status) ? $pperequest->ehs_approve_status : '')) }}
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Reason</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ isset($pperequest->remarks) ? $pperequest->remarks : '' }}</td>
-                </tr>
+            <table class="table table-bordered table-hover tblborder ">
+                <thead>
+                    <tr>
+                        <th>Employee Name</th>
+                        <th>Employee Id</th>
+                        <th>Previous applied Date</th>
+                        <th>Approval</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if ($userdata->isEmpty())
+                        <tr>
+                            <td class="text-center" colspan="6">No data is available</td>
+                        </tr>
+                    @else
+                        @foreach ($userdata as $data)
+                            <tr class="hover-row">
+                                <td>{{ $data['emp_name'] }}</td>
+                                <td>{{ $data['emp_id'] }}</td>
+                                <td>{{ displaydateformat($data['created_at']) }}</td>
+                                <td>{{ removeUnderScore(getStatus($data['approve_status'])) }}</td>
+                                <td>{{ $data['remarks'] }}</td>
+                            </tr>
+                        @endforeach
+                    @endif
+                </tbody>
             </table>
-            <br>
-
         </div>
     @endif
-    <br>
-    @if (
-        $pperequest->approve_status != STATUS_HOD_APPROVAL_PENDING &&
-            $pperequest->ehs_approve_status != STATUS_EHS_APPROVAL_PENDING)
-    <div>
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td class="header-cell">Previous History</td>
-                </tr>
-            </table>
-        </div>
-        <br>
-        <table class="table table-bordered table-hover tblborder ">
-            <thead>
-                <tr>
-                    <th>Employee Name</th>
-                    <th>Employee Id</th>
-                    <th>Previous applied Date</th>
-                    <th>HOD Approve status</th>
-                    <th>Ehs Approve status</th>
-                    <th>Remarks</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if ($userdata->isEmpty())
-                    <tr>
-                        <td class="text-center" colspan="6">No data is available</td>
-                    </tr>
-                @else
-                    @foreach ($userdata as $data)
-                        <tr class="hover-row">
-                            <td>{{ $data['emp_name'] }}</td>
-                            <td>{{ $data['emp_id'] }}</td>
-                            <td>{{ displaydateformat($data['created_at']) }}</td>
-                            <td>{{ removeUnderScore(getStatus($data['approve_status'])) }}</td>
-                            <td>{{ removeUnderScore(getStatus($data['ehs_approve_status'])) }}</td>
-                            <td>{{ $data['remarks'] }}</td>
-                        </tr>
-                    @endforeach
-                @endif
-            </tbody>
-        </table>
-    </div>
-@endif
     <br>
 
 </body>

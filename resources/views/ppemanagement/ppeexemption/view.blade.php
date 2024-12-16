@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Shoe Exemption Show')
+@section('title', 'PPE Shoe Exemption View')
 @section('pageurl', admin_url('ppe_exemption/list'))
 
 
@@ -90,7 +90,7 @@
                                             {{ displayDateformat($ppeexemption->created_at) }}
                                         </div>
                                     </div>
-                                  
+
                                     <div class="mb-3 col-md-12 form-input">
                                         <label class="form-label view_label">{{ __('Reason') }}</label>
                                         <div class="view_data">
