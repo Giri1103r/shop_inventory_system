@@ -664,6 +664,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/getchecklist/{workId}', [SafetyPermitController::class, 'getchecklist']);
                 Route::get('/getinstruction/{workId}', [SafetyPermitController::class, 'getinstruction']);
                 Route::get('/employeename', [SafetyPermitController::class, 'employeename']);
+                Route::get('/reassignemployeename', [SafetyPermitController::class, 'reassignemployeename']);
                 Route::get('/employeeid', [SafetyPermitController::class, 'employeeid']);
                 Route::get('fetchEmployeeDetails/{emp_id}', [SafetyPermitController::class, 'fetchEmployeeDetails']);
 

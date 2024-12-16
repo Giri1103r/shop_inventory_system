@@ -648,6 +648,105 @@
                             </div>
                         </div>
                     </div>
+
+                    @if($safetypermit['permit_status'] >= 2)
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="card-header-inner">
+                                    <h4 class="text-white">EHS Verification</h4>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($getEhSverification->approve_reject_by) ? $getEhSverification->approve_reject_by : '' }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Date') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($getEhSverification->date) ? Displaydateformat($getEhSverification->date) : '' }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($getEhSverification->remarks) ? $getEhSverification->remarks : '' }}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    @endif
+
+                    @if (
+                        $safetypermit['permit_status'] != 8 &&
+                            $safetypermit['permit_status'] != 5 &&
+                            ($safetypermit['permit_status'] > 3 || $safetypermit['permit_status'] > 4))
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="card-header-inner">
+                                    <h4 class="text-white">EHS Approval</h4>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($getEhsapproval->approve_reject_by) ? $getEhsapproval->approve_reject_by : '' }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Date') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($getEhsapproval->date) ? Displaydateformat($getEhsapproval->date) : '' }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($getEhsapproval->remarks) ? $getEhsapproval->remarks : '' }}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    @endif
+
+                    @if ($safetypermit['permit_status'] >= 7 && $safetypermit['permit_status'] != 8)
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="card-header-inner">
+                                    <h4 class="text-white">Plant Head Approval</h4>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($getplantheadapproval->approve_reject_by) ? $getplantheadapproval->approve_reject_by : '' }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Date') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($getplantheadapproval->date) ? Displaydateformat($getplantheadapproval->date) : '' }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($getplantheadapproval->remarks) ? $getplantheadapproval->remarks : '' }}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    @endif
                 </div>
 
             </div>

@@ -100,6 +100,12 @@ class SafetyPermitController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
+                        ->addColumn('verified_by', function ($row) {
+                            return getUsername($row->verified_by);
+                        })
+                        ->addColumn('approved_by', function ($row) {
+                            return getUsername($row->approved_by);
+                        })
                         ->addColumn('action', function ($row) {
                             $btn = '';
 
@@ -116,7 +122,7 @@ class SafetyPermitController extends Controller
                             $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="' . __('common.delete') . '"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'status_batch'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'status_batch', 'verified_by', 'approved_by'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -174,8 +180,67 @@ class SafetyPermitController extends Controller
 
             try {
 
-                $safetpermit =   $this->safetypermit->store();
-                $WorkmanInvolved =   $this->workmaninvolved->store($safetpermit->id);
+                $safetypermit =   $this->safetypermit->store();
+                $WorkmanInvolved =   $this->workmaninvolved->store($safetypermit->id);
+
+                $permit_status =  1;
+                $mailsubject = 'Safety Permit has been submitted';
+                $user_role = ROLE_EHS_OFFICER;
+
+                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+
+                if (count($users) > 0) {
+
+                    foreach ($users as $user) {
+
+                        $email_id = $user->email;
+
+                        if ($email_id != '' || $email_id != null) {
+                            $safetypermitdetails =  $this->safetypermit->selectmail($safetypermit->id);
+                            $permitrray  = $safetypermitdetails->toArray();
+
+                            $permitrray['name'] = $user->name;
+                            $permitrray['email_id'] =  $email_id;
+                            $permitrray['mail_subject'] = $mailsubject;
+
+                            Mail::to($permitrray['email_id'])->queue(new SafetyPermitEmail($permitrray));
+                        }
+                    }
+                }
+
+
+                /**
+                 * Send Web notification
+                 */
+
+                $notificationData = array(
+                    'notification_type' => 1,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => 'Safety Permit ' . $safetypermit->permit_id . ' submitted by ' . getUsername($safetypermit->created_by),
+                        'icon' => 'public/assets/images/icon/permit_to_work.png',
+                        'id' => $safetypermit->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('safetypermit/view/' . encryptId($safetypermit->id)),
+                    'assigned_user' => array_to_string($userids),
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+
+                $insert_array = array(
+                    'permit_type' => 0,
+                    'permit_id' => $safetypermit->id,
+                    'from_status' => 0,
+                    'to_status' => $permit_status,
+                    'is_reject' => null,
+                    'remarks' => null,
+                    'approved_by' => Auth::id(),
+                );
+                $this->statuslog->create($insert_array);
 
                 Session::flash('success', __('Your data has been creted successfully'));
 
@@ -200,11 +265,18 @@ class SafetyPermitController extends Controller
                 $workmaninvolved = $this->safetypermit->workmaninvolved($id);
                 $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto);
                 $confined_space_entry = json_decode($safetypermit->confined_space_entry);
+
+                $getEhSverification =   $this->approvereject->getEhSverification($id);
+                $getEhsapproval =   $this->approvereject->getEhsapproval($id);
+                $getplantheadapproval =   $this->approvereject->getplantheadapproval($id);
                 $data = array(
                     'safetypermit' => $safetypermit,
                     'stateIsolationLoto' => $stateIsolationLoto,
                     'confined_space_entry' => $confined_space_entry,
                     'workmaninvolved' => $workmaninvolved,
+                    'getEhSverification' => $getEhSverification,
+                    'getEhsapproval' => $getEhsapproval,
+                    'getplantheadapproval' => $getplantheadapproval,
 
                 );
             }
@@ -378,6 +450,7 @@ class SafetyPermitController extends Controller
 
                 $getEhSverification =   $this->approvereject->getEhSverification($id);
                 $getEhsapproval =   $this->approvereject->getEhsapproval($id);
+                $getplantheadapproval =   $this->approvereject->getplantheadapproval($id);
                 $data = array(
                     'safetypermit' => $safetypermit,
                     'stateIsolationLoto' => $stateIsolationLoto,
@@ -385,6 +458,7 @@ class SafetyPermitController extends Controller
                     'workmaninvolved' => $workmaninvolved,
                     'getEhSverification' => $getEhSverification,
                     'getEhsapproval' => $getEhsapproval,
+                    'getplantheadapproval' => $getplantheadapproval,
 
                 );
             }
@@ -491,15 +565,18 @@ class SafetyPermitController extends Controller
             if ($request->has('hold')) {
                 $permit_status = STATUS_EHS_HOLD;
             } elseif ($request->has('resume')) {
+
                 $permit_status = STATUS_EHS_RESUME;
             } elseif ($request->has('decline')) {
                 $permit_status = STATUS_EHS_DECLINE;
             } elseif ($request->has('reassign')) {
                 $permit_status = STATUS_EHS_REASSIGN;
             } elseif ($request->has('forward')) {
+
                 $permit_status = STATUS_PLANT_HEAD_PENDING;
             }
 
+            // dd($request);
             $approve =   $this->approvereject->ehsapproval($permit_status);
             if ($request->has('reassign')) {
                 $this->safetypermit->reassignto($approve->created_by, $id);
@@ -509,7 +586,8 @@ class SafetyPermitController extends Controller
             $this->safetypermit->permitstatus($permit_status, $id);
 
 
-            if ($permit_status = STATUS_EHS_HOLD) {
+            if ($request->has('hold')) {
+
                 $mailsubject = 'EHS Holded the permit';
                 $Assignedusers = User::whereRaw('id', $safetypermit->resume_hold_by)
                     ->orWhere('id', $safetypermit->created_by)
@@ -556,17 +634,13 @@ class SafetyPermitController extends Controller
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
-            } elseif ($permit_status = STATUS_EHS_RESUME) {
+            } elseif ($request->has('resume')) {
                 $mailsubject = 'EHS Resumed the permit';
-                $Assignedusers = User::whereRaw('id', $safetypermit->resume_hold_by)
-                ->orWhere('id', $safetypermit->created_by)
-                ->select('name', 'email')
-                ->get()
-                ->unique('email');
-                $UserId =  User::whereRaw('id', $safetypermit->resume_hold_by)->pluck('id')->toArray();
-                $assigned_user = array_merge([$safetypermit->created_by], $UserId);
-                $assigned_user = array_unique($assigned_user);
-
+                $assigned_user_ids = [$safetypermit->resume_hold_by, $safetypermit->created_by];
+                $Assignedusers = User::whereIn('id', $assigned_user_ids)
+                    ->select('name', 'email')
+                    ->get()
+                    ->unique('email');
 
                 if (count($Assignedusers) > 0) {
 
@@ -587,6 +661,9 @@ class SafetyPermitController extends Controller
                         }
                     }
                 }
+                $UserId =  User::where('id', $safetypermit->resume_hold_by)->pluck('id')->toArray();
+                $assigned_user = array_merge([$safetypermit->created_by], $UserId);
+                $assigned_user = array_unique($assigned_user);
 
                 $notificationData = array(
                     'notification_type' => 1,
@@ -604,7 +681,7 @@ class SafetyPermitController extends Controller
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
-            } elseif ($permit_status = STATUS_EHS_DECLINE) {
+            } elseif ($request->has('decline')) {
                 $mailsubject = 'EHS declined the permit';
                 $notifywhere = array(
                     'id' => $safetypermit->created_by,
@@ -653,7 +730,7 @@ class SafetyPermitController extends Controller
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
-            } elseif ($permit_status = STATUS_EHS_REASSIGN) {
+            } elseif ($request->has('reassign')) {
                 $mailsubject = 'EHS Re-assigned the permit';
                 $notifywhere = array(
                     'id' => $request->reassign_to,
@@ -702,7 +779,8 @@ class SafetyPermitController extends Controller
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
-            } elseif ($permit_status = STATUS_PLANT_HEAD_PENDING) {
+            } elseif ($request->has('forward')) {
+                // dd('STATUS_PLANT_HEAD_PENDING', $request);
                 $mailsubject = 'EHS Approved';
                 $user_role = ROLE_PLANT_HEAD;
 
@@ -754,15 +832,13 @@ class SafetyPermitController extends Controller
                 notificationSave($notificationData);
             }
 
-
-
             $insert_array = array(
                 'permit_type' => 2,
                 'permit_id' => $id,
                 'from_status' => 2,
                 'to_status' => $permit_status,
                 'is_reject' => null,
-                'remarks' => $request->ehs_aaproval_remarks,
+                'remarks' => $request->ehs_approval_remarks,
                 'approved_by' => Auth::id(),
             );
             $this->statuslog->create($insert_array);
@@ -1152,6 +1228,24 @@ class SafetyPermitController extends Controller
             $employees->map(function ($employee) {
                 return [
                     'id' => $employee->id,
+                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+                ];
+            })
+        );
+    }
+    public function reassignemployeename(Request $request)
+    {
+        $name = $request->input('search');
+
+        $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->whereRaw("FIND_IN_SET(?, user_role)", 3)
+            ->limit(10)
+            ->get();
+        return response()->json(
+            $employees->map(function ($employee) {
+                return [
+                    'id' => $employee->login_id,
                     'text' => $employee->emp_name . ' - ' . $employee->emp_id,
                 ];
             })

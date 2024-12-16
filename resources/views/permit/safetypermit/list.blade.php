@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Request')
+@section('title', 'Safety Permit')
 @section('pageurl', admin_url('ppe_request/list'))
 @section('content')
     <div class="container-fluid">
