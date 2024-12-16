@@ -95,41 +95,44 @@
                                 </div>
                                 <div class="row mt-2">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">HOD Approval </h4>
+                                        <h4 class="text-white">Previous History</h4>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="">Approval Status</label>
-                                        <div class="view_data mt-2">
-                                            @if ($pperequest->approve_status == STATUS_HOD_APPROVAL_PENDING)
-                                                <span class='badge bg-info' style='font: size 0.5em;'>HOD Approval Pending</span>
-                                            @elseif ($pperequest->approve_status == STATUS_HOD_APPROVED)
-                                                <span class='badge bg-success' style='font: size 0.5em;'>HOD Approved</span>
-                                            @elseif ($pperequest->approve_status == STATUS_HOD_REJECTED)
-                                                <span class='badge bg-danger' style='font: size 0.5em;'>HOD Rejected</span>
+
+                                <div class="col-md-12">
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Employee Name</th>
+                                                <th>Employee Id</th>
+                                                <th>Previous applied Date</th>
+                                                <th>Approval Status</th>
+                                                <th>Remarks</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (!($userdata))
+                                                <tr>
+                                                    <td class="text-center" colspan="6">No data is available</td>
+                                                </tr>
+                                            @else
+                                                {{-- @foreach ($userdata as $data) --}}
+                                                    <tr class="hover-row">
+                                                        <td>{{ $userdata->emp_name }}</td>
+                                                        <td>{{ $userdata->emp_id }}</td>
+                                                        <td>{{ displaydateformat($userdata->created_at) }}</td>
+                                                        <td>{{ removeUnderScore(getStatus($userdata->approve_status)) }}</td>
+                                                        {{-- <td>{{ removeUnderScore(getStatus($data['ehs_approve_status'])) }} --}}
+                                                        </td>
+                                                        <td>{{ $userdata->remarks }}</td>
+                                                    </tr>
+                                                {{-- @endforeach --}}
                                             @endif
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4  form-input">
-                                        <label class="form-label view_label">{{ __('Approver Name') }}</label>
-                                        <div class="view_data">
-                                            {{ getUsername(isset($pperequest->approved_by) ? $pperequest->approved_by : '') }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Aprroved Date') }}</label>
-                                        <div class="view_data">
-                                            {{ displayDateformat($pperequest->created_at) }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Remarks') }}</label>
-                                        <div class="view_data">
-                                            {{ $pperequest->approve_msg }}
-                                        </div>
-                                    </div>
+                                        </tbody>
+                                    </table>
+
                                 </div>
+
                                 <div class="row mt-2">
                                     <div class="card-header-inner">
                                         <h4 class="text-white">EHS Approval </h4>

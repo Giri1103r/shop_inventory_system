@@ -270,6 +270,14 @@ class PpeRequest extends Model
 
         return PpeRequest::where('emp_id',$userId)->where('approve_status', '!=',STATUS_HOD_APPROVAL_PENDING)->where('approve_status','!=',STATUS_EHS_APPROVAL_PENDING)->get();
     }
+
+    public function getuserdata($id)
+    {
+
+
+        return PpeRequest::where('id',$id)->orderBy('id','DESC')->first();
+    }
+
     public function exportdata()
     {
         $request = request();

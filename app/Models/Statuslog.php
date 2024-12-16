@@ -117,6 +117,12 @@ class Statuslog extends Model
         return $data;
     }
 
+    public function statuslogdetails( $id){
+        $data = Statuslog::where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)->latest('id')->first();
+        return $data;
+    }
+
+
     public function getexemptionstatusdetails($id)
     {
         $data = Statuslog::where('reference_id', $id)->where('type', TYPE_PPE_EXEMPTION)->get();

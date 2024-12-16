@@ -204,7 +204,7 @@ class PpeRequestController extends Controller
                     $RequestDate = Carbon::parse($chemicaldepartment->created_at)->addMonths(6);
                     $currentDate = Carbon::now();
 
-                    if (!$RequestDate->lt($currentDate)) {
+                    if ($RequestDate->lt($currentDate)) {
                         Session::flash('error', __('PPE Request is not allowed within six months'));
                         return redirect(admin_url('ppe_request/list'));
                     }
@@ -214,7 +214,7 @@ class PpeRequestController extends Controller
                     $lastRequestDate = Carbon::parse($lastPPERequest->created_at)->addYear();
                     $currentDate = Carbon::now();
 
-                    if (!$lastRequestDate->lt($currentDate)) {
+                    if ($lastRequestDate->lt($currentDate)) {
                         Session::flash('error', __('PPE Request is not allowed within one year'));
                         return redirect(admin_url('ppe_request/list'));
                     }
@@ -273,14 +273,14 @@ class PpeRequestController extends Controller
                 Session::flash('success', __('Your data has been created successfully!'));
                 return redirect(admin_url('ppe_request/list'));
             } catch (Exception $ex) {
-                  report($ex)
+                  dd($ex)
 
 ;
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
                 return redirect(admin_url('ppe_request/list'));
             }
         } catch (Exception $ex) {
-             report($ex)
+             dd($ex)
 ;
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
@@ -477,7 +477,7 @@ class PpeRequestController extends Controller
             Session::flash('success', 'PPE Request has successfully responded');
             return redirect()->to(admin_url('ppe_request/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect()->to(admin_url('ppe_request/list'));
         }
@@ -492,11 +492,12 @@ class PpeRequestController extends Controller
             if (Auth::check()) {
                 $pperequest = $this->pperequest->selectOne($id);
             }
-
+            $userdata = $this->pperequest->getuserdata($id);
 
             $data = [
                 'pperequest' =>  $pperequest,
                 'encryptid' => $request->id,
+                'userdata' => $userdata,
             ];
             return view('ppemanagement.pperequest.ehsapproval', $data);
         } catch (Exception $ex) {
@@ -618,8 +619,8 @@ class PpeRequestController extends Controller
             Session::flash('success', 'PPE Request has successfully responded');
             return redirect()->to(admin_url('ppe_request/list'));
         } catch (Exception $ex) {
-            report($ex);
-            report($ex);
+            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after some time!');
             return redirect()->to(admin_url('ppe_request/list'));
         }
