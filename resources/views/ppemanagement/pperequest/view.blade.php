@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Shoe Request Show')
+@section('title', 'PPE Shoe Request View')
 @section('pageurl', admin_url('ppe_request/list'))
 
 
@@ -106,8 +106,7 @@
                                                 <th>Employee Name</th>
                                                 <th>Employee Id</th>
                                                 <th>Previous applied Date</th>
-                                                <th>HOD Approve status</th>
-                                                <th>Ehs Approve status</th>
+                                                <th>Approval Status</th>
                                                 <th>Remarks</th>
                                             </tr>
                                         </thead>
@@ -123,7 +122,7 @@
                                                         <td>{{ $data['emp_id'] }}</td>
                                                         <td>{{ displaydateformat($data['created_at']) }}</td>
                                                         <td>{{ removeUnderScore(getStatus($data['approve_status'])) }}</td>
-                                                        <td>{{ removeUnderScore(getStatus($data['ehs_approve_status'])) }}
+                                                        {{-- <td>{{ removeUnderScore(getStatus($data['ehs_approve_status'])) }} --}}
                                                         </td>
                                                         <td>{{ $data['remarks'] }}</td>
                                                     </tr>

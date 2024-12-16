@@ -50,6 +50,7 @@ class SafetyPermit extends Model
         'assigned_job',
         'attendance_toolbox_talk',
         'verified_by',
+        'resume_hold_by',
         'reassign_to',
         'approved_by',
         'permit_status',
@@ -281,6 +282,15 @@ class SafetyPermit extends Model
         ];
 
         return $this->where('id', $id)->update($verifiedby);
+    }
+    public function resume_hold($resume_hold_by, $id)
+    {
+
+        $resume_hold_by = [
+            'resume_hold_by' => $resume_hold_by,
+        ];
+
+        return $this->where('id', $id)->update($resume_hold_by);
     }
 
     public function reassignto($reassignto, $id)
@@ -609,7 +619,7 @@ class SafetyPermit extends Model
 
     public function selectmail($id)
     {
-        $data =  $this->select('ptw_safety.permit_id','ptw_safety.unit_id','ptw_safety.date','ptw_safety.time_from','ptw_safety.time_to','ptw_safety.exact_location_job','ptw_safety.job_location_area')
+        $data =  $this->select('ptw_safety.permit_id', 'ptw_safety.unit_id', 'ptw_safety.date', 'ptw_safety.time_from', 'ptw_safety.time_to', 'ptw_safety.exact_location_job', 'ptw_safety.job_location_area')
             ->where('ptw_safety.id', $id)
             ->first();
 

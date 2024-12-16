@@ -29,20 +29,27 @@ class PpeTypeMasterController extends Controller
 
     public function index(Request $request)
     {
-
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-
-                    $data =  $this->ppetypemaster->list();
+                    $data = $this->ppetypemaster->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active<span>";
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
+                                $text = "<span style='color:green;'>Active<span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
+                                $text = "<span style='color:red;'>In-Active<span>";
+                            }
+
+
+                            if (CheckUserRole(ROLE_SUPERADMIN)) {
+                                if ($row->status == 1) {
+                                    $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='1'>Active<span>";
+                                } else if ($row->status == 0) {
+                                    $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='0'>In-Active<span>";
+                                }
                             }
                             return $text;
                         })
@@ -58,15 +65,14 @@ class PpeTypeMasterController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             if (CheckUserPermission('view')) {
-                            $btn = '<a href="' . admin_url('ppe_ppetype_master/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                                $btn = '<a href="' . admin_url('ppe_ppetype_master/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             }
                             if (CheckUserPermission('edit')) {
-                            $btn .= '<a href="' . admin_url('ppe_ppetype_master/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                                $btn .= '<a href="' . admin_url('ppe_ppetype_master/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
-                            // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['action', 'created_at', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -80,11 +86,12 @@ class PpeTypeMasterController extends Controller
         $ppetype = $this->ppetype->getPpetypedata();
 
         $data = [
-          'ppetype'=>$ppetype
+            'ppetype' => $ppetype
         ];
 
         return view('master.ppetypemaster.list', $data);
     }
+
 
     public function add()
     {

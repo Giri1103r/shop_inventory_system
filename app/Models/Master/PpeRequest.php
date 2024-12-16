@@ -23,7 +23,6 @@ class PpeRequest extends Model
         'item_code',
         'ppe_type',
         'approve_status',
-        'ehs_approve_status',
         'employee_reason',
         'status',
         'trash',
@@ -77,7 +76,7 @@ class PpeRequest extends Model
             $query->where('emp_name', 'LIKE', '%' . $request->emp_name . '%');
         }
         if ($request->has('ppe_status') && $request->ppe_status) {
-            $query->where('status', decryptId($request->ppe_status));
+            $query->where('ppe_pperequest.status', decryptId($request->ppe_status));
         }
 
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
@@ -269,7 +268,7 @@ class PpeRequest extends Model
     {
         $userId = Auth::user()->employee_id;
 
-        return PpeRequest::where('emp_id',$userId)->where('approve_status', '!=',STATUS_HOD_APPROVAL_PENDING)->where('ehs_approve_status','!=',STATUS_EHS_APPROVAL_PENDING)->get();
+        return PpeRequest::where('emp_id',$userId)->where('approve_status', '!=',STATUS_HOD_APPROVAL_PENDING)->where('approve_status','!=',STATUS_EHS_APPROVAL_PENDING)->get();
     }
     public function exportdata()
     {
