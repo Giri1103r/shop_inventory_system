@@ -99,111 +99,136 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-12">
-                                    <table class="table table-bordered table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Employee Name</th>
-                                                <th>Employee Id</th>
-                                                <th>Previous applied Date</th>
-                                                <th>Approval Status</th>
-                                                <th>Remarks</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @if ($userdata->isEmpty())
+                                <div class="table-responsive">
+                                    <div class="col-md-12">
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
                                                 <tr>
-                                                    <td class="text-center" colspan="6">No data is available</td>
+                                                    <th>Employee Name</th>
+                                                    <th>Employee ID</th>
+                                                    <th>Previous Applied Date</th>
+                                                    <th>Approval Status</th>
+                                                    <th>Remarks</th>
                                                 </tr>
-                                            @else
-                                                @foreach ($userdata as $data)
-                                                    <tr class="hover-row">
-                                                        <td>{{ $data['emp_name'] }}</td>
-                                                        <td>{{ $data['emp_id'] }}</td>
-                                                        <td>{{ displaydateformat($data['created_at']) }}</td>
-                                                        <td>
-                                                            @if ($data->approve_status == STATUS_HOD_APPROVAL_PENDING)
-                                                                <span class='badge bg-info' style='font-size: 1.0em;'>HOD Approval Pending</span>
-                                                            @elseif ($data->approve_status == STATUS_HOD_APPROVED)
-                                                                <span class='badge bg-success' style='font-size: 1.0em;'>HOD Approved</span>
-                                                            @elseif ($data->approve_status == STATUS_USER_APPLIED)
-                                                                <span class='badge bg-primary' style='font-size: 1.0em;'>User Applied</span>
-                                                            @elseif ($data->approve_status == STATUS_HOD_REJECTED)
-                                                                <span class='badge bg-danger' style='font-size: 1.0em;'>HOD Rejected</span>
-                                                            @elseif ($data->approve_status == STATUS_EHS_APPROVAL_PENDING)
-                                                                <span class='badge bg-info' style='font-size: 1.0em;'>EHS Approval Pending</span>
-                                                            @elseif ($data->approve_status == STATUS_EHS_APPROVED)
-                                                                <span class='badge bg-success' style='font-size: 1.0em;'>EHS Approved</span>
-                                                            @elseif ($data->approve_status == STATUS_EHS_REJECTED)
-                                                                <span class='badge bg-danger' style='font-size: 1.0em;'>EHS Rejected</span>
-                                                            @endif
-                                                        </td>
-
-                                                        {{-- <td>{{ removeUnderScore(getStatus($data['ehs_approve_status'])) }} --}}
-                                                        </td>
-                                                        <td>{{ $data['remarks'] }}</td>
+                                            </thead>
+                                            <tbody>
+                                                @if ($userdata->isEmpty())
+                                                    <tr>
+                                                        <td class="text-center" colspan="6">No data is available</td>
                                                     </tr>
-                                                @endforeach
-                                            @endif
-                                        </tbody>
-                                    </table>
+                                                @else
+                                                    @foreach ($userdata as $data)
+                                                        <tr class="hover-row">
+                                                            <td>{{ $data['emp_name'] }}</td>
+                                                            <td>{{ $data['emp_id'] }}</td>
+                                                            <td>{{ displaydateformat($data['created_at']) }}</td>
+                                                            <td>
+                                                                @if ($data->approve_status == STATUS_HOD_APPROVAL_PENDING)
+                                                                    <span class='badge bg-info'
+                                                                        style='font-size: 1.0em;'>HOD Approval
+                                                                        Pending</span>
+                                                                @elseif ($data->approve_status == STATUS_HOD_APPROVED)
+                                                                    <span class='badge bg-success'
+                                                                        style='font-size: 1.0em;'>HOD Approved</span>
+                                                                @elseif ($data->approve_status == STATUS_USER_APPLIED)
+                                                                    <span class='badge bg-primary'
+                                                                        style='font-size: 1.0em;'>User Applied</span>
+                                                                @elseif ($data->approve_status == STATUS_HOD_REJECTED)
+                                                                    <span class='badge bg-danger'
+                                                                        style='font-size: 1.0em;'>HOD Rejected</span>
+                                                                @elseif ($data->approve_status == STATUS_EHS_APPROVAL_PENDING)
+                                                                    <span class='badge bg-info'
+                                                                        style='font-size: 1.0em;'>EHS Officer Approval
+                                                                        Pending</span>
+                                                                @elseif ($data->approve_status == STATUS_EHS_APPROVED)
+                                                                    <span class='badge bg-success'
+                                                                        style='font-size: 1.0em;'>EHS Officer Approved</span>
+                                                                @elseif ($data->approve_status == STATUS_EHS_REJECTED)
+                                                                    <span class='badge bg-danger'
+                                                                        style='font-size: 1.0em;'>EHS Officer Rejected</span>
+                                                                @endif
+                                                            </td>
 
-                                </div>
+                                                            {{-- <td>{{ removeUnderScore(getStatus($data['ehs_approve_status'])) }} --}}
+                                                            </td>
+                                                            <td>{{ $data['remarks'] }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                @endif
+                                            </tbody>
+                                        </table>
 
-                                <div class="row mt-2">
-                                    <div class="card-header-inner">
-                                        <h4 class="text-white">Status log</h4>
                                     </div>
                                 </div>
 
-                                <div class="col-md-12">
-                                    <table class="table table-bordered table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Status</th>
-                                                <th>Approved By</th>
-                                                <th>Remarks</th>
-                                                <th>Date</th>
 
-                                            </tr>
-                                        </thead>
 
-                                        <tbody>
-                                            @if ($ppestatuslog->isEmpty())
-                                                <tr>
-                                                    <td class="text-center" colspan="5">No data is available</td>
-                                                </tr>
-                                            @else
-                                                @foreach ($ppestatuslog as $log)
-                                                    <tr class="hover-row">
-                                                        <td>
-                                                            @if ($log['to_status'] == STATUS_HOD_APPROVAL_PENDING)
-                                                                <span class='badge bg-info'  style='font-size: 1.0em;'>HOD Approval Pending</span>
-                                                            @elseif ($log['to_status'] == STATUS_HOD_APPROVED)
-                                                                <span class='badge bg-success'  style='font-size: 1.0em;'>HOD Approved</span>
-                                                            @elseif ($log['to_status'] == STATUS_USER_APPLIED)
-                                                                <span class='badge bg-primary'  style='font-size: 1.0em;'>User Applied</span>
-                                                            @elseif ($log['to_status'] == STATUS_HOD_REJECTED)
-                                                                <span class='badge bg-danger'  style='font-size: 1.0em;'>HOD Rejected</span>
-                                                            @elseif ($log['to_status'] == STATUS_EHS_APPROVAL_PENDING)
-                                                                <span class='badge bg-info'  style='font-size: 1.0em;'>EHS Approval Pending</span>
-                                                            @elseif ($log['to_status'] == STATUS_EHS_APPROVED)
-                                                                <span class='badge bg-success'  style='font-size: 1.0em;'>EHS Approved</span>
-                                                            @elseif ($log['to_status'] == STATUS_EHS_REJECTED)
-                                                                <span class='badge bg-danger'  style='font-size: 1.0em;'>EHS Rejected</span>
-                                                            @endif
-                                                        </td>
-                                                        <td>{{ getUsername($log['created_by']) }}</td>
-                                                        <td>{{ $log['remarks'] }}</td>
-                                                        <td>{{ displaydateformat($log['created_at']) }}</td>
-
-                                                    </tr>
-                                                @endforeach
-                                            @endif
-                                        </tbody>
-                                    </table>
-
+                                <div class="row mt-2">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Status logs</h4>
+                                    </div>
                                 </div>
+                                <div class="table-responsive">
+                                    <div class="col-md-12">
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Status</th>
+                                                    <th>Approved By</th>
+                                                    <th>Remarks</th>
+                                                    <th>Date</th>
+
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                @if ($ppestatuslog->isEmpty())
+                                                    <tr>
+                                                        <td class="text-center" colspan="5">No data is available</td>
+                                                    </tr>
+                                                @else
+                                                    @foreach ($ppestatuslog as $log)
+                                                        <tr class="hover-row">
+                                                            <td>
+                                                                @if ($log['to_status'] == STATUS_HOD_APPROVAL_PENDING)
+                                                                    <span class='badge bg-info'
+                                                                        style='font-size: 1.0em;'>HOD Approval
+                                                                        Pending</span>
+                                                                @elseif ($log['to_status'] == STATUS_HOD_APPROVED)
+                                                                    <span class='badge bg-success'
+                                                                        style='font-size: 1.0em;'>HOD Approved</span>
+                                                                @elseif ($log['to_status'] == STATUS_USER_APPLIED)
+                                                                    <span class='badge bg-primary'
+                                                                        style='font-size: 1.0em;'>User Applied</span>
+                                                                @elseif ($log['to_status'] == STATUS_HOD_REJECTED)
+                                                                    <span class='badge bg-danger'
+                                                                        style='font-size: 1.0em;'>HOD Rejected</span>
+                                                                @elseif ($log['to_status'] == STATUS_EHS_APPROVAL_PENDING)
+                                                                    <span class='badge bg-info'
+                                                                        style='font-size: 1.0em;'>EHS Approval
+                                                                        Pending</span>
+                                                                @elseif ($log['to_status'] == STATUS_EHS_APPROVED)
+                                                                    <span class='badge bg-success'
+                                                                        style='font-size: 1.0em;'>EHS Approved</span>
+                                                                @elseif ($log['to_status'] == STATUS_EHS_REJECTED)
+                                                                    <span class='badge bg-danger'
+                                                                        style='font-size: 1.0em;'>EHS Rejected</span>
+                                                                @endif
+                                                            </td>
+                                                            <td>{{ getUsername($log['created_by']) }}</td>
+                                                            <td>{{ $log['remarks'] }}</td>
+                                                            <td>{{ displaydateformat($log['created_at']) }}</td>
+
+                                                        </tr>
+                                                    @endforeach
+                                                @endif
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+
+
                             </div>
                         </div>
                     </div>

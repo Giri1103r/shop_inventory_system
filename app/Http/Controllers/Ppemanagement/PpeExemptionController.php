@@ -533,8 +533,9 @@ class PpeExemptionController extends Controller
                 'status' => $updateData['approve_status'],
                 'department' => $emp_details->department,
                 'unit' => $emp_details->unit,
-                'approved_by' => $emp_details->approved_by,
+                'approved_by' => Auth::id(),
             ];
+          
             $empId = $emp_details->emp_id;
             $requestor = $this->pperequest->getrequestemail($empId);
             $hod = $this->pperequest->getdepartmenthod($departmentId);

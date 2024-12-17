@@ -35,7 +35,7 @@
 
                             </span>
                         @endif
-                        Notification
+                        Notifications
                     </h5>
                 </div>
 
@@ -52,7 +52,7 @@
                                 </div>
                                 <p class="notify-details">{{ $notification['title'] }}</p>
                                 <p class="text-muted mb-0 user-msg">
-                                    <small>{{ $notification['message'] }}</small>
+                                    {{ $notification['message'] }}
                                 </p>
                                 <p class="text-muted mb-0 user-msg">
                                     <small> {{ $notification['time'] }}</small>
@@ -87,7 +87,7 @@
 
                     <img src="{{ url(profileImage(Auth::id())) }}" alt="mage" class="rounded-circle" width="36"
                         height="36">
-           
+
                 <span class="pro-user-name ms-1">
                     {{ Auth::user()->name }} <i class="mdi mdi-chevron-down"></i>
                 </span>
