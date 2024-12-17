@@ -121,7 +121,8 @@
                                                         <td>{{ $data['emp_name'] }}</td>
                                                         <td>{{ $data['emp_id'] }}</td>
                                                         <td>{{ displaydateformat($data['created_at']) }}</td>
-                                                        <td>{{ removeUnderScore(getStatus($data['approve_status'])) }}</td>
+                                                        <td>{{ removeUnderScore($data['approve_status'] == STATUS_EHS_APPROVAL_PENDING ? 'HOD APPROVED' : getStatus($data['approve_status'])) }}</td>
+
                                                         {{-- <td>{{ removeUnderScore(getStatus($data['ehs_approve_status'])) }} --}}
                                                         </td>
                                                         <td>{{ $data['remarks'] }}</td>
