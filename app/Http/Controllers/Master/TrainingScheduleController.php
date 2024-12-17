@@ -128,7 +128,7 @@ class TrainingScheduleController extends Controller
                                             <i class="fa-solid fa-pen-to-square"></i>
                                          </a> ';
                             }
-                            if (CheckUserPermission('delete')) {
+                            if (CheckUserPermission('delete') && $row->training_status == 1) {
                                 $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             }
                             return $btn;
@@ -204,7 +204,7 @@ class TrainingScheduleController extends Controller
         return response()->json(['conflicts' => $conflicts]);
     }
 
-
+  
     public function Store(Request $request)
     {
         try {
@@ -664,7 +664,7 @@ class TrainingScheduleController extends Controller
                 $user_id = Auth::id();
 
                 $insert_data = array(
-                    'upload_type' => 1,
+                    'upload_type' => 8,
                     'upload_status' => 0,
                     'file_name' => $filenewname,
                     'file_orgname' => $fileName,
@@ -684,8 +684,8 @@ class TrainingScheduleController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportTrainingSchedulejob($details));
-                //    dispatch((new ImportVenueJob($details))->onQueue('empimport'));
+                // dispatch(new ImportTrainingSchedulejob($details));
+                dispatch((new ImportTrainingSchedulejob($details))->onQueue('training_schedule'));
             }
 
             $insert_data['log_id'] = $insert_id;
@@ -794,7 +794,7 @@ class TrainingScheduleController extends Controller
             //         ->count();
             //         $totalTrainingHours = $training_hours * $presentTraineesCount;
             // }
-    
+
             $data = array(
                 'header' => $header,
                 'content' => $allData,
@@ -828,7 +828,7 @@ class TrainingScheduleController extends Controller
         }
     }
 
-  
+
     public function exportViewPdf(Request $request)
     {
         try {

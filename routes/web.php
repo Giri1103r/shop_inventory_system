@@ -443,6 +443,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/submit', [TrainingMatrixController::class, 'importSubmit']);
                 Route::post('/status', [TrainingMatrixController::class, 'statusChange']);
                 Route::get('/topic/ajax-list/{topicId}/{trainerId}', [TrainingMatrixController::class, 'Uniquecheck']);
+                Route::get('/topic/ajax-list', [TrainingMatrixController::class, 'uniquecheckTrainingMatrix']);
+
 
 
             });

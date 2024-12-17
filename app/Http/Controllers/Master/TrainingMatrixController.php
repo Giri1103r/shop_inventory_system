@@ -182,20 +182,15 @@ class TrainingMatrixController extends Controller
         }
     }
 
-    public function Uniquecheck(Request $request, $topicId, $trainerId) {
+    public function Uniquecheck(Request $request, $topicId, $trainerId)
+    {
         $topicId = decryptId($topicId);
         $trainerId = decryptId($trainerId);
         $unitId = decryptId($request->input('unit_id'));
-
-
         $departmentIds = decryptId($request->input('department_id'));
-
-
         if (!is_array($departmentIds)) {
             $departmentIds = [$departmentIds];
         }
-
-
         $departmentIds = array_map('decryptId', $departmentIds);
 
         $data = $this->training_matrix->getuique($trainerId, $topicId, $unitId, $departmentIds);
@@ -204,8 +199,20 @@ class TrainingMatrixController extends Controller
         ]);
     }
 
+    public function uniquecheckTrainingMatrix(Request $request)
+    {
+        $ids = $request->input('id') ? decryptId($request->input('id')) : null;
+        $topicId = decryptId($request->input('topicId'));
+        $trainerId = decryptId($request->input('trainerId'));
 
+        if (empty($ids)) {
+            $conflicts = $this->training_matrix->getUniqueSchedule($topicId, $trainerId);
+        } else {
+            $conflicts = $this->training_matrix->getExistUniqueSchedule($topicId, $trainerId, $ids);
+        }
 
+        return response()->json(['conflicts' => $conflicts]);
+    }
 
     public function View(Request $request)
     {
@@ -371,7 +378,7 @@ class TrainingMatrixController extends Controller
                 $user_id = Auth::id();
 
                 $insert_data = array(
-                    'upload_type' => 8,
+                    'upload_type' => 10,
                     'upload_status' => 0,
                     'file_name' => $filenewname,
                     'file_orgname' => $fileName,
@@ -391,8 +398,8 @@ class TrainingMatrixController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportTrainingMatrixJob($details));
-                //    dispatch((new ImportTrainingMatrixJob($details))->onQueue('training_matrix'));
+                // dispatch(new ImportTrainingMatrixJob($details));
+                dispatch((new ImportTrainingMatrixJob($details))->onQueue('training_matrix'));
             }
 
             $insert_data['log_id'] = $insert_id;

@@ -289,8 +289,8 @@ class NominationProcessController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImporNominationProcessJob($details));
-                //    dispatch((new ImporNominationProcessJob($details))->onQueue('nomination_process'));
+                // dispatch(new ImporNominationProcessJob($details));
+                   dispatch((new ImporNominationProcessJob($details))->onQueue('nomination_process'));
             }
 
             $insert_data['log_id'] = $insert_id;

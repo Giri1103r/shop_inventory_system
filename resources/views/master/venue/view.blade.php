@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Venue Show')
+@section('title', 'Venue Master Show')
 @section('pageurl', admin_url('venue/list'))
 
 

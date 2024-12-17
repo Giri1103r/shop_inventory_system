@@ -65,7 +65,7 @@ class TrainingSchedule extends Model
             $query->where('training_schedule.trash', 'NO');
         } elseif (CheckUserRole(ROLE_TRAINER)) {
             $trainer = DB::table('masters_employee')
-                ->select('id','emp_id')
+                ->select('id', 'emp_id')
                 ->where('emp_id', Auth::user()->employee_id)
                 ->first();
             if ($trainer) {
@@ -88,13 +88,16 @@ class TrainingSchedule extends Model
                     ->orWhere('from_date', 'LIKE', '%' . $search . '%');
             });
         }
-
         if ($request->has('from_date') && $request->from_date) {
-            $query = $query->where('from_date', 'LIKE', '%' . $request->from_date . '%');
+            $fromDate = Carbon::createFromFormat('d-m-Y H:i', $request->from_date)->format('Y-m-d H:i:s');
+            $query = $query->where('training_schedule.from_date', '>=', $fromDate);
         }
+
         if ($request->has('to_date') && $request->to_date) {
-            $query = $query->where('to_date', 'LIKE', '%' . $request->to_date . '%');
+            $toDate = Carbon::createFromFormat('d-m-Y H:i', $request->to_date)->format('Y-m-d H:i:s');
+            $query = $query->where('training_schedule.to_date', '<=', $toDate);
         }
+
         if ($request->has('topic_id') && $request->topic_id) {
             $query = $query->where('training_schedule.topic_id', decryptId($request->topic_id));
         }

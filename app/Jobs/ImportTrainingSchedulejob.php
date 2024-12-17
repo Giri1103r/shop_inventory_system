@@ -28,7 +28,9 @@ use DateTime;
 use Illuminate\Support\Facades\Session;
 use Shuchkin\SimpleXLSX;
 
-class ImportTrainingSchedulejob
+// class ImportTrainingSchedulejob
+class ImportTrainingSchedulejob implements ShouldQueue
+
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

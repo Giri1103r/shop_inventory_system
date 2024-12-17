@@ -183,8 +183,8 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.from_date = $('#from_date').val();
-                            d.to_date = $('#to_date').val();
+                            d.from_date = $('#from_date_datepicker').val();
+                            d.to_date = $('#to_date_datepicker').val();
                             d.topic_id = $('#topic_id').val();
                             d.trainer_id = $('#trainer_id').val();
                             d.unit_id = $('#unit_id').val();

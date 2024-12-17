@@ -165,57 +165,52 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
-//      $(document).ready(function() {
-//     function checkSelections() {
-//         var topicId = $('#topic_id').val();
-//         var trainerId = $('#trainer_id').val();
-//         var unitId = $('#unit_id').val();
-//         var departmentIds = $('#department_id').val();
-
-//         // Check if all four fields are selected
-//         if (topicId && trainerId && unitId && departmentIds) {
-//             $.ajax({
-//                 url: "{{ url('training_matrix/topic/ajax-list') }}/" + topicId + "/" + trainerId,
-//                 type: 'GET',
-//                 dataType: 'json',
-//                 data: {
-//                     unit_id: unitId,
-//                     department_id: departmentIds,
-//                 },
-//                 success: function(response) {
-//                     $('.text-danger').remove();
-
-//                     if (response.exists) {
-//                         $('#topic_id').closest('.form-group').append(
-//                             '<div><span class="text-danger">This topic is already assigned to another trainer.</span></div>'
-//                         );
-//                         $('#training_matrixadd').submit(function(e) {
-//                             e.preventDefault();
-//                         });
-//                     } else {
-//                         $('#training_matrixadd').off('submit');
-//                     }
-//                 },
-//                 error: function(xhr) {
-//                     alert('Error fetching data. Please try again.');
-//                 }
-//             });
-//         } else {
-//             $('.text-danger').remove();
-//             $('#training_matrixadd').off('submit');
-//         }
-//     }
-
-//     // Trigger checkSelections only when any of the fields are changed
-//     $('#topic_id').on('change', checkSelections);
-//     $('#trainer_id').on('change', checkSelections);
-//     $('#unit_id').on('change', checkSelections);
-//     $('#department_id').on('change', checkSelections);
-// });
-
-
-
         $(document).ready(function() {
+
+            function checkSelections() {
+                var topicId = $('#topic_id').val();
+                var trainerId = $('#trainer_id').val();
+
+                if (topicId && trainerId) {
+                    $.ajax({
+                        url: "{{ url('training_matrix/topic/ajax-list') }}",
+                        type: 'GET',
+                        dataType: 'json',
+                        data: {
+                            topicId: topicId,
+                            trainerId: trainerId,
+                        },
+                        success: function(response) {
+                            $('.text-danger').remove(); // Remove previous error messages
+                            var conflicts = response.conflicts;
+
+                            if (Object.keys(conflicts).length > 0) {
+                                for (var key in conflicts) {
+                                    if (conflicts.hasOwnProperty(key)) {
+                                        $('#' + key).closest('.form-group').append(
+                                            '<div><span class="text-danger">' + conflicts[key] +
+                                            '</span></div>'
+                                        );
+                                    }
+                                }
+                                $('#training_matrixadd').data('conflict', true);
+                            } else {
+                                $('#training_matrixadd').data('conflict', false);
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching data. Please try again.');
+                        }
+                    });
+                } else {
+                    $('.text-danger').remove();
+                    $('#training_matrixadd').data('conflict', false);
+                }
+            }
+
+            $('#topic_id').on('change', checkSelections);
+            $('#trainer_id').on('change', checkSelections);
+
 
             $('#training_evaluation').on('change', function() {
                 if ($(this).val() === '{{ encryptId(1) }}') { // "Yes" selected
@@ -227,11 +222,8 @@
             $('#department_id').select2({
                 placeholder: "Select Target Department",
                 allowClear: true,
-                closeOnSelect: false, // Allows multiple selections without closing the dropdown
+                closeOnSelect: false,
             });
-
-            // Handle the change event of the Unit dropdown
-
 
 
             $(document).on('change', '#unit_id', function() {
@@ -261,10 +253,6 @@
                     $('#department_id').trigger('change');
                 }
             });
-
-
-
-
 
             $('#training_matrixadd').validate({
                 rules: {

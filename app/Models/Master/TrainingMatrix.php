@@ -5,6 +5,7 @@ namespace App\Models\Master;
 use Carbon\Carbon;
 use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\DB;
+use DateTime;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
@@ -119,7 +120,8 @@ class TrainingMatrix extends Model
     }
 
 
-    public function getuique($trainerId, $topicId, $unitId, $departmentIds) {
+    public function getuique($trainerId, $topicId, $unitId, $departmentIds)
+    {
         if ($trainerId && $topicId) {
             return TrainingMatrix::where('topic_id', $topicId)
                 ->where('trainer_id', '=', $trainerId)
@@ -248,6 +250,38 @@ class TrainingMatrix extends Model
         $query->orderBy('id', 'DESC');
 
         return  $query->get();
+    }
+
+    public function getUniqueSchedule($topicId, $trainerId)
+    {
+        $conflicts = [];
+
+        $exists = $this->where('topic_id', $topicId)
+            ->where('trainer_id', $trainerId)
+            ->exists();
+
+        if ($exists) {
+            $conflicts['topic_id'] = 'The selected topic and trainer combination already exists.';
+            $conflicts['trainer_id'] = 'The selected topic and trainer combination already exists.';
+        }
+
+        return $conflicts;
+    }
+    public function getExistUniqueSchedule($topicId, $trainerId, $ids)
+    {
+        $conflicts = [];
+
+        $exists = $this->where('topic_id', $topicId)
+            ->where('trainer_id', $trainerId)
+            ->where('id', '!=', $ids)
+            ->exists();
+
+        if ($exists) {
+            $conflicts['topic_id'] = 'The selected topic and trainer combination already exists.';
+            $conflicts['trainer_id'] = 'The selected topic and trainer combination already exists.';
+        }
+
+        return $conflicts;
     }
 
     public function selectOne($id)

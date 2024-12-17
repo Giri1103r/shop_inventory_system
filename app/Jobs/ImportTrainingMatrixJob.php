@@ -34,8 +34,8 @@ use App\Models\Master\Employee;
 use App\Models\Master\TrainingMatrix;
 use Illuminate\Support\Facades\Session;
 
-// class ImportTrainingMatrixJob implements ShouldQueue
-class ImportTrainingMatrixJob
+class ImportTrainingMatrixJob implements ShouldQueue
+// class ImportTrainingMatrixJob
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

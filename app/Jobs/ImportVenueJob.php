@@ -31,8 +31,8 @@ use App\Models\Master\Venue;
 use App\Models\Master\Unit;
 use Illuminate\Support\Facades\Session;
 
-class ImportVenueJob 
-// class ImportVenueJob implements ShouldQueue
+// class ImportVenueJob 
+class ImportVenueJob implements ShouldQueue
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
