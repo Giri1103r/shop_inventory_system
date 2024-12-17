@@ -260,14 +260,14 @@ class TrainingScheduleController extends Controller
                         $assigned_users = $trainingSchedule->trainer_id;
 
                         $notificationData = [
-                            'notification_type' => 1,
-                            'module_type' => 1,
+                            'notification_type' => 2,
+                            'module_type' => 2,
                             'notification_message' => $mailsubject,
                             'mobile_notification' => json_encode([
                                 'title' => $mailsubject,
                                 'message' => 'Training Schedule for ' . getTopic($trainingSchedule->topic_id) . ' by ' . getUsername(Auth::id()),
                                 'icon' => 'public/assets/images/icon/permit_to_work.png',
-                                'module' => 1,
+                                'module' => 2,
                             ]),
                             'web_link' => 'training_schedule/view/' . encryptId($trainingSchedule->id),
                             'assigned_user' => $assigned_users,

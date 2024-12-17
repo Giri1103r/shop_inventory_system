@@ -54,7 +54,11 @@ class NotificationController extends Controller
                         ->editColumn('notification_type', function ($row) {
 
                             if($row->notification_type == 1){
-                                $btn = "UAUC";
+                                $btn = "PPE";
+                            }elseif($row->notification_type == 2){
+                                $btn = "Training ";
+                            }elseif($row->notification_type == 3){
+                                $btn = "PTW";
                             }
 
                             return $btn;
