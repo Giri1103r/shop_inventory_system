@@ -87,6 +87,15 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">Approve Status</label>
+                                           <select name="approve_status" id="approve_status"  style="width: 100%" class="form-select single-select">
+                                            <option value="">Select the approve status</option>
+                                              <option value="4">EHS Head Approval Pending</option>
+                                              <option value="5">EHS Head Approved</option>
+                                              <option value="6">EHS Head Rejected</option>
+                                           </select>
+                                        </div>
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -179,7 +188,7 @@
                         d.company = $('#company').val();
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
-                        d.status = $('#status').val();
+                        d.approve_status = $('#approve_status').val();
                     }
                 },
                 columns: [{
@@ -257,7 +266,7 @@
                                     var company = $('#company').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
-                                    var status = $('#status').val();
+                                    var approve_status = $('#approve_status').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
@@ -271,7 +280,7 @@
                                         '&company=' + company +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
-                                        '&status=' + status;
+                                        '&approve_status=' + approve_status;
                                 }
                             },
                             {
@@ -286,7 +295,7 @@
                                     var company = $('#company').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
-                                    var status = $('#status').val();
+                                    var approve_status = $('#approve_status').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
@@ -300,7 +309,7 @@
                                         '&company=' + company +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
-                                        '&status=' + status;
+                                        '&approve_status=' + approve_status;
                                 }
                             }
                         ]

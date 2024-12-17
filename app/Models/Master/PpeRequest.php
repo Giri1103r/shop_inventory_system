@@ -80,8 +80,8 @@ class PpeRequest extends Model
         if ($request->has('emp_name') && $request->emp_name) {
             $query->where('emp_name', 'LIKE', '%' . $request->emp_name . '%');
         }
-        if ($request->has('ppe_status') && $request->ppe_status) {
-            $query->where('ppe_pperequest.status', decryptId($request->ppe_status));
+        if ($request->has('approve_status') && $request->approve_status) {
+            $query->where('ppe_pperequest.approve_status', $request->approve_status);
         }
 
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
@@ -313,6 +313,10 @@ class PpeRequest extends Model
         }
         if ($request->has('emp_name') && $request->emp_name) {
             $query->where('emp_name', 'LIKE', '%' . $request->emp_name . '%');
+        }
+
+        if ($request->has('approve_status') && $request->approve_status) {
+            $query->where('ppe_pperequest.approve_status', $request->approve_status);
         }
 
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {

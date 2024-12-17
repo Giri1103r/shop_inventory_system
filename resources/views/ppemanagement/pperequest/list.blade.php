@@ -54,6 +54,19 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">Approve Status</label>
+                                            <select name="approve_status" id="approve_status" style="width: 100%"
+                                                class="form-select single-select">
+                                                <option value="">Select the approve status</option>
+                                                @foreach ($approvestatus as $status)
+                                                    <option value="{{ $status->id }}">{{ removeUnderScore($status->approve_status) }}
+                                                    </option>
+                                                @endforeach
+
+
+                                            </select>
+                                        </div>
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -157,7 +170,7 @@
                         d.emp_name = $('#emp_name').val();
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
-                        d.ppe_status = $('#ppe_status').val();
+                        d.approve_status = $('#approve_status').val();
                     }
                 },
                 columns: [{
@@ -230,7 +243,7 @@
                                     var emp_name = $('#emp_name').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
-                                    var ppe_status = $('#ppe_status').val();
+                                    var approve_status = $('#approve_status').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
@@ -241,7 +254,7 @@
                                         '&emp_name=' + emp_name +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
-                                        '&ppe_status=' + ppe_status;
+                                        '&approve_status=' + approve_status;
                                 }
                             },
                             {
@@ -253,7 +266,7 @@
                                     var emp_name = $('#emp_name').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
-                                    var ppe_status = $('#ppe_status').val();
+                                    var approve_status = $('#approve_status').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
@@ -264,7 +277,7 @@
                                         '&emp_name=' + emp_name +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
-                                        '&ppe_status=' + ppe_status;
+                                        '&approve_status=' + approve_status;
                                 }
                             }
                         ]
