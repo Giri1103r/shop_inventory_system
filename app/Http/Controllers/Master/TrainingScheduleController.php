@@ -26,6 +26,7 @@ use App\Models\User;
 use App\Models\Master\NominationProcess;
 use App\Models\UploadLog;
 use App\Mail\Training\TrainingStartedEmail;
+use App\Mail\Training\TrainingScheduledEmail;
 use Illuminate\Support\Facades\Session;
 
 class TrainingScheduleController extends Controller
@@ -95,15 +96,15 @@ class TrainingScheduleController extends Controller
                             $btn = '';
                             if ($row->training_status == 1) {
                                 $btn .= '<a href="' . admin_url('training_schedule/nominationProcess/' . encryptId($row->id)) . '" title="Nomination">
-                                            <i class="fa fa-calendar" ></i>
+                                            <i class="fa fa-calendar" style="color: #0013ff;"></i>
                                          </a> ';
                             }
                             if ($row->training_status == 4) {
-                            $btn .= '<a href="' . admin_url('training_schedule/pdf/' . encryptId($row->id)) . '"  class="pdficon" title="Pdf"><i class="fas fa-file-pdf" aria-hidden="true"></i> ';
+                                $btn .= '<a href="' . admin_url('training_schedule/pdf/' . encryptId($row->id)) . '"  class="pdficon" title="Pdf"><i class="fas fa-file-pdf" aria-hidden="true" style="color: #e21e23;"></i> ';
                             }
                             if ($row->training_status == 3) {
                                 $btn .= '<a href="' . admin_url('training_schedule/attendance/' . encryptId($row->id)) . '" title="Attendance">
-                                            <i class="fas fa-portrait" style="color: black;font-size: 15px;"></i>
+                                            <i class="fas fa-portrait" style="color: #811378;font-size: 16px;"></i>
                                          </a> ';
                             }
                             if (CheckUserPermission('view')) {
@@ -122,12 +123,14 @@ class TrainingScheduleController extends Controller
                                              </a> ';
                                 }
                             }
-                            // if (CheckUserPermission('edit')  && $row->training_status == 2) {
-                            //     $btn .= '<a href="' . admin_url('training_schedule/edit/' . encryptId($row->id)) . '" title="Edit">
-                            //                 <i class="fa-solid fa-pen-to-square"></i>
-                            //              </a> ';
-                            // }
-
+                            if (CheckUserPermission('edit')  && $row->training_status == 1) {
+                                $btn .= '<a href="' . admin_url('training_schedule/edit/' . encryptId($row->id)) . '" title="Edit">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                         </a> ';
+                            }
+                            if (CheckUserPermission('delete')) {
+                                $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
+                            }
                             return $btn;
                         })
                         ->rawColumns(['to_date', 'from_date', 'action', 'created_date', 'created_by', 'status'])
@@ -226,11 +229,57 @@ class TrainingScheduleController extends Controller
 
             try {
 
-                $this->training_schedule->store();
+                $training =  $this->training_schedule->store();
+                if ($training) {
+                    $trainingSchedule = $this->training_schedule->selectOne($training->id);
 
+                    if (!empty($trainingSchedule)) {
+                        $mailsubject = 'Training Scheduled';
+                        /**
+                         * Send email notification
+                         */
+                        if (!empty($trainingSchedule->email)) {
+                            $trainingArray = [
+                                'emp_name' => $trainingSchedule->emp_name,
+                                'from_date' => Displaydatetimeformat($trainingSchedule->from_date),
+                                'to_date' => Displaydatetimeformat($trainingSchedule->to_date),
+                                'topic_name' => $trainingSchedule->topic_name,
+                                'unit' => $trainingSchedule->unit_name,
+                                'department' => $trainingSchedule->department_name,
+                                'venue' => $trainingSchedule->name_of_the_conference_hall,
+                                'mail_subject' => $mailsubject,
+                            ];
+
+                            Mail::to($trainingSchedule->email)->queue(new TrainingScheduledEmail($trainingArray));
+                        }
+
+
+                        /**
+                         * Send Web notification
+                         */
+                        $assigned_users = $trainingSchedule->trainer_id;
+
+                        $notificationData = [
+                            'notification_type' => 2,
+                            'module_type' => 2,
+                            'notification_message' => $mailsubject,
+                            'mobile_notification' => json_encode([
+                                'title' => $mailsubject,
+                                'message' => 'Training Schedule for ' . getTopic($trainingSchedule->topic_id) . ' by ' . getUsername(Auth::id()),
+                                'icon' => 'public/assets/images/icon/permit_to_work.png',
+                                'module' => 2,
+                            ]),
+                            'web_link' => 'training_schedule/view/' . encryptId($trainingSchedule->id),
+                            'assigned_user' => $assigned_users,
+                            'created_by' => Auth::id(),
+                        ];
+
+                        notificationSave($notificationData);
+                    }
+                }
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
@@ -282,14 +331,14 @@ class TrainingScheduleController extends Controller
                     $assigned_user_ids = array_unique($assigned_users);
 
                     $notificationData = [
-                        'notification_type' => 1,
-                        'module_type' => 1,
+                        'notification_type' => 2,
+                        'module_type' => 2,
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode([
                             'title' => $mailsubject,
                             'message' => 'Training Started for ' . getTopic($nominee->topic_id) . ' by ' . getUsername(Auth::id()),
                             'icon' => 'public/assets/images/icon/permit_to_work.png',
-                            'module' => 1,
+                            'module' => 2,
                         ]),
                         'assigned_user' => implode(',', $assigned_user_ids),
                         'created_by' => Auth::id(),
@@ -353,7 +402,6 @@ class TrainingScheduleController extends Controller
 
             return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
-
             dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('training_schedule/list'));
@@ -547,6 +595,7 @@ class TrainingScheduleController extends Controller
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
+  
     public function Import(Request $request)
     {
         $data = array();

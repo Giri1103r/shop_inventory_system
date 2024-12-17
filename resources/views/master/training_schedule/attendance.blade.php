@@ -172,28 +172,23 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     const fromDate = "{{ \Carbon\Carbon::parse($training_schedule->from_date)->format('Y-m-d') }}";
-        //     const toDate = "{{ \Carbon\Carbon::parse($training_schedule->to_date)->format('Y-m-d') }}";
-
-        //     flatpickr("#date_datepicker", {
-        //         dateFormat: "d-m-Y H:i",
-        //         minDate: fromDate,
-        //         maxDate: toDate,
-        //         enableTime: true,
-        //         time_24hr: true
-        //     });
-        // });
-
         $(document).ready(function() {
             $('#resetform').on('click', function(e) {
                 e.preventDefault();
                 location.reload();
             });
 
+         
+            var fromDate = '{{ \Carbon\Carbon::parse($training_schedule->from_date)->toDateString() }}';
+            var toDate = '{{ \Carbon\Carbon::parse($training_schedule->to_date)->toDateString() }}';
+
             flatpickr("#date_datepicker", {
-                dateFormat: "d-m-Y",
+                // dateFormat: "d-m-Y", 
+                minDate: fromDate, 
+                maxDate: toDate, 
+              
             });
+
             $(function() {
                 $('#attendance').validate({
                     rules: {

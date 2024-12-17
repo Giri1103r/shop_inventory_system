@@ -46,15 +46,6 @@
                     </span>
                 </div>
 
-
-                {{-- <div class="mb-3">
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="checkbox-signin" name="remember">
-                        <label class="form-check-label" for="checkbox-signin">Remember me</label>
-                    </div>
-                </div> --}}
-
-
                 <div class="mb-3 form-input">
                     <div class="form-check custom-checkbox mb-0">
                         <input type="checkbox" class="form-check-input" id="customCheckBox1" name="remember">

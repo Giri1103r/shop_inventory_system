@@ -316,16 +316,14 @@
                 minDate: "today",
                 enableTime: true,
                 time_24hr: true,
-                onChange: function(selectedDates, dateStr, instance) {
-                    const toDatePicker = document.getElementById("to_date_datepicker")._flatpickr;
-                    toDatePicker.set("minDate",
-                        dateStr);
-                    toDatePicker.setDate(dateStr,
-                        false);
+                onChange: function(selectedDates, dateStr) {
+                    toDatePicker.set("minDate", dateStr);
+                    toDatePicker.setDate(
+                    dateStr); 
                 }
             });
 
-            flatpickr("#to_date_datepicker", {
+            const toDatePicker = flatpickr("#to_date_datepicker", {
                 dateFormat: "d-m-Y H:i",
                 minDate: "today",
                 enableTime: true,
@@ -357,6 +355,7 @@
                     },
                     target_trainees: {
                         required: true,
+                        digits: true,
                     },
 
                 },
@@ -384,6 +383,7 @@
                     },
                     target_trainees: {
                         required: "Target Trainees is Required.",
+                     digits: "Please enter only numeric values for Target Trainees."
                     },
 
                 },

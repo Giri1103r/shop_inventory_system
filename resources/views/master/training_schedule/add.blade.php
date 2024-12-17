@@ -149,164 +149,201 @@
 @stop
 
 @push('script')
-<script type="text/javascript" nonce="projectcab">
-    $(document).ready(function() {
-        function checkSelections() {
-            var fromDate = $('#from_date_datepicker').val();
-            var toDate = $('#to_date_datepicker').val();
-            var topicId = $('#topic_id').val();
-            var trainerId = $('#trainer_id').val();
-            var unitId = $('#unit_id').val();
-            var departmentId = $('#department_id').val();
-            var venueId = $('#venue_id').val();
+    <script type="text/javascript" nonce="projectcab">
+        $(document).ready(function() {
+            function checkSelections() {
+                var fromDate = $('#from_date_datepicker').val();
+                var toDate = $('#to_date_datepicker').val();
+                var topicId = $('#topic_id').val();
+                var trainerId = $('#trainer_id').val();
+                var unitId = $('#unit_id').val();
+                var departmentId = $('#department_id').val();
+                var venueId = $('#venue_id').val();
 
-            if (fromDate && toDate && topicId && trainerId && unitId && departmentId && venueId) {
-                $.ajax({
-                    url: "{{ url('training_schedule/topic/ajax-list') }}",
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {
-                        from_date: fromDate,
-                        to_date: toDate,
-                        topicId: topicId,
-                        trainerId: trainerId,
-                        unitId: unitId,
-                        departmentId: departmentId,
-                        venueId: venueId,
-                    },
-                    success: function(response) {
-                        $('.text-danger').remove();
-                        var conflicts = response.conflicts;
+                if (fromDate && toDate && topicId && trainerId && unitId && departmentId && venueId) {
+                    $.ajax({
+                        url: "{{ url('training_schedule/topic/ajax-list') }}",
+                        type: 'GET',
+                        dataType: 'json',
+                        data: {
+                            from_date: fromDate,
+                            to_date: toDate,
+                            topicId: topicId,
+                            trainerId: trainerId,
+                            unitId: unitId,
+                            departmentId: departmentId,
+                            venueId: venueId,
+                        },
+                        success: function(response) {
+                            $('.text-danger').remove();
+                            var conflicts = response.conflicts;
 
-                        if (Object.keys(conflicts).length > 0) {
-                            for (var key in conflicts) {
-                                if (conflicts.hasOwnProperty(key)) {
-                                    $('#' + key).closest('.form-group').append(
-                                        '<div><span class="text-danger">' + conflicts[key] + '</span></div>'
-                                    );
+                            if (Object.keys(conflicts).length > 0) {
+                                for (var key in conflicts) {
+                                    if (conflicts.hasOwnProperty(key)) {
+                                        $('#' + key).closest('.form-group').append(
+                                            '<div><span class="text-danger">' + conflicts[key] +
+                                            '</span></div>'
+                                        );
+                                    }
                                 }
+                                $('#training_scheduleadd').data('conflict', true);
+                            } else {
+                                $('#training_scheduleadd').data('conflict', false);
                             }
-                            $('#training_scheduleadd').data('conflict', true);
-                        } else {
-                            $('#training_scheduleadd').data('conflict', false);
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching data. Please try again.');
                         }
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching data. Please try again.');
-                    }
-                });
-            } else {
-                $('.text-danger').remove();
-                $('#training_scheduleadd').data('conflict', false);
-            }
-        }
-
-        $('#from_date_datepicker').on('change', checkSelections);
-        $('#to_date_datepicker').on('change', checkSelections);
-        $('#topic_id').on('change', checkSelections);
-        $('#trainer_id').on('change', checkSelections);
-        $('#unit_id').on('change', checkSelections);
-        $('#department_id').on('change', checkSelections);
-        $('#venue_id').on('change', checkSelections);
-
-        $(document).on('change', '#unit_id', function() {
-            var unitId = $(this).val();
-            if (unitId) {
-                $.ajax({
-                    url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                        $('#department_id').empty().append(
-                            '<option value="">Select Department</option>');
-                        $.each(data, function(key, value) {
-                            $('#department_id').append('<option value="' + value.id + '">' + value.name + '</option>');
-                        });
-                        $('#department_id').trigger('change.');
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching department. Please try again.');
-                    }
-                });
-            } else {
-                $('#department_id').empty().append('<option value="">Select Department</option>');
-                $('#department_id').trigger('change.');
-            }
-        });
-
-        $('#resetform').on('click', function(e) {
-            e.preventDefault();
-            location.reload();
-        });
-
-        flatpickr("#from_date_datepicker", {
-            dateFormat: "d-m-Y H:i",
-            minDate: "today",
-            enableTime: true,
-            time_24hr: true,
-            onChange: function(selectedDates, dateStr, instance) {
-                const toDatePicker = document.getElementById("to_date_datepicker")._flatpickr;
-                toDatePicker.set("minDate", dateStr);
-                toDatePicker.setDate(dateStr, false);
-            }
-        });
-
-        flatpickr("#to_date_datepicker", {
-            dateFormat: "d-m-Y H:i",
-            minDate: "today",
-            enableTime: true,
-            time_24hr: true,
-        });
-
-        $('#training_scheduleadd').validate({
-            rules: {
-                from_date: { required: true },
-                to_date: { required: true },
-                topic_id: { required: true },
-                trainer_id: { required: true },
-                venue_id: { required: true },
-                unit_id: { required: true },
-                department_id: { required: true },
-                target_trainees: { required: true },
-            },
-            messages: {
-                from_date: { required: "Select a From Date." },
-                to_date: { required: "Select a To Date." },
-                topic_id: { required: "Select a Training Topic." },
-                trainer_id: { required: "Select a Trainer." },
-                venue_id: { required: "Select a Venue/Location." },
-                unit_id: { required: "Select a Unit." },
-                department_id: { required: "Select a Department." },
-                target_trainees: { required: "Target Trainees is Required." },
-            },
-            errorElement: 'span',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element, errorClass, validClass) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element, errorClass, validClass) {
-                $(element).removeClass('is-invalid');
-            },
-            submitHandler: function(form) {
-                if ($('#training_scheduleadd').data('conflict') === true) {
-                    // Prevent form submission if there are conflicts
-                    return false;
+                    });
                 } else {
-                    form.submit(); // Submit the form when valid
+                    $('.text-danger').remove();
+                    $('#training_scheduleadd').data('conflict', false);
                 }
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                console.log(errors + " field(s) are invalid");
-                validator.errorList.forEach(function(error) {
-                    console.log("Field: " + error.element.name + ", Error: " + error.message);
-                });
             }
-        });
-    });
-</script>
 
+            $('#from_date_datepicker').on('change', checkSelections);
+            $('#to_date_datepicker').on('change', checkSelections);
+            $('#topic_id').on('change', checkSelections);
+            $('#trainer_id').on('change', checkSelections);
+            $('#unit_id').on('change', checkSelections);
+            $('#department_id').on('change', checkSelections);
+            $('#venue_id').on('change', checkSelections);
+
+            $(document).on('change', '#unit_id', function() {
+                var unitId = $(this).val();
+                if (unitId) {
+                    $.ajax({
+                        url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#department_id').empty().append(
+                                '<option value="">Select Department</option>');
+                            $.each(data, function(key, value) {
+                                $('#department_id').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#department_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching department. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#department_id').empty().append('<option value="">Select Department</option>');
+                    $('#department_id').trigger('change.');
+                }
+            });
+
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+
+            flatpickr("#from_date_datepicker", {
+                dateFormat: "d-m-Y H:i",
+                minDate: "today",
+                enableTime: true,
+                time_24hr: true,
+                onChange: function(selectedDates, dateStr) {
+                    toDatePicker.set("minDate", dateStr);
+                    toDatePicker.setDate(
+                    dateStr); 
+                }
+            });
+
+            const toDatePicker = flatpickr("#to_date_datepicker", {
+                dateFormat: "d-m-Y H:i",
+                minDate: "today",
+                enableTime: true,
+                time_24hr: true,
+            });
+
+
+            $('#training_scheduleadd').validate({
+                rules: {
+                    from_date: {
+                        required: true
+                    },
+                    to_date: {
+                        required: true
+                    },
+                    topic_id: {
+                        required: true
+                    },
+                    trainer_id: {
+                        required: true
+                    },
+                    venue_id: {
+                        required: true
+                    },
+                    unit_id: {
+                        required: true
+                    },
+                    department_id: {
+                        required: true
+                    },
+                    target_trainees: {
+                        required: true,
+                        digits: true,
+                    },
+                },
+                messages: {
+                    from_date: {
+                        required: "Select a From Date."
+                    },
+                    to_date: {
+                        required: "Select a To Date."
+                    },
+                    topic_id: {
+                        required: "Select a Training Topic."
+                    },
+                    trainer_id: {
+                        required: "Select a Trainer."
+                    },
+                    venue_id: {
+                        required: "Select a Venue/Location."
+                    },
+                    unit_id: {
+                        required: "Select a Unit."
+                    },
+                    department_id: {
+                        required: "Select a Department."
+                    },
+                    target_trainees: {
+                        required: "Target Trainees is Required.",
+                         digits: "Please enter only numeric values for Target Trainees."
+                    },
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    if ($('#training_scheduleadd').data('conflict') === true) {
+                        // Prevent form submission if there are conflicts
+                        return false;
+                    } else {
+                        form.submit(); // Submit the form when valid
+                    }
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log(errors + " field(s) are invalid");
+                    validator.errorList.forEach(function(error) {
+                        console.log("Field: " + error.element.name + ", Error: " + error
+                            .message);
+                    });
+                }
+            });
+        });
+    </script>
 @endpush

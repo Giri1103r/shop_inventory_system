@@ -36,6 +36,8 @@
                                     <form method="POST" id="nomination_processimport" enctype="multipart/form-data"
                                         action="{{ admin_url('nomination_process/import/submit') }}">
                                         @csrf
+                                        <input type="hidden" name="training_schedule_id" value="{{ $training_schedule_id }}">
+
                                         <div class="row">
                                             <div class="mb-3 col-md-6 form-input">
                                                 <label class="form-label required">Nomination Process File</label>

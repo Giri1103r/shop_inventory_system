@@ -50,7 +50,7 @@ class TrainingAttendance extends Model
             $attendanceData[] = [
                 'training_schedule_id' => decryptId($request->training_schedule_id),
                 'nomination_id' => $nominationId,
-                'attendance_date' => DBdateformat($request->attendance_date),
+                'attendance_date' => $request->attendance_date,
                 'attendance_status' => $request->attendance_status[$index], // Always defined now
                 'emp_name' => $request->emp_name[$index],
                 'from_date' => DBdatetimeformat($request->from_date),

@@ -1,10 +1,12 @@
 <html>
 
+
 <head>
+    <title> Training Details | KARAM</title>
     <style>
         .badge {
             padding: 1px 9px 2px;
-            font-size: 12px;
+            font-size: 12.025px;
             font-weight: bold;
             white-space: nowrap;
             color: #ffffff;
@@ -27,217 +29,330 @@
             even-footer-name: _blank;
         }
 
-        body {
-            font-size: 13px;
-            font-family: Arial, sans-serif;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-
-        table {
+        .table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
         }
 
-        th,
-        td {
-            text-align: left;
-            padding: 8px;
-            border: 1px solid #ddd;
-            vertical-align: middle;
+        .table td,
+        .table th {
+            border: 1px solid black;
+            padding: 5px;
+            word-wrap: break-word;
+            max-width: 100px;
+            /* Adjust as needed */
         }
 
-        th {
-            background-color: #469A9A;
-            color: #fff;
-            font-weight: bold;
-            text-transform: uppercase;
+        .table-striped tr:nth-of-type(odd) {
+            background-color: rgba(0, 0, 0, .05) !important;
         }
 
-        .table-header {
-            background-color: #469A9A;
-            color: #fff;
+        body {
+            font-size: 13px;
+        }
+
+        .full-width {
+            width: 100%;
+            font-size: 11px;
+        }
+
+        .tblborder {
+            border: 1px solid black;
+        }
+
+        .activity,
+        .activity th,
+        .activity td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        .header-cell {
+            background-color: #ce0f1f;
+            color: #000;
             font-weight: bold;
             padding: 5px;
-            text-transform: uppercase;
+        }
+
+        .table_card {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 16px;
             text-align: left;
         }
 
-        .striped tr:nth-child(even) {
+        .table_card th,
+        .table_card td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .table_card th {
+            background-color: #f2f2f2;
+            color: #333;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .table_card tr:nth-child(even) {
             background-color: #f9f9f9;
         }
 
-        .footer-table {
-            width: 100%;
-            border: none;
-            margin-top: 20px;
-            background-color: #469A9A;
-            color: #fff;
+        .table_card tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .table_card td {
             text-align: center;
-            padding: 10px 0;
         }
 
-        .footer-table td {
-            border: none;
-            color: #fff;
-        }
-
-        .no-border {
-            border: none;
-        }
-
-        .highlight {
-            background-color: #D6F6F6;
-        }
-
-        .text-success {
-            color: #28a745;
-        }
-
-        .text-danger {
-            color: #dc3545;
+        .table-container {
+            padding: 20px;
         }
     </style>
 </head>
 
 <body>
-    <htmlpageheader name="myHeader1">
-        <table class="highlight">
-            <tr>
-                <td style="width:20%;">
-                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:100px; height:100px;">
-                </td>
-                <td style="width:80%; font-size: 24px; font-weight:bold; font-family: Georgia, serif;">
-                    <div>{{ config('app.name') }}</div>
-                    <div>Training</div>
-                    {{-- <div>{{ $pagetitle }}</div> --}}
-                </td>
-            </tr>
-        </table>
-        <hr style="border-top: 4px double #469A9A;">
-    </htmlpageheader>
+    <htmlpageheader name="myHeader1" style="display:block;">
+        <htmlpageheader name="myHeader1" style="display:block;">
+            <table border="0" style="width:100%;border:0;border-bottom: 4px solid #000;background-color: #FFF;">
+                <tr style="">
+                    <td border="0" style="width:50%;float:left;text-align:left;">
+                        <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+                    </td>
+                    <td border="0"
+                        style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
+                        Training Details
+                    </td>
+                </tr>
+            </table>
 
-    <htmlpagefooter name="myFooter1">
-        <table class="footer-table">
-            <tr>
-                <td width="33%">{DATE d-m-Y}</td>
-                <td width="33%" style="text-align: center; font-style: italic;">Page {PAGENO} of {nbpg}</td>
-            </tr>
-        </table>
-    </htmlpagefooter>
 
-    <div>
-        <h4 class="table-header">Training Schedule</h4>
-        <table class="striped">
+        </htmlpageheader>
+
+
+        <htmlpagefooter name="myFooter1" style="display:none">
+            <table width="100%"
+                style="width:100%;border:0;background-color: #FFF;border-top: 4px solid #000;padding-top:10px;padding-bottom:10px;">
+                <tr>
+                    <td width="33%">
+                        <span style="font-style: italic;">{DATE d-m-Y}</span>
+                    </td>
+                    <td width="33%" align="center" style="font-weight: bold; font-style: italic;">
+
+                    </td>
+                    <td width="33%" style="text-align: right;">
+                        {PAGENO}/{nbpg}
+                    </td>
+                </tr>
+            </table>
+        </htmlpagefooter>
+
+
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
+                        Training Schedule
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <table width="100%" style="width:100%;">
             <tr>
-                <td><b>From Date</b></td>
-                <td>{{ Displaydatetimeformat($training_schedule->from_date) }}</td>
+                <td width="40%" style="padding:5px;text-transform: uppercase;"><b>From Date</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="58%" style="padding:5px;">
+                    {{ Displaydatetimeformat($training_schedule->from_date) }}</td>
             </tr>
             <tr>
-                <td><b>To Date</b></td>
-                <td>{{ Displaydatetimeformat($training_schedule->to_date) }}</td>
+                <td width="40%" style="padding:5px;text-transform: uppercase;"><b>To Date</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="58%" style="padding:5px;">
+                    {{ Displaydatetimeformat($training_schedule->to_date) }}</td>
             </tr>
             <tr>
-                <td><b>Training Topic</b></td>
-                <td>{{ $training_schedule->topic_name ?? '' }}</td>
+                <td width="40%" style="padding:5px;text-transform: uppercase;">
+                    <b>Training Topic</b>
+                </td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="58%" style="padding:5px;">
+                    {{ isset($training_schedule->topic_name) ? $training_schedule->topic_name : '' }}</td>
             </tr>
             <tr>
-                <td><b>Trainer</b></td>
-                <td>{{ $training_schedule->emp_name ?? '' }}</td>
+                <td width="40%" style="padding:5px;text-transform: uppercase;">
+                    <b>Trainer</b>
+                </td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="58%" style="padding:5px;">
+                    {{ isset($training_schedule->emp_name) ? $training_schedule->emp_name : '' }}</td>
             </tr>
             <tr>
-                <td><b>Unit</b></td>
-                <td>{{ $training_schedule->unit_name ?? '' }}</td>
+                <td width="40%" style="padding:5px;text-transform: uppercase;">
+                    <b>Unit</b>
+                </td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="58%" style="padding:5px;">
+                    {{ isset($training_schedule->unit_name) ? $training_schedule->unit_name : '' }}</td>
             </tr>
             <tr>
-                <td><b>Department</b></td>
-                <td>{{ $training_schedule->department_name ?? '' }}</td>
+                <td width="40%" style="padding:5px;text-transform: uppercase;">
+                    <b>Department</b>
+                </td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="58%" style="padding:5px;">
+                    {{ isset($training_schedule->department_name) ? $training_schedule->department_name : '' }}</td>
             </tr>
             <tr>
-                <td><b>Target Trainees</b></td>
-                <td>{{ $training_schedule->target_trainees ?? '' }}</td>
+                <td width="40%" style="padding:5px;text-transform: uppercase;">
+                    <b>Target Trainees</b>
+                </td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="58%" style="padding:5px;">
+                    {{ isset($training_schedule->target_trainees) ? $training_schedule->target_trainees : '' }}</td>
             </tr>
             <tr>
-                <td><b>Venue/Location</b></td>
-                <td>{{ $training_schedule->name_of_the_conference_hall ?? '' }}</td>
+                <td width="40%" style="padding:5px;text-transform: uppercase;">
+                    <b>Venue/Location</b>
+                </td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="58%" style="padding:5px;">
+                    {{ isset($training_schedule->name_of_the_conference_hall) ? $training_schedule->name_of_the_conference_hall : '' }}
+                </td>
             </tr>
             @if ($training_schedule->training_status == 3)
                 <tr>
-                    <td><b>Training Status</b></td>
-                    <td>Training Started</td>
+                    <td width="40%" style="padding:5px;text-transform: uppercase;">
+                        <b>Training Status</b>
+                    </td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="58%" style="padding:5px;">
+                        Training Started
+                    </td>
                 </tr>
             @elseif($training_schedule->training_status == 4)
                 <tr>
-                    <td><b>Training Status</b></td>
-                    <td>Training Ended</td>
+                    <td width="40%" style="padding:5px;text-transform: uppercase;">
+                        <b>Training Status</b>
+                    </td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="58%" style="padding:5px;">
+                        Training Ended
+                    </td>
                 </tr>
             @endif
             <tr>
-                <td><b>Created By</b></td>
-                <td>{{ getusername($training_schedule->created_by) }}</td>
+                <td width="40%" style="padding:5px;text-transform: uppercase;">
+                    <b>Created By</b>
+                </td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="58%" style="padding:5px;">
+                    {{ getusername($training_schedule->created_by) }}</td>
             </tr>
             <tr>
-                <td><b>Created Date</b></td>
-                <td>{{ displayDateformat($training_schedule->created_at) }}</td>
+                <td width="40%" style="padding:5px;text-transform: uppercase;">
+                    <b>Created Date</b>
+                </td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="58%" style="padding:5px;">
+                    {{ displayDateformat($training_schedule->created_at) }}</td>
             </tr>
         </table>
-
-        <h4 class="table-header">Nomination Process</h4>
-        <table class="striped">
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
+                        Nomination Process
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <table class="table_card" style="margin-top: 20px;">
             <thead>
                 <tr>
-                    <th>Employee ID</th>
-                    <th>Employee Name</th>
-                    <th>Email ID</th>
-                    <th>Department</th>
-                    <th>Employee Type</th>
-                    <th>Last Training Attended (Date)</th>
-                    <th>Last Training Attended (Topic)</th>
+                    <th class="form-label required">Employee ID</th>
+                    <th class="form-label required">Employee Name</th>
+                    <th class="form-label required">Email ID</th>
+                    <th class="form-label required">Department</th>
+                    <th class="form-label required">Employee Type</th>
+                    <th class="form-label required">Last training attended on
+                        (Date)
+                    </th>
+                    <th class="form-label required">Last Training Attended on
+                        (Topic)</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="lesson_learned_block">
+                @php $i = 1; @endphp
                 @foreach ($nominationProcessList as $nomination_process)
-                    <tr>
-                        <td>{{ $nomination_process->emp_id ?? '' }}</td>
-                        <td>{{ $nomination_process->emp_name ?? '' }}</td>
-                        <td>{{ $nomination_process->email ?? '' }}</td>
-                        <td>{{ $nomination_process->department_name ?? '' }}</td>
-                        <td>{{ $nomination_process->employee_type ?? '' }}</td>
-                        <td>{{ displayDateformat($nomination_process->last_training_attended_on) }}</td>
-                        <td>{{ $nomination_process->topic_name ?? '' }}</td>
+                    <tr class="lesson_learned_row">
+
+                        <td>
+                            {{ isset($nomination_process->emp_id) ? $nomination_process->emp_id : '' }}
+                        </td>
+                        <td>
+                            {{ isset($nomination_process->emp_name) ? $nomination_process->emp_name : '' }}
+                        </td>
+                        <td>
+                            {{ isset($nomination_process->email) ? $nomination_process->email : '' }}
+                        </td>
+                        <td>
+                            {{ isset($nomination_process->department_name) ? $nomination_process->department_name : '' }}
+                        </td>
+                        <td>
+                            {{ isset($nomination_process->employee_type) ? $nomination_process->employee_type : '' }}
+                        </td>
+                        <td>
+                            {{ displayDateformat($nomination_process->last_training_attended_on) }}
+                        </td>
+                        <td>
+                            {{ isset($nomination_process->topic_name) ? $nomination_process->topic_name : '' }}
+                        </td>
                     </tr>
+                    @php $i++; @endphp
                 @endforeach
             </tbody>
         </table>
-
-        <h4 class="table-header">Training Attendance</h4>
-        <table class="striped">
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
+                        Training Attendance
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <table class="table_card" style="margin-top: 20px;">
             <thead>
                 <tr>
-                    <th>Attendance Date</th>
-                    <th>Employee Name</th>
-                    <th>Attendance</th>
+                    <th class="form-label">Attendance Date</th>
+                    <th class="form-label">Employee Name</th>
+                    <th class="form-label required">Attendance(present /absent)
+                    </th>
                 </tr>
             </thead>
-            <tbody>
+
+            <tbody id="lesson_learned_block">
                 @foreach ($trainingAttendanceList as $training_attendance)
                     <tr>
-                        <td>{{ Displaydateformat($training_attendance->attendance_date) ?? '' }}</td>
+                        <td>{{ Displaydateformat($training_attendance->attendance_date) ?? '' }}
+                        </td>
                         <td>{{ $training_attendance->emp_name ?? '' }}</td>
                         <td>
                             @if ($training_attendance->attendance_status == 1)
-                                <span class="text-success">✔️</span>
+                            <i class="fa-solid fa-check" style="color: #267709;">✔</i>
                             @else
-                                <span class="text-danger">❌</span>
+                            <i class="fa-solid fa-x" style="color: #f72626;">✘</i>
                             @endif
                         </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
-    </div>
+
+
 </body>
 
 </html>
