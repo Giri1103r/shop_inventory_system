@@ -54,12 +54,10 @@ class PpeRequest extends Model
         $userRole = string_to_array($userRole);
 
 
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_EHS_OFFICER, $userRole)) {
         } elseif (in_array(ROLE_HOD, $userRole)) {
             $departmentId = $user->department_id;
             $query->where('ppe_pperequest.department', $departmentId);
-        } elseif (in_array(ROLE_EHS_OFFICER, $userRole)) {
-            $query->where('ppe_pperequest.approve_status', STATUS_EHS_APPROVAL_PENDING);
         } else {
             $query->where('emp_id', $empId);
         }
