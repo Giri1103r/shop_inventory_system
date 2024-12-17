@@ -37,13 +37,13 @@ class PpeRequest extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ppe_pperequest.*', 'masters_department.department_name', 'masters_ppetype.ppe_type','ppe_master_ppetypemaster.ppe_name')
-        ->join('masters_department','ppe_pperequest.department', '=', 'masters_department.id')
-        ->join('masters_ppetype','ppe_pperequest.ppe_type', '=', 'masters_ppetype.id')
-        ->join('ppe_master_ppetypemaster','ppe_pperequest.ppe_name', '=', 'ppe_master_ppetypemaster.id')
-        ->where('ppe_master_ppetypemaster.trash','NO')
-        ->where('masters_department.trash','NO')
-        ->where('masters_ppetype.trash','NO');
+        $query = $this->select('ppe_pperequest.*', 'masters_department.department_name', 'masters_ppetype.ppe_type', 'ppe_master_ppetypemaster.ppe_name')
+            ->join('masters_department', 'ppe_pperequest.department', '=', 'masters_department.id')
+            ->join('masters_ppetype', 'ppe_pperequest.ppe_type', '=', 'masters_ppetype.id')
+            ->join('ppe_master_ppetypemaster', 'ppe_pperequest.ppe_name', '=', 'ppe_master_ppetypemaster.id')
+            ->where('ppe_master_ppetypemaster.trash', 'NO')
+            ->where('masters_department.trash', 'NO')
+            ->where('masters_ppetype.trash', 'NO');
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -54,13 +54,17 @@ class PpeRequest extends Model
         $userRole = string_to_array($userRole);
 
 
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_EHS_OFFICER, $userRole)) {
+        if (in_array(ROLE_EHS_OFFICER, $userRole)) {
+
+            $query->whereIn('ppe_pperequest.approve_status', [STATUS_EHS_APPROVAL_PENDING, STATUS_EHS_APPROVED, STATUS_EHS_REJECTED]);
         } elseif (in_array(ROLE_HOD, $userRole)) {
             $departmentId = $user->department_id;
             $query->where('ppe_pperequest.department', $departmentId);
+        } elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
         } else {
-            $query->where('emp_id', $empId);
+            $query->where('ppe_pperequest.emp_id', $empId);
         }
+
 
 
         if ($request->search['value'] != null) {
@@ -121,7 +125,7 @@ class PpeRequest extends Model
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
             'department' => Auth::user()->department_id,
-            'item_code'=>$request->item_code,
+            'item_code' => $request->item_code,
             'ppe_type' => $request->ppe_type_id,
             'ppe_name' => $request->ppe_name_id,
             'employee_reason' => $request->reason,
@@ -170,7 +174,7 @@ class PpeRequest extends Model
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
             'department' => Auth::user()->department_id,
-            'item_code'=>$request->item_code,
+            'item_code' => $request->item_code,
             'ppe_type' => $request->ppe_type,
             'ppe_name' => $request->ppe_name,
             'employee_reason' => $request->reason,
@@ -268,14 +272,14 @@ class PpeRequest extends Model
     {
         $userId = Auth::user()->employee_id;
 
-        return PpeRequest::where('emp_id',$userId)->where('approve_status', '!=',STATUS_HOD_APPROVAL_PENDING)->where('approve_status','!=',STATUS_EHS_APPROVAL_PENDING)->get();
+        return PpeRequest::where('emp_id', $userId)->where('approve_status', '!=', STATUS_HOD_APPROVAL_PENDING)->where('approve_status', '!=', STATUS_EHS_APPROVAL_PENDING)->get();
     }
 
     public function getuserdata($id)
     {
 
 
-        return PpeRequest::where('id',$id)->orderBy('id','DESC')->first();
+        return PpeRequest::where('id', $id)->orderBy('id', 'DESC')->first();
     }
 
     public function exportdata()
