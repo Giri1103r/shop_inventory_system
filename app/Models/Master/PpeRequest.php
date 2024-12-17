@@ -59,7 +59,7 @@ class PpeRequest extends Model
             $departmentId = $user->department_id;
             $query->where('ppe_pperequest.department', $departmentId);
         } elseif (in_array(ROLE_EHS_OFFICER, $userRole)) {
-            $query->where('ppe_pperequest.approve_status', STATUS_HOD_APPROVED);
+            $query->where('ppe_pperequest.approve_status', STATUS_EHS_APPROVAL_PENDING);
         } else {
             $query->where('emp_id', $empId);
         }
