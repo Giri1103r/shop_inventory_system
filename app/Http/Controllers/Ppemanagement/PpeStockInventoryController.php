@@ -103,8 +103,6 @@ class PpeStockInventoryController extends Controller
             $id = decryptId($request->id);
             $ppestock = $this->ppestock->selectOne($id);
 
-
-
             $data = [
                 'ppestock' => $ppestock,
                 'encryptid' => $request->id,
