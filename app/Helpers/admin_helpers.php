@@ -300,7 +300,7 @@ if (!function_exists('getRoleMenu')) {
                   <tr>';
 
                     foreach ($permissions as $perm) {
-                        $html .= '<td><div style="display: inline-flex;justify-content: space-evenly;width: 7%;">  <input type="checkbox" name="menu_' . $value['id'] . '_' . $perm . '" class="" data-id="" data-parentid="" > ' . ucfirst($perm) . '<td>';
+                        $html .= '<td><div style="display: inline-flex;justify-content: space-evenly;width: 7%;">  <input type="checkbox" name="menu_' . $value['id'] . '_' . $perm . '" id="sub_' . $value['id'] . '" class="" data-id="" data-parentid="" > ' . ucfirst($perm) . '<td>';
                     }
 
                     $html .= '</tr>';

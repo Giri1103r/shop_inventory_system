@@ -217,9 +217,13 @@ class NominationProcessController extends Controller
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
-    public function Import(Request $request)
+    public function Import(Request $request,$training_schedule_id)
     {
-        $data = array();
+        $decryptedId = decryptId($training_schedule_id);
+
+        $data = [
+            'training_schedule_id' => $decryptedId,
+        ];
         return view('master.training.nomination_process.import', $data);
     }
     public function ImportSubmit(Request $request)
@@ -281,6 +285,7 @@ class NominationProcessController extends Controller
                 $details = [
                     "user_id" => $user_id,
                     "log_id" => $insert_id,
+                    "trainingScheduleIid" => $request->training_schedule_id,
                     "path" => $path,
                 ];
 
@@ -292,11 +297,11 @@ class NominationProcessController extends Controller
             $insert_data['Uploded_by'] = Auth::user()->toArray();
 
             Session::flash('success', __('Your data has been uploaded sucessfully'));
-            return redirect(admin_url('nomination_process/list'));
+            return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
-
+            dd($ex);
             Session::flash('error', __('Nomination Process upload failed'));
-            return redirect(admin_url('nomination_process/list'));
+            return redirect(admin_url('training_schedule/list'));
         }
     }
     public function ExportExcel(Request $request)

@@ -4,6 +4,7 @@
 
 
 @section('content')
+  
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
@@ -127,8 +128,10 @@
                                         <h4 class="text-white">Nomination Process</h4>
                                     </div>
                                 </div>
-                                <div style="padding-left: 88% !important">
-                                    <x-button-import href="{{ admin_url('nomination_process/import') }}"></x-button-import>
+                               
+                                {{-- <div style="cursor: pointer  !important;padding-left: 88% !important"> --}}
+                                <div class="d-flex justify-content-end p-2">
+                                    <x-button-import href="{{ admin_url('nomination_process/import/' . encryptId($training_schedule->id)) }}"></x-button-import>
 
                                 </div>
 
@@ -137,15 +140,15 @@
                                         action="{{ admin_url('nomination_process/add/submit') }}"
                                         enctype="multipart/form-data">
                                         @csrf
+                                        <div clase="nominationaddmorebutton" style="padding-left: 82% !important; margin-top: -59px;">
+                                            <button class="btn btn-primary addmorebutton"
+                                                data-block='lesson_learned_block' data-row='lesson_learned_row'
+                                                type="button" id="dynamic-add-more"
+                                                style="margin:10px;width: 84px;">Add</button>
 
+                                        </div>
                                         <div class="row">
-                                            <div style="padding-left: 79% !important;margin-top: -46px;">
-                                                <button class="btn btn-primary addmorebutton"
-                                                    data-block='lesson_learned_block' data-row='lesson_learned_row'
-                                                    type="button" id="dynamic-add-more"
-                                                    style="margin:10px;width: 84px;">Add</button>
-
-                                            </div>
+                                           
                                             <table class="table_card" style="margin-top: 20px;">
                                                 <thead>
 
@@ -339,11 +342,31 @@
                 dateFormat: "d-m-Y",
 
             });
-
-            $(document).on("change", "[id^='emp_id_']", function() {
-                var emp_id = $(this).val();
+            $(document).on("change", "[name^='employee'][name$='[emp_id]']", function() {
+                var empIds = [];
+                var isDuplicate = false;
                 var currentRow = $(this).closest("tr");
-                var departmentDropdown = currentRow.find('select[name*="[department_id]"]');
+                var emp_id = $(this).val();
+
+                $("[name^='employee'][name$='[emp_id]']").each(function() {
+                    var otherEmpId = $(this).val();
+                    if (otherEmpId) {
+                        if (empIds.includes(otherEmpId)) {
+                            isDuplicate = true;
+                        }
+                        empIds.push(otherEmpId);
+                    }
+                });
+
+                if (isDuplicate) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Duplicate Employee ID!",
+                        text: "Each Employee ID must be unique.",
+                    });
+                    $(this).val("");
+                    return;
+                }
 
                 if (emp_id) {
                     $.ajax({
@@ -358,8 +381,9 @@
                                 currentRow.find('input[name*="[employee_type]"]').val(data
                                     .employee.employee_status);
 
-                                departmentDropdown.empty();
-                                departmentDropdown.append(
+                                var departmentDropdown = currentRow.find(
+                                    'select[name*="[department_id]"]');
+                                departmentDropdown.empty().append(
                                     '<option value="">Select Department</option>');
                                 data.departments.forEach(function(department) {
                                     var selected = data.employee.department ==
@@ -382,13 +406,14 @@
                                 title: "Error",
                                 text: "An error occurred while fetching employee details.",
                             });
-                        },
+                        }
                     });
                 } else {
                     currentRow.find('input[name*="[emp_name]"]').val("");
                     currentRow.find('input[name*="[email]"]').val("");
                     currentRow.find('input[name*="[employee_type]"]').val("");
-                    departmentDropdown.empty().append('<option value="">Select Department</option>');
+                    currentRow.find('select[name*="[department_id]"]').empty().append(
+                        '<option value="">Select Department</option>');
                 }
             });
 
@@ -494,65 +519,38 @@
                 });
             });
 
-            $(document).on("change", "[name^='employee'][name$='[emp_id]']", function() {
-                var empIds = [];
-                var isDuplicate = false;
+            // $('#lesson_learned_block').on('change', '[name^="employee"][name$="[emp_id]"]', function() {
+            //     var rowId = $(this).attr('name').match(/\d+/)[
+            //         0]; // Extract row number from name attribute
+            //     var empIdField = `[name="employee[${rowId}][emp_id]"]`;
 
-                $("[name^='employee'][name$='[emp_id]']").each(function() {
-                    var empId = $(this).val();
-                    if (empId) {
-                        if (empIds.includes(empId)) {
-                            isDuplicate = true; // Duplicate found
-                        }
-                        empIds.push(empId);
-                    }
-                });
+            //     $(empIdField).rules('add', {
+            //         required: true,
+            //         remote: {
+            //             url: '{{ admin_url('training_schedule/nomination_process/unique') }}',
+            //             type: 'post',
+            //             data: {
+            //                 _token: '{{ csrf_token() }}',
+            //                 emp_id: function() {
+            //                     return $(empIdField)
+            //                         .val(); // Fetch Employee ID dynamically
+            //                 },
+            //                 training_schedule_id: function() {
+            //                     return $('#training_schedule_id').val();
+            //                 }
+            //             }
+            //         },
+            //         messages: {
+            //             required: "Employee ID is required.",
+            //             remote: "This Employee ID is already nominated for this training."
+            //         }
+            //     });
+            // });
 
-                if (isDuplicate) {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Duplicate Employee ID!",
-                        text: "Each Employee ID must be unique.",
-                    });
-
-                    // Clear the current field
-                    $(this).val("");
-                }
-            });
-            $('#lesson_learned_block').on('change', '[name^="employee"][name$="[emp_id]"]', function() {
-                var rowId = $(this).attr('name').match(/\d+/)[
-                    0]; // Extract row number from name attribute
-                var empIdField = `[name="employee[${rowId}][emp_id]"]`;
-
-                $(empIdField).rules('add', {
-                    required: true,
-                    remote: {
-                        url: '{{ admin_url('training_schedule/nomination_process/unique') }}',
-                        type: 'post',
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                            emp_id: function() {
-                                return $(empIdField)
-                                    .val(); // Fetch Employee ID dynamically
-                            },
-                            training_schedule_id: function() {
-                                return $('#training_schedule_id').val();
-                            }
-                        }
-                    },
-                    messages: {
-                        required: "Employee ID is required.",
-                        remote: "This Employee ID is already nominated for this training."
-                    }
-                });
-            });
-            var rowId = $(this).attr('name').match(/\d+/)[
-                    0]; // Extract row number from name attribute
-                var empIdField = `[name="employee[${rowId}][emp_id]"]`;
             $('#nomination_processadd').validate({
 
                 rules: {
-                    empIdField: {
+                    'employee[1][emp_id]': {
                         required: true,
                     },
                     'employee[1][emp_name]': {

@@ -61,11 +61,11 @@
                         <label class="form-check-label remember_me" for="customCheckBox1">Remember me</label>
                     </div>
                 </div>
-                <div class="mb-3">
+                {{-- <div class="mb-3">
 
                     <div class="g-recaptcha" data-sitekey="{{ env('GOOGLE_RECAPTCHA_KEY') }}"></div>
                     <div class="recaptcha-error" style="color:red;"></div>
-                </div>
+                </div> --}}
                 <div class="mb-3 d-grid text-center">
                     <button class="btn btn-primary" type="submit"> Log In </button>
                 </div>

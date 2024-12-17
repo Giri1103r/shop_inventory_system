@@ -166,7 +166,7 @@
             display: block;
         }
 
-      
+
 
         .custom-tooltip {
             display: none;
@@ -179,6 +179,8 @@
             white-space: nowrap;
             z-index: 1000;
         }
+
+      
     </style>
     @stack('style')
 

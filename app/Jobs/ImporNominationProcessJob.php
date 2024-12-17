@@ -27,6 +27,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
 
+use App\Models\Master\TrainingSchedule;
 use App\Models\Master\NominationProcess;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
@@ -279,15 +280,15 @@ class ImporNominationProcessJob
                 continue;
             }
 
-            if ($empExist->department != $deptExist->id) {
-                $cond_error_datas[] = [
-                    'upload_id' => $this->details['log_id'],
-                    'line_no' => $i,
-                    'error' => 'Employee does not belong to the specified Department',
-                ];
-                $i++;
-                continue;
-            }
+            // if ($empExist->department != $deptExist->id) {
+            //     $cond_error_datas[] = [
+            //         'upload_id' => $this->details['log_id'],
+            //         'line_no' => $i,
+            //         'error' => 'Employee does not belong to the specified Department',
+            //     ];
+            //     $i++;
+            //     continue;
+            // }
 
 
             // Topic Validation
@@ -305,10 +306,10 @@ class ImporNominationProcessJob
                 $i++;
                 continue;
             }
-            $nominationProcessExist = NominationProcess::where('emp_id', $empExist->id)->where('status', 1)->first();
+            $nominationProcessExist = NominationProcess::where('training_schedule_id', $this->details['trainingScheduleIid'])->where('employee_id', $emp_id)->where('status', 1)->first();
             if ($nominationProcessExist) {
 
-                if ($nominationProcessExist->emp_id !== $emp_id) {
+                if ($nominationProcessExist->employee_id !== $emp_id) {
                     $cond_error_datas[] = [
                         'upload_id' => $this->details['log_id'],
                         'line_no' => $i,
@@ -336,11 +337,10 @@ class ImporNominationProcessJob
                     $i++;
                     continue;
                 }
-              
             }
-            // Create the unit if it doesn't exist
             $data = [
-                'emp_id' => $empExist->id,
+                'training_schedule_id' => $this->details['trainingScheduleIid'],
+                'employee_id' => $empExist->id,
                 'emp_name' => $empExist->emp_name,
                 'email' => $empExist->email,
                 'department_id' => $empExist->department,
@@ -350,8 +350,15 @@ class ImporNominationProcessJob
                 'created_by' => $this->details['user_id'],
             ];
 
-            NominationProcess::create($data);
+            $nomination = NominationProcess::create($data);
 
+            if ($nomination) {
+                TrainingSchedule::where('id', $this->details['trainingScheduleIid'])->update([
+                    'training_status' => 2,
+                    'updated_by' => Auth::id(),
+                    'updated_at' => now(),
+                ]);
+            }
 
             $i++;
         }

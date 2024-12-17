@@ -383,18 +383,18 @@ Route::middleware(['securityheader'])->group(function () {
              * Topic master
              */
             Route::group(['prefix' => 'topic'], function () {
-                Route::get('/list', [TopicController::class, 'index']);
-                Route::post('/list', [TopicController::class, 'index']);
-                Route::get('/add', [TopicController::class, 'add']);
+                Route::get('/list', [TopicController::class, 'index'])->middleware('role:topic,view');
+                Route::post('/list', [TopicController::class, 'index'])->middleware('role:topic,view');
+                Route::get('/add', [TopicController::class, 'add'])->middleware('role:topic,add');
                 Route::post('/add/submit', [TopicController::class, 'store']);
-                Route::get('/edit/{id}', [TopicController::class, 'edit']);
+                Route::get('/edit/{id}', [TopicController::class, 'edit'])->middleware('role:topic,edit');
                 Route::post('/edit/submit', [TopicController::class, 'update']);
-                Route::get('/view/{id}', [TopicController::class, 'view'])->middleware('role:company,view');
-                Route::post('/delete', [TopicController::class, 'delete'])->middleware('role:company,delete');
+                Route::get('/view/{id}', [TopicController::class, 'view'])->middleware('role:topic,view');
+                Route::post('/delete', [TopicController::class, 'delete'])->middleware('role:topic,delete');
                 Route::get('/export/excel', [TopicController::class, 'exportExcel']);
                 Route::get('/export/pdf', [TopicController::class, 'exportPdf']);
                 Route::get('/sampledownload', [TopicController::class, 'DownloadSample']);
-                Route::get('/import', [TopicController::class, 'import'])->middleware('role:company,import');
+                Route::get('/import', [TopicController::class, 'import'])->middleware('role:topic,import');
                 Route::post('/import/submit', [TopicController::class, 'importSubmit']);
                 Route::post('/status', [TopicController::class, 'statusChange']);
                 Route::post('/unique', [TopicController::class, 'Uniquecheck']);
@@ -406,18 +406,18 @@ Route::middleware(['securityheader'])->group(function () {
              * Venue master
              */
             Route::group(['prefix' => 'venue'], function () {
-                Route::get('/list', [VenueController::class, 'index']);
-                Route::post('/list', [VenueController::class, 'index']);
-                Route::get('/add', [VenueController::class, 'add'])->middleware('role:company,add');
+                Route::get('/list', [VenueController::class, 'index'])->middleware('role:venue,view');
+                Route::post('/list', [VenueController::class, 'index'])->middleware('role:venue,view');
+                Route::get('/add', [VenueController::class, 'add'])->middleware('role:venue,add');
                 Route::post('/add/submit', [VenueController::class, 'store']);
-                Route::get('/edit/{id}', [VenueController::class, 'edit'])->middleware('role:company,edit');
+                Route::get('/edit/{id}', [VenueController::class, 'edit'])->middleware('role:venue,edit');
                 Route::post('/edit/submit', [VenueController::class, 'update']);
-                Route::get('/view/{id}', [VenueController::class, 'view'])->middleware('role:company,view');
-                Route::post('/delete', [VenueController::class, 'delete'])->middleware('role:company,delete');
+                Route::get('/view/{id}', [VenueController::class, 'view'])->middleware('role:venue,view');
+                Route::post('/delete', [VenueController::class, 'delete'])->middleware('role:venue,delete');
                 Route::get('/export/excel', [VenueController::class, 'exportExcel']);
                 Route::get('/export/pdf', [VenueController::class, 'exportPdf']);
                 Route::get('/sampledownload', [VenueController::class, 'DownloadSample']);
-                Route::get('/import', [VenueController::class, 'import'])->middleware('role:company,import');
+                Route::get('/import', [VenueController::class, 'import'])->middleware('role:venue,import');
                 Route::post('/import/submit', [VenueController::class, 'importSubmit']);
                 Route::post('/status', [VenueController::class, 'statusChange']);
                 Route::post('/unique', [VenueController::class, 'Uniquecheck']);
@@ -427,18 +427,18 @@ Route::middleware(['securityheader'])->group(function () {
              * Training Matrix
              */
             Route::group(['prefix' => 'training_matrix'], function () {
-                Route::get('/list', [TrainingMatrixController::class, 'index']);
-                Route::post('/list', [TrainingMatrixController::class, 'index']);
-                Route::get('/add', [TrainingMatrixController::class, 'add'])->middleware('role:company,add');
+                Route::get('/list', [TrainingMatrixController::class, 'index'])->middleware('role:training_matrix,view');
+                Route::post('/list', [TrainingMatrixController::class, 'index'])->middleware('role:training_matrix,view');
+                Route::get('/add', [TrainingMatrixController::class, 'add'])->middleware('role:training_matrix,add');
                 Route::post('/add/submit', [TrainingMatrixController::class, 'store']);
-                Route::get('/edit/{id}', [TrainingMatrixController::class, 'edit'])->middleware('role:company,edit');
+                Route::get('/edit/{id}', [TrainingMatrixController::class, 'edit'])->middleware('role:training_matrix,edit');
                 Route::post('/edit/submit', [TrainingMatrixController::class, 'update']);
-                Route::get('/view/{id}', [TrainingMatrixController::class, 'view'])->middleware('role:company,view');
-                Route::post('/delete', [TrainingMatrixController::class, 'delete'])->middleware('role:company,delete');
+                Route::get('/view/{id}', [TrainingMatrixController::class, 'view'])->middleware('role:training_matrix,view');
+                Route::post('/delete', [TrainingMatrixController::class, 'delete'])->middleware('role:training_matrix,delete');
                 Route::get('/export/excel', [TrainingMatrixController::class, 'exportExcel']);
                 Route::get('/export/pdf', [TrainingMatrixController::class, 'exportPdf']);
                 Route::get('/sampledownload', [TrainingMatrixController::class, 'DownloadSample']);
-                Route::get('/import', [TrainingMatrixController::class, 'import'])->middleware('role:company,import');
+                Route::get('/import', [TrainingMatrixController::class, 'import'])->middleware('role:training_matrix,import');
                 Route::post('/import/submit', [TrainingMatrixController::class, 'importSubmit']);
                 Route::post('/status', [TrainingMatrixController::class, 'statusChange']);
                 Route::get('/topic/ajax-list/{topicId}/{trainerId}', [TrainingMatrixController::class, 'Uniquecheck']);
@@ -450,22 +450,22 @@ Route::middleware(['securityheader'])->group(function () {
              * Training  Schedule
              */
             Route::group(['prefix' => 'training_schedule'], function () {
-                Route::get('/list', [TrainingScheduleController::class, 'index']);
-                Route::post('/list', [TrainingScheduleController::class, 'index']);
-                Route::get('/add', [TrainingScheduleController::class, 'add']);
+                Route::get('/list', [TrainingScheduleController::class, 'index'])->middleware('role:training_schedule,view');
+                Route::post('/list', [TrainingScheduleController::class, 'index'])->middleware('role:training_schedule,view');
+                Route::get('/add', [TrainingScheduleController::class, 'add'])->middleware('role:training_schedule,add');
                 Route::post('/add/submit', [TrainingScheduleController::class, 'store']);
-                Route::get('/edit/{id}', [TrainingScheduleController::class, 'edit']);
+                Route::get('/edit/{id}', [TrainingScheduleController::class, 'edit'])->middleware('role:training_schedule,edit');
                 Route::post('/edit/submit', [TrainingScheduleController::class, 'update']);
-                Route::get('/view/{id}', [TrainingScheduleController::class, 'view']);
+                Route::get('/view/{id}', [TrainingScheduleController::class, 'view'])->middleware('role:training_schedule,view');
                 Route::get('/export/excel', [TrainingScheduleController::class, 'exportExcel']);
                 Route::get('/export/pdf', [TrainingScheduleController::class, 'exportPdf']);
+                Route::post('/delete', [TrainingScheduleController::class, 'delete'])->middleware('role:training_schedule,delete');
                 Route::get('/sampledownload', [TrainingScheduleController::class, 'DownloadSample']);
-                Route::get('/import', [TrainingScheduleController::class, 'import'])->middleware('role:company,import');
+                Route::get('/import', [TrainingScheduleController::class, 'import'])->middleware('role:training_schedule,import');
                 Route::post('/import/submit', [TrainingScheduleController::class, 'importSubmit']);
                 Route::post('/status', [TrainingScheduleController::class, 'statusChange']);
                 Route::get('/topic/ajax-list', [TrainingScheduleController::class, 'Uniquecheck']);
                 Route::get('/nominationProcess/{id}', [TrainingScheduleController::class, 'nominationProcess']);
-                Route::post('/delete', [TrainingScheduleController::class, 'delete']);
                 Route::get('/start/{id}', [TrainingScheduleController::class, 'startTraining']);
                 Route::get('/end/{id}', [TrainingScheduleController::class, 'endTraining']);
                 Route::get('/attendance/{id}', [TrainingScheduleController::class, 'attendance']);
@@ -483,7 +483,7 @@ Route::middleware(['securityheader'])->group(function () {
              */
 
             Route::prefix('training_calendar')->group(function () {
-                Route::get('/list', [TrainingCalendarController::class, 'index']);
+                Route::get('/list', [TrainingCalendarController::class, 'index'])->middleware('role:training_calendar,view');
                 Route::get('/fetch/schedule', [TrainingCalendarController::class, 'trainingShow']);
                 Route::put('/update/{id}', [TrainingCalendarController::class, 'updateEvent']);
             });
@@ -499,7 +499,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/export/excel', [NominationProcessController::class, 'exportExcel']);
                 Route::get('/export/pdf', [NominationProcessController::class, 'exportPdf']);
                 Route::get('/sampledownload', [NominationProcessController::class, 'DownloadSample']);
-                Route::get('/import', [NominationProcessController::class, 'import']);
+                Route::get('/import/{training_schedule_id}', [NominationProcessController::class, 'import']);
                 Route::post('/import/submit', [NominationProcessController::class, 'importSubmit']);
                 Route::post('/status', [NominationProcessController::class, 'statusChange']);
                 Route::post('/unique', [NominationProcessController::class, 'Uniquecheck']);
