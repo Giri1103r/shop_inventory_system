@@ -170,7 +170,7 @@
                 var topicId = $('#topic_id').val();
                 var trainerId = $('#trainer_id').val();
                 var unitId = $('#unit_id').val();
-                var departmentId = $('#department_id').val();
+                var departmentIds = $('#department_id').val(); 
 
                 if (topicId && trainerId) {
                     $.ajax({
@@ -178,10 +178,9 @@
                         type: 'GET',
                         dataType: 'json',
                         data: {
-
-                        unitId: unitId,
-                        departmentId: departmentId,
-                    },
+                            unit_id: unitId,
+                            department_id: departmentIds,
+                        },
                         success: function(response) {
                             $('.text-danger').remove();
 
@@ -193,8 +192,7 @@
                                     e.preventDefault();
                                 });
                             } else {
-                                $('#training_matrixadd').off(
-                                'submit');
+                                $('#training_matrixadd').off('submit');
                             }
                         },
                         error: function(xhr) {
@@ -210,6 +208,7 @@
             $('#topic_id').on('change', checkSelections);
             $('#trainer_id').on('change', checkSelections);
         });
+
 
         $(document).ready(function() {
 

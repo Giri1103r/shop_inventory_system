@@ -58,9 +58,12 @@ class PpeRequest extends Model
         } elseif (in_array(ROLE_HOD, $userRole)) {
             $departmentId = $user->department_id;
             $query->where('ppe_pperequest.department', $departmentId);
+        } elseif (in_array(ROLE_EHS_OFFICER, $userRole)) {
+            $query->where('ppe_pperequest.approve_status', STATUS_HOD_APPROVED);
         } else {
             $query->where('emp_id', $empId);
         }
+
 
         if ($request->search['value'] != null) {
             $search = $request->search['value'];
@@ -309,7 +312,7 @@ class PpeRequest extends Model
         if ($request->has('emp_name') && $request->emp_name) {
             $query->where('emp_name', 'LIKE', '%' . $request->emp_name . '%');
         }
-       
+
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');

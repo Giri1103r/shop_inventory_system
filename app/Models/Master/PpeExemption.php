@@ -54,6 +54,9 @@ class PpeExemption extends Model
            $departmentId = $user->department_id;
            $query->where('ppe_ppeexemption.department',$departmentId);
         }
+        elseif (in_array(ROLE_EHS_HEAD, $userRole)) {
+            $query->where('ppe_ppeexemption.approve_status', STATUS_EHS_APPROVED);
+        }
 
         else {
             $query->where('ppe_ppeexemption.emp_id', $empId);

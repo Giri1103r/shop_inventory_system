@@ -220,7 +220,7 @@ class PpeExemptionController extends Controller
                 $img = admin_url('public/assets/images/ppe-management.jpg');
                 $notificationData = array(
                     'notification_type' => 1,
-                    'module_type' => 3,
+                    'module_type' => 1,
                     'notification_message' => $message,
                     'mobile_notification' => json_encode(array(
                         'title' => $message,
@@ -396,7 +396,7 @@ class PpeExemptionController extends Controller
                 $img = admin_url('public/assets/images/ppe-management.jpg');
                 $notificationData = array(
                     'notification_type' => 1,
-                    'module_type' => 3,
+                    'module_type' => 1,
                     'notification_message' => $message,
                     'mobile_notification' => json_encode(array(
                         'title' => $message,
@@ -547,7 +547,7 @@ class PpeExemptionController extends Controller
             $img = admin_url('public/assets/images/ppe-management.jpg');
             $notificationData = array(
                 'notification_type' => 1,
-                'module_type' => 3,
+                'module_type' => 1,
                 'notification_message' => $message,
                 'mobile_notification' => json_encode(array(
                     'title' => $message,
@@ -696,8 +696,7 @@ class PpeExemptionController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-             report($ex)
-;
+             report($ex);
         }
     }
 }

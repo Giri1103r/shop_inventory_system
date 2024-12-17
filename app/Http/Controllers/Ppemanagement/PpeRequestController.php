@@ -250,7 +250,7 @@ class PpeRequestController extends Controller
 
                 $notificationData = [
                     'notification_type' => 1,
-                    'module_type' => 3,
+                    'module_type' => 1,
                     'notification_message' => $message,
                     'mobile_notification' => json_encode([
                         'title' => $message,
@@ -383,9 +383,24 @@ class PpeRequestController extends Controller
         $remarks = $request->input('remarks');
         $approved_at = $request->input('date');
         $action = $request->input('action');
-        $approveStatus = $action == 'approve' ? STATUS_HOD_APPROVED : STATUS_HOD_REJECTED;
-        $dateTime = Carbon::createFromFormat('d-m-Y H:i:s', $approved_at);
+        if ($action == 'approve') {
+            $approveStatus = STATUS_EHS_APPROVAL_PENDING;
+            $status = 1; // Approved status
+        } else {
+            $approveStatus = STATUS_HOD_REJECTED;
+            $status = 0; // Rejected status
+        }
 
+        if ($action == 'approve') {
+            $approveDStatus = STATUS_HOD_APPROVED;
+            $status = 1; // Approved status
+        } else {
+            $approveDStatus = STATUS_HOD_REJECTED;
+            $status = 0; // Rejected status
+        }
+
+
+        $dateTime = Carbon::createFromFormat('d-m-Y H:i:s', $approved_at);
         try {
             $empDetails = $this->pperequest->find($id);
 
@@ -394,11 +409,22 @@ class PpeRequestController extends Controller
                 'approved_at' => $dateTime,
                 'approved_by' => Auth::id(),
                 'approve_status' => $approveStatus,
-                'status' => $action == 'approve' ? 1 : 0
+                'status' => $status
             ];
 
-            $this->ppestatus->store($updateData, $empDetails);
+            $updatedatas = [
+                'remarks' => $remarks,
+                'approved_at' => $dateTime,
+                'approved_by' => Auth::id(),
+                'approve_status' => $approveDStatus,
+                'status' => $status
+            ];
+
+            $this->ppestatus->store($updatedatas, $empDetails);
+
             $empDetails->updateapproval($updateData, $id);
+
+
 
             $details = [
                 'emp_id' => $empDetails->emp_id,
@@ -427,7 +453,7 @@ class PpeRequestController extends Controller
 
                 $notificationData = [
                     'notification_type' => 1,
-                    'module_type' => 3,
+                    'module_type' => 1,
                     'notification_message' => $message,
                     'mobile_notification' => json_encode([
                         'title' => $message,
@@ -450,7 +476,7 @@ class PpeRequestController extends Controller
 
                 $notificationData = [
                     'notification_type' => 1,
-                    'module_type' => 3,
+                    'module_type' => 1,
                     'notification_message' => $message,
                     'mobile_notification' => json_encode([
                         'title' => $message,
@@ -563,7 +589,7 @@ class PpeRequestController extends Controller
                 $assignedUserString = implode(',', $assignedUsers);
                 $notificationData = [
                     'notification_type' => 1,
-                    'module_type' => 3,
+                    'module_type' => 1,
                     'notification_message' => $message,
                     'mobile_notification' => json_encode([
                         'title' => $message,
@@ -592,7 +618,7 @@ class PpeRequestController extends Controller
                 $assignedUserString = implode(',', $assignedUsers);
                 $notificationData = [
                     'notification_type' => 1,
-                    'module_type' => 3,
+                    'module_type' => 1,
                     'notification_message' => $message,
                     'mobile_notification' => json_encode([
                         'title' => $message,
