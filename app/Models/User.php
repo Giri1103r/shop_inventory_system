@@ -138,13 +138,19 @@ class User extends Authenticatable
                 $this->updateErrorStatus($item['emp_id'], $errorMessage);
                 continue; // Skip this record
             }
-
+            if ($item['user_role']) {
+                $decryptedRoleIds = array_map(function ($encryptedId) {
+                    return $encryptedId;
+                }, $item['user_role']);
+    
+                $commaSeparatedRoles = implode(',', $decryptedRoleIds);
+            }
             $userData = [
                 'name' => $item['emp_name'],
                 'first_name' => $item['emp_name'],
                 'last_name' => '',
                 'email' => $item['email'],
-                'role' => $item['user_role'],
+                'role' => $commaSeparatedRoles,
                 'user_type' => 1,
                 'employee_id' => $item['emp_id'],
                 'username' => $item['emp_id'],
@@ -190,7 +196,6 @@ class User extends Authenticatable
         return DB::table('masters_employee')->where('emp_id', $emp_id)->update($update_data);
     }
 
-
     public function userUpdate($employee)
     {
 
@@ -208,13 +213,12 @@ class User extends Authenticatable
             $commaSeparatedRoles = implode(',', $decryptedRoleIds);
         }
 
-        // dd($employee);
 
         $data = array(
             'name' => $employee->emp_name,
             'first_name' => $employee->emp_name,
             'last_name' => '',
-            'email' => $employee->emp_email,
+            'email' => $employee->email,
             'role' => $commaSeparatedRoles,
             'employee_id' => $employee->emp_id,
             'department_id' => decryptId($employee->emp_department_id),

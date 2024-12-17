@@ -154,7 +154,7 @@ class EmployeeController extends Controller
             $id = decryptId($request->id);
             $rules = [
                 'emp_name' => 'required',
-                'email' => 'required|email',
+                'email' => 'required',
             ];
             $messages = [
 
@@ -167,8 +167,8 @@ class EmployeeController extends Controller
             }
 
             $employee =  $this->employee->updates($id);
-
             $userUpdate =  $this->user->userUpdate($employee);
+
 
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('employee/list'));
