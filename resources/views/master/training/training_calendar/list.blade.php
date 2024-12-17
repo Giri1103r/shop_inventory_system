@@ -58,7 +58,7 @@
 
 @push('script')
     <!--calender-->
-    <script src="{{ public_plugins('fullcalendar/locales-all.min.js') }}"></script>
+    {{-- <script src="{{ public_plugins('fullcalendar/locales-all.min.js') }}"></script> --}}
     <script src="{{ public_plugins('fullcalendar/main.min.js') }}"></script>
 
     <script>
@@ -72,7 +72,7 @@
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay',
                 },
-                editable: true,
+                editable: false,
                 events: {
                     url: '{{ url('training_calendar/fetch/schedule') }}',
                     method: 'GET',
@@ -90,9 +90,8 @@
                     const tooltip = document.createElement('div');
                     tooltip.classList.add('custom-tooltip');
                     tooltip.innerHTML = `
-                    <b>Trainer:</b> ${info.event.extendedProps.trainer_name || 'N/A'}<br>
-                    <b>Venue:</b> ${info.event.extendedProps.venue_name || 'N/A'}
-                `;
+            <b>Trainer:</b> ${info.event.extendedProps.trainer_name || 'N/A'}<br>
+            <b>Venue:</b> ${info.event.extendedProps.venue_name || 'N/A'}`;
                     info.el.style.position = 'relative';
                     info.el.appendChild(tooltip);
 
@@ -107,7 +106,7 @@
                     const editUrl = `{{ url('training_schedule/edit/') }}/${info.event.id}`;
                     window.location.href = editUrl;
                 },
-             
+
             });
 
             calendar.render();

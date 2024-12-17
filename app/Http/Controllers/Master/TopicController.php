@@ -76,9 +76,9 @@ class TopicController extends Controller
                             if (CheckUserPermission('edit')) {
                                 $btn .= '<a href="' . admin_url('topic/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
-                            if (CheckUserPermission('delete')) {
-                                $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
-                            }
+                            // if (CheckUserPermission('delete')) {
+                            //     $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
+                            // }
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])

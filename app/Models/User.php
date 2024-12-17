@@ -146,7 +146,7 @@ class User extends Authenticatable
                 'email' => $item['email'],
                 'role' => $item['user_role'],
                 'user_type' => 1,
-                'employee_id' => $item['emp_id'],
+                'employee_id' => $item['id'],
                 'username' => $item['emp_id'],
                 'password' => Hash::make($item['emp_name'] . "@12345"),
                 'department_id' => null,

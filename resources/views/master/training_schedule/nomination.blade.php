@@ -91,7 +91,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Training Man Hours</label>
                                         <div class="view_data">
-                                            {{ $training_hours ?? 'N/A' }}
+                                            {{ $totalTrainingHours ?? 'N/A' }}
                                         </div>
                                     </div>
 

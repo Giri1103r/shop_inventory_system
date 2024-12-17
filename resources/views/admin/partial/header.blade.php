@@ -84,7 +84,16 @@
         <li class="dropdown notification-list topbar-dropdown">
             <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown"
                 href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                <img src="{{ url('public/assets/images/users/user-1.jpg') }}" alt="user-image" class="rounded-circle">
+             
+                {{-- @if (!empty(profileImage(Auth::id())))
+                    <img src="{{ url(profileImage(Auth::id())) }}" alt="mage" class="rounded-circle"
+                        width="36" height="36">
+                @else
+                @endif --}}
+                <img src="{{ url('public/assets/images/users/user-1.jpg') }}" alt="user-image"
+                class="rounded-circle">
+                
+                {{-- @dd(url(profileImage(Auth::id()))) --}}
                 <span class="pro-user-name ms-1">
                     {{ Auth::user()->name }} <i class="mdi mdi-chevron-down"></i>
                 </span>

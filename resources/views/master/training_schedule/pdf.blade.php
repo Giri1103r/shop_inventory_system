@@ -50,9 +50,9 @@
                             {{ $value->name_of_the_conference_hall }}
                         </td>
 
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->training_man_hours ?? '-'}}
-                        </td>
+                        {{-- <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $totalTrainingHours ?? '-'}}
+                        </td> --}}
 
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php

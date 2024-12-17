@@ -80,6 +80,14 @@ class TrainingCalendarController extends Controller
                 ->leftJoin('masters_employee', 'training_schedule.trainer_id', '=', 'masters_employee.id')
                 ->whereBetween('from_date', [$request->start, $request->end]);
 
+            if (CheckUserRole(ROLE_SUPERADMIN)) {
+                $query->where('training_schedule.status', 1)
+                    ->where('training_schedule.trash', 'NO');
+            } elseif (CheckUserRole(ROLE_TRAINER)) {
+                $query->where('training_schedule.trainer_id', Auth::user()->employee_id)
+                    ->where('training_schedule.status', 1);
+            } 
+
             if ($request->filled('topic_id')) {
                 $query->where('training_schedule.topic_id', decryptId($request->topic_id));
             }
@@ -87,6 +95,7 @@ class TrainingCalendarController extends Controller
             if ($request->filled('trainer_id')) {
                 $query->where('training_schedule.trainer_id', decryptId($request->trainer_id));
             }
+
             $events = $query->get()->map(function ($event) {
                 return [
                     'id' => encryptId($event->id),
@@ -107,7 +116,6 @@ class TrainingCalendarController extends Controller
             return response()->json(['error' => 'Something went wrong. Please try again later.'], 500);
         }
     }
-
 
 
     public function updateEvent(Request $request, $id)
