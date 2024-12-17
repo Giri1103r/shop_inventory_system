@@ -158,6 +158,8 @@
                             rules: {
                                 item_code: {
                                     required: true,
+                                    minlength: 3,
+                                    maxlength: 30,
                                     regex: /^[a-zA-Z0-9-]*$/,
                                     remote: {
                                         url: '{{ admin_url('ppe_ppetype_master/unique') }}',
@@ -197,6 +199,8 @@
                                 messages: {
                                     item_code: {
                                         required: "Item Code cannot be empty.",
+                                        minlength: "Item code must contain between 3 and 30 characters.",
+                                        maxlength: "Item code must contain between 3 and 30 characters.",
                                         regex: "Item code should be alphanumeric.",
                                         remote: "Item code already exists."
                                     },

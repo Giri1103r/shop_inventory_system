@@ -130,14 +130,14 @@
                                                         <tr class="hover-row">
                                                             <td>
                                                                 @if ($log['to_status'] == STATUS_EHS_APPROVAL_PENDING)
-                                                                    <span class='badge bg-warning'>EHS Approval
+                                                                    <span class='badge bg-warning' style='font-size: 1.0em;'>EHS Approval
                                                                         Pending</span>
                                                                 @elseif ($log['to_status'] == STATUS_USER_APPLIED)
-                                                                    <span class='badge bg-primary'>User Applied</span>
+                                                                    <span class='badge bg-primary' style='font-size: 1.0em;'>User Applied</span>
                                                                 @elseif ($log['to_status'] == STATUS_EHS_APPROVED)
-                                                                    <span class='badge bg-success'>EHS Head Approved</span>
+                                                                    <span class='badge bg-success' style='font-size: 1.0em;'>EHS Head Approved</span>
                                                                 @elseif ($log['to_status'] == STATUS_EHS_REJECTED)
-                                                                    <span class='badge bg-danger'>EHS Head Rejected</span>
+                                                                <span class='badge bg-danger' style='font-size: 1.0em;'>EHS Head Rejected</span>
                                                                 @endif
                                                             </td>
                                                             <td>{{ getUsername($log['created_by']) }}</td>

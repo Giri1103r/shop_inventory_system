@@ -186,13 +186,24 @@ class TrainingMatrixController extends Controller
         $topicId = decryptId($topicId);
         $trainerId = decryptId($trainerId);
         $unitId = decryptId($request->input('unit_id'));
-        $departmentIds = array_map('decryptId', $request->input('department_id'));
+
+
+        $departmentIds = decryptId($request->input('department_id'));
+
+
+        if (!is_array($departmentIds)) {
+            $departmentIds = [$departmentIds];
+        }
+
+
+        $departmentIds = array_map('decryptId', $departmentIds);
 
         $data = $this->training_matrix->getuique($trainerId, $topicId, $unitId, $departmentIds);
         return response()->json([
             'exists' => $data
         ]);
     }
+
 
 
 

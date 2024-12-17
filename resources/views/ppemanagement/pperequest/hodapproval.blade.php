@@ -150,8 +150,8 @@
                     remarks: {
                         required: true,
                         minlength: 3,
-                        maxlength: 500,
-                        regex:/^[a-zA-Z\s][a-zA-Z\s.]*$/
+                        maxlength: 600,
+
 
                     },
                 },
@@ -159,9 +159,9 @@
 
                     remarks: {
                         required: " Remarks cannot be empty.",
-                        minlength: "Remarks  must contain between 3 and 500 characters.",
-                        maxlength: "Remarks must contain between 3 and 500 characters.",
-                        regex: "Remarks must contain only letters and numbers."
+                        minlength: "Remarks  must contain between 3 and 600 characters.",
+                        maxlength: "Remarks must contain between 3 and 600 characters.",
+
                     },
                 },
                 errorElement: 'div',

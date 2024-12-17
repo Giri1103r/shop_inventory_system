@@ -179,8 +179,8 @@
                     reason: {
                         required: true,
                         minlength: 3,
-                        maxlength: 255,
-                        regex:/^[a-zA-Z\s][a-zA-Z\s.]*$/
+                        maxlength: 600,
+
 
                     },
                     checkbox: {
@@ -196,9 +196,9 @@
                     },
                     reason: {
                         required: "Reason cannot be empty.",
-                        minlength: "Reason must contain between 3 and 255 characters.",
-                        maxlength: "Reason must contain between 3 and 255 characters.",
-                        regex: "Reason must contain only letters and numbers."
+                        minlength: "Reason must contain between 3 and 600 characters.",
+                        maxlength: "Reason must contain between 3 and  600 characters.",
+
                     },
                     checkbox: {
                         required: "You must agree to the terms and conditions."
