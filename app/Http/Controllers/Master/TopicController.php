@@ -160,7 +160,7 @@ class TopicController extends Controller
             }
             return view('master.topic.view', $data);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
         }
     }
 
@@ -181,7 +181,7 @@ class TopicController extends Controller
 
             return view('master.topic.edit', $data);
         } catch (Exception $error) {
-            report($error->getMessage());
+            dd($error->getMessage());
         }
     }
 
