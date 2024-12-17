@@ -257,6 +257,7 @@ class TrainingScheduleController extends Controller
                          * Send Web notification
                          */
                         $assigned_users = $trainingSchedule->trainer_id;
+                        $img = admin_url('public/assets/icons/traning.png');
                         $notificationData = [
                             'notification_type' => 2,
                             'module_type' => 2,
@@ -264,7 +265,7 @@ class TrainingScheduleController extends Controller
                             'mobile_notification' => json_encode([
                                 'title' => $mailsubject,
                                 'message' => 'A new training schedule has been created by ' . getUsername(Auth::id()),
-                                'icon' => 'public/assets/icon/traning.png',
+                                'icon' =>  $img,
                                 'module' => 2,
                             ]),
                             'web_link' => 'training_schedule/view/' . encryptId($trainingSchedule->id),
@@ -325,23 +326,24 @@ class TrainingScheduleController extends Controller
                     /**
                      * Send Web notification
                      */
-                    $assigned_users = $nominees->pluck('employee_id')->toArray();
-                    $assigned_user_ids = array_unique($assigned_users);
-                    $notificationData = [
-                        'notification_type' => 2,
-                        'module_type' => 2,
-                        'notification_message' => $mailsubject,
-                        'mobile_notification' => json_encode([
-                            'title' => $mailsubject,
-                            'message' => 'Training on the topic' . getTopic($nominee->topic_id) . ' has been started by ' . getUsername(Auth::id()),
-                            'icon' => 'public/assets/icon/traning.png',
-                            'module' => 2,
-                        ]),
-                        'assigned_user' => implode(',', $assigned_user_ids),
-                        'created_by' => Auth::id(),
-                    ];
+                    // $assigned_users = $nominees->pluck('employee_id')->toArray();
+                    // $assigned_user_ids = array_unique($assigned_users);
+                    // $img = admin_url('public/assets/icons/traning.png');
+                    // $notificationData = [
+                    //     'notification_type' => 2,
+                    //     'module_type' => 2,
+                    //     'notification_message' => $mailsubject,
+                    //     'mobile_notification' => json_encode([
+                    //         'title' => $mailsubject,
+                    //         'message' => 'Training on the topic ' . getTopic($nominee->topic_id) . ' has been started by ' . getUsername(Auth::id()),
+                    //         'icon' =>  $img, 
+                    //         'module' => 2,
+                    //     ]),
+                    //     'assigned_user' => implode(',', $assigned_user_ids),
+                    //     'created_by' => Auth::id(),
+                    // ];
 
-                    notificationSave($notificationData);
+                    // notificationSave($notificationData);
                 }
 
                 Session::flash('success', 'Training has been started successfully!');
