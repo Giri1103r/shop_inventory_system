@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use App\Models\FcmToken;
+use App\Models\Permit\SafetyPermit;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\WebPushConfig;
@@ -1359,4 +1360,14 @@ if (!function_exists('getMonth')) {
     {
         return Str::replace('_', " ", $string);
     }
+
+    if(!function_exists('get_permit_no'))
+{
+    function get_permit_no($id)
+    {
+
+        $data = SafetyPermit::where('id',$id)->select('permit_id')->first();
+        return $data->permit_id;
+    }
+}
 }

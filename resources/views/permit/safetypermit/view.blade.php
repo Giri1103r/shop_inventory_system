@@ -150,7 +150,7 @@
                                         style="width: 50px; height: 50px;">
                                     <label class="form-label view_label">Taken By (Name & Department)</label>
                                     <span class="view_data">
-                                        {{ $safetypermit->shut_down_takenby }}
+                                        {{ isset($safetypermit->shut_down_takenby) ? $safetypermit->shut_down_takenby : '' }}
                                     </span>
                                 </div>
                             </div>
@@ -171,7 +171,7 @@
                                         style="width: 50px; height: 50px;">
                                     <label class="form-label view_label">Taken By (Name & Department)</label>
                                     <span class="view_data">
-                                        {{ $safetypermit->loto_takenby }}
+                                        {{ isset($safetypermit->loto_takenby) ? $safetypermit->loto_takenby : '' }}
                                     </span>
                                 </div>
                             </div>
@@ -180,7 +180,7 @@
 
                                     <label class="form-label view_label m-1">Loto No</label>
                                     <div class="view_data">
-                                        {{ $safetypermit->job_description }}
+                                        {{ $safetypermit->loto_no }}
                                     </div>
                                 </div>
                                 <div class="mb-3 col-md-4 form-input">
@@ -229,13 +229,11 @@
                                         <label class="form-label view_label m-1">{{ $item }}</label>
                                         <span class="view_data">
                                             @if (in_array($item, $stateIsolationLoto))
-                                                <!-- Check if the item is in the array -->
                                                 <b><i class="fa-solid fa-check"
                                                         style="color: #267709; width: 15px;"></i></b>
                                             @else
                                                 <b><i class="fa-solid fa-xmark"
                                                         style="color: #ff0000; width: 15px;"></i></b>
-                                                <!-- Display X if not found -->
                                             @endif
                                         </span>
                                     </div>

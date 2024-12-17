@@ -12,6 +12,8 @@ use App\Mail\ContractExpireListEmail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
+
 
 use Carbon\Carbon;
 use App\Models\Master\Worktemp;
@@ -21,6 +23,7 @@ use App\Models\User;
 use App\Models\Master\Work;
 use App\Models\Master\Employee;
 use App\Models\Master\PpeStockinventory;
+use App\Models\Permit\SafetyPermit;
 
 use App\Mail\EmployeeRegisterEmail;
 
@@ -36,10 +39,11 @@ class CronController extends Controller
     private $employee;
     private $user;
     private $ppestock;
+    private $safetypermit;
 
     public function __construct()
     {
-
+        $this->safetypermit = new SafetyPermit();
         $this->worktemp = new Worktemp();
         $this->emp_temp = new EmployeeTemp();
         $this->work = new Work();
@@ -575,6 +579,36 @@ class CronController extends Controller
         }
     }
 
+
+    public function permitExpiry()
+    {
+        try {
+
+            $currentTime = Carbon::now()->format('H:i:s');
+            $permits = SafetyPermit::where('trash', 'NO')
+            ->where('permit_status', '!=', STATUS_PLANT_HEAD_APPROVED)
+            ->whereDate('date', Carbon::today()) 
+            ->whereTime('date', '<', $currentTime) 
+            ->whereTime('time_to', '<', $currentTime) 
+            ->get();
+    
+            if ($permits->isNotEmpty()) {
+                foreach ($permits as $permit) {
+                    $permit->permit_status = STATUS_PERMIT_EXPIRED;
+                    $permit->save();
+                }
+    
+                Log::info('Expired permits updated successfully.', ['count' => $permits->count()]);
+                return response()->json(['message' => 'Expired permits updated successfully.']);
+            } else {
+                Log::info('No permits found for expiry update.');
+                return response()->json(['message' => 'No expired permits found.']);
+            }
+        } catch (Exception $ex) {
+            Log::error('Error in permitExpiry cron job.', ['error' => $ex->getMessage()]);
+            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
+        }
+    }
 
     public function queueCompanyImport()
     {

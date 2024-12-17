@@ -34,6 +34,8 @@ use App\Models\Master\Employee;
 use App\Models\Master\Department;
 
 
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
 class SafetyPermitController extends Controller
 {
     private $safetypermit;
@@ -110,16 +112,26 @@ class SafetyPermitController extends Controller
                             $btn = '';
 
 
-                            $btn = '<a href="' . admin_url('safetypermit/approvereject/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            $btn = '<a href="' . admin_url('safetypermit/approvereject/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="Approval">
+                            <i class="fa-solid fa-check-to-slot text-success"></i>
+                        </a>';
 
-                            $btn .= '<a href="' . admin_url('safetypermit/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn .= '<a href="' . admin_url('safetypermit/view/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="' . __('common.view') . '">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>';
 
+                            $btn .= '<a href="' . admin_url('safetypermit/qr/pdf/' . encryptId($row->id)) . '" target="__blank" style="margin-right: 5px;" title="QR PDF">
+                            <i class="fa-solid fa-qrcode"></i>
+                        </a>';
 
+                            $btn .= '<a href="' . admin_url('safetypermit/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            <i class="fas fa-file-pdf" aria-hidden="true"></i>
+                        </a>';
 
-                            // $btn .= '<a href="' . admin_url('ptw/hotwork_permit/view/pdf/' . encryptId($row->id)) . '" data-toggle="tooltip" data-placement="top" class="pdficon" title="Pdf"><i class="fas fa-file-pdf" aria-hidden="true"></i> ';
+                            $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" style="margin-right: 5px;" title="' . __('common.delete') . '">
+                            <i class="fa-solid fa-trash text-danger"></i>
+                        </a>';
 
-
-                            $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="' . __('common.delete') . '"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status', 'status_batch', 'verified_by', 'approved_by'])
@@ -215,13 +227,13 @@ class SafetyPermitController extends Controller
                  */
 
                 $notificationData = array(
-                    'notification_type' => 1,
+                    'notification_type' => 3,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . ' submitted by ' . getUsername($safetypermit->created_by),
-                        'icon' => 'public/assets/images/icon/permit_to_work.png',
+                        'icon' => 'public/assets/icon/permit_to_work.png',
                         'id' => $safetypermit->id,
                         'module' => 1,
                     )),
@@ -413,13 +425,13 @@ class SafetyPermitController extends Controller
              */
 
             $notificationData = array(
-                'notification_type' => 1,
+                'notification_type' => 3,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
                     'message' => 'Hot Work Permit ' . $request->permit_id . ' submitted by ' . getUsername(Auth::id()),
-                    'icon' => 'public/assets/images/icon/permit_to_work.png',
+                    'icon' => 'public/assets/icon/permit_to_work.png',
                     'id' => $request->id,
                     'module' => 1,
                 )),
@@ -517,13 +529,13 @@ class SafetyPermitController extends Controller
              */
 
             $notificationData = array(
-                'notification_type' => 1,
+                'notification_type' => 3,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
                     'message' => 'Safety Permit ' . $safetypermit->permit_id . ' verified by ' . getUsername($approve->created_by),
-                    'icon' => 'public/assets/images/icon/permit_to_work.png',
+                    'icon' => 'public/assets/icon/permit_to_work.png',
                     'id' => $safetypermit->id,
                     'module' => 1,
                 )),
@@ -619,13 +631,13 @@ class SafetyPermitController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 1,
+                    'notification_type' => 3,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
-                        'icon' => 'public/assets/images/icon/permit_to_work.png',
+                        'icon' => 'public/assets/icon/permit_to_work.png',
                         'id' => $safetypermit->id,
                         'module' => 1,
                     )),
@@ -666,13 +678,13 @@ class SafetyPermitController extends Controller
                 $assigned_user = array_unique($assigned_user);
 
                 $notificationData = array(
-                    'notification_type' => 1,
+                    'notification_type' => 3,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
-                        'icon' => 'public/assets/images/icon/permit_to_work.png',
+                        'icon' => 'public/assets/icon/permit_to_work.png',
                         'id' => $safetypermit->id,
                         'module' => 1,
                     )),
@@ -715,13 +727,13 @@ class SafetyPermitController extends Controller
                  */
 
                 $notificationData = array(
-                    'notification_type' => 1,
+                    'notification_type' => 3,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
-                        'icon' => 'public/assets/images/icon/permit_to_work.png',
+                        'icon' => 'public/assets/icon/permit_to_work.png',
                         'id' => $safetypermit->id,
                         'module' => 1,
                     )),
@@ -764,13 +776,13 @@ class SafetyPermitController extends Controller
                  */
 
                 $notificationData = array(
-                    'notification_type' => 1,
+                    'notification_type' => 3,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
-                        'icon' => 'public/assets/images/icon/permit_to_work.png',
+                        'icon' => 'public/assets/icon/permit_to_work.png',
                         'id' => $safetypermit->id,
                         'module' => 1,
                     )),
@@ -815,13 +827,13 @@ class SafetyPermitController extends Controller
                  */
 
                 $notificationData = array(
-                    'notification_type' => 1,
+                    'notification_type' => 3,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
-                        'icon' => 'public/assets/images/icon/permit_to_work.png',
+                        'icon' => 'public/assets/icon/permit_to_work.png',
                         'id' => $safetypermit->id,
                         'module' => 1,
                     )),
@@ -907,13 +919,13 @@ class SafetyPermitController extends Controller
             $assigned_user = array_unique($assigned_user);
 
             $notificationData = array(
-                'notification_type' => 1,
+                'notification_type' => 3,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
                     'message' => 'Safety Permit ' . $safetypermit->permit_id . ' approved by ' . getUsername($approve->created_by),
-                    'icon' => 'public/assets/images/icon/permit_to_work.png',
+                    'icon' => 'public/assets/icon/permit_to_work.png',
                     'id' => $safetypermit->id,
                     'module' => 1,
                 )),
@@ -1283,5 +1295,89 @@ class SafetyPermitController extends Controller
             'employee' => $employee,
             'departments' => $departments
         ]);
+    }
+
+    public function permitQRPDF($id)
+    {
+        $url = admin_url('safetypermit/join/' . $id);
+
+
+        $qrSvg = QrCode::size(150)
+            ->backgroundColor(255, 255, 255)
+            ->color(1, 1, 1)
+            ->generate($url);
+        $permit_no = get_permit_no(decryptId($id));
+        $qrBase64 = 'data:image/svg+xml;base64,' . base64_encode($qrSvg);
+
+        $pagetitle = 'Safety Permit QR';
+        $property = [
+            'tempDir' => 'public/pdf/temp/',
+            'mode' => 'c',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 10,
+        ];
+
+        $mpdf = new \Mpdf\Mpdf($property);
+        $mpdf->setAutoTopMargin = 'stretch';
+
+        $view = view('permit.safetypermit.permitjoin', compact('qrBase64', 'permit_no'));
+        $html = $view->render();
+
+        $mpdf->WriteHTML($html);
+        $filename = "SafetyPermit.pdf";
+        $mpdf->Output($filename, 'I');
+    }
+    public function permit_join($id)
+    {
+        return 'permit__' . $id;
+    }
+
+    public function generalpdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $safetypermit = $this->safetypermit->selectOne($id);
+                $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto);
+                $confined_space_entry = json_decode($safetypermit->confined_space_entry);
+                $workmaninvolved = $this->safetypermit->workmaninvolved($id);
+
+                $getEhSverification =   $this->approvereject->getEhSverification($id);
+                $getEhsapproval =   $this->approvereject->getEhsapproval($id);
+                $getplantheadapproval =   $this->approvereject->getplantheadapproval($id);
+            }
+
+            $data = [
+                'safetypermit' => $safetypermit,
+                'pagetitle' => "Safety Permit",
+                'stateIsolationLoto' => $stateIsolationLoto,
+                'confined_space_entry' => $confined_space_entry,
+                'workmaninvolved' => $workmaninvolved,
+                'getEhSverification' => $getEhSverification,
+                'getEhsapproval' => $getEhsapproval,
+                'getplantheadapproval' => $getplantheadapproval,
+            ];
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('permit.safetypermit.exportpdf', $data)->render();
+            $mpdf->WriteHTML($html);
+            $filename = "Safety Permit.pdf";
+            return $mpdf->Output($filename, 'I');
+        } catch (Exception $ex) {
+            dd($ex);
+            report($ex);
+        }
     }
 }
