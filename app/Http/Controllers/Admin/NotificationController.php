@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
 use DB;
 use Str;
 use Illuminate\Support\Facades\Auth;
@@ -78,7 +80,7 @@ class NotificationController extends Controller
                             'web_link',
                         ])
                         ->rawColumns(['action'])
-                        // ->setFilteredRecords($data['filter_records'])
+                        ->setFilteredRecords($data['total_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);

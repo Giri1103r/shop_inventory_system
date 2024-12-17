@@ -8,6 +8,8 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -20,7 +22,6 @@ class PpeStockInventoryController extends Controller
     public function __construct()
     {
         $this->ppestock = new PpeStockinventory();
-
     }
     public function index(Request $request)
     {
@@ -49,12 +50,16 @@ class PpeStockInventoryController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
 
+                            if (CheckUserPermission('edit')) {
+                                $btn .= '<a href="' . admin_url('ppe_stock_inventory/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
+                            }
+
                             $btn .= '<a href="' . admin_url('ppe_stock_inventory/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
 
                             return $btn;
                         })
 
-                        ->rawColumns(['action', 'created_at', 'created_by','status'])
+                        ->rawColumns(['action', 'created_at', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -69,7 +74,7 @@ class PpeStockInventoryController extends Controller
         }
 
 
-     $data = array();
+        $data = array();
 
         return view('ppemanagement.ppestock.list', $data);
     }
@@ -90,6 +95,66 @@ class PpeStockInventoryController extends Controller
             return view('ppemanagement.ppestock.view', $data);
         } catch (Exception $ex) {
             report($ex);
+        }
+    }
+    public function edit(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $ppestock = $this->ppestock->selectOne($id);
+
+
+
+            $data = [
+                'ppestock' => $ppestock,
+                'encryptid' => $request->id,
+            ];
+
+            return view('ppemanagement.ppestock.edit', $data);
+        } catch (Exception $ex) {
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ppe_exemption/list'));
+        }
+    }
+
+    public function update(Request $request)
+    {
+        $id = decryptId($request->id);
+
+        $rules = [
+            'org' => 'required',
+            'item_code' => 'required',
+            'sub' => 'required',
+            'uom' => 'required',
+            'quantity' => 'required',
+            'item_description' => 'required',
+            'item_inventory_id' => 'required',
+        ];
+
+        $messages = [
+            'org.required' => 'Org Field is Mandatory',
+            'item_code.required' => 'Item Code Field is Mandatory',
+            'sub.required' => 'Sub Field is Mandatory',
+            'uom.required' => 'UOM Field is Mandatory',
+            'quantity.required' => 'Quantity is required',
+            'item_description.required' => 'Item Description Field is Mandatory',
+            'item_inventory_id.required' => 'Item Inventory ID Field is Mandatory',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+        try {
+            $this->ppestock->updates($id);
+            Session::flash('success', 'Your data has Updated Successfully');
+            return redirect('ppe_stock_inventory/list');
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Some thing went wrong Please try again after some time');
+            return redirect('ppe_stock_inventory/list');
         }
     }
 
@@ -228,9 +293,7 @@ class PpeStockInventoryController extends Controller
             $filename = "PPE Stock Inventory.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-             report($ex)
-;
-
+            report($ex);
         }
     }
 }

@@ -48,7 +48,11 @@
                             {{ Displaydateformat($value->to_date) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ removeUnderScore(getStatus($value->approve_status)) }}
+                            @if($value->approve_status ==  $ehsstatus)
+                                <p>{{ 'User Applied' }}</p>
+                            @else
+                                {{ removeUnderScore(getStatus($value->approve_status)) }}
+                            @endif
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}

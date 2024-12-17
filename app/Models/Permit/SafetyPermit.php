@@ -165,7 +165,6 @@ class SafetyPermit extends Model
         $data_count = $query;
         $total_records = $data_count->count();
 
-
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
         }

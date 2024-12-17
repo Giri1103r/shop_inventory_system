@@ -169,22 +169,21 @@ class PpeRequestController extends Controller
         return view('ppemanagement.pperequest.add', $data);
     }
 
+
+
     public function store(Request $request)
     {
         try {
             $rules = [
-                'item_code'=>'required',
+                'item_code' => 'required',
                 'ppe_type' => 'required',
                 'ppe_name' => 'required',
-
             ];
             $messages = [
                 'item_code.required' => __('Item Code is required'),
                 'ppe_name.required' => __('PPE Name is required'),
-                'ppe_type.required' => __('PPE Type  is required'),
-
+                'ppe_type.required' => __('PPE Type is required'),
             ];
-
 
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
@@ -204,7 +203,7 @@ class PpeRequestController extends Controller
                     $RequestDate = Carbon::parse($chemicaldepartment->created_at)->addMonths(6);
                     $currentDate = Carbon::now();
 
-                    if (!$RequestDate->lt($currentDate)) {
+                    if ($RequestDate->lt($currentDate)) {
                         Session::flash('error', __('PPE Request is not allowed within six months'));
                         return redirect(admin_url('ppe_request/list'));
                     }
@@ -214,7 +213,7 @@ class PpeRequestController extends Controller
                     $lastRequestDate = Carbon::parse($lastPPERequest->created_at)->addYear();
                     $currentDate = Carbon::now();
 
-                    if (!$lastRequestDate->lt($currentDate)) {
+                    if ($lastRequestDate->lt($currentDate)) {
                         Session::flash('error', __('PPE Request is not allowed within one year'));
                         return redirect(admin_url('ppe_request/list'));
                     }
@@ -226,33 +225,28 @@ class PpeRequestController extends Controller
 
             try {
                 $pperequest = $this->pperequest->store();
-
-
+                $id = $pperequest->id;
+                $statuslog = $this->ppestatus->storestatus($pperequest, $id);
 
                 // Mail
-                $id = $pperequest->id;
-
                 $departmentId = $pperequest->department;
-
                 $hod = $this->pperequest->getdepartmenthod($departmentId);
+
                 $details = [
                     'emp_name' => $pperequest->emp_name,
                     'emp_id' => $pperequest->emp_id,
                     'department' => $pperequest->department,
                     'item_code' => $pperequest->item_code,
                     'remarks' => $pperequest->employee_reason,
-
                     'approve_link' => url('ppe_request/hodapproval/view/' . encryptID($id)),
                     'reject_link' => url('ppe_request/hodapproval/view/' . encryptID($id))
                 ];
                 Mail::to($hod)->send(new PpeRequestRequestorEmail($details));
 
                 // Notification
-
                 $message = 'New PPE Request';
                 $hodId = $this->user->getdepartmenthodId($departmentId);
                 $img = admin_url('public/assets/images/ppe-management.jpg');
-
 
                 $notificationData = [
                     'notification_type' => 1,
@@ -273,19 +267,17 @@ class PpeRequestController extends Controller
                 Session::flash('success', __('Your data has been created successfully!'));
                 return redirect(admin_url('ppe_request/list'));
             } catch (Exception $ex) {
-                  report($ex)
-
-;
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
                 return redirect(admin_url('ppe_request/list'));
             }
         } catch (Exception $ex) {
-             report($ex)
-;
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }
     }
+
 
 
     public function view(Request $request)
@@ -492,11 +484,12 @@ class PpeRequestController extends Controller
             if (Auth::check()) {
                 $pperequest = $this->pperequest->selectOne($id);
             }
-
+            $userdata = $this->pperequest->getuserdata($id);
 
             $data = [
                 'pperequest' =>  $pperequest,
                 'encryptid' => $request->id,
+                'userdata' => $userdata,
             ];
             return view('ppemanagement.pperequest.ehsapproval', $data);
         } catch (Exception $ex) {
@@ -619,7 +612,7 @@ class PpeRequestController extends Controller
             return redirect()->to(admin_url('ppe_request/list'));
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
+
             Session::flash('error', 'Something went wrong, Please try after some time!');
             return redirect()->to(admin_url('ppe_request/list'));
         }
@@ -812,7 +805,14 @@ class PpeRequestController extends Controller
                 $export[] = getPpeType($data->ppe_type);
                 $export[] = getPpename($data->ppe_name);
                 $export[] = getDepartment($data->department);
-                $export[] = removeUnderScore(getStatus($data->approve_status));
+                if($data->approve_status == STATUS_HOD_APPROVAL_PENDING){
+                    $export[] = 'User Applied';
+                } elseif($data->approve_status == STATUS_EHS_APPROVAL_PENDING){
+                    $export[] = 'Hod Approved';
+                } else{
+                    $export[] = removeUnderScore(getStatus($data->approve_status));
+
+                }
                 $export[] = getusername($data->created_by);
                 $export[] = Displaydateformat($data->created_at);
 
@@ -838,6 +838,7 @@ class PpeRequestController extends Controller
             ini_set("pcre.backtrack_limit", "5000000");
 
             $allData = $this->pperequest->exportdata();
+
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');

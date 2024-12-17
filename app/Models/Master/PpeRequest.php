@@ -125,7 +125,6 @@ class PpeRequest extends Model
             'ppe_name' => $request->ppe_name_id,
             'employee_reason' => $request->reason,
             'approve_status' => STATUS_HOD_APPROVAL_PENDING,
-            'ehs_approve_status' => STATUS_EHS_APPROVAL_PENDING,
             'created_by' => Auth::id()
         );
 
@@ -270,14 +269,22 @@ class PpeRequest extends Model
 
         return PpeRequest::where('emp_id',$userId)->where('approve_status', '!=',STATUS_HOD_APPROVAL_PENDING)->where('approve_status','!=',STATUS_EHS_APPROVAL_PENDING)->get();
     }
+
+    public function getuserdata($id)
+    {
+
+
+        return PpeRequest::where('id',$id)->orderBy('id','DESC')->first();
+    }
+
     public function exportdata()
     {
         $request = request();
         $search = '';
         $query = $this->select('ppe_pperequest.*');
+
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
-
             $query =  $query->Where(function ($query) use ($search) {
                 $query->orWhereRaw('ppe_pperequest.emp_id LIKE "%' . $search . '%"');
             });
@@ -302,10 +309,7 @@ class PpeRequest extends Model
         if ($request->has('emp_name') && $request->emp_name) {
             $query->where('emp_name', 'LIKE', '%' . $request->emp_name . '%');
         }
-        if ($request->has('ppe_status') && $request->ppe_status) {
-            $query->where('status', decryptId($request->ppe_status));
-        }
-
+       
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
@@ -318,8 +322,9 @@ class PpeRequest extends Model
             $query->where('created_at', '<=', $endDate);
         }
 
-        return  $query->orderBy('id', 'DESC')->get();
+        return $query->orderBy('id', 'DESC')->get();
     }
+
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('ppe_pperequest'));

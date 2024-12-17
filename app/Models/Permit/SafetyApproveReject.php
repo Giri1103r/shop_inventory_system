@@ -135,7 +135,7 @@ class SafetyApproveReject extends Model
     
         $insert_array = array(
             'permit_id' => $request->permit_id,
-            'approve_reject_type' => 1,
+            'approve_reject_type' => 3,
             'approve_reject_by' => $request->approver_name,
             'date' => DBdatetimeformat($request->date),
             'remarks' => $request->planthead_approval_remarks,
@@ -182,6 +182,18 @@ class SafetyApproveReject extends Model
         return $data;
     }
 
+
+    
+    public function getplantheadapproval($ptw_id) {
+        $data = $this->select('ptw_aprove_reject.*')
+                    ->where('ptw_aprove_reject.permit_id', $ptw_id)
+                    ->where('ptw_aprove_reject.approve_reject_status', 7) ->where('ptw_aprove_reject.approve_reject_type', 3)->where('ptw_aprove_reject.trash', 'NO')
+                    ->first();
+
+        return $data;
+    }
+
+   
    
     public function updates($id)
     {

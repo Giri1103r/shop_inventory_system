@@ -43,7 +43,7 @@ class Notification extends Model
         $request = request();
         $search = '';
 
-        $query = $this->select('*')->whereRaw("FIND_IN_SET(?, assigned_user) > 0", [Auth::id()]);
+        $query = $this->select('*');
 
         if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -55,8 +55,8 @@ class Notification extends Model
             // });
         }
 
-        $data_count = $query;
-        $total_records = $data_count->count();
+        $data_count = $query->count();
+        $total_records = $data_count;
 
         $query->orderBy('id', 'DESC');
 
@@ -74,7 +74,6 @@ class Notification extends Model
 
         return $datas;
     }
-
 
     public static function booted()
     {
