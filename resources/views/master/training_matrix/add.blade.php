@@ -103,7 +103,7 @@
                                                     <label class="form-label require">Target Content Upload</label>
                                                     <input type="file" name="target_content" id="target_content"
                                                         class="form-control">
-                                                    <small class="text-muted">Allowed file types: .xls, .pdf</small>
+                                                    <small class="text-muted">Allowed file types: .xlsx, .pdf</small>
                                                 </div>
                                             </div>
 
@@ -136,7 +136,7 @@
                                                     <label class="form-label require">Upload Questionnaire</label>
                                                     <input type="file" name="questionnaire" id="questionnaire"
                                                         class="form-control">
-                                                    <small class="text-muted">Allowed file types: .xls, .pdf.</small>
+                                                    <small class="text-muted">Allowed file types: .xlsx, .pdf.</small>
                                                 </div>
                                             </div>
 
@@ -280,7 +280,7 @@
                     },
                     target_content: {
                         required: true,
-                        extension: "xls|pdf",
+                        extension: "xlsx|pdf",
                     },
                     mode_of_training: {
                         required: true,
@@ -293,7 +293,7 @@
                             return $('#training_evaluation').val() ===
                                 '{{ encryptId(1) }}'; // Only required if "Yes" is selected
                         },
-                        extension: "xls|pdf",
+                        extension: "xlsx|pdf",
                     }
                 },
                 messages: {
@@ -314,7 +314,7 @@
                     },
                     target_content: {
                         required: "Please upload Target Content.",
-                        extension: "Only .xls and .pdf file formats are allowed.",
+                        extension: "Only .xlsx and .pdf file formats are allowed.",
                     },
                     mode_of_training: {
                         required: "Please select the Mode of Training.",
@@ -324,7 +324,7 @@
                     },
                     questionnaire: {
                         required: "Please upload the Questionnaire.",
-                        extension: "Only .xls and .pdf file formats are allowed.",
+                        extension: "Only .xlsx and .pdf file formats are allowed.",
                     }
                 },
                 errorElement: 'span',

@@ -110,7 +110,7 @@
                                                     <label class="form-label require">Target Content Upload</label>
                                                     <input type="file" name="target_content" id="target_content"
                                                         class="form-control">
-                                                    <small class="text-muted">Allowed file types: .xls, .pdf</small>
+                                                    <small class="text-muted">Allowed file types: .xlsx, .pdf</small>
                                                     @if ($training_matrixFiles_target_content)
                                                         <a href="{{ asset($training_matrixFiles_target_content->file_path) }}"
                                                             target="_blank" class="d-block mt-2">
@@ -158,7 +158,7 @@
                                                     <label class="form-label require">Upload Questionnaire</label>
                                                     <input type="file" name="questionnaire" id="questionnaire"
                                                         class="form-control">
-                                                    <small class="text-muted">Allowed file types: .xls, .pdf.</small>
+                                                    <small class="text-muted">Allowed file types: .xlsx, .pdf.</small>
                                                     @if ($training_matrixFiles_questionnaire)
                                                         <a href="{{ asset($training_matrixFiles_questionnaire->file_path) }}"
                                                             target="_blank" class="d-block mt-2">
@@ -326,7 +326,7 @@
                         required: true,
                     },
                     questionnaire: {
-                        extension: "xls|pdf",
+                        extension: "xlsx|pdf",
                     },
 
                 },
@@ -354,7 +354,7 @@
                         required: "Please select Training Evaluation.",
                     },
                     questionnaire: {
-                        extension: "Only .xls and .pdf file formats are allowed.",
+                        extension: "Only .xlsx and .pdf file formats are allowed.",
                     },
 
                 },

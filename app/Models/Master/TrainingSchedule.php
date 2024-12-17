@@ -56,6 +56,7 @@ class TrainingSchedule extends Model
         $query = $query->leftJoin('training_masters_venue', 'training_schedule.venue_id', '=', 'training_masters_venue.id');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
+
         /**
          * Role Based list view condition start
          */
@@ -63,13 +64,18 @@ class TrainingSchedule extends Model
         if (CheckUserRole(ROLE_SUPERADMIN)) {
             $query->where('training_schedule.trash', 'NO');
         } elseif (CheckUserRole(ROLE_TRAINER)) {
-            $query->where('training_schedule.trainer_id', Auth::user()->employee_id)
-            ->where('training_schedule.trash', 'NO');
+            $trainer = DB::table('masters_employee')
+                ->select('id','emp_id')
+                ->where('emp_id', Auth::user()->employee_id)
+                ->first();
+            if ($trainer) {
+                $query->where('training_schedule.trainer_id', $trainer->id)
+                    ->where('training_schedule.trash', 'NO');
+            }
         } elseif (Auth::user()->role == ROLE_USER) {
             $query->where('training_schedule.created_by', Auth::id())
-            ->where('training_schedule.trash', 'NO');
+                ->where('training_schedule.trash', 'NO');
         }
-
 
         /**
          * Role Based list view condition end

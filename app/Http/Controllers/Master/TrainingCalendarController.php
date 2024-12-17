@@ -17,6 +17,7 @@ use Exception;
 use DataTables;
 use Response;
 
+use Illuminate\Support\Facades\DB;
 
 use App\Models\Master\Venue;
 use App\Models\Master\TrainingSchedule;
@@ -81,12 +82,18 @@ class TrainingCalendarController extends Controller
                 ->whereBetween('from_date', [$request->start, $request->end]);
 
             if (CheckUserRole(ROLE_SUPERADMIN)) {
-                $query->where('training_schedule.status', 1)
-                    ->where('training_schedule.trash', 'NO');
+                $query->where('training_schedule.trash', 'NO');
             } elseif (CheckUserRole(ROLE_TRAINER)) {
-                $query->where('training_schedule.trainer_id', Auth::user()->employee_id)
-                    ->where('training_schedule.status', 1);
-            } 
+                $trainer = DB::table('masters_employee')
+                    ->select('id')
+                    ->where('emp_id', Auth::user()->employee_id)
+                    ->first();
+
+                if ($trainer) {
+                    $query->where('training_schedule.trainer_id', $trainer->id)
+                        ->where('training_schedule.trash', 'NO');
+                }
+            }
 
             if ($request->filled('topic_id')) {
                 $query->where('training_schedule.topic_id', decryptId($request->topic_id));

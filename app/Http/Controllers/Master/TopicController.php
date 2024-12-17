@@ -133,14 +133,13 @@ class TopicController extends Controller
 
                 Session::flash('success', 'Topic added successfully!');
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('topic/list'));
         } catch (Exception $ex) {
-
-
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('topic/list'));
         }
@@ -207,7 +206,7 @@ class TopicController extends Controller
             Session::flash('success', 'Topic updated successfully!');
             return redirect(admin_url('topic/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('topic/list'));
         }
