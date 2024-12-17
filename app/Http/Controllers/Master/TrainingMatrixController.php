@@ -182,18 +182,19 @@ class TrainingMatrixController extends Controller
         }
     }
 
-    public function Uniquecheck($topicId, $trainerId)
-    {
-
+    public function Uniquecheck(Request $request, $topicId, $trainerId) {
         $topicId = decryptId($topicId);
         $trainerId = decryptId($trainerId);
+        $unitId = decryptId($request->input('unit_id'));
+        $departmentIds = array_map('decryptId', $request->input('department_id'));
 
-
-        $data = $this->training_matrix->getuique($trainerId, $topicId);
+        $data = $this->training_matrix->getuique($trainerId, $topicId, $unitId, $departmentIds);
         return response()->json([
             'exists' => $data
         ]);
     }
+
+
 
     public function View(Request $request)
     {

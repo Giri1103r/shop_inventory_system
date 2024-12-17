@@ -118,11 +118,13 @@ class TrainingMatrix extends Model
             ->get();
     }
 
-    public function getuique($trainerId, $topicId) {
 
+    public function getuique($trainerId, $topicId, $unitId, $departmentIds) {
         if ($trainerId && $topicId) {
             return TrainingMatrix::where('topic_id', $topicId)
                 ->where('trainer_id', '=', $trainerId)
+                ->where('unit_id', $unitId)
+                ->whereIn('department_id', $departmentIds)
                 ->exists();
         }
         return false;
