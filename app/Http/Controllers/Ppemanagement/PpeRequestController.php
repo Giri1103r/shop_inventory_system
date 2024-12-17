@@ -94,7 +94,7 @@ class PpeRequestController extends Controller
                                 $text = "<span class='badge bg-danger'style='font: size 0.5em;'>HOD Rejected</span>";
                             }
                             elseif ($row->approve_status == STATUS_EHS_APPROVAL_PENDING) {
-                                $text = "<span class='badge bg-info'style='font: size 0.5em;'>EHS Approval Pending</span>";
+                                $text = "<span class='badge bg-success' style='font: size 0.5em;'>HOD Approved</span>";
                             }
                             else if ($row->approve_status == STATUS_EHS_APPROVED) {
                                 $text = "<span class='badge bg-success'>EHS Approved</span>";
