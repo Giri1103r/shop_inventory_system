@@ -275,11 +275,9 @@ class PpeRequest extends Model
         return PpeRequest::where('emp_id', $userId)->where('approve_status', '!=', STATUS_HOD_APPROVAL_PENDING)->where('approve_status', '!=', STATUS_EHS_APPROVAL_PENDING)->get();
     }
 
-    public function getuserdata($id)
+    public function getuserdata($empId)
     {
-
-
-        return PpeRequest::where('id', $id)->orderBy('id', 'DESC')->first();
+        return PpeRequest::where('emp_id', $empId)->get();
     }
 
     public function exportdata()
@@ -300,7 +298,7 @@ class PpeRequest extends Model
         $userRole = $user->role;
         $userRole = string_to_array($userRole);
 
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole) || in_array(ROLE_EHS_OFFICER, $userRole)) {
         } elseif (in_array(ROLE_HOD, $userRole)) {
             $departmentId = $user->department_id;
             $query->where('ppe_pperequest.department', $departmentId);

@@ -185,7 +185,6 @@ class PpeTypeMaster extends Model
             'ppe_category' => $request->protection_category,
             'ppe_standard' => $request->ppe_standard,
             'ppe_image' => $ppe_file_path,
-            'quantity' => $request->quantity,
             'created_by' => Auth::id(),
             'updated_by' => Auth::id()
         );

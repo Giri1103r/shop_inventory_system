@@ -320,8 +320,9 @@ class PpeRequestController extends Controller
             if (Auth::check()) {
                 $pperequest = $this->pperequest->selectOne($id);
             }
+            $empId =$pperequest->emp_id;
             $ppestatuslog = $this->ppestatus->getstatusdetails($id);
-            $userdata = $this->pperequest->userdata();
+            $userdata = $this->pperequest->getuserdata($empId);
 
             $data = [
                 'userdata'=>$userdata,
@@ -524,10 +525,12 @@ class PpeRequestController extends Controller
 
         try {
             $id = decryptId($request->id);
+
             if (Auth::check()) {
                 $pperequest = $this->pperequest->selectOne($id);
             }
-            $userdata = $this->pperequest->getuserdata($id);
+            $empId = $pperequest->emp_id;
+            $userdata = $this->pperequest->getuserdata($empId);
 
             if($pperequest->approve_status != STATUS_EHS_APPROVAL_PENDING){
                 Session::flash('error','Already you have responded to the request');

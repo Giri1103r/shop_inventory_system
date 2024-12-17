@@ -67,9 +67,9 @@ class PpeTypeMasterController extends Controller
                             if (CheckUserPermission('view')) {
                                 $btn = '<a href="' . admin_url('ppe_ppetype_master/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             }
-                            if (CheckUserPermission('edit')) {
+                            // if (CheckUserPermission('edit')) {
                                 $btn .= '<a href="' . admin_url('ppe_ppetype_master/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            }
+                            // }
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_at', 'created_by', 'status'])
@@ -242,7 +242,7 @@ class PpeTypeMasterController extends Controller
 
                 Session::flash('success', __('Your data has been updated successfully!'));
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
             return redirect(admin_url('ppe_ppetype_master/list'));

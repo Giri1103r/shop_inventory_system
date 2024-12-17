@@ -164,7 +164,7 @@ class PpeStockInventoryController extends Controller
 
             $this->ppestock->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => __('PPE Request status changed sucessfully')], 200);
+            return response()->json(['status' => 'success', 'msg' => __('PPE Stock Inventory status changed sucessfully')], 200);
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => __('Please try after some time')], 406);

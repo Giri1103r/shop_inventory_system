@@ -230,7 +230,7 @@ class PpeExemption extends Model
         $userRole = $user->role;
 
         $userRole = string_to_array($userRole);
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole) ) {
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole )|| in_array(ROLE_EHS_HEAD, $userRole) ) {
         } elseif(in_array(ROLE_HOD, $userRole)){
            $departmentId = $user->department_id;
            $query->where('ppe_ppeexemption.department',$departmentId);
