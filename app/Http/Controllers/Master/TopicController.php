@@ -76,9 +76,9 @@ class TopicController extends Controller
                             if (CheckUserPermission('edit')) {
                                 $btn .= '<a href="' . admin_url('topic/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
-                            if (CheckUserPermission('delete')) {
-                                $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
-                            }
+                            // if (CheckUserPermission('delete')) {
+                            //     $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
+                            // }
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -133,14 +133,13 @@ class TopicController extends Controller
 
                 Session::flash('success', 'Topic added successfully!');
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('topic/list'));
         } catch (Exception $ex) {
-
-
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('topic/list'));
         }
@@ -161,7 +160,7 @@ class TopicController extends Controller
             }
             return view('master.topic.view', $data);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
         }
     }
 
@@ -182,7 +181,7 @@ class TopicController extends Controller
 
             return view('master.topic.edit', $data);
         } catch (Exception $error) {
-            report($error->getMessage());
+            dd($error->getMessage());
         }
     }
 
@@ -207,7 +206,7 @@ class TopicController extends Controller
             Session::flash('success', 'Topic updated successfully!');
             return redirect(admin_url('topic/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('topic/list'));
         }

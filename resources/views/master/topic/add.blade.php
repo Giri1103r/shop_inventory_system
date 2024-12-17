@@ -54,7 +54,7 @@
                                                     <label class="form-label">Upload Questionnaire</label>
                                                     <input type="file" name="questionnaire" id="questionnaire"
                                                         class="form-control" >
-                                                    <small class="text-muted">Allowed file types: .xls, .pdf.</small>
+                                                    <small class="text-muted">Allowed file types: .xlsx, .pdf.</small>
                                                 </div>
                                             </div>
                                         </div>
@@ -106,7 +106,7 @@
                         }
                     },
                     questionnaire: {
-                        extension: "xls|pdf",
+                        extension: "xlsx|pdf",
                     },
                 },
                 messages: {
@@ -118,7 +118,7 @@
                          remote: "{{ __('Topic Name should be unique') }}"
                     },
                     questionnaire: {
-                        extension: "Only .xls and .pdf file formats are allowed.",
+                        extension: "Only .xlsx and .pdf file formats are allowed.",
                     },
 
                 },

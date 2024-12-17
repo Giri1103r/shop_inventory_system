@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\PpeExemptionEmail;
 use App\Mail\PpeExemptionRejectEmail;
 use App\Mail\PpeExemptionRequestorEmail;
+use App\Models\ApproveStatus;
 use App\Models\Master\Company;
 use App\Models\Master\Department;
 use App\Models\Master\PpeExemption;
@@ -37,7 +38,9 @@ class PpeExemptionController extends Controller
     private $department;
     private $unit;
     private $employee;
+    private $approvestatus;
     private $company;
+
     private $uploadlog;
 
     public function __construct()
@@ -51,6 +54,7 @@ class PpeExemptionController extends Controller
         $this->department = new Department();
         $this->unit = new Unit();
         $this->company = new Company();
+        $this->approvestatus = new ApproveStatus();
     }
     public function index(Request $request)
     {
@@ -84,11 +88,11 @@ class PpeExemptionController extends Controller
                         ->addColumn('approve_status', function ($row) {
 
                             if ($row->approve_status ==  STATUS_EHS_APPROVAL_PENDING) {
-                                $text = "<span class='badge bg-info'style='font: size 0.5em;'>EHS Approval Pending</span>";
+                                $text = "<span class='badge bg-info' style='font-size: 1.0em;'>EHS Head Approval Pending</span>";
                             } else if ($row->approve_status == STATUS_EHS_APPROVED) {
-                                $text = "<span class='badge bg-success'style='font: size 0.5em;'>EHS Approved</span>";
+                                $text = "<span class='badge bg-success' style='font-size: 1.0em;'>EHS Head Approved</span>";
                             } else if ($row->approve_status == STATUS_EHS_REJECTED) {
-                                $text = "<span class='badge bg-danger'style='font: size 0.5em;'>EHS  Rejected</span>";
+                                $text = "<span class='badge bg-danger' style='font-size: 1.0em;'>EHS Head Rejected</span>";
                             }
                             return $text;
                         })
@@ -126,12 +130,13 @@ class PpeExemptionController extends Controller
         $department = $this->department->getdepartment();
         $unit = $this->unit->getunit();
         $company = $this->company->getcompany();
-
+        $approvestatus = $this->approvestatus->status();
 
         $data = [
             'department' => $department,
             'unit' => $unit,
-            'company' => $company
+            'company' => $company,
+            'approvestatus'=>$approvestatus,
         ];
         return view('ppemanagement.ppeexemption.list', $data);
     }
@@ -228,6 +233,7 @@ class PpeExemptionController extends Controller
                             displaydateformat($ppeexemption->from_date) . ' to ' . displaydateformat($ppeexemption->to_date),
                         'icon' => $img,
                         'module' => 1,
+                        'style' => 'font-size: 1rem;'
                     )),
                     'web_link' => admin_url('ppe_exemption/approval/view/' . encryptId($id)),
                     'assigned_user' => array_to_string($assigned_user),
@@ -404,6 +410,7 @@ class PpeExemptionController extends Controller
                             displaydateformat($data->from_date) . ' to ' . displaydateformat($data->to_date),
                         'icon' =>  $img,
                         'module' => 1,
+                        'style' => 'font-size: 1rem;'
                     )),
                     'assigned_user' => array_to_string($assigned_user),
                     'created_by' => Auth::id(),
@@ -554,6 +561,7 @@ class PpeExemptionController extends Controller
                     'message' => getUsername($updateData['approved_by']) . " has" . getStatus($updateData['approve_status']) . " a PPE Exemption request on " . displaydateformat($emp_details->created_at) . " from " . displaydateformat($emp_details->from_date) . " to " . displaydateformat($emp_details->to_date),
                     'icon' => $img,
                     'module' => 1,
+                    'style' => 'font-size: 1rem;'
                 )),
                 'web_link' => admin_url('ppe_exemption/approval/view/' . encryptId($id)),
                 'assigned_user' => array_to_string($assigned_user),

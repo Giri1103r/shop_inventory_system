@@ -121,7 +121,24 @@
                                                         <td>{{ $data['emp_name'] }}</td>
                                                         <td>{{ $data['emp_id'] }}</td>
                                                         <td>{{ displaydateformat($data['created_at']) }}</td>
-                                                        <td>{{ removeUnderScore(getStatus($data['approve_status'])) }}</td>
+                                                        <td>
+                                                            @if ($data->approve_status == STATUS_HOD_APPROVAL_PENDING)
+                                                                <span class='badge bg-info' style='font-size: 1.0em;'>HOD Approval Pending</span>
+                                                            @elseif ($data->approve_status == STATUS_HOD_APPROVED)
+                                                                <span class='badge bg-success' style='font-size: 1.0em;'>HOD Approved</span>
+                                                            @elseif ($data->approve_status == STATUS_USER_APPLIED)
+                                                                <span class='badge bg-primary' style='font-size: 1.0em;'>User Applied</span>
+                                                            @elseif ($data->approve_status == STATUS_HOD_REJECTED)
+                                                                <span class='badge bg-danger' style='font-size: 1.0em;'>HOD Rejected</span>
+                                                            @elseif ($data->approve_status == STATUS_EHS_APPROVAL_PENDING)
+                                                                <span class='badge bg-info' style='font-size: 1.0em;'>EHS Approval Pending</span>
+                                                            @elseif ($data->approve_status == STATUS_EHS_APPROVED)
+                                                                <span class='badge bg-success' style='font-size: 1.0em;'>EHS Approved</span>
+                                                            @elseif ($data->approve_status == STATUS_EHS_REJECTED)
+                                                                <span class='badge bg-danger' style='font-size: 1.0em;'>EHS Rejected</span>
+                                                            @endif
+                                                        </td>
+
                                                         {{-- <td>{{ removeUnderScore(getStatus($data['ehs_approve_status'])) }} --}}
                                                         </td>
                                                         <td>{{ $data['remarks'] }}</td>
@@ -161,19 +178,19 @@
                                                     <tr class="hover-row">
                                                         <td>
                                                             @if ($log['to_status'] == STATUS_HOD_APPROVAL_PENDING)
-                                                                <span class='badge bg-info'>HOD Approval Pending</span>
+                                                                <span class='badge bg-info'  style='font-size: 1.0em;'>HOD Approval Pending</span>
                                                             @elseif ($log['to_status'] == STATUS_HOD_APPROVED)
-                                                                <span class='badge bg-success'>HOD Approved</span>
+                                                                <span class='badge bg-success'  style='font-size: 1.0em;'>HOD Approved</span>
                                                             @elseif ($log['to_status'] == STATUS_USER_APPLIED)
-                                                                <span class='badge bg-primary'>User Applied</span>
+                                                                <span class='badge bg-primary'  style='font-size: 1.0em;'>User Applied</span>
                                                             @elseif ($log['to_status'] == STATUS_HOD_REJECTED)
-                                                                <span class='badge bg-danger'>HOD Rejected</span>
+                                                                <span class='badge bg-danger'  style='font-size: 1.0em;'>HOD Rejected</span>
                                                             @elseif ($log['to_status'] == STATUS_EHS_APPROVAL_PENDING)
-                                                                <span class='badge bg-info'>EHS Approval Pending</span>
+                                                                <span class='badge bg-info'  style='font-size: 1.0em;'>EHS Approval Pending</span>
                                                             @elseif ($log['to_status'] == STATUS_EHS_APPROVED)
-                                                                <span class='badge bg-success'>EHS Approved</span>
+                                                                <span class='badge bg-success'  style='font-size: 1.0em;'>EHS Approved</span>
                                                             @elseif ($log['to_status'] == STATUS_EHS_REJECTED)
-                                                                <span class='badge bg-danger'>EHS Rejected</span>
+                                                                <span class='badge bg-danger'  style='font-size: 1.0em;'>EHS Rejected</span>
                                                             @endif
                                                         </td>
                                                         <td>{{ getUsername($log['created_by']) }}</td>

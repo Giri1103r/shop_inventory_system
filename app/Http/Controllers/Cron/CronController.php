@@ -566,7 +566,8 @@ class CronController extends Controller
 
                 if (!empty($data)) {
                     $work = $this->ppestock->store($data);
-                    return response()->json(['message' => 'Data saved successfully.']);
+                    Session::flash('sucess','Your data has been created Sucessfully');
+                    return redirect('ppe_stock_inventory/list');
                 } else {
                     return response()->json(['message' => 'No data found in API response.']);
                 }
@@ -574,7 +575,7 @@ class CronController extends Controller
                 return response()->json(['message' => 'Failed to fetch data from API.', 'status' => $response->status()]);
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }

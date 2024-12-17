@@ -47,17 +47,20 @@ class NotificationController extends Controller
 
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('notification/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            if (!empty($row->web_link)) {
+
+                                $btn = '<a href="' . admin_url('notification/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            }
 
                             return $btn;
                         })
                         ->editColumn('notification_type', function ($row) {
 
-                            if($row->notification_type == 1){
+                            if ($row->notification_type == 1) {
                                 $btn = "PPE";
-                            }elseif($row->notification_type == 2){
-                                $btn = "Training ";
-                            }elseif($row->notification_type == 3){
+                            } elseif ($row->notification_type == 2) {
+                                $btn = "TRAINING";
+                            } elseif ($row->notification_type == 3) {
                                 $btn = "PTW";
                             }
 
@@ -152,7 +155,7 @@ class NotificationController extends Controller
 
         $notify_array = array(
             'notification_id' => $id,
-            'user_id' => $userId ,
+            'user_id' => $userId,
         );
 
         $notification = $this->notification->find($id);
@@ -161,7 +164,7 @@ class NotificationController extends Controller
 
         $viewedListArray = string_to_array($viewedList);
 
-        if(!in_array($userId ,$viewedListArray)){
+        if (!in_array($userId, $viewedListArray)) {
 
             $notify_array = array(
                 'notification_id' => $notification->id,
@@ -182,13 +185,10 @@ class NotificationController extends Controller
 
 
             NotificationLog::create($notify_array);
-
         }
 
-        $redirectUrl = $notification->web_link ;
+        $redirectUrl = $notification->web_link;
 
         return redirect($redirectUrl);
-
-
     }
 }

@@ -297,7 +297,7 @@ class TrainingMatrixFile extends Model
             $insert_data = array(
 
                 'topic_id' => $id,
-                'file_type' => 2,
+                'file_type' => 3,
                 'file_name' => $filenewname,
                 'file_orgname' => $fileName,
                 'file_path' => $path,

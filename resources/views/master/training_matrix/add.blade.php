@@ -103,7 +103,7 @@
                                                     <label class="form-label require">Target Content Upload</label>
                                                     <input type="file" name="target_content" id="target_content"
                                                         class="form-control">
-                                                    <small class="text-muted">Allowed file types: .xls, .pdf</small>
+                                                    <small class="text-muted">Allowed file types: .xlsx, .pdf</small>
                                                 </div>
                                             </div>
 
@@ -136,7 +136,7 @@
                                                     <label class="form-label require">Upload Questionnaire</label>
                                                     <input type="file" name="questionnaire" id="questionnaire"
                                                         class="form-control">
-                                                    <small class="text-muted">Allowed file types: .xls, .pdf.</small>
+                                                    <small class="text-muted">Allowed file types: .xlsx, .pdf.</small>
                                                 </div>
                                             </div>
 
@@ -165,49 +165,54 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
-        $(document).ready(function() {
-            function checkSelections() {
-                var topicId = $('#topic_id').val();
-                var trainerId = $('#trainer_id').val();
-                var unitId = $('#unit_id').val();
-                var departmentIds = $('#department_id').val(); 
+//      $(document).ready(function() {
+//     function checkSelections() {
+//         var topicId = $('#topic_id').val();
+//         var trainerId = $('#trainer_id').val();
+//         var unitId = $('#unit_id').val();
+//         var departmentIds = $('#department_id').val();
 
-                if (topicId && trainerId) {
-                    $.ajax({
-                        url: "{{ url('training_matrix/topic/ajax-list') }}/" + topicId + "/" + trainerId,
-                        type: 'GET',
-                        dataType: 'json',
-                        data: {
-                            unit_id: unitId,
-                            department_id: departmentIds,
-                        },
-                        success: function(response) {
-                            $('.text-danger').remove();
+//         // Check if all four fields are selected
+//         if (topicId && trainerId && unitId && departmentIds) {
+//             $.ajax({
+//                 url: "{{ url('training_matrix/topic/ajax-list') }}/" + topicId + "/" + trainerId,
+//                 type: 'GET',
+//                 dataType: 'json',
+//                 data: {
+//                     unit_id: unitId,
+//                     department_id: departmentIds,
+//                 },
+//                 success: function(response) {
+//                     $('.text-danger').remove();
 
-                            if (response.exists) {
-                                $('#topic_id').closest('.form-group').append(
-                                    '<div><span class="text-danger">This topic is already assigned to another trainer.</span></div>'
-                                );
-                                $('#training_matrixadd').submit(function(e) {
-                                    e.preventDefault();
-                                });
-                            } else {
-                                $('#training_matrixadd').off('submit');
-                            }
-                        },
-                        error: function(xhr) {
-                            alert('Error fetching data. Please try again.');
-                        }
-                    });
-                } else {
-                    $('.text-danger').remove();
-                    $('#training_matrixadd').off('submit');
-                }
-            }
+//                     if (response.exists) {
+//                         $('#topic_id').closest('.form-group').append(
+//                             '<div><span class="text-danger">This topic is already assigned to another trainer.</span></div>'
+//                         );
+//                         $('#training_matrixadd').submit(function(e) {
+//                             e.preventDefault();
+//                         });
+//                     } else {
+//                         $('#training_matrixadd').off('submit');
+//                     }
+//                 },
+//                 error: function(xhr) {
+//                     alert('Error fetching data. Please try again.');
+//                 }
+//             });
+//         } else {
+//             $('.text-danger').remove();
+//             $('#training_matrixadd').off('submit');
+//         }
+//     }
 
-            $('#topic_id').on('change', checkSelections);
-            $('#trainer_id').on('change', checkSelections);
-        });
+//     // Trigger checkSelections only when any of the fields are changed
+//     $('#topic_id').on('change', checkSelections);
+//     $('#trainer_id').on('change', checkSelections);
+//     $('#unit_id').on('change', checkSelections);
+//     $('#department_id').on('change', checkSelections);
+// });
+
 
 
         $(document).ready(function() {
@@ -280,7 +285,7 @@
                     },
                     target_content: {
                         required: true,
-                        extension: "xls|pdf",
+                        extension: "xlsx|pdf",
                     },
                     mode_of_training: {
                         required: true,
@@ -293,7 +298,7 @@
                             return $('#training_evaluation').val() ===
                                 '{{ encryptId(1) }}'; // Only required if "Yes" is selected
                         },
-                        extension: "xls|pdf",
+                        extension: "xlsx|pdf",
                     }
                 },
                 messages: {
@@ -314,7 +319,7 @@
                     },
                     target_content: {
                         required: "Please upload Target Content.",
-                        extension: "Only .xls and .pdf file formats are allowed.",
+                        extension: "Only .xlsx and .pdf file formats are allowed.",
                     },
                     mode_of_training: {
                         required: "Please select the Mode of Training.",
@@ -324,7 +329,7 @@
                     },
                     questionnaire: {
                         required: "Please upload the Questionnaire.",
-                        extension: "Only .xls and .pdf file formats are allowed.",
+                        extension: "Only .xlsx and .pdf file formats are allowed.",
                     }
                 },
                 errorElement: 'span',

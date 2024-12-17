@@ -31,7 +31,7 @@
                                     <form method="POST" id="PpeTypeMasterForm" enctype="multipart/form-data"
                                         action="{{ admin_url('ppe_ppetype_master/edit/submit') }}">
                                         @csrf
-                                        <input type="hidden" name="id" value="{{ $encryptid }}">
+                                        <input type="hidden" name="id" id="id" value="{{ $encryptid }}">
                                         <div class="row">
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
@@ -105,8 +105,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Standard</label>
                                                     <input type="text" name="ppe_standard" id="ppe_standard"
-                                                        class="form-control "
-                                                        value="{{ $ppetypemaster->ppe_standard }}"
+                                                        class="form-control " value="{{ $ppetypemaster->ppe_standard }}"
                                                         placeholder="Enter the ppe standard">
                                                     @error('ppe_standard')
                                                         <div class="text-danger">{{ $message }}</div>
@@ -118,15 +117,15 @@
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Image</label>
-                                                    <input type="file" name="ppe_file" id="ppe_file"
+                                                    <input type="file" name="ppe_file" id="ppe_file" accept="image/png, image/jpeg, image/jpg"
                                                         class="form-control " placeholder="Enter the image"
                                                         onchange="validateImage()">
                                                     <small>Allowed file types: png, jpeg , jpg</small>
                                                     @if (isset($ppetypemaster) && $ppetypemaster->ppe_image)
                                                         <p>
                                                             <a href="{{ asset('public/' . $ppetypemaster->ppe_image) }}"
-                                                                target="_blank">
-                                                                {{ basename($ppetypemaster->ppe_image) }}
+                                                                target="_blank" class="d-block mt-2">
+                                                                <i class="fa-solid fa-eye text-danger"></i> View
                                                             </a>
                                                         </p>
                                                         <input type="hidden" name="existing_pre_image"
@@ -176,8 +175,23 @@
                 rules: {
                     item_code: {
                         required: true,
-                        regex: /^[a-zA-Z0-9-]*$/
+                        minlength: 3,
+                        maxlength: 30,
+                        regex: /^[a-zA-Z0-9-]*$/,
+                        remote: {
+                            url: '{{ admin_url('ppe_ppetype_master/unique') }}',
+                            type: 'get',
+                            data: {
+                                item_code: function() {
+                                    return $('#item_code').val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
+                                }
+                            }
+                        }
                     },
+
                     ppe_name: {
                         required: true,
                         minlength: 3,
@@ -204,7 +218,10 @@
                 messages: {
                     item_code: {
                         required: "Item Code cannot be empty.",
-                        regex: "Item code should be alphanumeric."
+                        minlength: "Item code must contain between 3 and 30 characters.",
+                        maxlength: "Item code must contain between 3 and 30 characters.",
+                        regex: "Item code should be alphanumeric.",
+                        remote: "Item code already exists."
                     },
                     ppe_name: {
                         required: "PPE Name cannot be empty.",

@@ -201,7 +201,6 @@ class Employee extends Model
             $commaSeparatedRoles = implode(',', $decryptedRoleIds);
         }
 
-        // dd($decryptedRoleIds);
         $update_array = [
             'emp_id' => $request->emp_id ?? null,
             'emp_name' => $request->emp_name ?? null,
@@ -221,11 +220,10 @@ class Employee extends Model
             'updated_by' => Auth::id(),
             'updated_at' => now(),
         ];
-        // Perform the update
         $this->where('id', $id)->update($update_array);
 
-        // Retrieve and return the updated record
         return $this->find($id);
+
     }
 
     public function updateErrorStatus($emp_id, $errorMessage)

@@ -86,7 +86,7 @@
                                     <div class="mb-3 col-md-12 form-input">
                                         <label class="form-label view_label">{{ __('Reason') }}</label>
                                         <div class="view_data">
-                                            {{isset($pperequest->employee_reason) ? $pperequest->employee_reason : '' }}
+                                            {{ isset($pperequest->employee_reason) ? $pperequest->employee_reason : '' }}
 
 
                                         </div>
@@ -111,22 +111,38 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @if (!($userdata))
+                                            @if (!$userdata)
                                                 <tr>
                                                     <td class="text-center" colspan="6">No data is available</td>
                                                 </tr>
                                             @else
-                                                {{-- @foreach ($userdata as $data) --}}
+                                                @foreach ($userdata as $data)
                                                     <tr class="hover-row">
-                                                        <td>{{ $userdata->emp_name }}</td>
-                                                        <td>{{ $userdata->emp_id }}</td>
-                                                        <td>{{ displaydateformat($userdata->created_at) }}</td>
-                                                        <td>{{ removeUnderScore(getStatus($userdata->approve_status)) }}</td>
-                                                        {{-- <td>{{ removeUnderScore(getStatus($data['ehs_approve_status'])) }} --}}
+                                                        <td>{{ $data->emp_name }}</td>
+                                                        <td>{{ $data->emp_id }}</td>
+                                                        <td>{{ displaydateformat($data->created_at) }}</td>
+                                                        <td>
+                                                            @if ($data->approve_status == STATUS_HOD_APPROVAL_PENDING)
+                                                                <span class='badge bg-info' style='font-size: 1.0em;'>HOD Approval Pending</span>
+                                                            @elseif ($data->approve_status == STATUS_HOD_APPROVED)
+                                                                <span class='badge bg-success' style='font-size: 1.0em;'>HOD Approved</span>
+                                                            @elseif ($data->approve_status == STATUS_USER_APPLIED)
+                                                                <span class='badge bg-primary' style='font-size: 1.0em;'>User Applied</span>
+                                                            @elseif ($data->approve_status == STATUS_HOD_REJECTED)
+                                                                <span class='badge bg-danger' style='font-size: 1.0em;'>HOD Rejected</span>
+                                                            @elseif ($data->approve_status == STATUS_EHS_APPROVAL_PENDING)
+                                                                <span class='badge bg-info' style='font-size: 1.0em;'>EHS Approval Pending</span>
+                                                            @elseif ($data->approve_status == STATUS_EHS_APPROVED)
+                                                                <span class='badge bg-success' style='font-size: 1.0em;'>EHS Approved</span>
+                                                            @elseif ($data->approve_status == STATUS_EHS_REJECTED)
+                                                                <span class='badge bg-danger' style='font-size: 1.0em;'>EHS Rejected</span>
+                                                            @endif
                                                         </td>
-                                                        <td>{{ $userdata->remarks }}</td>
+                                                        {{-- <td>{{ removeUnderScore(getStatus($data['ehs_approve_status'])) }} --}}
+
+                                                        <td>{{ $data->remarks }}</td>
                                                     </tr>
-                                                {{-- @endforeach --}}
+                                                @endforeach
                                             @endif
                                         </tbody>
                                     </table>
@@ -195,8 +211,8 @@
                     remarks: {
                         required: true,
                         minlength: 3,
-                        maxlength: 255,
-                        regex:/^[a-zA-Z\s][a-zA-Z\s.]*$/
+                        maxlength: 600,
+
 
                     },
                 },
@@ -204,9 +220,9 @@
 
                     remarks: {
                         required: " Remarks cannot be empty.",
-                        minlength: "Remarks  must contain between 3 and 255 characters.",
-                        maxlength: "Remarks must contain between 3 and 255 characters.",
-                        regex: "Remarks must contain only letters and numbers."
+                        minlength: "Remarks  must contain between 3 and 600 characters.",
+                        maxlength: "Remarks must contain between 3 and 600 characters.",
+
                     },
                 },
                 errorElement: 'div',

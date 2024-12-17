@@ -17,6 +17,7 @@ use Exception;
 use DataTables;
 use Response;
 
+use Illuminate\Support\Facades\DB;
 
 use App\Models\Master\Venue;
 use App\Models\Master\TrainingSchedule;
@@ -80,6 +81,20 @@ class TrainingCalendarController extends Controller
                 ->leftJoin('masters_employee', 'training_schedule.trainer_id', '=', 'masters_employee.id')
                 ->whereBetween('from_date', [$request->start, $request->end]);
 
+            if (CheckUserRole(ROLE_SUPERADMIN)) {
+                $query->where('training_schedule.trash', 'NO');
+            } elseif (CheckUserRole(ROLE_TRAINER)) {
+                $trainer = DB::table('masters_employee')
+                    ->select('id')
+                    ->where('emp_id', Auth::user()->employee_id)
+                    ->first();
+
+                if ($trainer) {
+                    $query->where('training_schedule.trainer_id', $trainer->id)
+                        ->where('training_schedule.trash', 'NO');
+                }
+            }
+
             if ($request->filled('topic_id')) {
                 $query->where('training_schedule.topic_id', decryptId($request->topic_id));
             }
@@ -87,6 +102,7 @@ class TrainingCalendarController extends Controller
             if ($request->filled('trainer_id')) {
                 $query->where('training_schedule.trainer_id', decryptId($request->trainer_id));
             }
+
             $events = $query->get()->map(function ($event) {
                 return [
                     'id' => encryptId($event->id),
@@ -107,7 +123,6 @@ class TrainingCalendarController extends Controller
             return response()->json(['error' => 'Something went wrong. Please try again later.'], 500);
         }
     }
-
 
 
     public function updateEvent(Request $request, $id)

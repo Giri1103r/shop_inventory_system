@@ -49,13 +49,15 @@ class PpeExemption extends Model
         $userRole = $user->role;
 
         $userRole = string_to_array($userRole);
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_EHS_HEAD, $userRole) ) {
-        } elseif(in_array(ROLE_HOD, $userRole)){
-           $departmentId = $user->department_id;
-           $query->where('ppe_ppeexemption.department',$departmentId);
-        }
-    
-        else {
+        if (in_array(ROLE_EHS_HEAD, $userRole)) {
+
+            $query->whereIn('ppe_ppeexemption.approve_status', [STATUS_EHS_APPROVAL_PENDING, STATUS_EHS_APPROVED, STATUS_EHS_REJECTED]);
+        } elseif (in_array(ROLE_HOD, $userRole)) {
+            $departmentId = $user->department_id;
+            $query->where('ppe_ppeexemption.department', $departmentId);
+        } elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+
+        } else {
             $query->where('ppe_ppeexemption.emp_id', $empId);
         }
 
@@ -98,8 +100,8 @@ class PpeExemption extends Model
             $toDate =$request->to_date;
             $query->where('ppe_ppeexemption.to_date', '<=', $toDate);
         }
-        if ($request->has('status') && $request->status) {
-            $query->where('ppe_ppeexemption.status', decryptId($request->status));
+        if ($request->has('approve_status') && $request->approve_status) {
+            $query->where('ppe_ppeexemption.approve_status', $request->approve_status);
         }
 
 
@@ -228,7 +230,7 @@ class PpeExemption extends Model
         $userRole = $user->role;
 
         $userRole = string_to_array($userRole);
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole) ) {
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole )|| in_array(ROLE_EHS_HEAD, $userRole) ) {
         } elseif(in_array(ROLE_HOD, $userRole)){
            $departmentId = $user->department_id;
            $query->where('ppe_ppeexemption.department',$departmentId);
@@ -269,9 +271,9 @@ class PpeExemption extends Model
             $toDate =$request->to_date;
             $query->where('ppe_ppeexemption.to_date', '<=', $toDate);
         }
-        // if ($request->has('status') && $request->status) {
-        //     $query->where('ppe_ppeexemption.status', decryptId($request->status));
-        // }
+        if ($request->has('approve_status') && $request->approve_status) {
+            $query->where('ppe_ppeexemption.approve_status', $request->approve_status);
+        }
 
         return  $query->orderBy('id', 'DESC')->get();
     }

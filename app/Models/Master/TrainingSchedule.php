@@ -57,6 +57,29 @@ class TrainingSchedule extends Model
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
+        /**
+         * Role Based list view condition start
+         */
+
+        if (CheckUserRole(ROLE_SUPERADMIN)) {
+            $query->where('training_schedule.trash', 'NO');
+        } elseif (CheckUserRole(ROLE_TRAINER)) {
+            $trainer = DB::table('masters_employee')
+                ->select('id','emp_id')
+                ->where('emp_id', Auth::user()->employee_id)
+                ->first();
+            if ($trainer) {
+                $query->where('training_schedule.trainer_id', $trainer->id)
+                    ->where('training_schedule.trash', 'NO');
+            }
+        } elseif (Auth::user()->role == ROLE_USER) {
+            $query->where('training_schedule.created_by', Auth::id())
+                ->where('training_schedule.trash', 'NO');
+        }
+
+        /**
+         * Role Based list view condition end
+         */
         if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];
 
@@ -169,9 +192,9 @@ class TrainingSchedule extends Model
                         ->orWhere('department_id', '=', $departmentId)
                         ->orWhere('venue_id', '=', $venueId);
                 })
-                ->where('from_date', '<=', $todate)
-                ->where('to_date', '>=', $fromdate)
-                ->where('id', '!=', $ids); // Exclude the current record
+                    ->where('from_date', '<=', $todate)
+                    ->where('to_date', '>=', $fromdate)
+                    ->where('id', '!=', $ids); // Exclude the current record
             });
 
             if ($query->exists()) {
@@ -371,8 +394,8 @@ class TrainingSchedule extends Model
     public function selectOne($id)
     {
 
-        $data = $this->select('training_schedule.*', 'masters_unit.unit_name', 'masters_employee.emp_name','masters_employee.email','masters_department.department_name', 'training_masters_topic.topic_name', 'training_masters_venue.name_of_the_conference_hall')->leftJoin('masters_unit', 'training_schedule.unit_id', '=', 'masters_unit.id')->leftJoin('training_masters_topic', 'training_schedule.topic_id', '=', 'training_masters_topic.id')->leftJoin('masters_department', 'training_schedule.department_id', '=', 'masters_department.id')->leftJoin('masters_employee', 'training_schedule.trainer_id', '=', 'masters_employee.id')->leftJoin('training_masters_venue', 'training_schedule.venue_id', '=', 'training_masters_venue.id')
-            ->where('training_schedule.id', $id)->where('training_schedule.status', 1)
+        $data = $this->select('training_schedule.*', 'masters_unit.unit_name', 'masters_employee.emp_name', 'masters_employee.email', 'masters_department.department_name', 'training_masters_topic.topic_name', 'training_masters_venue.name_of_the_conference_hall')->leftJoin('masters_unit', 'training_schedule.unit_id', '=', 'masters_unit.id')->leftJoin('training_masters_topic', 'training_schedule.topic_id', '=', 'training_masters_topic.id')->leftJoin('masters_department', 'training_schedule.department_id', '=', 'masters_department.id')->leftJoin('masters_employee', 'training_schedule.trainer_id', '=', 'masters_employee.id')->leftJoin('training_masters_venue', 'training_schedule.venue_id', '=', 'training_masters_venue.id')
+            ->where('training_schedule.id', $id)
             ->first();
 
         return $data;

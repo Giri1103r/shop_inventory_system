@@ -168,7 +168,7 @@ class NominationProcess extends Model
             ->leftJoin('training_masters_topic', 'training_nomination_process.topic_id', '=', 'training_masters_topic.id')
             ->leftJoin('training_schedule', 'training_nomination_process.training_schedule_id', '=', 'training_schedule.id')
             ->leftJoin('training_masters_venue', 'training_schedule.venue_id', '=', 'training_masters_venue.id')
-            ->where('training_nomination_process.status', 1)->where('training_nomination_process.training_schedule_id', $training_schedule)
+            ->where('training_nomination_process.training_schedule_id', $training_schedule)
             ->get();
         return $data;
     }

@@ -90,7 +90,7 @@
                                             {{ displayDateformat($ppeexemption->created_at) }}
                                         </div>
                                     </div>
-                                  
+
                                     <div class="mb-3 col-md-12 form-input">
                                         <label class="form-label view_label">{{ __('Reason') }}</label>
                                         <div class="view_data">
@@ -163,8 +163,8 @@
                     remarks: {
                         required: true,
                         minlength: 3,
-                        maxlength: 255,
-                        regex:/^[a-zA-Z\s][a-zA-Z\s.]*$/
+                        maxlength: 600,
+
 
                     },
                 },
@@ -172,9 +172,8 @@
 
                     remarks: {
                         required: " Remarks cannot be empty.",
-                        minlength: "Remarks  must contain between 3 and 255 characters.",
-                        maxlength: "Remarks must contain between 3 and 255 characters.",
-                        regex: "Remarks must contain only letters and numbers."
+                        minlength: "Remarks  must contain between 3 and 600 characters.",
+                        maxlength: "Remarks must contain between 3 and 600 characters.",
                     },
                 },
                 errorElement: 'div',

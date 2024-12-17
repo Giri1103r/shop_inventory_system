@@ -3,6 +3,7 @@
 @section('pageurl', admin_url('ppe_exemption/list'))
 @section('content')
 
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
@@ -13,8 +14,8 @@
                         <x-button-filter dataId="" class="search me-2" href=""></x-button-filter>
 
 
-                            <x-button-add dataId="" class="add btn btn-primary"
-                                href="{{ admin_url('ppe_exemption/add') }}">Add</x-button-add>
+                        <x-button-add dataId="" class="add btn btn-primary"
+                            href="{{ admin_url('ppe_exemption/add') }}">Add</x-button-add>
 
 
                     </div>
@@ -87,6 +88,16 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">Approve Status</label>
+                                            <select name="approve_status" id="approve_status" style="width: 100%"
+                                                class="form-select single-select">
+                                                <option value="">Select the approve status</option>
+                                                <option value="4">EHS Head Approval Pending</option>
+                                                <option value="5">EHS Head Approved</option>
+                                                <option value="6">EHS Head Rejected</option>
+                                            </select>
+                                        </div>
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -101,7 +112,7 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table id="datatable-list"
-                                class="table primary-table-bordered table-bordered table-striped display responsive nowrap w-100 mt-2 datatable-list">
+                                class="table primary-table-bordered table-bordered table-striped display nowrap w-100 mt-2 datatable-list">
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
@@ -120,6 +131,7 @@
                             </table>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -153,11 +165,8 @@
         });
 
         $(document).ready(function() {
-            var firstTh = $('.datatable-list thead th:first');
-            firstTh.removeClass('sorting_asc');
-
             /* Datatable */
-            table = $('.datatable-list').DataTable({
+            var table = $('#datatable-list').DataTable({
                 autoWidth: false,
                 responsive: true,
                 processing: true,
@@ -165,6 +174,7 @@
                 searching: true,
                 ordering: true,
                 dom: 'Bfrtip',
+                scrollX: true,
                 ajax: {
                     url: "{{ admin_url('ppe_exemption/list') }}",
                     type: 'POST',
@@ -179,7 +189,7 @@
                         d.company = $('#company').val();
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
-                        d.status = $('#status').val();
+                        d.approve_status = $('#approve_status').val();
                     }
                 },
                 columns: [{
@@ -203,7 +213,6 @@
                         data: 'unit',
                         name: 'unit'
                     },
-
                     {
                         data: 'from_date',
                         name: 'from_date'
@@ -218,8 +227,7 @@
                     },
                     {
                         data: 'approve_status',
-                        name: 'approve_status',
-
+                        name: 'approve_status'
                     },
                     {
                         data: 'action',
@@ -257,7 +265,7 @@
                                     var company = $('#company').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
-                                    var status = $('#status').val();
+                                    var approve_status = $('#approve_status').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
@@ -271,7 +279,7 @@
                                         '&company=' + company +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
-                                        '&status=' + status;
+                                        '&approve_status=' + approve_status;
                                 }
                             },
                             {
@@ -286,7 +294,7 @@
                                     var company = $('#company').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
-                                    var status = $('#status').val();
+                                    var approve_status = $('#approve_status').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
@@ -300,7 +308,7 @@
                                         '&company=' + company +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
-                                        '&status=' + status;
+                                        '&approve_status=' + approve_status;
                                 }
                             }
                         ]
@@ -411,11 +419,9 @@
                 Swal.fire({
                     title: title,
                     icon: 'warning',
-                    showDenyButton: false,
                     showCancelButton: true,
                     confirmButtonText: text,
                     confirmButtonColor: btncolor,
-                    denyButtonColor: '#28a745',
                     customClass: {
                         confirmButton: 'btn-skew',
                         cancelButton: 'btn-skew'
@@ -425,9 +431,6 @@
                         $.ajax({
                             url: "{{ admin_url('ppe_exemption/delete') }}",
                             type: 'post',
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
                             data: {
                                 id: id,
                                 login_id: login_id

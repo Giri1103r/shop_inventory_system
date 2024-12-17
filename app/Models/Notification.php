@@ -48,11 +48,12 @@ class Notification extends Model
         if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];
 
-            // $query->where(function ($query) use ($search) {
-            //     $query->orWhere('company_id', 'LIKE', '%' . $search . '%')
-            //         ->orWhere('company_name', 'LIKE', '%' . $search . '%')
-            //         ->orWhere('company_shortname', 'LIKE', '%' . $search . '%');
-            // });
+            $query->where(function ($q) use ($search) {
+                $q->orWhere('notification_message', 'LIKE', '%' . $search . '%')
+                    ->orWhere('notification_type', 'LIKE', '%' . $search . '%')
+                    ->orWhere('web_link', 'LIKE', '%' . $search . '%')
+                    ->orWhere('created_by', 'LIKE', '%' . $search . '%');
+            });
         }
 
         $data_count = $query->count();
