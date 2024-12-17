@@ -169,12 +169,19 @@
             function checkSelections() {
                 var topicId = $('#topic_id').val();
                 var trainerId = $('#trainer_id').val();
-         
+                var unitId = $('#unit_id').val();
+                var departmentId = $('#department_id').val();
+
                 if (topicId && trainerId) {
                     $.ajax({
                         url: "{{ url('training_matrix/topic/ajax-list') }}/" + topicId + "/" + trainerId,
                         type: 'GET',
                         dataType: 'json',
+                        data: {
+
+                        unitId: unitId,
+                        departmentId: departmentId,
+                    },
                         success: function(response) {
                             $('.text-danger').remove();
 
