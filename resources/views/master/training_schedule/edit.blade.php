@@ -38,39 +38,7 @@
                                             value="{{ encryptId($training_schedule->id) }}">
 
                                         <div class="row">
-                                            @if (Auth::user()->role == ROLE_USER)
-                                                <div class="col-md-4">
-                                                    <div class="form-group form-input">
-                                                        <label for="from_date" class="form-label require">From Date</label>
-                                                        <input type="text" name ="from_date" id="from_date_datepicker"
-                                                            class="form-control" placeholder="From Date"
-                                                            value="{{ Displaydatetimeformat($training_schedule->from_date) }}">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group form-input">
-                                                        <label for="to_date" class="form-label require">To Date</label>
-                                                        <input type="text" name ="to_date" id="to_date_datepicker"
-                                                            class="form-control" placeholder="To Date"
-                                                            value="{{ Displaydatetimeformat($training_schedule->to_date) }}">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group form-input">
-                                                        <label for="venue_id" class="form-label require">Venue/Location
-                                                        </label>
-                                                        <select name="venue_id" id="venue_id"
-                                                            class="form-control single-select" style="width: 100%">
-                                                            <option value="">Select Venue/Location </option>
-                                                            @foreach ($venueList as $venue)
-                                                                <option @if ($training_schedule->venue_id == $venue->id) selected @endif
-                                                                    value="{{ encryptId($venue->id) }}">
-                                                                    {{ $venue->name_of_the_conference_hall }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            @endif
+                                         
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label for="from_date" class="form-label require">From Date</label>

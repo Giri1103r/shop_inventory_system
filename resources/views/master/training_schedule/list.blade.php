@@ -11,8 +11,9 @@
                 <div class="card">
                     <h4 class="card-title"></h4>
                     <div class="d-flex justify-content-end p-2">
-
-                        <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
+                        @if (Auth::user()->role != ROLE_USER)
+                            <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
+                        @endif
                         @if (CheckUserPermission('import'))
                             <x-button-import href="{{ admin_url('training_schedule/import') }}"></x-button-import>
                         @endif
@@ -258,8 +259,8 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        from_date = $('#from_date').val();
-                                        to_date = $('#to_date').val();
+                                        from_date = $('#from_date_datepicker').val();
+                                        to_date = $('#to_date_datepicker').val();
                                         topic_id = $('#topic_id').val();
                                         trainer_id = $('#trainer_id').val();
                                         unit_id = $('#unit_id').val();
@@ -283,8 +284,8 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        from_date = $('#from_date').val();
-                                        to_date = $('#to_date').val();
+                                        from_date = $('#from_date_datepicker').val();
+                                        to_date = $('#to_date_datepicker').val();
                                         topic_id = $('#topic_id').val();
                                         trainer_id = $('#trainer_id').val();
                                         unit_id = $('#unit_id').val();
