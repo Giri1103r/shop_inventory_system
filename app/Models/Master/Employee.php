@@ -33,6 +33,7 @@ class Employee extends Model
         'mobile_no',
         'company',
         'location',
+        'login_id',
         'email',
         'unit',
         'department',

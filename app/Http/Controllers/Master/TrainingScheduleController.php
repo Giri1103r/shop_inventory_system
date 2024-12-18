@@ -151,7 +151,6 @@ class TrainingScheduleController extends Controller
                     }
 
                     return $datatables->skipPaging()->make(true);
-
                 } catch (Exception $ex) {
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -509,7 +508,11 @@ class TrainingScheduleController extends Controller
                 $training_schedule = $this->training_schedule->selectOne($id);
                 $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
                 $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
-                $employeeList = Employee::select('id', 'emp_id', 'emp_name', 'email', 'department', 'employee_status')->where('user_role', ROLE_USER)->where('status', 1)->get();
+                $employeeList = Employee::select('id', 'emp_id', 'emp_name', 'email', 'department', 'employee_status')
+                    ->where('id', '!=', $training_schedule->trainer_id) 
+                    ->where('user_role', '!=', 1)
+                    ->where('status', 1) 
+                    ->get();
                 $nominationProcessList = $this->nomination_process->getNomination($training_schedule->id);
 
                 $training_hours = $training_schedule ? $training_schedule->calculateTrainingHours() : 0;
@@ -519,7 +522,6 @@ class TrainingScheduleController extends Controller
                     ->where('status', 1)
                     ->count();
 
-                // Calculate Total Training Hours
                 $totalTrainingHours = $training_hours * $presentTraineesCount;
                 $data = array(
                     'departmentList' => $departmentList,
@@ -533,7 +535,7 @@ class TrainingScheduleController extends Controller
             }
             return view('master.training_schedule.nomination', $data);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
         }
     }
 

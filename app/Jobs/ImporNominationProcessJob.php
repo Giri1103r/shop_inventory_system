@@ -222,7 +222,7 @@ class ImporNominationProcessJob  implements ShouldQueue
 
 
             $empExist = Employee::select('id', 'emp_id', 'emp_name', 'email', 'department', 'employee_status')
-                ->where('emp_id', $emp_id)->where('user_role', ROLE_USER)
+                ->where('emp_id', $emp_id)->where('user_role', '!=', 1)->where('id', '!=', $this->details['trainerId'])
                 ->where('status', 1)
                 ->first();
 

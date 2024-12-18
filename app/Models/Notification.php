@@ -55,7 +55,7 @@ class Notification extends Model
             $query->where('template_notification.trash', 'NO');
         } elseif (CheckUserRole(ROLE_TRAINER)) {
             $trainer = DB::table('masters_employee')
-                ->select('id', 'emp_id')
+                ->select('id')
                 ->where('emp_id', Auth::user()->employee_id)
                 ->first();
 

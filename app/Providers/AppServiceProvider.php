@@ -123,7 +123,7 @@ class AppServiceProvider extends ServiceProvider
                         $mymenu = array_unique(array_merge($mymenu, $permissionArray));
                     }
 
-                    $mymenu = range(1, 150);
+                    // $mymenu = range(1, 150);
                 } else {
 
                     $roleIds = string_to_array(Auth::user()->role);
@@ -143,7 +143,6 @@ class AppServiceProvider extends ServiceProvider
                 ->where('status', 1)
                 ->where('trash', 'NO')
                 ->whereIn('id', $mymenu)
-                ->orderBy('id', 'asc')
                 ->orderBy('parent_id', 'asc')
                 ->orderBy('sort_order', 'asc')
                 ->get();
