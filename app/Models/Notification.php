@@ -78,6 +78,113 @@ class Notification extends Model
                 }
             }
         }
+        elseif (Auth::user()->role == ROLE_USER) {
+            $notification_type = $query->where('notification_type', 1)->first();
+            if ($notification_type && $notification_type->notification_type == 1) {
+                $nomination = DB::table('users')
+                    ->select('id')
+                    ->where('employee_id', Auth::user()->employee_id)
+                    ->first();
+                if ($nomination) {
+                    $assignedUserId = $nomination->id;
+
+                    $query->whereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserId])
+                        ->where('template_notification.trash', 'NO');
+                }
+            }
+        }
+        elseif (Auth::user()->role == ROLE_HOD) {
+            $notification_type = $query->where('notification_type', 1)->first();
+            if ($notification_type && $notification_type->notification_type == 1) {
+                $nomination = DB::table('users')
+                    ->select('id')
+                    ->where('department_id', Auth::user()->department_id)
+                    ->get();
+
+                if ($nomination && $nomination->isNotEmpty()) {
+                    $assignedUserIds = $nomination->pluck('id')->toArray();
+
+                    $query->where(function ($query) use ($assignedUserIds) {
+                        foreach ($assignedUserIds as $assignedUserId) {
+                            $query->orWhereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserId]);
+                        }
+                    })
+
+                    ->where('template_notification.trash', 'NO');
+                }
+            }
+        }
+
+        elseif (Auth::user()->role == ROLE_EHS_HEAD) {
+            $notification_type = $query->where('notification_type', 1)->first();
+            if ($notification_type && $notification_type->notification_type == 1) {
+                $nomination = DB::table('users')
+                    ->select('id')
+                    ->where('emp_id', Auth::user()->employee_id)
+                    ->first();
+                if ($nomination) {
+                    $assignedUserId = $nomination->id;
+                    $query->whereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserId])
+                        ->where('template_notification.trash', 'NO');
+                }
+            }
+        }
+        elseif (Auth::user()->role == ROLE_EHS_OFFICER) {
+            $notification_type = $query->where('notification_type', 1)->first();
+            if ($notification_type && $notification_type->notification_type == 1) {
+                $nomination = DB::table('users')
+                    ->select('id')
+                    ->where('emp_id', Auth::user()->employee_id)
+                    ->first();
+                if ($nomination) {
+                    $assignedUserId = $nomination->id;
+                    $query->whereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserId])
+                        ->where('template_notification.trash', 'NO');
+                }
+            }
+        }
+        elseif (Auth::user()->role == ROLE_PLANT_HEAD) {
+            $notification_type = $query->where('notification_type', 3)->first();
+            if ($notification_type && $notification_type->notification_type == 3) {
+                $nomination = DB::table('users')
+                    ->select('id')
+                    ->where('emp_id', Auth::user()->employee_id)
+                    ->first();
+                if ($nomination) {
+                    $assignedUserId = $nomination->id;
+                    $query->whereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserId])
+                        ->where('template_notification.trash', 'NO');
+                }
+            }
+        }
+        elseif (Auth::user()->role == ROLE_EHS_HEAD) {
+            $notification_type = $query->where('notification_type', 3)->first();
+            if ($notification_type && $notification_type->notification_type == 3) {
+                $nomination = DB::table('users')
+                    ->select('id')
+                    ->where('emp_id', Auth::user()->employee_id)
+                    ->first();
+                if ($nomination) {
+                    $assignedUserId = $nomination->id;
+                    $query->whereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserId])
+                        ->where('template_notification.trash', 'NO');
+                }
+            }
+        }
+        elseif (Auth::user()->role == ROLE_EHS_OFFICER) {
+            $notification_type = $query->where('notification_type', 3)->first();
+            if ($notification_type && $notification_type->notification_type == 3) {
+                $nomination = DB::table('users')
+                    ->select('id')
+                    ->where('emp_id', Auth::user()->employee_id)
+                    ->first();
+                if ($nomination) {
+                    $assignedUserId = $nomination->id;
+                    $query->whereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserId])
+                        ->where('template_notification.trash', 'NO');
+                }
+            }
+        }
         /**
          * Role Based list view condition end
          */
