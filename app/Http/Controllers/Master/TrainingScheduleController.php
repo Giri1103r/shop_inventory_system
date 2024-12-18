@@ -71,14 +71,25 @@ class TrainingScheduleController extends Controller
                     $data =  $this->training_schedule->list();
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
+
                         ->addColumn('status', function ($row) {
-                            $text = "<span style='color:red'>In-Active<span>";
-                            if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
-                            } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
+                            if (Auth::user()->role == ROLE_USER) {
+                                $text = "<span style='color:red'>In-Active<span>";
+                                if ($row->status == 1) {
+                                    $text = "<span style='color:green;' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
+                                } else if ($row->status == 0) {
+                                    $text = "<span style='color:red;'  data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
+                                }
+                                return $text;
+                            } else {
+                                $text = "<span style='color:red'>In-Active<span>";
+                                if ($row->status == 1) {
+                                    $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
+                                } else if ($row->status == 0) {
+                                    $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
+                                }
+                                return $text;
                             }
-                            return $text;
                         })
                         ->addColumn('from_date', function ($row) {
                             return Displaydatetimeformat($row->from_date);
@@ -133,14 +144,15 @@ class TrainingScheduleController extends Controller
                             }
                             return $btn;
                         })
-                        ->rawColumns(['to_date', 'from_date', 'action', 'created_date', 'created_by', 'status'])
-                        ->setFilteredRecords($data['filter_records'])
-                        ->setTotalRecords($data['total_records'])
-                        ->skipPaging()
-                        ->make(true);
-                    return $datatables;
+                        ->rawColumns(['to_date', 'from_date', 'action', 'created_date', 'created_by', 'status']);
+                    if (Auth::user()->role != ROLE_USER) {
+                        $datatables->setFilteredRecords($data['filter_records'])
+                            ->setTotalRecords($data['total_records']);
+                    }
+
+                    return $datatables->skipPaging()->make(true);
+
                 } catch (Exception $ex) {
-                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -204,7 +216,7 @@ class TrainingScheduleController extends Controller
         return response()->json(['conflicts' => $conflicts]);
     }
 
-  
+
     public function Store(Request $request)
     {
         try {
@@ -278,7 +290,7 @@ class TrainingScheduleController extends Controller
                 }
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
@@ -326,30 +338,31 @@ class TrainingScheduleController extends Controller
                     /**
                      * Send Web notification
                      */
-                    // $assigned_users = $nominees->pluck('employee_id')->toArray();
-                    // $assigned_user_ids = array_unique($assigned_users);
-                    // $img = admin_url('public/assets/icons/traning.png');
-                    // $notificationData = [
-                    //     'notification_type' => 2,
-                    //     'module_type' => 2,
-                    //     'notification_message' => $mailsubject,
-                    //     'mobile_notification' => json_encode([
-                    //         'title' => $mailsubject,
-                    //         'message' => 'Training on the topic ' . getTopic($nominee->topic_id) . ' has been started by ' . getUsername(Auth::id()),
-                    //         'icon' =>  $img, 
-                    //         'module' => 2,
-                    //     ]),
-                    //     'assigned_user' => implode(',', $assigned_user_ids),
-                    //     'created_by' => Auth::id(),
-                    // ];
+                    $assigned_users = $nominees->pluck('employee_id')->toArray();
+                    $assigned_user_ids = array_unique($assigned_users);
+                    $img = admin_url('public/assets/icons/traning.png');
+                    $notificationData = [
+                        'notification_type' => 2,
+                        'module_type' => 2,
+                        'notification_message' => $mailsubject,
+                        'mobile_notification' => json_encode([
+                            'title' => $mailsubject,
+                            'message' => 'Training on the topic ' . getTopic($nominee->topic_id) . ' has been started by ' . getUsername(Auth::id()),
+                            'icon' =>  $img,
+                            'module' => 2,
+                        ]),
+                        'web_link' => 'training_schedule/view/' . encryptId($trainingScheduleId),
+                        'assigned_user' => implode(',', $assigned_user_ids),
+                        'created_by' => Auth::id(),
+                    ];
 
-                    // notificationSave($notificationData);
+                    notificationSave($notificationData);
                 }
 
                 Session::flash('success', 'Training has been started successfully!');
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong. Please try again later!');
             return redirect(admin_url('training_schedule/list'));
         }
@@ -369,7 +382,7 @@ class TrainingScheduleController extends Controller
             );
             return view('master.training_schedule.attendance', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
     public function storeAttendance(Request $request)
@@ -395,13 +408,13 @@ class TrainingScheduleController extends Controller
 
                 Session::flash('success', 'Attendance has been saved successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('training_schedule/list'));
         }
@@ -444,7 +457,7 @@ class TrainingScheduleController extends Controller
             $training = $this->training_schedule->updateStatus($trainingScheduleId, $training_status);
             Session::flash('success', 'Training has ended successfully!');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong. Please try again later!');
             return redirect(admin_url('training_schedule/list'));
         }
@@ -576,7 +589,7 @@ class TrainingScheduleController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('training_schedule/list'));
         }
@@ -761,7 +774,7 @@ class TrainingScheduleController extends Controller
                 );
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -873,7 +886,7 @@ class TrainingScheduleController extends Controller
             $filename = "Training.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
     public function DownloadSample(Request $request)

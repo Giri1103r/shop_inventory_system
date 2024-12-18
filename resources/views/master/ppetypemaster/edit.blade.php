@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Type Master Edit')
+@section('title', 'PPE Type Edit')
 @section('pageurl', admin_url('ppe_ppetype_master/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -131,7 +131,7 @@
                                                         <input type="hidden" name="existing_pre_image"
                                                             value="{{ $ppetypemaster->ppe_image }}">
                                                     @else
-                                                        <p>No file is uploaded</p>
+                                                        <p>No image is uploaded</p>
                                                     @endif
                                                     @error('ppe_file')
                                                         <div class="text-danger">{{ $message }}</div>

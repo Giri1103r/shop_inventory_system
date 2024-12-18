@@ -278,12 +278,12 @@ class PpeRequestController extends Controller
                 Session::flash('success', __('Your data has been created successfully!'));
                 return redirect(admin_url('ppe_request/list'));
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
                 return redirect(admin_url('ppe_request/list'));
             }
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }
@@ -299,7 +299,8 @@ class PpeRequestController extends Controller
             if (Auth::check()) {
                 $pperequest = $this->pperequest->selectOne($id);
             }
-            $userdata = $this->pperequest->userdata();
+            $empId = $pperequest->emp_id;
+            $userdata = $this->pperequest->getuserdata($empId);
             $ppestatuslog = $this->ppestatus->statuslog($id);
             $data = [
                 'pperequest' =>  $pperequest,
@@ -364,7 +365,6 @@ class PpeRequestController extends Controller
                 $pperequest = $this->pperequest->selectOne($id);
             }
             if($pperequest->approve_status != STATUS_HOD_APPROVAL_PENDING){
-                Session::flash('error','Already you have responded to the request');
                 return redirect('ppe_request/view/' . encryptId($id));
             }
             $data = [
@@ -497,7 +497,7 @@ class PpeRequestController extends Controller
                     'notification_message' => $message,
                     'mobile_notification' => json_encode([
                         'title' => $message,
-                        'message' => getUsername($updateData['approved_by']) . " has {$updateData['approve_status']} a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
+                        'message' => getUsername($updateData['approved_by']) . " has ". getStatus($updateData['approve_status']) . "a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
                         'icon' => $img,
                         'module' => 1,
                         'style' => 'font-size: 1rem;'
@@ -533,7 +533,6 @@ class PpeRequestController extends Controller
             $userdata = $this->pperequest->getuserdata($empId);
 
             if($pperequest->approve_status != STATUS_EHS_APPROVAL_PENDING){
-                Session::flash('error','Already you have responded to the request');
                 return redirect('ppe_request/view/' . encryptId($id));
             }
 

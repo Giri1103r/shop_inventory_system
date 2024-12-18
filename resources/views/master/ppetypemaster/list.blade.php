@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Type Master')
+@section('title', 'PPE Type')
 @section('pageurl', admin_url('ppe_ppetype_master/list'))
 
 
@@ -26,7 +26,7 @@
                             <x-button-add dataId="" class="add btn btn-primary ms-1"
                                 href="{{ admin_url('ppe_ppetype_master/add') }}">Add</x-button-add>
 
-            
+
 
                     </div>
 
@@ -42,16 +42,6 @@
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspectiontype" class="form-label ">PPE Name</label>
                                             <input type="text" name="ppe_name" id="ppe_name" class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">Protection Category</label>
-                                            <input type="text" name="protection_category" id="protection_category"
-                                                class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">PPE Standard</label>
-                                            <input type="text" name="ppe_standard" id="ppe_standard"
-                                                class="form-control">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspectiontype" class="form-label ">PPE Type</label>
@@ -203,9 +193,7 @@
                         d.ppe_name = $('#ppe_name').val();
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
-                        d.ppe_standard = $('#ppe_standard').val();
                         d.ppe_type = $('#ppe_type').val();
-                        d.protection_category = $('#protection_category').val();
                         d.ppe_status = $('#ppe_status').val();
 
                     }
@@ -274,8 +262,7 @@
                                     from_date = $('#from_date').val();
                                     to_date = $('#to_date').val();
                                     ppe_type = $('#ppe_type').val();
-                                    ppe_standard = $('#ppe_standard').val();
-                                    protection_category = $('#protection_category').val();
+
                                     ppe_status = $('#ppe_status').val();
 
                                     $(".dt-button").removeClass('processing');
@@ -288,8 +275,7 @@
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
                                         '&ppe_type=' + ppe_type +
-                                        '&protection_category=' + protection_category +
-                                        '&ppe_standard=' + ppe_standard +
+
                                         '&ppe_status=' + ppe_status
 
                                 }
@@ -304,8 +290,6 @@
                                     from_date = $('#from_date').val();
                                     to_date = $('#to_date').val();
                                     ppe_type = $('#ppe_type').val();
-                                    ppe_standard = $('#ppe_standard').val();
-                                    protection_category = $('#protection_category').val();
                                     ppe_status = $('#ppe_status').val();
 
 
@@ -319,8 +303,6 @@
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
                                         '&ppe_type=' + ppe_type +
-                                        '&protection_category=' + protection_category +
-                                        '&ppe_standard=' + ppe_standard +
                                         '&ppe_status=' + ppe_status
                                 }
                             },

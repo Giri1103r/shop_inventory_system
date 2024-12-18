@@ -219,7 +219,7 @@ class PpeExemptionController extends Controller
 
                 // Notification
                 $id = $ppeexemption->id;
-                $message = 'New Exemption Request';
+                $message = 'New PPE Exemption Request';
 
                 $assigned_user = $this->user->assigneduser($ehsofficer);
                 $img = admin_url('public/assets/images/ppe-management.jpg');
@@ -535,7 +535,7 @@ class PpeExemptionController extends Controller
                 'unit' => $emp_details->unit,
                 'approved_by' => Auth::id(),
             ];
-          
+
             $empId = $emp_details->emp_id;
             $requestor = $this->pperequest->getrequestemail($empId);
             $hod = $this->pperequest->getdepartmenthod($departmentId);
@@ -548,7 +548,7 @@ class PpeExemptionController extends Controller
                 Mail::to($recipients)->send(new PpeExemptionRejectEmail($details));
             }
 
-            $message = 'New Exemption Request';
+            $message = 'New PPE Exemption Request';
             $hodId = $this->user->getdepartmenthodId($departmentId);
             $requestorId = $this->user->getrequestId($empId);
             $assigned_user = array_merge($hodId, $requestorId);
