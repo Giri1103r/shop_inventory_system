@@ -659,6 +659,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/ehsverification/submit', [SafetyPermitController::class, 'ehsverification']);
                 Route::post('/ehsapproval/submit', [SafetyPermitController::class, 'ehsapproval']);
                 Route::post('/plantheadapproval/submit', [SafetyPermitController::class, 'plantheadapproval']);
+                Route::get('/permitExtension/{id}', [SafetyPermitController::class, 'permitExtension']);
+                Route::post('/permitExtension/submit', [SafetyPermitController::class, 'permitExtensionsubmit']);
                 Route::get('/edit/{id}', [SafetyPermitController::class, 'edit']);
                 Route::post('/edit/submit', [SafetyPermitController::class, 'update']);
                 Route::get('/export/excel', [SafetyPermitController::class, 'exportExcel']);
