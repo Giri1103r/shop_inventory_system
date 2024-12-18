@@ -73,8 +73,21 @@ class TrainingSchedule extends Model
                     ->where('training_schedule.trash', 'NO');
             }
         } elseif (Auth::user()->role == ROLE_USER) {
-            $query->where('training_schedule.created_by', Auth::id())
-                ->where('training_schedule.trash', 'NO');
+            $nomination = DB::table('masters_employee')
+                ->select('id', 'emp_id')
+                ->where('emp_id', Auth::user()->employee_id)
+                ->first();
+
+            if ($nomination) { // Ensure $nomination exists before proceeding
+                $query->where(function ($q) use ($nomination) { // Pass $nomination into the closure
+                    $q->whereExists(function ($subQuery) use ($nomination) {
+                        $subQuery->select(DB::raw(1))
+                            ->from('training_nomination_process')
+                            ->whereColumn('training_nomination_process.training_schedule_id', 'training_schedule.id')
+                            ->where('training_nomination_process.employee_id', $nomination->id); // Check if user is nominated
+                    });
+                })->where('training_schedule.trash', 'NO');
+            }
         }
 
         /**
@@ -84,8 +97,11 @@ class TrainingSchedule extends Model
             $search = $request->search['value'];
 
             $query->where(function ($query) use ($search) {
-                $query
-                    ->orWhere('from_date', 'LIKE', '%' . $search . '%');
+                $query->Where('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_employee.emp_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('training_masters_topic.topic_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('training_masters_venue.name_of_the_conference_hall', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('from_date') && $request->from_date) {
@@ -225,10 +241,6 @@ class TrainingSchedule extends Model
         return $conflicts;
     }
 
-
-
-
-
     public function ExistuniqueCheck($data)
     {
         return $this->where($data['param'],  $data['value'])
@@ -349,27 +361,61 @@ class TrainingSchedule extends Model
         $query = $query->leftJoin('training_masters_topic', 'training_schedule.topic_id', '=', 'training_masters_topic.id');
         $query = $query->leftJoin('training_masters_venue', 'training_schedule.venue_id', '=', 'training_masters_venue.id');
 
+
+        /**
+         * Role Based list view condition start
+         */
+
+        if (CheckUserRole(ROLE_SUPERADMIN)) {
+            $query->where('training_schedule.trash', 'NO');
+        } elseif (CheckUserRole(ROLE_TRAINER)) {
+            $trainer = DB::table('masters_employee')
+                ->select('id', 'emp_id')
+                ->where('emp_id', Auth::user()->employee_id)
+                ->first();
+            if ($trainer) {
+                $query->where('training_schedule.trainer_id', $trainer->id)
+                    ->where('training_schedule.trash', 'NO');
+            }
+        } elseif (Auth::user()->role == ROLE_USER) {
+            $nomination = DB::table('masters_employee')
+                ->select('id', 'emp_id')
+                ->where('emp_id', Auth::user()->employee_id)
+                ->first();
+
+            if ($nomination) {
+                $query->where(function ($q) use ($nomination) { 
+                    $q->whereExists(function ($subQuery) use ($nomination) {
+                        $subQuery->select(DB::raw(1))
+                            ->from('training_nomination_process')
+                            ->whereColumn('training_nomination_process.training_schedule_id', 'training_schedule.id')
+                            ->where('training_nomination_process.employee_id', $nomination->id); 
+                    });
+                })->where('training_schedule.trash', 'NO');
+            }
+        }
+        /**
+         * Role Based list view condition end
+         */
         if (!empty($request->search)) {
             $query->where(function ($subQuery) use ($request) {
                 $search = $request->search;
-                $subQuery->where('from_date', 'LIKE', '%' . $search . '%')
-                    ->orWhere('to_date', 'LIKE', '%' . $search . '%')
-                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                $subQuery->Where('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_employee.emp_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('training_masters_topic.topic_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('training_masters_venue.name_of_the_conference_hall', 'LIKE', '%' . $search . '%');
             });
         }
+        if ($request->has('from_date') && $request->from_date) {
+            $fromDate = Carbon::createFromFormat('d-m-Y H:i', $request->from_date)->format('Y-m-d H:i:s');
+            $query = $query->where('training_schedule.from_date', '>=', $fromDate);
+        }
 
-        // Filters
-        // if ($request->has('from_date') && !empty($request->from_date)) {
-        //     $query->whereDate('from_date', '=', $request->from_date);
-        // }
-
-        // if ($request->has('to_date') && !empty($request->to_date)) {
-        //     $query->whereDate('to_date', '=', $request->to_date);
-        // }
+        if ($request->has('to_date') && $request->to_date) {
+            $toDate = Carbon::createFromFormat('d-m-Y H:i', $request->to_date)->format('Y-m-d H:i:s');
+            $query = $query->where('training_schedule.to_date', '<=', $toDate);
+        }
         if ($request->has('topic_id') && $request->topic_id) {
             $query = $query->where('training_schedule.topic_id', decryptId($request->topic_id));
         }
@@ -393,7 +439,7 @@ class TrainingSchedule extends Model
 
         return  $query->get();
     }
-
+   
     public function selectOne($id)
     {
 

@@ -119,7 +119,7 @@ class TrainingCalendarController extends Controller
 
             return response()->json($events);
         } catch (Exception $ex) {
-            dd($ex->getMessage());
+            report($ex->getMessage());
             return response()->json(['error' => 'Something went wrong. Please try again later.'], 500);
         }
     }
