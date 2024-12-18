@@ -648,7 +648,7 @@
                             </div>
                         </div>
                     </div>
-                    @if ((in_array(ROLE_EHS_OFFICER, getUserRoleId(Auth::id()))|| isAdmin()) && $safetypermit['permit_status'] == 1)
+                    @if ((in_array(ROLE_EHS_OFFICER, getUserRoleId(Auth::id()))|| isAdmin()) && $safetypermit['permit_status'] == STATUS_EHS_VERIFICATION_PENDING)
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">
@@ -698,7 +698,7 @@
                                 </form>
                             </div>
                         </div>
-                    @elseif($safetypermit['permit_status'] >= 2)
+                    @elseif($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING)
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">
@@ -735,10 +735,10 @@
                         $safetypermit['reassign_to'] == Auth::id() ||
                             ($safetypermit['verified_by'] == Auth::id() && !$safetypermit['reassign_to']) || isAdmin())
                         @if (
-                            $safetypermit['permit_status'] == 2 ||
-                                $safetypermit['permit_status'] == 3 ||
-                                $safetypermit['permit_status'] == 5 ||
-                                $safetypermit['permit_status'] == 8)
+                            $safetypermit['permit_status'] == STATUS_EHS_APPROVE_PENDING ||
+                                $safetypermit['permit_status'] == STATUS_EHS_HOLD ||
+                                $safetypermit['permit_status'] == STATUS_EHS_REASSIGN ||
+                                $safetypermit['permit_status'] == STATUS_EHS_RESUME)
                             <div class="card-body ">
                                 <div class="row">
                                     <div class="card-header-inner">
@@ -767,6 +767,7 @@
                                                         id="date" name="date" readonly
                                                         value="{{ date('d-m-Y H:i:s') }}">
                                                 </div>
+                                                @if (($safetypermit['permit_status'] == STATUS_EHS_APPROVE_PENDING || $safetypermit['permit_status'] == STATUS_EHS_RESUME) && ($safetypermit['reassign_to'] != Auth::id()))
                                                 <div class="col-md-4 mt-4">
                                                     <div class="form-check">
                                                         <label for="reasigned"
@@ -774,14 +775,10 @@
                                                         <input type="checkbox" class="form-check-input"
                                                             id="reasigned" name="reasigned"
                                                             @error('remarks') is-invalid @enderror>
-                                                        {{-- <div class="text-danger" id="remarks_error"></div>
-                                                        @error('remarks')
-                                                            <span id="remark_error"
-                                                                class="text-danger">{{ $message }}</span>
-                                                        @enderror --}}
+                                                        
                                                     </div>
                                                 </div>
-
+                                               @endif
                                                 <div class="col-md-4 mb-3 reassign-div" style="display:none;">
                                                     <label for="reassign_to" class="form-label">Reassign To</label>
                                                     <select name="reassign_to" id="reassign_to"
@@ -813,22 +810,25 @@
                                         </div>
                                         <hr>
 
-                                        @if ($safetypermit['permit_status'] == 3)
+                                        @if ($safetypermit['permit_status'] == STATUS_EHS_HOLD)
                                             <div class="d-flex float-end gap-2 mx-auto">
                                                 <button type="submit" name="resume" value="resume"
                                                     class="btn btn-info w-100">Resume</button>
                                             </div>
-                                        @elseif($safetypermit['permit_status'] == 8)
+                                        @elseif($safetypermit['permit_status'] == STATUS_EHS_RESUME)
                                             <div class="d-flex float-end gap-2 mx-auto">
 
                                                 <button type="submit" name="decline" value="decline"
                                                     class="btn btn-danger w-100">Decline</button>
+
+                                                    @if(($safetypermit['reassign_to'] != Auth::id()))
                                                 <button type="submit" name="reassign" value="reassign"
                                                     class="btn btn-secondary w-100 reassign-btn">Reassign</button>
+                                                    @endif
                                                 <button type="submit" name="forward" value="forward"
                                                     class="btn btn-success w-100">Forward</button>
                                             </div>
-                                        @elseif($safetypermit['permit_status'] == 5 && $safetypermit['reassign_to'] == Auth::id())
+                                        @elseif($safetypermit['permit_status'] == STATUS_EHS_REASSIGN && $safetypermit['reassign_to'] == Auth::id())
                                             <div class="d-flex float-end gap-2 mx-auto">
                                                 <button type="submit" name="hold" value="hold"
                                                     class="btn btn-info w-100">Hold</button>
@@ -853,9 +853,9 @@
                                 </div>
                             </div>
                         @elseif (
-                            $safetypermit['permit_status'] != 8 &&
-                                $safetypermit['permit_status'] != 5 &&
-                                ($safetypermit['permit_status'] > 3 || $safetypermit['permit_status'] > 4))
+                            $safetypermit['permit_status'] != STATUS_EHS_RESUME &&
+                                $safetypermit['permit_status'] != STATUS_EHS_REASSIGN &&
+                                ($safetypermit['permit_status'] > STATUS_EHS_HOLD || $safetypermit['permit_status'] > STATUS_EHS_DECLINE))
                             <div class="card-body ">
                                 <div class="row">
                                     <div class="card-header-inner">
@@ -887,9 +887,9 @@
                             </div>
                         @endif
                     @elseif (
-                        $safetypermit['permit_status'] != 8 &&
-                            $safetypermit['permit_status'] != 5 &&
-                            ($safetypermit['permit_status'] > 3 || $safetypermit['permit_status'] > 4))
+                        $safetypermit['permit_status'] != STATUS_EHS_RESUME &&
+                            $safetypermit['permit_status'] != STATUS_EHS_REASSIGN &&
+                            ($safetypermit['permit_status'] > STATUS_EHS_HOLD || $safetypermit['permit_status'] > STATUS_EHS_DECLINE))
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">
@@ -922,7 +922,7 @@
                     @endif
 
 
-                    @if (($safetypermit['permit_status'] == 6 && (in_array(ROLE_PLANT_HEAD, getUserRoleId(Auth::id()))|| isAdmin())))
+                    @if (($safetypermit['permit_status'] == STATUS_PLANT_HEAD_PENDING && (in_array(ROLE_PLANT_HEAD, getUserRoleId(Auth::id()))|| isAdmin())))
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">
@@ -972,7 +972,7 @@
                                 </form>
                             </div>
                         </div>
-                    @elseif ($safetypermit['permit_status'] >= 7 && $safetypermit['permit_status'] != 8)
+                    @elseif ($safetypermit['permit_status'] >= STATUS_PLANT_HEAD_APPROVED && $safetypermit['permit_status'] != STATUS_EHS_RESUME)
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">

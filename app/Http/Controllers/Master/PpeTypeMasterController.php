@@ -261,7 +261,7 @@ class PpeTypeMasterController extends Controller
 
             $this->ppetypemaster->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => __('PPE Type Master status changed successfully')], 200);
+            return response()->json(['status' => 'success', 'msg' => __('PPE Type  status changed successfully')], 200);
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => __('Please try after some time')], 406);
@@ -275,7 +275,7 @@ class PpeTypeMasterController extends Controller
 
             $this->ppetypemaster->deleterecord($id);
 
-            return response()->json(['status' => 'success', 'msg' => __('PPE Type Master  deleted successfully')], 200);
+            return response()->json(['status' => 'success', 'msg' => __('PPE Type deleted successfully')], 200);
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => __('Please try after some time')], 406);
@@ -326,7 +326,7 @@ class PpeTypeMasterController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('PPEType Master Details.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('PPE Type Details.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -364,7 +364,7 @@ class PpeTypeMasterController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "PPE Type Master",
+                'pagetitle' => "PPE Type",
             );
 
             $property = [
@@ -386,7 +386,7 @@ class PpeTypeMasterController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "PPE Type Master Details.pdf";
+            $filename = "PPE Type Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);

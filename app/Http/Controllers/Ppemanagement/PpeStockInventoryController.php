@@ -32,11 +32,20 @@ class PpeStockInventoryController extends Controller
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
-                            $text = "<span style='color:red'>In-Active</span>";
+                            $text = "<span style='color:red'>In-Active<span>";
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='1'>Active</span>";
+                                $text = "<span style='color:green;'>Active<span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='0'>In-Active</span>";
+                                $text = "<span style='color:red;'>In-Active<span>";
+                            }
+
+
+                            if (CheckUserRole(ROLE_SUPERADMIN)) {
+                                if ($row->status == 1) {
+                                    $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='1'>Active<span>";
+                                } else if ($row->status == 0) {
+                                    $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='0'>In-Active<span>";
+                                }
                             }
                             return $text;
                         })
@@ -50,11 +59,10 @@ class PpeStockInventoryController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
 
-                            if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('ppe_stock_inventory/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
-                            }
+                            if(CheckUserPermission('view')){
+                                $btn .= '<a href="' . admin_url('ppe_stock_inventory/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
 
-                            $btn .= '<a href="' . admin_url('ppe_stock_inventory/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            }
 
                             return $btn;
                         })

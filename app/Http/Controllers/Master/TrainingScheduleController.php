@@ -152,6 +152,7 @@ class TrainingScheduleController extends Controller
 
                     return $datatables->skipPaging()->make(true);
                 } catch (Exception $ex) {
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }

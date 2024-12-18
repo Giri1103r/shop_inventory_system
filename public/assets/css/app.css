@@ -22280,6 +22280,7 @@ table.dataTable.dtr-inline.collapsed>tbody>tr.parent>td:first-child:before,
 table.dataTable.dtr-inline.collapsed>tbody>tr.parent>th:first-child:before {
   background-color: #ff5b5b;
   top: 0.85rem;
+  margin-top: 3px !important;
 }
 
 div.dt-button-info {

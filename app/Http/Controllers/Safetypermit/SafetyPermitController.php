@@ -111,18 +111,20 @@ class SafetyPermitController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
 
-
-                            $btn = '<a href="' . admin_url('safetypermit/approvereject/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="Approval">
+                            if ((!in_array(ROLE_USER, getUserRoleId(Auth::id()))) && ($row->permit_status == STATUS_EHS_VERIFICATION_PENDING || $row->permit_status == STATUS_EHS_APPROVE_PENDING || $row->permit_status == STATUS_PLANT_HEAD_PENDING || $row->permit_status == STATUS_EHS_HOLD || $row->permit_status == STATUS_EHS_RESUME || $row->permit_status == STATUS_EHS_REASSIGN)) {
+                                $btn = '<a href="' . admin_url('safetypermit/approvereject/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="Approval">
                             <i class="fa-solid fa-check-to-slot text-success"></i>
                         </a>';
+                            }
 
                             $btn .= '<a href="' . admin_url('safetypermit/view/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="' . __('common.view') . '">
                             <i class="fa-solid fa-eye"></i>
                         </a>';
-
-                            $btn .= '<a href="' . admin_url('safetypermit/qr/pdf/' . encryptId($row->id)) . '" target="__blank" style="margin-right: 5px;" title="QR PDF">
+                            if ($row->permit_status >= STATUS_EHS_APPROVE_PENDING) {
+                                $btn .= '<a href="' . admin_url('safetypermit/qr/pdf/' . encryptId($row->id)) . '" target="__blank" style="margin-right: 5px;" title="QR PDF">
                             <i class="fa-solid fa-qrcode"></i>
                         </a>';
+                            }
 
                             $btn .= '<a href="' . admin_url('safetypermit/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf" aria-hidden="true"></i>
@@ -498,19 +500,20 @@ class SafetyPermitController extends Controller
             $this->safetypermit->permitstatus($permit_status, $id);
 
             $mailsubject = 'EHS Verified';
-            $user_role = ROLE_EHS_OFFICER;
+            $Assignedusers = User::where('id', $safetypermit->verified_by)
+            ->orWhere('id', $safetypermit->created_by)
+            ->select('name', 'email')
+            ->get()
+            ->unique('email');
 
-            $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
-            $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+            if ($Assignedusers != null) {
 
-            if (count($users) > 0) {
-
-                foreach ($users as $user) {
+                foreach ($Assignedusers as $user) {
 
                     $email_id = $user->email;
 
                     if ($email_id != '' || $email_id != null) {
-                        $safetypermit = new SafetyPermit();
+                        // $safetypermit = new SafetyPermit();
                         $safetypermitdetails =  $this->safetypermit->selectmail($id);
                         $permitrray  = $safetypermitdetails->toArray();
 
@@ -523,7 +526,9 @@ class SafetyPermitController extends Controller
                 }
             }
 
-
+            $userids = User::where('id', $safetypermit->verified_by)->pluck('id')->toArray();
+            // dd($userids,$safetypermit->verified_by);
+            // $users = User::where($notifywhere)->whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
             /**
              * Send Web notification
              */
@@ -577,7 +582,6 @@ class SafetyPermitController extends Controller
             if ($request->has('hold')) {
                 $permit_status = STATUS_EHS_HOLD;
             } elseif ($request->has('resume')) {
-
                 $permit_status = STATUS_EHS_RESUME;
             } elseif ($request->has('decline')) {
                 $permit_status = STATUS_EHS_DECLINE;
@@ -591,8 +595,8 @@ class SafetyPermitController extends Controller
             // dd($request);
             $approve =   $this->approvereject->ehsapproval($permit_status);
             if ($request->has('reassign')) {
-                $this->safetypermit->reassignto($approve->created_by, $id);
-            } elseif ($request->has('resume')) {
+                $this->safetypermit->reassignto($request->reassign_to, $id);
+            } elseif ($request->has('resume')||$request->has('hold') ) {
                 $this->safetypermit->resume_hold($approve->created_by, $id);
             }
             $this->safetypermit->permitstatus($permit_status, $id);
@@ -601,15 +605,13 @@ class SafetyPermitController extends Controller
             if ($request->has('hold')) {
 
                 $mailsubject = 'EHS Holded the permit';
-                $Assignedusers = User::whereRaw('id', $safetypermit->resume_hold_by)
+                $Assignedusers = User::where('id', $safetypermit->resume_hold_by)
                     ->orWhere('id', $safetypermit->created_by)
                     ->select('name', 'email')
                     ->get()
                     ->unique('email');
-                $UserId =  User::whereRaw('id', $safetypermit->resume_hold_by)->pluck('id')->toArray();
-                $assigned_user = array_merge([$safetypermit->created_by], $UserId);
-                $assigned_user = array_unique($assigned_user);
-
+           
+                    
                 if (count($Assignedusers) > 0) {
 
                     foreach ($Assignedusers as $user) {
@@ -617,7 +619,6 @@ class SafetyPermitController extends Controller
                         $email_id = $user->email;
 
                         if ($email_id != '' || $email_id != null) {
-                            $safetypermit = new SafetyPermit();
                             $safetypermitdetails =  $this->safetypermit->selectmail($id);
                             $permitrray  = $safetypermitdetails->toArray();
 
@@ -629,7 +630,7 @@ class SafetyPermitController extends Controller
                         }
                     }
                 }
-
+                $UserId =  User::where('id', $safetypermit->resume_hold_by)->orwhere('id', $safetypermit->created_by)->pluck('id')->toArray();
                 $notificationData = array(
                     'notification_type' => 3,
                     'module_type' => 1,
@@ -642,17 +643,17 @@ class SafetyPermitController extends Controller
                         'module' => 1,
                     )),
                     'web_link' =>  admin_url('safetypermit/view/' . encryptId($safetypermit->id)),
-                    'assigned_user' => array_to_string($assigned_user),
+                    'assigned_user' => array_to_string($UserId),
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
             } elseif ($request->has('resume')) {
                 $mailsubject = 'EHS Resumed the permit';
-                $assigned_user_ids = [$safetypermit->resume_hold_by, $safetypermit->created_by];
-                $Assignedusers = User::whereIn('id', $assigned_user_ids)
-                    ->select('name', 'email')
-                    ->get()
-                    ->unique('email');
+                $Assignedusers = User::where('id', $safetypermit->resume_hold_by)
+                ->orWhere('id', $safetypermit->created_by)
+                ->select('name', 'email')
+                ->get()
+                ->unique('email');
 
                 if (count($Assignedusers) > 0) {
 
@@ -661,7 +662,6 @@ class SafetyPermitController extends Controller
                         $email_id = $user->email;
 
                         if ($email_id != '' || $email_id != null) {
-                            $safetypermit = new SafetyPermit();
                             $safetypermitdetails =  $this->safetypermit->selectmail($id);
                             $permitrray  = $safetypermitdetails->toArray();
 
@@ -673,9 +673,7 @@ class SafetyPermitController extends Controller
                         }
                     }
                 }
-                $UserId =  User::where('id', $safetypermit->resume_hold_by)->pluck('id')->toArray();
-                $assigned_user = array_merge([$safetypermit->created_by], $UserId);
-                $assigned_user = array_unique($assigned_user);
+                $UserId =  User::where('id', $safetypermit->resume_hold_by)->orwhere('id', $safetypermit->created_by)->pluck('id')->toArray();
 
                 $notificationData = array(
                     'notification_type' => 3,
@@ -689,7 +687,7 @@ class SafetyPermitController extends Controller
                         'module' => 1,
                     )),
                     'web_link' =>  admin_url('safetypermit/view/' . encryptId($safetypermit->id)),
-                    'assigned_user' => array_to_string($assigned_user),
+                    'assigned_user' => array_to_string($UserId),
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
@@ -757,7 +755,7 @@ class SafetyPermitController extends Controller
                         $email_id = $user->email;
 
                         if ($email_id != '' || $email_id != null) {
-                            $safetypermit = new SafetyPermit();
+                            // $safetypermit = new SafetyPermit();
                             $safetypermitdetails =  $this->safetypermit->selectmail($id);
                             $permitrray  = $safetypermitdetails->toArray();
 
@@ -896,7 +894,6 @@ class SafetyPermitController extends Controller
                     $email_id = $user->email;
 
                     if ($email_id != '' || $email_id != null) {
-                        $safetypermit = new SafetyPermit();
                         $safetypermitdetails =  $this->safetypermit->selectmail($id);
                         $permitrray  = $safetypermitdetails->toArray();
 
@@ -1250,10 +1247,12 @@ class SafetyPermitController extends Controller
         $name = $request->input('search');
 
         $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
-            ->where('status', 1)
-            ->whereRaw("FIND_IN_SET(?, user_role)", 3)
-            ->limit(10)
-            ->get();
+        ->where('status', 1)
+        ->whereRaw("FIND_IN_SET(?, user_role)", [3])
+        ->where('login_id', '!=', Auth::id()) 
+        ->limit(10)
+        ->get();
+    
         return response()->json(
             $employees->map(function ($employee) {
                 return [

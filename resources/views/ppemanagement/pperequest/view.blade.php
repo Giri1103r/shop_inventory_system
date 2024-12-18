@@ -173,6 +173,7 @@
                                         <table class="table table-bordered table-hover">
                                             <thead>
                                                 <tr>
+
                                                     <th>Status</th>
                                                     <th>Approved By</th>
                                                     <th>Remarks</th>
@@ -189,6 +190,7 @@
                                                 @else
                                                     @foreach ($ppestatuslog as $log)
                                                         <tr class="hover-row">
+
                                                             <td>
                                                                 @if ($log['to_status'] == STATUS_HOD_APPROVAL_PENDING)
                                                                     <span class='badge bg-info'
@@ -205,14 +207,14 @@
                                                                         style='font-size: 1.0em;'>HOD Rejected</span>
                                                                 @elseif ($log['to_status'] == STATUS_EHS_APPROVAL_PENDING)
                                                                     <span class='badge bg-info'
-                                                                        style='font-size: 1.0em;'>EHS Approval
+                                                                        style='font-size: 1.0em;'>EHS Officer Approval
                                                                         Pending</span>
                                                                 @elseif ($log['to_status'] == STATUS_EHS_APPROVED)
                                                                     <span class='badge bg-success'
-                                                                        style='font-size: 1.0em;'>EHS Approved</span>
+                                                                        style='font-size: 1.0em;'>EHS Officer Approved</span>
                                                                 @elseif ($log['to_status'] == STATUS_EHS_REJECTED)
                                                                     <span class='badge bg-danger'
-                                                                        style='font-size: 1.0em;'>EHS Rejected</span>
+                                                                        style='font-size: 1.0em;'>EHS Officer Rejected</span>
                                                                 @endif
                                                             </td>
                                                             <td>{{ getUsername($log['created_by']) }}</td>

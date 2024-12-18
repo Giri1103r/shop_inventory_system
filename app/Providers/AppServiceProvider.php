@@ -87,7 +87,7 @@ class AppServiceProvider extends ServiceProvider
         defined('CHEMICAL_DEPARTMENT') or define('CHEMICAL_DEPARTMENT', 53);
 
 
-
+        // Safety Permit
         defined('STATUS_EHS_VERIFICATION_PENDING') or define('STATUS_EHS_VERIFICATION_PENDING', 1);
         defined('STATUS_EHS_APPROVE_PENDING') or define('STATUS_EHS_APPROVE_PENDING', 2);
         defined('STATUS_EHS_HOLD') or define('STATUS_EHS_HOLD', 3);

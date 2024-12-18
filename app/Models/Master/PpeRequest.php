@@ -55,11 +55,10 @@ class PpeRequest extends Model
 
 
         if (in_array(ROLE_EHS_OFFICER, $userRole)) {
-
-            $query->whereIn('ppe_pperequest.approve_status', [STATUS_EHS_APPROVAL_PENDING, STATUS_EHS_APPROVED, STATUS_EHS_REJECTED]);
+            $query->orderBy('ppe_pperequest.id','DESC');
         } elseif (in_array(ROLE_HOD, $userRole)) {
             $departmentId = $user->department_id;
-            $query->where('ppe_pperequest.department', $departmentId);
+            $query->where('ppe_pperequest.department', $departmentId)->orderBy('ppe_pperequest.id','DESC');
         } elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
         } else {
             $query->where('ppe_pperequest.emp_id', $empId);
@@ -277,7 +276,7 @@ class PpeRequest extends Model
 
     public function getuserdata($empId)
     {
-        return PpeRequest::where('emp_id', $empId)->get();
+        return PpeRequest::where('emp_id', $empId)->where('approve_status', '!=', STATUS_HOD_APPROVAL_PENDING)->get();
     }
 
     public function exportdata()
