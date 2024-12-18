@@ -251,7 +251,7 @@ class PpeRequestController extends Controller
                     'approve_link' => url('ppe_request/hodapproval/view/' . encryptID($id)),
                     'reject_link' => url('ppe_request/hodapproval/view/' . encryptID($id))
                 ];
-                Mail::to($hod)->send(new PpeRequestRequestorEmail($details));
+                Mail::to($hod)->queue(new PpeRequestRequestorEmail($details));
 
                 // Notification
                 $message = 'New PPE Request';
@@ -460,7 +460,7 @@ class PpeRequestController extends Controller
             if ($action == 'approve') {
                 foreach ($ehsofficer as $officer) {
                     $officer_email = $officer->email;
-                    Mail::to($officer_email)->send(new PpeRequestHodApprovalEmail($details));
+                    Mail::to($officer_email)->queue(new PpeRequestHodApprovalEmail($details));
                 }
 
                 $message = 'New PPE Request';
@@ -485,7 +485,7 @@ class PpeRequestController extends Controller
 
                 notificationSave($notificationData);
             } else {
-                Mail::to($requestor)->send(new PpeRejectRequestEmail($details));
+                Mail::to($requestor)->queue(new PpeRejectRequestEmail($details));
 
                 $message = 'New PPE Request';
                 $requestorId = $this->user->getrequestId($empId);
@@ -601,7 +601,7 @@ class PpeRequestController extends Controller
             $recipients = array_filter([$requestor, $hod, $storemanager]);
 
             if ($action == 'approve') {
-                Mail::to($recipients)->send(new PpeEhsRequestEmail($details));
+                Mail::to($recipients)->queue(new PpeEhsRequestEmail($details));
 
                 $id = $empDetails->id;
                 $message = 'New PPE Request';
@@ -630,7 +630,7 @@ class PpeRequestController extends Controller
 
                 notificationSave($notificationData);
             } else {
-                Mail::to($recipients)->send(new PpeRequestEhsRejectEmail($details));
+                Mail::to($recipients)->queue(new PpeRequestEhsRejectEmail($details));
 
                 $id = $empDetails->id;
                 $message = 'New PPE Request';
@@ -751,7 +751,7 @@ class PpeRequestController extends Controller
                     'approve_link' => url('ppe_request/hodapproval/view/' . encryptID($id)),
                     'reject_link' => url('ppe_request/hodapproval/view/' . encryptID($id))
                 ];
-                Mail::to($hod)->send(new PpeRequestRequestorEmail($details));
+                Mail::to($hod)->queue(new PpeRequestRequestorEmail($details));
 
                 // Notification
 

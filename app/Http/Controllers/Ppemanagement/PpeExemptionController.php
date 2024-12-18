@@ -214,7 +214,7 @@ class PpeExemptionController extends Controller
 
                 foreach ($ehsofficer as $officer) {
                     $officer_email = getUseremail($officer->id);
-                    Mail::to($officer_email)->send(new PpeExemptionRequestorEmail($details));
+                    Mail::to($officer_email)->queue(new PpeExemptionRequestorEmail($details));
                 }
 
                 // Notification
@@ -390,7 +390,7 @@ class PpeExemptionController extends Controller
 
                 foreach ($ehsofficer as $officer) {
                     $officer_email = getUseremail($officer->id);
-                    Mail::to($officer_email)->send(new PpeExemptionRequestorEmail($details));
+                    Mail::to($officer_email)->queue(new PpeExemptionRequestorEmail($details));
                 }
 
 
@@ -535,17 +535,16 @@ class PpeExemptionController extends Controller
                 'unit' => $emp_details->unit,
                 'approved_by' => Auth::id(),
             ];
-
             $empId = $emp_details->emp_id;
             $requestor = $this->pperequest->getrequestemail($empId);
             $hod = $this->pperequest->getdepartmenthod($departmentId);
 
             if ($action == 'approve') {
                 $recipients = array_filter([$requestor, $hod]);
-                Mail::to($recipients)->send(new PpeExemptionEmail($details));
+                Mail::to($recipients)->queue(new PpeExemptionEmail($details));
             } else {
                 $recipients = array_filter([$requestor, $hod]);
-                Mail::to($recipients)->send(new PpeExemptionRejectEmail($details));
+                Mail::to($recipients)->queue(new PpeExemptionRejectEmail($details));
             }
 
             $message = 'New PPE Exemption Request';
@@ -621,7 +620,12 @@ class PpeExemptionController extends Controller
                 $export[] =  Displaydateformat($data->to_date);
                 if($data->approve_status ==  $ehsstatus){
                     $export[] = 'User Applied';
-                } else{
+                }elseif($data->approve_status ==  STATUS_EHS_APPROVED){
+                    $export[] = 'EHS Head Approved';
+                }elseif($data->approve_status ==  STATUS_EHS_REJECTED){
+                    $export[] = 'EHS Head Rejected';
+                }
+                else{
                     $export[] = removeUnderScore(getStatus($data->approve_status));
 
                 }

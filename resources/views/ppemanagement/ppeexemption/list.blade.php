@@ -123,8 +123,8 @@
                                         <th>From Date</th>
                                         <th>To Date</th>
                                         <th>Reason</th>
-                                        <th>Approve Status</th>
-                                        <th>Action</th>
+                                        <th data-priority="2">Approve Status</th>
+                                        <th data-priority="1">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>

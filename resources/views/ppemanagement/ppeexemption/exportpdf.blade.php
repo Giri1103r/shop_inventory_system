@@ -200,7 +200,7 @@
                 <div style="width:100%;">
                     <table style="width:100%;">
                         <tr>
-                            <td class="header-cell">EHS Approval</td>
+                            <td class="header-cell">Approval Status</td>
                         </tr>
                     </table>
                 </div>

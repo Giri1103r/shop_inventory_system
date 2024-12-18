@@ -48,10 +48,12 @@
                             {{ Displaydateformat($value->to_date) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            @if($value->approve_status ==  $ehsstatus)
+                            @if ($value->approve_status == $ehsstatus)
                                 <p>{{ 'User Applied' }}</p>
-                            @else
-                                {{ removeUnderScore(getStatus($value->approve_status)) }}
+                            @elseif($value->approve_status == STATUS_EHS_APPROVED)
+                                <p>{{ 'EHS Head Approved' }}</p>
+                            @elseif($value->approve_status == STATUS_EHS_REJECTED)
+                                <p>{{ 'EHS Head Rejected' }}</p>
                             @endif
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
