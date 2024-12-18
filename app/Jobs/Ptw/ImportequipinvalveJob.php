@@ -18,154 +18,115 @@ use App\Models\User;
 use App\Models\UploadLog;
 use App\Models\UploadLogError;
 use App\Models\Master\EquipInvalve;
+use Illuminate\Support\Facades\Session;
 
 //  class ImportequipinvalveJob implements ShouldQueue
 class ImportequipinvalveJob
 {
-
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $details;
 
-
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
     public function __construct($details)
     {
-
-
         $this->details = $details;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
     public function handle()
     {
-
-
         $i = 1;
 
-        $update_array = array(
+        // Update the upload log to indicate the job is being processed
+        $update_array = [
             'upload_status' => 1,
-        );
+        ];
 
-        UploadLog::where('id', $this->details['log_id'])
-            ->update($update_array);
-
+        UploadLog::where('id', $this->details['log_id'])->update($update_array);
 
         $xlsx = SimpleXLSX::parse($this->details['path']);
-        // $xlsx = SimpleXLSX::parse(private_storage($this->details['path']));
-
-        // dd($xlsx);
         $cond_error_datas = [];
 
         foreach ($xlsx->rows() as $row) {
-
             $sno = trim($row['0']);
             $equip_involve = trim($row['1']);
 
-            /*
-             * Header column validation
-             */
+            // Header column validation
             if ($i == 1) {
-
                 if (count($row) == 2) {
-
-                    if (
-                        $sno != 'SNo' ||
-                        $equip_involve != 'Name'
-                    ) {
-                        $error_data_1 = array(
+                    if ($sno != 'SNo' || $equip_involve != 'Name') {
+                        $error_data_1 = [
                             'upload_id' => $this->details['log_id'],
-                            'line_no' =>  $i,
+                            'line_no' => $i,
                             'error' => 'Header Column Name Not Match',
-                        );
+                        ];
                         $cond_error_datas[] = $error_data_1;
-                        $i++;
-                        break;
+                        break; // Stop processing further rows if header is incorrect
                     }
                     $i++;
-
                     continue;
                 } else {
-                    $error_data_1 = array(
+                    $error_data_1 = [
                         'upload_id' => $this->details['log_id'],
                         'line_no' => $i,
                         'error' => 'Header Column Not Match',
-                    );
-
+                    ];
                     $cond_error_datas[] = $error_data_1;
-                    $i++;
-                    break;
+                    break; // Stop processing further rows if header is incorrect
                 }
             }
 
-            /* Column data validation */
-
-
-
+            // Column data validation
             if ($equip_involve == '') {
-
-                $cond_error_data = array(
+                $cond_error_data = [
                     'upload_id' => $this->details['log_id'],
                     'line_no' => $i,
                     'error' => 'Name is missing',
-                );
-
+                ];
                 $cond_error_datas[] = $cond_error_data;
-
                 $i++;
                 continue;
-            } else {
-
-                $equip_involveExist = EquipInvalve::where('equip_involve', $equip_involve)->get();
-                try {
-
-                    if (count($equip_involveExist) > 0) {
-                        $cond_error_data = array(
-                            'upload_id' => $this->details['log_id'],
-                            'line_no' => $i,
-                            'error' => 'Name Already Exist',
-                        );
-                        $cond_error_datas[] = $cond_error_data;
-                        $i++;
-                        continue;
-                    }
-                } catch (\Exception $ex) {
-                    $cond_error_data = array(
-                        'upload_id' => $this->details['log_id'],
-                        'line_no' => $i,
-                        'error' => 'Invalid Data',
-                    );
-                    $cond_error_datas[] = $cond_error_data;
-                }
             }
 
+            // Check if equipment already exists
+            $equip_involveExist = EquipInvalve::where('equip_involve', $equip_involve)->exists();
+            if ($equip_involveExist) {
+                $cond_error_data = [
+                    'upload_id' => $this->details['log_id'],
+                    'line_no' => $i,
+                    'error' => 'Name is already Exists',
+                ];
+                $cond_error_datas[] = $cond_error_data;
+                $i++;
+                continue; // Skip to the next row if the name already exists
+            }
 
-            $data = array(
+            // If no error, proceed to insert the data
+            $data = [
                 'equip_involve' => $equip_involve,
-                'created_by' => $this->details['user_id']
-            );
-
+                'created_by' => $this->details['user_id'],
+            ];
             EquipInvalve::create($data);
 
             $i++;
         }
 
+        // If there were errors, insert them into the error log and update the upload status
         if (count($cond_error_datas) > 0) {
             UploadLogError::insert($cond_error_datas);
+            $final_update_array = [
+                'upload_status' => 3, // Mark as failed
+            ];
+            Session::flash('error', 'Failed to upload. Please check the upload log.');
+        } else {
+            // If no errors, mark the upload as successful
+            $final_update_array = [
+                'upload_status' => 2, // Mark as successful
+            ];
+            Session::flash('success', 'Upload completed successfully.');
         }
 
-        $final_update_array = array(
-            'upload_status' => 2,
-        );
-
+        // Update the upload log with the final status
         UploadLog::where('id', $this->details['log_id'])->update($final_update_array);
     }
 }
+

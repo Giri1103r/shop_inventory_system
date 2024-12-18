@@ -242,7 +242,7 @@ class ProtectiveEquipController extends Controller
 
         $filePath = $filedetails->sample_file;
         $customFileName = $filedetails->file_name;
-        
+
         return Response::download($filePath, $customFileName);
     }
 
@@ -256,6 +256,7 @@ class ProtectiveEquipController extends Controller
     public function ImportSubmit(Request $request)
     {
         try {
+
             $file = $request->file('protective_equip_upload');
 
             $rules = [
@@ -267,6 +268,7 @@ class ProtectiveEquipController extends Controller
 
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
+                dd($validator->errors());
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
