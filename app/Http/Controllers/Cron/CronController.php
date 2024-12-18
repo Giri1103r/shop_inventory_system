@@ -589,8 +589,6 @@ class CronController extends Controller
             $permits = SafetyPermit::where('trash', 'NO')
             ->where('permit_status', '!=', STATUS_PLANT_HEAD_APPROVED)
             ->whereDate('date', Carbon::today()) 
-            ->whereTime('date', '<', $currentTime) 
-            ->whereTime('time_to', '<', $currentTime) 
             ->get();
     
             if ($permits->isNotEmpty()) {
