@@ -502,7 +502,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/export/excel', [NominationProcessController::class, 'exportExcel']);
                 Route::get('/export/pdf', [NominationProcessController::class, 'exportPdf']);
                 Route::get('/sampledownload', [NominationProcessController::class, 'DownloadSample']);
-                Route::get('/import/{training_schedule_id}', [NominationProcessController::class, 'import']);
+                Route::get('/import/{training_schedule_id}/{trainer_id}', [NominationProcessController::class, 'import']);
                 Route::post('/import/submit', [NominationProcessController::class, 'importSubmit']);
                 Route::post('/status', [NominationProcessController::class, 'statusChange']);
                 Route::post('/unique', [NominationProcessController::class, 'Uniquecheck']);

@@ -4,7 +4,7 @@
 
 
 @section('content')
-  
+
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
@@ -128,10 +128,12 @@
                                         <h4 class="text-white">Nomination Process</h4>
                                     </div>
                                 </div>
-                               
+
                                 {{-- <div style="cursor: pointer  !important;padding-left: 88% !important"> --}}
                                 <div class="d-flex justify-content-end p-2">
-                                    <x-button-import href="{{ admin_url('nomination_process/import/' . encryptId($training_schedule->id)) }}"></x-button-import>
+                                    <x-button-import
+                                    href="{{ admin_url('nomination_process/import/' . encryptId($training_schedule->id) . '/' . encryptId($training_schedule->trainer_id)) }}">
+                                    ></x-button-import>
 
                                 </div>
 
@@ -140,15 +142,15 @@
                                         action="{{ admin_url('nomination_process/add/submit') }}"
                                         enctype="multipart/form-data">
                                         @csrf
-                                        <div clase="nominationaddmorebutton" style="padding-left: 82% !important; margin-top: -59px;">
-                                            <button class="btn btn-primary addmorebutton"
-                                                data-block='lesson_learned_block' data-row='lesson_learned_row'
-                                                type="button" id="dynamic-add-more"
+                                        <div clase="nominationaddmorebutton"
+                                            style="padding-left: 82% !important; margin-top: -59px;">
+                                            <button class="btn btn-primary addmorebutton" data-block='lesson_learned_block'
+                                                data-row='lesson_learned_row' type="button" id="dynamic-add-more"
                                                 style="margin:10px;width: 84px;">Add</button>
 
                                         </div>
                                         <div class="row">
-                                           
+
                                             <table class="table_card" style="margin-top: 20px;">
                                                 <thead>
 

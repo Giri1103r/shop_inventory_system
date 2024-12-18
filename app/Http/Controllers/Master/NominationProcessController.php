@@ -100,7 +100,7 @@ class NominationProcessController extends Controller
         }
         $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
         $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
-        $employeeList  = $this->employee->select('id', 'emp_id')->where('user_role', ROLE_USER)->where('status', '1')->get();
+        $employeeList  = $this->employee->select('id', 'emp_id')->where('user_role','!=',1)->where('status', '1')->get();
         $data = array(
             'departmentList' => $departmentList,
             'topicList' => $topicList,
@@ -217,12 +217,13 @@ class NominationProcessController extends Controller
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
-    public function Import(Request $request,$training_schedule_id)
+    public function Import(Request $request,$training_schedule_id,$trainer_id)
     {
         $decryptedId = decryptId($training_schedule_id);
-
+        $trainerDecryptedId = decryptId($trainer_id);
         $data = [
             'training_schedule_id' => $decryptedId,
+            'trainer_id' => $trainerDecryptedId,
         ];
         return view('master.training.nomination_process.import', $data);
     }
@@ -286,6 +287,7 @@ class NominationProcessController extends Controller
                     "user_id" => $user_id,
                     "log_id" => $insert_id,
                     "trainingScheduleIid" => $request->training_schedule_id,
+                    "trainerId" => $request->trainer_id,
                     "path" => $path,
                 ];
 

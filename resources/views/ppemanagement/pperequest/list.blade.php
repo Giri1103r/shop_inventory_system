@@ -100,10 +100,10 @@
                                         <th>PPE Name</th>
                                         <th>PPE Type</th>
                                         <th>Department</th>
-                                        <th>Approval Status</th>
+                                        <th data-priority="2">Approval Status</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
-                                        <th>{{ __('common.action') }}</th>
+                                        <th data-priority="1">{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>

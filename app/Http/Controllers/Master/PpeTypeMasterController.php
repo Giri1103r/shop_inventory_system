@@ -364,7 +364,7 @@ class PpeTypeMasterController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "PPE Type Master",
+                'pagetitle' => "PPE Type",
             );
 
             $property = [

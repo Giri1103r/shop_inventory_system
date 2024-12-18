@@ -37,6 +37,7 @@
                                         action="{{ admin_url('nomination_process/import/submit') }}">
                                         @csrf
                                         <input type="hidden" name="training_schedule_id" value="{{ $training_schedule_id }}">
+                                        <input type="hidden" name="trainer_id" value="{{ $trainer_id }}">
 
                                         <div class="row">
                                             <div class="mb-3 col-md-6 form-input">
