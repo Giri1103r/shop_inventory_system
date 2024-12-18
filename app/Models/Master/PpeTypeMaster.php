@@ -59,12 +59,7 @@ class PpeTypeMaster extends Model
         if ($request->has('ppe_name') && $request->ppe_name) {
             $query = $query->where('ppe_name', 'LIKE', '%' . $request->ppe_name . '%');
         }
-        if ($request->has('ppe_standard') && $request->ppe_standard) {
-            $query = $query->where('ppe_standard', 'LIKE', '%' . $request->ppe_standard . '%');
-        }
-        if ($request->has('protection_category') && $request->protection_category) {
-            $query = $query->where('ppe_category', 'LIKE', '%' . $request->protection_category . '%');
-        }
+
         if ($request->has('ppe_type') && $request->ppe_type) {
             $query = $query->where('ppe_master_ppetypemaster.ppe_type', 'LIKE', '%' . $request->ppe_type . '%');
         }
@@ -245,12 +240,6 @@ class PpeTypeMaster extends Model
         }
         if ($request->has('ppe_name') && $request->ppe_name) {
             $query = $query->where('ppe_name', 'LIKE', '%' . $request->ppe_name . '%');
-        }
-        if ($request->has('ppe_standard') && $request->ppe_standard) {
-            $query = $query->where('ppe_standard', 'LIKE', '%' . $request->ppe_standard . '%');
-        }
-        if ($request->has('protection_category') && $request->protection_category) {
-            $query = $query->where('ppe_category', 'LIKE', '%' . $request->protection_category . '%');
         }
         if ($request->has('ppe_type') && $request->ppe_type) {
             $query = $query->where('ppe_master_ppetypemaster.ppe_type', 'LIKE', '%' . $request->ppe_type . '%');

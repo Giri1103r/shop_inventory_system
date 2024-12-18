@@ -104,8 +104,8 @@
                                         <thead>
                                             <tr>
                                                 <th>Employee Name</th>
-                                                <th>Employee Id</th>
-                                                <th>Previous applied Date</th>
+                                                <th>Employee ID</th>
+                                                <th>Previous Applied Date</th>
                                                 <th>Approval Status</th>
                                                 <th>Remarks</th>
                                             </tr>
@@ -131,11 +131,11 @@
                                                             @elseif ($data->approve_status == STATUS_HOD_REJECTED)
                                                                 <span class='badge bg-danger' style='font-size: 1.0em;'>HOD Rejected</span>
                                                             @elseif ($data->approve_status == STATUS_EHS_APPROVAL_PENDING)
-                                                                <span class='badge bg-info' style='font-size: 1.0em;'>EHS Approval Pending</span>
+                                                                <span class='badge bg-info' style='font-size: 1.0em;'>EHS Officer Approval Pending</span>
                                                             @elseif ($data->approve_status == STATUS_EHS_APPROVED)
-                                                                <span class='badge bg-success' style='font-size: 1.0em;'>EHS Approved</span>
+                                                                <span class='badge bg-success' style='font-size: 1.0em;'>EHS Officer Approved</span>
                                                             @elseif ($data->approve_status == STATUS_EHS_REJECTED)
-                                                                <span class='badge bg-danger' style='font-size: 1.0em;'>EHS Rejected</span>
+                                                                <span class='badge bg-danger' style='font-size: 1.0em;'>EHS Officer Rejected</span>
                                                             @endif
                                                         </td>
                                                         {{-- <td>{{ removeUnderScore(getStatus($data['ehs_approve_status'])) }} --}}

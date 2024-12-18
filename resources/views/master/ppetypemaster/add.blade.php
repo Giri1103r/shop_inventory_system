@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Type Master')
+@section('title', 'PPE Type')
 @section('pageurl', admin_url('ppe_ppetype_master/list'))
 @section('content')
     <div class="clearfix"></div>

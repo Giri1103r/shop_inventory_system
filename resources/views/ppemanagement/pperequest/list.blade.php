@@ -2,7 +2,14 @@
 @section('title', 'PPE Shoe Request')
 @section('pageurl', admin_url('ppe_request/list'))
 @section('content')
-
+    @push('style')
+        <style>
+          .table-responsive{
+            overflow-x: auto;
+            width: 100%
+          }
+        </style>
+    @endpush
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
@@ -60,7 +67,8 @@
                                                 class="form-select single-select">
                                                 <option value="">Select the approve status</option>
                                                 @foreach ($approvestatus as $status)
-                                                    <option value="{{ $status->id }}">{{ removeUnderScore($status->approve_status) }}
+                                                    <option value="{{ $status->id }}">
+                                                        {{ removeUnderScore($status->approve_status) }}
                                                     </option>
                                                 @endforeach
 
@@ -77,6 +85,8 @@
                         </form>
                         <hr>
                     </div>
+
+
 
                     <div class="card-body">
                         <div class="table-responsive">
@@ -286,8 +296,10 @@
                         extend: 'pageLength',
                         text: '{{ __('common.show') }} 10 {{ __('common.records') }}'
                     }
-                ]
+                ],
+                scrollX: true // Enable horizontal scrolling
             });
+
 
             // Change event for length selection
             table.on('length.dt', function(e, settings, len) {

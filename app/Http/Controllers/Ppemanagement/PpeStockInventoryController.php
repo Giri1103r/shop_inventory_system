@@ -50,11 +50,10 @@ class PpeStockInventoryController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
 
-                            if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('ppe_stock_inventory/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
-                            }
+                            if(CheckUserPermission('view')){
+                                $btn .= '<a href="' . admin_url('ppe_stock_inventory/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
 
-                            $btn .= '<a href="' . admin_url('ppe_stock_inventory/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            }
 
                             return $btn;
                         })
