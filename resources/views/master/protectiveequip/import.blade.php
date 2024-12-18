@@ -24,8 +24,8 @@
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('administration.employee_import') }}</h4> --}}
                                 <div class="d-flex justify-content-end p-2 gap-2">
-                                    <x-button-download href="{{ admin_url('ptw/equipinvolvemaster/sampledownload') }}"></x-button-download>
-                                    <x-button-back href="{{ admin_url('ptw/equipinvolvemaster/list') }}"></x-button-back>
+                                    <x-button-download href="{{ admin_url('ptw/protectiveequipmentmaster/sampledownload') }}"></x-button-download>
+                                    <x-button-back href="{{ admin_url('ptw/protectiveequipmentmaster/list') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -34,12 +34,12 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="companyimport" enctype="multipart/form-data"
-                                        action="{{ admin_url('ptw/equipinvolvemaster/import/submit') }}">
+                                        action="{{ admin_url('ptw/protectiveequipmentmaster/import/submit') }}">
                                         @csrf
                                         <div class="row">
                                             <div class="mb-3 col-md-6 form-input">
                                                 <label class="form-label required">File</label>
-                                                <input type="file"  name="equipinvolved_upload" class="form-control"  placeholder="">
+                                                <input type="file"  name="protective_equip_upload" class="form-control"  placeholder="">
                                             </div>
                                         </div>
                                         <hr>

@@ -363,23 +363,23 @@ class SafetyPermit extends Model
         return $this->where('id', $id)->update($extenstion);
     }
 
-    public function permit_extended_status($id, $ptw_status)
-    {
+    // public function permit_extended_status($id, $ptw_status)
+    // {
 
-        if ($ptw_status == 14) {
-            $extenstion_status = [
-                'permit_extension_status' => 1,
-            ];
+    //     if ($ptw_status == 14) {
+    //         $extenstion_status = [
+    //             'permit_extension_status' => 1,
+    //         ];
 
-            return $this->where('id', $id)->update($extenstion_status);
-        } else {
-            $extenstion_status = [
-                'permit_extension_status' => 0,
-            ];
+    //         return $this->where('id', $id)->update($extenstion_status);
+    //     } else {
+    //         $extenstion_status = [
+    //             'permit_extension_status' => 0,
+    //         ];
 
-            return $this->where('id', $id)->update($extenstion_status);
-        }
-    }
+    //         return $this->where('id', $id)->update($extenstion_status);
+    //     }
+    // }
     public function statuschange($id)
     {
         $request = request();

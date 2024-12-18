@@ -80,7 +80,7 @@ class ImportsafeworkJob
 
                     if (
                         $sno != 'SNo' ||
-                        $safe_work != 'Name'
+                        $safe_work != 'Safe Work'
                     ) {
                         $error_data_1 = array(
                             'upload_id' => $this->details['log_id'],

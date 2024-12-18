@@ -87,8 +87,8 @@ class TypeofWorkController extends Controller
                             }
                             return "<span style='color:gray'>No Image</span>";
                         })
-                        
-                        
+
+
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // /if (CheckUserPermission('view')) {
