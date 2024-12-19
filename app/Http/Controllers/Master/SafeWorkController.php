@@ -9,17 +9,16 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 
-use Str;
-use Response;
-use Session;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Session;
 use Exception;
-use DataTables;
+use Yajra\DataTables\DataTables;
 
 use App\Jobs\Ptw\ImportsafeworkJob;
 
 use App\Models\UploadLog;
 use App\Models\Master\SafeWork;
-
+use Illuminate\Support\Facades\Response;
 
 class SafeWorkController extends Controller
 {
@@ -338,6 +337,10 @@ class SafeWorkController extends Controller
 
             $allData = $this->safework->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 __('Name'),
@@ -367,7 +370,6 @@ class SafeWorkController extends Controller
                     $exportData
                 );
         } catch (Exception $ex) {
-
             report($ex);
         }
     }
@@ -380,6 +382,10 @@ class SafeWorkController extends Controller
             ini_set("pcre.backtrack_limit", "5000000");
 
             $allData = $this->safework->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
 
             $header = [
                 __("common.sno"),
@@ -418,7 +424,6 @@ class SafeWorkController extends Controller
             $filename = "Safe Work Instructions Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }

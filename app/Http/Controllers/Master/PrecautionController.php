@@ -8,12 +8,12 @@ use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Response;
 
-use Str;
-use Response;
-use Session;
 use Exception;
-use DataTables;
+use Yajra\DataTables\DataTables;
 
 use App\Jobs\Ptw\ImportPrecautionJob;
 
@@ -342,6 +342,10 @@ class PrecautionController extends Controller
 
             $allData = $this->precaution->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 __('Name'),
@@ -383,6 +387,10 @@ class PrecautionController extends Controller
             ini_set("pcre.backtrack_limit", "5000000");
 
             $allData = $this->precaution->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
 
             $header = [
                 __("common.sno"),

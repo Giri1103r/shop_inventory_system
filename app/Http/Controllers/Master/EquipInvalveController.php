@@ -9,17 +9,16 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 
-use Str;
-use Response;
-use Session;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Response;
 use Exception;
-use DataTables;
+use Yajra\DataTables\DataTables;
 
 use App\Jobs\Ptw\ImportequipinvalveJob;
 
 use App\Models\UploadLog;
 use App\Models\Master\EquipInvalve;
-
+use Illuminate\Support\Facades\Session;
 
 class EquipInvalveController extends Controller
 {
@@ -338,6 +337,10 @@ class EquipInvalveController extends Controller
 
             $allData = $this->equipinvalve->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 __('Name'),
@@ -380,6 +383,10 @@ class EquipInvalveController extends Controller
             ini_set("pcre.backtrack_limit", "5000000");
 
             $allData = $this->equipinvalve->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
 
             $header = [
                 __("common.sno"),

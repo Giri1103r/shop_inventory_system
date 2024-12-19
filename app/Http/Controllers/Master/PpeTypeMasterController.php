@@ -44,7 +44,7 @@ class PpeTypeMasterController extends Controller
                             }
 
 
-                            if (CheckUserRole(ROLE_SUPERADMIN)) {
+                            if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_HOD)) {
                                 if ($row->status == 1) {
                                     $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='1'>Active<span>";
                                 } else if ($row->status == 0) {

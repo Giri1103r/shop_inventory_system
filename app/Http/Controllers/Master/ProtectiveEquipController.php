@@ -9,11 +9,11 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 
-use Str;
-use Response;
-use Session;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Session;
 use Exception;
-use DataTables;
+use Yajra\DataTables\DataTables;
 
 use App\Jobs\Ptw\ImportProtectiveEquipJob;
 
@@ -340,6 +340,10 @@ class ProtectiveEquipController extends Controller
 
             $allData = $this->protectiveequip->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 __('Name'),
@@ -383,6 +387,10 @@ class ProtectiveEquipController extends Controller
 
             $allData = $this->protectiveequip->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 __('Name'),
@@ -425,13 +433,13 @@ class ProtectiveEquipController extends Controller
     }
 
 
-    public function list(Request $request)
-    {
+    // public function list(Request $request)
+    // {
 
-        $conpanyId = decryptId($request->companyId);
+    //     $conpanyId = decryptId($request->companyId);
 
-        $Location = $this->locationtype->ajaxList($conpanyId);
+    //     $Location = $this->locationtype->ajaxList($conpanyId);
 
-        return response()->json($Location);
-    }
+    //     return response()->json($Location);
+    // }
 }

@@ -278,12 +278,12 @@ class PpeRequestController extends Controller
                 Session::flash('success', __('Your data has been created successfully!'));
                 return redirect(admin_url('ppe_request/list'));
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
                 return redirect(admin_url('ppe_request/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }
@@ -401,18 +401,18 @@ class PpeRequestController extends Controller
         $action = $request->input('action');
         if ($action == 'approve') {
             $approveStatus = STATUS_EHS_APPROVAL_PENDING;
-            $status = 1; // Approved status
+            $status = 1;
         } else {
             $approveStatus = STATUS_HOD_REJECTED;
-            $status = 0; // Rejected status
+            $status = 0;
         }
 
         if ($action == 'approve') {
             $approveDStatus = STATUS_HOD_APPROVED;
-            $status = 1; // Approved status
+            $status = 1;
         } else {
             $approveDStatus = STATUS_HOD_REJECTED;
-            $status = 0; // Rejected status
+            $status = 0;
         }
 
 

@@ -239,6 +239,8 @@ class PpeExemption extends Model
             $query->where('ppe_ppeexemption.emp_id', $empId);
         }
 
+        
+
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 

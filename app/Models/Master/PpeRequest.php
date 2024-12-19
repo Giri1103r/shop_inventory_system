@@ -45,8 +45,7 @@ class PpeRequest extends Model
             ->where('masters_department.trash', 'NO')
             ->where('masters_ppetype.trash', 'NO');
 
-        $org_total =  $query;
-        $org_total_counts = $org_total->count();
+
 
         $user = Auth::user();
         $empId = $user->employee_id;
@@ -64,7 +63,8 @@ class PpeRequest extends Model
             $query->where('ppe_pperequest.emp_id', $empId);
         }
 
-
+        $org_total =  $query;
+        $org_total_counts = $org_total->count();
 
         if ($request->search['value'] != null) {
             $search = $request->search['value'];
