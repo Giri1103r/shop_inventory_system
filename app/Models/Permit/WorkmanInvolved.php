@@ -44,17 +44,9 @@ class WorkmanInvolved extends Model
         $request = request();
         $search = '';
         $query = $this->select(
-            'ptw_masters_typeofwork.*',
-            'ptw_masters_typeofwork_upload.file_path',
-            'ptw_masters_typeofwork.id as typeid'
-        )
-        ->leftJoin(
-            'ptw_masters_typeofwork_upload', 
-            'ptw_masters_typeofwork_upload.typeofwork_id', 
-            '=', 
-            'ptw_masters_typeofwork.id'
-        )
-        ->where('ptw_masters_typeofwork_upload.trash', 'NO');
+            'ptw_safety_workman_involved.*');
+
+
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -69,17 +61,11 @@ class WorkmanInvolved extends Model
             });
         }
 
-        if ($request->has('work_name') && $request->work_name) {
-            $query = $query->where('work_name', 'LIKE', '%' . $request->work_name . '%');
-        }
-        if ($request->has('status') && $request->status) {
 
-            $query = $query->where('status', decryptId($request->status));
-        }
         $data_count = $query;
         $total_records = $data_count->count();
 
-        $query->orderBy('typeid', 'DESC');
+        $query->orderBy('id', 'DESC');
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
@@ -95,30 +81,23 @@ class WorkmanInvolved extends Model
         return $datas;
     }
 
-  
-    public function UniqueCheck($data)
-    {
 
-        return $this->where('work_name',  $data)->get();
-    }
 
-    public function ExistuniqueCheck($data, $id)
-    {
-        return $this->where('work_name',  $data)
-            ->where('id', '!=', $id)
-            ->get();
+
+    public function getWorkmaninvolved($id){
+        return WorkmanInvolved::where('permit_id', $id)->get();
     }
 
     public function store($permit_id)
     {
         $request = request();
 
-        
+
         $empIds = $request->input('emp_id');
-        $workmanNames = $request->input('workman_name'); 
-        $workmanDesigs = $request->input('workman_desig'); 
-        $workmanDepts = $request->input('workman_dept'); 
-        $natureOfJobs = $request->input('nature_of_job'); 
+        $workmanNames = $request->input('workman_name');
+        $workmanDesigs = $request->input('workman_desig');
+        $workmanDepts = $request->input('workman_dept');
+        $natureOfJobs = $request->input('nature_of_job');
 
         foreach ($empIds as $index => $empId) {
             $insert_array = array(
@@ -130,130 +109,130 @@ class WorkmanInvolved extends Model
                 'nature_of_job' => $natureOfJobs[$index],
                 'created_by' => Auth::id()
             );
-    
+
             $this->insert($insert_array);
         }
     }
 
-    public function updates($id)
-    {
+    // public function updates($id)
+    // {
 
-        $request = request();
+    //     $request = request();
 
-        $update_array = array(
-            'work_name' => $request->work_name,
-            'description' => $request->description,
-            'updated_by' => Auth::id()
-        );
+    //     $update_array = array(
+    //         'work_name' => $request->work_name,
+    //         'description' => $request->description,
+    //         'updated_by' => Auth::id()
+    //     );
 
-        return $this->where('id', $id)->update($update_array);
-    }
+    //     return $this->where('id', $id)->update($update_array);
+    // }
 
-    public function statuschange($id)
-    {
-        $request = request();
+    // public function statuschange($id)
+    // {
+    //     $request = request();
 
-        $type = $request->types;
-        if ($type == 1) {
-            $update_data = array(
-                'status' => 0,
-            );
-        } else {
-            $update_data = array(
-                'status' => 1,
-            );
-        }
+    //     $type = $request->types;
+    //     if ($type == 1) {
+    //         $update_data = array(
+    //             'status' => 0,
+    //         );
+    //     } else {
+    //         $update_data = array(
+    //             'status' => 1,
+    //         );
+    //     }
 
-        return $this->where('id', $id)->update($update_data);
-    }
+    //     return $this->where('id', $id)->update($update_data);
+    // }
 
-    public function deleterecord($id)
-    {
+    // public function deleterecord($id)
+    // {
 
-        $update_data = array(
-            'status' => 0,
-            'trash' => 'YES',
-        );
+    //     $update_data = array(
+    //         'status' => 0,
+    //         'trash' => 'YES',
+    //     );
 
-        return $this->where('id', $id)->update($update_data);
-    }
+    //     return $this->where('id', $id)->update($update_data);
+    // }
 
-    public function exportdata()
-    {
-        $request = request();
-        $search = '';
-        $query = $this->select(
-            'ptw_masters_typeofwork.*',
-            'ptw_masters_typeofwork_upload.file_path',
-            'ptw_masters_typeofwork.id as typeid'
-        )
-        ->leftJoin(
-            'ptw_masters_typeofwork_upload', 
-            'ptw_masters_typeofwork_upload.typeofwork_id', 
-            '=', 
-            'ptw_masters_typeofwork.id'
-        )
-        ->where('ptw_masters_typeofwork_upload.trash', 'NO');
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
+    // public function exportdata()
+    // {
+    //     $request = request();
+    //     $search = '';
+    //     $query = $this->select(
+    //         'ptw_masters_typeofwork.*',
+    //         'ptw_masters_typeofwork_upload.file_path',
+    //         'ptw_masters_typeofwork.id as typeid'
+    //     )
+    //     ->leftJoin(
+    //         'ptw_masters_typeofwork_upload',
+    //         'ptw_masters_typeofwork_upload.typeofwork_id',
+    //         '=',
+    //         'ptw_masters_typeofwork.id'
+    //     )
+    //     ->where('ptw_masters_typeofwork_upload.trash', 'NO');
+    //     if ($request->search != null || $request->search != '') {
+    //         $search = $request->search;
 
-            $query->where(function ($query) use ($search) {
-                $query
-                    ->orWhere('work_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('description', 'LIKE', '%' . $search . '%');
-            });
-        }
+    //         $query->where(function ($query) use ($search) {
+    //             $query
+    //                 ->orWhere('work_name', 'LIKE', '%' . $search . '%')
+    //                 ->orWhere('description', 'LIKE', '%' . $search . '%');
+    //         });
+    //     }
 
-        if ($request->has('work_name') && $request->work_name) {
-            $query = $query->where('work_name', 'LIKE', '%' . $request->work_name . '%');
-        }
-        if ($request->has('status') && $request->status) {
+    //     if ($request->has('work_name') && $request->work_name) {
+    //         $query = $query->where('work_name', 'LIKE', '%' . $request->work_name . '%');
+    //     }
+    //     if ($request->has('status') && $request->status) {
 
-            $query = $query->where('ptw_masters_typeofwork.status', decryptId($request->status));
-        }
-        $query->orderBy('typeid', 'DESC');
-        return  $query->get();
-    }
+    //         $query = $query->where('ptw_masters_typeofwork.status', decryptId($request->status));
+    //     }
+    //     $query->orderBy('typeid', 'DESC');
+    //     return  $query->get();
+    // }
 
-    public function selectOne($id)
-    {
+    // public function selectOne($id)
+    // {
 
-        $data =  $this->select('ptw_masters_typeofwork.*', 'ptw_masters_typeofwork_upload.file_path',)->leftjoin('ptw_masters_typeofwork_upload', 'ptw_masters_typeofwork_upload.typeofwork_id', '=', 'ptw_masters_typeofwork.id')
-            ->where('ptw_masters_typeofwork.id', $id)
-            ->first();
+    //     $data =  $this->select('ptw_masters_typeofwork.*', 'ptw_masters_typeofwork_upload.file_path',)->leftjoin('ptw_masters_typeofwork_upload', 'ptw_masters_typeofwork_upload.typeofwork_id', '=', 'ptw_masters_typeofwork.id')
+    //         ->where('ptw_masters_typeofwork.id', $id)
+    //         ->first();
 
-        return $data;
-    }
-
-
-    public function gettypework()
-    {
-
-        $data =  $this->select('ptw_masters_typeofwork.*','ptw_masters_typeofwork_upload.file_path')
-        ->leftjoin('ptw_masters_typeofwork_upload', 'ptw_masters_typeofwork_upload.typeofwork_id', '=', 'ptw_masters_typeofwork.id')->where('ptw_masters_typeofwork.status',1)->where('ptw_masters_typeofwork_upload.status',1)
-        ->get();
-        return $data;
-    }
+    //     return $data;
+    // }
 
 
-    public function getprotectiveequip()
-    {
+    // public function gettypework()
+    // {
 
-        $data =  $this->select('ptw_masters_typeofwork.*','ptw_masters_typeofwork_upload.file_path')
-        ->leftjoin('ptw_masters_typeofwork_upload', 'ptw_masters_typeofwork_upload.typeofwork_id', '=', 'ptw_masters_typeofwork.id')->where('ptw_masters_typeofwork.status',1)->where('ptw_masters_typeofwork_upload.status',1)
-        ->get();
-        return $data;
-    }
+    //     $data =  $this->select('ptw_masters_typeofwork.*','ptw_masters_typeofwork_upload.file_path')
+    //     ->leftjoin('ptw_masters_typeofwork_upload', 'ptw_masters_typeofwork_upload.typeofwork_id', '=', 'ptw_masters_typeofwork.id')->where('ptw_masters_typeofwork.status',1)->where('ptw_masters_typeofwork_upload.status',1)
+    //     ->get();
+    //     return $data;
+    // }
 
 
-    protected static function booted()
-    {
-        static::addGlobalScope(new TrashScope('ptw_masters_typeofwork'));
+    // public function getprotectiveequip()
+    // {
 
-        // static::created(function ($model) {
+    //     $data =  $this->select('ptw_masters_typeofwork.*','ptw_masters_typeofwork_upload.file_path')
+    //     ->leftjoin('ptw_masters_typeofwork_upload', 'ptw_masters_typeofwork_upload.typeofwork_id', '=', 'ptw_masters_typeofwork.id')->where('ptw_masters_typeofwork.status',1)->where('ptw_masters_typeofwork_upload.status',1)
+    //     ->get();
+    //     return $data;
+    // }
 
-        //     $uniqueId = 'CMP-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
-        //     $model->update(['company_id' => $uniqueId]);
-        // });
-    }
+
+    // protected static function booted()
+    // {
+    //     static::addGlobalScope(new TrashScope('ptw_masters_typeofwork'));
+
+    //     // static::created(function ($model) {
+
+    //     //     $uniqueId = 'CMP-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
+    //     //     $model->update(['company_id' => $uniqueId]);
+    //     // });
+    // }
 }

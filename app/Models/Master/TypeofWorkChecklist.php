@@ -558,6 +558,7 @@ class TypeofWorkChecklist extends Model
 
     public function getprotectiveequipment($id, $type)
     {
+      
         $data = $this->select('ptw_masters_typeofwork_checklist.*', 'ptw_masters_protective_equip.protective_equip')
             ->leftJoin('ptw_masters_protective_equip', 'ptw_masters_protective_equip.id', '=', 'ptw_masters_typeofwork_checklist.check_points')
             ->where('ptw_masters_typeofwork_checklist.typeofwork_id', $id)
@@ -574,7 +575,6 @@ class TypeofWorkChecklist extends Model
             ->leftJoin('ptw_masters_equip_involved', 'ptw_masters_equip_involved.id', '=', 'ptw_masters_typeofwork_checklist.check_points')->where('ptw_masters_typeofwork_checklist.typeofwork_id', $id)
             ->where('ptw_masters_typeofwork_checklist.type', $type)->where('ptw_masters_typeofwork_checklist.checked', 1)
             ->get();
-
         return $data;
     }
 
@@ -597,7 +597,7 @@ class TypeofWorkChecklist extends Model
             ->where('ptw_masters_typeofwork_checklist.type', $type)->where('ptw_masters_typeofwork_checklist.checked', 1)
             ->get();
 
-     
+
         return $data;
     }
 

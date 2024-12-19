@@ -334,6 +334,10 @@ class SafetyPermitController extends Controller
             $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto, true);
             $protectiveEquipment = json_decode($safetypermit->protective_equip, true);
             $equipmentInvolved = json_decode($safetypermit->equipment_involved, true);
+
+            $workman = $this->workmaninvolved->getWorkmaninvolved($id);
+
+
             $data = [
                 'unitList' => $unitList,
                 'typeofwork' => $typeofwork,
@@ -347,9 +351,11 @@ class SafetyPermitController extends Controller
                 'confinedSpaceEntry'=>$confinedSpaceEntry,
                 'equipmentInvolved'=>$equipmentInvolved,
                 'protectiveEquipment'=>$protectiveEquipment,
+                'workman'=>$workman,
             ];
             return view('permit.safetypermit.edit', $data);
         } catch (Exception $ex) {
+            dd($ex);
             Session::flash('error', 'Something Went Wrong Please try again after some time');
             return redirect('safetypermit/list');
         }
@@ -1097,6 +1103,7 @@ class SafetyPermitController extends Controller
     }
     public function getequipmentinvolved($workId)
     {
+
         $getequipmentinvolved = $this->typeofworkchecklist->getequipmentinvolved($workId, 'type2');
         return response()->json($getequipmentinvolved);
     }
