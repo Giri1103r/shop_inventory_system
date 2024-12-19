@@ -34,17 +34,7 @@
                                             <input type="text" class="form-control " name="emp_name" id="emp_name">
 
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">Department</label>
-                                            <select name="department" id="department" style="width: 100%"
-                                                class="form-select single-select">
-                                                <option value="">Select the department name</option>
-                                                @foreach ($department as $name)
-                                                    <option value="{{ $name->id }}">{{ $name->department_name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">Unit</label>
@@ -55,6 +45,13 @@
                                                 @foreach ($unit as $name)
                                                     <option value="{{ $name->id }}">{{ $name->unit_name }}</option>
                                                 @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">Department</label>
+                                            <select name="department" id="department" style="width: 100%"
+                                                class="form-select single-select">
+                                                <option value="">Select the department name</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
@@ -162,6 +159,34 @@
                 dateFormat: "d-m-Y",
                 minDate: "today"
             });
+        });
+
+        $(document).on('change', '#unit', function() {
+            var unitId = $(this).val();
+            if (unitId) {
+                $.ajax({
+                    url: "{{ admin_url('ppe_exemption/ajax-list') }}/" + unitId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#department').empty().append(
+                            '<option value="">Select Target Department</option>'
+                        );
+                        $.each(data, function(key, value) {
+                            $('#department').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#department').trigger('change');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching department. Please try again.');
+                    }
+                });
+            } else {
+                $('#department').empty().append(
+                    '<option value="">Select Target Department</option>');
+                $('#department').trigger('change');
+            }
         });
 
         $(document).ready(function() {

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Equipment Involved in Job Add')
+@section('title', 'Equipment Involved in Job Edit')
 @section('pageurl', admin_url('ptw/equipinvolvemaster/list'))
 
 
