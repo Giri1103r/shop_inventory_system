@@ -138,6 +138,10 @@ class UploadLogController extends Controller
 
             $allData = $this->uploadlogerror->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 'No.',
                 'Line No',

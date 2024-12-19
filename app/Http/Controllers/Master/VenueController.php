@@ -348,6 +348,10 @@ class VenueController extends Controller
 
             $allData = $this->venue->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 'Name of the Conference Hall',
@@ -394,6 +398,10 @@ class VenueController extends Controller
         try {
 
             $allData = $this->venue->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
 
             $header = [
                 __("common.sno"),

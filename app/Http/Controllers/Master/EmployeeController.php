@@ -203,6 +203,10 @@ class EmployeeController extends Controller
 
             $allData = $this->employee->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 'Employee Id',
@@ -247,6 +251,11 @@ class EmployeeController extends Controller
         try {
 
             $allData = $this->employee->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+            
             $header = [
                 __("common.sno"),
                 'Employee Id',

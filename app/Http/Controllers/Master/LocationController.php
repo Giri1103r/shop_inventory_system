@@ -268,6 +268,10 @@ class LocationController extends Controller
 
             $allData = $this->location->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 'Location ID',
@@ -312,6 +316,10 @@ class LocationController extends Controller
         try {
 
             $allData = $this->location->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
 
             $header = [
                 __("common.sno"),
@@ -358,7 +366,7 @@ class LocationController extends Controller
 
     public function list(Request $request ,$companyId)
     {
-        
+
         $companyId = decryptId($companyId);
         $id = decryptId($request->id);
         $locations = $this->location->ajaxList($companyId, $id);

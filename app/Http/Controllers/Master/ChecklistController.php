@@ -9,17 +9,16 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 
-use Str;
-use Response;
-use Session;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Response;
 use Exception;
-use DataTables;
+use Yajra\DataTables\DataTables;
 
 use App\Jobs\Ptw\ImportChecklistJob;
 
 use App\Models\UploadLog;
 use App\Models\Master\Checklist;
-
+use Illuminate\Support\Facades\Session;
 
 class ChecklistController extends Controller
 {
@@ -242,11 +241,11 @@ class ChecklistController extends Controller
 
         $filedetails =  exportsamplefile('checklist');
 
-    
+
 
         $filePath = $filedetails->sample_file;
         $customFileName = $filedetails->file_name;
-        
+
         return Response::download($filePath, $customFileName);
     }
 
@@ -340,6 +339,10 @@ class ChecklistController extends Controller
 
             $allData = $this->checklist->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 __('Name'),
@@ -369,7 +372,6 @@ class ChecklistController extends Controller
                     $exportData
                 );
         } catch (Exception $ex) {
-dd($ex);
             report($ex);
         }
     }
@@ -382,6 +384,10 @@ dd($ex);
             ini_set("pcre.backtrack_limit", "5000000");
 
             $allData = $this->checklist->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
 
             $header = [
                 __("common.sno"),
@@ -419,9 +425,7 @@ dd($ex);
             $filename = "Equipment Checklist Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
-
 }

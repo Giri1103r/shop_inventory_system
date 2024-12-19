@@ -198,6 +198,10 @@ class WorkController extends Controller
 
             $allData = $this->Work->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 'Worker Id',
@@ -254,6 +258,11 @@ class WorkController extends Controller
         try {
 
             $allData = $this->Work->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+            
             $header = [
                 __("common.sno"),
                 'Worker Id',
@@ -297,9 +306,9 @@ class WorkController extends Controller
             $filename = "Worker Master.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-          
+
             report($ex);
         }
     }
- 
+
 }

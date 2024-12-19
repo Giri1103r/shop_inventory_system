@@ -9,17 +9,16 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 
-use Str;
-use Response;
-use Session;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Response;
 use Exception;
-use DataTables;
+use Yajra\DataTables\DataTables;
 
 use App\Jobs\Ptw\ImportequipinvalveJob;
 
 use App\Models\UploadLog;
 use App\Models\Master\EquipInvalve;
-
+use Illuminate\Support\Facades\Session;
 
 class EquipInvalveController extends Controller
 {
@@ -242,7 +241,7 @@ class EquipInvalveController extends Controller
 
         $filePath = $filedetails->sample_file;
         $customFileName = $filedetails->file_name;
-        
+
         return Response::download($filePath, $customFileName);
     }
 
@@ -338,6 +337,10 @@ class EquipInvalveController extends Controller
 
             $allData = $this->equipinvalve->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 __('Name'),
@@ -361,7 +364,7 @@ class EquipInvalveController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Protective equipments to be worn .xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Equipments involved job details .xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -380,6 +383,10 @@ class EquipInvalveController extends Controller
             ini_set("pcre.backtrack_limit", "5000000");
 
             $allData = $this->equipinvalve->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
 
             $header = [
                 __("common.sno"),
@@ -415,9 +422,8 @@ class EquipInvalveController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Equipments involved job details.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }

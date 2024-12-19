@@ -73,6 +73,10 @@ class UserLogController extends Controller
 
             $allData = $this->userlog->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 'No.',
                 'User Name',

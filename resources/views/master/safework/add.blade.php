@@ -61,7 +61,7 @@
                                                 </div>
                                             </div>
 
-                                           
+
                                         </div>
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
@@ -106,13 +106,13 @@
                             url: '{{ admin_url("ptw/safeworkmaster/unique") }}',
                             type: 'post',
                             data: {
-                                location_type_name: function() {
+                                safe_work: function() {
                                     return $('#safe_work').val();
                                 }
                             }
                         }
                     },
-                   
+
                 },
                 messages: {
                     safe_work: {
@@ -122,7 +122,7 @@
                         remote: "{{ __('Name should be unique') }}",
                         // pattern: "Only alphanumeric characters and -, _, ', \", (), ,, and & are allowed",
                     },
-                    
+
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {

@@ -419,6 +419,11 @@ class TrainingMatrixController extends Controller
         try {
 
             $allData = $this->training_matrix->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $departmentList = $this->department->select('id', 'department_name')->where('status', 1)->get();
 
             $departmentMap = $departmentList->pluck('department_name', 'id')->toArray();
@@ -481,6 +486,11 @@ class TrainingMatrixController extends Controller
         try {
 
             $allData = $this->training_matrix->exportdata();
+            
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $departmentList = $this->department->select('id', 'department_name')->where('status', 1)->get();
 
             $departmentMap = $departmentList->pluck('department_name', 'id')->toArray();
