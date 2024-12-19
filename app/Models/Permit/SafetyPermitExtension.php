@@ -20,6 +20,7 @@ class SafetyPermitExtension extends Model
         'extended_time',
         'date',
         'to_time',
+        'remarks',
         'approve_reject_status',
         'status',
         'trash',
@@ -45,28 +46,9 @@ class SafetyPermitExtension extends Model
 
     public function permitextensionelectOne($id)
     {
-        // dd($id);
-        $data = $this->select(
-            'hotcold_permit_extension.*',
-            'ptw_hot_cold_permit.permit_id as permitID',
-            'ptw_hot_cold_permit.id',
-            'ptw_hot_cold_file.file_path',
-            'ptwhotpermit_approve_reject.*',
-            // 'ptwhot_approve_reject_file.*'
-        )
-        ->leftJoin('ptw_hot_cold_permit', 'ptw_hot_cold_permit.id', '=', 'hotcold_permit_extension.permit_id')
-        ->leftJoin('ptwhotpermit_approve_reject', 'ptwhotpermit_approve_reject.permit_id', '=', 'hotcold_permit_extension.permit_id')
-        // ->leftJoin('ptwhot_approve_reject_file', 'ptwhot_approve_reject_file.permit_id', '=', 'hotcold_permit_extension.permit_id')
-        ->leftJoin('ptw_hot_cold_file', 'ptw_hot_cold_file.ptw_hot_cold_id', '=', 'ptw_hot_cold_permit.id')
-        ->where(function ($query) use ($id) {
-            $query->where('ptwhotpermit_approve_reject.approve_reject_type', 8)
-                  ->where('hotcold_permit_extension.permit_id', $id);
-        })
-        ->orWhere(function ($query) use ($id) {
-            $query->where('ptwhotpermit_approve_reject.approve_reject_type', 9)
-                  ->where('hotcold_permit_extension.permit_id', $id);
-        })
-        ->get();
+        $data =  $this->select('ptw_safety_extension.*')->leftJoin('ptw_safety', 'ptw_safety.id', '=', 'ptw_safety_extension.permit_id')
+            ->where('ptw_safety.id', $id)
+            ->get();
 
         return $data;
     }
@@ -90,6 +72,7 @@ class SafetyPermitExtension extends Model
             'extended_time' => $newExtendedTime,
             'date' => DBdateformat($request->date),
             'to_time' => $request->time_to,
+            'remarks' => $request->remarks,
             'approve_reject_status' => $permit_status,
             'created_by' => Auth::id()
         );

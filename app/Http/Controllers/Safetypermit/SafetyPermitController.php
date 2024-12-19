@@ -114,7 +114,7 @@ class SafetyPermitController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
 
-                            if ((!in_array(ROLE_USER, getUserRoleId(Auth::id()))) && ($row->permit_status == STATUS_EHS_VERIFICATION_PENDING || $row->permit_status == STATUS_EHS_APPROVE_PENDING || $row->permit_status == STATUS_PLANT_HEAD_PENDING || $row->permit_status == STATUS_EHS_HOLD || $row->permit_status == STATUS_EHS_RESUME || $row->permit_status == STATUS_EHS_REASSIGN)) {
+                            if ((!in_array(ROLE_USER, getUserRoleId(Auth::id()))) && ($row->permit_status == STATUS_EHS_VERIFICATION_PENDING || $row->permit_status == STATUS_EHS_APPROVE_PENDING || $row->permit_status == STATUS_PLANT_HEAD_PENDING || $row->permit_status == STATUS_EHS_HOLD || $row->permit_status == STATUS_EHS_RESUME || $row->permit_status == STATUS_EHS_REASSIGN || $row->permit_status == STATUS_PERMIT_EXTENDED || $row->permit_status == STATUS_PERMIT_EXTENDED_APPROVAL)) {
                                 $btn = '<a href="' . admin_url('safetypermit/approvereject/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="Approval">
                             <i class="fa-solid fa-check-to-slot text-success"></i>
                         </a>';
@@ -289,6 +289,8 @@ class SafetyPermitController extends Controller
                 $getEhSverification =   $this->approvereject->getEhSverification($id);
                 $getEhsapproval =   $this->approvereject->getEhsapproval($id);
                 $getplantheadapproval =   $this->approvereject->getplantheadapproval($id);
+                $getsafetyPermitExtension =   $this->safetyPermitExtension->permitextensionelectOne($id);
+                $getpermitextensionapproval =   $this->approvereject->getpermitextensionapproval($id);
                 $data = array(
                     'safetypermit' => $safetypermit,
                     'stateIsolationLoto' => $stateIsolationLoto,
@@ -297,6 +299,8 @@ class SafetyPermitController extends Controller
                     'getEhSverification' => $getEhSverification,
                     'getEhsapproval' => $getEhsapproval,
                     'getplantheadapproval' => $getplantheadapproval,
+                    'getsafetyPermitExtension' => $getsafetyPermitExtension,
+                    'getpermitextensionapproval' => $getpermitextensionapproval,
 
                 );
             }
@@ -471,6 +475,8 @@ class SafetyPermitController extends Controller
                 $getEhSverification =   $this->approvereject->getEhSverification($id);
                 $getEhsapproval =   $this->approvereject->getEhsapproval($id);
                 $getplantheadapproval =   $this->approvereject->getplantheadapproval($id);
+                $getsafetyPermitExtension =   $this->safetyPermitExtension->permitextensionelectOne($id);
+                $getpermitextensionapproval =   $this->approvereject->getpermitextensionapproval($id);
                 $data = array(
                     'safetypermit' => $safetypermit,
                     'stateIsolationLoto' => $stateIsolationLoto,
@@ -479,6 +485,8 @@ class SafetyPermitController extends Controller
                     'getEhSverification' => $getEhSverification,
                     'getEhsapproval' => $getEhsapproval,
                     'getplantheadapproval' => $getplantheadapproval,
+                    'getsafetyPermitExtension' => $getsafetyPermitExtension,
+                    'getpermitextensionapproval' => $getpermitextensionapproval,
 
                 );
             }
@@ -507,7 +515,6 @@ class SafetyPermitController extends Controller
 
             $mailsubject = 'EHS Verified';
             $Assignedusers = User::where('id', $safetypermit->verified_by)
-            ->orWhere('id', $safetypermit->created_by)
             ->select('name', 'email')
             ->get()
             ->unique('email');
@@ -1076,130 +1083,7 @@ class SafetyPermitController extends Controller
         }
     }
 
-    public function ExportViewPdf(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-            if (Auth::check()) {
-                $hot_permit = $this->safetypermit->selectOne($id);
-                $holidays = $this->holidays->get();
-
-                $currentdate = $hot_permit->created_at;
-                $date = Carbon::parse($currentdate);
-                $dayOfWeek = $date->format('l');
-                $created_at = Displaydateformat($hot_permit->created_at);
-
-                $holidays = $this->holidays->where('status', 1)->get();
-
-                $holidaysDates = [];
-                foreach ($holidays as $holiday) {
-                    $holidaysDates[] = Displaydateformat($holiday->public_holidays);
-                }
-
-
-                $checklist = $this->checklist->find(3);
-
-                $checklist_details = $this->checklistdetails->getchecklist(2);
-
-                $getchecklistdetails = $this->permitchecklist->getchecklistdetails($hot_permit->id, 3);
-                $getEngineerapproval = $this->approvereject->getEngineerapproval($id);
-                $getehsapproval = $this->approvereject->getehsapproval($id);
-                $getworkcompletionapproval = $this->approvereject->getworkcompletionapproval($id);
-                $getClosure = $this->approvereject->getClosure($id);
-                $recordname = $this->recordname->getgasrecordname($id);
-                $record = $this->record->getgasrecorddetails($id);
-                $getapprovalWork = $this->approvalstart->getapprovalWork($id);
-                $getIsolation = $this->isolation->getIsolation($id);
-                $getIsolation1 = $this->isolation->getIsolation1($id);
-                $getIsolation2 = $this->isolation->getIsolation2($id);
-                $getIsolation3 = $this->isolation->getIsolation3($id);
-                $getIsolation4 = $this->isolation->getIsolation4($id);
-                if ($getapprovalWork !== null) {
-                    $approvalData = json_decode($getapprovalWork->approval, true);
-                } else {
-
-                    $approvalData = [
-                        'checks' => [],
-                        'lel' => '',
-                        'hydrogen' => '',
-                        'oxygen' => '',
-                        'hours' => '',
-                        'declaration' => '',
-                        'special_ppe' => '',
-                        'others' => '',
-                        'consideration' => '',
-                    ];
-                }
-                $getapprovalStart = $this->approvereject->getapprovalStart($id);
-                $getElectrical = $this->electrical->getElectrical($id);
-
-                $getpermitextension = $this->extension->getpermitextension($id);
-                $getPermitExtensionsupervisor = $this->approvereject->getPermitExtensionsupervisor($id);
-                $getPermitExtensionsuperintendednt = $this->approvereject->getPermitExtensionsuperintendednt($id);
-                $data = array(
-                    'hot_permit' => $hot_permit,
-                    'checklist' => $checklist,
-                    'checklist_details' => $checklist_details,
-                    'getchecklistdetails' => $getchecklistdetails,
-                    'getEngineerapproval' => $getEngineerapproval,
-                    'recordname' => $recordname,
-                    'record' => $record,
-                    'getapprovalStart' => $getapprovalStart,
-                    'approvalData' => $approvalData,
-                    'getehsapproval' => $getehsapproval,
-                    'getworkcompletionapproval' => $getworkcompletionapproval,
-                    'getElectrical' => $getElectrical,
-                    'getClosure' => $getClosure,
-                    'getIsolation' => $getIsolation,
-                    'getIsolation1' => $getIsolation1,
-                    'getIsolation2' => $getIsolation2,
-                    'getIsolation3' => $getIsolation3,
-                    'getIsolation4' => $getIsolation4,
-                    'dayOfWeek' => $dayOfWeek,
-                    'holidaysDates' => $holidaysDates,
-                    'created_at' => $created_at,
-                    'getpermitextension' => $getpermitextension,
-                    'getPermitExtensionsupervisor' => $getPermitExtensionsupervisor,
-                    'getPermitExtensionsuperintendednt' => $getPermitExtensionsuperintendednt,
-                );
-            }
-
-            $property = [
-                'tempDir' => 'public/pdf/temp/',
-                'mode' => 'c',
-                'margin_left' => 10,
-                'margin_right' => 10,
-                'margin_top' => 10,
-
-            ];
-
-            $mpdf = new \Mpdf\Mpdf($property);
-            $mpdf->setAutoTopMargin = 'stretch';
-
-            $view = view('ptw.main.hotptw.pdf', $data);
-            $html = $view->render();
-
-
-            $mpdf->WriteHTML($html);
-
-            $filename = "List.pdf";
-            $mpdf->Output($filename, 'I');
-        } catch (Exception $ex) {
-            dd($ex);
-            report($ex);
-        }
-    }
-
-    public function DownloadSample(Request $request)
-    {
-
-        $filedetails =  exportsamplefile('uauc_notification');
-
-        $filePath = $filedetails->sample_file;
-        $customFileName = $filedetails->file_name;
-
-        return Response::download($filePath, $customFileName);
-    }
+ 
 
     public function getprotectivechecklist($workId)
     {
@@ -1351,6 +1235,8 @@ class SafetyPermitController extends Controller
                 $getEhSverification =   $this->approvereject->getEhSverification($id);
                 $getEhsapproval =   $this->approvereject->getEhsapproval($id);
                 $getplantheadapproval =   $this->approvereject->getplantheadapproval($id);
+                $getsafetyPermitExtension =   $this->safetyPermitExtension->permitextensionelectOne($id);
+                $getpermitextensionapproval =   $this->approvereject->getpermitextensionapproval($id);
             }
 
             $data = [
@@ -1362,6 +1248,8 @@ class SafetyPermitController extends Controller
                 'getEhSverification' => $getEhSverification,
                 'getEhsapproval' => $getEhsapproval,
                 'getplantheadapproval' => $getplantheadapproval,
+                'getsafetyPermitExtension' => $getsafetyPermitExtension,
+                'getpermitextensionapproval' => $getpermitextensionapproval,
             ];
 
             $property = [
@@ -1408,22 +1296,70 @@ class SafetyPermitController extends Controller
         }
     }
 
-    public function permitExtensionCil(Request $request)
+    public function permitExtensionsubmit(Request $request)
     {
 
         try {
 
             $id = $request->permit_id;
-            $ptw = $this->ptw->find($id);
+            $safetypermit = $this->safetypermit->find($id);
             $permit_status = STATUS_PERMIT_EXTENDED;
-            $approve =   $this->SafetyPermitExtension->store($permit_status, $id);
-            $this->ptw->permitstatus($permit_status, $id);
-            $this->ptw->permit_extended_status($id, $permit_status);
+            $approve =   $this->safetyPermitExtension->store($permit_status, $id);
+            $this->safetypermit->permitstatus($permit_status, $id);
+            $this->safetypermit->permit_extended_status($id, $permit_status);
+            $this->safetypermit->permit_extended_time($id, $request->time_to);
+
+            $mailsubject = 'Permit Extended';
+            $Assignedusers = User::where('id', $safetypermit->verified_by)
+            ->select('name', 'email')
+            ->get()
+            ->unique('email');
+
+            if ($Assignedusers != null) {
+
+                foreach ($Assignedusers as $user) {
+
+                    $email_id = $user->email;
+
+                    if ($email_id != '' || $email_id != null) {
+                        $safetypermitdetails =  $this->safetypermit->selectmail($id);
+                        $permitrray  = $safetypermitdetails->toArray();
+
+                        $permitrray['name'] = $user->name;
+                        $permitrray['email_id'] =  $email_id;
+                        $permitrray['mail_subject'] = $mailsubject;
+
+                        Mail::to($permitrray['email_id'])->queue(new SafetyPermitEmail($permitrray));
+                    }
+                }
+            }
+
+            $userids = User::where('id', $safetypermit->verified_by)->pluck('id')->toArray();
+            /**
+             * Send Web notification
+             */
+
+            $notificationData = array(
+                'notification_type' => 3,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => 'Safety Permit ' . $safetypermit->permit_id . 'submitted for permit extension by ' . getUsername($approve->created_by),
+                    'icon' => 'public/assets/icon/permit_to_work.png',
+                    'id' => $safetypermit->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  admin_url('safetypermit/view/' . encryptId($safetypermit->id)),
+                'assigned_user' => array_to_string($userids),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
 
             $insert_array = array(
                 'permit_type' => 1,
                 'permit_id' => $id,
-                'from_status' => 2,
+                'from_status' => $request->permit_status,
                 'to_status' => $permit_status,
                 'is_reject' => null,
                 'remarks' => $request->extension_remarks,
@@ -1436,6 +1372,104 @@ class SafetyPermitController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            return redirect(admin_url('safetypermit/list'));
+        }
+    }
+
+    public function permitextensionapproval(Request $request)
+    {
+
+        try {
+
+            $id = $request->permit_id;
+            $safetypermit = $this->safetypermit->find($id);
+
+            if ($request->has('approve')) {
+                $permit_status = STATUS_PERMIT_EXTENDED_APPROVAL;
+            }elseif($request->has('reject')) {
+                $permit_status = STATUS_PERMIT_EXTENDED_REJECTED;
+            }
+
+            $approve =   $this->approvereject->extensionApproval($permit_status);
+            $this->safetypermit->permitstatus($permit_status, $id);
+
+            if ($request->has('approve')) {
+            $mailsubject = 'EHS approved the extension';
+            $Assignedusers = User::where('id', $safetypermit->verified_by)
+            ->select('name', 'email')
+            ->get()
+            ->unique('email');
+            $userids = User::where('id', $safetypermit->verified_by)->pluck('id')->toArray();
+            }elseif($request->has('reject')) {
+
+                $mailsubject = 'EHS rejected the extension';
+                $Assignedusers = User::where('id', $safetypermit->created_by)
+                ->select('name', 'email')
+                ->get()
+                ->unique('email');
+                $userids = User::where('id', $safetypermit->created_by)->pluck('id')->toArray();
+            }
+
+            if ($Assignedusers != null) {
+
+                foreach ($Assignedusers as $user) {
+
+                    $email_id = $user->email;
+
+                    if ($email_id != '' || $email_id != null) {
+                        // $safetypermit = new SafetyPermit();
+                        $safetypermitdetails =  $this->safetypermit->selectmail($id);
+                        $permitrray  = $safetypermitdetails->toArray();
+
+                        $permitrray['name'] = $user->name;
+                        $permitrray['email_id'] =  $email_id;
+                        $permitrray['mail_subject'] = $mailsubject;
+
+                        Mail::to($permitrray['email_id'])->queue(new SafetyPermitEmail($permitrray));
+                    }
+                }
+            }
+
+    
+            /**
+             * Send Web notification
+             */
+
+            $notificationData = array(
+                'notification_type' => 3,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => 'Safety Permit ' . $safetypermit->permit_id .  $mailsubject . getUsername($approve->created_by),
+                    'icon' => 'public/assets/icon/permit_to_work.png',
+                    'id' => $safetypermit->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  admin_url('safetypermit/view/' . encryptId($safetypermit->id)),
+                'assigned_user' => array_to_string($userids),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+
+            $insert_array = array(
+                'permit_type' => 1,
+                'permit_id' => $id,
+                'from_status' => 2,
+                'to_status' => $permit_status,
+                'is_reject' => null,
+                'remarks' => $request->ehs_verification_remarks,
+                'approved_by' => Auth::id(),
+            );
+            $this->statuslog->create($insert_array);
+
+            return redirect(admin_url('safetypermit/list'));
+        } catch (Exception $ex) {
+
+            dd($ex);
+            report($ex);
+
+
             return redirect(admin_url('safetypermit/list'));
         }
     }
