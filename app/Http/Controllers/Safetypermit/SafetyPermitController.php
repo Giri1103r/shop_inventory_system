@@ -318,6 +318,8 @@ class SafetyPermitController extends Controller
 
             $id = decryptId($request->id);
 
+            $safetypermit = $this->safetypermit->selectOne($id);
+
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $typeofwork = $this->typeofwork->gettypework();
 
@@ -328,6 +330,10 @@ class SafetyPermitController extends Controller
             $getinstruction = $this->safework->selectchecklist();
             $getprecaution = $this->precaution->selectchecklist();
             $getchecklist = $this->checklist->selectchecklist();
+            $confinedSpaceEntry = json_decode($safetypermit->confined_space_entry, true);
+            $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto, true);
+            $protectiveEquipment = json_decode($safetypermit->protective_equip, true);
+            $equipmentInvolved = json_decode($safetypermit->equipment_involved, true);
             $data = [
                 'unitList' => $unitList,
                 'typeofwork' => $typeofwork,
@@ -336,6 +342,11 @@ class SafetyPermitController extends Controller
                 'getprecaution' => $getprecaution,
                 'getchecklist' => $getchecklist,
                 'getinstruction' => $getinstruction,
+                'safetypermit'=> $safetypermit,
+                'stateIsolationLoto'=>$stateIsolationLoto,
+                'confinedSpaceEntry'=>$confinedSpaceEntry,
+                'equipmentInvolved'=>$equipmentInvolved,
+                'protectiveEquipment'=>$protectiveEquipment,
             ];
             return view('permit.safetypermit.edit', $data);
         } catch (Exception $ex) {
