@@ -215,7 +215,7 @@ class PrecautionController extends Controller
 
             $this->precaution->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => __('Precation to be taken status changed')], 200);
+            return response()->json(['status' => 'success', 'msg' => __('Precaution to be taken status changed')], 200);
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
@@ -242,11 +242,11 @@ class PrecautionController extends Controller
         // dd(5676578);
         $filedetails =  exportsamplefile('precaution_taken');
 
-    
+
 
         $filePath = $filedetails->sample_file;
         $customFileName = $filedetails->file_name;
-        
+
         return Response::download($filePath, $customFileName);
     }
 
@@ -395,7 +395,7 @@ class PrecautionController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Location Details",
+                'pagetitle' => "Precation to be takens Details",
             );
 
             $property = [
@@ -420,7 +420,7 @@ class PrecautionController extends Controller
             $filename = "Precation to be takens Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-           
+
             report($ex);
         }
     }

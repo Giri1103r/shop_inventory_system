@@ -242,7 +242,7 @@ class EquipInvalveController extends Controller
 
         $filePath = $filedetails->sample_file;
         $customFileName = $filedetails->file_name;
-        
+
         return Response::download($filePath, $customFileName);
     }
 
@@ -361,7 +361,7 @@ class EquipInvalveController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Protective equipments to be worn .xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Equipments involved job details .xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -415,9 +415,8 @@ class EquipInvalveController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Equipments involved job details.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }

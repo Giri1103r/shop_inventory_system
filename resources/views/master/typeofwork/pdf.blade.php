@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Equipment Checklist PDF')
+@section('title', 'Type of work')
 @section('content')
 
     <div style="width:100%;">
@@ -24,7 +24,7 @@
                         <td style='padding: 7px;border: 0.5px solid;text-align:center'>
                             {{ $i }}
                         </td>
-                    
+
                         <td style='padding: 7px;border: 0.5px solid'>
                             <a href="{{ asset($value->file_path) }}" target="_blank">
                                 <img src="{{ asset($value->file_path) }}" alt="Image"

@@ -268,7 +268,7 @@ class ProtectiveEquipController extends Controller
 
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
-               
+
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
@@ -394,7 +394,7 @@ class ProtectiveEquipController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Location Details",
+                'pagetitle' => "Protective equipments to be worn",
             );
 
             $property = [
@@ -417,7 +417,7 @@ class ProtectiveEquipController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Protective equipments to be worn Details.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
