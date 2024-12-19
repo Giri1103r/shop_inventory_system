@@ -117,9 +117,9 @@
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Image</label>
-                                                    <input type="file" name="ppe_file" id="ppe_file" accept="image/png, image/jpeg, image/jpg"
-                                                        class="form-control " placeholder="Enter the image"
-                                                        onchange="validateImage()">
+                                                    <input type="file" name="ppe_file" id="ppe_file"
+                                                        accept="image/png, image/jpeg, image/jpg" class="form-control "
+                                                        placeholder="Enter the image" onchange="validateImage()">
                                                     <small>Allowed file types: png, jpeg , jpg</small>
                                                     @if (isset($ppetypemaster) && $ppetypemaster->ppe_image)
                                                         <p>
@@ -196,7 +196,19 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex: /^[a-zA-Z0-9\-_'"()\s]{3,30}$/
+                        regex: /^[a-zA-Z0-9\-_'"()\s]{3,30}$/,
+                        remote: {
+                            url: '{{ admin_url('ppe_ppetype_master/ppename/unique') }}',
+                            type: 'get',
+                            data: {
+                                ppe_name: function() {
+                                    return $('#ppe_name').val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
+                                }
+                            }
+                        }
                     },
                     ppe_type: {
                         required: true
@@ -227,7 +239,8 @@
                         required: "PPE Name cannot be empty.",
                         minlength: "PPE Name must be between 3 and 30 characters.",
                         maxlength: "PPE Name must be between 3 and 30 characters.",
-                        regex: "PPE Name should be alphanumeric and can include -, _, ', \", (, )."
+                        regex: "PPE Name should be alphanumeric and can include -, _, ', \", (, ).",
+                        remote: "PPE Name already exists."
                     },
                     ppe_type: {
                         required: "Please select the PPE Type."

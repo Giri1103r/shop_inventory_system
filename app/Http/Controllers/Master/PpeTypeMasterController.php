@@ -186,6 +186,24 @@ class PpeTypeMasterController extends Controller
         }
     }
 
+
+    public function PPEuniqueCheck(Request $request)
+    {
+
+        if ($request->ajax()) {
+            $ppe_name = $request->ppe_name;
+            $id = $request->id;
+
+            if (empty($id)) {
+                $record = $this->ppetypemaster->ppeuniqueCheck(['param' => 'ppe_name', 'value' => $ppe_name]);
+            } else {
+                $record = $this->ppetypemaster->ppeexistUniqueCheck(['param' => 'ppe_name', 'value' => $ppe_name, 'id' => $id]);
+            }
+
+            return response()->json($record->isEmpty());
+        }
+    }
+
     public function edit(Request $request)
     {
         try {

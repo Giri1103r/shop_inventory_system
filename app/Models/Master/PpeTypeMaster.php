@@ -113,6 +113,19 @@ class PpeTypeMaster extends Model
             ->where('id', '!=', decryptId($data['id']))
             ->get();
     }
+    public function ppeuniqueCheck($data)
+    {
+
+       $unique =PpeTypeMaster::where($data['param'], $data['value'])->get();
+       return $unique;
+    }
+
+    public function ppeExistuniqueCheck($data)
+    {
+        return $this->where($data['param'],  $data['value'])
+            ->where('id', '!=', decryptId($data['id']))
+            ->get();
+    }
 
 
 

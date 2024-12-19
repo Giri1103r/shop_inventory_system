@@ -112,19 +112,19 @@
                                         <div class="">
                                             <div class="mb-3 row">
                                                 <div class="col-md-4 mb-3">
-                                                    <label for="approver_name" class="form-label">Approver Name</label>
+                                                    <label for="approver_name" class="form-label require">Approver Name</label>
                                                     <input type="text" class="form-control form-control-sm"
                                                         id="approver_name" readonly value="{{ Auth::user()->name }}">
                                                 </div>
                                                 <div class="col-md-4 mb-3">
-                                                    <label for="date" class="form-label">Date</label>
+                                                    <label for="date" class="form-label require">Date</label>
                                                     <input type="text" class="form-control form-control-sm"
                                                         id="date" name="date" readonly
                                                         value="{{ date('d-m-Y H:i:s') }}">
                                                 </div>
                                                 <div class="col-md-12 mb-3">
                                                     <div class="mb-1">
-                                                        <label for="remarks" class="form-label">Remarks</label>
+                                                        <label for="remarks" class="form-label require">Remarks</label>
                                                         <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks" rows="3"></textarea>
                                                         <div class="text-danger" id="remarks_error"></div>
                                                         @error('remarks')
