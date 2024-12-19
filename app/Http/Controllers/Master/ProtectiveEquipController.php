@@ -268,7 +268,7 @@ class ProtectiveEquipController extends Controller
 
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
-                dd($validator->errors());
+               
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 

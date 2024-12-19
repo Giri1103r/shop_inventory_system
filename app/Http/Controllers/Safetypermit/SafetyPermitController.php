@@ -19,6 +19,7 @@ use App\Models\User;
 use App\Models\Permit\SafetyPermit;
 use App\Models\Permit\WorkmanInvolved;
 use App\Models\Permit\SafetyApproveReject;
+use App\Models\Permit\SafetyPermitExtension;
 use App\Models\Permit\Statuslog;
 use App\Mail\SafetyPermitEmail;
 
@@ -39,6 +40,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 class SafetyPermitController extends Controller
 {
     private $safetypermit;
+    private $safetyPermitExtension;
     private $workmaninvolved;
     private $unit;
     private $typeofwork;
@@ -55,6 +57,7 @@ class SafetyPermitController extends Controller
     public function __construct()
     {
         $this->safetypermit = new SafetyPermit();
+        $this->safetyPermitExtension = new SafetyPermitExtension();
         $this->workmaninvolved = new WorkmanInvolved();
         $this->unit = new Unit();
         $this->typeofwork = new TypeofWork();
@@ -116,6 +119,9 @@ class SafetyPermitController extends Controller
                             <i class="fa-solid fa-check-to-slot text-success"></i>
                         </a>';
                             }
+                            if (($row->permit_status >= STATUS_EHS_APPROVE_PENDING) && ($row->permit_status != STATUS_PLANT_HEAD_APPROVED) && ($row->created_by == Auth::id())  ) {
+                            $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '" class="permitExtension" title="' . __('Permit Extension') . '"><i class="fa fa-external-link"></i> ';
+                            }
 
                             $btn .= '<a href="' . admin_url('safetypermit/view/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="' . __('common.view') . '">
                             <i class="fa-solid fa-eye"></i>
@@ -127,7 +133,7 @@ class SafetyPermitController extends Controller
                             }
 
                             $btn .= '<a href="' . admin_url('safetypermit/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
-                            <i class="fas fa-file-pdf" aria-hidden="true"></i>
+                            <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
 
                             $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" style="margin-right: 5px;" title="' . __('common.delete') . '">
@@ -1377,6 +1383,60 @@ class SafetyPermitController extends Controller
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
+        }
+    }
+
+    public function permitExtension(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            $safetypermit = $this->safetypermit->selectOne($id);
+            // $getpermitextension = $this->extension->getpermitextension($id);
+            // $getPermitExtensionsupervisor = $this->approvereject->getPermitExtensionsupervisor($id);
+            // $getPermitExtensionsuperintendednt = $this->approvereject->getPermitExtensionsuperintendednt($id);
+
+            $data = array(
+                'safetypermit' => $safetypermit,
+                // 'getpermitextension' => $getpermitextension,
+                // 'getPermitExtensionsupervisor' => $getPermitExtensionsupervisor,
+                // 'getPermitExtensionsuperintendednt' => $getPermitExtensionsuperintendednt,
+            );
+            return view('permit.safetypermit.permitextension', $data);
+        } catch (Exception $ex) {
+            report($ex);
+        }
+    }
+
+    public function permitExtensionCil(Request $request)
+    {
+
+        try {
+
+            $id = $request->permit_id;
+            $ptw = $this->ptw->find($id);
+            $permit_status = STATUS_PERMIT_EXTENDED;
+            $approve =   $this->SafetyPermitExtension->store($permit_status, $id);
+            $this->ptw->permitstatus($permit_status, $id);
+            $this->ptw->permit_extended_status($id, $permit_status);
+
+            $insert_array = array(
+                'permit_type' => 1,
+                'permit_id' => $id,
+                'from_status' => 2,
+                'to_status' => $permit_status,
+                'is_reject' => null,
+                'remarks' => $request->extension_remarks,
+                'approved_by' => Auth::id(),
+            );
+            $this->statuslog->create($insert_array);
+
+
+            return redirect(admin_url('safetypermit/list'));
+        } catch (Exception $ex) {
+
+            report($ex);
+            return redirect(admin_url('safetypermit/list'));
         }
     }
 }

@@ -45,9 +45,9 @@ class TypeofWork extends Model
             'ptw_masters_typeofwork.id as typeid'
         )
         ->leftJoin(
-            'ptw_masters_typeofwork_upload', 
-            'ptw_masters_typeofwork_upload.typeofwork_id', 
-            '=', 
+            'ptw_masters_typeofwork_upload',
+            'ptw_masters_typeofwork_upload.typeofwork_id',
+            '=',
             'ptw_masters_typeofwork.id'
         )
         ->where('ptw_masters_typeofwork_upload.trash', 'NO');
@@ -215,9 +215,9 @@ class TypeofWork extends Model
             'ptw_masters_typeofwork.id as typeid'
         )
         ->leftJoin(
-            'ptw_masters_typeofwork_upload', 
-            'ptw_masters_typeofwork_upload.typeofwork_id', 
-            '=', 
+            'ptw_masters_typeofwork_upload',
+            'ptw_masters_typeofwork_upload.typeofwork_id',
+            '=',
             'ptw_masters_typeofwork.id'
         )
         ->where('ptw_masters_typeofwork_upload.trash', 'NO');
