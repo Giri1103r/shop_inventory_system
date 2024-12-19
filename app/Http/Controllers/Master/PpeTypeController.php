@@ -243,6 +243,10 @@ class PpeTypeController extends Controller
 
             $allData = $this->ppetype->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 __("PPE ID"),
@@ -286,6 +290,10 @@ class PpeTypeController extends Controller
             ini_set("pcre.backtrack_limit", "5000000");
 
             $allData = $this->ppetype->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
 
             $header = [
                 __("common.sno"),

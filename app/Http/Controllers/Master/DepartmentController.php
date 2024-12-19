@@ -289,6 +289,10 @@ class DepartmentController extends Controller
 
             $allData = $this->department->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 'Department Id',
@@ -337,6 +341,10 @@ class DepartmentController extends Controller
         try {
 
             $allData = $this->department->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
 
             $header = [
                 __("common.sno"),

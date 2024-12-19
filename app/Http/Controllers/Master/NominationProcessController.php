@@ -175,7 +175,7 @@ class NominationProcessController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $nomination_process = $this->nomination_process->selectOne($id);
-                
+
                 $data = array(
                     'nomination_process' => $nomination_process,
                 );
@@ -313,6 +313,10 @@ class NominationProcessController extends Controller
 
             $allData = $this->nomination_process->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 'Employee ID',
@@ -365,6 +369,11 @@ class NominationProcessController extends Controller
         try {
 
             $allData = $this->nomination_process->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+            
             $header = [
                 __("common.sno"),
                 'Employee ID',

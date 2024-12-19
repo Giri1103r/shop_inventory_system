@@ -473,6 +473,10 @@ class TypeofWorkController extends Controller
 
             $allData = $this->typeofwork->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 __('Name'),
@@ -517,6 +521,10 @@ class TypeofWorkController extends Controller
             ini_set("pcre.backtrack_limit", "5000000");
 
             $allData = $this->typeofwork->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
 
             $header = [
                 __("common.sno"),

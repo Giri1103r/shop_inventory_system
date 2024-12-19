@@ -282,6 +282,10 @@ class UnitController extends Controller
 
             $allData = $this->unit->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 'Unit Id',
@@ -328,6 +332,10 @@ class UnitController extends Controller
         try {
 
             $allData = $this->unit->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
 
             $header = [
                 __("common.sno"),
@@ -455,7 +463,7 @@ class UnitController extends Controller
         }
     }
 
-    
+
     public function list(Request $request, $locationId)
     {
         $locationId = decryptId($locationId);
@@ -483,7 +491,7 @@ class UnitController extends Controller
     }
 
 
-    
+
     public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {
