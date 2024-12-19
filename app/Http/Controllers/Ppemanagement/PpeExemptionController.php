@@ -712,4 +712,12 @@ class PpeExemptionController extends Controller
              report($ex);
         }
     }
+
+    public function list(Request $request){
+        $unitId = $request->input('unitId');
+
+        $data = $this->department->getunitDeparment( $unitId);
+
+        return response()->json($data);
+    }
 }

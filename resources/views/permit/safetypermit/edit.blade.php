@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Permit Add')
+@section('title', 'Safety Permit Edit')
 @section('pageurl', admin_url('safetypermit/list'))
 
 

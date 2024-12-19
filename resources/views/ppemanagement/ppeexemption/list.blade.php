@@ -52,6 +52,7 @@
                                             <select name="department" id="department" style="width: 100%"
                                                 class="form-select single-select">
                                                 <option value="">Select the department name</option>
+
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
@@ -165,16 +166,19 @@
             var unitId = $(this).val();
             if (unitId) {
                 $.ajax({
-                    url: "{{ admin_url('ppe_exemption/ajax-list') }}/" + unitId + "/0",
-                    type: 'GET',
-                    dataType: 'json',
+                    url: "{{ url('ppe_exemption/ajax-list') }}",
+                        type: 'GET',
+                        dataType: 'json',
+                        data: {
+                            unitId: unitId,
+                        },
                     success: function(data) {
                         $('#department').empty().append(
                             '<option value="">Select Target Department</option>'
                         );
                         $.each(data, function(key, value) {
                             $('#department').append('<option value="' + value
-                                .id + '">' + value.name + '</option>');
+                                .id + '">' + value.department_name  + '</option>');
                         });
                         $('#department').trigger('change');
                     },

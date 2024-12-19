@@ -699,6 +699,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/export/excel', [PpeExemptionController::class, 'exportExcel']);
                 Route::get('/export/pdf', [PpeExemptionController::class, 'exportPdf']);
                 Route::get('/generalpdf/{id}', [PpeExemptionController::class, 'pdf']);
+                Route::get('/ajax-list', [PpeExemptionController::class, 'list']);
+
 
             });
         });

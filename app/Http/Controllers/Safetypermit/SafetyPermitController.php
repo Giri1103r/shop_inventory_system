@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Str;
 use Response;
-use Session;
 use Exception;
 use DataTables;
 use Mail;
@@ -33,8 +32,7 @@ use App\Models\Master\Precaution;
 use App\Models\Master\Checklist;
 use App\Models\Master\Employee;
 use App\Models\Master\Department;
-
-
+use Illuminate\Support\Facades\Session;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SafetyPermitController extends Controller
@@ -119,13 +117,15 @@ class SafetyPermitController extends Controller
                             <i class="fa-solid fa-check-to-slot text-success"></i>
                         </a>';
                             }
-                            if (($row->permit_status >= STATUS_EHS_APPROVE_PENDING) && ($row->permit_status != STATUS_PLANT_HEAD_APPROVED) && ($row->created_by == Auth::id())  ) {
-                            $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '" class="permitExtension" title="' . __('Permit Extension') . '"><i class="fa fa-external-link"></i> ';
+                            if (($row->permit_status >= STATUS_EHS_APPROVE_PENDING) && ($row->permit_status != STATUS_PLANT_HEAD_APPROVED) && ($row->created_by == Auth::id())) {
+                                $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '" class="permitExtension" title="' . __('Permit Extension') . '"><i class="fa fa-external-link"></i> ';
                             }
 
                             $btn .= '<a href="' . admin_url('safetypermit/view/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="' . __('common.view') . '">
                             <i class="fa-solid fa-eye"></i>
                         </a>';
+
+                        // $btn .= '<a href="' . admin_url('safetypermit/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             if ($row->permit_status >= STATUS_EHS_APPROVE_PENDING) {
                                 $btn .= '<a href="' . admin_url('safetypermit/qr/pdf/' . encryptId($row->id)) . '" target="__blank" style="margin-right: 5px;" title="QR PDF">
                             <i class="fa-solid fa-qrcode"></i>
@@ -315,38 +315,32 @@ class SafetyPermitController extends Controller
     public function edit(Request $request)
     {
         try {
+
             $id = decryptId($request->id);
-            $locationlist = $this->location->where('status', 1)->get();
-            $hot_cold = $this->safetypermit->find($id);
-            $permit_type =  $hot_cold->permit_type;
-            $location =  $hot_cold->location;
-            // $sub_permit =  $hot_cold->sub_permit;
-            $sub_permit = explode(',', $hot_cold->sub_permit);
 
+            $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
+            $typeofwork = $this->typeofwork->gettypework();
 
-            $checklist = $this->checklist->find(1);
+            $employeeList = Employee::select('id', 'emp_id', 'emp_name', 'email', 'department', 'employee_status')->where('user_role', ROLE_USER)->where('status', 1)->get();
 
-            $checklist_details = $this->checklistdetails->getchecklist(1);
-            $permitchecklist = $this->permitchecklist->where('ptw_hot_cold_id', $id)->get()->KeyBy('checklist_name_id');
-            $file = $this->file->where('ptw_hot_cold_id', $id)->first();
-
-
-
-            $data = array(
-                'locationlist' => $locationlist,
-                'hot_cold' => $hot_cold,
-                'permit_type' => $permit_type,
-                'location' => $location,
-                'sub_permit' => $sub_permit,
-                'checklist' => $checklist,
-                'checklist_details' => $checklist_details,
-                'permitchecklist' => $permitchecklist->toArray(),
-                'file' => $file,
-            );
-            return view('ptw.main.hotptw.edit', $data);
-        } catch (Exception $error) {
-            dd($error);
-            report($error->getMessage());
+            $getprotectiveequipment = $this->protective->selectchecklist();
+            $getequipmentinvolved = $this->equipinvalve->selectchecklist();
+            $getinstruction = $this->safework->selectchecklist();
+            $getprecaution = $this->precaution->selectchecklist();
+            $getchecklist = $this->checklist->selectchecklist();
+            $data = [
+                'unitList' => $unitList,
+                'typeofwork' => $typeofwork,
+                'getprotectiveequipment' => $getprotectiveequipment,
+                'getequipmentinvolved' => $getequipmentinvolved,
+                'getprecaution' => $getprecaution,
+                'getchecklist' => $getchecklist,
+                'getinstruction' => $getinstruction,
+            ];
+            return view('permit.safetypermit.edit', $data);
+        } catch (Exception $ex) {
+            Session::flash('error', 'Something Went Wrong Please try again after some time');
+            return redirect('safetypermit/list');
         }
     }
 
@@ -515,9 +509,9 @@ class SafetyPermitController extends Controller
 
             $mailsubject = 'EHS Verified';
             $Assignedusers = User::where('id', $safetypermit->verified_by)
-            ->select('name', 'email')
-            ->get()
-            ->unique('email');
+                ->select('name', 'email')
+                ->get()
+                ->unique('email');
 
             if ($Assignedusers != null) {
 
@@ -609,7 +603,7 @@ class SafetyPermitController extends Controller
             $approve =   $this->approvereject->ehsapproval($permit_status);
             if ($request->has('reassign')) {
                 $this->safetypermit->reassignto($request->reassign_to, $id);
-            } elseif ($request->has('resume')||$request->has('hold') ) {
+            } elseif ($request->has('resume') || $request->has('hold')) {
                 $this->safetypermit->resume_hold($approve->created_by, $id);
             }
             $this->safetypermit->permitstatus($permit_status, $id);
@@ -623,8 +617,8 @@ class SafetyPermitController extends Controller
                     ->select('name', 'email')
                     ->get()
                     ->unique('email');
-           
-                    
+
+
                 if (count($Assignedusers) > 0) {
 
                     foreach ($Assignedusers as $user) {
@@ -663,10 +657,10 @@ class SafetyPermitController extends Controller
             } elseif ($request->has('resume')) {
                 $mailsubject = 'EHS Resumed the permit';
                 $Assignedusers = User::where('id', $safetypermit->resume_hold_by)
-                ->orWhere('id', $safetypermit->created_by)
-                ->select('name', 'email')
-                ->get()
-                ->unique('email');
+                    ->orWhere('id', $safetypermit->created_by)
+                    ->select('name', 'email')
+                    ->get()
+                    ->unique('email');
 
                 if (count($Assignedusers) > 0) {
 
@@ -1083,7 +1077,7 @@ class SafetyPermitController extends Controller
         }
     }
 
- 
+
 
     public function getprotectivechecklist($workId)
     {
@@ -1137,12 +1131,12 @@ class SafetyPermitController extends Controller
         $name = $request->input('search');
 
         $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
-        ->where('status', 1)
-        ->whereRaw("FIND_IN_SET(?, user_role)", [3])
-        ->where('login_id', '!=', Auth::id()) 
-        ->limit(10)
-        ->get();
-    
+            ->where('status', 1)
+            ->whereRaw("FIND_IN_SET(?, user_role)", [3])
+            ->where('login_id', '!=', Auth::id())
+            ->limit(10)
+            ->get();
+
         return response()->json(
             $employees->map(function ($employee) {
                 return [
@@ -1311,9 +1305,9 @@ class SafetyPermitController extends Controller
 
             $mailsubject = 'Permit Extended';
             $Assignedusers = User::where('id', $safetypermit->verified_by)
-            ->select('name', 'email')
-            ->get()
-            ->unique('email');
+                ->select('name', 'email')
+                ->get()
+                ->unique('email');
 
             if ($Assignedusers != null) {
 
@@ -1386,7 +1380,7 @@ class SafetyPermitController extends Controller
 
             if ($request->has('approve')) {
                 $permit_status = STATUS_PERMIT_EXTENDED_APPROVAL;
-            }elseif($request->has('reject')) {
+            } elseif ($request->has('reject')) {
                 $permit_status = STATUS_PERMIT_EXTENDED_REJECTED;
             }
 
@@ -1394,19 +1388,19 @@ class SafetyPermitController extends Controller
             $this->safetypermit->permitstatus($permit_status, $id);
 
             if ($request->has('approve')) {
-            $mailsubject = 'EHS approved the extension';
-            $Assignedusers = User::where('id', $safetypermit->verified_by)
-            ->select('name', 'email')
-            ->get()
-            ->unique('email');
-            $userids = User::where('id', $safetypermit->verified_by)->pluck('id')->toArray();
-            }elseif($request->has('reject')) {
+                $mailsubject = 'EHS approved the extension';
+                $Assignedusers = User::where('id', $safetypermit->verified_by)
+                    ->select('name', 'email')
+                    ->get()
+                    ->unique('email');
+                $userids = User::where('id', $safetypermit->verified_by)->pluck('id')->toArray();
+            } elseif ($request->has('reject')) {
 
                 $mailsubject = 'EHS rejected the extension';
                 $Assignedusers = User::where('id', $safetypermit->created_by)
-                ->select('name', 'email')
-                ->get()
-                ->unique('email');
+                    ->select('name', 'email')
+                    ->get()
+                    ->unique('email');
                 $userids = User::where('id', $safetypermit->created_by)->pluck('id')->toArray();
             }
 
@@ -1430,7 +1424,7 @@ class SafetyPermitController extends Controller
                 }
             }
 
-    
+
             /**
              * Send Web notification
              */
