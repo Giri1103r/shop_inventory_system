@@ -128,6 +128,21 @@ class SafetyApproveReject extends Model
         );
         return $this->create($insert_array);
     }
+    public function ehsapproval($ptw_status)
+    {
+        $request = request();
+    
+        $insert_array = array(
+            'permit_id' => $request->permit_id,
+            'approve_reject_type' => 2,
+            'approve_reject_by' => $request->approver_name,
+            'date' => DBdatetimeformat($request->date),
+            'remarks' => $request->ehs_approval_remarks,
+            'approve_reject_status' => $ptw_status,
+            'created_by' => Auth::id()
+        );
+        return $this->create($insert_array);
+    }
 
     public function plantheadApproval($ptw_status)
     {
@@ -146,22 +161,21 @@ class SafetyApproveReject extends Model
     }
 
 
-    public function ehsapproval($ptw_status)
+    public function extensionApproval($ptw_status)
     {
         $request = request();
     
         $insert_array = array(
             'permit_id' => $request->permit_id,
-            'approve_reject_type' => 2,
+            'approve_reject_type' => 4,
             'approve_reject_by' => $request->approver_name,
             'date' => DBdatetimeformat($request->date),
-            'remarks' => $request->ehs_approval_remarks,
+            'remarks' => $request->extension_aproval_remarks,
             'approve_reject_status' => $ptw_status,
             'created_by' => Auth::id()
         );
         return $this->create($insert_array);
     }
-
 
   
     public function getEhSverification($ptw_id) {
@@ -177,6 +191,7 @@ class SafetyApproveReject extends Model
         $data = $this->select('ptw_aprove_reject.*')
                     ->where('ptw_aprove_reject.permit_id', $ptw_id)
                     ->where('ptw_aprove_reject.approve_reject_status', 6) ->where('ptw_aprove_reject.approve_reject_type', 2)->where('ptw_aprove_reject.trash', 'NO')
+                    ->orderBy('id', 'desc') 
                     ->first();
 
         return $data;
@@ -192,6 +207,17 @@ class SafetyApproveReject extends Model
 
         return $data;
     }
+
+        
+    public function getpermitextensionapproval($ptw_id) {
+        $data = $this->select('ptw_aprove_reject.*')
+                    ->where('ptw_aprove_reject.permit_id', $ptw_id)
+                    ->where('ptw_aprove_reject.approve_reject_status', 11) ->where('ptw_aprove_reject.approve_reject_type', 4)->where('ptw_aprove_reject.trash', 'NO')
+                    ->get();
+
+        return $data;
+    }
+
 
    
    

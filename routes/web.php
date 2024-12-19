@@ -74,6 +74,7 @@ Route::get('worksave', [CronController::class, 'workSave']);
 Route::get('employee_master_temp', [CronController::class, 'employeeMasterTemp']);
 Route::get('employee_save', [CronController::class, 'EmployeeSave']);
 Route::get('permit_expiry', [CronController::class, 'permitExpiry']);
+Route::get('permit_close', [CronController::class, 'permitClose']);
 
 
 Route::get('test', [TestController::class,  'index']);
@@ -663,6 +664,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/plantheadapproval/submit', [SafetyPermitController::class, 'plantheadapproval']);
                 Route::get('/permitExtension/{id}', [SafetyPermitController::class, 'permitExtension']);
                 Route::post('/permitExtension/submit', [SafetyPermitController::class, 'permitExtensionsubmit']);
+                Route::post('/permitextensionapproval/submit', [SafetyPermitController::class, 'permitextensionapproval']);
                 Route::get('/edit/{id}', [SafetyPermitController::class, 'edit']);
                 Route::post('/edit/submit', [SafetyPermitController::class, 'update']);
                 Route::get('/export/excel', [SafetyPermitController::class, 'exportExcel']);

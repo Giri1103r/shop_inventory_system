@@ -730,12 +730,134 @@
                         </div>
                     @endif
 
+                    @if($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED)
+                    <div class="card-body ">
+                        <div class="row">
+                            <div class="card-header-inner">
+                                <h4 class="text-white">Permit Extension</h4>
+                            </div>
+                        </div>
+                        @foreach ($getsafetyPermitExtension as $getsafetyPermitExtension)
+                        <div class="row">
+                            <div class="mb-3 col-md-4 form-input">
+                                <label class="form-label view_label">{{ __('Submitted by') }}</label>
+                                <div class="view_data">
+                                    {{getUsername( isset($getsafetyPermitExtension->created_by) ? $getsafetyPermitExtension->created_by : '') }}
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-4 form-input">
+                                <label class="form-label view_label">{{ __('Date') }}</label>
+                                <div class="view_data">
+                                    {{ isset($getsafetyPermitExtension->date) ? Displaydateformat($getsafetyPermitExtension->date) : '' }}
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-4 form-input">
+                                <label class="form-label view_label">{{ __('Time') }}</label>
+                                <div class="view_data">
+                                    {{ isset($getsafetyPermitExtension->to_time) ? $getsafetyPermitExtension->to_time : '' }}
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-4 form-input">
+                                <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                <div class="view_data">
+                                    {{ isset($getsafetyPermitExtension->remarks) ? $getsafetyPermitExtension->remarks : '' }}
+                                </div>
+                            </div>
 
+                        </div>
+                        @endforeach
+                    </div>
+                @endif
+                @if($safetypermit['verified_by'] == Auth::id()  && ($safetypermit['permit_status'] == STATUS_PERMIT_EXTENDED  || isAdmin()))
+                <div class="card-body ">
+                    <div class="row">
+                        <div class="card-header-inner">
+                            <h4 class="text-white">Permit Extension Approval</h4>
+                        </div>
+                    </div>
+                    <div class="basic-form">
+                        <form method="POST" id="ehs_verification"
+                            action="{{ admin_url('safetypermit/permitextensionapproval/submit') }}"
+                            enctype="multipart/form-data">
+                            @csrf
+                            <div class="">
+                                <input type="hidden" id= "permit_id" name="permit_id"
+                                    value="{{ $safetypermit->id }}">
+                                <div class="mb-3 row">
+                                    <div class="col-md-4 mb-3">
+                                        <label for="approver_name" class="form-label">Approver Name</label>
+                                        <input type="text" class="form-control form-control-sm"
+                                            name= "approver_name" id="approver_name" readonly
+                                            value="{{ Auth::user()->name }}">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="date" class="form-label">Date</label>
+                                        <input type="text" class="form-control form-control-sm"
+                                            id="date" name="date" readonly
+                                            value="{{ date('d-m-Y H:i:s') }}">
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <div class="mb-1">
+                                            <label for="remarks" class="form-label">Remarks</label>
+                                            <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="extension_aproval_remarks"
+                                                rows="3"></textarea>
+                                            <div class="text-danger" id="remarks_error"></div>
+                                            @error('remarks')
+                                                <span id="remark_error"
+                                                    class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="d-flex float-end gap-2 mx-auto">
+                                <button type="submit" name="approve" value="approve"
+                                    class="btn btn-success w-100">Approve</button>
+                                    <button type="submit" name="reject" value="reject"
+                                    class="btn btn-danger w-100">Reject</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                @elseif($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED_APPROVAL)
+
+                <div class="card-body ">
+                    <div class="row">
+                        <div class="card-header-inner">
+                            <h4 class="text-white">Permit Extension Approval</h4>
+                        </div>
+                    </div>
+                @foreach($getpermitextensionapproval as $getpermitextensionapproval)
+                    <div class="row">
+                        <div class="mb-3 col-md-4 form-input">
+                            <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                            <div class="view_data">
+                                {{ isset($getpermitextensionapproval->approve_reject_by) ? $getpermitextensionapproval->approve_reject_by : '' }}
+                            </div>
+                        </div>
+                        <div class="mb-3 col-md-4 form-input">
+                            <label class="form-label view_label">{{ __('Date') }}</label>
+                            <div class="view_data">
+                                {{ isset($getpermitextensionapproval->date) ? Displaydateformat($getpermitextensionapproval->date) : '' }}
+                            </div>
+                        </div>
+                        <div class="mb-3 col-md-4 form-input">
+                            <label class="form-label view_label">{{ __('Remarks') }}</label>
+                            <div class="view_data">
+                                {{ isset($getpermitextensionapproval->remarks) ? $getpermitextensionapproval->remarks : '' }}
+                            </div>
+                        </div>
+
+                    </div>
+                    @endforeach
+                </div>
+                @endif
                     @if (
                         $safetypermit['reassign_to'] == Auth::id() ||
                             ($safetypermit['verified_by'] == Auth::id() && !$safetypermit['reassign_to']) || isAdmin())
                         @if (
-                            $safetypermit['permit_status'] == STATUS_EHS_APPROVE_PENDING ||
+                            $safetypermit['permit_status'] == STATUS_EHS_APPROVE_PENDING ||  $safetypermit['permit_status'] == STATUS_PERMIT_EXTENDED_APPROVAL ||
                                 $safetypermit['permit_status'] == STATUS_EHS_HOLD ||
                                 $safetypermit['permit_status'] == STATUS_EHS_REASSIGN ||
                                 $safetypermit['permit_status'] == STATUS_EHS_RESUME)
@@ -852,7 +974,7 @@
                                     </form>
                                 </div>
                             </div>
-                        @elseif (
+                        @elseif (  $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED &&
                             $safetypermit['permit_status'] != STATUS_EHS_RESUME &&
                                 $safetypermit['permit_status'] != STATUS_EHS_REASSIGN &&
                                 ($safetypermit['permit_status'] > STATUS_EHS_HOLD || $safetypermit['permit_status'] > STATUS_EHS_DECLINE))
@@ -886,7 +1008,7 @@
                                 </div>
                             </div>
                         @endif
-                    @elseif (
+                    @elseif ( $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED &&
                         $safetypermit['permit_status'] != STATUS_EHS_RESUME &&
                             $safetypermit['permit_status'] != STATUS_EHS_REASSIGN &&
                             ($safetypermit['permit_status'] > STATUS_EHS_HOLD || $safetypermit['permit_status'] > STATUS_EHS_DECLINE))
@@ -972,7 +1094,7 @@
                                 </form>
                             </div>
                         </div>
-                    @elseif ($safetypermit['permit_status'] >= STATUS_PLANT_HEAD_APPROVED && $safetypermit['permit_status'] != STATUS_EHS_RESUME)
+                    @elseif ($safetypermit['permit_status'] >= STATUS_PLANT_HEAD_APPROVED && $safetypermit['permit_status'] != STATUS_EHS_RESUME && $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED  && $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED_APPROVAL )
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">

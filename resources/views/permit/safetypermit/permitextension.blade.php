@@ -31,6 +31,8 @@
                                     <div class="">
                                         <input type="hidden" id= "permit_id" name="permit_id"
                                             value="{{ $safetypermit->id }}">
+                                            <input type="hidden" id= "permit_status" name="permit_status"
+                                            value="{{ $safetypermit->permit_status }}">
                                         <div class="mb-3 row">
                                             <div class="col-md-4 mb-3">
                                                 <label for="date" class="form-label require">Date</label>
