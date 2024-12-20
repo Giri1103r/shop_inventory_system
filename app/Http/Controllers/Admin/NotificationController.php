@@ -35,12 +35,10 @@ class NotificationController extends Controller
 
     public function notificationList(Request $request)
     {
-
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-
-                    $data =  $this->notification->list();
+                    $data = $this->notification->list();
 
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
@@ -48,14 +46,11 @@ class NotificationController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             if (!empty($row->web_link)) {
-
-                                $btn = '<a href="' . admin_url('notification/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                                $btn = '<a href="' . admin_url('notification/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             }
-
                             return $btn;
                         })
                         ->editColumn('notification_type', function ($row) {
-
                             if ($row->notification_type == 1) {
                                 $btn = "PPE";
                             } elseif ($row->notification_type == 2) {
@@ -63,20 +58,21 @@ class NotificationController extends Controller
                             } elseif ($row->notification_type == 3) {
                                 $btn = "PTW";
                             }
-
                             return $btn;
                         })
+                        ->editColumn('mobile_notification', function ($row) {
+
+                            $mobileNotification = json_decode($row->mobile_notification, true);
+
+                            return $mobileNotification['message'] ?? '';
+                        })
                         ->editColumn('datetime', function ($row) {
-
-                            $btn =  timeago($row->created_at);
-
-                            return $btn;
+                            return timeago($row->created_at);
                         })
                         ->removeColumn([
                             'assigned_user',
                             'created_at',
                             'created_by',
-                            'mobile_notification',
                             'id',
                             'module_type',
                             'status',
@@ -86,7 +82,7 @@ class NotificationController extends Controller
                             'viewed_user',
                             'web_link',
                         ])
-                        ->rawColumns(['action'])
+                        ->rawColumns(['action', 'mobile_notification'])
                         ->setFilteredRecords($data['total_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -100,9 +96,9 @@ class NotificationController extends Controller
         }
 
         $data = array();
-
         return view('admin.notification.list', $data);
     }
+
 
     public function notificationAllRead(Request $request)
     {

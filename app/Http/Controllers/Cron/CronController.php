@@ -581,6 +581,32 @@ class CronController extends Controller
         }
     }
 
+    public function updateItem(){
+        try {
+
+            $apiUrl = 'https://vmsapi.karam.in/emp.asmx/GetPPEInventory?TokenId=123&Orgid=86&Item=71160-H';
+
+            $response = Http::get($apiUrl);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                if (!empty($data)) {
+                    $work = $this->ppestock->update($data);
+                    Session::flash('sucess','Your data has been created Sucessfully');
+                    return redirect('ppe_stock_inventory/list');
+                } else {
+                    return response()->json(['message' => 'No data found in API response.']);
+                }
+            } else {
+                return response()->json(['message' => 'Failed to fetch data from API.', 'status' => $response->status()]);
+            }
+        } catch (Exception $ex) {
+            report($ex);
+            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
+        }
+    }
+
 
     public function permitExpiry()
     {
@@ -589,16 +615,16 @@ class CronController extends Controller
             $currentTime = Carbon::now()->format('H:i:s');
             $permits = SafetyPermit::where('trash', 'NO')
             ->where('permit_status', '!=', STATUS_PLANT_HEAD_APPROVED)
-            ->whereDate('date', Carbon::today()) 
+            ->whereDate('date', Carbon::today())
             ->where('time_to', '<', $currentTime)
             ->get();
-    
+
             if ($permits->isNotEmpty()) {
                 foreach ($permits as $permit) {
                     $permit->permit_status = STATUS_PERMIT_EXPIRED;
                     $permit->save();
                 }
-    
+
                 Log::info('Expired permits updated successfully.', ['count' => $permits->count()]);
                 return response()->json(['message' => 'Expired permits updated successfully.']);
             } else {
@@ -616,36 +642,36 @@ class CronController extends Controller
     {
         try {
             Log::info('PermitClose function started.');
-    
+
             $currentTime = Carbon::now();
             $timeThirtyMinutesAhead = Carbon::now()->addMinutes(30);
-    
+
             $permits = SafetyPermit::where('trash', 'NO')
                 ->where('permit_status', '!=', STATUS_PLANT_HEAD_APPROVED)
                 ->whereDate('date', Carbon::today())
                 ->whereTime('time_to', '>=', $currentTime->toTimeString())
                 ->whereTime('time_to', '<=', $timeThirtyMinutesAhead->toTimeString())
                 ->get();
-    
+
             Log::info('Fetched permits: ', ['count' => $permits->count()]);
-    
+
             $mailsubject = 'Permit is going to expire in 30 minutes';
-    
+
             foreach ($permits as $permit) {
                 $assignedUser = User::where('id', $permit->created_by)
                     ->select('name', 'email')
                     ->first();
-    
+
                 if ($assignedUser && $assignedUser->email) {
                     $safetypermitdetails = $this->safetypermit->selectmail($permit->id);
                     $permitrray = $safetypermitdetails->toArray();
-    
+
                     $permitrray['name'] = $assignedUser->name;
                     $permitrray['email_id'] = $assignedUser->email;
                     $permitrray['mail_subject'] = $mailsubject;
-    
+
                     Mail::to($permitrray['email_id'])->queue(new PermitExpiryEmail($permitrray));
-    
+
                     Log::info("Permit expiry email sent.", [
                         'email' => $assignedUser->email,
                         'permit_id' => $permit->permit_id,
@@ -659,7 +685,7 @@ class CronController extends Controller
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
-   
+
     public function queueCompanyImport()
     {
         $queueLength = Queue::size('company');

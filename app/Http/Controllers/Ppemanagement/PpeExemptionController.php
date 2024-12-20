@@ -492,7 +492,7 @@ class PpeExemptionController extends Controller
         ];
         $messages = [
             'remarks.required' => 'Remarks Field is Mandatory',
-           
+
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -556,7 +556,7 @@ class PpeExemptionController extends Controller
                 'notification_message' => $message,
                 'mobile_notification' => json_encode(array(
                     'title' => $message,
-                    'message' => getUsername($updateData['approved_by']) . " has" . getStatus($updateData['approve_status']) . " a PPE Exemption request on " . displaydateformat($emp_details->created_at) . " from " . displaydateformat($emp_details->from_date) . " to " . displaydateformat($emp_details->to_date),
+                    'message' => getUsername($updateData['approved_by']) . " has" . removeUnderScore(getStatus($updateData['approve_status']))  . " a PPE Exemption request on " . displaydateformat($emp_details->created_at) . " from " . displaydateformat($emp_details->from_date) . " to " . displaydateformat($emp_details->to_date),
                     'icon' => $img,
                     'module' => 1,
                     'style' => 'font-size: 1rem;'

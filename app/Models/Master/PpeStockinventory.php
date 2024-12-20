@@ -124,11 +124,30 @@ class PpeStockinventory extends Model
                 'created_by' => Auth::id(),
             ];
 
-            $this->create($insert_array);
+
+            $exists = $this->where('item_code', $item['ITEM_CODE'])->exists();
+
+            if ($exists) {
+
+                $valuesToInsertOrUpdate = array_merge($insert_array, [
+                    'updated_at' => now(),
+                ]);
+            } else {
+
+                $valuesToInsertOrUpdate = array_merge($insert_array, [
+                    'created_at' => now(),
+                ]);
+            }
+
+            $this->updateOrInsert(
+                ['item_code' => $item['ITEM_CODE']],
+                $valuesToInsertOrUpdate
+            );
         }
 
         return true;
     }
+
 
     public function updates($id)
     {
@@ -152,7 +171,6 @@ class PpeStockinventory extends Model
         $request = request();
         $currentQuantity = PpeStockinventory::where('item_code', $itemCode)->first();
         if ($action == 'approve') {
-            $newQuantity = $currentQuantity->quantity - 1;
             $this->where('item_code', $itemCode)->update(['quantity' => $newQuantity]);
 
             return $newQuantity;

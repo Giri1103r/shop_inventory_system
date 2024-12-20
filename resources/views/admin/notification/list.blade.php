@@ -17,8 +17,9 @@
                                         <th>{{ __('No.') }}</th>
                                         <th>{{ __('Notification Type') }}</th>
                                         <th>{{ __('Notitication') }}</th>
+                                        <th>{{ __('Message') }}</th>
                                         <th>{{ __('Received') }}</th>
-                                        <th>{{ __('Action') }}</th>
+                                        <th data-priority="1">{{ __('Action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -91,6 +92,10 @@
                 {
                     data: 'notification_message',
                     name: 'notification_message'
+                },
+                {
+                    data: 'mobile_notification',
+                    name: 'mobile_notification'
                 },
                 {
                     data: 'datetime',

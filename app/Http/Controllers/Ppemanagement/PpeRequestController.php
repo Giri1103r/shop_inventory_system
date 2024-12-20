@@ -322,8 +322,9 @@ class PpeRequestController extends Controller
                 $pperequest = $this->pperequest->selectOne($id);
             }
             $empId =$pperequest->emp_id;
-            $ppestatuslog = $this->ppestatus->getstatusdetails($id);
+            // $ppestatuslog = $this->ppestatus->getstatusdetails($id);
             $userdata = $this->pperequest->getuserdata($empId);
+            $ppestatuslog = $this->ppestatus->statuslog($id);
 
             $data = [
                 'userdata'=>$userdata,
@@ -426,6 +427,7 @@ class PpeRequestController extends Controller
                 'status' => $status
             ];
 
+
             $updatedatas = [
                 'remarks' => $remarks,
                 'approved_at' => $dateTime,
@@ -471,7 +473,7 @@ class PpeRequestController extends Controller
                     'notification_message' => $message,
                     'mobile_notification' => json_encode([
                         'title' => $message,
-                        'message' => getUsername($updateData['approved_by']) . " has " . getStatus($updateData['approve_status']) . " a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
+                        'message' => getUsername($updateData['approved_by']) . " has " . removeUnderScore(getStatus($updateData['approve_status']))  . " a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
                         'icon' => $img,
                         'module' => 1,
                         'style' => 'font-size: 1rem;'
@@ -495,7 +497,7 @@ class PpeRequestController extends Controller
                     'notification_message' => $message,
                     'mobile_notification' => json_encode([
                         'title' => $message,
-                        'message' => getUsername($updateData['approved_by']) . " has ". getStatus($updateData['approve_status']) . "a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
+                        'message' => getUsername($updateData['approved_by']) . " has ". removeUnderScore(getStatus($updateData['approve_status']))  . " a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
                         'icon' => $img,
                         'module' => 1,
                         'style' => 'font-size: 1rem;'
@@ -552,7 +554,7 @@ class PpeRequestController extends Controller
         ];
         $messages = [
             'remarks.required' => 'Remarks Field is Mandatory',
-           
+
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -580,6 +582,8 @@ class PpeRequestController extends Controller
                 'approve_status' =>  $approveStatus,
             ];
 
+
+
             if ($action == 'approve' || $action == 'reject') {
                 $updateEhsData['status'] = 0;
             }
@@ -593,11 +597,27 @@ class PpeRequestController extends Controller
                 'department' => $empDetails->department,
                 'approved_by' => $empDetails->approved_by,
             ];
+
             $requestor = $this->user->getrequestEmail($empId);
-            $recipients = array_filter([$requestor, $hod, $storemanager]);
+            $recipients = array_filter([$requestor, $hod,$storemanager]);
 
             if ($action == 'approve') {
                 Mail::to($recipients)->queue(new PpeEhsRequestEmail($details));
+
+
+                $Storedetails = [
+                    'emp_id' => $empDetails->emp_id,
+                    'emp_name' => $empDetails->emp_name,
+                    'remarks' => $updateEhsData['remarks'],
+                    'status' => $updateEhsData['approve_status'],
+                    'department' => $empDetails->department,
+                    'approved_by' => $empDetails->approved_by,
+                    'approve_link'=>url('stockitem'),
+                ];
+
+                if ($action == 'approve') {
+                    Mail::to($storemanager)->queue(new PpeRequestStoremanagerEmail($Storedetails));
+                }
 
                 $id = $empDetails->id;
                 $message = 'New PPE Request';
@@ -607,22 +627,22 @@ class PpeRequestController extends Controller
                 $requestorId = $this->user->getrequestId($empId);
                 $assignedUsers = array_filter(array_merge($hodId, $storemanagerId, $requestorId));
                 $assignedUserString = implode(',', $assignedUsers);
+
                 $notificationData = [
                     'notification_type' => 1,
                     'module_type' => 1,
                     'notification_message' => $message,
                     'mobile_notification' => json_encode([
                         'title' => $message,
-                        'message' => getUsername($updateEhsData['approved_by']) . " has " . getStatus($updateEhsData['approve_status']) . " a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
+                        'message' => getUsername($updateEhsData['approved_by']) . " has " . removeUnderScore(getStatus($updateEhsData['approve_status']))  . " a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
                         'icon' => $img,
-                        'style' => 'font-size: 1rem;' ,
+                        'style' => 'font-size: 1rem;',
                         'module' => 1,
                     ]),
                     'web_link' => admin_url('ppe_request/view/' . encryptId($id)),
                     'assigned_user' => $assignedUserString,
                     'created_by' => Auth::id(),
                 ];
-
 
                 notificationSave($notificationData);
             } else {
@@ -636,16 +656,16 @@ class PpeRequestController extends Controller
                 $storemanagerId = $this->user->getStoreManagerId();
                 $assignedUsers = array_filter(array_merge($hodId, $storemanagerId, $requestorId));
                 $assignedUserString = implode(',', $assignedUsers);
+
                 $notificationData = [
                     'notification_type' => 1,
                     'module_type' => 1,
                     'notification_message' => $message,
                     'mobile_notification' => json_encode([
                         'title' => $message,
-                        'message' => getUsername($updateEhsData['approved_by']) . " has " . getStatus($updateEhsData['approve_status']) . " a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
+                        'message' => getUsername($updateEhsData['approved_by']) . " has " . removeUnderScore(getStatus($updateEhsData['approve_status']))  . " a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
                         'icon' => $img,
-                        'module' => 1,
-                        'style' => 'font-size: 1rem;' ,
+                        'style' => 'font-size: 1rem;',
                     ]),
                     'web_link' => admin_url('ppe_request/view/' . encryptId($id)),
                     'assigned_user' =>  $assignedUserString,
@@ -654,6 +674,7 @@ class PpeRequestController extends Controller
 
                 notificationSave($notificationData);
             }
+
 
             Session::flash('success', 'PPE Request has successfully responded');
             return redirect()->to(admin_url('ppe_request/list'));

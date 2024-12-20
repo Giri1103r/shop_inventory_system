@@ -100,8 +100,15 @@ class PpeExemption extends Model
             $toDate =$request->to_date;
             $query->where('ppe_ppeexemption.to_date', '<=', $toDate);
         }
+
+
         if ($request->has('approve_status') && $request->approve_status) {
-            $query->where('ppe_ppeexemption.approve_status', $request->approve_status);
+            $approveStatus = (int) $request->approve_status;
+            if ($approveStatus === (int) STATUS_USER_APPLIED) {
+                $query->where('ppe_ppeexemption.approve_status', STATUS_HOD_APPROVAL_PENDING);
+            } else {
+                $query->where('ppe_ppeexemption.approve_status', $approveStatus);
+            }
         }
 
 
@@ -239,7 +246,7 @@ class PpeExemption extends Model
             $query->where('ppe_ppeexemption.emp_id', $empId);
         }
 
-        
+
 
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
@@ -274,7 +281,12 @@ class PpeExemption extends Model
             $query->where('ppe_ppeexemption.to_date', '<=', $toDate);
         }
         if ($request->has('approve_status') && $request->approve_status) {
-            $query->where('ppe_ppeexemption.approve_status', $request->approve_status);
+            $approveStatus = (int) $request->approve_status;
+            if ($approveStatus === (int) STATUS_USER_APPLIED) {
+                $query->where('ppe_ppeexemption.approve_status', STATUS_HOD_APPROVAL_PENDING);
+            } else {
+                $query->where('ppe_ppeexemption.approve_status', $approveStatus);
+            }
         }
 
         return  $query->orderBy('id', 'DESC')->get();
