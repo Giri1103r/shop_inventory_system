@@ -66,11 +66,12 @@
                                             <select name="approve_status" id="approve_status" style="width: 100%"
                                                 class="form-select single-select">
                                                 <option value="">Select the approve status</option>
-                                                @foreach ($approvestatus as $status)
-                                                    <option value="{{ $status->id }}">
-                                                        {{ removeUnderScore($status->approve_status) }}
-                                                    </option>
-                                                @endforeach
+                                                <option value="1">HOD Approval Pending</option>
+                                                <option value="2">HOD Approved</option>
+                                                <option value="3">HOD Rejected</option>
+                                                <option value="4">EHS Officer Approval Pending</option>
+                                                <option value="5">EHS Officer Approved</option>
+                                                <option value="6">EHS Officer Rejected</option>
 
 
                                             </select>
