@@ -54,15 +54,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="ppe_status" id="ppe_status" style="width: 100%"
-                                                class="form-control single-select">
-                                                <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
-                                            </select>
-                                        </div>
+                                      
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -87,7 +79,6 @@
                                         <th>SUB</th>
                                         <th>UOM</th>
                                         <th>Quantity</th>
-                                        <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -167,7 +158,7 @@
                     d.inventory_item_id = $('#inventory_item_id').val();
                     d.from_date = $('#from_date').val();
                     d.to_date = $('#to_date').val();
-                    d.ppe_status = $('#ppe_status').val();
+
                 }
             },
             columns: [
@@ -178,7 +169,6 @@
                 { data: 'sub', name: 'sub' },
                 { data: 'uom', name: 'uom' },
                 { data: 'quantity', name: 'quantity' },
-                { data: 'status', name: 'status' },
                 { data: 'created_by', name: 'created_by' },
                 { data: 'created_at', name: 'created_at' },
                 { data: 'action', name: 'action', orderable: false }
@@ -212,7 +202,7 @@
                                 var inventory_item_id = $('#inventory_item_id').val();
                                 var from_date = $('#from_date').val();
                                 var to_date = $('#to_date').val();
-                                var ppe_status = $('#ppe_status').val();
+
 
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
@@ -221,8 +211,8 @@
                                     '&item_code=' + item_code +
                                     '&inventory_item_id=' + inventory_item_id +
                                     '&from_date=' + from_date +
-                                    '&to_date=' + to_date +
-                                    '&ppe_status=' + ppe_status;
+                                    '&to_date=' + to_date ;
+
                             }
                         },
                         {
@@ -234,7 +224,7 @@
                                 var inventory_item_id = $('#inventory_item_id').val();
                                 var from_date = $('#from_date').val();
                                 var to_date = $('#to_date').val();
-                                var ppe_status = $('#ppe_status').val();
+
 
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
@@ -243,8 +233,8 @@
                                     '&item_code=' + item_code +
                                     '&inventory_item_id=' + inventory_item_id +
                                     '&from_date=' + from_date +
-                                    '&to_date=' + to_date +
-                                    '&ppe_status=' + ppe_status;
+                                    '&to_date=' + to_date ;
+
                             }
                         }
                     ]

@@ -43,9 +43,7 @@ class PpeStockinventory extends Model
             $query->where('inventory_item_id', 'LIKE', '%' . $request->inventory_item_id . '%');
         }
 
-        if ($request->has('ppe_status') && $request->ppe_status) {
-            $query->where('status', decryptId($request->ppe_status));
-        }
+
 
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
@@ -112,41 +110,46 @@ class PpeStockinventory extends Model
 
     public function store($data)
     {
-        foreach ($data as $item) {
-            $insert_array = [
-                'org' => isset($item['ORG']) ? $item['ORG'] : null,
-                'inventory_item_id' => isset($item['INVENTORY_ITEM_ID']) ? $item['INVENTORY_ITEM_ID'] : null,
-                'item_code' => isset($item['ITEM_CODE']) ? $item['ITEM_CODE'] : null,
-                'sub' => isset($item['UOM']) ? $item['UOM'] : null,
-                'uom' => isset($item['SUB']) ? $item['SUB'] : null,
-                'quantity' => isset($item['QTY']) ? $item['QTY'] : null,
-                'item_description' => isset($item['ITEM_DESCRIPTION']) ? $item['ITEM_DESCRIPTION'] : null,
-                'created_by' => Auth::id(),
-            ];
+        $updatedItemCodes = [];
 
 
-            $exists = $this->where('item_code', $item['ITEM_CODE'])->exists();
+        $groupedData = collect($data)->groupBy('ITEM_CODE');
 
-            if ($exists) {
 
-                $valuesToInsertOrUpdate = array_merge($insert_array, [
-                    'updated_at' => now(),
-                ]);
-            } else {
+        foreach ($groupedData as $itemCode => $items) {
 
-                $valuesToInsertOrUpdate = array_merge($insert_array, [
+
+            foreach ($items as $item) {
+                $insert_array = [
+                    'org' => isset($item['ORG']) ? $item['ORG'] : null,
+                    'inventory_item_id' => isset($item['INVENTORY_ITEM_ID']) ? $item['INVENTORY_ITEM_ID'] : null,
+                    'item_code' => isset($item['ITEM_CODE']) ? $item['ITEM_CODE'] : null,
+                    'sub' => isset($item['SUB']) ? $item['SUB'] : null,
+                    'uom' => isset($item['UOM']) ? $item['UOM'] : null,
+                    'quantity' => isset($item['QTY']) ? $item['QTY'] : null,
+                    'item_description' => isset($item['ITEM_DESCRIPTION']) ? $item['ITEM_DESCRIPTION'] : null,
+                    'created_by' => Auth::id(),
                     'created_at' => now(),
-                ]);
+                    'updated_at' => now(),
+                ];
+
+
+                $this->updateOrInsert(
+                    ['item_code' => $itemCode, 'sub' => $item['SUB']],
+                    $insert_array
+                );
             }
 
-            $this->updateOrInsert(
-                ['item_code' => $item['ITEM_CODE']],
-                $valuesToInsertOrUpdate
-            );
+
+            $updatedItemCodes[] = $itemCode;
         }
 
-        return true;
+
+        return $updatedItemCodes;
     }
+
+
+
 
 
     public function updates($id)
@@ -166,18 +169,18 @@ class PpeStockinventory extends Model
        $this->where('id',$id)->update( $update_array);
     }
 
-    public function getquantity($itemCode, $action)
-    {
-        $request = request();
-        $currentQuantity = PpeStockinventory::where('item_code', $itemCode)->first();
-        if ($action == 'approve') {
-            $this->where('item_code', $itemCode)->update(['quantity' => $newQuantity]);
+    // public function getquantity($itemCode, $action)
+    // {
+    //     $request = request();
+    //     $currentQuantity = PpeStockinventory::where('item_code', $itemCode)->first();
+    //     if ($action == 'approve') {
+    //         $this->where('item_code', $itemCode)->update(['quantity' => $newQuantity]);
 
-            return $newQuantity;
-        }
+    //         return $newQuantity;
+    //     }
 
-        return $currentQuantity;
-    }
+    //     return $currentQuantity;
+    // }
 
 
     public function exportdata()
@@ -202,9 +205,7 @@ class PpeStockinventory extends Model
             $query->where('inventory_item_id', 'LIKE', '%' . $request->inventory_item_id . '%');
         }
 
-        if ($request->has('ppe_status') && $request->ppe_status) {
-            $query->where('status', decryptId($request->ppe_status));
-        }
+      
 
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
