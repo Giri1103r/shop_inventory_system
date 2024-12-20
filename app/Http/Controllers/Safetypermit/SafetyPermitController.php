@@ -125,7 +125,7 @@ class SafetyPermitController extends Controller
                             <i class="fa-solid fa-eye"></i>
                         </a>';
 
-                        // $btn .= '<a href="' . admin_url('safetypermit/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
+                        $btn .= '<a href="' . admin_url('safetypermit/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             if ($row->permit_status >= STATUS_EHS_APPROVE_PENDING) {
                                 $btn .= '<a href="' . admin_url('safetypermit/qr/pdf/' . encryptId($row->id)) . '" target="__blank" style="margin-right: 5px;" title="QR PDF">
                             <i class="fa-solid fa-qrcode"></i>

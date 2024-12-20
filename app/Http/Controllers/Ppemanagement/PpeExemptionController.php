@@ -161,7 +161,7 @@ class PpeExemptionController extends Controller
             $rules = [
                 'from_date' => 'required|date_format:d-m-Y',
                 'to_date' => 'required|date_format:d-m-Y|after_or_equal:from_date',
-                'reason' => ['required', 'regex:/^[a-zA-Z0-9\-_\'"()\s]+$/'],
+                'reason' =>'required' ,
             ];
 
 
@@ -172,7 +172,7 @@ class PpeExemptionController extends Controller
                 'to_date.date_format' => __('To Date must be in the format Y-m-d'),
                 'to_date.after_or_equal' => __('To Date must be on or after From Date'),
                 'reason.required' => __('Reason is required'),
-                'reason.regex' => __('Reason should be alphanumeric and can include -, _, \', ", (, ).'),
+               
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -348,7 +348,7 @@ class PpeExemptionController extends Controller
             $rules = [
                 'from_date' => 'required|date_format:d-m-Y',
                 'to_date' => 'required|date_format:d-m-Y|after_or_equal:from_date',
-                'reason' => ['required', 'regex:/^[a-zA-Z0-9\-_\'"()\s]+$/'],
+                'reason' =>'required' ,
             ];
 
 
@@ -359,7 +359,7 @@ class PpeExemptionController extends Controller
                 'to_date.date_format' => __('To Date must be in the format Y-m-d'),
                 'to_date.after_or_equal' => __('To Date must be on or after From Date'),
                 'reason.required' => __('Reason is required'),
-                'reason.regex' => __('Reason should be alphanumeric and can include -, _, \', ", (, ).'),
+
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {

@@ -829,496 +829,581 @@
 @stop
 
 @push('script')
-    <script>
-      $(document).ready(function() {
-    // Select2 initialization for employee_code
-    $('#employee_code').select2({
-        // Existing select2 code for employee code
-    });
+<script>
+    $(document).ready(function() {
 
-    // Handling change event for employee code to fetch employee details
-    $(document).on("change", "#employee_code", function() {
-        var emp_id = $(this).val();
-        var currentRow = $(this).closest(".row");
-        var departmentDropdown = currentRow.find('select[name="workman_dept"]');
+        $('#employee_code').select2({
+            ajax: {
+                url: '{{ admin_url('safetypermit/employeeid') }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search: params.term
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: $.map(data, function(item) {
+                            return {
+                                id: item.id,
+                                text: item.text
+                            };
+                        })
+                    };
+                }
+            },
+            minimumInputLength: 1,
+            dropdownCssClass: 'form-control',
+            selectionCssClass: 'form-control'
+        });
 
-        if (emp_id) {
-            $.ajax({
-                url: "{{ url('safetypermit/fetchEmployeeDetails') }}/" + emp_id,
-                type: "GET",
-                success: function(data) {
-                    if (data.employee) {
-                        // Set employee details in the form fields
-                        currentRow.find('input[name="workman_name"]').val(data.employee.emp_name);
-                        currentRow.find('input[name="workman_desig"]').val(data.employee.designation);
 
-                        // Set the department dropdown options
-                        departmentDropdown.empty();
-                        departmentDropdown.append('<option value="">Select Department</option>');
+        $(document).on("change", "#employee_code", function() {
+            var emp_id = $(this).val();
+            var currentRow = $(this).closest(".row");
+            var departmentDropdown = currentRow.find(
+                'select[name="workman_dept"]');
 
-                        if (data.departments && data.departments.length > 0) {
-                            data.departments.forEach(function(department) {
-                                var selected = data.employee.department == department.id ? "selected" : "";
+            if (emp_id) {
+                $.ajax({
+                    url: "{{ url('safetypermit/fetchEmployeeDetails') }}/" + emp_id,
+                    type: "GET",
+                    success: function(data) {
+
+                        if (data.employee) {
+
+                            currentRow.find('input[name="workman_name"]').val(data.employee
+                                .emp_name);
+                            currentRow.find('input[name="workman_desig"]').val(data.employee
+                                .designation);
+
+                            departmentDropdown.empty();
+                            departmentDropdown.append(
+                                '<option value="">Select Department</option>'
+                            );
+
+                            if (data.departments && data.departments.length > 0) {
+                                data.departments.forEach(function(department) {
+                                    var selected = data.employee.department ==
+                                        department.id ? "selected" : "";
+                                    departmentDropdown.append(
+                                        `<option value="${department.id}" ${selected}>${department.department_name}</option>`
+                                    );
+                                });
+                            } else {
                                 departmentDropdown.append(
-                                    `<option value="${department.id}" ${selected}>${department.department_name}</option>`
+                                    '<option value="">No departments available</option>'
                                 );
-                            });
+                            }
                         } else {
-                            departmentDropdown.append('<option value="">No departments available</option>');
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: "Employee data could not be fetched.",
+                            });
                         }
-                    } else {
+                    },
+                    error: function() {
                         Swal.fire({
                             icon: "error",
                             title: "Error",
-                            text: "Employee data could not be fetched.",
+                            text: "An error occurred while fetching employee details.",
                         });
+                    },
+                });
+            } else {
+
+                currentRow.find('input[name="workman_name"]').val("");
+                currentRow.find('input[name="workman_desig"]').val("");
+                departmentDropdown.empty();
+                departmentDropdown.append('<option value="">Select Department</option>');
+            }
+        });
+
+
+        $(document).on("click", ".add", function(e) {
+            e.preventDefault();
+
+            var parentRow = $(this).closest(".row");
+
+
+            var employeeCode = parentRow.find('select[name="employee_code"] option:selected').val();
+            var employeeName = parentRow.find('select[name="employee_code"] option:selected').text();
+            var workmanName = parentRow.find('input[name="workman_name"]').val();
+            var designation = parentRow.find('input[name="workman_desig"]').val();
+            var department = parentRow.find('select[name="workman_dept"] option:selected').val();
+            var departmentName = parentRow.find('select[name="workman_dept"] option:selected').text();
+            var natureOfJob = parentRow.find('input[name="nature_of_job"]').val();
+
+            var newRow = `
+                <tr>
+                    <td><input type="hidden" name="emp_id[]" value="${employeeCode}">${employeeName}</td>
+                    <td><input type="hidden" name="workman_name[]" value="${workmanName}">${workmanName}</td>
+                    <td><input type="hidden" name="workman_desig[]" value="${designation}">${designation}</td>
+                    <td><input type="hidden" name="workman_dept[]" value="${department}">${departmentName}</td>
+                    <td><input type="hidden" name="nature_of_job[]" value="${natureOfJob}">${natureOfJob}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm remove-entry">Remove</button>
+                    </td>
+                </tr>
+            `;
+
+            $("#workman-list-entries").append(newRow);
+
+            parentRow.find('select[name="employee_code"]').val("");
+            parentRow.find('select[name="employee_code"]').trigger("change");
+            parentRow.find('input[name="workman_name"]').val("");
+            parentRow.find('input[name="workman_desig"]').val("");
+            parentRow.find('select[name="workman_dept"]').val("");
+            parentRow.find('select[name="workman_dept"]').trigger("change");
+            parentRow.find('input[name="nature_of_job"]').val("");
+
+            Swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "Workman has been added to the table.",
+            });
+        });
+
+
+        $(document).on("click", ".remove-entry", function() {
+            $(this).closest("tr").remove();
+        });
+
+        $('#employeenameshutdown,#employeenameloto').select2({
+            ajax: {
+                url: '{{ admin_url('safetypermit/employeename') }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search: params.term
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: $.map(data, function(item) {
+                            return {
+                                id: item.id,
+                                text: item.text
+                            };
+                        })
+                    };
+                }
+            },
+            minimumInputLength: 1,
+            dropdownCssClass: 'form-control',
+            selectionCssClass: 'form-control'
+        });
+
+
+        $('#shutdown-checkbox').on('change', function() {
+            if ($(this).is(':checked')) {
+                $('#employeenameshutdown').prop('disabled', false);
+            } else {
+                $('#employeenameshutdown').prop('disabled', true);
+            }
+        });
+        $('#lotocheckbox').on('change', function() {
+            if ($(this).is(':checked')) {
+                $('#employeenameloto').prop('disabled', false);
+            } else {
+                $('#employeenameloto').prop('disabled', true);
+            }
+        });
+    });
+
+    flatpickr("#date", {
+        // enableTime: true,
+        dateFormat: "d-m-Y",
+        // time_24hr: true,
+        minuteIncrement: 5,
+    });
+
+    flatpickr("#time_from", {
+        enableTime: true,
+        noCalendar: true,
+        time_24hr: true,
+        minuteIncrement: 5,
+        dateFormat: "H:i"
+    });
+
+    flatpickr("#time_to", {
+        enableTime: true,
+        noCalendar: true,
+        time_24hr: true,
+        minuteIncrement: 5,
+        dateFormat: "H:i"
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        var firstTh = $('.datatable-list thead th:first');
+        firstTh.removeClass('sorting_asc');
+    });
+
+    $(function() {
+        /* Datatable */
+        var table = $('.datatable-list').DataTable({
+            autoWidth: false,
+            responsive: true,
+            processing: false,
+            serverSide: true,
+            searching: false,
+            ordering: false,
+            lengthChange: false, // Disables "Show entries"
+            // dom: 'Bfrtip',
+            layout: {
+                top2Start: '',
+                top2End: {
+                    search: {
+                        placeholder: ''
                     }
                 },
-                error: function() {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Error",
-                        text: "An error occurred while fetching employee details.",
-                    });
+                topStart: '',
+                topEnd: '',
+                bottomStart: '',
+                bottomEnd: '',
+                bottom2Start: 'info',
+                bottom2End: 'paging'
+            },
+
+            ajax: {
+                url: "{{ admin_url('uploadlog/list') }}",
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-            });
-        } else {
-            currentRow.find('input[name="workman_name"]').val("");
-            currentRow.find('input[name="workman_desig"]').val("");
-            departmentDropdown.empty();
-            departmentDropdown.append('<option value="">Select Department</option>');
-        }
+                data: function(d) {}
+            },
+            columns: [{
+                    data: 'DT_RowIndex',
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: 'line_no',
+                    name: 'line_no'
+                },
+                {
+                    data: 'error',
+                    name: 'error'
+                },
+            ],
+
+            language: {
+                paginate: {
+                    first: '<i title="{{ __('common.first') }}" class="fa fa-angle-double-left" aria-hidden="true"></i>',
+                    last: '<i title="{{ __('common.last') }}" title="Next" class="fa fa-angle-double-right" aria-hidden="true"></i>',
+                    next: '<i title="{{ __('common.next') }}" class="fa fa-angle-right" aria-hidden="true"></i>',
+                    previous: '<i title="{{ __('common.previous') }}" class="fa fa-angle-left" aria-hidden="true"></i>',
+                },
+                "info": "{{ __('common.dt_info') }}",
+                "infoEmpty": "{{ __('common.dt_infoEmpty') }}",
+                "infoFiltered": "{{ __('common.dt_infoFiltered') }}",
+            },
+            aLengthMenu: [
+                [10, 25, 50, 100],
+                [10, 25, 50, 100]
+            ],
+            buttons: [{
+                    extend: 'collection',
+                    text: '{{ __('common.export') }}',
+                    buttons: [{
+                        extend: 'excel',
+                        text: '{{ __('common.excel') }}',
+                        action: function(e, dt, button, config) {
+                            var searchValue = $('#datatable-list_filter input').val();
+                            $(".dt-button").removeClass('processing');
+                            $('body').click();
+                            window.location.href =
+                                "{{ admin_url('uploadlog/export/excel/' . request()->logid) }}" +
+                                '?search=' + searchValue;
+                        }
+                    }, ]
+                },
+
+                {
+                    "extend": 'pageLength',
+                    "text": '{{ __('common.show') }} 10 {{ __('common.records') }}'
+                }
+            ],
+
+        });
+
+        table.on('length.dt', function(e, settings, len) {
+            var text = '{{ __('common.show') }} ' + len + ' {{ __('common.records') }}';
+            $('.buttons-page-length').find('span').text(text);
+        });
+
+        $(document).on('click', '#searchform', function() {
+            table.draw();
+        });
+
+        $(document).on('click', '#resetform', function() {
+            setTimeout(function() {
+                table.draw();
+            }, 150);
+        });
+
     });
 
-    // Add new workman to table
-    $(document).on("click", ".add", function(e) {
-        e.preventDefault();
-        var parentRow = $(this).closest(".row");
-        var employeeCode = parentRow.find('select[name="employee_code"] option:selected').val();
-        var workmanName = parentRow.find('input[name="workman_name"]').val();
-        var designation = parentRow.find('input[name="workman_desig"]').val();
-        var department = parentRow.find('select[name="workman_dept"] option:selected').val();
-        var departmentName = parentRow.find('select[name="workman_dept"] option:selected').text();  // Get department name
-        var natureOfJob = parentRow.find('input[name="nature_of_job"]').val();
+    $(document).ready(function() {
+        const displayedEquipments = new Set();
 
-        var newRow = `
-            <tr>
-                <td><input type="hidden" name="emp_id[]" value="${employeeCode}">${workmanName}</td>
-                <td><input type="hidden" name="workman_name[]" value="${workmanName}">${workmanName}</td>
-                <td><input type="hidden" name="workman_desig[]" value="${designation}">${designation}</td>
-                <td><input type="hidden" name="workman_dept[]" value="${department}">${departmentName}</td>
-                <td><input type="hidden" name="nature_of_job[]" value="${natureOfJob}">${natureOfJob}</td>
-                <td><button class="btn btn-danger btn-sm remove-entry">Remove</button></td>
-            </tr>
-        `;
-        $("#workman-list-entries").append(newRow);
+        $('.work-type-checkbox').on('change', function() {
+            const workId = $(this).data('id');
+            const container = $('#getprotectivechecklist-container');
 
-        // Reset input fields after adding a row
-        parentRow.find('select[name="employee_code"]').val("");
-        parentRow.find('input[name="workman_name"]').val("");
-        parentRow.find('input[name="workman_desig"]').val("");
-        parentRow.find('select[name="workman_dept"]').val("");
-        parentRow.find('input[name="nature_of_job"]').val("");
-    });
+            if ($(this).is(':checked')) {
+                $.ajax({
+                    url: "{{ admin_url('safetypermit/getprotectivechecklist') }}/" + workId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        let checkpointsHtml = '';
 
-    // Remove a workman entry
-    $(document).on("click", ".remove-entry", function() {
-        $(this).closest("tr").remove();
-    });
-});
+                        data.forEach(function(item) {
+                            if (!displayedEquipments.has(item.protective_equip)) {
+                                displayedEquipments.add(item.protective_equip);
+                                checkpointsHtml += `
+                            <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
+                                <input type="checkbox" class="protective-checkbox" name="protective_equip[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                <label for="checkpoint-${workId}-${item.id}">${item.protective_equip}</label>
+                            </div>`;
+                            }
+                        });
 
-
-
-        flatpickr("#date", {
-            // enableTime: true,
-            dateFormat: "d-m-Y",
-            // time_24hr: true,
-            minuteIncrement: 5,
-        });
-
-        flatpickr("#time_from", {
-            enableTime: true,
-            noCalendar: true,
-            time_24hr: true,
-            minuteIncrement: 5,
-            dateFormat: "H:i"
-        });
-
-        flatpickr("#time_to", {
-            enableTime: true,
-            noCalendar: true,
-            time_24hr: true,
-            minuteIncrement: 5,
-            dateFormat: "H:i"
-        });
-    </script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-
-            var firstTh = $('.datatable-list thead th:first');
-            firstTh.removeClass('sorting_asc');
-        });
-
-        $(function() {
-            /* Datatable */
-            var table = $('.datatable-list').DataTable({
-                autoWidth: false,
-                responsive: true,
-                processing: false,
-                serverSide: true,
-                searching: false,
-                ordering: false,
-                lengthChange: false, // Disables "Show entries"
-                // dom: 'Bfrtip',
-                layout: {
-                    top2Start: '',
-                    top2End: {
-                        search: {
-                            placeholder: ''
+                        if (checkpointsHtml) {
+                            container.append(checkpointsHtml);
                         }
                     },
-                    topStart: '',
-                    topEnd: '',
-                    bottomStart: '',
-                    bottomEnd: '',
-                    bottom2Start: 'info',
-                    bottom2End: 'paging'
-                },
-
-                ajax: {
-                    url: "{{ admin_url('uploadlog/list') }}",
-                    type: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
                     },
-                    data: function(d) {}
-                },
-                columns: [{
-                        data: 'DT_RowIndex',
-                        orderable: false,
-                        searchable: false
+                });
+            } else {
+                container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
+            }
+        });
+    });
+    $(document).ready(function() {
+        const displayedEquipments = new Set();
+
+        $('.work-type-checkbox').on('change', function() {
+            const workId = $(this).data('id');
+            const container = $('#getequipmentinvolved-container');
+
+            if ($(this).is(':checked')) {
+                $.ajax({
+                    url: "{{ admin_url('safetypermit/getequipmentinvolved') }}/" + workId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        let checkpointsHtml = '';
+
+                        data.forEach(function(item) {
+                            if (!displayedEquipments.has(item.equip_involve)) {
+                                displayedEquipments.add(item.equip_involve);
+
+                                checkpointsHtml += `
+                            <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
+                                <input type="checkbox" class="" name="equiment_involved[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                <label for="checkpoint-${workId}-${item.id}">${item.equip_involve}</label>
+                            </div>`;
+                            }
+                        });
+
+                        if (checkpointsHtml) {
+                            container.append(checkpointsHtml);
+                        }
                     },
-                    {
-                        data: 'line_no',
-                        name: 'line_no'
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
                     },
-                    {
-                        data: 'error',
-                        name: 'error'
+                });
+            } else {
+                container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
+            }
+        });
+    });
+    $(document).ready(function() {
+        const displayedEquipments = new Set();
+
+        $('.work-type-checkbox').on('change', function() {
+            const workId = $(this).data('id');
+            const container = $('#getprecaution-container');
+
+            if ($(this).is(':checked')) {
+                $.ajax({
+                    url: "{{ admin_url('safetypermit/getprecaution') }}/" + workId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        let checkpointsHtml = '';
+
+                        data.forEach(function(item) {
+                            if (!displayedEquipments.has(item.precaution)) {
+                                displayedEquipments.add(item.precaution);
+
+                                checkpointsHtml += `
+                            <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
+                                <input type="checkbox" class="" name="precaution_taken[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                <label for="checkpoint-${workId}-${item.id}">${item.precaution}</label>
+                            </div>`;
+                            }
+                        });
+
+                        if (checkpointsHtml) {
+                            container.append(checkpointsHtml);
+                        }
                     },
-                ],
-
-                language: {
-                    paginate: {
-                        first: '<i title="{{ __('common.first') }}" class="fa fa-angle-double-left" aria-hidden="true"></i>',
-                        last: '<i title="{{ __('common.last') }}" title="Next" class="fa fa-angle-double-right" aria-hidden="true"></i>',
-                        next: '<i title="{{ __('common.next') }}" class="fa fa-angle-right" aria-hidden="true"></i>',
-                        previous: '<i title="{{ __('common.previous') }}" class="fa fa-angle-left" aria-hidden="true"></i>',
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
                     },
-                    "info": "{{ __('common.dt_info') }}",
-                    "infoEmpty": "{{ __('common.dt_infoEmpty') }}",
-                    "infoFiltered": "{{ __('common.dt_infoFiltered') }}",
-                },
-                aLengthMenu: [
-                    [10, 25, 50, 100],
-                    [10, 25, 50, 100]
-                ],
-                buttons: [{
-                        extend: 'collection',
-                        text: '{{ __('common.export') }}',
-                        buttons: [{
-                            extend: 'excel',
-                            text: '{{ __('common.excel') }}',
-                            action: function(e, dt, button, config) {
-                                var searchValue = $('#datatable-list_filter input').val();
-                                $(".dt-button").removeClass('processing');
-                                $('body').click();
-                                window.location.href =
-                                    "{{ admin_url('uploadlog/export/excel/' . request()->logid) }}" +
-                                    '?search=' + searchValue;
+                });
+            } else {
+                container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        const displayedEquipments = new Set();
+
+        $('.work-type-checkbox').on('change', function() {
+            const workId = $(this).data('id');
+            const container = $('#getchecklist-container');
+
+            if ($(this).is(':checked')) {
+                $.ajax({
+                    url: "{{ admin_url('safetypermit/getchecklist') }}/" + workId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        let checkpointsHtml = '';
+
+                        data.forEach(function(item) {
+                            if (!displayedEquipments.has(item.checklist)) {
+                                displayedEquipments.add(item.checklist);
+
+                                checkpointsHtml += `
+                            <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
+                                <input type="checkbox" class="" name="equipment_checklist[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                <label for="checkpoint-${workId}-${item.id}">${item.checklist}</label>
+                            </div>`;
                             }
-                        }, ]
+                        });
+
+                        if (checkpointsHtml) {
+                            container.append(checkpointsHtml);
+                        }
                     },
-
-                    {
-                        "extend": 'pageLength',
-                        "text": '{{ __('common.show') }} 10 {{ __('common.records') }}'
-                    }
-                ],
-
-            });
-
-            table.on('length.dt', function(e, settings, len) {
-                var text = '{{ __('common.show') }} ' + len + ' {{ __('common.records') }}';
-                $('.buttons-page-length').find('span').text(text);
-            });
-
-            $(document).on('click', '#searchform', function() {
-                table.draw();
-            });
-
-            $(document).on('click', '#resetform', function() {
-                setTimeout(function() {
-                    table.draw();
-                }, 150);
-            });
-
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    },
+                });
+            } else {
+                container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
+            }
         });
+    });
 
-        $(document).ready(function() {
-            const displayedEquipments = new Set();
+    $(document).ready(function() {
+        const displayedEquipments = new Set();
 
-            $('.work-type-checkbox').on('change', function() {
-                const workId = $(this).data('id');
-                const container = $('#getprotectivechecklist-container');
+        $('.work-type-checkbox').on('change', function() {
+            const workId = $(this).data('id');
+            const container = $('#getinstruction-container');
 
-                if ($(this).is(':checked')) {
-                    $.ajax({
-                        url: "{{ admin_url('safetypermit/getprotectivechecklist') }}/" + workId,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            let checkpointsHtml = '';
+            if ($(this).is(':checked')) {
+                $.ajax({
+                    url: "{{ admin_url('safetypermit/getinstruction') }}/" + workId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        let checkpointsHtml = '';
 
-                            data.forEach(function(item) {
-                                if (!displayedEquipments.has(item.protective_equip)) {
-                                    displayedEquipments.add(item.protective_equip);
-                                    checkpointsHtml += `
-                                <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                    <input type="checkbox" class="protective-checkbox" name="protective_equip[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
-                                    <label for="checkpoint-${workId}-${item.id}">${item.protective_equip}</label>
-                                </div>`;
-                                }
-                            });
+                        data.forEach(function(item) {
+                            if (!displayedEquipments.has(item.safe_work)) {
+                                displayedEquipments.add(item.safe_work);
 
-                            if (checkpointsHtml) {
-                                container.append(checkpointsHtml);
+                                checkpointsHtml += `
+                            <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
+                                <input type="checkbox" class="" name="safework_instruction[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                <label for="checkpoint-${workId}-${item.id}">${item.safe_work}</label>
+                            </div>`;
                             }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        },
-                    });
-                } else {
-                    container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
-                }
-            });
+                        });
+
+                        if (checkpointsHtml) {
+                            container.append(checkpointsHtml);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    },
+                });
+            } else {
+                container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
+            }
         });
+    });
 
-        $(document).ready(function() {
-            const displayedEquipments = new Set();
 
-            $('.work-type-checkbox').on('change', function() {
-                const workId = $(this).data('id');
-                const container = $('#getequipmentinvolved-container');
+    $(document).ready(function() {
+        const section1Inputs = $('#section-1 input');
+        const checkboxWithValue8 = $('.work-type-checkbox[data-id="8"]');
 
-                if ($(this).is(':checked')) {
-                    $.ajax({
-                        url: "{{ admin_url('safetypermit/getequipmentinvolved') }}/" + workId,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            let checkpointsHtml = '';
+        section1Inputs.prop('disabled', true);
 
-                            data.forEach(function(item) {
-                                if (!displayedEquipments.has(item.equip_involve)) {
-                                    displayedEquipments.add(item.equip_involve);
+        checkboxWithValue8.on('change', function() {
+            if ($(this).is(':checked')) {
 
-                                    checkpointsHtml += `
-                                <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                    <input type="checkbox" class="" name="equiment_involved[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
-                                    <label for="checkpoint-${workId}-${item.id}">${item.equip_involve}</label>
-                                </div>`;
-                                }
-                            });
+                section1Inputs.prop('disabled', false);
+            } else {
 
-                            if (checkpointsHtml) {
-                                container.append(checkpointsHtml);
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        },
-                    });
-                } else {
-                    container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
-                }
-            });
+                section1Inputs.prop('disabled', true);
+            }
         });
+    });
 
-        $(document).ready(function() {
-            const displayedEquipments = new Set();
+    $(document).ready(function() {
+        const shutdownCheckbox = $('#shutdown-checkbox');
+        const targetInputs = $('.shutdowncheckbox').not('#shutdown-checkbox');
 
-            $('.work-type-checkbox').on('change', function() {
-                const workId = $(this).data('id');
-                const container = $('#getprecaution-container');
 
-                if ($(this).is(':checked')) {
-                    $.ajax({
-                        url: "{{ admin_url('safetypermit/getprecaution') }}/" + workId,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            let checkpointsHtml = '';
+        targetInputs.prop('disabled', true);
 
-                            data.forEach(function(item) {
-                                if (!displayedEquipments.has(item.precaution)) {
-                                    displayedEquipments.add(item.precaution);
 
-                                    checkpointsHtml += `
-                                <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                    <input type="checkbox" class="" name="precaution_taken[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
-                                    <label for="checkpoint-${workId}-${item.id}">${item.precaution}</label>
-                                </div>`;
-                                }
-                            });
+        shutdownCheckbox.on('change', function() {
+            if ($(this).is(':checked')) {
+                targetInputs.prop('disabled', false);
+            } else {
 
-                            if (checkpointsHtml) {
-                                container.append(checkpointsHtml);
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        },
-                    });
-                } else {
-                    container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
-                }
-            });
+                targetInputs.prop('disabled', true);
+            }
         });
+    });
 
-        $(document).ready(function() {
-            const displayedEquipments = new Set();
+    $(document).ready(function() {
+        const lotoCheckbox = $('#loto-checkbox');
+        const targetInputs = $('.lotocheckbox').not('#loto-checkbox');
 
-            $('.work-type-checkbox').on('change', function() {
-                const workId = $(this).data('id');
-                const container = $('#getchecklist-container');
 
-                if ($(this).is(':checked')) {
-                    $.ajax({
-                        url: "{{ admin_url('safetypermit/getchecklist') }}/" + workId,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            let checkpointsHtml = '';
+        targetInputs.prop('disabled', true);
 
-                            data.forEach(function(item) {
-                                if (!displayedEquipments.has(item.checklist)) {
-                                    displayedEquipments.add(item.checklist);
 
-                                    checkpointsHtml += `
-                                <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                    <input type="checkbox" class="" name="equipment_checklist[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
-                                    <label for="checkpoint-${workId}-${item.id}">${item.checklist}</label>
-                                </div>`;
-                                }
-                            });
+        lotoCheckbox.on('change', function() {
+            if ($(this).is(':checked')) {
+                targetInputs.prop('disabled', false);
+            } else {
 
-                            if (checkpointsHtml) {
-                                container.append(checkpointsHtml);
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        },
-                    });
-                } else {
-                    container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
-                }
-            });
+                targetInputs.prop('disabled', true);
+            }
         });
-
-        $(document).ready(function() {
-            const displayedEquipments = new Set();
-
-            $('.work-type-checkbox').on('change', function() {
-                const workId = $(this).data('id');
-                const container = $('#getinstruction-container');
-
-                if ($(this).is(':checked')) {
-                    $.ajax({
-                        url: "{{ admin_url('safetypermit/getinstruction') }}/" + workId,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            let checkpointsHtml = '';
-
-                            data.forEach(function(item) {
-                                if (!displayedEquipments.has(item.safe_work)) {
-                                    displayedEquipments.add(item.safe_work);
-
-                                    checkpointsHtml += `
-                                <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                    <input type="checkbox" class="" name="safework_instruction[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
-                                    <label for="checkpoint-${workId}-${item.id}">${item.safe_work}</label>
-                                </div>`;
-                                }
-                            });
-
-                            if (checkpointsHtml) {
-                                container.append(checkpointsHtml);
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        },
-                    });
-                } else {
-                    container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
-                }
-            });
-        });
-
-        $(document).ready(function() {
-            const section1Inputs = $('#section-1 input');
-            const checkboxWithValue8 = $('.work-type-checkbox[data-id="8"]');
-
-            section1Inputs.prop('disabled', true);
-
-            checkboxWithValue8.on('change', function() {
-                if ($(this).is(':checked')) {
-                    section1Inputs.prop('disabled', false);
-                } else {
-                    section1Inputs.prop('disabled', true);
-                }
-            });
-        });
-
-
-        $(document).ready(function() {
-            const shutdownCheckbox = $('#shutdown-checkbox');
-            const targetInputs = $('.shutdowncheckbox').not('#shutdown-checkbox');
-
-
-            targetInputs.prop('disabled', true);
-
-
-            shutdownCheckbox.on('change', function() {
-                if ($(this).is(':checked')) {
-                    targetInputs.prop('disabled', false);
-                } else {
-
-                    targetInputs.prop('disabled', true);
-                }
-            });
-        });
-
-        $(document).ready(function() {
-            const lotoCheckbox = $('#loto-checkbox');
-            const targetInputs = $('.lotocheckbox').not('#loto-checkbox');
-
-
-            targetInputs.prop('disabled', true);
-
-
-            lotoCheckbox.on('change', function() {
-                if ($(this).is(':checked')) {
-                    targetInputs.prop('disabled', false);
-                } else {
-
-                    targetInputs.prop('disabled', true);
-                }
-            });
-        });
-    </script>
+    });
+</script>
 @endpush
