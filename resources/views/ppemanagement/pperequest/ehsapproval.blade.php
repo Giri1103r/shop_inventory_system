@@ -111,7 +111,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @if (!$userdata)
+                                            @if ($userdata->isEmpty())
                                                 <tr>
                                                     <td class="text-center" colspan="6">No data is available</td>
                                                 </tr>
@@ -123,19 +123,26 @@
                                                         <td>{{ displaydateformat($data->created_at) }}</td>
                                                         <td>
                                                             @if ($data->approve_status == STATUS_HOD_APPROVAL_PENDING)
-                                                                <span class='badge bg-info' style='font-size: 1.0em;'>HOD Approval Pending</span>
+                                                                <span class='badge bg-info' style='font-size: 1.0em;'>HOD
+                                                                    Approval Pending</span>
                                                             @elseif ($data->approve_status == STATUS_HOD_APPROVED)
-                                                                <span class='badge bg-success' style='font-size: 1.0em;'>HOD Approved</span>
+                                                                <span class='badge bg-success' style='font-size: 1.0em;'>HOD
+                                                                    Approved</span>
                                                             @elseif ($data->approve_status == STATUS_USER_APPLIED)
-                                                                <span class='badge bg-primary' style='font-size: 1.0em;'>User Applied</span>
+                                                                <span class='badge bg-primary'
+                                                                    style='font-size: 1.0em;'>User Applied</span>
                                                             @elseif ($data->approve_status == STATUS_HOD_REJECTED)
-                                                                <span class='badge bg-danger' style='font-size: 1.0em;'>HOD Rejected</span>
+                                                                <span class='badge bg-danger' style='font-size: 1.0em;'>HOD
+                                                                    Rejected</span>
                                                             @elseif ($data->approve_status == STATUS_EHS_APPROVAL_PENDING)
-                                                                <span class='badge bg-info' style='font-size: 1.0em;'>EHS Officer Approval Pending</span>
+                                                                <span class='badge bg-info' style='font-size: 1.0em;'>EHS
+                                                                    Officer Approval Pending</span>
                                                             @elseif ($data->approve_status == STATUS_EHS_APPROVED)
-                                                                <span class='badge bg-success' style='font-size: 1.0em;'>EHS Officer Approved</span>
+                                                                <span class='badge bg-success' style='font-size: 1.0em;'>EHS
+                                                                    Officer Approved</span>
                                                             @elseif ($data->approve_status == STATUS_EHS_REJECTED)
-                                                                <span class='badge bg-danger' style='font-size: 1.0em;'>EHS Officer Rejected</span>
+                                                                <span class='badge bg-danger' style='font-size: 1.0em;'>EHS
+                                                                    Officer Rejected</span>
                                                             @endif
                                                         </td>
                                                         {{-- <td>{{ removeUnderScore(getStatus($data['ehs_approve_status'])) }} --}}
@@ -162,7 +169,8 @@
                                         <div class="">
                                             <div class="mb-3 row">
                                                 <div class="col-md-4 mb-3">
-                                                    <label for="approver_name" class="form-label require">Approver Name</label>
+                                                    <label for="approver_name" class="form-label require">Approver
+                                                        Name</label>
                                                     <input type="text" class="form-control form-control-sm"
                                                         id="approver_name" readonly value="{{ Auth::user()->name }}">
                                                 </div>
