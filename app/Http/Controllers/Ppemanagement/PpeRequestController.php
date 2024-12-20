@@ -381,13 +381,11 @@ class PpeRequestController extends Controller
     public function storehodapproval(Request $request)
     {
         $rules = [
-            'remarks' => 'required|min:3|max:255|regex:/^[a-zA-Z].*/',
+            'remarks' => 'required',
         ];
         $messages = [
             'remarks.required' => 'Remarks Field is Mandatory',
-            'remarks.min' => 'Minimum 3 characters are required',
-            'remarks.max' => 'Maximum limit is 255 characters',
-            'remarks.regex' => 'First character should be an alphabet',
+
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -550,13 +548,11 @@ class PpeRequestController extends Controller
     public function storeehsapproval(Request $request)
     {
         $rules = [
-            'remarks' => 'required|min:3|max:255|regex:/^[a-zA-Z].*/',
+            'remarks' => 'required',
         ];
         $messages = [
             'remarks.required' => 'Remarks Field is Mandatory',
-            'remarks.min' => 'Minimum 3 characters are required',
-            'remarks.max' => 'Maximum limit is 255 characters',
-            'remarks.regex' => 'First character should be an alphabet',
+           
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
