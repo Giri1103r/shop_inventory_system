@@ -238,7 +238,7 @@
                         <th>Employee Name</th>
                         <th>Employee Id</th>
                         <th>Previous applied Date</th>
-                        <th>Approval</th>
+                        <th>Approval Status</th>
                         <th>Remarks</th>
                     </tr>
                 </thead>

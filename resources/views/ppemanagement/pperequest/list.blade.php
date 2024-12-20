@@ -4,10 +4,10 @@
 @section('content')
     @push('style')
         <style>
-          .table-responsive{
-            overflow-x: auto;
-            width: 100%
-          }
+            .table-responsive {
+                overflow-x: auto;
+                width: 100%
+            }
         </style>
     @endpush
     <div class="container-fluid">
@@ -92,7 +92,7 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table id="datatable-list"
-                                class="table primary-table-bordered table-bordered table-striped display responsive nowrap w-100 mt-2 datatable-list">
+                                class="table primary-table-bordered table-bordered table-striped  nowrap w-100 mt-2 datatable-list">
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
@@ -120,17 +120,17 @@
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
-            // Reset form
+
             $('#resetform').on('click', function(e) {
                 e.preventDefault();
                 location.reload();
             });
 
-            // Remove sorting class from first table header
+
             var firstTh = $('.datatable-list thead th:first');
             firstTh.removeClass('sorting_asc');
 
-            // Initialize flatpickr for date pickers
+
             var fromDatepicker = flatpickr("#from_date", {
                 dateFormat: "d-m-Y",
                 onChange: function(selectedDates) {
@@ -149,12 +149,15 @@
 
             // Initialize DataTable
             var table = $('.datatable-list').DataTable({
-                autoWidth: false,
-                responsive: true,
-                processing: false,
+
+
                 serverSide: true,
                 searching: true,
                 ordering: true,
+                bSort: true,
+                scrollX: true,
+                autoWidth: true,
+                responsive: false,
                 dom: 'Bfrtip',
                 layout: {
                     top2Start: 'buttons',
@@ -298,7 +301,6 @@
                         text: '{{ __('common.show') }} 10 {{ __('common.records') }}'
                     }
                 ],
-                scrollX: true // Enable horizontal scrolling
             });
 
 
