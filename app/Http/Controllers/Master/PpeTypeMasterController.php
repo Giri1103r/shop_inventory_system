@@ -362,7 +362,7 @@ class PpeTypeMasterController extends Controller
             ini_set("pcre.backtrack_limit", "5000000");
 
             $allData = $this->ppetypemaster->exportdata();
-
+            
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
