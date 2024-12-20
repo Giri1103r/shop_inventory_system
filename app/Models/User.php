@@ -138,19 +138,21 @@ class User extends Authenticatable
                 $this->updateErrorStatus($item['emp_id'], $errorMessage);
                 continue; // Skip this record
             }
-            if ($item['user_role']) {
-                $decryptedRoleIds = array_map(function ($encryptedId) {
-                    return $encryptedId;
-                }, $item['user_role']);
+            // $commaSeparatedRoles = null;
+            // if (isset($item['user_role']) && is_array($item['user_role'])) {
+            //     $decryptedRoleIds = array_map(function ($encryptedId) {
+            //         return $encryptedId;
+            //     }, $item['user_role']);
     
-                $commaSeparatedRoles = implode(',', $decryptedRoleIds);
-            }
+            //     $commaSeparatedRoles = implode(',', $decryptedRoleIds);
+            // }
+    
             $userData = [
                 'name' => $item['emp_name'],
                 'first_name' => $item['emp_name'],
                 'last_name' => '',
                 'email' => $item['email'],
-                'role' => $commaSeparatedRoles,
+                'role' => $item['user_role'],
                 'user_type' => 1,
                 'employee_id' => $item['emp_id'],
                 'username' => $item['emp_id'],

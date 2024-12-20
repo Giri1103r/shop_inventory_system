@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\DB;
 
 use Carbon\Carbon;
 use App\Models\Master\Worktemp;
@@ -501,17 +501,27 @@ class CronController extends Controller
 
                 $employee = $this->employee->store($emp_temp);
                 $users = $this->user->store($employee);
+                foreach ($users as $user) {
+                    // if (!empty($user) && isset($user->email)) {
+                    //     $empdetails = $this->employee->selectOne($user->employee_id);
+                    //     if (!empty($empdetails)) {
 
-                // foreach ($users as $user) {
-                //     if (!empty($user) && isset($user->email)) {
-                //         $empdetails = $this->employee->selectOne($user->employee_id);
-                //         if (!empty($empdetails)) {
+                    //         $emp = $empdetails->toArray();
+                    //         Mail::to($user->email)->queue(new EmployeeRegisterEmail($emp));
+                    //     }
+                    // }
+                    if (!empty($user) && isset($user['employee_id'])) {
+                        $userID = DB::table('users')
+                            ->select('id')
+                            ->where('employee_id', $user['employee_id'])
+                            ->first();
 
-                //             $emp = $empdetails->toArray();
-                //             Mail::to($user->email)->queue(new EmployeeRegisterEmail($emp));
-                //         }
-                //     }
-                // }
+                        if ($userID && isset($userID->id)) {
+                            $this->employee->updateUserId($user['employee_id'], $userID->id);
+                        }
+                    }
+                }
+
 
                 if (empty($employee)) {
                     $this->emp_temp->updateAllErrorStatus();
@@ -567,7 +577,7 @@ class CronController extends Controller
 
                 if (!empty($data)) {
                     $work = $this->ppestock->store($data);
-                    Session::flash('sucess','Your data has been created Sucessfully');
+                    Session::flash('sucess', 'Your data has been created Sucessfully');
                     return redirect('ppe_stock_inventory/list');
                 } else {
                     return response()->json(['message' => 'No data found in API response.']);

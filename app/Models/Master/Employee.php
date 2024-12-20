@@ -130,7 +130,7 @@ class Employee extends Model
         $insertArray = [];
         foreach ($emptemp as $item) {
 
-            $emailExists = $this->where('email', $item->email)->where('emp_id','!=', $item->emp_id)->exists();
+            $emailExists = $this->where('email', $item->email)->where('emp_id', '!=', $item->emp_id)->exists();
 
             if ($emailExists) {
                 $errorMessage = "Email already exists.";
@@ -224,7 +224,6 @@ class Employee extends Model
         $this->where('id', $id)->update($update_array);
 
         return $this->find($id);
-
     }
 
     public function updateErrorStatus($emp_id, $errorMessage)
@@ -235,6 +234,14 @@ class Employee extends Model
         ];
 
         return EmployeeTemp::where('emp_id', $emp_id)->update($update_data);
+    }
+    public function updateUserId($emp_id, $login_id)
+    {
+        $update_data = [
+            'login_id' => $login_id,
+        ];
+
+        return $this->where('emp_id', $emp_id)->update($update_data);
     }
 
     public function statuschange($id)
@@ -353,9 +360,10 @@ class Employee extends Model
         return $list;
     }
 
-   
 
-    public function getEmployeefulldata(){
+
+    public function getEmployeefulldata()
+    {
         return Employee::all();
     }
     protected static function booted()
