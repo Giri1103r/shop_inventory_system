@@ -510,9 +510,9 @@ class TrainingScheduleController extends Controller
                 $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
                 $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
                 $employeeList = Employee::select('id', 'emp_id', 'emp_name', 'email', 'department', 'employee_status')
-                    ->where('id', '!=', $training_schedule->trainer_id) 
+                    ->where('id', '!=', $training_schedule->trainer_id)
                     ->where('user_role', '!=', 1)
-                    ->where('status', 1) 
+                    ->where('status', 1)
                     ->get();
                 $nominationProcessList = $this->nomination_process->getNomination($training_schedule->id);
 
@@ -722,6 +722,10 @@ class TrainingScheduleController extends Controller
 
             $allData = $this->training_schedule->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 'From Date',
@@ -787,6 +791,12 @@ class TrainingScheduleController extends Controller
         try {
 
             $allData = $this->training_schedule->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+
             $header = [
                 __("common.sno"),
                 'From Date',

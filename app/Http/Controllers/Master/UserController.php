@@ -507,6 +507,10 @@ class UserController extends Controller
 
             $allData = $this->user->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             // dd($allData);
 
             $header = [
@@ -553,6 +557,10 @@ class UserController extends Controller
         try {
 
             $allData = $this->user->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
 
             $header = [
                 __("common.sno"),

@@ -330,6 +330,10 @@ class TopicController extends Controller
 
             $allData = $this->topic->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 'Topic ID',
@@ -372,6 +376,10 @@ class TopicController extends Controller
         try {
 
             $allData = $this->topic->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
 
             $header = [
                 __("common.sno"),

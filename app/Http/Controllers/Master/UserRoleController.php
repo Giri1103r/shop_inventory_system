@@ -256,6 +256,10 @@ class UserRoleController extends Controller
 
             $allData = $this->user_role->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 'No.',
                 'User Role ID',
@@ -275,7 +279,7 @@ class UserRoleController extends Controller
                 if ($data->id != 1) {
                     $export['User Role Status'] = $data->status == 1 ? 'Active' : 'In-Active';
                 } else {
-                    $export['User Role Status'] = '-'; 
+                    $export['User Role Status'] = '-';
                 }
                 $export['Created User'] =  getusername($data->created_by);
                 $export['Created Date'] =  Displaydateformat($data->created_at);
@@ -302,6 +306,10 @@ class UserRoleController extends Controller
         try {
 
             $allData = $this->user_role->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
 
             $header = [
                 'No.',

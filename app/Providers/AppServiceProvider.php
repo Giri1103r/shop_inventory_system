@@ -97,6 +97,9 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_PLANT_HEAD_APPROVED') or define('STATUS_PLANT_HEAD_APPROVED', 7);
         defined('STATUS_EHS_RESUME') or define('STATUS_EHS_RESUME', 8);
         defined('STATUS_PERMIT_EXPIRED') or define('STATUS_PERMIT_EXPIRED', 9);
+        defined('STATUS_PERMIT_EXTENDED') or define('STATUS_PERMIT_EXTENDED', 10);
+        defined('STATUS_PERMIT_EXTENDED_APPROVAL') or define('STATUS_PERMIT_EXTENDED_APPROVAL', 11);
+        defined('STATUS_PERMIT_EXTENDED_REJECTED') or define('STATUS_PERMIT_EXTENDED_REJECTED', 12);
 
 
 

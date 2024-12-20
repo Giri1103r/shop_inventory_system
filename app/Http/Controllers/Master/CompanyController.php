@@ -440,6 +440,10 @@ class CompanyController extends Controller
 
             $allData = $this->company->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 'Company ID',
@@ -486,6 +490,10 @@ class CompanyController extends Controller
         try {
 
             $allData = $this->company->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
 
             $header = [
                 __("common.sno"),

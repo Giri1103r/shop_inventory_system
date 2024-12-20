@@ -278,12 +278,12 @@ class PpeRequestController extends Controller
                 Session::flash('success', __('Your data has been created successfully!'));
                 return redirect(admin_url('ppe_request/list'));
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
                 return redirect(admin_url('ppe_request/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }
@@ -381,13 +381,11 @@ class PpeRequestController extends Controller
     public function storehodapproval(Request $request)
     {
         $rules = [
-            'remarks' => 'required|min:3|max:255|regex:/^[a-zA-Z].*/',
+            'remarks' => 'required',
         ];
         $messages = [
             'remarks.required' => 'Remarks Field is Mandatory',
-            'remarks.min' => 'Minimum 3 characters are required',
-            'remarks.max' => 'Maximum limit is 255 characters',
-            'remarks.regex' => 'First character should be an alphabet',
+
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -401,18 +399,18 @@ class PpeRequestController extends Controller
         $action = $request->input('action');
         if ($action == 'approve') {
             $approveStatus = STATUS_EHS_APPROVAL_PENDING;
-            $status = 1; // Approved status
+            $status = 1;
         } else {
             $approveStatus = STATUS_HOD_REJECTED;
-            $status = 0; // Rejected status
+            $status = 0;
         }
 
         if ($action == 'approve') {
             $approveDStatus = STATUS_HOD_APPROVED;
-            $status = 1; // Approved status
+            $status = 1;
         } else {
             $approveDStatus = STATUS_HOD_REJECTED;
-            $status = 0; // Rejected status
+            $status = 0;
         }
 
 
@@ -550,13 +548,11 @@ class PpeRequestController extends Controller
     public function storeehsapproval(Request $request)
     {
         $rules = [
-            'remarks' => 'required|min:3|max:255|regex:/^[a-zA-Z].*/',
+            'remarks' => 'required',
         ];
         $messages = [
             'remarks.required' => 'Remarks Field is Mandatory',
-            'remarks.min' => 'Minimum 3 characters are required',
-            'remarks.max' => 'Maximum limit is 255 characters',
-            'remarks.regex' => 'First character should be an alphabet',
+           
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);

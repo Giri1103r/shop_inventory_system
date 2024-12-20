@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Permit Add')
+@section('title', 'Safety Permit Edit')
 @section('pageurl', admin_url('safetypermit/list'))
 
 
@@ -37,7 +37,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Date</label>
                                                     <input type="text" name="date" id="date" class="form-control"
-                                                        value = "{{ todayDate() }}">
+                                                        value = "{{ $safetypermit->date }}">
                                                 </div>
                                             </div>
 
@@ -45,7 +45,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Time(From)</label>
                                                     <input type="text" name="time_from" id="time_from"
-                                                        class="form-control" placeholder="Time(From)">
+                                                        class="form-control" placeholder="Time(From)"
+                                                        value="{{ $safetypermit->time_from }}">
                                                 </div>
                                             </div>
 
@@ -54,7 +55,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Time(To)</label>
                                                     <input type="text" name="time_to" id="time_to" class="form-control"
-                                                        placeholder="Time(To)">
+                                                        placeholder="Time(To)" value="{{ $safetypermit->time_to }}">
                                                 </div>
                                             </div>
 
@@ -66,8 +67,9 @@
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Unit</option>
                                                         @foreach ($unitList as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}">
-                                                                {{ $unit->unit_name }}</option>
+                                                            <option value="{{ encryptId($unit->id) }}"
+                                                                @if ($unit->id == $safetypermit->unit_id) selected @endif>
+                                                                {{ $unit->unit_name }}
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -77,7 +79,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Exact location of job</label>
                                                     <input type="text" name="exact_location_job" id="exact_location_job"
-                                                        class="form-control" placeholder="Exact location of job">
+                                                        class="form-control" placeholder="Exact location of job"
+                                                        value="{{ $safetypermit->exact_location_job }}">
                                                 </div>
                                             </div>
 
@@ -86,7 +89,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Job Location & Area</label>
                                                     <input type="text" name="job_location_area" id="job_location_area"
-                                                        class="form-control" placeholder="Job Location & Area">
+                                                        class="form-control" placeholder="Job Location & Area"
+                                                        value="{{ $safetypermit->job_location_area }}">
                                                 </div>
                                             </div>
 
@@ -94,7 +98,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Work Permit No</label>
                                                     <input type="text" name="permit_id" id="permit_id"
-                                                        class="form-control" value = "{{ getsequence('safetypermit') }}">
+                                                        class="form-control" value="{{ $safetypermit->permit_id }}">
                                                 </div>
                                             </div>
                                         </div>
@@ -106,13 +110,19 @@
                                             <div class="col-12">
                                                 <div class="card p-3 rounded m-3">
                                                     <div class="row g-3">
+                                                        @php
+
+                                                            $subPermitArray = explode(',', $safetypermit->sub_permit);
+                                                        @endphp
+
                                                         @foreach ($typeofwork as $work)
                                                             <div class="col-12 col-md-4 d-flex align-items-center gap-2">
                                                                 <input type="hidden" name=""
                                                                     value="{{ $work->id }}">
                                                                 <input type="checkbox" class="work-type-checkbox"
                                                                     data-id="{{ $work->id }}" name="sub_permit[]"
-                                                                    value="{{ $work->id }}">
+                                                                    value="{{ $work->id }}"
+                                                                    @if (in_array($work->id, $subPermitArray)) checked @endif>
                                                                 <a href="{{ asset($work->file_path) }}" target="_blank">
                                                                     <img src="{{ asset($work->file_path) }}" alt="Image"
                                                                         class="img-fluid"
@@ -121,6 +131,7 @@
                                                                 <span>{{ $work->work_name }}</span>
                                                             </div>
                                                         @endforeach
+
 
                                                     </div>
                                                 </div>
@@ -131,7 +142,7 @@
                                             <div class="col-12">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Job Description</label>
-                                                    <textarea name="job_description" class="form-control" placeholder="Job Description"></textarea>
+                                                    <textarea name="job_description" class="form-control" placeholder="Job Description">{{ $safetypermit->job_description }}</textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -144,9 +155,9 @@
                                                     <label class="form-label mb-0">Shut Down Required (Yes/No)</label>
                                                     <input type="checkbox" id="shutdown-checkbox"
                                                         class="validate-radio-required" name="shutdown_req"
-                                                        value="1">
+                                                        value="1"
+                                                        {{ $safetypermit->shutdown_req == 1 ? 'checked' : '' }}>
                                                 </div>
-
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
@@ -154,13 +165,15 @@
                                                         class="img-fluid" style="width: 50px; height: 50px;">
                                                     <label class="form-label mb-0">Taken By (Name & Department)</label>
                                                     <select name="shut_down_takenby" id="employeenameshutdown"
-                                                        class="form-control shutdowncheckbox" disabled>
-                                                        <option value="">Select Person</option>
+                                                        class="form-control shutdowncheckbox"
+                                                        {{ $safetypermit->shutdown_req == 1 ? '' : 'disabled' }}>
+                                                        <option value="">{{ $safetypermit->shut_down_takenby }}
+                                                        </option>
                                                     </select>
                                                 </div>
                                             </div>
-
                                         </div>
+
 
                                         <div class="row border p-3 mx-1">
                                             <div class="col-12 col-md-6 mb-3">
@@ -170,7 +183,8 @@
                                                     <label class="form-label mb-0 ">Isolation/LOTO Required
                                                         (Yes/No)</label>
                                                     <input type="checkbox" id="loto-checkbox"
-                                                        class="validate-radio-required" name= "loto_req">
+                                                        class="validate-radio-required" name= "loto_req"
+                                                        {{ $safetypermit->loto_req == 1 ? 'checked' : '' }}>
                                                 </div>
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
@@ -183,8 +197,9 @@
                                                         placeholder="Search by Employee Name" disabled> --}}
 
                                                     <select name="loto_takenby" id="employeenameloto"
-                                                        class="form-control lotocheckbox" disabled>
-                                                        <option value="">Select Person</option>
+                                                        class="form-control lotocheckbox"
+                                                        {{ $safetypermit->loto_req == 1 ? '' : 'disabled' }}>
+                                                        <option value="">{{ $safetypermit->loto_takenby }}</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -195,18 +210,22 @@
                                                 <div class="form-group d-flex align-items-center gap-3">
                                                     <label class="form-label mb-0">Loto No</label>
                                                     <input type="text" name="loto_no"
-                                                        class="form-control lotocheckbox" placeholder="Loto No" disabled>
+                                                        class="form-control lotocheckbox" placeholder="Loto No"
+                                                        value="{{ $safetypermit->tagfield == 1 ? $safetypermit->loto_no : '' }}"
+                                                        {{ $safetypermit->tagfield == 1 ? '' : 'disabled' }}>
                                                 </div>
                                             </div>
                                             <div class="col-12 col-md-8 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
-                                                    <label class="form-label mb-0 ">Tag Field properly (Yes/No)</label>
+                                                    <label class="form-label mb-0">Tag Field properly (Yes/No)</label>
                                                     <input type="checkbox"
                                                         class="validate-radio-required shutdowncheckbox" name="tagfield"
-                                                        disabled>
+                                                        value="1"
+                                                        {{ $safetypermit->tagfield == 1 ? 'checked' : '' }}>
                                                 </div>
                                             </div>
                                         </div>
+
 
                                         <div class="row col-md-12 d-flex mt-3">
                                             <!-- Left Side: Scrollable on X-Axis -->
@@ -225,7 +244,9 @@
                                                                 <label class="form-label mb-0">Air</label>
                                                                 <input type="checkbox"
                                                                     class="validate-radio-required shutdowncheckbox"
-                                                                    name="state_isolation_loto[]" value="Air" disabled>
+                                                                    name="state_isolation_loto[]" value="Air"
+                                                                    {{ in_array('Air', $stateIsolationLoto ?? []) ? 'checked' : '' }}
+                                                                    disabled>
                                                             </div>
                                                         </div>
                                                         <div class="d-inline-block"
@@ -236,7 +257,9 @@
                                                                 <label class="form-label mb-0">Gas</label>
                                                                 <input type="checkbox"
                                                                     class="validate-radio-required shutdowncheckbox"
-                                                                    name="state_isolation_loto[]" value="Gas" disabled>
+                                                                    name="state_isolation_loto[]" value="Gas"
+                                                                    {{ in_array('Gas', $stateIsolationLoto ?? []) ? 'checked' : '' }}
+                                                                    disabled>
                                                             </div>
                                                         </div>
                                                         <div class="d-inline-block"
@@ -260,6 +283,7 @@
                                                                 <input type="checkbox"
                                                                     class="validate-radio-required shutdowncheckbox"
                                                                     name="state_isolation_loto[]" value="Electrical"
+                                                                    {{ in_array('Electrical', $stateIsolationLoto ?? []) ? 'checked' : '' }}
                                                                     disabled>
                                                             </div>
                                                         </div>
@@ -272,13 +296,14 @@
                                                                 <input type="checkbox"
                                                                     class="validate-radio-required shutdowncheckbox"
                                                                     name="state_isolation_loto[]" value="Water/Liquid"
+                                                                    {{ in_array('Water/Liquid', $stateIsolationLoto ?? []) ? 'checked' : '' }}
                                                                     disabled>
                                                             </div>
                                                         </div>
                                                         <div class="d-inline-block"
                                                             style="margin-left: -200px; padding: 0; flex-shrink: 0;">
                                                             <div class="form-group d-flex align-items-center gap-1">
-                                                                <textarea class="form-control shutdowncheckbox" name="state_isolation_loto[]" placeholder="Specify others" disabled></textarea>
+                                                                <textarea class="form-control shutdowncheckbox" name="state_isolation_loto[]" placeholder="Specify others" disabled>{{ $stateIsolationLoto['other'] ?? '' }}</textarea>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -292,21 +317,33 @@
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">O2%</label>
-                                                            <input type="text" name="confined_space_entry[o2_percentage]" class="form-control" placeholder="" disabled>
+                                                            <input type="text"
+                                                                name="confined_space_entry[o2_percentage]"
+                                                                class="form-control"
+                                                                value="{{ $confinedSpaceEntry['o2_percentage'] ?? '' }}"
+                                                                disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">System Isolated</label>
-                                                            <input type="hidden" name="confined_space_entry[system_isolated]" value="0">
-                                                            <input type="checkbox" class="validate-radio-required" name="confined_space_entry[system_isolated]" value="1">
+                                                            <input type="hidden"
+                                                                name="confined_space_entry[system_isolated]"
+                                                                value="0">
+                                                            <input type="checkbox" class="validate-radio-required"
+                                                                name="confined_space_entry[system_isolated]"
+                                                                value="1"
+                                                                {{ $confinedSpaceEntry['system_isolated'] ?? '' == 1 ? 'checked' : '' }}>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">Rescue System Available</label>
-                                                            <input type="hidden" name="confined_space_entry[rescue_system]" value="0">
-                                                            <input type="checkbox" class="validate-radio-required" name="confined_space_entry[rescue_system]" value="1">
+                                                            <input type="hidden"
+                                                                name="confined_space_entry[rescue_system]" value="0">
+                                                            <input type="checkbox" class="validate-radio-required"
+                                                                name="confined_space_entry[rescue_system]" value="1"
+                                                                {{ $confinedSpaceEntry['rescue_system'] ?? '' == 1 ? 'checked' : '' }}>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -315,20 +352,32 @@
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">Confined Space Attendant</label>
-                                                            <input type="hidden" name="confined_space_entry[confined_attendant]" value="0">
-                                                            <input type="checkbox" class="validate-radio-required" name="confined_space_entry[confined_attendant]" value="1">
+                                                            <input type="hidden"
+                                                                name="confined_space_entry[confined_attendant]"
+                                                                value="0">
+                                                            <input type="checkbox" class="validate-radio-required"
+                                                                name="confined_space_entry[confined_attendant]"
+                                                                value="1"
+                                                                {{ $confinedSpaceEntry['confined_attendant'] ?? '' == 1 ? 'checked' : '' }}>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">Attendant Name</label>
-                                                            <input type="text" name="confined_space_entry[attendant_name]" class="form-control" placeholder="Search by Employee Name" disabled>
+                                                            <input type="text"
+                                                                name="confined_space_entry[attendant_name]"
+                                                                class="form-control" placeholder="Search by Employee Name"
+                                                                value="{{ $confinedSpaceEntry['attendant_name'] ?? '' }}"
+                                                                disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">Register for entry & exits</label>
-                                                            <input type="checkbox" class="validate-radio-required" name="confined_space_entry[register_entry_exits]" disabled>
+                                                            <input type="checkbox" class="validate-radio-required"
+                                                                name="confined_space_entry[register_entry_exits]"
+                                                                {{ $confinedSpaceEntry['register_entry_exits'] ?? '' == 1 ? 'checked' : '' }}
+                                                                disabled>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -337,25 +386,38 @@
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">Any Other Gas / PPM</label>
-                                                            <input type="text" name="confined_space_entry[other_gas]" class="form-control" placeholder="Loto No" disabled>
+                                                            <input type="text" name="confined_space_entry[other_gas]"
+                                                                class="form-control" placeholder="Loto No"
+                                                                value="{{ $confinedSpaceEntry['other_gas'] ?? '' }}"
+                                                                disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
-                                                            <label class="form-label">PPM and is therefore safe to enter from</label>
-                                                            <input type="text" name="confined_space_entry[ppm_safe_to_enter]" class="form-control" placeholder="" disabled>
+                                                            <label class="form-label">PPM and is therefore safe to enter
+                                                                from</label>
+                                                            <input type="date"
+                                                                name="confined_space_entry[ppm_entry_date]"
+                                                                class="form-control"
+                                                                value="{{ $confinedSpaceEntry['ppm_entry_date'] ?? '' }}"
+                                                                disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
-                                                            <label class="form-label">To</label>
-                                                            <input type="text" name="confined_space_entry[to]" class="form-control" placeholder="" disabled>
+                                                            <label class="form-label">PPM and is therefore safe to enter
+                                                                to</label>
+                                                            <input type="date"
+                                                                name="confined_space_entry[ppm_entry_to]"
+                                                                class="form-control"
+                                                                value="{{ $confinedSpaceEntry['ppm_entry_to'] ?? '' }}"
+                                                                disabled>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-
                                         </div>
+
 
                                         <p class="fw-bold fs-5 mt-3">Protective Equipment's to be Worn (<i
                                                 class="fas fa-check text-primary"></i>)
@@ -403,15 +465,6 @@
                                                     </div>
 
                                                     <div id="getprotectivechecklist-container" class="row g-3 mt-3">
-                                                        {{-- @foreach ($getprotectiveequipment as $getprotectiveequipment)
-                                                            <div
-                                                                class="col-12 col-md-6 col-lg-4 d-flex align-items-center gap-2">
-                                                                <input type="checkbox" id="select-all"
-                                                                    class="validate-radio-required">
-                                                                <label>{{ $getprotectiveequipment->protective_equip }}</label>
-                                                            </div>
-                                                        @endforeach --}}
-
 
                                                     </div>
                                                 </div>
@@ -479,14 +532,7 @@
                                                         <div class="col-md-5">
                                                             {{-- <div class="row row-cols-2 g-3"> --}}
                                                             <div id="getequipmentinvolved-container" class="row g-3 mt-3">
-                                                                {{-- @foreach ($getequipmentinvolved as $getequipmentinvolved)
-                                                                    <div  class="col-12 col-md-6 col-lg-4 d-flex align-items-center gap-2">
-                                                                        <input type="checkbox" id="select-all"
-                                                                            class="form-check-input">
-                                                                        <label for="select-all"
-                                                                            class="form-check-label">{{ $getequipmentinvolved->equip_involve }}</label>
-                                                                    </div>
-                                                                @endforeach --}}
+
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3">
@@ -508,14 +554,7 @@
 
                                                 <div class="card p-3  rounded m-2">
                                                     <div id="getprecaution-container" class="row g-3 mt-3">
-                                                        {{-- @foreach ($getprecaution as $getprecaution)
-                                                            <div class="col-12 col-md-12 d-flex align-items-center gap-2">
-                                                                <input type="checkbox" id="select-all"
-                                                                    class="validate-radio-required">
 
-                                                                <label>{{ $getprecaution->precaution }}</label>
-                                                            </div>
-                                                        @endforeach --}}
                                                     </div>
                                                 </div>
                                             </div>
@@ -529,14 +568,7 @@
 
                                                 <div class="card p-3 rounded m-2">
                                                     <div id="getchecklist-container" class="row g-3 mt-3">
-                                                        {{-- @foreach ($getchecklist as $getchecklist)
-                                                            <div class="col-12 col-md-12 d-flex align-items-center gap-2">
-                                                                <input type="checkbox" id="select-all"
-                                                                    class="validate-radio-required">
 
-                                                                <label>{{ $getchecklist->checklist }}</label>
-                                                            </div>
-                                                        @endforeach --}}
                                                     </div>
                                                 </div>
                                             </div>
@@ -563,14 +595,7 @@
                                             <div class="col-12 p-2">
                                                 <div class="card p-3  rounded m-2">
                                                     <div id="getinstruction-container" class="row g-3 mt-3">
-                                                        {{-- @foreach ($getinstruction as $getinstruction)
-                                                            <div class="col-12 col-md-12 d-flex align-items-center gap-2">
-                                                                <input type="checkbox" id="select-all"
-                                                                    class="validate-radio-required">
 
-                                                                <label>{{ $getinstruction->safe_work }}</label>
-                                                            </div>
-                                                        @endforeach --}}
                                                     </div>
                                                 </div>
                                             </div>
@@ -631,8 +656,14 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Employee Code / Visitor ID</label>
                                                     <select name="employee_code" id="employee_code"
-                                                        class="single-select   form-control">
+                                                        class="single-select form-control">
                                                         <option value="">Select Employee ID</option>
+                                                        @foreach ($workman as $item)
+                                                            <option value="{{ $item->emp_id }}"
+                                                                {{ old('employee_code', $item->emp_id) == $item->emp_id ? 'selected' : '' }}>
+                                                                {{ $item->emp_id }}
+                                                            </option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -640,14 +671,16 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Name of Workman</label>
                                                     <input type="text" name="workman_name" id="workman_name"
-                                                        class="form-control" readonly>
+                                                        class="form-control" readonly
+                                                        value="{{ old('workman_name', $workman->first()->workman_name) }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Designation</label>
                                                     <input type="text" name="workman_desig" id="workman_desig"
-                                                        class="form-control" readonly>
+                                                        class="form-control" readonly
+                                                        value="{{ old('workman_desig', $workman->first()->workman_desig) }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
@@ -656,7 +689,12 @@
                                                     <select name="workman_dept" id="workman_dept"
                                                         class="form-control single-select">
                                                         <option value="">Select Department</option>
-                                                        <!-- Dynamic department options here -->
+                                                        @foreach ($workman as $item)
+                                                            <option value="{{ $item->workman_dept }}"
+                                                                {{ old('workman_dept', $item->workman_dept) == $item->workman_dept ? 'selected' : '' }}>
+                                                                {{ $item->workman_dept }}
+                                                            </option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -664,18 +702,20 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Nature of Job</label>
                                                     <input type="text" name="nature_of_job" id="nature_of_job"
-                                                        class="form-control">
+                                                        class="form-control"
+                                                        value="{{ old('nature_of_job', $workman->first()->nature_of_job) }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-2 mt-3">
                                                 <x-button-add dataId="" class="add btn btn-primary ms-1"
                                                     href="{{ admin_url('ptw/typeofworkmaster/add') }}">Add</x-button-add>
                                             </div>
-
                                         </div>
+
+
                                         <div class="table-responsive mt-3">
                                             <table class="table table-bordered text-center">
-                                                <thead class=" text-white" style="background-color:#5b626b">
+                                                <thead class="text-white" style="background-color:#5b626b">
                                                     <tr>
                                                         <th>Employee Code / Visitor ID</th>
                                                         <th>Name of Workman</th>
@@ -686,10 +726,23 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="workman-list-entries">
-
+                                                    @foreach ($workman as $item)
+                                                        <tr>
+                                                            <td>{{ $item->emp_id }}</td>
+                                                            <td>{{ $item->workman_name }}</td>
+                                                            <td>{{ $item->workman_desig }}</td>
+                                                            <td>{{ $item->workman_dept }}</td>
+                                                            <td>{{ $item->nature_of_job }}</td>
+                                                            <td>
+                                                                <button class="btn btn-danger btn-sm remove-entry">Remove</button>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
                                                 </tbody>
                                             </table>
                                         </div>
+
+
 
                                         <div class="row mt-2">
                                             <div class="col-12 col-md-6">
@@ -758,7 +811,8 @@
                                         <div class="submit-button float-end">
                                             <x-button-submit class="submit" id="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
-                                            <x-button-cancel href="{{ admin_url('safetypermit/list') }}"></x-button-cancel>
+                                            <x-button-cancel
+                                                href="{{ admin_url('safetypermit/list') }}"></x-button-cancel>
                                         </div>
                                     </form>
                                 </div>
@@ -775,581 +829,581 @@
 @stop
 
 @push('script')
-    <script>
-        $(document).ready(function() {
+<script>
+    $(document).ready(function() {
 
-            $('#employee_code').select2({
-                ajax: {
-                    url: '{{ admin_url('safetypermit/employeeid') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            })
-                        };
-                    }
+        $('#employee_code').select2({
+            ajax: {
+                url: '{{ admin_url('safetypermit/employeeid') }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search: params.term
+                    };
                 },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
-            });
+                processResults: function(data) {
+                    return {
+                        results: $.map(data, function(item) {
+                            return {
+                                id: item.id,
+                                text: item.text
+                            };
+                        })
+                    };
+                }
+            },
+            minimumInputLength: 1,
+            dropdownCssClass: 'form-control',
+            selectionCssClass: 'form-control'
+        });
 
 
-            $(document).on("change", "#employee_code", function() {
-                var emp_id = $(this).val();
-                var currentRow = $(this).closest(".row");
-                var departmentDropdown = currentRow.find(
-                    'select[name="workman_dept"]');
+        $(document).on("change", "#employee_code", function() {
+            var emp_id = $(this).val();
+            var currentRow = $(this).closest(".row");
+            var departmentDropdown = currentRow.find(
+                'select[name="workman_dept"]');
 
-                if (emp_id) {
-                    $.ajax({
-                        url: "{{ url('safetypermit/fetchEmployeeDetails') }}/" + emp_id,
-                        type: "GET",
-                        success: function(data) {
+            if (emp_id) {
+                $.ajax({
+                    url: "{{ url('safetypermit/fetchEmployeeDetails') }}/" + emp_id,
+                    type: "GET",
+                    success: function(data) {
 
-                            if (data.employee) {
+                        if (data.employee) {
 
-                                currentRow.find('input[name="workman_name"]').val(data.employee
-                                    .emp_name);
-                                currentRow.find('input[name="workman_desig"]').val(data.employee
-                                    .designation);
+                            currentRow.find('input[name="workman_name"]').val(data.employee
+                                .emp_name);
+                            currentRow.find('input[name="workman_desig"]').val(data.employee
+                                .designation);
 
-                                departmentDropdown.empty();
-                                departmentDropdown.append(
-                                    '<option value="">Select Department</option>'
-                                );
+                            departmentDropdown.empty();
+                            departmentDropdown.append(
+                                '<option value="">Select Department</option>'
+                            );
 
-                                if (data.departments && data.departments.length > 0) {
-                                    data.departments.forEach(function(department) {
-                                        var selected = data.employee.department ==
-                                            department.id ? "selected" : "";
-                                        departmentDropdown.append(
-                                            `<option value="${department.id}" ${selected}>${department.department_name}</option>`
-                                        );
-                                    });
-                                } else {
+                            if (data.departments && data.departments.length > 0) {
+                                data.departments.forEach(function(department) {
+                                    var selected = data.employee.department ==
+                                        department.id ? "selected" : "";
                                     departmentDropdown.append(
-                                        '<option value="">No departments available</option>'
+                                        `<option value="${department.id}" ${selected}>${department.department_name}</option>`
                                     );
-                                }
-                            } else {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Error",
-                                    text: "Employee data could not be fetched.",
                                 });
+                            } else {
+                                departmentDropdown.append(
+                                    '<option value="">No departments available</option>'
+                                );
                             }
-                        },
-                        error: function() {
+                        } else {
                             Swal.fire({
                                 icon: "error",
                                 title: "Error",
-                                text: "An error occurred while fetching employee details.",
+                                text: "Employee data could not be fetched.",
                             });
-                        },
-                    });
-                } else {
-
-                    currentRow.find('input[name="workman_name"]').val("");
-                    currentRow.find('input[name="workman_desig"]').val("");
-                    departmentDropdown.empty();
-                    departmentDropdown.append('<option value="">Select Department</option>');
-                }
-            });
-
-
-            $(document).on("click", ".add", function(e) {
-                e.preventDefault();
-
-                var parentRow = $(this).closest(".row");
-
-
-                var employeeCode = parentRow.find('select[name="employee_code"] option:selected').val();
-                var employeeName = parentRow.find('select[name="employee_code"] option:selected').text();
-                var workmanName = parentRow.find('input[name="workman_name"]').val();
-                var designation = parentRow.find('input[name="workman_desig"]').val();
-                var department = parentRow.find('select[name="workman_dept"] option:selected').val();
-                var departmentName = parentRow.find('select[name="workman_dept"] option:selected').text();
-                var natureOfJob = parentRow.find('input[name="nature_of_job"]').val();
-
-                var newRow = `
-                    <tr>
-                        <td><input type="hidden" name="emp_id[]" value="${employeeCode}">${employeeName}</td>
-                        <td><input type="hidden" name="workman_name[]" value="${workmanName}">${workmanName}</td>
-                        <td><input type="hidden" name="workman_desig[]" value="${designation}">${designation}</td>
-                        <td><input type="hidden" name="workman_dept[]" value="${department}">${departmentName}</td>
-                        <td><input type="hidden" name="nature_of_job[]" value="${natureOfJob}">${natureOfJob}</td>
-                        <td>
-                            <button class="btn btn-danger btn-sm remove-entry">Remove</button>
-                        </td>
-                    </tr>
-                `;
-
-                $("#workman-list-entries").append(newRow);
-
-                parentRow.find('select[name="employee_code"]').val("");
-                parentRow.find('select[name="employee_code"]').trigger("change");
-                parentRow.find('input[name="workman_name"]').val("");
-                parentRow.find('input[name="workman_desig"]').val("");
-                parentRow.find('select[name="workman_dept"]').val("");
-                parentRow.find('select[name="workman_dept"]').trigger("change");
-                parentRow.find('input[name="nature_of_job"]').val("");
-
-                Swal.fire({
-                    icon: "success",
-                    title: "Success",
-                    text: "Workman has been added to the table.",
-                });
-            });
-
-
-            $(document).on("click", ".remove-entry", function() {
-                $(this).closest("tr").remove();
-            });
-
-            $('#employeenameshutdown,#employeenameloto').select2({
-                ajax: {
-                    url: '{{ admin_url('safetypermit/employeename') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            })
-                        };
-                    }
-                },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
-            });
-
-
-            $('#shutdown-checkbox').on('change', function() {
-                if ($(this).is(':checked')) {
-                    $('#employeenameshutdown').prop('disabled', false);
-                } else {
-                    $('#employeenameshutdown').prop('disabled', true);
-                }
-            });
-            $('#lotocheckbox').on('change', function() {
-                if ($(this).is(':checked')) {
-                    $('#employeenameloto').prop('disabled', false);
-                } else {
-                    $('#employeenameloto').prop('disabled', true);
-                }
-            });
-        });
-
-        flatpickr("#date", {
-            // enableTime: true,
-            dateFormat: "d-m-Y",
-            // time_24hr: true,
-            minuteIncrement: 5,
-        });
-
-        flatpickr("#time_from", {
-            enableTime: true,
-            noCalendar: true,
-            time_24hr: true,
-            minuteIncrement: 5,
-            dateFormat: "H:i"
-        });
-
-        flatpickr("#time_to", {
-            enableTime: true,
-            noCalendar: true,
-            time_24hr: true,
-            minuteIncrement: 5,
-            dateFormat: "H:i"
-        });
-    </script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-
-            var firstTh = $('.datatable-list thead th:first');
-            firstTh.removeClass('sorting_asc');
-        });
-
-        $(function() {
-            /* Datatable */
-            var table = $('.datatable-list').DataTable({
-                autoWidth: false,
-                responsive: true,
-                processing: false,
-                serverSide: true,
-                searching: false,
-                ordering: false,
-                lengthChange: false, // Disables "Show entries"
-                // dom: 'Bfrtip',
-                layout: {
-                    top2Start: '',
-                    top2End: {
-                        search: {
-                            placeholder: ''
                         }
                     },
-                    topStart: '',
-                    topEnd: '',
-                    bottomStart: '',
-                    bottomEnd: '',
-                    bottom2Start: 'info',
-                    bottom2End: 'paging'
-                },
+                    error: function() {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "An error occurred while fetching employee details.",
+                        });
+                    },
+                });
+            } else {
 
-                ajax: {
-                    url: "{{ admin_url('uploadlog/list') }}",
-                    type: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    data: function(d) {}
-                },
-                columns: [{
-                        data: 'DT_RowIndex',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'line_no',
-                        name: 'line_no'
-                    },
-                    {
-                        data: 'error',
-                        name: 'error'
-                    },
-                ],
+                currentRow.find('input[name="workman_name"]').val("");
+                currentRow.find('input[name="workman_desig"]').val("");
+                departmentDropdown.empty();
+                departmentDropdown.append('<option value="">Select Department</option>');
+            }
+        });
 
-                language: {
-                    paginate: {
-                        first: '<i title="{{ __('common.first') }}" class="fa fa-angle-double-left" aria-hidden="true"></i>',
-                        last: '<i title="{{ __('common.last') }}" title="Next" class="fa fa-angle-double-right" aria-hidden="true"></i>',
-                        next: '<i title="{{ __('common.next') }}" class="fa fa-angle-right" aria-hidden="true"></i>',
-                        previous: '<i title="{{ __('common.previous') }}" class="fa fa-angle-left" aria-hidden="true"></i>',
-                    },
-                    "info": "{{ __('common.dt_info') }}",
-                    "infoEmpty": "{{ __('common.dt_infoEmpty') }}",
-                    "infoFiltered": "{{ __('common.dt_infoFiltered') }}",
-                },
-                aLengthMenu: [
-                    [10, 25, 50, 100],
-                    [10, 25, 50, 100]
-                ],
-                buttons: [{
-                        extend: 'collection',
-                        text: '{{ __('common.export') }}',
-                        buttons: [{
-                            extend: 'excel',
-                            text: '{{ __('common.excel') }}',
-                            action: function(e, dt, button, config) {
-                                var searchValue = $('#datatable-list_filter input').val();
-                                $(".dt-button").removeClass('processing');
-                                $('body').click();
-                                window.location.href =
-                                    "{{ admin_url('uploadlog/export/excel/' . request()->logid) }}" +
-                                    '?search=' + searchValue;
-                            }
-                        }, ]
-                    },
 
-                    {
-                        "extend": 'pageLength',
-                        "text": '{{ __('common.show') }} 10 {{ __('common.records') }}'
+        $(document).on("click", ".add", function(e) {
+            e.preventDefault();
+
+            var parentRow = $(this).closest(".row");
+
+
+            var employeeCode = parentRow.find('select[name="employee_code"] option:selected').val();
+            var employeeName = parentRow.find('select[name="employee_code"] option:selected').text();
+            var workmanName = parentRow.find('input[name="workman_name"]').val();
+            var designation = parentRow.find('input[name="workman_desig"]').val();
+            var department = parentRow.find('select[name="workman_dept"] option:selected').val();
+            var departmentName = parentRow.find('select[name="workman_dept"] option:selected').text();
+            var natureOfJob = parentRow.find('input[name="nature_of_job"]').val();
+
+            var newRow = `
+                <tr>
+                    <td><input type="hidden" name="emp_id[]" value="${employeeCode}">${employeeName}</td>
+                    <td><input type="hidden" name="workman_name[]" value="${workmanName}">${workmanName}</td>
+                    <td><input type="hidden" name="workman_desig[]" value="${designation}">${designation}</td>
+                    <td><input type="hidden" name="workman_dept[]" value="${department}">${departmentName}</td>
+                    <td><input type="hidden" name="nature_of_job[]" value="${natureOfJob}">${natureOfJob}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm remove-entry">Remove</button>
+                    </td>
+                </tr>
+            `;
+
+            $("#workman-list-entries").append(newRow);
+
+            parentRow.find('select[name="employee_code"]').val("");
+            parentRow.find('select[name="employee_code"]').trigger("change");
+            parentRow.find('input[name="workman_name"]').val("");
+            parentRow.find('input[name="workman_desig"]').val("");
+            parentRow.find('select[name="workman_dept"]').val("");
+            parentRow.find('select[name="workman_dept"]').trigger("change");
+            parentRow.find('input[name="nature_of_job"]').val("");
+
+            Swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "Workman has been added to the table.",
+            });
+        });
+
+
+        $(document).on("click", ".remove-entry", function() {
+            $(this).closest("tr").remove();
+        });
+
+        $('#employeenameshutdown,#employeenameloto').select2({
+            ajax: {
+                url: '{{ admin_url('safetypermit/employeename') }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search: params.term
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: $.map(data, function(item) {
+                            return {
+                                id: item.id,
+                                text: item.text
+                            };
+                        })
+                    };
+                }
+            },
+            minimumInputLength: 1,
+            dropdownCssClass: 'form-control',
+            selectionCssClass: 'form-control'
+        });
+
+
+        $('#shutdown-checkbox').on('change', function() {
+            if ($(this).is(':checked')) {
+                $('#employeenameshutdown').prop('disabled', false);
+            } else {
+                $('#employeenameshutdown').prop('disabled', true);
+            }
+        });
+        $('#lotocheckbox').on('change', function() {
+            if ($(this).is(':checked')) {
+                $('#employeenameloto').prop('disabled', false);
+            } else {
+                $('#employeenameloto').prop('disabled', true);
+            }
+        });
+    });
+
+    flatpickr("#date", {
+        // enableTime: true,
+        dateFormat: "d-m-Y",
+        // time_24hr: true,
+        minuteIncrement: 5,
+    });
+
+    flatpickr("#time_from", {
+        enableTime: true,
+        noCalendar: true,
+        time_24hr: true,
+        minuteIncrement: 5,
+        dateFormat: "H:i"
+    });
+
+    flatpickr("#time_to", {
+        enableTime: true,
+        noCalendar: true,
+        time_24hr: true,
+        minuteIncrement: 5,
+        dateFormat: "H:i"
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        var firstTh = $('.datatable-list thead th:first');
+        firstTh.removeClass('sorting_asc');
+    });
+
+    $(function() {
+        /* Datatable */
+        var table = $('.datatable-list').DataTable({
+            autoWidth: false,
+            responsive: true,
+            processing: false,
+            serverSide: true,
+            searching: false,
+            ordering: false,
+            lengthChange: false, // Disables "Show entries"
+            // dom: 'Bfrtip',
+            layout: {
+                top2Start: '',
+                top2End: {
+                    search: {
+                        placeholder: ''
                     }
-                ],
+                },
+                topStart: '',
+                topEnd: '',
+                bottomStart: '',
+                bottomEnd: '',
+                bottom2Start: 'info',
+                bottom2End: 'paging'
+            },
 
-            });
+            ajax: {
+                url: "{{ admin_url('uploadlog/list') }}",
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: function(d) {}
+            },
+            columns: [{
+                    data: 'DT_RowIndex',
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: 'line_no',
+                    name: 'line_no'
+                },
+                {
+                    data: 'error',
+                    name: 'error'
+                },
+            ],
 
-            table.on('length.dt', function(e, settings, len) {
-                var text = '{{ __('common.show') }} ' + len + ' {{ __('common.records') }}';
-                $('.buttons-page-length').find('span').text(text);
-            });
+            language: {
+                paginate: {
+                    first: '<i title="{{ __('common.first') }}" class="fa fa-angle-double-left" aria-hidden="true"></i>',
+                    last: '<i title="{{ __('common.last') }}" title="Next" class="fa fa-angle-double-right" aria-hidden="true"></i>',
+                    next: '<i title="{{ __('common.next') }}" class="fa fa-angle-right" aria-hidden="true"></i>',
+                    previous: '<i title="{{ __('common.previous') }}" class="fa fa-angle-left" aria-hidden="true"></i>',
+                },
+                "info": "{{ __('common.dt_info') }}",
+                "infoEmpty": "{{ __('common.dt_infoEmpty') }}",
+                "infoFiltered": "{{ __('common.dt_infoFiltered') }}",
+            },
+            aLengthMenu: [
+                [10, 25, 50, 100],
+                [10, 25, 50, 100]
+            ],
+            buttons: [{
+                    extend: 'collection',
+                    text: '{{ __('common.export') }}',
+                    buttons: [{
+                        extend: 'excel',
+                        text: '{{ __('common.excel') }}',
+                        action: function(e, dt, button, config) {
+                            var searchValue = $('#datatable-list_filter input').val();
+                            $(".dt-button").removeClass('processing');
+                            $('body').click();
+                            window.location.href =
+                                "{{ admin_url('uploadlog/export/excel/' . request()->logid) }}" +
+                                '?search=' + searchValue;
+                        }
+                    }, ]
+                },
 
-            $(document).on('click', '#searchform', function() {
+                {
+                    "extend": 'pageLength',
+                    "text": '{{ __('common.show') }} 10 {{ __('common.records') }}'
+                }
+            ],
+
+        });
+
+        table.on('length.dt', function(e, settings, len) {
+            var text = '{{ __('common.show') }} ' + len + ' {{ __('common.records') }}';
+            $('.buttons-page-length').find('span').text(text);
+        });
+
+        $(document).on('click', '#searchform', function() {
+            table.draw();
+        });
+
+        $(document).on('click', '#resetform', function() {
+            setTimeout(function() {
                 table.draw();
-            });
-
-            $(document).on('click', '#resetform', function() {
-                setTimeout(function() {
-                    table.draw();
-                }, 150);
-            });
-
+            }, 150);
         });
 
-        $(document).ready(function() {
-            const displayedEquipments = new Set();
+    });
 
-            $('.work-type-checkbox').on('change', function() {
-                const workId = $(this).data('id');
-                const container = $('#getprotectivechecklist-container');
+    $(document).ready(function() {
+        const displayedEquipments = new Set();
 
-                if ($(this).is(':checked')) {
-                    $.ajax({
-                        url: "{{ admin_url('safetypermit/getprotectivechecklist') }}/" + workId,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            let checkpointsHtml = '';
+        $('.work-type-checkbox').on('change', function() {
+            const workId = $(this).data('id');
+            const container = $('#getprotectivechecklist-container');
 
-                            data.forEach(function(item) {
-                                if (!displayedEquipments.has(item.protective_equip)) {
-                                    displayedEquipments.add(item.protective_equip);
-                                    checkpointsHtml += `
-                                <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                    <input type="checkbox" class="protective-checkbox" name="protective_equip[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
-                                    <label for="checkpoint-${workId}-${item.id}">${item.protective_equip}</label>
-                                </div>`;
-                                }
-                            });
+            if ($(this).is(':checked')) {
+                $.ajax({
+                    url: "{{ admin_url('safetypermit/getprotectivechecklist') }}/" + workId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        let checkpointsHtml = '';
 
-                            if (checkpointsHtml) {
-                                container.append(checkpointsHtml);
+                        data.forEach(function(item) {
+                            if (!displayedEquipments.has(item.protective_equip)) {
+                                displayedEquipments.add(item.protective_equip);
+                                checkpointsHtml += `
+                            <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
+                                <input type="checkbox" class="protective-checkbox" name="protective_equip[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                <label for="checkpoint-${workId}-${item.id}">${item.protective_equip}</label>
+                            </div>`;
                             }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        },
-                    });
-                } else {
-                    container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
-                }
-            });
+                        });
+
+                        if (checkpointsHtml) {
+                            container.append(checkpointsHtml);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    },
+                });
+            } else {
+                container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
+            }
         });
-        $(document).ready(function() {
-            const displayedEquipments = new Set();
+    });
+    $(document).ready(function() {
+        const displayedEquipments = new Set();
 
-            $('.work-type-checkbox').on('change', function() {
-                const workId = $(this).data('id');
-                const container = $('#getequipmentinvolved-container');
+        $('.work-type-checkbox').on('change', function() {
+            const workId = $(this).data('id');
+            const container = $('#getequipmentinvolved-container');
 
-                if ($(this).is(':checked')) {
-                    $.ajax({
-                        url: "{{ admin_url('safetypermit/getequipmentinvolved') }}/" + workId,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            let checkpointsHtml = '';
+            if ($(this).is(':checked')) {
+                $.ajax({
+                    url: "{{ admin_url('safetypermit/getequipmentinvolved') }}/" + workId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        let checkpointsHtml = '';
 
-                            data.forEach(function(item) {
-                                if (!displayedEquipments.has(item.equip_involve)) {
-                                    displayedEquipments.add(item.equip_involve);
+                        data.forEach(function(item) {
+                            if (!displayedEquipments.has(item.equip_involve)) {
+                                displayedEquipments.add(item.equip_involve);
 
-                                    checkpointsHtml += `
-                                <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                    <input type="checkbox" class="" name="equiment_involved[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
-                                    <label for="checkpoint-${workId}-${item.id}">${item.equip_involve}</label>
-                                </div>`;
-                                }
-                            });
-
-                            if (checkpointsHtml) {
-                                container.append(checkpointsHtml);
+                                checkpointsHtml += `
+                            <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
+                                <input type="checkbox" class="" name="equiment_involved[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                <label for="checkpoint-${workId}-${item.id}">${item.equip_involve}</label>
+                            </div>`;
                             }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        },
-                    });
-                } else {
-                    container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
-                }
-            });
+                        });
+
+                        if (checkpointsHtml) {
+                            container.append(checkpointsHtml);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    },
+                });
+            } else {
+                container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
+            }
         });
-        $(document).ready(function() {
-            const displayedEquipments = new Set();
+    });
+    $(document).ready(function() {
+        const displayedEquipments = new Set();
 
-            $('.work-type-checkbox').on('change', function() {
-                const workId = $(this).data('id');
-                const container = $('#getprecaution-container');
+        $('.work-type-checkbox').on('change', function() {
+            const workId = $(this).data('id');
+            const container = $('#getprecaution-container');
 
-                if ($(this).is(':checked')) {
-                    $.ajax({
-                        url: "{{ admin_url('safetypermit/getprecaution') }}/" + workId,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            let checkpointsHtml = '';
+            if ($(this).is(':checked')) {
+                $.ajax({
+                    url: "{{ admin_url('safetypermit/getprecaution') }}/" + workId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        let checkpointsHtml = '';
 
-                            data.forEach(function(item) {
-                                if (!displayedEquipments.has(item.precaution)) {
-                                    displayedEquipments.add(item.precaution);
+                        data.forEach(function(item) {
+                            if (!displayedEquipments.has(item.precaution)) {
+                                displayedEquipments.add(item.precaution);
 
-                                    checkpointsHtml += `
-                                <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                    <input type="checkbox" class="" name="precaution_taken[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
-                                    <label for="checkpoint-${workId}-${item.id}">${item.precaution}</label>
-                                </div>`;
-                                }
-                            });
-
-                            if (checkpointsHtml) {
-                                container.append(checkpointsHtml);
+                                checkpointsHtml += `
+                            <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
+                                <input type="checkbox" class="" name="precaution_taken[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                <label for="checkpoint-${workId}-${item.id}">${item.precaution}</label>
+                            </div>`;
                             }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        },
-                    });
-                } else {
-                    container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
-                }
-            });
+                        });
+
+                        if (checkpointsHtml) {
+                            container.append(checkpointsHtml);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    },
+                });
+            } else {
+                container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
+            }
         });
+    });
 
-        $(document).ready(function() {
-            const displayedEquipments = new Set();
+    $(document).ready(function() {
+        const displayedEquipments = new Set();
 
-            $('.work-type-checkbox').on('change', function() {
-                const workId = $(this).data('id');
-                const container = $('#getchecklist-container');
+        $('.work-type-checkbox').on('change', function() {
+            const workId = $(this).data('id');
+            const container = $('#getchecklist-container');
 
-                if ($(this).is(':checked')) {
-                    $.ajax({
-                        url: "{{ admin_url('safetypermit/getchecklist') }}/" + workId,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            let checkpointsHtml = '';
+            if ($(this).is(':checked')) {
+                $.ajax({
+                    url: "{{ admin_url('safetypermit/getchecklist') }}/" + workId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        let checkpointsHtml = '';
 
-                            data.forEach(function(item) {
-                                if (!displayedEquipments.has(item.checklist)) {
-                                    displayedEquipments.add(item.checklist);
+                        data.forEach(function(item) {
+                            if (!displayedEquipments.has(item.checklist)) {
+                                displayedEquipments.add(item.checklist);
 
-                                    checkpointsHtml += `
-                                <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                    <input type="checkbox" class="" name="equipment_checklist[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
-                                    <label for="checkpoint-${workId}-${item.id}">${item.checklist}</label>
-                                </div>`;
-                                }
-                            });
-
-                            if (checkpointsHtml) {
-                                container.append(checkpointsHtml);
+                                checkpointsHtml += `
+                            <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
+                                <input type="checkbox" class="" name="equipment_checklist[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                <label for="checkpoint-${workId}-${item.id}">${item.checklist}</label>
+                            </div>`;
                             }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        },
-                    });
-                } else {
-                    container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
-                }
-            });
+                        });
+
+                        if (checkpointsHtml) {
+                            container.append(checkpointsHtml);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    },
+                });
+            } else {
+                container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
+            }
         });
+    });
 
-        $(document).ready(function() {
-            const displayedEquipments = new Set();
+    $(document).ready(function() {
+        const displayedEquipments = new Set();
 
-            $('.work-type-checkbox').on('change', function() {
-                const workId = $(this).data('id');
-                const container = $('#getinstruction-container');
+        $('.work-type-checkbox').on('change', function() {
+            const workId = $(this).data('id');
+            const container = $('#getinstruction-container');
 
-                if ($(this).is(':checked')) {
-                    $.ajax({
-                        url: "{{ admin_url('safetypermit/getinstruction') }}/" + workId,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            let checkpointsHtml = '';
+            if ($(this).is(':checked')) {
+                $.ajax({
+                    url: "{{ admin_url('safetypermit/getinstruction') }}/" + workId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        let checkpointsHtml = '';
 
-                            data.forEach(function(item) {
-                                if (!displayedEquipments.has(item.safe_work)) {
-                                    displayedEquipments.add(item.safe_work);
+                        data.forEach(function(item) {
+                            if (!displayedEquipments.has(item.safe_work)) {
+                                displayedEquipments.add(item.safe_work);
 
-                                    checkpointsHtml += `
-                                <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                    <input type="checkbox" class="" name="safework_instruction[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
-                                    <label for="checkpoint-${workId}-${item.id}">${item.safe_work}</label>
-                                </div>`;
-                                }
-                            });
-
-                            if (checkpointsHtml) {
-                                container.append(checkpointsHtml);
+                                checkpointsHtml += `
+                            <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
+                                <input type="checkbox" class="" name="safework_instruction[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                <label for="checkpoint-${workId}-${item.id}">${item.safe_work}</label>
+                            </div>`;
                             }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        },
-                    });
-                } else {
-                    container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
-                }
-            });
+                        });
+
+                        if (checkpointsHtml) {
+                            container.append(checkpointsHtml);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    },
+                });
+            } else {
+                container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
+            }
         });
+    });
 
 
-        $(document).ready(function() {
-            const section1Inputs = $('#section-1 input');
-            const checkboxWithValue8 = $('.work-type-checkbox[data-id="8"]');
+    $(document).ready(function() {
+        const section1Inputs = $('#section-1 input');
+        const checkboxWithValue8 = $('.work-type-checkbox[data-id="8"]');
 
-            section1Inputs.prop('disabled', true);
+        section1Inputs.prop('disabled', true);
 
-            checkboxWithValue8.on('change', function() {
-                if ($(this).is(':checked')) {
+        checkboxWithValue8.on('change', function() {
+            if ($(this).is(':checked')) {
 
-                    section1Inputs.prop('disabled', false);
-                } else {
+                section1Inputs.prop('disabled', false);
+            } else {
 
-                    section1Inputs.prop('disabled', true);
-                }
-            });
+                section1Inputs.prop('disabled', true);
+            }
         });
+    });
 
-        $(document).ready(function() {
-            const shutdownCheckbox = $('#shutdown-checkbox');
-            const targetInputs = $('.shutdowncheckbox').not('#shutdown-checkbox');
-
-
-            targetInputs.prop('disabled', true);
+    $(document).ready(function() {
+        const shutdownCheckbox = $('#shutdown-checkbox');
+        const targetInputs = $('.shutdowncheckbox').not('#shutdown-checkbox');
 
 
-            shutdownCheckbox.on('change', function() {
-                if ($(this).is(':checked')) {
-                    targetInputs.prop('disabled', false);
-                } else {
+        targetInputs.prop('disabled', true);
 
-                    targetInputs.prop('disabled', true);
-                }
-            });
+
+        shutdownCheckbox.on('change', function() {
+            if ($(this).is(':checked')) {
+                targetInputs.prop('disabled', false);
+            } else {
+
+                targetInputs.prop('disabled', true);
+            }
         });
+    });
 
-        $(document).ready(function() {
-            const lotoCheckbox = $('#loto-checkbox');
-            const targetInputs = $('.lotocheckbox').not('#loto-checkbox');
-
-
-            targetInputs.prop('disabled', true);
+    $(document).ready(function() {
+        const lotoCheckbox = $('#loto-checkbox');
+        const targetInputs = $('.lotocheckbox').not('#loto-checkbox');
 
 
-            lotoCheckbox.on('change', function() {
-                if ($(this).is(':checked')) {
-                    targetInputs.prop('disabled', false);
-                } else {
+        targetInputs.prop('disabled', true);
 
-                    targetInputs.prop('disabled', true);
-                }
-            });
+
+        lotoCheckbox.on('change', function() {
+            if ($(this).is(':checked')) {
+                targetInputs.prop('disabled', false);
+            } else {
+
+                targetInputs.prop('disabled', true);
+            }
         });
-    </script>
+    });
+</script>
 @endpush

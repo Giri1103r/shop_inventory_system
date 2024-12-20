@@ -18,6 +18,7 @@ use App\Models\User;
 use App\Models\UploadLog;
 use App\Models\UploadLogError;
 use App\Models\Master\Precaution;
+use Illuminate\Support\Facades\Session;
 
 //  class ImportsafeworkJob implements ShouldQueue
 class ImportPrecautionJob
@@ -79,7 +80,7 @@ class ImportPrecautionJob
 
                     if (
                         $sno != 'SNo' ||
-                        $precaution != 'Name'
+                        $precaution != 'Precaution Name'
                     ) {
                         $error_data_1 = array(
                             'upload_id' => $this->details['log_id'],
@@ -122,30 +123,23 @@ class ImportPrecautionJob
 
                 $i++;
                 continue;
-            } else {
-
-                $precautionExist = Precaution::where('precaution', $precaution)->get();
-                try {
-
-                    if (count($precautionExist) > 0) {
-                        $cond_error_data = array(
-                            'upload_id' => $this->details['log_id'],
-                            'line_no' => $i,
-                            'error' => 'Name Already Exist',
-                        );
-                        $cond_error_datas[] = $cond_error_data;
-                        $i++;
-                        continue;
-                    }
-                } catch (\Exception $ex) {
-                    $cond_error_data = array(
-                        'upload_id' => $this->details['log_id'],
-                        'line_no' => $i,
-                        'error' => 'Invalid Data',
-                    );
-                    $cond_error_datas[] = $cond_error_data;
-                }
             }
+
+
+            $precautionExist = Precaution::where('precaution', $precaution)->exists();
+            if ($precautionExist) {
+                $cond_error_data = [
+                    'upload_id' => $this->details['log_id'],
+                    'line_no' => $i,
+                    'error' => 'Name is already Exists',
+                ];
+                $cond_error_datas[] = $cond_error_data;
+                $i++;
+                continue;
+            }
+
+
+
 
 
             $data = array(
@@ -160,11 +154,16 @@ class ImportPrecautionJob
 
         if (count($cond_error_datas) > 0) {
             UploadLogError::insert($cond_error_datas);
+            $final_update_array = [
+                'upload_status' => 3,
+            ];
+            Session::flash('error', 'Failed to upload. Please check the upload log.');
+        } else {
+            $final_update_array = [
+                'upload_status' => 2,
+            ];
+            Session::flash('success', 'Upload completed successfully.');
         }
-
-        $final_update_array = array(
-            'upload_status' => 2,
-        );
 
         UploadLog::where('id', $this->details['log_id'])->update($final_update_array);
     }

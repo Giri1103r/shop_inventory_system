@@ -44,7 +44,7 @@ class PpeTypeMasterController extends Controller
                             }
 
 
-                            if (CheckUserRole(ROLE_SUPERADMIN)) {
+                            if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_HOD) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_EHS_HEAD)) {
                                 if ($row->status == 1) {
                                     $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='1'>Active<span>";
                                 } else if ($row->status == 0) {
@@ -180,6 +180,24 @@ class PpeTypeMasterController extends Controller
                 $record = $this->ppetypemaster->uniqueCheck(['param' => 'item_code', 'value' => $ppe_type]);
             } else {
                 $record = $this->ppetypemaster->existUniqueCheck(['param' => 'item_code', 'value' => $ppe_type, 'id' => $id]);
+            }
+
+            return response()->json($record->isEmpty());
+        }
+    }
+
+
+    public function PPEuniqueCheck(Request $request)
+    {
+
+        if ($request->ajax()) {
+            $ppe_name = $request->ppe_name;
+            $id = $request->id;
+
+            if (empty($id)) {
+                $record = $this->ppetypemaster->ppeuniqueCheck(['param' => 'ppe_name', 'value' => $ppe_name]);
+            } else {
+                $record = $this->ppetypemaster->ppeexistUniqueCheck(['param' => 'ppe_name', 'value' => $ppe_name, 'id' => $id]);
             }
 
             return response()->json($record->isEmpty());

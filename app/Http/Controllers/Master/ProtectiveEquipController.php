@@ -9,11 +9,11 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 
-use Str;
-use Response;
-use Session;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Session;
 use Exception;
-use DataTables;
+use Yajra\DataTables\DataTables;
 
 use App\Jobs\Ptw\ImportProtectiveEquipJob;
 
@@ -242,7 +242,7 @@ class ProtectiveEquipController extends Controller
 
         $filePath = $filedetails->sample_file;
         $customFileName = $filedetails->file_name;
-        
+
         return Response::download($filePath, $customFileName);
     }
 
@@ -256,6 +256,7 @@ class ProtectiveEquipController extends Controller
     public function ImportSubmit(Request $request)
     {
         try {
+
             $file = $request->file('protective_equip_upload');
 
             $rules = [
@@ -267,6 +268,7 @@ class ProtectiveEquipController extends Controller
 
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
+
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
@@ -338,6 +340,10 @@ class ProtectiveEquipController extends Controller
 
             $allData = $this->protectiveequip->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 __('Name'),
@@ -381,6 +387,10 @@ class ProtectiveEquipController extends Controller
 
             $allData = $this->protectiveequip->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 __('Name'),
@@ -392,7 +402,7 @@ class ProtectiveEquipController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Location Details",
+                'pagetitle' => "Protective equipments to be worn",
             );
 
             $property = [
@@ -415,7 +425,7 @@ class ProtectiveEquipController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Protective equipments to be worn Details.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
@@ -423,13 +433,13 @@ class ProtectiveEquipController extends Controller
     }
 
 
-    public function list(Request $request)
-    {
+    // public function list(Request $request)
+    // {
 
-        $conpanyId = decryptId($request->companyId);
+    //     $conpanyId = decryptId($request->companyId);
 
-        $Location = $this->locationtype->ajaxList($conpanyId);
+    //     $Location = $this->locationtype->ajaxList($conpanyId);
 
-        return response()->json($Location);
-    }
+    //     return response()->json($Location);
+    // }
 }

@@ -686,7 +686,86 @@
         </table>
     @endif
 
+    @if($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED || ( $safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&  $safetypermit['permit_extension_status'] == 1))
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td
+                        style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
+                        Permit Extension
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <table>
+            @foreach ($getsafetyPermitExtension as $getsafetyPermitExtension)
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Name</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ isset($getsafetyPermitExtension->created_by) ? $getsafetyPermitExtension->created_by : '' }}
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Date</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ displaydateformat(isset($getsafetyPermitExtension->date) ? $getsafetyPermitExtension->date : '') }}
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>To Time</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ displaydateformat(isset($getsafetyPermitExtension->to_time) ? $getsafetyPermitExtension->to_time : '') }}
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Reason</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ isset($getsafetyPermitExtension->remarks) ? $getsafetyPermitExtension->remarks : '' }}</td>
+            </tr>
+            @endforeach
+        </table>
+    @endif
 
+    @if($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED_APPROVAL || ( $safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&  $safetypermit['permit_extension_status'] == 1))
+    <div style="width:100%;">
+        <table style="width:100%;">
+            <tr>
+                <td
+                    style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
+                    Permit Extension Approval
+                </td>
+            </tr>
+        </table>
+    </div>
+    <table>
+        @foreach($getpermitextensionapproval as $getpermitextensionapproval)
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($getpermitextensionapproval->approve_reject_by) ? $getpermitextensionapproval->approve_reject_by : '' }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ displaydateformat(isset($getpermitextensionapproval->date) ? $getpermitextensionapproval->date : '') }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Reason</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($getpermitextensionapproval->remarks) ? $getpermitextensionapproval->remarks : '' }}</td>
+        </tr>
+        @endforeach
+    </table>
+@endif
     @if (
         $safetypermit['permit_status'] != 8 &&
             $safetypermit['permit_status'] != 5 &&

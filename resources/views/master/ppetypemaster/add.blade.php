@@ -177,7 +177,18 @@
                                         required: true,
                                         minlength: 3,
                                         maxlength: 30,
-                                        regex: /^[a-zA-Z0-9\-_'"()\s]{3,30}$/
+                                        regex: /^[a-zA-Z0-9\-_'"()\s]{3,30}$/,
+                                        remote: {
+                                        url: '{{ admin_url('ppe_ppetype_master/ppename/unique') }}',
+                                        type: 'get',
+                                        data: {
+                                            item_code: function() {
+                                                var ppeName = $('#ppe_name').val();
+                                                console.log('PPE Name:', ppeName);
+                                                return ppeName;
+                                            },
+                                        }
+                                    },
                                     },
                                     ppe_type: {
                                         required: true
@@ -208,7 +219,8 @@
                                         required: "PPE Name cannot be empty.",
                                         minlength: "PPE Name must be between 3 and 30 characters.",
                                         maxlength: "PPE Name must be between 3 and 30 characters.",
-                                        regex: "PPE Name should be alphanumeric and can include -, _, ', \", (, )."
+                                        regex: "PPE Name should be alphanumeric and can include -, _, ', \", (, ).",
+                                         remote: "PPE Name already exists."
                                     },
                                     ppe_type: {
                                         required: "Please select the PPE Type."

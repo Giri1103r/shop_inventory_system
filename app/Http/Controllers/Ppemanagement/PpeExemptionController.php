@@ -161,7 +161,7 @@ class PpeExemptionController extends Controller
             $rules = [
                 'from_date' => 'required|date_format:d-m-Y',
                 'to_date' => 'required|date_format:d-m-Y|after_or_equal:from_date',
-                'reason' => ['required', 'regex:/^[a-zA-Z0-9\-_\'"()\s]+$/'],
+                'reason' =>'required' ,
             ];
 
 
@@ -172,7 +172,7 @@ class PpeExemptionController extends Controller
                 'to_date.date_format' => __('To Date must be in the format Y-m-d'),
                 'to_date.after_or_equal' => __('To Date must be on or after From Date'),
                 'reason.required' => __('Reason is required'),
-                'reason.regex' => __('Reason should be alphanumeric and can include -, _, \', ", (, ).'),
+
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -348,7 +348,7 @@ class PpeExemptionController extends Controller
             $rules = [
                 'from_date' => 'required|date_format:d-m-Y',
                 'to_date' => 'required|date_format:d-m-Y|after_or_equal:from_date',
-                'reason' => ['required', 'regex:/^[a-zA-Z0-9\-_\'"()\s]+$/'],
+                'reason' =>'required' ,
             ];
 
 
@@ -359,7 +359,7 @@ class PpeExemptionController extends Controller
                 'to_date.date_format' => __('To Date must be in the format Y-m-d'),
                 'to_date.after_or_equal' => __('To Date must be on or after From Date'),
                 'reason.required' => __('Reason is required'),
-                'reason.regex' => __('Reason should be alphanumeric and can include -, _, \', ", (, ).'),
+
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
@@ -488,13 +488,11 @@ class PpeExemptionController extends Controller
     {
 
         $rules = [
-            'remarks' => 'required|min:3|max:255|regex:/^[a-zA-Z].*/',
+            'remarks' => 'required',
         ];
         $messages = [
             'remarks.required' => 'Remarks Field is Mandatory',
-            'remarks.min' => 'Minimum 3 characters are required',
-            'remarks.max' => 'Maximum limit is 255 characters',
-            'remarks.regex' => 'First character should be an alphabet',
+           
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -711,5 +709,13 @@ class PpeExemptionController extends Controller
 
              report($ex);
         }
+    }
+
+    public function list(Request $request){
+        $unitId = $request->input('unitId');
+
+        $data = $this->department->getunitDeparment( $unitId);
+
+        return response()->json($data);
     }
 }

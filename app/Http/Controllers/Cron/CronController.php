@@ -26,6 +26,7 @@ use App\Models\Master\PpeStockinventory;
 use App\Models\Permit\SafetyPermit;
 
 use App\Mail\EmployeeRegisterEmail;
+use App\Mail\PermitExpiryEmail;
 
 
 use Exception;
@@ -597,10 +598,11 @@ class CronController extends Controller
 
             $currentTime = Carbon::now()->format('H:i:s');
             $permits = SafetyPermit::where('trash', 'NO')
-                ->where('permit_status', '!=', STATUS_PLANT_HEAD_APPROVED)
-                ->whereDate('date', Carbon::today())
-                ->get();
-
+            ->where('permit_status', '!=', STATUS_PLANT_HEAD_APPROVED)
+            ->whereDate('date', Carbon::today()) 
+            ->where('time_to', '<', $currentTime)
+            ->get();
+    
             if ($permits->isNotEmpty()) {
                 foreach ($permits as $permit) {
                     $permit->permit_status = STATUS_PERMIT_EXPIRED;
@@ -619,6 +621,55 @@ class CronController extends Controller
         }
     }
 
+
+    public function permitClose()
+    {
+        try {
+            Log::info('PermitClose function started.');
+    
+            $currentTime = Carbon::now();
+            $timeThirtyMinutesAhead = Carbon::now()->addMinutes(30);
+    
+            $permits = SafetyPermit::where('trash', 'NO')
+                ->where('permit_status', '!=', STATUS_PLANT_HEAD_APPROVED)
+                ->whereDate('date', Carbon::today())
+                ->whereTime('time_to', '>=', $currentTime->toTimeString())
+                ->whereTime('time_to', '<=', $timeThirtyMinutesAhead->toTimeString())
+                ->get();
+    
+            Log::info('Fetched permits: ', ['count' => $permits->count()]);
+    
+            $mailsubject = 'Permit is going to expire in 30 minutes';
+    
+            foreach ($permits as $permit) {
+                $assignedUser = User::where('id', $permit->created_by)
+                    ->select('name', 'email')
+                    ->first();
+    
+                if ($assignedUser && $assignedUser->email) {
+                    $safetypermitdetails = $this->safetypermit->selectmail($permit->id);
+                    $permitrray = $safetypermitdetails->toArray();
+    
+                    $permitrray['name'] = $assignedUser->name;
+                    $permitrray['email_id'] = $assignedUser->email;
+                    $permitrray['mail_subject'] = $mailsubject;
+    
+                    Mail::to($permitrray['email_id'])->queue(new PermitExpiryEmail($permitrray));
+    
+                    Log::info("Permit expiry email sent.", [
+                        'email' => $assignedUser->email,
+                        'permit_id' => $permit->permit_id,
+                    ]);
+                } else {
+                    Log::warning("No user or email found for permit.", ['permit_id' => $permit->permit_id]);
+                }
+            }
+        } catch (Exception $ex) {
+            Log::error('Error in permitClose cron job.', ['error' => $ex->getMessage()]);
+            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
+        }
+    }
+   
     public function queueCompanyImport()
     {
         $queueLength = Queue::size('company');

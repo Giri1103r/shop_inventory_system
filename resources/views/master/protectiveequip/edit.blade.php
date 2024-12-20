@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Protective Equipments to be worn Add')
+@section('title', 'Protective Equipments to be worn Edit')
 @section('pageurl', admin_url('ptw/protectiveequipmentmaster/list'))
 
 
@@ -85,7 +85,7 @@
                     protective_equip: {
                         required: true,
                         minlength: 3,
-                        pattern: /^[a-zA-Z0-9\s\-_'"(),&]*$/, 
+                        pattern: /^[a-zA-Z0-9\s\-_'"(),&]*$/,
                         remote: {
                             url: '{{ admin_url('ptw/protectiveequipmentmaster/unique') }}',
                             type: 'post',

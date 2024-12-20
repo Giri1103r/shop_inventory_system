@@ -178,6 +178,7 @@ class SafeWork extends Model
 
         return $data;
     }
+    
 
     public function selectchecklist()
     {

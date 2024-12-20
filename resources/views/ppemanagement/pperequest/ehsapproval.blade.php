@@ -111,7 +111,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @if (!$userdata)
+                                            @if ($userdata->isEmpty())
                                                 <tr>
                                                     <td class="text-center" colspan="6">No data is available</td>
                                                 </tr>
@@ -123,19 +123,26 @@
                                                         <td>{{ displaydateformat($data->created_at) }}</td>
                                                         <td>
                                                             @if ($data->approve_status == STATUS_HOD_APPROVAL_PENDING)
-                                                                <span class='badge bg-info' style='font-size: 1.0em;'>HOD Approval Pending</span>
+                                                                <span class='badge bg-info' style='font-size: 1.0em;'>HOD
+                                                                    Approval Pending</span>
                                                             @elseif ($data->approve_status == STATUS_HOD_APPROVED)
-                                                                <span class='badge bg-success' style='font-size: 1.0em;'>HOD Approved</span>
+                                                                <span class='badge bg-success' style='font-size: 1.0em;'>HOD
+                                                                    Approved</span>
                                                             @elseif ($data->approve_status == STATUS_USER_APPLIED)
-                                                                <span class='badge bg-primary' style='font-size: 1.0em;'>User Applied</span>
+                                                                <span class='badge bg-primary'
+                                                                    style='font-size: 1.0em;'>User Applied</span>
                                                             @elseif ($data->approve_status == STATUS_HOD_REJECTED)
-                                                                <span class='badge bg-danger' style='font-size: 1.0em;'>HOD Rejected</span>
+                                                                <span class='badge bg-danger' style='font-size: 1.0em;'>HOD
+                                                                    Rejected</span>
                                                             @elseif ($data->approve_status == STATUS_EHS_APPROVAL_PENDING)
-                                                                <span class='badge bg-info' style='font-size: 1.0em;'>EHS Officer Approval Pending</span>
+                                                                <span class='badge bg-info' style='font-size: 1.0em;'>EHS
+                                                                    Officer Approval Pending</span>
                                                             @elseif ($data->approve_status == STATUS_EHS_APPROVED)
-                                                                <span class='badge bg-success' style='font-size: 1.0em;'>EHS Officer Approved</span>
+                                                                <span class='badge bg-success' style='font-size: 1.0em;'>EHS
+                                                                    Officer Approved</span>
                                                             @elseif ($data->approve_status == STATUS_EHS_REJECTED)
-                                                                <span class='badge bg-danger' style='font-size: 1.0em;'>EHS Officer Rejected</span>
+                                                                <span class='badge bg-danger' style='font-size: 1.0em;'>EHS
+                                                                    Officer Rejected</span>
                                                             @endif
                                                         </td>
                                                         {{-- <td>{{ removeUnderScore(getStatus($data['ehs_approve_status'])) }} --}}
@@ -162,19 +169,20 @@
                                         <div class="">
                                             <div class="mb-3 row">
                                                 <div class="col-md-4 mb-3">
-                                                    <label for="approver_name" class="form-label">Approver Name</label>
+                                                    <label for="approver_name" class="form-label require">Approver
+                                                        Name</label>
                                                     <input type="text" class="form-control form-control-sm"
                                                         id="approver_name" readonly value="{{ Auth::user()->name }}">
                                                 </div>
                                                 <div class="col-md-4 mb-3">
-                                                    <label for="date" class="form-label">Date</label>
+                                                    <label for="date" class="form-label require">Date</label>
                                                     <input type="text" class="form-control form-control-sm"
                                                         id="date" name="date" readonly
                                                         value="{{ date('d-m-Y H:i:s') }}">
                                                 </div>
                                                 <div class="col-md-12 mb-3">
                                                     <div class="mb-1">
-                                                        <label for="remarks" class="form-label">Remarks</label>
+                                                        <label for="remarks" class="form-label require">Remarks</label>
                                                         <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks" rows="3"></textarea>
                                                         <div class="text-danger" id="remarks_error"></div>
                                                         @error('remarks')

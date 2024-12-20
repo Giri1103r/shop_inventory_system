@@ -34,87 +34,88 @@ class PpeRequest extends Model
     ];
 
     public function list()
-    {
-        $request = request();
-        $search = '';
-        $query = $this->select('ppe_pperequest.*', 'masters_department.department_name', 'masters_ppetype.ppe_type', 'ppe_master_ppetypemaster.ppe_name')
-            ->join('masters_department', 'ppe_pperequest.department', '=', 'masters_department.id')
-            ->join('masters_ppetype', 'ppe_pperequest.ppe_type', '=', 'masters_ppetype.id')
-            ->join('ppe_master_ppetypemaster', 'ppe_pperequest.ppe_name', '=', 'ppe_master_ppetypemaster.id')
-            ->where('ppe_master_ppetypemaster.trash', 'NO')
-            ->where('masters_department.trash', 'NO')
-            ->where('masters_ppetype.trash', 'NO');
+{
+    $request = request();
+    $user = Auth::user();
+    $userRole = string_to_array($user->role);
+    $empId = $user->employee_id;
 
-        $org_total =  $query;
-        $org_total_counts = $org_total->count();
+    $query = $this->select('ppe_pperequest.*', 'masters_department.department_name', 'masters_ppetype.ppe_type', 'ppe_master_ppetypemaster.ppe_name')
+        ->join('masters_department', 'ppe_pperequest.department', '=', 'masters_department.id')
+        ->join('masters_ppetype', 'ppe_pperequest.ppe_type', '=', 'masters_ppetype.id')
+        ->join('ppe_master_ppetypemaster', 'ppe_pperequest.ppe_name', '=', 'ppe_master_ppetypemaster.id')
+        ->where('ppe_master_ppetypemaster.trash', 'NO')
+        ->where('masters_department.trash', 'NO')
+        ->where('masters_ppetype.trash', 'NO');
 
-        $user = Auth::user();
-        $empId = $user->employee_id;
-        $userRole = $user->role;
-        $userRole = string_to_array($userRole);
-
-
-        if (in_array(ROLE_EHS_OFFICER, $userRole)) {
-            $query->orderBy('ppe_pperequest.id','DESC');
-        } elseif (in_array(ROLE_HOD, $userRole)) {
-            $departmentId = $user->department_id;
-            $query->where('ppe_pperequest.department', $departmentId)->orderBy('ppe_pperequest.id','DESC');
-        } elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
-        } else {
-            $query->where('ppe_pperequest.emp_id', $empId);
-        }
-
-
-
-        if ($request->search['value'] != null) {
-            $search = $request->search['value'];
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('emp_name', 'LIKE', '%' . $search . '%');
-            });
-        }
-
-        if ($request->has('emp_id') && $request->emp_id) {
-            $query->where('emp_id', 'LIKE', '%' . $request->emp_id . '%');
-        }
-        if ($request->has('emp_name') && $request->emp_name) {
-            $query->where('emp_name', 'LIKE', '%' . $request->emp_name . '%');
-        }
-        if ($request->has('approve_status') && $request->approve_status) {
-            $query->where('ppe_pperequest.approve_status', $request->approve_status);
-        }
-
-        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
-            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('ppe_pperequest.created_at', [$startDate, $endDate]);
-        } elseif ($request->has('from_date') && !empty($request->from_date)) {
-            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('ppe_pperequest.created_at', '>=', $startDate);
-        } elseif ($request->has('to_date') && !empty($request->to_date)) {
-            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('ppe_pperequest.created_at', '<=', $endDate);
-        }
-
-
-        $data_count = $query->count();
-        $total_records = $data_count;
-
-        $query->orderBy('id', 'DESC');
-
-        if ($request->length != -1) {
-            $query->offset($request->start)->limit($request->length);
-        }
-
-        $data = $query->get();
-
-        $datas = [
-            'data' => $data,
-            'total_records' => $org_total_counts,
-            'filter_records' => $total_records,
-        ];
-
-        return $datas;
+    if (in_array(ROLE_EHS_OFFICER, $userRole)) {
+        $query->orderBy('ppe_pperequest.id', 'DESC');
+    } elseif (in_array(ROLE_HOD, $userRole)) {
+        $departmentId = $user->department_id;
+        $query->where('ppe_pperequest.department', $departmentId)
+              ->orderBy('ppe_pperequest.id', 'DESC');
+    } elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+    } else {
+        $query->where('ppe_pperequest.emp_id', $empId);
     }
+
+    if ($request->search['value'] != null) {
+        $search = $request->search['value'];
+        $query->where(function ($query) use ($search) {
+            $query->orWhere('emp_name', 'LIKE', '%' . $search . '%');
+        });
+    }
+
+    if ($request->has('emp_id') && $request->emp_id) {
+        $query->where('emp_id', 'LIKE', '%' . $request->emp_id . '%');
+    }
+    if ($request->has('emp_name') && $request->emp_name) {
+        $query->where('emp_name', 'LIKE', '%' . $request->emp_name . '%');
+    }
+
+    if ($request->has('approve_status') && $request->approve_status) {
+        $approveStatus = (int) $request->approve_status;
+        if ($approveStatus === (int) STATUS_HOD_APPROVED) {
+            $query->where('ppe_pperequest.approve_status', STATUS_EHS_APPROVAL_PENDING);
+        } elseif ($approveStatus === (int) STATUS_USER_APPLIED) {
+            $query->where('ppe_pperequest.approve_status', STATUS_HOD_APPROVAL_PENDING);
+        } else {
+            $query->where('ppe_pperequest.approve_status', $approveStatus);
+        }
+    }
+
+    if ($request->has('from_date') && !empty($request->from_date)) {
+        $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+        $query->where('ppe_pperequest.created_at', '>=', $startDate);
+    }
+    if ($request->has('to_date') && !empty($request->to_date)) {
+        $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+        $query->where('ppe_pperequest.created_at', '<=', $endDate);
+    }
+    if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+        $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+        $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+        $query->whereBetween('ppe_pperequest.created_at', [$startDate, $endDate]);
+    }
+
+    $org_total_counts = $query->count();
+
+    if ($request->length != -1) {
+        $query->offset($request->start)->limit($request->length);
+    }
+
+    $data = $query->get();
+    $total_records = $data->count();
+
+    return [
+        'data' => $data,
+        'total_records' => $org_total_counts,
+        'filter_records' => $total_records,
+    ];
+}
+
+
+
 
 
     public function store()
@@ -276,7 +277,7 @@ class PpeRequest extends Model
 
     public function getuserdata($empId)
     {
-        return PpeRequest::where('emp_id', $empId)->where('approve_status', '!=', STATUS_HOD_APPROVAL_PENDING)->get();
+        return PpeRequest::where('emp_id', $empId)->where('approve_status', '!=', STATUS_HOD_APPROVAL_PENDING)->where('approve_status', '!=', STATUS_EHS_APPROVAL_PENDING)->get();
     }
 
     public function exportdata()
@@ -313,7 +314,14 @@ class PpeRequest extends Model
         }
 
         if ($request->has('approve_status') && $request->approve_status) {
-            $query->where('ppe_pperequest.approve_status', $request->approve_status);
+            $approveStatus = (int) $request->approve_status;
+            if ($approveStatus === (int) STATUS_HOD_APPROVED) {
+                $query->where('ppe_pperequest.approve_status', STATUS_EHS_APPROVAL_PENDING);
+            } elseif ($approveStatus === (int) STATUS_USER_APPLIED) {
+                $query->where('ppe_pperequest.approve_status', STATUS_HOD_APPROVAL_PENDING);
+            } else {
+                $query->where('ppe_pperequest.approve_status', $approveStatus);
+            }
         }
 
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {

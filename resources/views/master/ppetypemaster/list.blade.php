@@ -343,12 +343,12 @@
                 var id = $(this).data('id');
                 var types = $(this).data('type');
                 if (types == 1) {
-                    var title = '{{ __('Do You want to In-Activate  PPE Type master') }}';
+                    var title = '{{ __('Do You want to In-Activate  PPE Type ') }}';
                     var text = '{{ __('common.inactive') }}';
                     var btncolor = '#dc3545'
 
                 } else {
-                    var title = '{{ __('Do You want to Activate PPE Type master') }}';
+                    var title = '{{ __('Do You want to Activate PPE Type') }}';
                     var text = '{{ __('common.active') }}';
                     var btncolor = '#7ddc35'
                 }
@@ -416,7 +416,7 @@
                 var id = $(this).data('id');
                 var login_id = $(this).data('login_id');
 
-                var title = '{{ __('Do You want to Delete PPE Type master') }}';
+                var title = '{{ __('Do You want to Delete PPE Type') }}';
                 var text = '{{ __('common.delete') }}';
                 var btncolor = '#dc3545'
 

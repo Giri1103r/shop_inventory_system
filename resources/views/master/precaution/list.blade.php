@@ -132,7 +132,7 @@
                             data: 'precaution',
                             name: 'precaution'
                         },
-                    
+
                         {
                             data: 'status',
                             name: 'status'
@@ -227,12 +227,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Precation to be taken') }}';
+                        var title = '{{ __('Do You want to In-Activate Precaution to be taken') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Precation to be taken') }}';
+                        var title = '{{ __('Do You want to Activate Precaution to be taken') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -300,7 +300,7 @@
                     var id = $(this).data('id');
                     var login_id = $(this).data('login_id');
 
-                    var title = '{{ __('Do You want to Delete Precation to be taken') }}';
+                    var title = '{{ __('Do You want to Delete Precaution to be taken') }}';
                     var text = '{{ __('common.delete') }}';
                     var btncolor = '#dc3545'
 

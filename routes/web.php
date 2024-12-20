@@ -74,6 +74,7 @@ Route::get('worksave', [CronController::class, 'workSave']);
 Route::get('employee_master_temp', [CronController::class, 'employeeMasterTemp']);
 Route::get('employee_save', [CronController::class, 'EmployeeSave']);
 Route::get('permit_expiry', [CronController::class, 'permitExpiry']);
+Route::get('permit_close', [CronController::class, 'permitClose']);
 
 
 Route::get('test', [TestController::class,  'index']);
@@ -606,6 +607,8 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('ppe_ppetype_master/ajax-list', [PpeTypeMasterController::class, 'list']);
             Route::get('ppe_ppetype_master/ajax-ppename', [PpeTypeMasterController::class, 'PPEnamelist']);
             Route::get('ppe_ppetype_master/unique', [PpeTypeMasterController::class, 'Uniquecheck']);
+            Route::get('ppe_ppetype_master/ppename/unique', [PpeTypeMasterController::class, 'PPEUniquecheck']);
+
 
 
 
@@ -659,6 +662,9 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/ehsverification/submit', [SafetyPermitController::class, 'ehsverification']);
                 Route::post('/ehsapproval/submit', [SafetyPermitController::class, 'ehsapproval']);
                 Route::post('/plantheadapproval/submit', [SafetyPermitController::class, 'plantheadapproval']);
+                Route::get('/permitExtension/{id}', [SafetyPermitController::class, 'permitExtension']);
+                Route::post('/permitExtension/submit', [SafetyPermitController::class, 'permitExtensionsubmit']);
+                Route::post('/permitextensionapproval/submit', [SafetyPermitController::class, 'permitextensionapproval']);
                 Route::get('/edit/{id}', [SafetyPermitController::class, 'edit']);
                 Route::post('/edit/submit', [SafetyPermitController::class, 'update']);
                 Route::get('/export/excel', [SafetyPermitController::class, 'exportExcel']);
@@ -693,6 +699,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/export/excel', [PpeExemptionController::class, 'exportExcel']);
                 Route::get('/export/pdf', [PpeExemptionController::class, 'exportPdf']);
                 Route::get('/generalpdf/{id}', [PpeExemptionController::class, 'pdf']);
+                Route::get('/ajax-list', [PpeExemptionController::class, 'list']);
+
 
             });
         });

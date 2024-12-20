@@ -300,6 +300,11 @@ class Department extends Model
         return Department::where('trash','NO')->where('status','!=',0)->get();
     }
 
+    public function getunitDeparment($unitId)
+    {
+       return Department::select('id','department_name')->where('unit_id',$unitId)->where('status',1)->where('trash','NO')->get();
+    }
+
 
     protected static function booted()
     {

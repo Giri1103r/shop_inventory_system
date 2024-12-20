@@ -9,17 +9,16 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 
-use Str;
-use Response;
-use Session;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Session;
 use Exception;
-use DataTables;
+use Yajra\DataTables\DataTables;
 
 use App\Jobs\Ptw\ImportsafeworkJob;
 
 use App\Models\UploadLog;
 use App\Models\Master\SafeWork;
-
+use Illuminate\Support\Facades\Response;
 
 class SafeWorkController extends Controller
 {
@@ -190,13 +189,13 @@ class SafeWorkController extends Controller
     public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {
-            $equip_involve = $request->equip_involve;
+            $safe_work = $request->safe_work;
             $id = $request->id;
             if ($id == '') {
-                $record = $this->safework->uniqueCheck($equip_involve);
+                $record = $this->safework->uniqueCheck($safe_work);
             } else {
                 $id = decryptId($id);
-                $record = $this->safework->ExistuniqueCheck($equip_involve, $id);
+                $record = $this->safework->ExistuniqueCheck($safe_work, $id);
             }
             if ($record->count()) {
                 return Response::json(false);
@@ -242,7 +241,7 @@ class SafeWorkController extends Controller
 
         $filePath = $filedetails->sample_file;
         $customFileName = $filedetails->file_name;
-        
+
         return Response::download($filePath, $customFileName);
     }
 
@@ -338,6 +337,10 @@ class SafeWorkController extends Controller
 
             $allData = $this->safework->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 __('Name'),
@@ -367,7 +370,6 @@ class SafeWorkController extends Controller
                     $exportData
                 );
         } catch (Exception $ex) {
-
             report($ex);
         }
     }
@@ -381,6 +383,10 @@ class SafeWorkController extends Controller
 
             $allData = $this->safework->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
                 __('Name'),
@@ -392,15 +398,16 @@ class SafeWorkController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Location Details",
+                'pagetitle' => "Safe Work Instructions",
             );
 
             $property = [
                 'tempDir' => 'public/pdf/temp/',
-                'mode' => 'c',
+                'mode' => 'utf-8',
                 'margin_left' => 10,
                 'margin_right' => 10,
                 'margin_top' => 10,
+
 
             ];
 
@@ -415,9 +422,8 @@ class SafeWorkController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Safe Work Instructions Details.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
