@@ -337,7 +337,7 @@ class SafetyPermitController extends Controller
             $protectiveEquipment = json_decode($safetypermit->protective_equip, true);
             $equipmentInvolved = json_decode($safetypermit->equipment_involved, true);
 
-           $workman = $this->workmaninvolved->getworkmanDetails( $id);
+            $workman = $this->workmaninvolved->getWorkmaninvolved($id);
 
 
             $data = [
@@ -1010,7 +1010,7 @@ class SafetyPermitController extends Controller
 
         $checkpoints = $this->typeofworkchecklist->getprotectiveequipment($workId, 'type1');
 
-      
+
 
         return response()->json($checkpoints);
     }

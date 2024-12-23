@@ -84,6 +84,10 @@ class WorkmanInvolved extends Model
 
 
 
+    public function getempIds($permit_id)
+    {
+        return WorkmanInvolved::where('permit_id', $permit_id)->pluck('emp_id')->toArray();
+    }
 
     public function getWorkmaninvolved($id)
     {
