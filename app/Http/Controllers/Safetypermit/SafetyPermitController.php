@@ -1105,16 +1105,7 @@ class SafetyPermitController extends Controller
 
         $checkpoints = $this->typeofworkchecklist->getprotectiveequipment($workId, 'type1');
 
-        if ($id) {
-            $safetypermit = $this->safetypermit->getprotetiveequip($id);
-            $checked = json_decode($safetypermit, true);
-
-
-
-            foreach( $checked as $ids){
-                $checkedCheckpoints = $this->typeofworkchecklist->getProtectivecheckpoints($ids);
-            }
-        }
+      
 
         return response()->json($checkpoints);
     }

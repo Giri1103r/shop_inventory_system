@@ -164,10 +164,11 @@
                                                         class="img-fluid" style="width: 50px; height: 50px;">
                                                     <label class="form-label mb-0">Taken By (Name & Department)</label>
                                                     <select name="shut_down_takenby" id="employeenameshutdown"
-                                                    class="form-control shutdowncheckbox" >
-                                                    <option value="">Select Person</option>
-
-                                                </select>
+                                                        class="form-control shutdowncheckbox"
+                                                        {{ $safetypermit->shutdown_req == 1 ? '' : 'disabled' }}>
+                                                        <option value="">{{ $safetypermit->shut_down_takenby }}
+                                                        </option>
+                                                    </select>
                                                 </div>
                                             </div>
 
@@ -192,8 +193,9 @@
 
 
                                                     <select name="loto_takenby" id="employeenameloto"
-                                                        class="form-control lotocheckbox" disabled>
-                                                        <option value="">Select Person</option>
+                                                        class="form-control lotocheckbox"
+                                                        {{ $safetypermit->loto_req == 1 ? '' : 'disabled' }}>
+                                                        <option value="">{{ $safetypermit->loto_takenby }}</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -237,7 +239,9 @@
                                                             <label class="form-label mb-0">Air</label>
                                                             <input type="checkbox"
                                                                 class="validate-radio-required shutdowncheckbox"
-                                                                name="state_isolation_loto[]" value="Air" disabled>
+                                                                name="state_isolation_loto[]" value="Air"
+                                                                {{ in_array('Air', $stateIsolationLoto ?? []) ? 'checked' : '' }}
+                                                                disabled>
                                                         </div>
                                                     </div>
                                                     <div class="d-inline-block"
@@ -248,7 +252,9 @@
                                                             <label class="form-label mb-0">Gas</label>
                                                             <input type="checkbox"
                                                                 class="validate-radio-required shutdowncheckbox"
-                                                                name="state_isolation_loto[]" value="Gas" disabled>
+                                                                name="state_isolation_loto[]" value="Gas"
+                                                                {{ in_array('Gas', $stateIsolationLoto ?? []) ? 'checked' : '' }}
+                                                                disabled>
                                                         </div>
                                                     </div>
                                                     <div class="d-inline-block"
@@ -261,41 +267,33 @@
                                                 </div>
 
                                                 <!-- Second Row -->
-                                                <div class="row mb-3"
-                                                    style="display: flex; flex-wrap: nowrap; justify-content: flex-start; align-items: center;">
-                                                    <div class="d-inline-block"
-                                                        style="margin: 0; padding: 0; flex-shrink: 0;">
+                                               
+                                                <div class="row mb-3" style="display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: 20px;">
+                                                    <div class="d-inline-block" style="padding: 0; flex-shrink: 0; width: 200px;">
                                                         <div class="form-group d-flex align-items-center gap-1">
-                                                            <img src="{{ url('public/assets/images/safetypermit/electrician.png') }}"
-                                                                class="img-fluid" style="width: 50px; height: 50px;">
+                                                            <img src="{{ url('public/assets/images/safetypermit/electrician.png') }}" class="img-fluid" style="width: 50px; height: 50px;">
                                                             <label class="form-label mb-0">Electrical</label>
-                                                            <input type="checkbox"
-                                                                class="validate-radio-required shutdowncheckbox"
-                                                                name="state_isolation_loto[]" value="Electrical"
-                                                                disabled>
+                                                            <input type="checkbox" class="validate-radio-required shutdowncheckbox" name="state_isolation_loto[]" value="Electrical" {{ in_array('Electrical', $stateIsolationLoto ?? []) ? 'checked' : '' }} disabled>
                                                         </div>
                                                     </div>
-                                                    <div class="d-inline-block"
-                                                        style="margin-left: -200px; padding: 0; flex-shrink: 0;">
+                                                    <div class="d-inline-block" style="padding: 0; flex-shrink: 0; width: 200px;">
                                                         <div class="form-group d-flex align-items-center gap-1">
-                                                            <img src="{{ url('public/assets/images/safetypermit/leak.png') }}"
-                                                                class="img-fluid" style="width: 50px; height: 50px;">
+                                                            <img src="{{ url('public/assets/images/safetypermit/leak.png') }}" class="img-fluid" style="width: 50px; height: 50px;">
                                                             <label class="form-label mb-0">Water/Liquid</label>
-                                                            <input type="checkbox"
-                                                                class="validate-radio-required shutdowncheckbox"
-                                                                name="state_isolation_loto[]" value="Water/Liquid"
-                                                                disabled>
+                                                            <input type="checkbox" class="validate-radio-required shutdowncheckbox" name="state_isolation_loto[]" value="Water/Liquid" {{ in_array('Water/Liquid', $stateIsolationLoto ?? []) ? 'checked' : '' }} disabled>
                                                         </div>
                                                     </div>
-                                                    <div class="d-inline-block"
-                                                        style="margin-left: -200px; padding: 0; flex-shrink: 0;">
+                                                    <div class="d-inline-block" style="padding: 0; flex-shrink: 0; width: 200px;">
                                                         <div class="form-group d-flex align-items-center gap-1">
-                                                            <textarea class="form-control shutdowncheckbox" name="state_isolation_loto[]" placeholder="Specify others" disabled></textarea>
+                                                            <textarea class="form-control shutdowncheckbox" name="state_isolation_loto[]" placeholder="Specify others" disabled>{{ $stateIsolationLoto['other'] ?? '' }}</textarea>
                                                         </div>
                                                     </div>
                                                 </div>
+
                                             </div>
                                         </div>
+
+
 
                                         <div id="section-1" class="col-md-8">
                                             <p class="fw-bold fs-5 mt-3">Applicable for Confined Space Entry</p>
@@ -304,21 +302,33 @@
                                                 <div class="col-12 col-md-4 mb-3">
                                                     <div class="form-group">
                                                         <label class="form-label">O2%</label>
-                                                        <input type="text" name="confined_space_entry[o2_percentage]" class="form-control" placeholder="" disabled>
+                                                        <input type="text"
+                                                            name="confined_space_entry[o2_percentage]"
+                                                            class="form-control"
+                                                            value="{{ $confinedSpaceEntry['o2_percentage'] ?? '' }}"
+                                                            disabled>
                                                     </div>
                                                 </div>
                                                 <div class="col-12 col-md-4 mb-3">
                                                     <div class="form-group">
                                                         <label class="form-label">System Isolated</label>
-                                                        <input type="hidden" name="confined_space_entry[system_isolated]" value="0">
-                                                        <input type="checkbox" class="validate-radio-required" name="confined_space_entry[system_isolated]" value="1">
+                                                        <input type="hidden"
+                                                            name="confined_space_entry[system_isolated]"
+                                                            value="0">
+                                                        <input type="checkbox" class="validate-radio-required"
+                                                            name="confined_space_entry[system_isolated]"
+                                                            value="1"
+                                                            {{ $confinedSpaceEntry['system_isolated'] ?? '' == 1 ? 'checked' : '' }}>
                                                     </div>
                                                 </div>
                                                 <div class="col-12 col-md-4 mb-3">
                                                     <div class="form-group">
                                                         <label class="form-label">Rescue System Available</label>
-                                                        <input type="hidden" name="confined_space_entry[rescue_system]" value="0">
-                                                        <input type="checkbox" class="validate-radio-required" name="confined_space_entry[rescue_system]" value="1">
+                                                        <input type="hidden"
+                                                            name="confined_space_entry[rescue_system]" value="0">
+                                                        <input type="checkbox" class="validate-radio-required"
+                                                            name="confined_space_entry[rescue_system]" value="1"
+                                                            {{ $confinedSpaceEntry['rescue_system'] ?? '' == 1 ? 'checked' : '' }}>
                                                     </div>
                                                 </div>
                                             </div>
@@ -327,20 +337,32 @@
                                                 <div class="col-12 col-md-4 mb-3">
                                                     <div class="form-group">
                                                         <label class="form-label">Confined Space Attendant</label>
-                                                        <input type="hidden" name="confined_space_entry[confined_attendant]" value="0">
-                                                        <input type="checkbox" class="validate-radio-required" name="confined_space_entry[confined_attendant]" value="1">
+                                                        <input type="hidden"
+                                                            name="confined_space_entry[confined_attendant]"
+                                                            value="0">
+                                                        <input type="checkbox" class="validate-radio-required"
+                                                            name="confined_space_entry[confined_attendant]"
+                                                            value="1"
+                                                            {{ $confinedSpaceEntry['confined_attendant'] ?? '' == 1 ? 'checked' : '' }}>
                                                     </div>
                                                 </div>
                                                 <div class="col-12 col-md-4 mb-3">
                                                     <div class="form-group">
                                                         <label class="form-label">Attendant Name</label>
-                                                        <input type="text" name="confined_space_entry[attendant_name]" class="form-control" placeholder="Search by Employee Name" disabled>
+                                                        <input type="text"
+                                                            name="confined_space_entry[attendant_name]"
+                                                            class="form-control" placeholder="Search by Employee Name"
+                                                            value="{{ $confinedSpaceEntry['attendant_name'] ?? '' }}"
+                                                            disabled>
                                                     </div>
                                                 </div>
                                                 <div class="col-12 col-md-4 mb-3">
                                                     <div class="form-group">
                                                         <label class="form-label">Register for entry & exits</label>
-                                                        <input type="checkbox" class="validate-radio-required" name="confined_space_entry[register_entry_exits]" disabled>
+                                                        <input type="checkbox" class="validate-radio-required"
+                                                            name="confined_space_entry[register_entry_exits]"
+                                                            {{ $confinedSpaceEntry['register_entry_exits'] ?? '' == 1 ? 'checked' : '' }}
+                                                            disabled>
                                                     </div>
                                                 </div>
                                             </div>
@@ -349,7 +371,10 @@
                                                 <div class="col-12 col-md-4 mb-3">
                                                     <div class="form-group">
                                                         <label class="form-label">Any Other Gas / PPM</label>
-                                                        <input type="text" name="confined_space_entry[other_gas]" class="form-control" placeholder="Loto No" disabled>
+                                                        <input type="text" name="confined_space_entry[other_gas]"
+                                                            class="form-control" placeholder="Loto No"
+                                                            value="{{ $confinedSpaceEntry['other_gas'] ?? '' }}"
+                                                            disabled>
                                                     </div>
                                                 </div>
                                                 <div class="col-12 col-md-4 mb-3">
@@ -366,6 +391,7 @@
                                                 </div>
                                             </div>
                                         </div>
+
 
                                     </div>
 
