@@ -492,7 +492,7 @@ class PpeExemptionController extends Controller
         ];
         $messages = [
             'remarks.required' => 'Remarks Field is Mandatory',
-           
+
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -556,7 +556,7 @@ class PpeExemptionController extends Controller
                 'notification_message' => $message,
                 'mobile_notification' => json_encode(array(
                     'title' => $message,
-                    'message' => getUsername($updateData['approved_by']) . " has" . getStatus($updateData['approve_status']) . " a PPE Exemption request on " . displaydateformat($emp_details->created_at) . " from " . displaydateformat($emp_details->from_date) . " to " . displaydateformat($emp_details->to_date),
+                    'message' => getUsername($updateData['approved_by']) . " has" . removeUnderScore(getStatus($updateData['approve_status']))  . " a PPE Exemption request on " . displaydateformat($emp_details->created_at) . " from " . displaydateformat($emp_details->from_date) . " to " . displaydateformat($emp_details->to_date),
                     'icon' => $img,
                     'module' => 1,
                     'style' => 'font-size: 1rem;'
@@ -597,7 +597,8 @@ class PpeExemptionController extends Controller
                 __("Company"),
                 __("From Date"),
                 __("To Date"),
-                __("Approve Status"),
+                __("From Status"),
+                __("To Status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -616,16 +617,31 @@ class PpeExemptionController extends Controller
                 $export[] =  getcompanyname($data->company);
                 $export[] =  Displaydateformat($data->from_date);
                 $export[] =  Displaydateformat($data->to_date);
-                if($data->approve_status ==  $ehsstatus){
+
+                if ($data->approve_status == STATUS_EHS_APPROVAL_PENDING) {
                     $export[] = 'User Applied';
-                }elseif($data->approve_status ==  STATUS_EHS_APPROVED){
+                }
+                elseif ($data->approve_status == STATUS_EHS_APPROVED) {
+                    $export[] = 'EHS Head Approval Pending';
+                }
+                elseif ($data->approve_status == STATUS_EHS_REJECTED) {
+                    $export[] = 'EHS Head Approval Pending';
+                }
+                else {
+                    $export[] = removeUnderScore(getStatus($data->approve_status));
+                }
+
+                if ($data->approve_status == STATUS_EHS_APPROVAL_PENDING) {
+                    $export[] = 'EHS Head Approval Pending';
+                }
+                elseif ($data->approve_status == STATUS_EHS_APPROVED) {
                     $export[] = 'EHS Head Approved';
-                }elseif($data->approve_status ==  STATUS_EHS_REJECTED){
+                }
+                elseif ($data->approve_status == STATUS_EHS_REJECTED) {
                     $export[] = 'EHS Head Rejected';
                 }
-                else{
+                else {
                     $export[] = removeUnderScore(getStatus($data->approve_status));
-
                 }
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -669,7 +685,8 @@ class PpeExemptionController extends Controller
                 __("Company"),
                 __("From Date"),
                 __("To Date"),
-                __("Approve Status"),
+                __("From Status"),
+                __("To Status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];

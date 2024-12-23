@@ -17,7 +17,7 @@
                     <tr>
                         <td colspan="4" align="center"
                             style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>PPE Request {{ $details['status'] }}</b>
+                            <b>PPE Request</b>
                         </td>
                     </tr>
 
@@ -26,30 +26,24 @@
                             <b>Employee Name</b>
                         </td>
                         <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ $details['emp_name'] }}</td>
+                            valign="top"> {{ $Storedetails['emp_name'] }}</td>
                     </tr>
                     <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                             <b>Employee Id</b>
                         </td>
                         <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ $details['emp_id'] }}</td>
+                            valign="top"> {{ $Storedetails['emp_id'] }}</td>
                     </tr>
 
-                    <tr>
-                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>Item Code</b>
-                        </td>
-                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ getItemCode($details['item_code'] )}}</td>
-                    </tr>
+
 
                     <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                             <b>Department</b>
                         </td>
                         <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ getDepartment($details['department']) }}</td>
+                            valign="top"> {{ getDepartment($Storedetails['department']) }}</td>
                     </tr>
 
                     <tr>
@@ -57,7 +51,7 @@
                             <b>Reason</b>
                         </td>
                         <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ $details['remarks'] }}</td>
+                            valign="top"> {{ $Storedetails['remarks'] }}</td>
                     </tr>
 
                     <tr>
@@ -65,7 +59,7 @@
                             <b>Approved By</b>
                         </td>
                         <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ getUsername($details['approved_by']) }}</td>
+                            valign="top"> {{ getUsername($Storedetails['approved_by']) }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -73,7 +67,7 @@
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 20px;">
                 <tr>
                     <td align="center" style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                        <a href="{{ $details['approve_link'] }}" style="background-color: green; border: 1px solid green; border-radius: 5px; box-sizing: border-box; color: #ffffff; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 10px 20px; text-align: center; text-decoration: none; text-transform: capitalize;">Approve</a>
+                        <a href="{{ $Storedetails['approve_link'] }}" style="background-color: green; border: 1px solid green; border-radius: 5px; box-sizing: border-box; color: #ffffff; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 10px 20px; text-align: center; text-decoration: none; text-transform: capitalize;">Issued</a>
                     </td>
                 </tr>
             </table>

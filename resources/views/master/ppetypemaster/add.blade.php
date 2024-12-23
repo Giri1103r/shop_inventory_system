@@ -201,6 +201,8 @@
                                     },
                                     ppe_standard: {
                                         required: true,
+                                        minlength: 3,
+                                        maxlength: 30,
                                         regex: /^[a-zA-Z0-9\-_'"()\s]+$/
                                     },
                                     ppe_file: {
@@ -233,6 +235,8 @@
                                     },
                                     ppe_standard: {
                                         required: "PPE Standard cannot be empty.",
+                                        minlength: "PPE  Standard must be between 3 and 30 characters.",
+                                        maxlength: "PPE  Standard must be between 3 and 30 characters.",
                                         regex: "PPE Standard should be alphanumeric and can include -, _, ', \", (, )."
                                     },
                                     ppe_file: {

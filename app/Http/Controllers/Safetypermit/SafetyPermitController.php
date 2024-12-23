@@ -51,6 +51,7 @@ class SafetyPermitController extends Controller
     private $department;
     private $approvereject;
     private $statuslog;
+    private $employee;
 
     public function __construct()
     {
@@ -68,6 +69,7 @@ class SafetyPermitController extends Controller
         $this->department = new Department();
         $this->approvereject = new SafetyApproveReject();
         $this->statuslog = new Statuslog();
+        $this->employee = new Employee();
     }
 
     public function index(Request $request)
@@ -335,7 +337,7 @@ class SafetyPermitController extends Controller
             $protectiveEquipment = json_decode($safetypermit->protective_equip, true);
             $equipmentInvolved = json_decode($safetypermit->equipment_involved, true);
 
-            $workman = $this->workmaninvolved->getWorkmaninvolved($id);
+           $workman = $this->workmaninvolved->getworkmanDetails( $id);
 
 
             $data = [
@@ -1002,11 +1004,19 @@ class SafetyPermitController extends Controller
 
 
 
-    public function getprotectivechecklist($workId)
+    public function getprotectivechecklist(Request $request, $workId)
     {
+        $id = decryptId($request->input('id'));
+
         $checkpoints = $this->typeofworkchecklist->getprotectiveequipment($workId, 'type1');
+
+      
+
         return response()->json($checkpoints);
     }
+
+
+
     public function getequipmentinvolved($workId)
     {
 
@@ -1076,10 +1086,25 @@ class SafetyPermitController extends Controller
     {
         $name = $request->input('search');
 
-        $employee_code = Employee::where('emp_id', 'like', '%' . $name . '%')
-            ->where('status', 1)
-            ->limit(10)
-            ->get();
+        $permit_id = decryptId($request->input('permit_id'));
+
+
+        $emp_ids = $this->workmaninvolved->getempIds($permit_id);
+
+        if ($permit_id) {
+
+            $employee_code = Employee::whereIn('id', $emp_ids)
+                ->where('emp_id', 'like', '%' . $name . '%')
+                ->where('status', 1)
+                ->limit(10)
+                ->get();
+        } else {
+            $employee_code = Employee::where('emp_id', 'like', '%' . $name . '%')
+                ->where('status', 1)
+                ->limit(10)
+                ->get();
+        }
+
         return response()->json(
             $employee_code->map(function ($employee) {
                 return [

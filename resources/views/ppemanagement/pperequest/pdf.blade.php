@@ -19,43 +19,68 @@
                 @php
                     $i = 1;
                 @endphp
+
                 @foreach ($content as $key => $value)
                     <tr>
-                        <td style='padding: 7px;border: 0.5px solid;text-align:center'>
+                        <td style='padding: 7px; border: 0.5px solid; text-align:center'>
                             {{ $i }}
                         </td>
 
-                        <td style='padding: 7px;border: 0.5px solid'>
+                        <td style='padding: 7px; border: 0.5px solid'>
                             {{ $value->emp_id }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
+                        <td style='padding: 7px; border: 0.5px solid'>
                             {{ $value->emp_name }}
                         </td>
 
-                        <td style='padding: 7px;border: 0.5px solid'>
+                        <td style='padding: 7px; border: 0.5px solid'>
                             {{ getPpeType($value->ppe_type) }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
+                        <td style='padding: 7px; border: 0.5px solid'>
                             {{ getPpename($value->ppe_name) }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
+                        <td style='padding: 7px; border: 0.5px solid'>
                             {{ getDepartment($value->department) }}
                         </td>
 
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            @if($value->approve_status == $hodstatus)
+                        <td style='padding: 7px; border: 0.5px solid'>
+                            @if ($value->approve_status == $hodstatus)
                                 <p>{{ 'User Applied' }}</p>
-                            @elseif($value->approve_status == $ehsstatus)
+                            @elseif($value->approve_status == STATUS_HOD_APPROVED)
+                                <p>{{ 'HOD Approval Pending' }}</p>
+                            @elseif($value->approve_status == STATUS_HOD_REJECTED)
+                                <p>{{ 'HOD Approval Pending' }}</p>
+                            @elseif($value->approve_status == STATUS_EHS_APPROVAL_PENDING)
+                                <p>{{ 'HOD Approved' }}</p>
+                            @elseif($value->approve_status == STATUS_EHS_APPROVED)
+                                <p>{{ 'EHS Officer Approval Pending' }}</p>
+                            @elseif($value->approve_status == STATUS_EHS_REJECTED)
+                                <p>{{ 'EHS Officer Approval Pending' }}</p>
+                            @endif
+                        </td>
+
+                        <td style='padding: 7px; border: 0.5px solid'>
+                            @if ($value->approve_status == $hodstatus)
+                                <p>{{ 'HOD Approval Pending' }}</p>
+                            @elseif($value->approve_status == STATUS_HOD_APPROVED)
                                 <p>{{ 'Hod Approved' }}</p>
+                            @elseif($value->approve_status == STATUS_HOD_REJECTED)
+                                <p>{{ 'Hod Rejected' }}</p>
+                                @elseif($value->approve_status == STATUS_EHS_APPROVAL_PENDING)
+                                <p>{{ 'EHS Officer Approval Pending' }}</p>
+                            @elseif($value->approve_status == STATUS_EHS_APPROVED)
+                                <p>{{ 'EHS Officer Approved' }}</p>
+                            @elseif($value->approve_status == STATUS_EHS_REJECTED)
+                                <p>{{ 'EHS Officer Rejected' }}</p>
                             @else
                                 {{ removeUnderScore(getStatus($value->approve_status)) }}
                             @endif
                         </td>
 
-                        <td style='padding: 7px;border: 0.5px solid'>
+                        <td style='padding: 7px; border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
+                        <td style='padding: 7px; border: 0.5px solid'>
                             {{ Displaydateformat($value->created_at) }}
                         </td>
                     </tr>
@@ -63,6 +88,7 @@
                         $i++;
                     @endphp
                 @endforeach
+
             </tbody>
         </table>
         <br>

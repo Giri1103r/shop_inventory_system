@@ -159,38 +159,64 @@
             <div style="width:100%;">
                 <table style="width:100%;">
                     <tr>
-                        <td class="header-cell">Approval Status</td>
+                        <td class="header-cell">Status Logs</td>
                     </tr>
                 </table>
             </div>
             <br>
-            <table>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ isset($ppestatuslog->created_by) ? getUsername($ppestatuslog->created_by) : '' }}</td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ displaydateformat(isset($pperequest->approved_at) ? $pperequest->approved_at : '') }}</td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Approve Status</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ removeUnderScore(getStatus(isset($ppestatuslog->to_status) ? $ppestatuslog->to_status : '')) }}
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Reason</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ isset($ppestatuslog->remarks) ? $ppestatuslog->remarks : '' }}</td>
-                </tr>
-            </table>
+            <div class="table-responsive">
+                <div class="col-md-12">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+
+                                <th>Status</th>
+                                <th>Approved By</th>
+                                <th>Remarks</th>
+                                <th>Date</th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @if ($ppestatuslog->isEmpty())
+                                <tr>
+                                    <td class="text-center" colspan="5">No data is available</td>
+                                </tr>
+                            @else
+                                @foreach ($ppestatuslog as $log)
+                                    <tr class="hover-row">
+
+                                        <td>
+                                            @if ($log['to_status'] == STATUS_HOD_APPROVAL_PENDING)
+                                                HOD Approval Pending
+                                            @elseif ($log['to_status'] == STATUS_HOD_APPROVED)
+                                                HOD Approved
+                                            @elseif ($log['to_status'] == STATUS_USER_APPLIED)
+                                                User Applied
+                                            @elseif ($log['to_status'] == STATUS_HOD_REJECTED)
+                                                HOD Rejected
+                                            @elseif ($log['to_status'] == STATUS_EHS_APPROVAL_PENDING)
+                                                EHS Officer Approval Pending
+                                            @elseif ($log['to_status'] == STATUS_EHS_APPROVED)
+                                                EHS Officer Approved
+                                            @elseif ($log['to_status'] == STATUS_EHS_REJECTED)
+                                                EHS Officer Rejected
+                                            @endif
+                                        </td>
+
+                                        <td>{{ getUsername($log['created_by']) }}</td>
+                                        <td>{{ $log['remarks'] }}</td>
+                                        <td>{{ displaydateformat($log['created_at']) }}</td>
+
+                                    </tr>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
             <br>
         </div>
     @endif
@@ -212,7 +238,7 @@
                         <th>Employee Name</th>
                         <th>Employee Id</th>
                         <th>Previous applied Date</th>
-                        <th>Approval</th>
+                        <th>Approval Status</th>
                         <th>Remarks</th>
                     </tr>
                 </thead>

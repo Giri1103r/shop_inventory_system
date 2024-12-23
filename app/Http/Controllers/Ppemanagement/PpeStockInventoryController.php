@@ -200,7 +200,6 @@ class PpeStockInventoryController extends Controller
                 __("UOM"),
                 __("Quantity"),
                 __("Item Description"),
-                __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -218,7 +217,6 @@ class PpeStockInventoryController extends Controller
                 $export[] =  $data->uom;
                 $export[] =  $data->quantity;
                 $export[] =  $data->item_description;
-                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 
@@ -263,7 +261,6 @@ class PpeStockInventoryController extends Controller
                 __("UOM"),
                 __("Quantity"),
                 __("Item Description"),
-                __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];

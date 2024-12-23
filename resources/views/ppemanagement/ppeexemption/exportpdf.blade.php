@@ -2,7 +2,7 @@
 
 
 <head>
-    <title>PPE Exemption |  KARAM</title>
+    <title>PPE Exemption | KARAM</title>
     <style>
         .badge {
             padding: 1px 9px 2px;
@@ -195,48 +195,64 @@
                 </td>
             </tr>
         </table>
-        @if ($ppeexemption->approve_status != STATUS_EHS_APPROVAL_PENDING)
-            <div>
-                <div style="width:100%;">
-                    <table style="width:100%;">
-                        <tr>
-                            <td class="header-cell">Approval Status</td>
-                        </tr>
-                    </table>
-                </div>
-                <br>
-                <table>
+
+        <div>
+            <div style="width:100%;">
+                <table style="width:100%;">
                     <tr>
-                        <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">
-                            {{ getUsername(isset($ppeexemption->approved_by) ? $ppeexemption->approved_by : '') }}</td>
-                    </tr>
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">
-                            {{ displaydateformat(isset($ppeexemption->approved_at) ? $ppeexemption->approved_at : '') }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>Approve Status</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">
-                            {{ removeUnderScore(getStatus(isset($ppeexemption->approve_status) ? $ppeexemption->approve_status : '')) }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>Reason</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">
-                            {{ isset($ppeexemption->remarks) ? $ppeexemption->remarks : '' }}</td>
+                        <td class="header-cell">Status Logs</td>
                     </tr>
                 </table>
-                <br>
-
             </div>
-        @endif
+            <br>
+            <div class="table-responsive">
+                <div class="col-md-12">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Approved By</th>
+                                <th>Remarks</th>
+                                <th>Date</th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @if ($ppestatuslog->isEmpty())
+                                <tr>
+                                    <td class="text-center" colspan="5">No data is available</td>
+                                </tr>
+                            @else
+                                @foreach ($ppestatuslog as $log)
+                                    <tr class="hover-row">
+                                        <td>
+                                            @if ($log['to_status'] == STATUS_EHS_APPROVAL_PENDING)
+                                                EHS Approval Pending
+                                            @elseif ($log['to_status'] == STATUS_USER_APPLIED)
+                                                User Applied
+                                            @elseif ($log['to_status'] == STATUS_EHS_APPROVED)
+                                                EHS Head Approved
+                                            @elseif ($log['to_status'] == STATUS_EHS_REJECTED)
+                                                EHS Head Rejected
+                                            @endif
+                                        </td>
+                                        <td>{{ getUsername($log['created_by']) }}</td>
+                                        <td>{{ $log['remarks'] }}</td>
+                                        <td>{{ displaydateformat($log['created_at']) }}</td>
+
+                                    </tr>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+            <br>
+
+        </div>
+
 </body>
 
 </html>

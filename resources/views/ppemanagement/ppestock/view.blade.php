@@ -84,18 +84,7 @@
                                             {{ displayDateformat($ppestock->created_at) }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Status') }}</label>
-                                        <div class="view_data">
-                                            @if ($ppestock->status == 1)
-                                                {{ __('common.active') }}
-                                            @else
-                                                {{ __('common.inactive') }}
-                                            @endif
-
-                                        </div>
-                                    </div>
-
+                                  
 
                                 </div>
                             </div>

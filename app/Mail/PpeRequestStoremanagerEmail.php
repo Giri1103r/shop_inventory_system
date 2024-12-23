@@ -12,13 +12,13 @@ use Illuminate\Queue\SerializesModels;
 class PpeRequestStoremanagerEmail extends Mailable
 {
     use Queueable, SerializesModels;
-    protected $details;
+    protected $Storedetails;
     /**
      * Create a new message instance.
      */
-    public function __construct($details)
+    public function __construct($Storedetails)
     {
-        $this->details = $details;
+        $this->Storedetails = $Storedetails;
     }
 
 
@@ -39,7 +39,7 @@ class PpeRequestStoremanagerEmail extends Mailable
     {
         return new Content(
             view: 'emails.pperequest.storemanageremail',
-            with: ['details' => $this->details]
+            with: ['Storedetails' => $this->Storedetails]
         );
     }
 
