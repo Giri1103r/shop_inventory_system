@@ -337,7 +337,7 @@ class SafetyPermitController extends Controller
             $protectiveEquipment = json_decode($safetypermit->protective_equip, true);
             $equipmentInvolved = json_decode($safetypermit->equipment_involved, true);
 
-           $workman = $this->workmaninvolved->getworkmanDetails( $id);
+            $workman = $this->workmaninvolved->getWorkmaninvolved($id);
 
 
             $data = [
@@ -353,8 +353,7 @@ class SafetyPermitController extends Controller
                 'confinedSpaceEntry' => $confinedSpaceEntry,
                 'equipmentInvolved' => $equipmentInvolved,
                 'protectiveEquipment' => $protectiveEquipment,
-                'employeeList'=> $employeeList
-
+                'workman' => $workman,
             ];
             return view('permit.safetypermit.edit', $data);
         } catch (Exception $ex) {
@@ -369,109 +368,15 @@ class SafetyPermitController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $rules = [
-                'permit_id' => 'required',
-                'permit_type' => 'required',
-                'location' => 'required',
-                'sub_permit' => 'required',
-                'desc_work' => 'required',
-                'unit' => 'required',
-                'workers' => 'required',
-                'types_hotwork' => 'required',
-                'risk_assess_no' => 'required',
-                'flames_spark' => 'required',
-                'work_from_time' => 'required',
-                'work_to_time' => 'required',
-                'permit_checklist1' => 'required',
-                'cil_cont_name' => 'required',
-                'cil_cont_upload' => 'required',
-                'company_name' => 'required',
-                'cil_cont_time' => 'required',
+            $safetypermitdetails = $this->safetypermit->find($id);
+            $this->safetypermit->updates($id);
+            $this->workmaninvolved->store($id);
 
-            ];
-            $messages = [
-                'permit_id.required' => __('ptw.permit_id_is_required'),
-                'permit_type.required' => __('ptw.permit_type_is_required'),
-                'location.required' => __('ptw.location_is_required'),
-                'sub_permit.required' => __('ptw.sub_permit_is_required'),
-                'desc_work.required' => __('ptw.brief_description_of_work_is_required'),
-                'unit.required' => __('ptw.unit_location_is_required'),
-                'workers.required' => __('ptw.no_of_workers_is_required'),
-                'types_hotwork.required' => __('ptw.types_of_hot_work_is_required'),
-                'risk_assess_no.required' => __('ptw.risk_assessment_form_no_is_required'),
-                'flames_spark.required' => __('ptw.flames_sparks_producing_equipment_is_required'),
-                'work_from_time.required' => __('ptw.period_of_work_from_time_is_required'),
-                'work_to_time.required' => __('ptw.period_of_work_to_time_is_required'),
-                'permit_checklist1.required' => __('ptw.permit_checklist_required'),
-                'cil_cont_name.required' => __('ptw.cil_contractor_name_is_required'),
-                'cil_cont_upload.required' => __('ptw.signature_is_required'),
-                'company_name.required' => __('ptw.contractor_company_name_is_required'),
-                'cil_cont_time.required' => __('ptw.time_is_required'),
-
-            ];
-
-            $permit_status = 2;
-            $hotpermitdetails = $this->safetypermit->find($id);
-            $hotpermit = $this->safetypermit->updates($id, $permit_status);
-            $this->permitchecklist->updates($id);
-            $this->file->updates($hotpermit);
-
-
-
-            $mailsubject = 'Hot Work Permit Submitted';
-
-            $user_role = ['ROLE_HOD', 'ROLE_ENGINEER'];
-
-            $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
-            $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
-
-
-            if (count($users) > 0) {
-
-                foreach ($users as $user) {
-
-                    $email_id = $user->email;
-
-                    if ($email_id != '' || $email_id != null) {
-                        $ptw = new Ptw();
-                        $permitdetails =  $this->safetypermit->selectOne($id);
-                        $permitrray  = $permitdetails->toArray();
-
-                        $permitrray['name'] = $user->name;
-                        $permitrray['email_id'] =  $email_id;
-                        $permitrray['mail_subject'] = $mailsubject;
-
-                        Mail::to($permitrray['email_id'])->queue(new HotWorkEmail($permitrray));
-                    }
-                }
-            }
-
-            /**
-             * Send Web notification
-             */
-
-            $notificationData = array(
-                'notification_type' => 3,
-                'module_type' => 1,
-                'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode(array(
-                    'title' => $mailsubject,
-                    'message' => 'Hot Work Permit ' . $request->permit_id . ' submitted by ' . getUsername(Auth::id()),
-                    'icon' => 'public/assets/icon/permit_to_work.png',
-                    'id' => $request->id,
-                    'module' => 1,
-                )),
-                'web_link' =>  admin_url('ptw/hotwork_permit/view/' . encryptId($request->id)),
-                'assigned_user' => array_to_string($userids),
-                'created_by' => Auth::id(),
-            );
-            notificationSave($notificationData);
-
-
-            Session::flash('success', __('ptw.hotwork_permit_updated_successfully'));
+            Session::flash('success', __('Your data has been updated successfully'));
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
-            Session::flash('error', __('ptw.something_went_wrong_try_again'));
+            dd($ex);
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('safetypermit/list'));
         }
     }
@@ -1105,7 +1010,7 @@ class SafetyPermitController extends Controller
 
         $checkpoints = $this->typeofworkchecklist->getprotectiveequipment($workId, 'type1');
 
-      
+
 
         return response()->json($checkpoints);
     }
