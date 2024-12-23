@@ -303,6 +303,10 @@ class SafetyPermit extends Model
         return $this->where('id', $id)->update($reassignto);
     }
 
+    public function getprotetiveequip( $id){
+          return $this->where('id',$id)->pluck('protective_equip')->first();
+    }
+
     public function approved_by($approved_by, $id)
     {
 

@@ -32,6 +32,8 @@
                                     <form method="POST" id="pperequestadd"
                                         action="{{ admin_url('safetypermit/add/submit') }}">
                                         @csrf
+                                        <input type="hidden" id="id" name="id"
+                                            value="{{ encryptId($safetypermit->id) }}">
                                         <div class="row ">
                                             <div class="col-md-3">
                                                 <div class="form-group form-input">
@@ -111,10 +113,8 @@
                                                 <div class="card p-3 rounded m-3">
                                                     <div class="row g-3">
                                                         @php
-
-                                                            $subPermitArray = explode(',', $safetypermit->sub_permit);
+                                                            $subPermitIds = explode(',', $safetypermit->sub_permit);
                                                         @endphp
-
                                                         @foreach ($typeofwork as $work)
                                                             <div class="col-12 col-md-4 d-flex align-items-center gap-2">
                                                                 <input type="hidden" name=""
@@ -122,23 +122,22 @@
                                                                 <input type="checkbox" class="work-type-checkbox"
                                                                     data-id="{{ $work->id }}" name="sub_permit[]"
                                                                     value="{{ $work->id }}"
-                                                                    @if (in_array($work->id, $subPermitArray)) checked @endif>
+                                                                    @if (in_array($work->id, $subPermitIds)) checked data-checked="true" @endif>
                                                                 <a href="{{ asset($work->file_path) }}" target="_blank">
-                                                                    <img src="{{ asset($work->file_path) }}" alt="Image"
-                                                                        class="img-fluid"
+                                                                    <img src="{{ asset($work->file_path) }}"
+                                                                        alt="Image" class="img-fluid"
                                                                         style="max-width: 50px; object-fit: cover;">
                                                                 </a>
                                                                 <span>{{ $work->work_name }}</span>
                                                             </div>
                                                         @endforeach
-
-
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div class="row mb-3 ">
+                                        {{-- Job description --}}
+                                        <div class="row mb-3 mt-2">
                                             <div class="col-12">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Job Description</label>
@@ -155,9 +154,9 @@
                                                     <label class="form-label mb-0">Shut Down Required (Yes/No)</label>
                                                     <input type="checkbox" id="shutdown-checkbox"
                                                         class="validate-radio-required" name="shutdown_req"
-                                                        value="1"
-                                                        {{ $safetypermit->shutdown_req == 1 ? 'checked' : '' }}>
+                                                        value="1" {{$safetypermit->shutdown_req == 1? 'checked':''}}>
                                                 </div>
+
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
@@ -165,15 +164,14 @@
                                                         class="img-fluid" style="width: 50px; height: 50px;">
                                                     <label class="form-label mb-0">Taken By (Name & Department)</label>
                                                     <select name="shut_down_takenby" id="employeenameshutdown"
-                                                        class="form-control shutdowncheckbox"
-                                                        {{ $safetypermit->shutdown_req == 1 ? '' : 'disabled' }}>
-                                                        <option value="">{{ $safetypermit->shut_down_takenby }}
-                                                        </option>
-                                                    </select>
+                                                    class="form-control shutdowncheckbox" >
+                                                    <option value="">Select Person</option>
+
+                                                </select>
                                                 </div>
                                             </div>
-                                        </div>
 
+                                        </div>
 
                                         <div class="row border p-3 mx-1">
                                             <div class="col-12 col-md-6 mb-3">
@@ -183,8 +181,7 @@
                                                     <label class="form-label mb-0 ">Isolation/LOTO Required
                                                         (Yes/No)</label>
                                                     <input type="checkbox" id="loto-checkbox"
-                                                        class="validate-radio-required" name= "loto_req"
-                                                        {{ $safetypermit->loto_req == 1 ? 'checked' : '' }}>
+                                                        class="validate-radio-required" name= "loto_req" {{$safetypermit->loto_req == 1? 'checked':''}}>
                                                 </div>
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
@@ -192,237 +189,194 @@
                                                     <img src="{{ url('public/assets/images/safetypermit/profile.png') }}"
                                                         class="img-fluid" style="width: 50px; height: 50px;">
                                                     <label class="form-label mb-0 ">Taken By (Name & Department)</label>
-                                                    {{-- <input type="text" name="description"
-                                                        class="form-control lotocheckbox"
-                                                        placeholder="Search by Employee Name" disabled> --}}
+
 
                                                     <select name="loto_takenby" id="employeenameloto"
-                                                        class="form-control lotocheckbox"
-                                                        {{ $safetypermit->loto_req == 1 ? '' : 'disabled' }}>
-                                                        <option value="">{{ $safetypermit->loto_takenby }}</option>
+                                                        class="form-control lotocheckbox" disabled>
+                                                        <option value="">Select Person</option>
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
+
 
                                         <div class="row border p-3 mx-1">
                                             <div class="col-12 col-md-4 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
                                                     <label class="form-label mb-0">Loto No</label>
                                                     <input type="text" name="loto_no"
-                                                        class="form-control lotocheckbox" placeholder="Loto No"
-                                                        value="{{ $safetypermit->tagfield == 1 ? $safetypermit->loto_no : '' }}"
-                                                        {{ $safetypermit->tagfield == 1 ? '' : 'disabled' }}>
+                                                        class="form-control lotocheckbox" placeholder="Loto No" value="{{$safetypermit->loto_no}}">
                                                 </div>
                                             </div>
                                             <div class="col-12 col-md-8 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
-                                                    <label class="form-label mb-0">Tag Field properly (Yes/No)</label>
+                                                    <label class="form-label mb-0 ">Tag Field properly (Yes/No)</label>
                                                     <input type="checkbox"
                                                         class="validate-radio-required shutdowncheckbox" name="tagfield"
-                                                        value="1"
-                                                        {{ $safetypermit->tagfield == 1 ? 'checked' : '' }}>
+                                                        {{$safetypermit->loto_takenby ? 'checked':'disabled'}}>
                                                 </div>
                                             </div>
                                         </div>
 
+                                       {{-- state of isolation --}}
 
-                                        <div class="row col-md-12 d-flex mt-3">
-                                            <!-- Left Side: Scrollable on X-Axis -->
-                                            <div class="col-md-4">
-                                                <p class="fw-bold fs-5 mt-3">State of Isolation & LOTO</p>
-                                                <div class="scroll-container border p-3"
-                                                    style="overflow-x: auto; white-space: nowrap; width: 100%;">
-                                                    <!-- First Row -->
-                                                    <div class="row mb-3"
-                                                        style="display: flex; flex-wrap: nowrap; justify-content: flex-start; align-items: center;">
-                                                        <div class="d-inline-block"
-                                                            style="margin: 0; padding: 0; flex-shrink: 0;">
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <img src="{{ url('public/assets/images/safetypermit/person.png') }}"
-                                                                    class="img-fluid" style="width: 50px; height: 50px;">
-                                                                <label class="form-label mb-0">Air</label>
-                                                                <input type="checkbox"
-                                                                    class="validate-radio-required shutdowncheckbox"
-                                                                    name="state_isolation_loto[]" value="Air"
-                                                                    {{ in_array('Air', $stateIsolationLoto ?? []) ? 'checked' : '' }}
-                                                                    disabled>
-                                                            </div>
-                                                        </div>
-                                                        <div class="d-inline-block"
-                                                            style="margin-left: -200px; padding: 0; flex-shrink: 0;">
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <img src="{{ url('public/assets/images/safetypermit/natural-gas.png') }}"
-                                                                    class="img-fluid" style="width: 50px; height: 50px;">
-                                                                <label class="form-label mb-0">Gas</label>
-                                                                <input type="checkbox"
-                                                                    class="validate-radio-required shutdowncheckbox"
-                                                                    name="state_isolation_loto[]" value="Gas"
-                                                                    {{ in_array('Gas', $stateIsolationLoto ?? []) ? 'checked' : '' }}
-                                                                    disabled>
-                                                            </div>
-                                                        </div>
-                                                        <div class="d-inline-block"
-                                                            style="margin-left: -200px; padding: 0; flex-shrink: 0;">
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <label class="form-label mb-0">Others if any please
-                                                                    specify</label>
-                                                            </div>
+                                       <div class="row col-md-12 d-flex mt-3">
+                                        <!-- Left Side: Scrollable on X-Axis -->
+                                        <div class="col-md-4">
+                                            <p class="fw-bold fs-5 mt-3">State of Isolation & LOTO</p>
+                                            <div class="scroll-container border p-3"
+                                                style="overflow-x: auto; white-space: nowrap; width: 100%;">
+                                                <!-- First Row -->
+                                                <div class="row mb-3"
+                                                    style="display: flex; flex-wrap: nowrap; justify-content: flex-start; align-items: center;">
+                                                    <div class="d-inline-block"
+                                                        style="margin: 0; padding: 0; flex-shrink: 0;">
+                                                        <div class="form-group d-flex align-items-center gap-1">
+                                                            <img src="{{ url('public/assets/images/safetypermit/person.png') }}"
+                                                                class="img-fluid" style="width: 50px; height: 50px;">
+                                                            <label class="form-label mb-0">Air</label>
+                                                            <input type="checkbox"
+                                                                class="validate-radio-required shutdowncheckbox"
+                                                                name="state_isolation_loto[]" value="Air" disabled>
                                                         </div>
                                                     </div>
-
-                                                    <!-- Second Row -->
-                                                    <div class="row mb-3"
-                                                        style="display: flex; flex-wrap: nowrap; justify-content: flex-start; align-items: center;">
-                                                        <div class="d-inline-block"
-                                                            style="margin: 0; padding: 0; flex-shrink: 0;">
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <img src="{{ url('public/assets/images/safetypermit/electrician.png') }}"
-                                                                    class="img-fluid" style="width: 50px; height: 50px;">
-                                                                <label class="form-label mb-0">Electrical</label>
-                                                                <input type="checkbox"
-                                                                    class="validate-radio-required shutdowncheckbox"
-                                                                    name="state_isolation_loto[]" value="Electrical"
-                                                                    {{ in_array('Electrical', $stateIsolationLoto ?? []) ? 'checked' : '' }}
-                                                                    disabled>
-                                                            </div>
-                                                        </div>
-                                                        <div class="d-inline-block"
-                                                            style="margin-left: -200px; padding: 0; flex-shrink: 0;">
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <img src="{{ url('public/assets/images/safetypermit/leak.png') }}"
-                                                                    class="img-fluid" style="width: 50px; height: 50px;">
-                                                                <label class="form-label mb-0">Water/Liquid</label>
-                                                                <input type="checkbox"
-                                                                    class="validate-radio-required shutdowncheckbox"
-                                                                    name="state_isolation_loto[]" value="Water/Liquid"
-                                                                    {{ in_array('Water/Liquid', $stateIsolationLoto ?? []) ? 'checked' : '' }}
-                                                                    disabled>
-                                                            </div>
-                                                        </div>
-                                                        <div class="d-inline-block"
-                                                            style="margin-left: -200px; padding: 0; flex-shrink: 0;">
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <textarea class="form-control shutdowncheckbox" name="state_isolation_loto[]" placeholder="Specify others" disabled>{{ $stateIsolationLoto['other'] ?? '' }}</textarea>
-                                                            </div>
+                                                    <div class="d-inline-block"
+                                                        style="margin-left: -200px; padding: 0; flex-shrink: 0;">
+                                                        <div class="form-group d-flex align-items-center gap-1">
+                                                            <img src="{{ url('public/assets/images/safetypermit/natural-gas.png') }}"
+                                                                class="img-fluid" style="width: 50px; height: 50px;">
+                                                            <label class="form-label mb-0">Gas</label>
+                                                            <input type="checkbox"
+                                                                class="validate-radio-required shutdowncheckbox"
+                                                                name="state_isolation_loto[]" value="Gas" disabled>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
-
-                                            <div id="section-1" class="col-md-8">
-                                                <p class="fw-bold fs-5 mt-3">Applicable for Confined Space Entry</p>
-
-                                                <div class="row border rounded p-2 mx-1">
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">O2%</label>
-                                                            <input type="text"
-                                                                name="confined_space_entry[o2_percentage]"
-                                                                class="form-control"
-                                                                value="{{ $confinedSpaceEntry['o2_percentage'] ?? '' }}"
-                                                                disabled>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">System Isolated</label>
-                                                            <input type="hidden"
-                                                                name="confined_space_entry[system_isolated]"
-                                                                value="0">
-                                                            <input type="checkbox" class="validate-radio-required"
-                                                                name="confined_space_entry[system_isolated]"
-                                                                value="1"
-                                                                {{ $confinedSpaceEntry['system_isolated'] ?? '' == 1 ? 'checked' : '' }}>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Rescue System Available</label>
-                                                            <input type="hidden"
-                                                                name="confined_space_entry[rescue_system]" value="0">
-                                                            <input type="checkbox" class="validate-radio-required"
-                                                                name="confined_space_entry[rescue_system]" value="1"
-                                                                {{ $confinedSpaceEntry['rescue_system'] ?? '' == 1 ? 'checked' : '' }}>
+                                                    <div class="d-inline-block"
+                                                        style="margin-left: -200px; padding: 0; flex-shrink: 0;">
+                                                        <div class="form-group d-flex align-items-center gap-1">
+                                                            <label class="form-label mb-0">Others if any please
+                                                                specify</label>
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <div class="row border rounded p-2 mx-1">
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Confined Space Attendant</label>
-                                                            <input type="hidden"
-                                                                name="confined_space_entry[confined_attendant]"
-                                                                value="0">
-                                                            <input type="checkbox" class="validate-radio-required"
-                                                                name="confined_space_entry[confined_attendant]"
-                                                                value="1"
-                                                                {{ $confinedSpaceEntry['confined_attendant'] ?? '' == 1 ? 'checked' : '' }}>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Attendant Name</label>
-                                                            <input type="text"
-                                                                name="confined_space_entry[attendant_name]"
-                                                                class="form-control" placeholder="Search by Employee Name"
-                                                                value="{{ $confinedSpaceEntry['attendant_name'] ?? '' }}"
+                                                <!-- Second Row -->
+                                                <div class="row mb-3"
+                                                    style="display: flex; flex-wrap: nowrap; justify-content: flex-start; align-items: center;">
+                                                    <div class="d-inline-block"
+                                                        style="margin: 0; padding: 0; flex-shrink: 0;">
+                                                        <div class="form-group d-flex align-items-center gap-1">
+                                                            <img src="{{ url('public/assets/images/safetypermit/electrician.png') }}"
+                                                                class="img-fluid" style="width: 50px; height: 50px;">
+                                                            <label class="form-label mb-0">Electrical</label>
+                                                            <input type="checkbox"
+                                                                class="validate-radio-required shutdowncheckbox"
+                                                                name="state_isolation_loto[]" value="Electrical"
                                                                 disabled>
                                                         </div>
                                                     </div>
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Register for entry & exits</label>
-                                                            <input type="checkbox" class="validate-radio-required"
-                                                                name="confined_space_entry[register_entry_exits]"
-                                                                {{ $confinedSpaceEntry['register_entry_exits'] ?? '' == 1 ? 'checked' : '' }}
+                                                    <div class="d-inline-block"
+                                                        style="margin-left: -200px; padding: 0; flex-shrink: 0;">
+                                                        <div class="form-group d-flex align-items-center gap-1">
+                                                            <img src="{{ url('public/assets/images/safetypermit/leak.png') }}"
+                                                                class="img-fluid" style="width: 50px; height: 50px;">
+                                                            <label class="form-label mb-0">Water/Liquid</label>
+                                                            <input type="checkbox"
+                                                                class="validate-radio-required shutdowncheckbox"
+                                                                name="state_isolation_loto[]" value="Water/Liquid"
                                                                 disabled>
                                                         </div>
                                                     </div>
-                                                </div>
-
-                                                <div class="row border rounded p-2 mx-1 mb-3">
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Any Other Gas / PPM</label>
-                                                            <input type="text" name="confined_space_entry[other_gas]"
-                                                                class="form-control" placeholder="Loto No"
-                                                                value="{{ $confinedSpaceEntry['other_gas'] ?? '' }}"
-                                                                disabled>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">PPM and is therefore safe to enter
-                                                                from</label>
-                                                            <input type="date"
-                                                                name="confined_space_entry[ppm_entry_date]"
-                                                                class="form-control"
-                                                                value="{{ $confinedSpaceEntry['ppm_entry_date'] ?? '' }}"
-                                                                disabled>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">PPM and is therefore safe to enter
-                                                                to</label>
-                                                            <input type="date"
-                                                                name="confined_space_entry[ppm_entry_to]"
-                                                                class="form-control"
-                                                                value="{{ $confinedSpaceEntry['ppm_entry_to'] ?? '' }}"
-                                                                disabled>
+                                                    <div class="d-inline-block"
+                                                        style="margin-left: -200px; padding: 0; flex-shrink: 0;">
+                                                        <div class="form-group d-flex align-items-center gap-1">
+                                                            <textarea class="form-control shutdowncheckbox" name="state_isolation_loto[]" placeholder="Specify others" disabled></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
+                                        <div id="section-1" class="col-md-8">
+                                            <p class="fw-bold fs-5 mt-3">Applicable for Confined Space Entry</p>
+
+                                            <div class="row border rounded p-2 mx-1">
+                                                <div class="col-12 col-md-4 mb-3">
+                                                    <div class="form-group">
+                                                        <label class="form-label">O2%</label>
+                                                        <input type="text" name="confined_space_entry[o2_percentage]" class="form-control" placeholder="" disabled>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-4 mb-3">
+                                                    <div class="form-group">
+                                                        <label class="form-label">System Isolated</label>
+                                                        <input type="hidden" name="confined_space_entry[system_isolated]" value="0">
+                                                        <input type="checkbox" class="validate-radio-required" name="confined_space_entry[system_isolated]" value="1">
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-4 mb-3">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Rescue System Available</label>
+                                                        <input type="hidden" name="confined_space_entry[rescue_system]" value="0">
+                                                        <input type="checkbox" class="validate-radio-required" name="confined_space_entry[rescue_system]" value="1">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row border rounded p-2 mx-1">
+                                                <div class="col-12 col-md-4 mb-3">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Confined Space Attendant</label>
+                                                        <input type="hidden" name="confined_space_entry[confined_attendant]" value="0">
+                                                        <input type="checkbox" class="validate-radio-required" name="confined_space_entry[confined_attendant]" value="1">
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-4 mb-3">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Attendant Name</label>
+                                                        <input type="text" name="confined_space_entry[attendant_name]" class="form-control" placeholder="Search by Employee Name" disabled>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-4 mb-3">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Register for entry & exits</label>
+                                                        <input type="checkbox" class="validate-radio-required" name="confined_space_entry[register_entry_exits]" disabled>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row border rounded p-2 mx-1 mb-3">
+                                                <div class="col-12 col-md-4 mb-3">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Any Other Gas / PPM</label>
+                                                        <input type="text" name="confined_space_entry[other_gas]" class="form-control" placeholder="Loto No" disabled>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-4 mb-3">
+                                                    <div class="form-group">
+                                                        <label class="form-label">PPM and is therefore safe to enter from</label>
+                                                        <input type="text" name="confined_space_entry[ppm_safe_to_enter]" class="form-control" placeholder="" disabled>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-4 mb-3">
+                                                    <div class="form-group">
+                                                        <label class="form-label">To</label>
+                                                        <input type="text" name="confined_space_entry[to]" class="form-control" placeholder="" disabled>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+
+                                        {{-- Protective Equipment to be own --}}
 
                                         <p class="fw-bold fs-5 mt-3">Protective Equipment's to be Worn (<i
                                                 class="fas fa-check text-primary"></i>)
                                             <span class="text-danger">*</span>
                                         </p>
+
                                         <div class="row" style="background: #d6f5e0b0;">
                                             <div class="col-12 col-lg-8 mt-2 p-2">
                                                 <div class="card p-3 rounded m-2">
@@ -466,6 +420,9 @@
 
                                                     <div id="getprotectivechecklist-container" class="row g-3 mt-3">
 
+
+
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -488,7 +445,7 @@
                                             </div>
                                         </div>
 
-
+                                        {{-- Name of the Equipement involved in Job --}}
 
                                         <p class="fw-bold fs-5 mt-3">Name of Equipment's involved in Job
                                             <span class="text-danger">*</span>
@@ -530,7 +487,6 @@
                                                         </div>
 
                                                         <div class="col-md-5">
-                                                            {{-- <div class="row row-cols-2 g-3"> --}}
                                                             <div id="getequipmentinvolved-container" class="row g-3 mt-3">
 
                                                             </div>
@@ -544,6 +500,8 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        {{-- Precaution --}}
 
 
                                         <p class="fw-bold fs-5 mt-3">Precaution To be Taken</span>
@@ -559,6 +517,8 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        {{-- Equipement Checklist --}}
 
 
                                         <p class="fw-bold fs-5 mt-3">Equipment's Check List</span>
@@ -583,12 +543,16 @@
                                                         <span class="text-danger">*</span>
                                                         <input type="checkbox" id="select-all"
                                                             class="validate-radio-required"
-                                                            name = "equipment_checklist_inspection">
+                                                            name = "equipment_checklist_inspection"
+                                                            {{ $safetypermit->equipment_checklist_inspection == 1 ? 'checked' : '' }}>
                                                     </p>
 
                                                 </div>
                                             </div>
                                         </div>
+
+                                        {{-- Safe work instruction --}}
+
                                         <p class="fw-bold fs-5 mt-3">Safe Work Instructions</span>
                                         </p>
                                         <div class="row" style="background: #d6f5e0b0;">
@@ -600,6 +564,9 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        {{-- Safe work procedure --}}
+
                                         <div class="row mt-2">
                                             <div class="col-12 col-md-6">
                                                 <div class="p-3 mb-1">
@@ -608,7 +575,8 @@
                                                         (Yes/No)
                                                         <span class="text-danger">*</span>
                                                         <input type="checkbox" id="select-all"
-                                                            class="validate-radio-required" name = "toolbox_talk">
+                                                            class="validate-radio-required" name = "toolbox_talk"
+                                                            {{ $safetypermit->toolbox_talk == 1 ? 'checked' : '' }}>
                                                     </p>
                                                 </div>
                                             </div>
@@ -623,12 +591,16 @@
                                                             Tool box Talk Given By (Name)
                                                         </label>
                                                         <input type="text" name="talk_givenby" id="talk_givenby"
-                                                            class="form-control" style="flex-grow: 1; max-width: 300px;">
+                                                            class="form-control" style="flex-grow: 1; max-width: 300px;"
+                                                            value="{{ $safetypermit->talk_givenby }}">
                                                     </div>
                                                 </div>
                                             </div>
 
                                         </div>
+
+                                        {{-- Mandetory Notes --}}
+
                                         <p class="fw-bold fs-5 mt-3">Mandatory Notes for PPEs</span>
                                         </p>
                                         <div class="row" style="background: #d6f5e0b0;">
@@ -649,73 +621,72 @@
                                                 </div>
                                             </div>
                                         </div>
+
+
+                                        {{-- List of work man involved in job --}}
+
+
                                         <p class="fw-bold fs-5 mt-3">List of Workman involved in Job</span>
                                         </p>
-                                        <div class="row">
-                                            <div class="col-md-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">Employee Code / Visitor ID</label>
-                                                    <select name="employee_code" id="employee_code"
-                                                        class="single-select form-control">
-                                                        <option value="">Select Employee ID</option>
-                                                        @foreach ($workman as $item)
-                                                            <option value="{{ $item->emp_id }}"
-                                                                {{ old('employee_code', $item->emp_id) == $item->emp_id ? 'selected' : '' }}>
-                                                                {{ $item->emp_id }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
+                                        <div>
+                                            {{-- @foreach () --}}
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label">Employee Code / Visitor ID</label>
+                                                        <select name="employee_code" id="employee_code"
+                                                            class="single-select   form-control">
+                                                            <option value="">Select Employee ID</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label">Name of Workman</label>
+                                                        <input type="text" name="workman_name" id="workman_name"
+                                                            class="form-control" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label">Designation</label>
+                                                        <input type="text" name="workman_desig" id="workman_desig"
+                                                            class="form-control" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label">Department / Company</label>
+                                                        <select name="workman_dept" id="workman_dept"
+                                                            class="form-control single-select">
+                                                            <option value="">Select Department</option>
+                                                            <!-- Dynamic department options here -->
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label">Nature of Job</label>
+                                                        <input type="text" name="nature_of_job" id="nature_of_job"
+                                                            class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2 mt-3">
+                                                    <x-button-add dataId="" class="add btn btn-primary ms-1"
+                                                        href="{{ admin_url('ptw/typeofworkmaster/add') }}">Add</x-button-add>
                                                 </div>
                                             </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">Name of Workman</label>
-                                                    <input type="text" name="workman_name" id="workman_name"
-                                                        class="form-control" readonly
-                                                        value="{{ old('workman_name', $workman->first()->workman_name) }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">Designation</label>
-                                                    <input type="text" name="workman_desig" id="workman_desig"
-                                                        class="form-control" readonly
-                                                        value="{{ old('workman_desig', $workman->first()->workman_desig) }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">Department / Company</label>
-                                                    <select name="workman_dept" id="workman_dept"
-                                                        class="form-control single-select">
-                                                        <option value="">Select Department</option>
-                                                        @foreach ($workman as $item)
-                                                            <option value="{{ $item->workman_dept }}"
-                                                                {{ old('workman_dept', $item->workman_dept) == $item->workman_dept ? 'selected' : '' }}>
-                                                                {{ $item->workman_dept }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">Nature of Job</label>
-                                                    <input type="text" name="nature_of_job" id="nature_of_job"
-                                                        class="form-control"
-                                                        value="{{ old('nature_of_job', $workman->first()->nature_of_job) }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2 mt-3">
-                                                <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                                    href="{{ admin_url('ptw/typeofworkmaster/add') }}">Add</x-button-add>
-                                            </div>
+                                            {{-- @endforeach --}}
+
+
+
                                         </div>
+
 
 
                                         <div class="table-responsive mt-3">
                                             <table class="table table-bordered text-center">
-                                                <thead class="text-white" style="background-color:#5b626b">
+                                                <thead class=" text-white" style="background-color:#5b626b">
                                                     <tr>
                                                         <th>Employee Code / Visitor ID</th>
                                                         <th>Name of Workman</th>
@@ -726,18 +697,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="workman-list-entries">
-                                                    @foreach ($workman as $item)
-                                                        <tr>
-                                                            <td>{{ $item->emp_id }}</td>
-                                                            <td>{{ $item->workman_name }}</td>
-                                                            <td>{{ $item->workman_desig }}</td>
-                                                            <td>{{ $item->workman_dept }}</td>
-                                                            <td>{{ $item->nature_of_job }}</td>
-                                                            <td>
-                                                                <button class="btn btn-danger btn-sm remove-entry">Remove</button>
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
+
                                                 </tbody>
                                             </table>
                                         </div>
@@ -752,7 +712,8 @@
                                                         for duty (Yes/No)
                                                         <span class="text-danger">*</span>
                                                         <input type="checkbox" id="select-all" name = "assigned_job"
-                                                            class="validate-radio-required">
+                                                            class="validate-radio-required"
+                                                            {{ $safetypermit->assigned_job == 1 ? 'checked' : '' }}>
                                                     </p>
                                                 </div>
                                             </div>
@@ -768,12 +729,16 @@
                                                         </label>
                                                         <input type="text" name="attendance_toolbox_talk"
                                                             id="attendance_toolbox_talk" class="form-control"
-                                                            style="flex-grow: 1; max-width: 300px;">
+                                                            style="flex-grow: 1; max-width: 300px;"
+                                                            value="{{ $safetypermit->attendance_toolbox_talk }}">
                                                     </div>
                                                 </div>
                                             </div>
 
                                         </div>
+
+
+                                        {{-- Notes --}}
 
                                         <p class="fw-bold fs-5 mt-3">Note</span>
                                         </p>
@@ -807,6 +772,7 @@
                                                 </div>
                                             </div>
                                         </div>
+
                                         <hr>
                                         <div class="submit-button float-end">
                                             <x-button-submit class="submit" id="submit"></x-button-submit>
@@ -814,391 +780,94 @@
                                             <x-button-cancel
                                                 href="{{ admin_url('safetypermit/list') }}"></x-button-cancel>
                                         </div>
+
                                     </form>
                                 </div>
-
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        </form>
     </div>
 
 @stop
 
 @push('script')
-<script>
-    $(document).ready(function() {
+    <script>
+   $(document).ready(function() {
+    const displayedEquipments = new Set();
+    const container = $('#getprotectivechecklist-container');
+    var id = $('#id').val();
 
-        $('#employee_code').select2({
-            ajax: {
-                url: '{{ admin_url('safetypermit/employeeid') }}',
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        search: params.term
-                    };
-                },
-                processResults: function(data) {
-                    return {
-                        results: $.map(data, function(item) {
-                            return {
-                                id: item.id,
-                                text: item.text
-                            };
-                        })
-                    };
-                }
+    function fetchProtectiveChecklist(workId) {
+        $.ajax({
+            url: "{{ admin_url('safetypermit/getprotectivechecklist') }}/" + workId,
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                id: id
             },
-            minimumInputLength: 1,
-            dropdownCssClass: 'form-control',
-            selectionCssClass: 'form-control'
-        });
+            success: function(data) {
+                let checkpointsHtml = '';
 
-
-        $(document).on("change", "#employee_code", function() {
-            var emp_id = $(this).val();
-            var currentRow = $(this).closest(".row");
-            var departmentDropdown = currentRow.find(
-                'select[name="workman_dept"]');
-
-            if (emp_id) {
-                $.ajax({
-                    url: "{{ url('safetypermit/fetchEmployeeDetails') }}/" + emp_id,
-                    type: "GET",
-                    success: function(data) {
-
-                        if (data.employee) {
-
-                            currentRow.find('input[name="workman_name"]').val(data.employee
-                                .emp_name);
-                            currentRow.find('input[name="workman_desig"]').val(data.employee
-                                .designation);
-
-                            departmentDropdown.empty();
-                            departmentDropdown.append(
-                                '<option value="">Select Department</option>'
-                            );
-
-                            if (data.departments && data.departments.length > 0) {
-                                data.departments.forEach(function(department) {
-                                    var selected = data.employee.department ==
-                                        department.id ? "selected" : "";
-                                    departmentDropdown.append(
-                                        `<option value="${department.id}" ${selected}>${department.department_name}</option>`
-                                    );
-                                });
-                            } else {
-                                departmentDropdown.append(
-                                    '<option value="">No departments available</option>'
-                                );
-                            }
-                        } else {
-                            Swal.fire({
-                                icon: "error",
-                                title: "Error",
-                                text: "Employee data could not be fetched.",
-                            });
-                        }
-                    },
-                    error: function() {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Error",
-                            text: "An error occurred while fetching employee details.",
-                        });
-                    },
-                });
-            } else {
-
-                currentRow.find('input[name="workman_name"]').val("");
-                currentRow.find('input[name="workman_desig"]').val("");
-                departmentDropdown.empty();
-                departmentDropdown.append('<option value="">Select Department</option>');
-            }
-        });
-
-
-        $(document).on("click", ".add", function(e) {
-            e.preventDefault();
-
-            var parentRow = $(this).closest(".row");
-
-
-            var employeeCode = parentRow.find('select[name="employee_code"] option:selected').val();
-            var employeeName = parentRow.find('select[name="employee_code"] option:selected').text();
-            var workmanName = parentRow.find('input[name="workman_name"]').val();
-            var designation = parentRow.find('input[name="workman_desig"]').val();
-            var department = parentRow.find('select[name="workman_dept"] option:selected').val();
-            var departmentName = parentRow.find('select[name="workman_dept"] option:selected').text();
-            var natureOfJob = parentRow.find('input[name="nature_of_job"]').val();
-
-            var newRow = `
-                <tr>
-                    <td><input type="hidden" name="emp_id[]" value="${employeeCode}">${employeeName}</td>
-                    <td><input type="hidden" name="workman_name[]" value="${workmanName}">${workmanName}</td>
-                    <td><input type="hidden" name="workman_desig[]" value="${designation}">${designation}</td>
-                    <td><input type="hidden" name="workman_dept[]" value="${department}">${departmentName}</td>
-                    <td><input type="hidden" name="nature_of_job[]" value="${natureOfJob}">${natureOfJob}</td>
-                    <td>
-                        <button class="btn btn-danger btn-sm remove-entry">Remove</button>
-                    </td>
-                </tr>
-            `;
-
-            $("#workman-list-entries").append(newRow);
-
-            parentRow.find('select[name="employee_code"]').val("");
-            parentRow.find('select[name="employee_code"]').trigger("change");
-            parentRow.find('input[name="workman_name"]').val("");
-            parentRow.find('input[name="workman_desig"]').val("");
-            parentRow.find('select[name="workman_dept"]').val("");
-            parentRow.find('select[name="workman_dept"]').trigger("change");
-            parentRow.find('input[name="nature_of_job"]').val("");
-
-            Swal.fire({
-                icon: "success",
-                title: "Success",
-                text: "Workman has been added to the table.",
-            });
-        });
-
-
-        $(document).on("click", ".remove-entry", function() {
-            $(this).closest("tr").remove();
-        });
-
-        $('#employeenameshutdown,#employeenameloto').select2({
-            ajax: {
-                url: '{{ admin_url('safetypermit/employeename') }}',
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        search: params.term
-                    };
-                },
-                processResults: function(data) {
-                    return {
-                        results: $.map(data, function(item) {
-                            return {
-                                id: item.id,
-                                text: item.text
-                            };
-                        })
-                    };
-                }
-            },
-            minimumInputLength: 1,
-            dropdownCssClass: 'form-control',
-            selectionCssClass: 'form-control'
-        });
-
-
-        $('#shutdown-checkbox').on('change', function() {
-            if ($(this).is(':checked')) {
-                $('#employeenameshutdown').prop('disabled', false);
-            } else {
-                $('#employeenameshutdown').prop('disabled', true);
-            }
-        });
-        $('#lotocheckbox').on('change', function() {
-            if ($(this).is(':checked')) {
-                $('#employeenameloto').prop('disabled', false);
-            } else {
-                $('#employeenameloto').prop('disabled', true);
-            }
-        });
-    });
-
-    flatpickr("#date", {
-        // enableTime: true,
-        dateFormat: "d-m-Y",
-        // time_24hr: true,
-        minuteIncrement: 5,
-    });
-
-    flatpickr("#time_from", {
-        enableTime: true,
-        noCalendar: true,
-        time_24hr: true,
-        minuteIncrement: 5,
-        dateFormat: "H:i"
-    });
-
-    flatpickr("#time_to", {
-        enableTime: true,
-        noCalendar: true,
-        time_24hr: true,
-        minuteIncrement: 5,
-        dateFormat: "H:i"
-    });
-</script>
-<script type="text/javascript">
-    $(document).ready(function() {
-
-        var firstTh = $('.datatable-list thead th:first');
-        firstTh.removeClass('sorting_asc');
-    });
-
-    $(function() {
-        /* Datatable */
-        var table = $('.datatable-list').DataTable({
-            autoWidth: false,
-            responsive: true,
-            processing: false,
-            serverSide: true,
-            searching: false,
-            ordering: false,
-            lengthChange: false, // Disables "Show entries"
-            // dom: 'Bfrtip',
-            layout: {
-                top2Start: '',
-                top2End: {
-                    search: {
-                        placeholder: ''
-                    }
-                },
-                topStart: '',
-                topEnd: '',
-                bottomStart: '',
-                bottomEnd: '',
-                bottom2Start: 'info',
-                bottom2End: 'paging'
-            },
-
-            ajax: {
-                url: "{{ admin_url('uploadlog/list') }}",
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: function(d) {}
-            },
-            columns: [{
-                    data: 'DT_RowIndex',
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: 'line_no',
-                    name: 'line_no'
-                },
-                {
-                    data: 'error',
-                    name: 'error'
-                },
-            ],
-
-            language: {
-                paginate: {
-                    first: '<i title="{{ __('common.first') }}" class="fa fa-angle-double-left" aria-hidden="true"></i>',
-                    last: '<i title="{{ __('common.last') }}" title="Next" class="fa fa-angle-double-right" aria-hidden="true"></i>',
-                    next: '<i title="{{ __('common.next') }}" class="fa fa-angle-right" aria-hidden="true"></i>',
-                    previous: '<i title="{{ __('common.previous') }}" class="fa fa-angle-left" aria-hidden="true"></i>',
-                },
-                "info": "{{ __('common.dt_info') }}",
-                "infoEmpty": "{{ __('common.dt_infoEmpty') }}",
-                "infoFiltered": "{{ __('common.dt_infoFiltered') }}",
-            },
-            aLengthMenu: [
-                [10, 25, 50, 100],
-                [10, 25, 50, 100]
-            ],
-            buttons: [{
-                    extend: 'collection',
-                    text: '{{ __('common.export') }}',
-                    buttons: [{
-                        extend: 'excel',
-                        text: '{{ __('common.excel') }}',
-                        action: function(e, dt, button, config) {
-                            var searchValue = $('#datatable-list_filter input').val();
-                            $(".dt-button").removeClass('processing');
-                            $('body').click();
-                            window.location.href =
-                                "{{ admin_url('uploadlog/export/excel/' . request()->logid) }}" +
-                                '?search=' + searchValue;
-                        }
-                    }, ]
-                },
-
-                {
-                    "extend": 'pageLength',
-                    "text": '{{ __('common.show') }} 10 {{ __('common.records') }}'
-                }
-            ],
-
-        });
-
-        table.on('length.dt', function(e, settings, len) {
-            var text = '{{ __('common.show') }} ' + len + ' {{ __('common.records') }}';
-            $('.buttons-page-length').find('span').text(text);
-        });
-
-        $(document).on('click', '#searchform', function() {
-            table.draw();
-        });
-
-        $(document).on('click', '#resetform', function() {
-            setTimeout(function() {
-                table.draw();
-            }, 150);
-        });
-
-    });
-
-    $(document).ready(function() {
-        const displayedEquipments = new Set();
-
-        $('.work-type-checkbox').on('change', function() {
-            const workId = $(this).data('id');
-            const container = $('#getprotectivechecklist-container');
-
-            if ($(this).is(':checked')) {
-                $.ajax({
-                    url: "{{ admin_url('safetypermit/getprotectivechecklist') }}/" + workId,
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                        let checkpointsHtml = '';
-
-                        data.forEach(function(item) {
-                            if (!displayedEquipments.has(item.protective_equip)) {
-                                displayedEquipments.add(item.protective_equip);
-                                checkpointsHtml += `
+                data.forEach(function(item) {
+                    if (!displayedEquipments.has(item.protective_equip)) {
+                        displayedEquipments.add(item.protective_equip);
+                        checkpointsHtml += `
                             <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                <input type="checkbox" class="protective-checkbox" name="protective_equip[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                <input type="checkbox" class="protective-checkbox" name="protective_equip[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}" ${item.checked ? 'checked' : ''}>
                                 <label for="checkpoint-${workId}-${item.id}">${item.protective_equip}</label>
                             </div>`;
-                            }
-                        });
-
-                        if (checkpointsHtml) {
-                            container.append(checkpointsHtml);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error:', error);
-                    },
+                    }
                 });
-            } else {
-                container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
+
+                if (checkpointsHtml) {
+                    container.append(checkpointsHtml);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
             }
         });
-    });
-    $(document).ready(function() {
-        const displayedEquipments = new Set();
+    }
 
-        $('.work-type-checkbox').on('change', function() {
-            const workId = $(this).data('id');
+    function removeProtectiveChecklist(workId) {
+        container.find(`.checkpoint[data-work-id="${workId}"]`).remove();
+        displayedEquipments.forEach(equip => {
+            if (!$(`.checkpoint[data-id="${equip}"]`).length) {
+                displayedEquipments.delete(equip);
+            }
+        });
+    }
+
+    $('.work-type-checkbox[data-checked="true"]').each(function() {
+        const workId = $(this).data('id');
+        fetchProtectiveChecklist(workId);
+    });
+
+    $('.work-type-checkbox').on('change', function() {
+        const workId = $(this).data('id');
+
+        if ($(this).is(':checked')) {
+            fetchProtectiveChecklist(workId);
+        } else {
+            removeProtectiveChecklist(workId);
+        }
+    });
+});
+
+
+
+        // for equipment involved
+        $(document).ready(function() {
+            const displayedEquipments = new Set();
             const container = $('#getequipmentinvolved-container');
 
-            if ($(this).is(':checked')) {
+            function fetchEquipmentInvolved(workId) {
                 $.ajax({
                     url: "{{ admin_url('safetypermit/getequipmentinvolved') }}/" + workId,
+
                     type: 'GET',
                     dataType: 'json',
                     success: function(data) {
@@ -1209,10 +878,10 @@
                                 displayedEquipments.add(item.equip_involve);
 
                                 checkpointsHtml += `
-                            <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                <input type="checkbox" class="" name="equiment_involved[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
-                                <label for="checkpoint-${workId}-${item.id}">${item.equip_involve}</label>
-                            </div>`;
+                                <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
+                                    <input type="checkbox" class="" name="equiment_involved[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                    <label for="checkpoint-${workId}-${item.id}">${item.equip_involve}</label>
+                                </div>`;
                             }
                         });
 
@@ -1224,21 +893,44 @@
                         console.error('Error:', error);
                     },
                 });
-            } else {
-                container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
             }
-        });
-    });
-    $(document).ready(function() {
-        const displayedEquipments = new Set();
 
-        $('.work-type-checkbox').on('change', function() {
-            const workId = $(this).data('id');
+            function removeEquipmentInvolved(workId) {
+                container.find(`.checkpoint[data-work-id="${workId}"]`).remove();
+                displayedEquipments.forEach(equip => {
+                    if (!$(`.checkpoint[data-id="${equip}"]`).length) {
+                        displayedEquipments.delete(equip);
+                    }
+                });
+            }
+
+            $('.work-type-checkbox[data-checked="true"]').each(function() {
+                const workId = $(this).data('id');
+                fetchEquipmentInvolved(workId);
+            });
+
+            $('.work-type-checkbox').on('change', function() {
+                const workId = $(this).data('id');
+
+                if ($(this).is(':checked')) {
+                    fetchEquipmentInvolved(workId);
+                } else {
+                    removeEquipmentInvolved(workId);
+                }
+            });
+        });
+
+        // Precaution
+
+        $(document).ready(function() {
+            const displayedEquipments = new Set();
             const container = $('#getprecaution-container');
 
-            if ($(this).is(':checked')) {
+
+            function fetchPrecaution(workId) {
                 $.ajax({
                     url: "{{ admin_url('safetypermit/getprecaution') }}/" + workId,
+
                     type: 'GET',
                     dataType: 'json',
                     success: function(data) {
@@ -1249,10 +941,10 @@
                                 displayedEquipments.add(item.precaution);
 
                                 checkpointsHtml += `
-                            <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                <input type="checkbox" class="" name="precaution_taken[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
-                                <label for="checkpoint-${workId}-${item.id}">${item.precaution}</label>
-                            </div>`;
+                                <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
+                                    <input type="checkbox" class="" name="precaution_taken[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                    <label for="checkpoint-${workId}-${item.id}">${item.precaution}</label>
+                                </div>`;
                             }
                         });
 
@@ -1264,20 +956,42 @@
                         console.error('Error:', error);
                     },
                 });
-            } else {
-                container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
             }
+
+            function removePrecaution(workId) {
+                container.find(`.checkpoint[data-work-id="${workId}"]`).remove();
+                displayedEquipments.forEach(equip => {
+                    if (!$(`.checkpoint[data-id="${equip}"]`).length) {
+                        displayedEquipments.delete(equip);
+                    }
+                });
+            }
+
+            $('.work-type-checkbox[data-checked="true"]').each(function() {
+                const workId = $(this).data('id');
+                fetchPrecaution(workId);
+            });
+
+            $('.work-type-checkbox').on('change', function() {
+                const workId = $(this).data('id');
+
+                if ($(this).is(':checked')) {
+                    fetchPrecaution(workId);
+                } else {
+                    removePrecaution(workId);
+                }
+            });
         });
-    });
 
-    $(document).ready(function() {
-        const displayedEquipments = new Set();
+        // Equipment Checklist
 
-        $('.work-type-checkbox').on('change', function() {
-            const workId = $(this).data('id');
+
+        $(document).ready(function() {
+            const displayedEquipments = new Set();
             const container = $('#getchecklist-container');
 
-            if ($(this).is(':checked')) {
+
+            function fetchEquimentchecklist(workId) {
                 $.ajax({
                     url: "{{ admin_url('safetypermit/getchecklist') }}/" + workId,
                     type: 'GET',
@@ -1290,10 +1004,10 @@
                                 displayedEquipments.add(item.checklist);
 
                                 checkpointsHtml += `
-                            <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                <input type="checkbox" class="" name="equipment_checklist[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
-                                <label for="checkpoint-${workId}-${item.id}">${item.checklist}</label>
-                            </div>`;
+                                <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
+                                    <input type="checkbox" class="" name="equipment_checklist[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                    <label for="checkpoint-${workId}-${item.id}">${item.checklist}</label>
+                                </div>`;
                             }
                         });
 
@@ -1305,20 +1019,41 @@
                         console.error('Error:', error);
                     },
                 });
-            } else {
-                container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
             }
+
+            function removeEquimentchecklist(workId) {
+                container.find(`.checkpoint[data-work-id="${workId}"]`).remove();
+                displayedEquipments.forEach(equip => {
+                    if (!$(`.checkpoint[data-id="${equip}"]`).length) {
+                        displayedEquipments.delete(equip);
+                    }
+                });
+            }
+
+            $('.work-type-checkbox[data-checked="true"]').each(function() {
+                const workId = $(this).data('id');
+                fetchEquimentchecklist(workId);
+            });
+
+            $('.work-type-checkbox').on('change', function() {
+                const workId = $(this).data('id');
+
+                if ($(this).is(':checked')) {
+                    fetchEquimentchecklist(workId);
+                } else {
+                    removeEquimentchecklist(workId);
+                }
+            });
         });
-    });
 
-    $(document).ready(function() {
-        const displayedEquipments = new Set();
+        // Safe work instruction
 
-        $('.work-type-checkbox').on('change', function() {
-            const workId = $(this).data('id');
+        $(document).ready(function() {
+            const displayedEquipments = new Set();
             const container = $('#getinstruction-container');
 
-            if ($(this).is(':checked')) {
+
+            function fetchSafeworkInstruction(workId) {
                 $.ajax({
                     url: "{{ admin_url('safetypermit/getinstruction') }}/" + workId,
                     type: 'GET',
@@ -1331,10 +1066,10 @@
                                 displayedEquipments.add(item.safe_work);
 
                                 checkpointsHtml += `
-                            <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                <input type="checkbox" class="" name="safework_instruction[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
-                                <label for="checkpoint-${workId}-${item.id}">${item.safe_work}</label>
-                            </div>`;
+                                <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
+                                    <input type="checkbox" class="" name="safework_instruction[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                    <label for="checkpoint-${workId}-${item.id}">${item.safe_work}</label>
+                                </div>`;
                             }
                         });
 
@@ -1346,64 +1081,253 @@
                         console.error('Error:', error);
                     },
                 });
-            } else {
-                container.find(`.checkpoints-group[data-work-id="${workId}"]`).remove();
             }
+
+            function removeSafeworkInstruction(workId) {
+                container.find(`.checkpoint[data-work-id="${workId}"]`).remove();
+                displayedEquipments.forEach(equip => {
+                    if (!$(`.checkpoint[data-id="${equip}"]`).length) {
+                        displayedEquipments.delete(equip);
+                    }
+                });
+            }
+
+            $('.work-type-checkbox[data-checked="true"]').each(function() {
+                const workId = $(this).data('id');
+                fetchSafeworkInstruction(workId);
+            });
+
+            $('.work-type-checkbox').on('change', function() {
+                const workId = $(this).data('id');
+
+                if ($(this).is(':checked')) {
+                    fetchSafeworkInstruction(workId);
+                } else {
+                    removeSafeworkInstruction(workId);
+                }
+            });
         });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            var permitId = $('#id').val();
+
+            $('#employee_code').select2({
+                ajax: {
+                    url: '{{ admin_url('safetypermit/employeeid') }}',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term,
+                            permit_id: permitId
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.id,
+                                    text: item.text
+                                };
+                            })
+                        };
+                    }
+                },
+                minimumInputLength: 1,
+                dropdownCssClass: 'form-control',
+                selectionCssClass: 'form-control'
+            });
+
+
+
+
+
+            $(document).on("click", ".add", function(e) {
+                e.preventDefault();
+
+                var parentRow = $(this).closest(".row");
+
+
+                var employeeCode = parentRow.find('select[name="employee_code"] option:selected').val();
+                var employeeName = parentRow.find('select[name="employee_code"] option:selected').text();
+                var workmanName = parentRow.find('input[name="workman_name"]').val();
+                var designation = parentRow.find('input[name="workman_desig"]').val();
+                var department = parentRow.find('select[name="workman_dept"] option:selected').val();
+                var departmentName = parentRow.find('select[name="workman_dept"] option:selected').text();
+                var natureOfJob = parentRow.find('input[name="nature_of_job"]').val();
+
+                var newRow = `
+                <tr>
+                    <td><input type="hidden" name="emp_id[]" value="${employeeCode}">${employeeName}</td>
+                    <td><input type="hidden" name="workman_name[]" value="${workmanName}">${workmanName}</td>
+                    <td><input type="hidden" name="workman_desig[]" value="${designation}">${designation}</td>
+                    <td><input type="hidden" name="workman_dept[]" value="${department}">${departmentName}</td>
+                    <td><input type="hidden" name="nature_of_job[]" value="${natureOfJob}">${natureOfJob}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm remove-entry">Remove</button>
+                    </td>
+                </tr>
+                `;
+
+                $("#workman-list-entries").append(newRow);
+
+                parentRow.find('select[name="employee_code"]').val("");
+                parentRow.find('select[name="employee_code"]').trigger("change");
+                parentRow.find('input[name="workman_name"]').val("");
+                parentRow.find('input[name="workman_desig"]').val("");
+                parentRow.find('select[name="workman_dept"]').val("");
+                parentRow.find('select[name="workman_dept"]').trigger("change");
+                parentRow.find('input[name="nature_of_job"]').val("");
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: "Workman has been added to the table.",
+                });
+            });
+
+
+            $(document).on("click", ".remove-entry", function() {
+                $(this).closest("tr").remove();
+            });
+
+            $('#employeenameshutdown, #employeenameloto').select2({
+                ajax: {
+                    url: '{{ admin_url('safetypermit/employeename') }}',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.id,
+                                    text: item.text
+                                };
+                            })
+                        };
+                    }
+                },
+                minimumInputLength: 1,
+                dropdownCssClass: 'form-control',
+                selectionCssClass: 'form-control'
+             });
+
+
+
+             const lotocheckbox = $('#loto-checkbox');
+    const shutdowncheckbox = $('#shutdown-checkbox');
+    const sectionemployeenameloto = $('#employeenameloto');
+    const employeenameshutdown = $('#employeenameshutdown');
+
+
+    if (lotocheckbox.is(':checked')) {
+        sectionemployeenameloto.prop('disabled', false);
+    } else {
+        sectionemployeenameloto.prop('disabled', true);
+    }
+
+    if (shutdowncheckbox.is(':checked')) {
+        employeenameshutdown.prop('disabled', false);
+    } else {
+        employeenameshutdown.prop('disabled', true);
+    }
+
+
+    lotocheckbox.on('change', function() {
+        if ($(this).is(':checked')) {
+            sectionemployeenameloto.prop('disabled', false);
+        } else {
+            sectionemployeenameloto.prop('disabled', true);
+        }
+    });
+
+    shutdowncheckbox.on('change', function() {
+        if ($(this).is(':checked')) {
+            employeenameshutdown.prop('disabled', false);
+        } else {
+            employeenameshutdown.prop('disabled',true);
+        }
     });
 
 
-    $(document).ready(function() {
-        const section1Inputs = $('#section-1 input');
-        const checkboxWithValue8 = $('.work-type-checkbox[data-id="8"]');
 
-        section1Inputs.prop('disabled', true);
 
-        checkboxWithValue8.on('change', function() {
-            if ($(this).is(':checked')) {
 
+        $(document).ready(function() {
+            const section1Inputs = $('#section-1 input');
+            const checkboxWithValue8 = $('.work-type-checkbox[data-id="8"]');
+
+            if (checkboxWithValue8.is(':checked')) {
                 section1Inputs.prop('disabled', false);
             } else {
-
                 section1Inputs.prop('disabled', true);
             }
-        });
-    });
 
-    $(document).ready(function() {
-        const shutdownCheckbox = $('#shutdown-checkbox');
-        const targetInputs = $('.shutdowncheckbox').not('#shutdown-checkbox');
+            checkboxWithValue8.on('change', function() {
+                if ($(this).is(':checked')) {
+                    section1Inputs.prop('disabled', false);
+                } else {
+                    section1Inputs.prop('disabled', true);
+                }
+            });
+});
+
+        $(document).ready(function() {
+            const shutdownCheckbox = $('#shutdown-checkbox');
+            const targetInputs = $('.shutdowncheckbox').not('#shutdown-checkbox');
 
 
-        targetInputs.prop('disabled', true);
+            targetInputs.prop('disabled', true);
 
-
-        shutdownCheckbox.on('change', function() {
-            if ($(this).is(':checked')) {
+            if (shutdowncheckbox.is(':checked')) {
                 targetInputs.prop('disabled', false);
-            } else {
-
-                targetInputs.prop('disabled', true);
-            }
-        });
-    });
-
-    $(document).ready(function() {
-        const lotoCheckbox = $('#loto-checkbox');
-        const targetInputs = $('.lotocheckbox').not('#loto-checkbox');
-
-
+    } else {
         targetInputs.prop('disabled', true);
+    }
 
 
-        lotoCheckbox.on('change', function() {
-            if ($(this).is(':checked')) {
-                targetInputs.prop('disabled', false);
-            } else {
+            shutdownCheckbox.on('change', function() {
+                if ($(this).is(':checked')) {
+                    targetInputs.prop('disabled', false);
+                } else {
 
-                targetInputs.prop('disabled', true);
-            }
+                    targetInputs.prop('disabled', true);
+                }
+            });
         });
-    });
-</script>
+
+
+
+        });
+
+        flatpickr("#date", {
+            // enableTime: true,
+            dateFormat: "d-m-Y",
+            // time_24hr: true,
+            minuteIncrement: 5,
+        });
+
+        flatpickr("#time_from", {
+            enableTime: true,
+            noCalendar: true,
+            time_24hr: true,
+            minuteIncrement: 5,
+            dateFormat: "H:i"
+        });
+
+        flatpickr("#time_to", {
+            enableTime: true,
+            noCalendar: true,
+            time_24hr: true,
+            minuteIncrement: 5,
+            dateFormat: "H:i"
+        });
+    </script>
 @endpush

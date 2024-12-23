@@ -84,8 +84,12 @@ class WorkmanInvolved extends Model
 
 
 
-    public function getWorkmaninvolved($id){
-        return WorkmanInvolved::where('permit_id', $id)->get();
+    public function getempIds($permit_id){
+        return WorkmanInvolved::where('permit_id', $permit_id)->pluck('emp_id')->toArray();
+    }
+
+    public function getworkmanDetails( $id){
+        return WorkmanInvolved::where('permit_id',  $id)->get();
     }
 
     public function store($permit_id)
