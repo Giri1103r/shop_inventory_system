@@ -165,7 +165,7 @@ class SafetyPermit extends Model
 
         $data_count = $query;
         $total_records = $data_count->count();
-
+        $query->orderBy('id', 'DESC');
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
         }
@@ -222,7 +222,6 @@ class SafetyPermit extends Model
             'tagfield' => $tagfield,
             'state_isolation_loto' => $state_isolation_loto,
             'confined_space_entry' => $confined_space_entry,
-            'description' => $request->description,
             'protective_equip' => $protective_equip,
             'equiment_involved' => $equiment_involved,
             'equiment_involved_others' => $request->equiment_involved_others,
@@ -242,37 +241,71 @@ class SafetyPermit extends Model
     }
 
 
-    public function updates($id, $ptw_status)
+    public function updates($id)
     {
         $request = request();
 
-        $update_array = array(
-            'permit_id' => $request->permit_id,
-            'permit_type' => $request->permit_type,
-            'location' => $request->location,
-            'sub_permit' => $request->sub_permit,
-            'desc_work' => $request->desc_work,
-            'unit' => $request->unit,
-            'workers' => $request->workers,
-            'types_hotwork' => $request->types_hotwork,
-            'risk_assess_no' => $request->risk_assess_no,
-            'flames_spark' => $request->flames_spark,
-            'work_from_date' => DBdateformat($request->work_from_date),
-            'work_from_time' => $request->work_from_time,
-            'work_to_date' => DBdateformat($request->work_to_date),
-            'work_to_time' => $request->work_to_time,
-            'cil_cont_name' => $request->cil_cont_name,
-            'company_name' => $request->company_name,
-            'cil_cont_date' => DBdateformat($request->cil_cont_date),
-            'cil_cont_time' => $request->cil_cont_time,
-            'permit_status' => $ptw_status,
-            'permit_extension' => null,
-            'permit_extended' => null,
-            'permit_extension_status' => null,
-            'updated_by' => Auth::id()
-        );
+        $safetypermit = $this->find($id);
+        $update_array = [];
 
-        return $this->where('id', $id)->update($update_array);
+        $update_array['permit_id'] = $request->permit_id ?? $safetypermit->permit_id;
+        $update_array['date'] = DBdateformat($request->date ?? $safetypermit->date);
+        $update_array['time_from'] = $request->time_from ?? $safetypermit->time_from;
+        $update_array['time_to'] = $request->time_to ?? $safetypermit->time_to;
+        $update_array['unit_id'] = decryptId($request->unit_id) ?? $safetypermit->unit_id;
+        $update_array['exact_location_job'] = $request->exact_location_job ?? $safetypermit->exact_location_job;
+        $update_array['job_location_area'] = $request->job_location_area ?? $safetypermit->job_location_area;
+
+        $update_array['sub_permit'] = is_array($request->sub_permit)
+            ? implode(',', $request->sub_permit)
+            : $request->sub_permit ?? $safetypermit->sub_permit;
+
+        $update_array['state_isolation_loto'] = !empty($request->state_isolation_loto) && $request->state_isolation_loto !== $safetypermit->state_isolation_loto
+            ? json_encode($request->state_isolation_loto)
+            : $safetypermit->state_isolation_loto;
+
+        $update_array['confined_space_entry'] = !empty($request->confined_space_entry) && $request->confined_space_entry !== $safetypermit->confined_space_entry
+            ? json_encode($request->confined_space_entry)
+            : $safetypermit->confined_space_entry;
+
+        $update_array['protective_equip'] = !empty($request->protective_equip) && $request->protective_equip !== $safetypermit->protective_equip
+            ? json_encode($request->protective_equip)
+            : $safetypermit->protective_equip;
+
+        $update_array['equiment_involved'] = !empty($request->equiment_involved) && $request->equiment_involved !== $safetypermit->equiment_involved
+            ? json_encode($request->equiment_involved)
+            : $safetypermit->equiment_involved;
+
+        $update_array['precaution_taken'] = !empty($request->precaution_taken) && $request->precaution_taken !== $safetypermit->precaution_taken
+            ? json_encode($request->precaution_taken)
+            : $safetypermit->precaution_taken;
+
+        $update_array['equipment_checklist'] = !empty($request->equipment_checklist) && $request->equipment_checklist !== $safetypermit->equipment_checklist
+            ? json_encode($request->equipment_checklist)
+            : $safetypermit->equipment_checklist;
+
+        $update_array['safework_instruction'] = !empty($request->safework_instruction) && $request->safework_instruction !== $safetypermit->safework_instruction
+            ? json_encode($request->safework_instruction)
+            : $safetypermit->safework_instruction;
+
+        $update_array['shutdown_req'] = $request->has('shutdown_req') ? 1 : $safetypermit->shutdown_req;
+        $update_array['loto_req'] = $request->has('loto_req') ? 1 : $safetypermit->loto_req;
+        $update_array['tagfield'] = $request->has('tagfield') ? 1 : $safetypermit->tagfield;
+        $update_array['toolbox_talk'] = $request->has('toolbox_talk') ? 1 : $safetypermit->toolbox_talk;
+        $update_array['assigned_job'] = $request->has('assigned_job') ? 1 : $safetypermit->assigned_job;
+        $update_array['equipment_checklist_inspection'] = $request->has('equipment_checklist_inspection') ? 1 : $safetypermit->equipment_checklist_inspection;
+
+        $update_array['job_description'] = $request->job_description ?? $safetypermit->job_description;
+        $update_array['shut_down_takenby'] = $request->shut_down_takenby ?? $safetypermit->shut_down_takenby;
+        $update_array['loto_takenby'] = $request->loto_takenby ?? $safetypermit->loto_takenby;
+        $update_array['loto_no'] = $request->loto_no ?? $safetypermit->loto_no;
+        $update_array['equiment_involved_others'] = $request->equiment_involved_others ?? $safetypermit->equiment_involved_others;
+        $update_array['talk_givenby'] = $request->talk_givenby ?? $safetypermit->talk_givenby;
+        $update_array['attendance_toolbox_talk'] = $request->attendance_toolbox_talk ?? $safetypermit->attendance_toolbox_talk;
+
+        $update_array['updated_by'] = Auth::id();
+
+        return  $this->where('id', $id)->update($update_array);
     }
     public function verifiedby($verifiedby, $id)
     {

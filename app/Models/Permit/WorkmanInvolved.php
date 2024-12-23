@@ -44,7 +44,8 @@ class WorkmanInvolved extends Model
         $request = request();
         $search = '';
         $query = $this->select(
-            'ptw_safety_workman_involved.*');
+            'ptw_safety_workman_involved.*'
+        );
 
 
 
@@ -84,7 +85,8 @@ class WorkmanInvolved extends Model
 
 
 
-    public function getWorkmaninvolved($id){
+    public function getWorkmaninvolved($id)
+    {
         return WorkmanInvolved::where('permit_id', $id)->get();
     }
 
@@ -98,19 +100,20 @@ class WorkmanInvolved extends Model
         $workmanDesigs = $request->input('workman_desig');
         $workmanDepts = $request->input('workman_dept');
         $natureOfJobs = $request->input('nature_of_job');
+        if (isset($empIds)) {
+            foreach ($empIds as $index => $empId) {
+                $insert_array = array(
+                    'permit_id' => $permit_id,
+                    'emp_id' => $empId,
+                    'workman_name' => $workmanNames[$index],
+                    'workman_desig' => $workmanDesigs[$index],
+                    'workman_dept' => $workmanDepts[$index],
+                    'nature_of_job' => $natureOfJobs[$index],
+                    'created_by' => Auth::id()
+                );
 
-        foreach ($empIds as $index => $empId) {
-            $insert_array = array(
-                'permit_id' => $permit_id,
-                'emp_id' => $empId,
-                'workman_name' => $workmanNames[$index],
-                'workman_desig' => $workmanDesigs[$index],
-                'workman_dept' => $workmanDepts[$index],
-                'nature_of_job' => $natureOfJobs[$index],
-                'created_by' => Auth::id()
-            );
-
-            $this->insert($insert_array);
+                $this->insert($insert_array);
+            }
         }
     }
 
@@ -118,33 +121,45 @@ class WorkmanInvolved extends Model
     // {
 
     //     $request = request();
+    //     $empIds = $request->input('emp_id');
+    //     $workmanNames = $request->input('workman_name');
+    //     $workmanDesigs = $request->input('workman_desig');
+    //     $workmanDepts = $request->input('workman_dept');
+    //     $natureOfJobs = $request->input('nature_of_job');
 
-    //     $update_array = array(
-    //         'work_name' => $request->work_name,
-    //         'description' => $request->description,
-    //         'updated_by' => Auth::id()
-    //     );
-
-    //     return $this->where('id', $id)->update($update_array);
-    // }
-
-    // public function statuschange($id)
-    // {
-    //     $request = request();
-
-    //     $type = $request->types;
-    //     if ($type == 1) {
-    //         $update_data = array(
-    //             'status' => 0,
+    //     foreach ($empIds as $index => $empId) {
+    //         $update_array = array(
+    //             'permit_id' => $id,
+    //             'emp_id' => $empId,
+    //             'workman_name' => $workmanNames[$index],
+    //             'workman_desig' => $workmanDesigs[$index],
+    //             'workman_dept' => $workmanDepts[$index],
+    //             'nature_of_job' => $natureOfJobs[$index],
+    //             'updated_by' => Auth::id()
     //         );
-    //     } else {
-    //         $update_data = array(
-    //             'status' => 1,
-    //         );
+
+
+    //         return $this->where('id', $id)->update($update_array);
     //     }
-
-    //     return $this->where('id', $id)->update($update_data);
     // }
+
+    public function statuschange($id)
+    {
+        $request = request();
+
+        $type = $request->types;
+        if ($type == 1) {
+            $update_data = array(
+                'status' => 0,
+            );
+        } else {
+            $update_data = array(
+                'status' => 1,
+            );
+        }
+
+        return $this->where('id', $id)->update($update_data);
+    }
 
     // public function deleterecord($id)
     // {
