@@ -131,7 +131,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex: /^[a-zA-Z0-9]*$/
+                        regex:  /^[a-zA-Z0-9]*$/
                     },
                     item_code: {
                         required: true,
