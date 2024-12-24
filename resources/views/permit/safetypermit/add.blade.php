@@ -155,7 +155,7 @@
                                                         class="img-fluid" style="width: 50px; height: 50px;">
                                                     <label class="form-label mb-0">Shut Down Required (Yes/No)</label>
                                                     <input type="checkbox" id="shutdown-checkbox"
-                                                        class="validate-radio-required" name="shutdown_req"
+                                                        class="shutdown-checkbox" name="shutdown_req"
                                                         value="1">
                                                     <div class="text-danger"></div>
                                                 </div>
@@ -184,7 +184,7 @@
                                                     <label class="form-label mb-0 ">Isolation/LOTO Required
                                                         (Yes/No)</label>
                                                     <input type="checkbox" id="loto-checkbox"
-                                                        class="validate-radio-required" name= "loto_req">
+                                                        class="loto-checkbox" name= "loto_req">
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
@@ -219,7 +219,7 @@
                                                 <div class="form-group d-flex align-items-center gap-3">
                                                     <label class="form-label mb-0 ">Tag Field properly (Yes/No)</label>
                                                     <input type="checkbox"
-                                                        class="validate-radio-required shutdowncheckbox" name="tagfield"
+                                                        class=" shutdowncheckbox" name="tagfield"
                                                         disabled>
                                                     <div class="text-danger"></div>
                                                 </div>
@@ -256,7 +256,7 @@
                                                                 <label class="form-label mb-0"
                                                                     for="gas_checkbox">Gas</label>
                                                                 <input type="checkbox"
-                                                                    class="validate-radio-required shutdowncheckbox"
+                                                                    class=" shutdowncheckbox"
                                                                     id="gas_checkbox" name="state_isolation_loto[]"
                                                                     value="Gas" disabled>
                                                             </div>
@@ -617,7 +617,7 @@
                                                         checklist prior to start work (Yes/No)
                                                         <span class="text-danger">*</span>
                                                         <input type="checkbox" id="equipment_checklist_inspection"
-                                                            class="validate-radio-required"
+                                                            class=""
                                                             name = "equipment_checklist_inspection">
                                                         <div class="text-danger"></div>
                                                     </label>
@@ -651,7 +651,7 @@
                                                         (Yes/No)
                                                         <span class="text-danger">*</span>
                                                         <input type="checkbox" id="toolbox_talk"
-                                                            class="validate-radio-required" name = "toolbox_talk">
+                                                            class="" name = "toolbox_talk">
                                                         <div class="text-danger"></div>
                                                     </label>
                                                 </div>
@@ -776,7 +776,7 @@
                                                         for duty (Yes/No)
                                                         <span class="text-danger">*</span>
                                                         <input type="checkbox" id="assigned_job" name = "assigned_job"
-                                                            class="validate-radio-required">
+                                                            class="">
                                                         <div class="text-danger"></div>
                                                     </label>
                                                 </div>
@@ -1802,7 +1802,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex: /^[a-zA-Z]$/
+                       
                     },
                     employee_code: {
                         required: true,
@@ -1890,7 +1890,7 @@
                         required: "Talk Given By is required",
                         minlength: "Name is between 3 to 30 characters",
                         maxlength: "Name is between 3 to 30 characters",
-                        regex: "Only alphabetsa are acceptable"
+
                     },
                     employee_code: {
                         required: "Employee ID is required",

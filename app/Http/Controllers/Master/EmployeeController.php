@@ -141,6 +141,7 @@ class EmployeeController extends Controller
                 'employee' => $employee,
                 'userrole' => $userrole,
             );
+          
 
             return view('master.employee.edit', $data);
         } catch (Exception $error) {
@@ -212,6 +213,10 @@ class EmployeeController extends Controller
                 'Employee Id',
                 'Employee Name',
                 'Email',
+                'Company Name',
+                'Location Name',
+                'Unit Name',
+                'Department Name',
                 'Employee Status',
                 __("common.status"),
                 __("common.created_date"),
@@ -225,6 +230,10 @@ class EmployeeController extends Controller
                 $export[] =  $data->emp_id;
                 $export[] =  $data->emp_name;
                 $export[] =  $data->email;
+                $export[] =  getCompanyname($data->company);
+                $export[] =  getLocationname($data->location);
+                $export[] =  getUnitname($data->unit);
+                $export[] =  getDepartment($data->department);
                 $export[] =  $data->employee_status;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  Displaydateformat($data->created_at);
@@ -255,12 +264,16 @@ class EmployeeController extends Controller
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-            
+
             $header = [
                 __("common.sno"),
                 'Employee Id',
                 'Employee Name',
                 'Email',
+                'Company Name',
+                'Location Name',
+                'Unit Name',
+                'Department Name',
                 'Employee Status',
                 __("common.status"),
                 __("common.created_date"),

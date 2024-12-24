@@ -42,9 +42,18 @@ class PpeTypeController extends Controller
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active<span>";
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
+                                $text = "<span style='color:green;'>Active<span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
+                                $text = "<span style='color:red;'>In-Active<span>";
+                            }
+
+
+                            if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_HOD) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_EHS_HEAD)) {
+                                if ($row->status == 1) {
+                                    $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='1'>Active<span>";
+                                } else if ($row->status == 0) {
+                                    $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='0'>In-Active<span>";
+                                }
                             }
                             return $text;
                         })
@@ -59,7 +68,7 @@ class PpeTypeController extends Controller
 
                             $btn = '<a href="' . admin_url('ppe_type/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             $btn .= '<a href="' . admin_url('ppe_type/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
+                            // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -93,9 +102,7 @@ class PpeTypeController extends Controller
             ];
             $messages = [
 
-
                 'ppe_type.required' => __('PPE Type  is required'),
-
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -107,7 +114,7 @@ class PpeTypeController extends Controller
 
                 $this->ppetype->store();
 
-                Session::flash('success', __('PPE Type is taken  added successfully'));
+                Session::flash('success', __('Your data has been added successfully'));
             } catch (Exception $ex) {
                  report($ex)
 ;
@@ -177,7 +184,7 @@ class PpeTypeController extends Controller
 
                 $this->ppetype->updates($id);
 
-                Session::flash('success', __('PPE Type is taken updated successfully'));
+                Session::flash('success', __('Your data has been  updated successfully'));
             } catch (Exception $ex) {
                 Session::flash('error', __('common.message_error'));
             }
@@ -197,7 +204,7 @@ class PpeTypeController extends Controller
 
             $this->ppetype->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => __('PPE Type  to be taken status changed')], 200);
+            return response()->json(['status' => 'success', 'msg' => __('PPE Type status changed Successfully')], 200);
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
@@ -211,7 +218,7 @@ class PpeTypeController extends Controller
 
             $this->ppetype->deleterecord($id);
 
-            return response()->json(['status' => 'success', 'msg' => __('PPE Type to be taken deleted successfully')], 200);
+            return response()->json(['status' => 'success', 'msg' => __('Your data has deleted successfully')], 200);
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
@@ -330,7 +337,7 @@ class PpeTypeController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Precation to be takens Details.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
         }

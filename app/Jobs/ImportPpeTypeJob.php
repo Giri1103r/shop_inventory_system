@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Shuchkin\SimpleXLSX;
 
-class ImportPpeTypeJob implements ShouldQueue
-// class ImportPpeTypeJob
+// class ImportPpeTypeJob implements ShouldQueue
+class ImportPpeTypeJob
 {
 
 
@@ -120,6 +120,7 @@ class ImportPpeTypeJob implements ShouldQueue
             $data = [
                 'ppe_type' => $ppename,
                 'created_by' => Auth::id(),
+                'created_at'=>now(),
             ];
 
             PpeType::create($data);

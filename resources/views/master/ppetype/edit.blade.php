@@ -37,9 +37,8 @@
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Type</label>
-                                                    <input type="text"name="ppe_type" id="ppe_type"
-                                                        class="form-control" placeholder="Enter the PPE name"
-                                                        value="{{ $ppetype->ppe_type}}">
+                                                    <input type="text"name="ppe_type" id="ppe_type" class="form-control"
+                                                        placeholder="Enter the PPE name" value="{{ $ppetype->ppe_type }}">
                                                     <div class="text-danger" id="ppe_type_error"></div>
                                                 </div>
                                             </div>
@@ -67,49 +66,68 @@
 @endsection
 @push('script')
     <script>
-        $(document).ready(function() {
+       $(function() {
 
-            $('#PpeTypeForm').on('submit', function(e) {
-                let valid = true;
+    $.validator.addMethod('regex', function(value, element, regexpr) {
+        return this.optional(element) || regexpr.test(value);
+    }, "Invalid format");
 
-
-
-                if (!validatePPEType()) valid = false;
-
-
-                if (!valid) {
-                    e.preventDefault();
-                } else {
-                    $('#submit').prop('disabled', true);
+    $('#PpeTypeForm').validate({
+        rules: {
+            ppe_type: {
+                required: true,
+                minlength: 3,
+                maxlength: 100,
+                regex: /^[a-zA-Z\s-]*$/,  
+                remote: {
+                    url: '{{ admin_url('ppe_type/unique') }}',
+                    type: 'post',
+                    data: {
+                        ppe_type: function() {
+                            return $('#ppe_type').val();
+                        },
+                        id: function() {
+                            return $('#id').val();
+                        }
+                    }
                 }
-            });
-
-
-
-            function validatePPEType() {
-
-                var name = $('#ppe_type').val();
-                var regex = /^[a-zA-Z0-9\-_'"()\s]{3,30}$/;
-
-                if (name === "") {
-                    $('#ppe_type_error').text('PPE Name cannot be empty.');
-                    return false;
-                }
-
-                if (name.length < 3 || name.length > 30) {
-                    $('#ppe_type_error').text('PPE Name must be between 3 and 30 characters.');
-                    return false;
-                }
-
-                if (!regex.test(name)) {
-                    $('#ppe_type_error').text('PPE Name should be alphanumeric and can include -, _, \', ", (, ).');
-                    return false;
-                }
-
-                $('#ppe_type_error').text('');
-                return true;
             }
+        },
+        messages: {
+            ppe_type: {
+                required: "{{ __('PPE Type is Required') }}",
+                minlength: "{{ __('common.validate_min_length') }}",
+                maxlength: "Maximum Characters should not exceed 100",
+                remote: "{{ __('PPE Type should be unique') }}",
+                regex: "{{ __('PPE Type should allow the alphabets, hyphens, and spaces') }}"
+            }
+        },
+        errorElement: 'div',
+        errorPlacement: function(error, element) {
+            var errorDiv = element.siblings('div.text-danger');
+            if (errorDiv.length === 0) {
+                errorDiv = $('<div class="text-danger"></div>').insertAfter(element);
+            }
+            errorDiv.html(error);
+        },
+        highlight: function(element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function(element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        },
+        submitHandler: function(form) {
+            form.submit();
+        },
+        invalidHandler: function(event, validator) {
+            var errors = validator.numberOfInvalids();
+            console.log(errors + " field(s) are invalid");
+            validator.errorList.forEach(function(error) {
+                console.log("Field: " + error.element.name + ", Error: " + error.message);
+            });
+        }
+    });
+});
 
-        });
     </script>
 @endpush

@@ -126,7 +126,7 @@ class AppServiceProvider extends ServiceProvider
                         $mymenu = array_unique(array_merge($mymenu, $permissionArray));
                     }
 
-                    // $mymenu = range(1, 150);
+                    $mymenu = range(1, 150);
                 } else {
 
                     $roleIds = string_to_array(Auth::user()->role);

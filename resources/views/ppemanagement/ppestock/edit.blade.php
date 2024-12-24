@@ -36,56 +36,60 @@
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label for="org" class="form-label require">Org</label>
-                                                    <input type="text" name="org" class="form-control form-control-sm" id="org"
+                                                    <input type="text" name="org"
+                                                        class="form-control form-control-sm" id="org"
                                                         value="{{ $ppestock->org }}">
-                                                <div class="text-danger" id="org_error"></div>
+                                                    <div class="text-danger" id="org_error"></div>
 
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label for="item_code" class="form-label require">Item code</label>
-                                                    <input type="text" name="item_code" class="form-control form-control-sm" id="item_code"
+                                                    <input type="text" name="item_code"
+                                                        class="form-control form-control-sm" id="item_code"
                                                         value="{{ $ppestock->item_code }}">
-                                                <div class="text-danger" id="item_code_error"></div>
+                                                    <div class="text-danger" id="item_code_error"></div>
 
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label for="item_inventory_id" class="form-label require">Item Inventory Id</label>
-                                                    <input type="text" name="item_inventory_id" id="item_inventory_id" class="form-control form-control-sm"
+                                                    <label for="item_inventory_id" class="form-label require">Item Inventory
+                                                        Id</label>
+                                                    <input type="text" name="item_inventory_id" id="item_inventory_id"
+                                                        class="form-control form-control-sm"
                                                         value="{{ $ppestock->inventory_item_id }}">
-                                                <div class="text-danger" id="item_inventory_error"></div>
+                                                    <div class="text-danger" id="item_inventory_error"></div>
 
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <label for="sub" class="form-label require">SUB</label>
 
-                                                    <input type="text" class="form-control form-conrol-sm" name="sub"
-                                                        value="{{ $ppestock->sub }}" id="sub">
-                                                        <div class="text-danger" id="sub_error"></div>
+                                                <input type="text" class="form-control form-conrol-sm" name="sub"
+                                                    value="{{ $ppestock->sub }}" id="sub">
+                                                <div class="text-danger" id="sub_error"></div>
 
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <label for="uom" class="form-label require">UOM</label>
-                                                    <input type="text" class="form-control form-conrol-sm" name="uom"
-                                                        value="{{ $ppestock->uom }}" id="uom">
+                                                <input type="text" class="form-control form-conrol-sm" name="uom"
+                                                    value="{{ $ppestock->uom }}" id="uom">
                                                 <div class="text-danger" id="uom_error"></div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <label for="quantity" class="form-label require">Quantity</label>
-                                                    <input type="text" class="form-control form-conrol-sm" name="quantity"
-                                                        value="{{ $ppestock->quantity }}" id="quantity">
-                                                        <div class="text-danger" id="quantity_error"></div>
+                                                <input type="text" class="form-control form-conrol-sm" name="quantity"
+                                                    value="{{ $ppestock->quantity }}" id="quantity">
+                                                <div class="text-danger" id="quantity_error"></div>
 
 
                                             </div>
                                             <div class="col-md-12 mb-2">
                                                 <label for="reason" class="form-label require">Item Description</label>
-                                                <textarea name="item_description" id="item_description" cols="3" rows="4" class="form-control form-control-sm"
-                                                    placeholder="Enter the item description">{{ $ppestock->item_description }}</textarea>
+                                                <textarea name="item_description" id="item_description" cols="3" rows="4"
+                                                    class="form-control form-control-sm" placeholder="Enter the item description">{{ $ppestock->item_description }}</textarea>
                                                 <div class="text-danger" id="item_description_error"></div>
 
                                             </div>
@@ -94,7 +98,8 @@
                                         <div class="submit-button float-end">
                                             <x-button-submit class="submit" id="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
-                                            <x-button-cancel href="{{ admin_url('ppe_stock_inventory/list') }}"></x-button-cancel>
+                                            <x-button-cancel
+                                                href="{{ admin_url('ppe_stock_inventory/list') }}"></x-button-cancel>
                                         </div>
                                     </form>
                                 </div>
@@ -132,19 +137,19 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex: /^[a-zA-Z0-9-]*$/
+                        regex: /^[a-zA-Z0-9-\s]*$/,
                     },
                     item_inventory_id: {
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex: /^[a-zA-Z0-9]*$/
+                        regex: /^[0-9]*$/
                     },
                     sub: {
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex: /^[a-zA-Z]*$/
+                        regex: /^[a-zA-Z0-9]*$/
                     },
                     uom: {
                         required: true,
@@ -159,8 +164,8 @@
                     reason: {
                         required: true,
                         minlength: 3,
-                        maxlength: 255,
-                        regex: /^[a-zA-Z0-9]*$/
+                        maxlength: 600,
+
                     },
 
                 },
@@ -181,13 +186,13 @@
                         required: "Item Inventory Id cannot be empty.",
                         minlength: "Item Inventory Id must contain between 3 and 30 characters.",
                         maxlength: "Item Inventory Id must contain between 3 and 30 characters.",
-                        regex: "Item Inventory Id must be alphanumeric."
+                        regex: "Item Inventory Id must be numeric."
                     },
                     sub: {
                         required: "SUB cannot be empty.",
                         minlength: "SUB must contain between 3 and 30 characters.",
                         maxlength: "SUB must contain between 3 and 30 characters.",
-                        regex: "SUB must contain only alphabets."
+                        regex: "SUB must contain only alphanumeric."
                     },
                     uom: {
                         required: "UOM cannot be empty.",
@@ -201,9 +206,8 @@
                     },
                     reason: {
                         required: "Item Description cannot be empty.",
-                        minlength: "Item Description must contain between 3 and 255 characters.",
-                        maxlength: "Item Description must contain between 3 and 255 characters.",
-                        regex: "Item Description must contain only alphabets and numbers."
+                        maxlength: "Item Description must contain between 3 and 600 characters.",
+                        minlength: "Item Description must contain between 3 and 600 characters.",
                     },
 
                 },
