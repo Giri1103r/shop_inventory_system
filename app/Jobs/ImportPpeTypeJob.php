@@ -11,12 +11,14 @@ use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Shuchkin\SimpleXLSX;
-
-// class ImportPpeTypeJob implements ShouldQueue
-class ImportPpeTypeJob
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+class ImportPpeTypeJob implements ShouldQueue
+// class ImportPpeTypeJob
 {
 
-
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     /**
      * Create a new job instance.
      */
@@ -122,6 +124,7 @@ class ImportPpeTypeJob
                 'created_by' => Auth::id(),
                 'created_at'=>now(),
             ];
+           
 
             PpeType::create($data);
             $i++;

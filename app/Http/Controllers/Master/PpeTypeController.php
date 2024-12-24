@@ -415,8 +415,8 @@ class PpeTypeController extends Controller
                 ];
 
                 try {
-                    dispatch(new ImportPpeTypeJob($details));
-
+                    // dispatch(new ImportPpeTypeJob($details));
+                    dispatch(new ImportPpeTypeJob($details))->onQueue('ppetype');
                     $insert_data['log_id'] = $insert_id;
                     $insert_data['Uploded_by'] = Auth::user()->toArray();
 

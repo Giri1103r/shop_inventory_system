@@ -141,7 +141,7 @@ class EmployeeController extends Controller
                 'employee' => $employee,
                 'userrole' => $userrole,
             );
-          
+
 
             return view('master.employee.edit', $data);
         } catch (Exception $error) {
@@ -175,7 +175,7 @@ class EmployeeController extends Controller
             return redirect(admin_url('employee/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+           
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('employee/list'));
