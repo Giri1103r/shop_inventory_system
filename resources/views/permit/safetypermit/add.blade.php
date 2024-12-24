@@ -1,3 +1,4 @@
+
 @extends('admin.layouts.admin')
 @section('title', 'Safety Permit Add')
 @section('pageurl', admin_url('safetypermit/list'))
@@ -1692,17 +1693,7 @@
                     section1Inputs.prop('disabled', true);
                 }
             });
-            $.validator.addMethod("regex", function(value, element, regexp) {
-                return this.optional(element) || regexp.test(value);
-            }, "Please check your input.");
 
-            $('#safetyPermitadd').validate({
-                rules:{
-                    "confined_space_entry[o2_percentage]": {
-                        
-                }
-
-            });
         });
 
         $(document).ready(function() {
