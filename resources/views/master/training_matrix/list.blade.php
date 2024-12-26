@@ -77,16 +77,6 @@
                                             </select>
                                         </div>
 
-
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label class="form-label ">Mode of Training</label>
-                                            <select name="mode_of_training" id="mode_of_training"
-                                                class="form-control single-select" style="width: 100%;">
-                                                <option value="">Select Mode of training</option>
-                                                <option value="1">Online</option>
-                                                <option value="2">Offline</option>
-                                            </select>
-                                        </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"

@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Venue Master PDF')
+@section('title', 'Location Type List')
 @section('content')
 
     <div style="width:100%;">
@@ -25,32 +25,29 @@
                             {{ $i }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->name_of_the_conference_hall }}
+                            {{ $value->permit_id }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->unit_name }}
+                            {{ getUnitname($value->unit_id) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->capacity }}
+                            {{ Displaydateformat($value->date) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ strtoupper($value->projector_or_lcd_availability) }}
+                            {{ $value->exact_location_job }}
                         </td>
-                      
+                        
                         <td style='padding: 7px;border: 0.5px solid'>
-                            @php
-                                $status = $value->status == 1 ? 'Active' : 'In-Active';
-                            @endphp
-                            {{ $status }}
+                            {{ $value->status_name }}
                         </td>
-
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getusername($value->created_by) }}
+                            {{ getUsername($value->verified_by) }}
                         </td>
-
-
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydateformat($value->created_at) }}
+                            {{ getUsername($value->approved_by) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getUsername($value->created_by) }}
                         </td>
                     </tr>
                     @php

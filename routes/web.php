@@ -61,12 +61,19 @@ Route::get('queuehigh', [CronController::class, 'queueHigh']);
 Route::get('queuedefault', [CronController::class, 'queueDefault']);
 Route::get('queueemail', [CronController::class, 'queueEmail']);
 
+Route::get('cron/training/nomination-process/import', [CronController::class, 'queueNominationProcessImport']);
+Route::get('cron/training/training-schedule/import', [CronController::class, 'queueTrainingScheduleImport']);
+Route::get('cron/training/training-matrix/import', [CronController::class, 'queueTrainingMatrixImport']);
+Route::get('cron/training/master/topic/import', [CronController::class, 'queueTopicImport']);
+Route::get('cron/training/master/venue/import', [CronController::class, 'queueVenueImport']);
 Route::get('queueCompanyImport', [CronController::class, 'queueCompanyImport']);
 Route::get('queuelocationimport', [CronController::class, 'queuelocationimport']);
 Route::get('queueunitimport', [CronController::class, 'queueunitimport']);
 Route::get('queueDepartmentuplodimport', [CronController::class, 'queueDepartmentuplodimport']);
 
 
+
+Route::get('stockitem', [CronController::class, 'storeItem']);
 
 Route::get('stockitem', [CronController::class, 'storeItem']);
 Route::get('workmastertemp', [CronController::class, 'workMasterTemp']);
@@ -472,6 +479,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/nominationProcess/{id}', [TrainingScheduleController::class, 'nominationProcess']);
                 Route::get('/start/{id}', [TrainingScheduleController::class, 'startTraining']);
                 Route::get('/end/{id}', [TrainingScheduleController::class, 'endTraining']);
+                Route::post('/training_end/submit', [TrainingScheduleController::class, 'endTrainingStore']);
                 Route::get('/attendance/{id}', [TrainingScheduleController::class, 'attendance']);
                 Route::post('/attendance/submit', [TrainingScheduleController::class, 'storeAttendance']);
                 Route::post('/attendance/unique', [TrainingScheduleController::class, 'checkUniqueAttendanceDate']);
@@ -480,6 +488,7 @@ Route::middleware(['securityheader'])->group(function () {
 
 
             });
+            Route::get('training/feedback/{id}', [TrainingScheduleController::class, 'feedback']);
 
 
             /**
@@ -700,7 +709,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/export/pdf', [PpeExemptionController::class, 'exportPdf']);
                 Route::get('/generalpdf/{id}', [PpeExemptionController::class, 'pdf']);
                 Route::get('/ajax-list', [PpeExemptionController::class, 'list']);
-
 
             });
         });

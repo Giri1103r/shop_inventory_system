@@ -648,7 +648,7 @@
                             </div>
                         </div>
                     </div>
-                    @if ((in_array(ROLE_EHS_OFFICER, getUserRoleId(Auth::id()))|| isAdmin()) && $safetypermit['permit_status'] == STATUS_EHS_VERIFICATION_PENDING)
+                    @if (((in_array(ROLE_EHS_OFFICER, getUserRoleId(Auth::id()))|| isAdmin()) && $safetypermit['permit_status'] == STATUS_EHS_VERIFICATION_PENDING) || ($safetypermit['verified_by'] == Auth::id() &&  $safetypermit['permit_status'] == STATUS_PLANTHEAD_REJECTED) )
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">
@@ -730,7 +730,7 @@
                         </div>
                     @endif
 
-                    @if($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED)
+                    @if($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED  &&  $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED)
                     <div class="card-body ">
                         <div class="row">
                             <div class="card-header-inner">
@@ -768,7 +768,7 @@
                         @endforeach
                     </div>
                 @endif
-                @if($safetypermit['verified_by'] == Auth::id()  && ($safetypermit['permit_status'] == STATUS_PERMIT_EXTENDED  || isAdmin()))
+                @if(($safetypermit['verified_by'] == Auth::id() || isAdmin()) && ($safetypermit['permit_status'] == STATUS_PERMIT_EXTENDED ) &&  $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED )
                 <div class="card-body ">
                     <div class="row">
                         <div class="card-header-inner">
@@ -820,7 +820,7 @@
                         </form>
                     </div>
                 </div>
-                @elseif($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED_APPROVAL)
+                @elseif($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED_APPROVAL &&  $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED)
 
                 <div class="card-body ">
                     <div class="row">
@@ -974,7 +974,7 @@
                                     </form>
                                 </div>
                             </div>
-                        @elseif (  $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED &&
+                        @elseif (  $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED &&  $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED &&
                             $safetypermit['permit_status'] != STATUS_EHS_RESUME &&
                                 $safetypermit['permit_status'] != STATUS_EHS_REASSIGN &&
                                 ($safetypermit['permit_status'] > STATUS_EHS_HOLD || $safetypermit['permit_status'] > STATUS_EHS_DECLINE))
@@ -1008,7 +1008,7 @@
                                 </div>
                             </div>
                         @endif
-                    @elseif ( $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED &&
+                    @elseif ( $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED &&  $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED &&
                         $safetypermit['permit_status'] != STATUS_EHS_RESUME &&
                             $safetypermit['permit_status'] != STATUS_EHS_REASSIGN &&
                             ($safetypermit['permit_status'] > STATUS_EHS_HOLD || $safetypermit['permit_status'] > STATUS_EHS_DECLINE))
@@ -1089,12 +1089,14 @@
                                     <hr>
                                     <div class="d-flex float-end gap-2 mx-auto">
                                         <button type="submit" name="approve" value="approve"
-                                            class="btn btn-info w-100">Approve</button>
+                                            class="btn btn-success w-100">Approve</button>
+                                            <button type="submit" name="reject" value="reject"
+                                            class="btn btn-danger w-100">Reject</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
-                    @elseif ($safetypermit['permit_status'] >= STATUS_PLANT_HEAD_APPROVED && $safetypermit['permit_status'] != STATUS_EHS_RESUME && $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED  && $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED_APPROVAL )
+                    @elseif ($safetypermit['permit_status'] >= STATUS_PLANT_HEAD_APPROVED && $safetypermit['permit_status'] != STATUS_EHS_RESUME && $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED  && $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED_APPROVAL &&  $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED)
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">

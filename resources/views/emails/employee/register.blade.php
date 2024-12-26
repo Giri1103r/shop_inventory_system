@@ -8,10 +8,6 @@
             <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">
                 Dear {{ $details['name'] }},
             </p>
-            <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">
-                Login credentials have been created for you to access the Indialand application by the Ardhas Technology team.
-            </p>
-            
             <!-- Employee Details Table -->
             <table role="presentation" border="1" cellpadding="5" cellspacing="0"
                 style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;" width="100%">
@@ -28,7 +24,7 @@
                     </tr>
                     <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;"><b>Employee No</b></td>
-                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;">{{ $details['emp_id'] }}</td>
+                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;">{{ $details['employee_id'] }}</td>
                     </tr>
                     <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;"><b>Date</b></td>
@@ -43,12 +39,12 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;"><b>Username</b></td>
-                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;">{{ $details['username'] }}</td>
+                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;"><b>Email ID</b></td>
+                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;">{{ $details['email'] }}</td>
                     </tr>
                     <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;"><b>Password</b></td>
-                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;">{{ 'User@' . $details['emp_id'] }}</td>
+                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;">{{ 'User@' . $details['employee_id'] }}</td>
                     </tr>
                 </tbody>
             </table>

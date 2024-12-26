@@ -27,8 +27,21 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
+                                            <label for="from_date" class="form-label">From Date</label>
+                                            <input type="text" name="from_date" id="from_date_datepicker"
+                                                class="form-control" placeholder="From Date">
+                                        </div>
+
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="to_date" class="form-label">To Date</label>
+                                            <input type="text" name="to_date" id="to_date_datepicker"
+                                                class="form-control" placeholder="To Date">
+                                        </div>
+
+                                        <div class="col-md-3 mb-3 form-input">
                                             <label for="topic_id" class="form-label ">Topic ID</label>
-                                            <input type="text" name="topic_id" id="topic_id" class="form-control" placeholder="Topic ID">
+                                            <input type="text" name="topic_id" id="topic_id" class="form-control"
+                                                placeholder="Topic ID">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="topic_name" class="form-label ">Topic Name</label>
@@ -66,6 +79,7 @@
                                         <th>{{ __('common.sno') }}</th>
                                         <th>Topic ID</th>
                                         <th>Topic Name</th>
+                                        <th>No. of Questions</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -90,6 +104,22 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
+    
+
+            flatpickr("#from_date_datepicker", {
+                dateFormat: "d-m-Y",
+                onChange: function(selectedDates, dateStr) {
+                    const toDatePicker = document.getElementById("to_date_datepicker")._flatpickr;
+                    if (toDatePicker) {
+                        toDatePicker.set("minDate", dateStr);
+                    }
+                },
+            });
+
+            flatpickr("#to_date_datepicker", {
+                dateFormat: "d-m-Y",
+            });
+
 
             $(function() {
                 /* Datatable */
@@ -124,6 +154,8 @@
                                 .attr('content')
                         },
                         data: function(d) {
+                            d.from_date = $('#from_date_datepicker').val();
+                            d.to_date = $('#to_date_datepicker').val();
                             d.topic_id = $('#topic_id').val();
                             d.topic_name = $('#topic_name').val();
                             d.status = $('#status').val();
@@ -142,6 +174,10 @@
                         {
                             data: 'topic_name',
                             name: 'topic_name'
+                        },
+                        {
+                            data: 'no_of_questions',
+                            name: 'no_of_questions'
                         },
                         {
                             data: 'status',
@@ -184,6 +220,8 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
+                                        from_date = $('#from_date_datepicker').val();
+                                        to_date = $('#to_date_datepicker').val();
                                         topic_id = $('#topic_id').val();
                                         topic_name = $('#topic_name').val();
                                         status = $('#status').val();
@@ -193,6 +231,8 @@
                                         window.location.href =
                                             "{{ admin_url('topic/export/pdf') }}" +
                                             '?search=' + searchValue +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&topic_id=' + topic_id +
                                             '&topic_name=' + topic_name +
                                             '&status=' + status
@@ -203,6 +243,8 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
+                                        from_date = $('#from_date_datepicker').val();
+                                        to_date = $('#to_date_datepicker').val();
                                         topic_id = $('#topic_id').val();
                                         topic_name = $('#topic_name').val();
                                         status = $('#status').val();
@@ -211,6 +253,8 @@
                                         window.location.href =
                                             "{{ admin_url('topic/export/excel') }}" +
                                             '?search=' + searchValue +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&topic_id=' + topic_id +
                                             '&topic_name=' + topic_name +
                                             '&status=' + status

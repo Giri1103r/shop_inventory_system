@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Nomination Process Import')
-@section('pageurl', admin_url('nomination_process/list'))
+@section('pageurl', admin_url('training_schedule/list'))
 
 
 @section('content')
@@ -25,7 +25,7 @@
                                 {{-- <h4 class="card-title">{{ __('administration.employee_import') }}</h4> --}}
                                 <div class="d-flex justify-content-end p-2 gap-2">
                                     <x-button-download href="{{ admin_url('nomination_process/sampledownload') }}"></x-button-download>
-                                    <x-button-back href="{{ admin_url('nomination_process/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('training_schedule/list') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -49,7 +49,7 @@
                                         <div class="submit-button" style="text-align: right;">
                                             <x-button-submit></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
-                                            <x-button-cancel href="{{ admin_url('nomination_process/list') }}"></x-button-cancel>
+                                            <x-button-cancel href="{{ admin_url('training_schedule/list') }}"></x-button-cancel>
 
                                         </div>
 
