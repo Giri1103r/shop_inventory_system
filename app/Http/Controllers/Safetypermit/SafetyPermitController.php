@@ -1031,8 +1031,6 @@ class SafetyPermitController extends Controller
 
         $checkpoints = $this->typeofworkchecklist->getprotectiveequipment($workId, 'type1');
 
-
-
         return response()->json($checkpoints);
     }
 
