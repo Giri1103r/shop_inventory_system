@@ -4,6 +4,7 @@ namespace App\Models\Master;
 
 use App\Scopes\TrashScope;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class PpeType extends Model
@@ -50,6 +51,18 @@ class PpeType extends Model
         if ($request->has('ppe_status') && $request->ppe_status) {
 
             $query = $query->where('status', decryptId($request->ppe_status));
+        }
+
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        } elseif ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('created_at', '>=', $startDate);
+        } elseif ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('created_at', '<=', $endDate);
         }
 
         $data_count = $query;
@@ -171,6 +184,18 @@ class PpeType extends Model
         if ($request->has('ppe_status') && $request->ppe_status) {
 
             $query = $query->where('status', decryptId($request->ppe_status));
+        }
+
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        } elseif ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('created_at', '>=', $startDate);
+        } elseif ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('created_at', '<=', $endDate);
         }
 
         return  $query->orderBy('id', 'DESC')->get();

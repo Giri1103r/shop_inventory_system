@@ -32,6 +32,27 @@
                                             <label for="inspectiontype" class="form-label ">PPE Type</label>
                                             <input type="text" name="ppe_type" id="ppe_type" class="form-control">
                                         </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="from_date" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="to_date" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
@@ -88,6 +109,24 @@
             firstTh.removeClass('sorting_asc');
         });
 
+        $(document).ready(function() {
+            var fromDatepicker = flatpickr("#from_date", {
+                dateFormat: "d-m-Y",
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        var startDate = selectedDates[0];
+                        toDatepicker.set('minDate', startDate);
+                        toDatepicker.clear();
+                    }
+                }
+            });
+
+            var toDatepicker = flatpickr("#to_date", {
+                dateFormat: "d-m-Y",
+                minDate: "today"
+            });
+        });
+
         $(function() {
             /* Datatable */
             var table = $('.datatable-list').DataTable({
@@ -123,6 +162,8 @@
                     data: function(d) {
                         d.ppe_id = $('#ppe_id').val();
                         d.ppe_type = $('#ppe_type').val();
+                        d.from_date = $('#from_date').val();
+                        d.to_date = $('#to_date').val();
                         d.ppe_status = $('#ppe_status').val();
 
                     }
@@ -184,6 +225,8 @@
                                     var searchValue = $('#datatable-list_filter input').val();
                                     ppe_id = $('#ppe_id').val();
                                     ppe_type = $('#ppe_type').val();
+                                    from_date = $('#from_date').val();
+                                    to_date = $('#to_date').val();
                                     ppe_status = $('#ppe_status').val();
 
                                     $(".dt-button").removeClass('processing');
@@ -193,6 +236,8 @@
                                         '?search=' + searchValue +
                                         '&ppe_id=' + ppe_id +
                                         '&ppe_type=' + ppe_type +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&ppe_status=' +ppe_status
 
                                 }
@@ -204,6 +249,8 @@
                                     var searchValue = $('#datatable-list_filter input').val();
                                     ppe_id = $('#ppe_id').val();
                                     ppe_type = $('#ppe_type').val();
+                                    from_date = $('#from_date').val();
+                                    to_date = $('#to_date').val();
                                     ppe_status = $('#ppe_status').val();
 
 
@@ -214,6 +261,8 @@
                                         '?search=' + searchValue+
                                         '&ppe_id=' + ppe_id +
                                         '&ppe_type=' + ppe_type +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&ppe_status=' +ppe_status
 
                                 }

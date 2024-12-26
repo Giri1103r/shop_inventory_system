@@ -221,6 +221,7 @@ class Employee extends Model
             'updated_by' => Auth::id(),
             'updated_at' => now(),
         ];
+       
         $this->where('id', $id)->update($update_array);
 
         return $this->find($id);

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Type Master Show')
+@section('title', 'PPE Type View')
 @section('pageurl', admin_url('ppe_type/list'))
 
 
@@ -38,7 +38,7 @@
                             <div class="row">
 
                                 <div class="mb-3 col-md-4 form-input">
-                                    <label class="form-label view_label">{{ __('Item Code') }}</label>
+                                    <label class="form-label view_label">{{ __('PPE ID') }}</label>
                                     <div class="view_data">
                                         {{ isset($ppetype->ppe_id) ? $ppetype->ppe_id : '' }}
                                     </div>
@@ -51,7 +51,7 @@
                                     </div>
                                 </div>
 
-                             
+
 
                                 <div class="mb-3 col-md-4 form-input">
                                     <label class="form-label view_label">{{ __('common.created_by') }}</label>

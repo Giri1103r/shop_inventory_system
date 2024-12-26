@@ -109,10 +109,10 @@ class PpeTypeMasterController extends Controller
     {
         try {
             $rules = [
-                'item_code' => ['required', 'regex:/^[a-zA-Z0-9-]*$/'],
+                'item_code' => ['required', 'regex:/^[a-zA-Z0-9-\s]*$/'],
                 'ppe_name' => ['required', 'string', 'regex:/^[a-zA-Z0-9\-_\'"()\s]{3,30}$/'],
                 'ppe_type' => 'required|string',
-                'ppe_standard' => ['required', 'regex:/^[a-zA-Z0-9\-_\'"()\s]+$/'],
+                'ppe_standard' => ['required', 'regex:/^[a-zA-Z0-9\-_\'"()\s.:;]*$/'],
                 'protection_category' => ['required', 'string', 'regex:/^[a-zA-Z0-9\-_\'"()\s]{3,30}$/'],
                 'ppe_file' => 'nullable|mimes:png,jpeg,jpg',
 
@@ -226,10 +226,10 @@ class PpeTypeMasterController extends Controller
         try {
             $id = decryptId($request->id);
             $rules = [
-                'item_code' => ['required', 'regex:/^[a-zA-Z0-9-]*$/'],
-                'ppe_name' => ['required', 'string', 'regex:/^[a-zA-Z0-9\-_\'"()\s]{3,30}$/'],
+                'item_code' => ['required', 'regex:/^[a-zA-Z0-9-\s]*$/'],
+                'ppe_name' => ['required', 'string', 'regex:/^[a-zA-Z0-9\-_\'"()\s]{3,100}$/'],
                 'ppe_type' => 'required|string',
-                'ppe_standard' => ['required', 'regex:/^[a-zA-Z0-9\-_\'"()\s]+$/'],
+               'ppe_standard' => ['required', 'regex:/^[a-zA-Z0-9\-_\'"()\s.:;]*$/'],
                 'protection_category' => ['required', 'string', 'regex:/^[a-zA-Z0-9\-_\'"()\s]{3,30}$/'],
                  'ppe_file' => 'nullable|mimes:png,jpeg,jpg',
 
@@ -241,7 +241,7 @@ class PpeTypeMasterController extends Controller
                 'ppe_name.required' => __('PPE Name is required'),
                 'ppe_name.regex' => __('PPE Name should be alphanumeric and can include -, _, \', ", (, ).'),
                 'ppe_name.min' => __('PPE Name must be at least 3 characters.'),
-                'ppe_name.max' => __('PPE Name may not be greater than 30 characters.'),
+                'ppe_name.max' => __('PPE Name may not be greater than 100 characters.'),
                 'ppe_type.required' => __('PPE Type is required'),
                 'ppe_standard.required' => __('PPE Standard is required'),
                 'ppe_standard.regex' => __('PPE Standard should be alphanumeric and can include -, _, \', ", (, ).'),
@@ -362,7 +362,7 @@ class PpeTypeMasterController extends Controller
             ini_set("pcre.backtrack_limit", "5000000");
 
             $allData = $this->ppetypemaster->exportdata();
-            
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }

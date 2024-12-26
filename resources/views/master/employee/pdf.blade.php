@@ -34,6 +34,18 @@
                             {{ $value->email }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getCompanyname($value->company) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getLocationname($value->location)}}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getUnitname($value->unit) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{getDepartment($value->department) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->employee_status }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
