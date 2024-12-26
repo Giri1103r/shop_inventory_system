@@ -66,7 +66,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('User Role') }}</label>
                                         <div class="view_data">
-                                    
+
                                             @php
                                                 $userRoles = explode(',', $employee->user_role ?? '');
                                                 $roleNames = [];
@@ -98,55 +98,31 @@
                                             {{ isset($employee->employee_status) ? $employee->employee_status : '' }}
                                         </div>
                                     </div>
-                                    {{-- <div class="mb-3 col-md-4 form-input">
+                                    <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Company Name') }}</label>
                                         <div class="view_data">
-                                            {{ isset($employee->company_name) ? $employee->company_name : '' }}
+                                            {{ getCompanyname(isset($employee->company) ? $employee->company : '') }}
                                         </div>
-                                    </div>                                  
+                                    </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Location Name') }}</label>
                                         <div class="view_data">
-                                            {{ isset($employee->location_name) ? $employee->location_name : '' }}
+                                            {{ getLocationname(isset($employee->location) ? $employee->location : '' )}}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Unit Name') }}</label>
                                         <div class="view_data">
-                                            {{ isset($employee->unit_name) ? $employee->unit_name : '' }}
+                                            {{ getUnitname(isset($employee->unit) ? $employee->unit : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Department Name') }}</label>
                                         <div class="view_data">
-                                            {{ isset($employee->department_name) ? $employee->department_name : '' }}
+                                            {{ getDepartment(isset($employee->department) ? $employee->department : '') }}
                                         </div>
                                     </div>
 
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('SubDepartment Name') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($employee->subdepartment) ? $employee->subdepartment : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Designation') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($employee->designation) ? $employee->designation : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('WFEmptype') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($employee->wfemptype) ? $employee->wfemptype : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Skill') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($employee->skill) ? $employee->skill : '' }}
-                                        </div>
-                                    </div> --}}
                                 </div>
                             </div>
                         </div>

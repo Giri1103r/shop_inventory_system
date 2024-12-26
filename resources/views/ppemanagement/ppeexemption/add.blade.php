@@ -34,32 +34,37 @@
                                         @csrf
                                         <input type="hidden" name="unit" id="unit"
                                             value="{{ $userData->unit_id }}">
-                                            <input type="hidden" name="company" id="company"
+                                        <input type="hidden" name="company" id="company"
                                             value="{{ $userData->company_id }}">
                                         <hr>
                                         <div class="row">
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label for="emp_name" class="form-label require">Employee Name</label>
-                                                    <input type="text" name="emp_name"
-                                                        class="form-control form-control-sm " id="emp_name"
-                                                        value="{{ $employee->name }}" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-3">
-                                                <div class="form-group form-input">
                                                     <label for="emp_id" class="form-label require">Employee ID</label>
                                                     <input type="text" name="emp_id"
-                                                        class="form-control form-control-sm "id="emp_id"
-                                                        value="{{ $employee->employee_id }}" readonly>
+                                                        class="form-control form-control-sm" id="emp_id"
+                                                        value="{{ $employee->employee_id }}"
+                                                        @if (Auth::user()->role !=ROLE_SUPERADMIN) readonly @endif>
                                                 </div>
                                             </div>
+
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="emp_name" class="form-label require">Employee Name</label>
+                                                    <input type="text" name="emp_name"
+                                                        class="form-control form-control-sm" id="emp_name"
+                                                        value="{{ $employee->name }}"
+                                                        @if (Auth::user()->role != ROLE_SUPERADMIN) readonly @endif>
+                                                </div>
+                                            </div>
+
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label for="department" class="form-label require">Department</label>
                                                     <input type="text" name="department" id="department"
                                                         class="form-control form-control-sm"
-                                                        value="{{ getDepartment($employee->department_id) }}" readonly>
+                                                        value="{{ getDepartment($employee->department_id) }}"
+                                                        @if (Auth::user()->role != ROLE_SUPERADMIN) readonly @endif>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">

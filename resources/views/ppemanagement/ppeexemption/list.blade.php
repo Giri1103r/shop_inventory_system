@@ -27,12 +27,17 @@
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_id" class="form-label ">Emp Id</label>
-                                            <input type="text" class="form-control " name="emp_id" id="emp_id">
+                                            <select name="emp_id" id="emp_id" class="form-control form-control-sm"
+                                                style="width: 100%">
+                                                <option value="">Select the Employee ID</option>
+                                            </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">Emp Name</label>
-                                            <input type="text" class="form-control " name="emp_name" id="emp_name">
-
+                                            <select name="emp_name" id="emp_name" class="form-control form-control-sm"
+                                                style="width: 100%">
+                                                <option value="">Select the Employee Name</option>
+                                            </select>
                                         </div>
 
 
@@ -114,8 +119,8 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Emp Id</th>
-                                        <th>Emp Name</th>
+                                        <th>Employee ID</th>
+                                        <th>Employee Name</th>
                                         <th>Department</th>
                                         <th>Unit</th>
                                         <th>From Date</th>
@@ -144,6 +149,62 @@
                 location.reload();
             });
         });
+
+        $('#emp_id').select2({
+            ajax: {
+                url: '{{ admin_url('safetypermit/employeeid') }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search: params.term
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: $.map(data, function(item) {
+                            return {
+                                id: item.text,
+                                text: item.text
+                            };
+                        })
+                    };
+                }
+            },
+            minimumInputLength: 1,
+            dropdownCssClass: 'form-control',
+            selectionCssClass: 'form-control'
+        });
+
+        $('#emp_name').select2({
+            ajax: {
+                url: '{{ admin_url('safetypermit/employeename') }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search: params.term
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: $.map(data, function(item) {
+
+                            var cleanedText = item.text.replace(/ - .*/, '').trim();
+                            return {
+                                id: cleanedText,
+                                text: cleanedText
+                            };
+                        })
+                    };
+                }
+            },
+            minimumInputLength: 1,
+            dropdownCssClass: 'form-control',
+            selectionCssClass: 'form-control'
+        });
+
+
         $(document).ready(function() {
             var fromDatepicker = flatpickr("#from_date", {
                 dateFormat: "d-m-Y",
@@ -167,18 +228,18 @@
             if (unitId) {
                 $.ajax({
                     url: "{{ url('ppe_exemption/ajax-list') }}",
-                        type: 'GET',
-                        dataType: 'json',
-                        data: {
-                            unitId: unitId,
-                        },
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        unitId: unitId,
+                    },
                     success: function(data) {
                         $('#department').empty().append(
                             '<option value="">Select Target Department</option>'
                         );
                         $.each(data, function(key, value) {
                             $('#department').append('<option value="' + value
-                                .id + '">' + value.department_name  + '</option>');
+                                .id + '">' + value.department_name + '</option>');
                         });
                         $('#department').trigger('change');
                     },

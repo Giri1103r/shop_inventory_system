@@ -74,6 +74,8 @@ Route::get('queueDepartmentuplodimport', [CronController::class, 'queueDepartmen
 
 
 Route::get('stockitem', [CronController::class, 'storeItem']);
+
+Route::get('stockitem', [CronController::class, 'storeItem']);
 Route::get('workmastertemp', [CronController::class, 'workMasterTemp']);
 Route::get('worksave', [CronController::class, 'workSave']);
 Route::get('employee_master_temp', [CronController::class, 'employeeMasterTemp']);
@@ -707,7 +709,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/export/pdf', [PpeExemptionController::class, 'exportPdf']);
                 Route::get('/generalpdf/{id}', [PpeExemptionController::class, 'pdf']);
                 Route::get('/ajax-list', [PpeExemptionController::class, 'list']);
-
 
             });
         });

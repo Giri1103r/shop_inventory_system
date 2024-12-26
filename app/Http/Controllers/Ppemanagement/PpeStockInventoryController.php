@@ -61,9 +61,10 @@ class PpeStockInventoryController extends Controller
 
                             if(CheckUserPermission('view')){
                                 $btn .= '<a href="' . admin_url('ppe_stock_inventory/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-
                             }
-
+                            if(CheckUserPermission('edit')){
+                                $btn .= '<a href="' . admin_url('ppe_stock_inventory/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
+                            }
                             return $btn;
                         })
 

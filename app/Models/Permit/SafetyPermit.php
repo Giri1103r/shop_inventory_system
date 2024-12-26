@@ -3,6 +3,7 @@
 namespace App\Models\Permit;
 
 use App\Models\Master\Employee;
+use App\Models\Permit\WorkmanInvolved;
 use App\Models\Master\ContractorCompanyUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -85,15 +86,22 @@ class SafetyPermit extends Model
         $search = '';
         $id = Auth::id();
 
-        // $employeelocation = Employee::where('login_id', $id)->value('location');
+        $user = Auth::user();
+        $empId = $user->employee_id;
+        $userRole = $user->role;
+        $unit_id = $user->unit_id;
+        $id = $user->id;
 
-        $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')
-            ->leftJoin(
-                'masters_unit',
-                'masters_unit.id',
-                '=',
-                'ptw_safety.unit_id'
-            )->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
+        $userRole = string_to_array($userRole);
+        if (isAdmin()) {
+            $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
+        } elseif (in_array(ROLE_EHS_OFFICER, $userRole)) {
+            $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')->where('ptw_safety.unit_id', $unit_id);
+        } elseif (in_array(ROLE_PLANT_HEAD, $userRole)) {
+            $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')->where('ptw_safety.unit_id', $unit_id);
+        } else {
+            $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')->where('ptw_safety.created_by', $id);
+        }
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -105,63 +113,32 @@ class SafetyPermit extends Model
             });
         }
 
-        // if ($request->has('permit_id') && $request->permit_id) {
-        //     $query = $query->where('permit_id', 'LIKE', '%' . $request->permit_id . '%');
-        // }
-        // if ($request->has('loc_id') && $request->loc_id) {
 
-        //     $loc_id = decryptId($request->loc_id);
-        //     $query = $query->where('ptw_safety.location', 'LIKE', '%' . $loc_id . '%');
-        // }
+        if ($request->has('permit_id') && $request->permit_id) {
+            $query = $query->where('ptw_safety.permit_id', 'LIKE', '%' . $request->permit_id . '%');
+        }
+        if ($request->has('unit_id') && $request->unit_id) {
 
-        // if ($request->has('sub_permit') && $request->sub_permit) {
-        //     $query = $query->where('ptw_safety.sub_permit', 'LIKE', '%' . $request->sub_permit . '%');
-        // }
+            $unit_id = decryptId($request->unit_id);
+            $query = $query->where('ptw_safety.unit_id', 'LIKE', '%' . $unit_id . '%');
+        }
 
-        // if ($request->has('status') && $request->status) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
+            $fromDate = $request->from_date;
+            $query->where('ptw_safety.date', '>=', $fromDate);
+        }
 
-        //     $status = decryptId($request->status);
-        //     $query = $query->where('ptw_safety.permit_status', 'LIKE', '%' . $status . '%');
-        // }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $toDate = $request->to_date;
+            $query->where('ptw_safety.date', '<=', $toDate);
+        }
 
+        if ($request->has('status') && $request->status) {
 
-        // if ($request->has('hot_status') && $request->hot_status) {
-        //     $query = $query->where('ptw_safety.permit_status', $request->hot_status);
-        // }
-        // $sql = $query->toSql();
-        // $bindings = $query->getBindings();
+            $status = decryptId($request->status);
+            $query = $query->where('ptw_safety.permit_status', 'LIKE', '%' . $status . '%');
+        }
 
-        // // Use vsprintf to replace the placeholders with the bindings
-        // $fullSql = vsprintf(str_replace('?', '%s', $sql), array_map(function ($binding) {
-        //     return is_numeric($binding) ? $binding : "'$binding'";
-        // }, $bindings));
-
-        // dd($fullSql);
-
-        // if (isset($request->order)) {
-
-        //     $columnName = $request->order[0]['name'];
-        //     $columnorder = $request->order[0]['dir'];
-
-        //     switch ($columnName) {
-
-        //         case "permit_id":
-        //             $query = $query->orderBy('permit_id', $columnorder);
-        //             break;
-        //         case "status":
-        //             $query = $query->orderBy('status', $columnorder);
-        //             break;
-        //         case "created_by":
-        //             $query = $query->orderBy('created_by', $columnorder);
-        //             break;
-        //         case "created_date":
-        //             $query = $query->orderBy('created_at', $columnorder);
-        //             break;
-        //         default:
-        //             $query = $query->orderBy('id', 'DESC');
-        //             break;
-        //     }
-        // }
 
         $data_count = $query;
         $total_records = $data_count->count();
@@ -336,8 +313,9 @@ class SafetyPermit extends Model
         return $this->where('id', $id)->update($reassignto);
     }
 
-    public function getprotetiveequip( $id){
-          return $this->where('id',$id)->pluck('protective_equip')->first();
+    public function getprotetiveequip($id)
+    {
+        return $this->where('id', $id)->pluck('protective_equip')->first();
     }
 
     public function approved_by($approved_by, $id)
@@ -437,15 +415,10 @@ class SafetyPermit extends Model
 
         $main_result = $this->where('id', $id)->update($update_data);
 
-        $confined_result = ConfinedPtw::where('permit_id', $id)->update($update_data);
-        $lifting_result = LifitingPtw::where('permit_id', $id)->update($update_data);
-        $wah_result = WahPtw::where('permit_id', $id)->update($update_data);
-
+        $WorkmanInvolved = WorkmanInvolved::where('permit_id', $id)->update($update_data);
         return [
             'main_result' => $main_result,
-            'confined_result' => $confined_result,
-            'lifting_result' => $lifting_result,
-            'wah_result' => $wah_result,
+            'WorkmanInvolved' => $WorkmanInvolved,
         ];
     }
 
@@ -656,7 +629,7 @@ class SafetyPermit extends Model
     public function selectmail($id)
     {
         $data =  $this->select('ptw_safety.permit_id', 'ptw_safety.unit_id', 'ptw_safety.date', 'ptw_safety.time_from', 'ptw_safety.time_to', 'ptw_safety.exact_location_job', 'ptw_safety.job_location_area')
-            ->where('ptw_safety.id', $id)
+            ->where('ptw_safety.id', $id)->where('ptw_safety.trash','NO')
             ->first();
 
         return $data;
@@ -745,30 +718,13 @@ class SafetyPermit extends Model
 
         $id = Auth::id();
 
-        $employeelocation = Employee::where('login_id', $id)->value('location');
-        $contractor = ContractorCompanyUser::where('login_id', $id)->first(['login_id', 'id']);
-
-        // dd($contractor);
-
-        if ($id == 1) {
-            $query = $this->select('ptw_safety.*', 'ptw_hot_cold_status.status_name', 'ptw_hot_cold_status.bg_color', 'master_operation_location_type.location_type_name');
-            $query = $query->leftJoin('ptw_hot_cold_status', 'ptw_hot_cold_status.id', '=', 'ptw_safety.permit_status');
-
-            $query = $query->leftJoin('master_operation_location_type', 'master_operation_location_type.id', '=', 'ptw_safety.location');
-        } elseif (isset($contractor) && ($id == $contractor->login_id)) {
-            $query = $this->select('ptw_safety.*', 'ptw_hot_cold_status.status_name', 'ptw_hot_cold_status.bg_color', 'master_operation_location_type.location_type_name');
-            $query = $query->leftJoin('ptw_hot_cold_status', 'ptw_hot_cold_status.id', '=', 'ptw_safety.permit_status');
-
-            $query = $query->leftJoin('master_operation_location_type', 'master_operation_location_type.id', '=', 'ptw_safety.location');
-            $query = $query->where('ptw_safety.created_by', $contractor->login_id);
-        } else {
-            $query = $this->select('ptw_safety.*', 'ptw_hot_cold_status.status_name', 'ptw_hot_cold_status.bg_color', 'master_operation_location_type.location_type_name');
-            $query = $query->leftJoin('ptw_hot_cold_status', 'ptw_hot_cold_status.id', '=', 'ptw_safety.permit_status');
-
-            $query = $query->leftJoin('master_operation_location_type', 'master_operation_location_type.id', '=', 'ptw_safety.location');
-            $query = $query->where('ptw_safety.location', $employeelocation);
-        }
-
+        $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')
+            ->leftJoin(
+                'masters_unit',
+                'masters_unit.id',
+                '=',
+                'ptw_safety.unit_id'
+            )->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
 
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
@@ -778,13 +734,24 @@ class SafetyPermit extends Model
             });
         }
 
-        if ($request->has('permit_id') && $request->permit_id) {
-            $query = $query->where('permit_id', 'LIKE', '%' . $request->permit_id . '%');
-        }
-        if ($request->has('sub_permit') && $request->sub_permit) {
 
-            $sub_permit = $request->sub_permit;
-            $query = $query->where('ptw_safety.sub_permit', 'LIKE', '%' . $sub_permit . '%');
+        if ($request->has('permit_id') && $request->permit_id) {
+            $query = $query->where('ptw_safety.permit_id', 'LIKE', '%' . $request->permit_id . '%');
+        }
+        if ($request->has('unit_id') && $request->unit_id) {
+
+            $unit_id = decryptId($request->unit_id);
+            $query = $query->where('ptw_safety.unit_id', 'LIKE', '%' . $unit_id . '%');
+        }
+
+        if ($request->has('from_date') && !empty($request->from_date)) {
+            $fromDate = $request->from_date;
+            $query->where('ptw_safety.date', '>=', $fromDate);
+        }
+
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $toDate = $request->to_date;
+            $query->where('ptw_safety.date', '<=', $toDate);
         }
 
         if ($request->has('status') && $request->status) {
@@ -792,37 +759,6 @@ class SafetyPermit extends Model
             $status = decryptId($request->status);
             $query = $query->where('ptw_safety.permit_status', 'LIKE', '%' . $status . '%');
         }
-        if ($request->has('loc_id') && $request->loc_id) {
-
-            $loc_id = decryptId($request->loc_id);
-            $query = $query->where('ptw_safety.location', 'LIKE', '%' . $loc_id . '%');
-        }
-
-        if (isset($request->order)) {
-
-            $columnName = $request->order[0]['name'];
-            $columnorder = $request->order[0]['dir'];
-
-            switch ($columnName) {
-
-                case "permit_id":
-                    $query = $query->orderBy('permit_id', $columnorder);
-                    break;
-                case "status":
-                    $query = $query->orderBy('status', $columnorder);
-                    break;
-                case "created_by":
-                    $query = $query->orderBy('created_by', $columnorder);
-                    break;
-                case "created_date":
-                    $query = $query->orderBy('created_at', $columnorder);
-                    break;
-                default:
-                    $query = $query->orderBy('id', 'DESC');
-                    break;
-            }
-        }
-
 
         return  $query->get();
     }

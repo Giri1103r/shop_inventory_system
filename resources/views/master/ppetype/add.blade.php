@@ -65,56 +65,65 @@
 
 @endsection
 @push('script')
-<script>
-    $(function() {
-        $('#PpeTypeForm').validate({
-            rules: {
-                ppe_type: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    remote: {
-                        url: '{{ admin_url('ppe_type/unique') }}',
-                        type: 'post',
-                        data: {
-                            ppe_type: function() {
-                                return $('#ppe_type').val();
+    <script>
+        $(function() {
+            $.validator.addMethod('regex', function(value, element, regexpr) {
+                return this.optional(element) || regexpr.test(value);
+            }, "Invalid format");
+
+            $('#PpeTypeForm').validate({
+                rules: {
+                    ppe_type: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        regex: /^[a-zA-Z\s-]*$/,
+                        remote: {
+                            url: '{{ admin_url('ppe_type/unique') }}',
+                            type: 'post',
+                            data: {
+                                ppe_type: function() {
+                                    return $('#ppe_type').val();
+                                }
                             }
                         }
                     }
+                },
+                messages: {
+                    ppe_type: {
+                        required: "{{ __('PPE Type is Required') }}",
+                        minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 100",
+                        remote: "{{ __('PPE Type should be unique') }}",
+                        regex: "{{ __('PPE Type should allow alphabets hypens and spaces') }}"
+                    }
+                },
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    var errorDiv = element.siblings('div.text-danger');
+                    if (errorDiv.length === 0) {
+                        errorDiv = $('<div class="text-danger"></div>').insertAfter(element);
+                    }
+                    errorDiv.html(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log(errors + " field(s) are invalid");
+                    validator.errorList.forEach(function(error) {
+                        console.log("Field: " + error.element.name + ", Error: " + error
+                            .message);
+                    });
                 }
-            },
-            messages: {
-                ppe_type: {
-                    required: "{{ __('PPE Type is Required') }}",
-                    minlength: "{{ __('common.validate_min_length') }}",
-                    maxlength: "Maximum Characters should not exceed 100",
-                    remote: "{{ __('PPE Type should be unique') }}"
-                }
-            },
-            errorElement: 'span',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element, errorClass, validClass) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element, errorClass, validClass) {
-                $(element).removeClass('is-invalid');
-            },
-            submitHandler: function(form) {
-                console.log('test');
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                console.log(errors + " field(s) are invalid");
-                validator.errorList.forEach(function(error) {
-                    console.log("Field: " + error.element.name + ", Error: " + error.message);
-                });
-            }
+            });
         });
-    });
-</script>
+    </script>
 @endpush

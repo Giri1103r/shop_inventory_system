@@ -177,7 +177,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex: /^[a-zA-Z0-9-]*$/,
+                        regex:/^[a-zA-Z0-9-\s]*$/,
                         remote: {
                             url: '{{ admin_url('ppe_ppetype_master/unique') }}',
                             type: 'get',
@@ -197,18 +197,18 @@
                         minlength: 3,
                         maxlength: 30,
                         regex: /^[a-zA-Z0-9\-_'"()\s]{3,30}$/,
-                        remote: {
-                            url: '{{ admin_url('ppe_ppetype_master/ppename/unique') }}',
-                            type: 'get',
-                            data: {
-                                ppe_name: function() {
-                                    return $('#ppe_name').val();
-                                },
-                                id: function() {
-                                    return $('#id').val();
-                                }
-                            }
-                        }
+                        // remote: {
+                        //     url: '{{ admin_url('ppe_ppetype_master/ppename/unique') }}',
+                        //     type: 'get',
+                        //     data: {
+                        //         ppe_name: function() {
+                        //             return $('#ppe_name').val();
+                        //         },
+                        //         id: function() {
+                        //             return $('#id').val();
+                        //         }
+                        //     }
+                        // }
                     },
                     ppe_type: {
                         required: true
@@ -223,7 +223,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex: /^[a-zA-Z0-9\-_'"()\s]+$/
+                        regex: /^[a-zA-Z0-9\-_'"()\s.:;]*$/
                     },
                     ppe_file: {
                         extension: "png|jpeg|jpg"
@@ -242,7 +242,7 @@
                         minlength: "PPE Name must be between 3 and 30 characters.",
                         maxlength: "PPE Name must be between 3 and 30 characters.",
                         regex: "PPE Name should be alphanumeric and can include -, _, ', \", (, ).",
-                        remote: "PPE Name already exists."
+                        // remote: "PPE Name already exists."
                     },
                     ppe_type: {
                         required: "Please select the PPE Type."

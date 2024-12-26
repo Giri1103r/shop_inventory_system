@@ -160,7 +160,7 @@
                                     required: true,
                                     minlength: 3,
                                     maxlength: 30,
-                                    regex: /^[a-zA-Z0-9-]*$/,
+                                    regex: /^[a-zA-Z0-9-\s]*$/,
                                     remote: {
                                         url: '{{ admin_url('ppe_ppetype_master/unique') }}',
                                         type: 'get',
@@ -176,19 +176,19 @@
                                     ppe_name: {
                                         required: true,
                                         minlength: 3,
-                                        maxlength: 30,
-                                        regex: /^[a-zA-Z0-9\-_'"()\s]{3,30}$/,
-                                        remote: {
-                                        url: '{{ admin_url('ppe_ppetype_master/ppename/unique') }}',
-                                        type: 'get',
-                                        data: {
-                                            item_code: function() {
-                                                var ppeName = $('#ppe_name').val();
-                                                console.log('PPE Name:', ppeName);
-                                                return ppeName;
-                                            },
-                                        }
-                                    },
+                                        maxlength: 100,
+                                        regex: /^[a-zA-Z0-9\-_'"()\s]{3,100}$/,
+                                    //     remote: {
+                                    //     url: '{{ admin_url('ppe_ppetype_master/ppename/unique') }}',
+                                    //     type: 'get',
+                                    //     data: {
+                                    //         item_code: function() {
+                                    //             var ppeName = $('#ppe_name').val();
+                                    //             console.log('PPE Name:', ppeName);
+                                    //             return ppeName;
+                                    //         },
+                                    //     }
+                                    // },
                                     },
                                     ppe_type: {
                                         required: true
@@ -197,13 +197,13 @@
                                         required: true,
                                         minlength: 3,
                                         maxlength: 30,
-                                        regex: /^[a-zA-Z0-9\-_'"()\s]{3,30}$/
+                                        regex: /^[a-zA-Z0-9\-_'"():;\s]{3,30}$/
                                     },
                                     ppe_standard: {
                                         required: true,
                                         minlength: 3,
                                         maxlength: 30,
-                                        regex: /^[a-zA-Z0-9\-_'"()\s]+$/
+                                        regex:/^[a-zA-Z0-9\-_'"()\s.:;]*$/
                                     },
                                     ppe_file: {
                                         extension: "png|jpeg|jpg"
@@ -219,10 +219,10 @@
                                     },
                                     ppe_name: {
                                         required: "PPE Name cannot be empty.",
-                                        minlength: "PPE Name must be between 3 and 30 characters.",
-                                        maxlength: "PPE Name must be between 3 and 30 characters.",
-                                        regex: "PPE Name should be alphanumeric and can include -, _, ', \", (, ).",
-                                         remote: "PPE Name already exists."
+                                        minlength: "PPE Name must be between 3 and 100 characters.",
+                                        maxlength: "PPE Name must be between 3 and 100 characters.",
+                                        regex: "PPE Name should be alphanumeric and can include -, _, ', \", (, ).,:,;",
+                                        //  remote: "PPE Name already exists."
                                     },
                                     ppe_type: {
                                         required: "Please select the PPE Type."
@@ -237,10 +237,10 @@
                                         required: "PPE Standard cannot be empty.",
                                         minlength: "PPE  Standard must be between 3 and 30 characters.",
                                         maxlength: "PPE  Standard must be between 3 and 30 characters.",
-                                        regex: "PPE Standard should be alphanumeric and can include -, _, ', \", (, )."
+                                        regex: "PPE Standard should be alphanumeric and can include -, _, ', \", (, ),:,;,."
                                     },
                                     ppe_file: {
-                                        extension: "Allowed file types: png, jpeg, jpg."
+                                        extension: "Please enter a value with a valid mimetype."
                                     }
                                 },
                                 errorElement: 'div',

@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Employee Master PDF')
+@section('title', 'Location Type List')
 @section('content')
 
     <div style="width:100%;">
@@ -25,39 +25,30 @@
                             {{ $i }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->emp_id }}
+                            {{ $value->permit_id }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->emp_name }}
+                            {{ getUnitname($value->unit_id) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->email }}
+                            {{ Displaydateformat($value->date) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getCompanyname($value->company) }}
+                            {{ $value->exact_location_job }}
+                        </td>
+                        
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->status_name }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getLocationname($value->location)}}
+                            {{ getUsername($value->verified_by) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getUnitname($value->unit) }}
+                            {{ getUsername($value->approved_by) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{getDepartment($value->department) }}
+                            {{ getUsername($value->created_by) }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->employee_status }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            @php
-                                $status = $value->status == 1 ? 'Active' : 'In-Active';
-                            @endphp
-                            {{ $status }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydateformat($value->created_at) }}
-                        </td>
-
                     </tr>
                     @php
                         $i++;
