@@ -167,7 +167,7 @@ class TrainingMatrixController extends Controller
                 if ($training_matrix->training_evaluation == 1) {
                     $this->training_matrix_file->store1($training_matrix);
                 }
-                Session::flash('success', 'Training Matrix added successfully!');
+                Session::flash('success', 'Your data has been created successfully');
             } catch (Exception $ex) {
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -292,7 +292,7 @@ class TrainingMatrixController extends Controller
                 $this->training_matrix_file->updates1($id);
             }
 
-            Session::flash('success', 'Training Matrix updated successfully!');
+            Session::flash('success', 'Your data has been updated successfully');
             return redirect(admin_url('training_matrix/list'));
         } catch (Exception $ex) {
             report($ex);

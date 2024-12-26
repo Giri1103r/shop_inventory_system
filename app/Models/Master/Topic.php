@@ -21,6 +21,7 @@ class Topic extends Model
     protected $fillable = [
         'topic_id',
         'topic_name',
+        'no_of_questions',
         'status',
         'trash',
         'created_by',
@@ -53,7 +54,17 @@ class Topic extends Model
                     ->orWhere('topic_name', 'LIKE', '%' . $search . '%');
             });
         }
-     
+        
+        if ($request->has('from_date') && $request->from_date) {
+            $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay();
+            $query = $query->where('training_masters_topic.created_at', '>=', $fromDate);
+        }
+        
+        if ($request->has('to_date') && $request->to_date) {
+            $toDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay();
+            $query = $query->where('training_masters_topic.created_at', '<=', $toDate);
+        }
+        
 
         if ($request->has('topic_id') && $request->topic_id) {
             $query = $query->where('topic_id', 'LIKE', '%' . $request->topic_id . '%');
@@ -84,7 +95,7 @@ class Topic extends Model
         return $datas;
     }
 
-  
+
     public function UniqueCheck($data)
     {
 
@@ -105,6 +116,7 @@ class Topic extends Model
         $insert_array = array(
             'topic_id' => $request->topic_id,
             'topic_name' => $request->topic_name,
+            'no_of_questions' => $request->no_of_questions,
             'created_by' => Auth::id()
         );
         return $this->create($insert_array);
@@ -118,6 +130,7 @@ class Topic extends Model
         $update_array = array(
             'topic_id' => $request->topic_id,
             'topic_name' => $request->topic_name,
+            'no_of_questions' => $request->no_of_questions,
             'updated_by' => Auth::id()
         );
         return $this->where('id', $id)->update($update_array);
@@ -163,7 +176,7 @@ class Topic extends Model
 
             $query =  $query->Where(function ($query) use ($search) {
                 $query->orWhereRaw('topic_id LIKE "%' . $search . '%"')
-                ->orWhereRaw('topic_name LIKE "%' . $search . '%"');
+                    ->orWhereRaw('topic_name LIKE "%' . $search . '%"');
             });
         }
         if ($request->has('topic_id') && $request->topic_id) {

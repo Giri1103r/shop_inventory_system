@@ -34,7 +34,7 @@
                             {{ $value->capacity }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->projector_or_lcd_availability}}
+                            {{ strtoupper($value->projector_or_lcd_availability) }}
                         </td>
                       
                         <td style='padding: 7px;border: 0.5px solid'>

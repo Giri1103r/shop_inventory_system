@@ -31,7 +31,8 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="topicadd" action="{{ admin_url('topic/add/submit') }}" enctype="multipart/form-data">
+                                    <form method="POST" id="topicadd" action="{{ admin_url('topic/add/submit') }}"
+                                        enctype="multipart/form-data">
                                         @csrf
 
                                         <div class="row">
@@ -47,6 +48,13 @@
                                                     <label class="form-label require">Topic Name</label>
                                                     <input type="text" name="topic_name" class="form-control"
                                                         placeholder="Topic Name">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label">No. of Questions</label>
+                                                    <input type="text" name="no_of_questions" class="form-control"
+                                                        placeholder="No. of Questions">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
@@ -105,6 +113,9 @@
                             }
                         }
                     },
+                    no_of_questions: {
+                        digits: true,
+                    },
                     questionnaire: {
                         extension: "xlsx|pdf",
                     },
@@ -115,7 +126,10 @@
                         minlength: "{{ __('common.validate_min_length') }}",
                         maxlength: "Maximum Characters should not exceed 100",
                         pattern: "Only alphanumeric characters and -, _, ', \", (), ,, and & are allowed",
-                         remote: "{{ __('Topic Name should be unique') }}"
+                        remote: "{{ __('Topic Name should be unique') }}"
+                    },
+                    no_of_questions: {
+                        digits: "Please enter only numeric values for the number of questions."
                     },
                     questionnaire: {
                         extension: "Only .xlsx and .pdf file formats are allowed.",

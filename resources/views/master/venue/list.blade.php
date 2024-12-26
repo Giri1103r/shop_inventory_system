@@ -17,7 +17,7 @@
                             <x-button-import href="{{ admin_url('venue/import') }}"></x-button-import>
                         @endif
                         @if (CheckUserPermission('add'))
-                            <x-button-add dataId=""  class="add btn btn-primary ms-1"
+                            <x-button-add dataId="" class="add btn btn-primary ms-1"
                                 href="{{ admin_url('venue/add') }}">Add</x-button-add>
                         @endif
                     </div>
@@ -27,9 +27,22 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="name_of_the_conference_hall" class="form-label ">Name of the Conference Hall</label>
+                                            <label for="from_date" class="form-label">From Date</label>
+                                            <input type="text" name="from_date" id="from_date_datepicker"
+                                                class="form-control" placeholder="From Date">
+                                        </div>
+
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="to_date" class="form-label">To Date</label>
+                                            <input type="text" name="to_date" id="to_date_datepicker"
+                                                class="form-control" placeholder="To Date">
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="name_of_the_conference_hall" class="form-label ">Name of the
+                                                Conference Hall</label>
                                             <input type="text" name="name_of_the_conference_hall"
-                                                id="name_of_the_conference_hall" class="form-control" placeholder="Name of the Conference Hall">
+                                                id="name_of_the_conference_hall" class="form-control"
+                                                placeholder="Name of the Conference Hall">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="unit_id" class="form-label ">Unit Name</label>
@@ -44,9 +57,10 @@
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="capacity" class="form-label ">Capacity</label>
-                                            <input type="number" name="capacity" id="capacity" class="form-control" placeholder="Capacity">
+                                            <input type="number" name="capacity" id="capacity" class="form-control"
+                                                placeholder="Capacity">
                                         </div>
-                                        
+
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
@@ -78,6 +92,8 @@
                                         <th>Conference Hall Name</th>
                                         <th>Unit</th>
                                         <th>Capacity</th>
+                                        <th>Projector/LCD
+                                            Availability</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -103,6 +119,19 @@
                 firstTh.removeClass('sorting_asc');
             });
 
+            flatpickr("#from_date_datepicker", {
+                dateFormat: "d-m-Y",
+                onChange: function(selectedDates, dateStr) {
+                    const toDatePicker = document.getElementById("to_date_datepicker")._flatpickr;
+                    if (toDatePicker) {
+                        toDatePicker.set("minDate", dateStr);
+                    }
+                },
+            });
+
+            flatpickr("#to_date_datepicker", {
+                dateFormat: "d-m-Y",
+            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -136,6 +165,8 @@
                                 .attr('content')
                         },
                         data: function(d) {
+                            d.from_date = $('#from_date_datepicker').val();
+                            d.to_date = $('#to_date_datepicker').val();
                             d.name_of_the_conference_hall = $('#name_of_the_conference_hall').val();
                             d.unit_id = $('#unit_id').val();
                             d.capacity = $('#capacity').val();
@@ -160,7 +191,11 @@
                             data: 'capacity',
                             name: 'capacity'
                         },
-                       
+                        {
+                            data: 'projector_or_lcd_availability',
+                            name: 'projector_or_lcd_availability'
+                        },
+
                         {
                             data: 'status',
                             name: 'status'
@@ -202,6 +237,8 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
+                                        from_date = $('#from_date_datepicker').val();
+                                        to_date = $('#to_date_datepicker').val();
                                         name_of_the_conference_hall = $(
                                             '#name_of_the_conference_hall').val();
                                         unit_id = $('#unit_id').val();
@@ -213,6 +250,8 @@
                                         window.location.href =
                                             "{{ admin_url('venue/export/pdf') }}" +
                                             '?search=' + searchValue +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&name_of_the_conference_hall=' +
                                             name_of_the_conference_hall +
                                             '&unit_id=' + unit_id +
@@ -225,6 +264,8 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
+                                        from_date = $('#from_date_datepicker').val();
+                                        to_date = $('#to_date_datepicker').val();
                                         name_of_the_conference_hall = $(
                                             '#name_of_the_conference_hall').val();
                                         unit_id = $('#unit_id').val();
@@ -235,6 +276,8 @@
                                         window.location.href =
                                             "{{ admin_url('venue/export/excel') }}" +
                                             '?search=' + searchValue +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&name_of_the_conference_hall=' +
                                             name_of_the_conference_hall +
                                             '&unit_id=' + unit_id +

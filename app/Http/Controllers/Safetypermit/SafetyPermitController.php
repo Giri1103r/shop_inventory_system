@@ -330,6 +330,7 @@ class SafetyPermitController extends Controller
 
             $safetypermit = $this->safetypermit->selectOne($id);
 
+            // dd($safetypermit);
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $typeofwork = $this->typeofwork->gettypework();
 
@@ -1031,8 +1032,6 @@ class SafetyPermitController extends Controller
         $id = decryptId($request->input('id'));
 
         $checkpoints = $this->typeofworkchecklist->getprotectiveequipment($workId, 'type1');
-
-
 
         return response()->json($checkpoints);
     }

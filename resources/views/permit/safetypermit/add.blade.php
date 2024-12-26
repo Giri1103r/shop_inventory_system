@@ -1,4 +1,3 @@
-
 @extends('admin.layouts.admin')
 @section('title', 'Safety Permit Add')
 @section('pageurl', admin_url('safetypermit/list'))
@@ -102,7 +101,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Work Permit No</label>
                                                     <input type="text" name="permit_id" id="permit_id"
-                                                        class="form-control" value = "{{ getsequence('safetypermit') }}">
+                                                        class="form-control" value = "{{ getsequence('safetypermit') }}"
+                                                        readonly>
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
@@ -155,8 +155,7 @@
                                                         class="img-fluid" style="width: 50px; height: 50px;">
                                                     <label class="form-label mb-0">Shut Down Required (Yes/No)</label>
                                                     <input type="checkbox" id="shutdown-checkbox"
-                                                        class="shutdown-checkbox" name="shutdown_req"
-                                                        value="1">
+                                                        class="shutdown-checkbox" name="shutdown_req" value="1">
                                                     <div class="text-danger"></div>
                                                 </div>
 
@@ -183,8 +182,8 @@
                                                         class="img-fluid" style="width: 50px; height: 50px;">
                                                     <label class="form-label mb-0 ">Isolation/LOTO Required
                                                         (Yes/No)</label>
-                                                    <input type="checkbox" id="loto-checkbox"
-                                                        class="loto-checkbox" name= "loto_req">
+                                                    <input type="checkbox" id="loto-checkbox" class="loto-checkbox"
+                                                        name= "loto_req">
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
@@ -218,8 +217,7 @@
                                             <div class="col-12 col-md-8 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
                                                     <label class="form-label mb-0 ">Tag Field properly (Yes/No)</label>
-                                                    <input type="checkbox"
-                                                        class=" shutdowncheckbox" name="tagfield"
+                                                    <input type="checkbox" class=" shutdowncheckbox" name="tagfield"
                                                         disabled>
                                                     <div class="text-danger"></div>
                                                 </div>
@@ -243,7 +241,7 @@
                                                                 <label class="form-label mb-0"
                                                                     for="air_checkbox">Air</label>
                                                                 <input type="checkbox"
-                                                                    class="validate-radio-required shutdowncheckbox"
+                                                                    class=" shutdowncheckbox"
                                                                     id="air_checkbox" name="state_isolation_loto[]"
                                                                     value="Air" disabled>
                                                             </div>
@@ -255,8 +253,7 @@
                                                                     class="img-fluid" style="width: 50px; height: 50px;">
                                                                 <label class="form-label mb-0"
                                                                     for="gas_checkbox">Gas</label>
-                                                                <input type="checkbox"
-                                                                    class=" shutdowncheckbox"
+                                                                <input type="checkbox" class=" shutdowncheckbox"
                                                                     id="gas_checkbox" name="state_isolation_loto[]"
                                                                     value="Gas" disabled>
                                                             </div>
@@ -282,7 +279,7 @@
                                                                 <label class="form-label mb-0"
                                                                     for="electrical_checkbox">Electrical</label>
                                                                 <input type="checkbox"
-                                                                    class="validate-radio-required shutdowncheckbox"
+                                                                    class=" shutdowncheckbox"
                                                                     id="electrical_checkbox" name="state_isolation_loto[]"
                                                                     value="Electrical" disabled>
                                                             </div>
@@ -296,7 +293,7 @@
                                                                 <label class="form-label mb-0"
                                                                     for="water_checkbox">Water/Liquid</label>
                                                                 <input type="checkbox"
-                                                                    class="validate-radio-required shutdowncheckbox"
+                                                                    class=" shutdowncheckbox"
                                                                     id="water_checkbox" name="state_isolation_loto[]"
                                                                     value="Water/Liquid" disabled>
                                                             </div>
@@ -334,7 +331,7 @@
                                                             <input type="hidden"
                                                                 name="confined_space_entry[system_isolated]"
                                                                 value="0">
-                                                            <input type="checkbox" class="validate-radio-required"
+                                                            <input type="checkbox" class="system_isolated"
                                                                 name="confined_space_entry[system_isolated]"
                                                                 value="1">
                                                             <div class="text-danger"></div>
@@ -346,7 +343,7 @@
                                                             <label class="form-label">Rescue System Available</label>
                                                             <input type="hidden"
                                                                 name="confined_space_entry[rescue_system]" value="0">
-                                                            <input type="checkbox" class="validate-radio-required"
+                                                            <input type="checkbox" class="rescue_system"
                                                                 name="confined_space_entry[rescue_system]" value="1">
                                                             <div class="text-danger"></div>
 
@@ -361,7 +358,7 @@
                                                             <input type="hidden"
                                                                 name="confined_space_entry[confined_attendant]"
                                                                 value="0">
-                                                            <input type="checkbox" class="validate-radio-required"
+                                                            <input type="checkbox" class="confined_attendant"
                                                                 name="confined_space_entry[confined_attendant]"
                                                                 value="1">
                                                             <div class="text-danger"></div>
@@ -382,7 +379,7 @@
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">Register for entry & exits</label>
-                                                            <input type="checkbox" class="validate-radio-required"
+                                                            <input type="checkbox" class="register_entry_exits"
                                                                 name="confined_space_entry[register_entry_exits]" disabled>
                                                             <div class="text-danger"></div>
 
@@ -405,7 +402,7 @@
                                                             <label class="form-label">PPM and is therefore safe to enter
                                                                 from</label>
                                                             <input type="text"
-                                                                name="confined_space_entry[ppm_safe_to_enter]"
+                                                                name="confined_space_entry[ppm_safe_to_enter]" id="from_PPMTime"
                                                                 class="form-control" placeholder="" disabled>
                                                             <div class="text-danger"></div>
                                                         </div>
@@ -413,7 +410,7 @@
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">To</label>
-                                                            <input type="text" name="confined_space_entry[to]"
+                                                            <input type="text" name="confined_space_entry[to]" id="to_PPMTime"
                                                                 class="form-control" placeholder="" disabled>
                                                             <div class="text-danger"></div>
 
@@ -617,8 +614,7 @@
                                                         checklist prior to start work (Yes/No)
                                                         <span class="text-danger">*</span>
                                                         <input type="checkbox" id="equipment_checklist_inspection"
-                                                            class=""
-                                                            name = "equipment_checklist_inspection">
+                                                            class="" name = "equipment_checklist_inspection">
                                                         <div class="text-danger"></div>
                                                     </label>
 
@@ -650,8 +646,8 @@
                                                         Safe Work Procedure discussed in tool box talk before start the work
                                                         (Yes/No)
                                                         <span class="text-danger">*</span>
-                                                        <input type="checkbox" id="toolbox_talk"
-                                                            class="" name = "toolbox_talk">
+                                                        <input type="checkbox" id="toolbox_talk" class=""
+                                                            name = "toolbox_talk">
                                                         <div class="text-danger"></div>
                                                     </label>
                                                 </div>
@@ -794,8 +790,9 @@
                                                         <input type="text" name="attendance_toolbox_talk"
                                                             id="attendance_toolbox_talk" class="form-control"
                                                             style="flex-grow: 1; max-width: 300px;">
-                                                        <div class="text-danger"></div>
+
                                                     </div>
+                                                    <div class="text-danger"></div>
                                                 </div>
                                             </div>
 
@@ -949,7 +946,7 @@
 
 
             $(document).on("click", ".add", function(e) {
-                e.preventDefault();
+
 
                 var parentRow = $(this).closest(".row");
 
@@ -979,11 +976,7 @@
                         .text("Workman Name is required.");
                     isValid = false;
                 }
-                // if (!designation) {
-                //     parentRow.find('input[name="workman_desig"]').closest('.form-group').find(
-                //         '.text-danger').text("Designation is required.");
-                //     isValid = false;
-                // }
+
                 if (!department) {
                     parentRow.find('select[name="workman_dept"]').closest('.form-group').find(
                         '.text-danger').text("Department is required.");
@@ -1083,27 +1076,50 @@
         });
 
         flatpickr("#date", {
-            // enableTime: true,
+            minDate: new Date(),
             dateFormat: "d-m-Y",
-            // time_24hr: true,
             minuteIncrement: 5,
         });
 
-        flatpickr("#time_from", {
+        flatpickr("#from_PPMTime",{
             enableTime: true,
             noCalendar: true,
             time_24hr: true,
             minuteIncrement: 5,
-            dateFormat: "H:i"
+            dateFormat: "H:i",
         });
 
-        flatpickr("#time_to", {
+        flatpickr("#to_PPMTime",{
             enableTime: true,
             noCalendar: true,
             time_24hr: true,
             minuteIncrement: 5,
-            dateFormat: "H:i"
+            dateFormat: "H:i",
         });
+
+        const fromPicker = flatpickr("#time_from", {
+            enableTime: true,
+            noCalendar: true,
+            time_24hr: true,
+            minuteIncrement: 5,
+            dateFormat: "H:i",
+            onChange: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length > 0) {
+                    let fromTime = selectedDates[0];
+                    let toTime = new Date(fromTime.getTime() + 8 * 60 * 60 * 1000);
+
+                    let hours = String(toTime.getHours()).padStart(2, '0');
+                    let minutes = String(toTime.getMinutes()).padStart(2, '0');
+                    let formattedTime = `${hours}:${minutes}`;
+
+
+                    document.getElementById("time_to").value = formattedTime;
+                }
+            }
+        });
+
+
+        document.getElementById("time_to").readOnly = true;
     </script>
     <script type="text/javascript">
         $(document).ready(function() {
@@ -1221,7 +1237,6 @@
         $(document).ready(function() {
             const displayedEquipments = new Set();
 
-
             $('.work-type-checkbox').on('change', function() {
                 const workId = $(this).data('id');
                 const container = $('#getprotectivechecklist-container');
@@ -1233,13 +1248,17 @@
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
+
                             let checkpointsHtml = '';
                             data.forEach(function(item) {
+
                                 if (!displayedEquipments.has(item.protective_equip)) {
                                     displayedEquipments.add(item.protective_equip);
+                                    const isChecked = item.default_enable == 1 ?
+                                        'checked' : '';
                                     checkpointsHtml += `
                                 <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                    <input type="checkbox" class="protective-checkbox" name="protective_equip[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                    <input type="checkbox" class="protective-checkbox" name="protective_equip[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}" ${isChecked}>
                                     <label for="checkpoint-${workId}-${item.id}">${item.protective_equip}</label>
                                 </div>`;
                                 }
@@ -1258,12 +1277,10 @@
                 }
             });
 
-
             $('#safetyPermitadd').on('submit', function(e) {
                 const container = $('#getprotectivechecklist-container');
                 const errorDiv = $(
                     '<div class="text-danger">Please select at least one Protective Equipment.</div>');
-
 
                 container.find('.text-danger').remove();
 
@@ -1272,11 +1289,9 @@
 
                 $('.protective-checkbox').each(function() {
                     if ($(this).is(':checked')) {
-                        hasSelection =
-                            true;
+                        hasSelection = true;
                     }
                 });
-
 
                 if (!hasSelection) {
                     hasError = true;
@@ -1284,25 +1299,22 @@
                     e.preventDefault();
                 }
 
-
                 if (hasError) {
                     e.preventDefault();
                 }
             });
 
-
             $('#getprotectivechecklist-container').on('change', '.protective-checkbox', function() {
                 const container = $('#getprotectivechecklist-container');
 
-
                 const hasSelection = container.find('.protective-checkbox:checked').length > 0;
-
 
                 if (hasSelection) {
                     container.find('.text-danger').remove();
                 }
             });
         });
+
 
 
 
@@ -1330,10 +1342,11 @@
                             data.forEach(function(item) {
                                 if (!displayedEquipments.has(item.equip_involve)) {
                                     displayedEquipments.add(item.equip_involve);
-
+                                    const isChecked = item.default_enable == 1 ?
+                                        'checked' : '';
                                     checkpointsHtml += `
                                 <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                    <input type="checkbox" class="equiment_involved" name="equiment_involved[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                    <input type="checkbox" class="equiment_involved" name="equiment_involved[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}" ${isChecked}>
                                     <label for="checkpoint-${workId}-${item.id}">${item.equip_involve}</label>
                                 </div>`;
                                 }
@@ -1419,10 +1432,11 @@
                             data.forEach(function(item) {
                                 if (!displayedPrecautions.has(item.precaution)) {
                                     displayedPrecautions.add(item.precaution);
-
+                                    const isChecked = item.default_enable == 1 ?
+                                        'checked' : '';
                                     checkpointsHtml += `
                                 <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                    <input type="checkbox" class="precaution_taken" name="precaution_taken[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                    <input type="checkbox" class="precaution_taken" name="precaution_taken[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}"${isChecked}>
                                     <label for="checkpoint-${workId}-${item.id}">${item.precaution}</label>
                                 </div>`;
                                 }
@@ -1443,49 +1457,6 @@
                 }
             });
 
-            // $('#safetyPermitadd').on('submit', function(e) {
-            //     const container = $('#getprecaution-container');
-            //     const errorDiv = $(
-            //         '<div class="text-danger">Please select at least one Precaution Taken.</div>');
-
-
-            //     container.find('.text-danger').remove();
-
-            //     let hasError = false;
-            //     let hasSelection = false;
-
-            //     $('.precaution_taken').each(function() {
-            //         if ($(this).is(':checked')) {
-            //             hasSelection =
-            //                 true;
-            //         }
-            //     });
-
-
-            //     if (!hasSelection) {
-            //         hasError = true;
-            //         container.append(errorDiv);
-            //         e.preventDefault();
-            //     }
-
-
-            //     if (hasError) {
-            //         e.preventDefault();
-            //     }
-            // });
-
-
-            // $('#getprecaution-container').on('change', '.precaution_taken', function() {
-            //     const container = $('#getprecaution-container');
-
-
-            //     const hasSelection = container.find('.precaution_taken:checked').length > 0;
-
-
-            //     if (hasSelection) {
-            //         container.find('.text-danger').remove();
-            //     }
-            // });
         });
 
 
@@ -1514,10 +1485,11 @@
                             data.forEach(function(item) {
                                 if (!displayedEquipments.has(item.checklist)) {
                                     displayedEquipments.add(item.checklist);
-
+                                    const isChecked = item.default_enable == 1 ?
+                                        'checked' : '';
                                     checkpointsHtml += `
                                 <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                    <input type="checkbox" class="equipment_checklist" name="equipment_checklist[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                    <input type="checkbox" class="equipment_checklist" name="equipment_checklist[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}" ${isChecked}>
                                     <label for="checkpoint-${workId}-${item.id}">${item.checklist}</label>
                                 </div>`;
                                 }
@@ -1538,49 +1510,7 @@
                 }
             });
 
-            // $('#safetyPermitadd').on('submit', function(e) {
-            //     const container = $('#getchecklist-container');
-            //     const errorDiv = $(
-            //         '<div class="text-danger">Please select at least one Equipment Checklist.</div>');
 
-
-            //     container.find('.text-danger').remove();
-
-            //     let hasError = false;
-            //     let hasSelection = false;
-
-            //     $('.equipment_checklist').each(function() {
-            //         if ($(this).is(':checked')) {
-            //             hasSelection =
-            //                 true;
-            //         }
-            //     });
-
-
-            //     if (!hasSelection) {
-            //         hasError = true;
-            //         container.append(errorDiv);
-            //         e.preventDefault();
-            //     }
-
-
-            //     if (hasError) {
-            //         e.preventDefault();
-            //     }
-            // });
-
-
-            // $('#getchecklist-container').on('change', '.equipment_checklist', function() {
-            //     const container = $('#getchecklist-container');
-
-
-            //     const hasSelection = container.find('.equipment_checklist:checked').length > 0;
-
-
-            //     if (hasSelection) {
-            //         container.find('.text-danger').remove();
-            //     }
-            // });
         });
 
 
@@ -1608,10 +1538,11 @@
                             data.forEach(function(item) {
                                 if (!displayedEquipments.has(item.safe_work)) {
                                     displayedEquipments.add(item.safe_work);
-
+                                    const isChecked = item.default_enable == 1 ?
+                                        'checked' : '';
                                     checkpointsHtml += `
                                 <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                    <input type="checkbox" class="safework_instruction" name="safework_instruction[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                    <input type="checkbox" class="safework_instruction" name="safework_instruction[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}" ${isChecked}>
                                     <label for="checkpoint-${workId}-${item.id}">${item.safe_work}</label>
                                 </div>`;
                                 }
@@ -1632,49 +1563,7 @@
                 }
             });
 
-            // $('#safetyPermitadd').on('submit', function(e) {
-            //     const container = $('#getinstruction-container');
-            //     const errorDiv = $(
-            //         '<div class="text-danger">Please select at least one Safe Work Instruction.</div>');
 
-
-            //     container.find('.text-danger').remove();
-
-            //     let hasError = false;
-            //     let hasSelection = false;
-
-            //     $('.safework_instruction').each(function() {
-            //         if ($(this).is(':checked')) {
-            //             hasSelection =
-            //                 true;
-            //         }
-            //     });
-
-
-            //     if (!hasSelection) {
-            //         hasError = true;
-            //         container.append(errorDiv);
-            //         e.preventDefault();
-            //     }
-
-
-            //     if (hasError) {
-            //         e.preventDefault();
-            //     }
-            // });
-
-
-            // $('#getinstruction-container').on('change', '.safework_instruction', function() {
-            //     const container = $('#getinstruction-container');
-
-
-            //     const hasSelection = container.find('.safework_instruction:checked').length > 0;
-
-
-            //     if (hasSelection) {
-            //         container.find('.text-danger').remove();
-            //     }
-            // });
         });
 
 
@@ -1776,18 +1665,8 @@
                         minlength: 3,
                         maxlength: 600,
                     },
-                 
-                    shut_down_takenby: {
-                        required: true
-                    },
-                   
-                    loto_takenby: {
-                        required: true
-                    },
-                    loto_no: {
-                        required: true,
-                        numeric: true
-                    },
+
+
                     equipment_checklist_inspection: {
                         required: true,
                     },
@@ -1798,14 +1677,16 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                       
+
                     },
+
+
                     assigned_job: {
                         required: true,
                     },
                     attendance_toolbox_talk: {
                         required: true,
-                        regex: /^[0-9]$/
+                        digits: true,
                     }
 
                 },
@@ -1843,18 +1724,10 @@
                         minlength: "Job Description between 3 and 600 characters.",
                         maxlength: "Job Description between 3 and 600 characters.",
                     },
-                   
-                    shut_down_takenby: {
-                        required: "Please select the person responsible for shutting down."
-                    },
-                 
-                    loto_takenby: {
-                        required: "Please select the person responsible for LOTO."
-                    },
-                    loto_no: {
-                        required: "Loto No is required.",
-                        numeric: "Please enter a valid numeric Loto No."
-                    },
+
+
+
+
                     equipment_checklist_inspection: {
                         required: "Equipment Checklist Inspection is required.",
                     },
@@ -1867,21 +1740,7 @@
                         maxlength: "Name is between 3 to 30 characters",
 
                     },
-                    employee_code: {
-                        required: "Employee ID is required",
-                    },
-                    workman_desig: {
-                        required: "Designation is required",
-                    },
-                    workman_dept: {
-                        required: "Department is required",
-                    },
-                    nature_of_job: {
-                        required: "Nature Of the job is required",
-                        minlength: "Nature Of the job between 3 and 30 characters.",
-                        maxlength: "Nature Of the job between 3 and 30 characters.",
-                        regex: "Only the Alphabes are Required"
-                    },
+
                     assigned_job: {
                         required: "Please check the Assigned job",
                     },
