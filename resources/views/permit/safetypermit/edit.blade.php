@@ -227,6 +227,7 @@
                                         </div>
 
 
+
                                         <div class="row col-md-12 d-flex mt-3">
                                             <!-- Left Side: Scrollable on X-Axis -->
                                             <div class="col-md-4">
@@ -234,81 +235,67 @@
                                                 <div class="scroll-container border p-3"
                                                     style="overflow-x: auto; white-space: nowrap; width: 100%;">
                                                     <!-- First Row -->
-                                                    <div class="row mb-3"
-                                                        style="display: flex; flex-wrap: nowrap; justify-content: flex-start; align-items: center;">
-                                                        <div class="d-inline-block"
-                                                            style="margin: 0; padding: 0; flex-shrink: 0;">
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <img src="{{ url('public/assets/images/safetypermit/person.png') }}"
-                                                                    class="img-fluid" style="width: 50px; height: 50px;">
-                                                                <label class="form-label mb-0">Air</label>
-                                                                <input type="checkbox" class=" shutdowncheckbox"
-                                                                    name="state_isolation_loto[]" value="Air"
-                                                                    {{ in_array('Air', $stateIsolationLoto ?? []) ? 'checked' : '' }}
-                                                                    disabled>
-                                                            </div>
+                                                    <div class="row mb-3 d-flex flex-nowrap align-items-center">
+                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                            style="min-width: 200px;">
+                                                            <img src="{{ url('public/assets/images/safetypermit/person.png') }}"
+                                                                class="img-fluid" style="width: 50px; height: 50px;">
+                                                            <label class="form-label mb-0">Air</label>
+                                                            <input type="checkbox" class="shutdowncheckbox"
+                                                                name="state_isolation_loto[]" value="Air"
+                                                                {{ in_array('Air', $stateIsolationLoto ?? []) ? 'checked' : '' }}
+                                                                disabled>
                                                         </div>
-                                                        <div class="d-inline-block"
-                                                            style="margin-left: -200px; padding: 0; flex-shrink: 0;">
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <img src="{{ url('public/assets/images/safetypermit/natural-gas.png') }}"
-                                                                    class="img-fluid" style="width: 50px; height: 50px;">
-                                                                <label class="form-label mb-0">Gas</label>
-                                                                <input type="checkbox" class=" shutdowncheckbox"
-                                                                    name="state_isolation_loto[]" value="Gas"
-                                                                    {{ in_array('Gas', $stateIsolationLoto ?? []) ? 'checked' : '' }}
-                                                                    disabled>
-                                                            </div>
+                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                            style="min-width: 200px;">
+                                                            <img src="{{ url('public/assets/images/safetypermit/natural-gas.png') }}"
+                                                                class="img-fluid" style="width: 50px; height: 50px;">
+                                                            <label class="form-label mb-0">Gas</label>
+                                                            <input type="checkbox" class="shutdowncheckbox"
+                                                                name="state_isolation_loto[]" value="Gas"
+                                                                {{ in_array('Gas', $stateIsolationLoto ?? []) ? 'checked' : '' }}
+                                                                disabled>
                                                         </div>
-                                                        <div class="d-inline-block"
-                                                            style="margin-left: -200px; padding: 0; flex-shrink: 0;">
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <label class="form-label mb-0">Others if any please
-                                                                    specify</label>
-                                                            </div>
+                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                            style="min-width: 200px;">
+                                                            <label class="form-label mb-0">Others if any please
+                                                                specify</label>
                                                         </div>
                                                     </div>
 
                                                     <!-- Second Row -->
-                                                    <div class="row mb-3"
-                                                        style="display: flex; flex-wrap: nowrap; justify-content: flex-start; align-items: center;">
-                                                        <div class="d-inline-block"
-                                                            style="margin: 0; padding: 0; flex-shrink: 0;">
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <img src="{{ url('public/assets/images/safetypermit/electrician.png') }}"
-                                                                    class="img-fluid" style="width: 50px; height: 50px;">
-                                                                <label class="form-label mb-0">Electrical</label>
-                                                                <input type="checkbox" class=" shutdowncheckbox"
-                                                                    name="state_isolation_loto[]" value="Electrical"
-                                                                    {{ in_array('Electrical', $stateIsolationLoto ?? []) ? 'checked' : '' }}
-                                                                    disabled>
-                                                            </div>
+                                                    <div class="row mb-3 d-flex flex-nowrap align-items-center">
+                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                            style="min-width: 200px;">
+                                                            <img src="{{ url('public/assets/images/safetypermit/electrician.png') }}"
+                                                                class="img-fluid" style="width: 50px; height: 50px;">
+                                                            <label class="form-label mb-0">Electrical</label>
+                                                            <input type="checkbox" class="shutdowncheckbox"
+                                                                name="state_isolation_loto[]" value="Electrical"
+                                                                {{ in_array('Electrical', $stateIsolationLoto ?? []) ? 'checked' : '' }}
+                                                                disabled>
                                                         </div>
-                                                        <div class="d-inline-block"
-                                                            style="margin-left: -200px; padding: 0; flex-shrink: 0;">
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <img src="{{ url('public/assets/images/safetypermit/leak.png') }}"
-                                                                    class="img-fluid" style="width: 50px; height: 50px;">
-                                                                <label class="form-label mb-0">Water/Liquid</label>
-                                                                <input type="checkbox" class=" shutdowncheckbox"
-                                                                    name="state_isolation_loto[]" value="Water/Liquid"
-                                                                    {{ in_array('Water/Liquid', $stateIsolationLoto ?? []) ? 'checked' : '' }}
-                                                                    disabled>
-                                                            </div>
+                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                            style="min-width: 200px;">
+                                                            <img src="{{ url('public/assets/images/safetypermit/leak.png') }}"
+                                                                class="img-fluid" style="width: 50px; height: 50px;">
+                                                            <label class="form-label mb-0">Water/Liquid</label>
+                                                            <input type="checkbox" class="shutdowncheckbox"
+                                                                name="state_isolation_loto[]" value="Water/Liquid"
+                                                                {{ in_array('Water/Liquid', $stateIsolationLoto ?? []) ? 'checked' : '' }}
+                                                                disabled>
                                                         </div>
-                                                        <div class="d-inline-block"
-                                                            style="margin-left: -200px; padding: 0; flex-shrink: 0;">
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <textarea class="form-control shutdowncheckbox" name="state_isolation_loto[]" placeholder="Specify others" disabled>
-                                                                @if ($stateIsolationLoto)
-@foreach ($stateIsolationLoto as $item)
+                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                            style="min-width: 200px;">
+                                                            <textarea class="form-control shutdowncheckbox" name="state_isolation_loto[]" placeholder="Specify others" disabled>
+@if ($stateIsolationLoto)
+                                                  @foreach ($stateIsolationLoto as $item)
 @if (!in_array($item, ['Air', 'Gas', 'Electrical', 'Water/Liquid']))
 {{ $item }}
 @endif
 @endforeach
-@endif
-                                                            </textarea>
-                                                            </div>
+                                                @endif
+</textarea>
                                                         </div>
                                                     </div>
                                                 </div>
