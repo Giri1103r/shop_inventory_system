@@ -30,7 +30,7 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="pperequestadd"
+                                    <form method="POST" id="safetyPermitEdit"
                                         action="{{ admin_url('safetypermit/edit/submit') }}" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" name="id" id="id"
@@ -1269,7 +1269,9 @@
                 const workId = $(this).data('id');
                 const container = $('#getprotectivechecklist-container');
 
-                if ($(this).is(':checked')) {
+                const checkboxState = $(this).prop('checked');
+
+                if (checkboxState) {
                     $.ajax({
                         url: `{{ admin_url('safetypermit/getprotectivechecklist') }}/${workId}`,
                         type: 'GET',
@@ -1282,14 +1284,14 @@
                                 if (!displayedEquipments.has(uniqueKey)) {
                                     displayedEquipments.add(uniqueKey);
                                     checkpointsHtml += `
-                                <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" 
-                                     data-work-id="${workId}" data-id="${item.id}">
-                                    <input type="checkbox" class="protective-checkbox" 
-                                           name="protective_equip[${workId}][]" 
-                                           value="${item.id}" 
-                                           id="checkpoint-${workId}-${item.id}" ${item.is_checked ? 'checked' : ''}>
-                                    <label for="checkpoint-${workId}-${item.id}">${item.protective_equip}</label>
-                                </div>`;
+                            <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint"
+                                 data-work-id="${workId}" data-id="${item.id}">
+                                <input type="checkbox" class="protective-checkbox"
+                                       name="protective_equip[${workId}][]"
+                                       value="${item.id}"
+                                       id="checkpoint-${workId}-${item.id}" ${item.is_checked ? 'checked' : ''}>
+                                <label for="checkpoint-${workId}-${item.id}">${item.protective_equip}</label>
+                            </div>`;
                                 }
                             });
 
@@ -1318,6 +1320,7 @@
                 }
             });
         });
+
 
         $(document).ready(function() {
             const displayedEquipments = new Set();
@@ -1541,6 +1544,111 @@
                 } else {
 
                     targetInputs.prop('disabled', true);
+                }
+            });
+        });
+
+        $(document).ready(function() {
+            // Add a custom validation method for regex
+            $.validator.addMethod("regex", function(value, element, regexp) {
+                var re = new RegExp(regexp);
+                return this.optional(element) || re.test(value);
+            }, "Please check your input.");
+
+            $('#safetyPermitEdit').validate({
+                rules: {
+                    date: {
+                        required: true,
+                    },
+                    time_from: {
+                        required: true,
+                    },
+                    time_to: {
+                        required: true,
+                    },
+                    unit_id: {
+                        required: true,
+                    },
+                    exact_location_job: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
+                        regex: /^[a-zA-Z, ]{3,30}$/
+                    },
+                    job_location_area: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 50,
+                        regex: /^[a-zA-Z, ]{3,50}$/
+                    },
+                    'sub_permit[]': {
+                        required: true,
+                        minlength: 1
+                    },
+                    job_description: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 600,
+                    },
+                },
+                messages: {
+                    date: {
+                        required: "Date cannot be empty.",
+                    },
+                    time_from: {
+                        required: "From Time cannot be empty.",
+                    },
+                    time_to: {
+                        required: "To Time cannot be empty.",
+                    },
+                    unit_id: {
+                        required: "Please Select the unit.",
+                    },
+                    exact_location_job: {
+                        required: "Exact Job Location cannot be empty.",
+                        minlength: "Exact Job Location must be between 3 and 30 characters.",
+                        maxlength: "Exact Job Location must be between 3 and 30 characters.",
+                        regex: "Exact Job Location contains only the letters",
+                    },
+                    job_location_area: {
+                        required: "Job Location Area cannot be empty.",
+                        minlength: "Job Location Area must be between 3 and 50 characters.",
+                        maxlength: "Job Location Area must be between 3 and 50 characters.",
+                        regex: "Job Location Area contains only the letters",
+                    },
+                    job_description: {
+                        required: "Job Description cannot be empty.",
+                        minlength: "Job Description between 3 and 600 characters.",
+                        maxlength: "Job Description between 3 and 600 characters.",
+                    },
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('text-danger');
+                    if (element.prop('tagName') === 'SELECT') {
+                        error.insertAfter(element.next(
+                            '.select2')); // Assuming you are using select2 plugin
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    $('#submit').prop('disabled', true);
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log(errors + " field(s) are invalid");
+                    validator.errorList.forEach(function(error) {
+                        console.log("Field: " + error.element.name + ", Error: " + error
+                            .message);
+                    });
                 }
             });
         });
