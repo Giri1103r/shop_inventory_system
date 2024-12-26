@@ -3,6 +3,7 @@
 namespace App\Models\Permit;
 
 use App\Models\Master\Employee;
+use App\Models\Permit\WorkmanInvolved;
 use App\Models\Master\ContractorCompanyUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -414,15 +415,10 @@ class SafetyPermit extends Model
 
         $main_result = $this->where('id', $id)->update($update_data);
 
-        $confined_result = ConfinedPtw::where('permit_id', $id)->update($update_data);
-        $lifting_result = LifitingPtw::where('permit_id', $id)->update($update_data);
-        $wah_result = WahPtw::where('permit_id', $id)->update($update_data);
-
+        $WorkmanInvolved = WorkmanInvolved::where('permit_id', $id)->update($update_data);
         return [
             'main_result' => $main_result,
-            'confined_result' => $confined_result,
-            'lifting_result' => $lifting_result,
-            'wah_result' => $wah_result,
+            'WorkmanInvolved' => $WorkmanInvolved,
         ];
     }
 
@@ -633,7 +629,7 @@ class SafetyPermit extends Model
     public function selectmail($id)
     {
         $data =  $this->select('ptw_safety.permit_id', 'ptw_safety.unit_id', 'ptw_safety.date', 'ptw_safety.time_from', 'ptw_safety.time_to', 'ptw_safety.exact_location_job', 'ptw_safety.job_location_area')
-            ->where('ptw_safety.id', $id)
+            ->where('ptw_safety.id', $id)->where('ptw_safety.trash','NO')
             ->first();
 
         return $data;

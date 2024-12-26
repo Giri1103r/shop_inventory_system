@@ -647,7 +647,7 @@
                         </div>
                     </div>
 
-                    @if($safetypermit['permit_status'] >= 2)
+                    @if ($safetypermit['permit_status'] >= 2)
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">
@@ -678,81 +678,89 @@
                             </div>
                         </div>
                     @endif
-                    @if($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED || ( $safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&  $safetypermit['permit_extension_status'] == 1)&&  $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED)
-                    <div class="card-body ">
-                        <div class="row">
-                            <div class="card-header-inner">
-                                <h4 class="text-white">Permit Extension</h4>
-                            </div>
-                        </div>
-                        @foreach ($getsafetyPermitExtension as $getsafetyPermitExtension)
-                        <div class="row">
-                            <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">{{ __('Submitted by') }}</label>
-                                <div class="view_data">
-                                    {{getUsername( isset($getsafetyPermitExtension->created_by) ? $getsafetyPermitExtension->created_by : '') }}
+                    @if (
+                        $safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED ||
+                            ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&
+                                $safetypermit['permit_extension_status'] == 1 &&
+                                $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED))
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="card-header-inner">
+                                    <h4 class="text-white">Permit Extension</h4>
                                 </div>
                             </div>
-                            <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">{{ __('Date') }}</label>
-                                <div class="view_data">
-                                    {{ isset($getsafetyPermitExtension->date) ? Displaydateformat($getsafetyPermitExtension->date) : '' }}
-                                </div>
-                            </div>
-                            <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">{{ __('Time') }}</label>
-                                <div class="view_data">
-                                    {{ isset($getsafetyPermitExtension->to_time) ? $getsafetyPermitExtension->to_time : '' }}
-                                </div>
-                            </div>
-                            <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">{{ __('Remarks') }}</label>
-                                <div class="view_data">
-                                    {{ isset($getsafetyPermitExtension->remarks) ? $getsafetyPermitExtension->remarks : '' }}
-                                </div>
-                            </div>
+                            @foreach ($getsafetyPermitExtension as $getsafetyPermitExtension)
+                                <div class="row">
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Submitted by') }}</label>
+                                        <div class="view_data">
+                                            {{ getUsername(isset($getsafetyPermitExtension->created_by) ? $getsafetyPermitExtension->created_by : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Date') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($getsafetyPermitExtension->date) ? Displaydateformat($getsafetyPermitExtension->date) : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Time') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($getsafetyPermitExtension->to_time) ? $getsafetyPermitExtension->to_time : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($getsafetyPermitExtension->remarks) ? $getsafetyPermitExtension->remarks : '' }}
+                                        </div>
+                                    </div>
 
-                        </div>
-                        @endforeach
-                    </div>
-                @endif
-                    @if($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED_APPROVAL || ( $safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&  $safetypermit['permit_extension_status'] == 1))
-
-                    <div class="card-body ">
-                        <div class="row">
-                            <div class="card-header-inner">
-                                <h4 class="text-white">Permit Extension Approval</h4>
-                            </div>
-                        </div>
-                    @foreach($getpermitextensionapproval as $getpermitextensionapproval)
-                        <div class="row">
-                            <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">{{ __('Approver Name') }}</label>
-                                <div class="view_data">
-                                    {{ isset($getpermitextensionapproval->approve_reject_by) ? $getpermitextensionapproval->approve_reject_by : '' }}
                                 </div>
-                            </div>
-                            <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">{{ __('Date') }}</label>
-                                <div class="view_data">
-                                    {{ isset($getpermitextensionapproval->date) ? Displaydateformat($getpermitextensionapproval->date) : '' }}
-                                </div>
-                            </div>
-                            <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">{{ __('Remarks') }}</label>
-                                <div class="view_data">
-                                    {{ isset($getpermitextensionapproval->remarks) ? $getpermitextensionapproval->remarks : '' }}
-                                </div>
-                            </div>
-    
+                            @endforeach
                         </div>
-                        @endforeach
-                    </div>
                     @endif
                     @if (
-                        $safetypermit['permit_status'] != 8 &&  $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED && $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED &&
+                        $safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED_APPROVAL ||
+                            ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING && $safetypermit['permit_extension_status'] == 1))
+
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="card-header-inner">
+                                    <h4 class="text-white">Permit Extension Approval</h4>
+                                </div>
+                            </div>
+                            @foreach ($getpermitextensionapproval as $getpermitextensionapproval)
+                                <div class="row">
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($getpermitextensionapproval->approve_reject_by) ? $getpermitextensionapproval->approve_reject_by : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Date') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($getpermitextensionapproval->date) ? Displaydateformat($getpermitextensionapproval->date) : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($getpermitextensionapproval->remarks) ? $getpermitextensionapproval->remarks : '' }}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                    @if (
+                        $safetypermit['permit_status'] != 8 &&
+                            $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED &&
+                            $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED &&
                             $safetypermit['permit_status'] != 5 &&
-                            ($safetypermit['permit_status'] > 3 || $safetypermit['permit_status'] > 4 ))
+                            ($safetypermit['permit_status'] > 3 || $safetypermit['permit_status'] > 4))
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">
@@ -784,7 +792,11 @@
                         </div>
                     @endif
 
-                    @if ($safetypermit['permit_status'] >= STATUS_PLANT_HEAD_APPROVED && $safetypermit['permit_status'] != STATUS_EHS_RESUME && $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED  && $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED_APPROVAL)
+                    @if (
+                        $safetypermit['permit_status'] >= STATUS_PLANT_HEAD_APPROVED &&
+                            $safetypermit['permit_status'] != STATUS_EHS_RESUME &&
+                            $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED &&
+                            $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED_APPROVAL)
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">
@@ -815,8 +827,58 @@
                             </div>
                         </div>
                     @endif
-                </div>
 
+
+                    <div class="card-body ">
+                        <div class="row">
+                            <div class="card-header-inner">
+                                <h4 class="text-white">Status logs</h4>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <div class="col-md-12">
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Status</th>
+                                            <th>Approved By</th>
+                                            <th>Remarks</th>
+                                            <th>Date</th>
+
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        @if ($status_log->isEmpty())
+                                            <tr>
+                                                <td class="text-center" colspan="5">No data is available</td>
+                                            </tr>
+                                        @else
+                                            @foreach ($status_log as $status_log)
+                                                <tr>
+                                                    <td>{{ isset($status_log['status_name']) ? $status_log['status_name'] : '-' }}
+                                                    </td>
+                                                    <td>{{ isset($status_log['approved_by']) ? getUsername($status_log['approved_by']) : '-' }}
+                                                    </td>
+                                                    <td>{{ isset($status_log['remarks']) ? $status_log['remarks'] : '-' }}
+                                                    </td>
+                                                    <td>{{ null !== Displaydateformat($status_log['created_at']) ? Displaydateformat($status_log['created_at']) : '-' }}
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                </div>
             </div>
         </div>
     </div>

@@ -145,9 +145,7 @@ class SafetyPermitController extends Controller
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
 
-                            $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" style="margin-right: 5px;" title="' . __('common.delete') . '">
-                            <i class="fa-solid fa-trash text-danger"></i>
-                        </a>';
+                        $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';;
 
                             return $btn;
                         })
@@ -250,11 +248,11 @@ class SafetyPermitController extends Controller
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . ' submitted by ' . getUsername($safetypermit->created_by),
-                        'icon' => 'public/assets/icon/permit_to_work.png',
+                        'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
                         'module' => 1,
                     )),
-                    'web_link' =>  admin_url('safetypermit/view/' . encryptId($safetypermit->id)),
+                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($userids),
                     'created_by' => Auth::id(),
                 );
@@ -295,6 +293,8 @@ class SafetyPermitController extends Controller
                 $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto);
                 $confined_space_entry = json_decode($safetypermit->confined_space_entry);
 
+                $status_log = $this->statuslog->selectOne($id);
+
                 $getEhSverification =   $this->approvereject->getEhSverification($id);
                 $getEhsapproval =   $this->approvereject->getEhsapproval($id);
                 $getplantheadapproval =   $this->approvereject->getplantheadapproval($id);
@@ -310,6 +310,7 @@ class SafetyPermitController extends Controller
                     'getplantheadapproval' => $getplantheadapproval,
                     'getsafetyPermitExtension' => $getsafetyPermitExtension,
                     'getpermitextensionapproval' => $getpermitextensionapproval,
+                    'status_log' => $status_log,
 
                 );
             }
@@ -479,11 +480,11 @@ class SafetyPermitController extends Controller
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
                     'message' => 'Safety Permit ' . $safetypermit->permit_id . ' verified by ' . getUsername($approve->created_by),
-                    'icon' => 'public/assets/icon/permit_to_work.png',
+                    'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                     'id' => $safetypermit->id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('safetypermit/view/' . encryptId($safetypermit->id)),
+                 'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                 'assigned_user' => array_to_string($userids),
                 'created_by' => Auth::id(),
             );
@@ -577,11 +578,11 @@ class SafetyPermitController extends Controller
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
-                        'icon' => 'public/assets/icon/permit_to_work.png',
+                        'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
                         'module' => 1,
                     )),
-                    'web_link' =>  admin_url('safetypermit/view/' . encryptId($safetypermit->id)),
+                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($UserId),
                     'created_by' => Auth::id(),
                 );
@@ -621,11 +622,11 @@ class SafetyPermitController extends Controller
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
-                        'icon' => 'public/assets/icon/permit_to_work.png',
+                        'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
                         'module' => 1,
                     )),
-                    'web_link' =>  admin_url('safetypermit/view/' . encryptId($safetypermit->id)),
+                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($UserId),
                     'created_by' => Auth::id(),
                 );
@@ -670,11 +671,11 @@ class SafetyPermitController extends Controller
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
-                        'icon' => 'public/assets/icon/permit_to_work.png',
+                        'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
                         'module' => 1,
                     )),
-                    'web_link' =>  admin_url('safetypermit/view/' . encryptId($safetypermit->id)),
+                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($userids),
                     'created_by' => Auth::id(),
                 );
@@ -719,11 +720,11 @@ class SafetyPermitController extends Controller
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
-                        'icon' => 'public/assets/icon/permit_to_work.png',
+                        'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
                         'module' => 1,
                     )),
-                    'web_link' =>  admin_url('safetypermit/view/' . encryptId($safetypermit->id)),
+                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($userids),
                     'created_by' => Auth::id(),
                 );
@@ -770,11 +771,11 @@ class SafetyPermitController extends Controller
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
-                        'icon' => 'public/assets/icon/permit_to_work.png',
+                        'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
                         'module' => 1,
                     )),
-                    'web_link' =>  admin_url('safetypermit/view/' . encryptId($safetypermit->id)),
+                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($userids),
                     'created_by' => Auth::id(),
                 );
@@ -871,11 +872,11 @@ class SafetyPermitController extends Controller
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
                     'message' => 'Safety Permit ' . $safetypermit->permit_id . ' approved by ' . getUsername($approve->created_by),
-                    'icon' => 'public/assets/icon/permit_to_work.png',
+                    'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                     'id' => $safetypermit->id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('safetypermit/view/' . encryptId($safetypermit->id)),
+                 'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                 'assigned_user' => array_to_string($assigned_user),
                 'created_by' => Auth::id(),
             );
@@ -1309,11 +1310,11 @@ class SafetyPermitController extends Controller
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
                     'message' => 'Safety Permit ' . $safetypermit->permit_id . 'submitted for permit extension by ' . getUsername($approve->created_by),
-                    'icon' => 'public/assets/icon/permit_to_work.png',
+                    'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                     'id' => $safetypermit->id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('safetypermit/view/' . encryptId($safetypermit->id)),
+                 'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                 'assigned_user' => array_to_string($userids),
                 'created_by' => Auth::id(),
             );
@@ -1405,11 +1406,11 @@ class SafetyPermitController extends Controller
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
                     'message' => 'Safety Permit ' . $safetypermit->permit_id .  $mailsubject . getUsername($approve->created_by),
-                    'icon' => 'public/assets/icon/permit_to_work.png',
+                    'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                     'id' => $safetypermit->id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('safetypermit/view/' . encryptId($safetypermit->id)),
+                 'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                 'assigned_user' => array_to_string($userids),
                 'created_by' => Auth::id(),
             );

@@ -24,6 +24,17 @@ class Statuslog extends Model
 
     ];
 
+
+    
+    public function selectOne($id)
+    {
+
+        $data =  $this->select('ptw_status_log.*','ptw_status.status_name')->leftjoin('ptw_status', 'ptw_status.id', '=', 'ptw_status_log.to_status')
+            ->where('ptw_status_log.permit_id', $id)
+            ->get();
+
+        return $data;
+    }
     public function getstatusdetails($id)
     {
         $data = Statuslog::where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)->get();
