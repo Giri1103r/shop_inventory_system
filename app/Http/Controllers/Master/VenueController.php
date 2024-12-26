@@ -62,6 +62,9 @@ class VenueController extends Controller
                             }
                             return $text;
                         })
+                        ->addColumn('projector_or_lcd_availability', function ($row) {
+                            return strtoupper($row->projector_or_lcd_availability);
+                        })
                         ->addColumn('created_at', function ($row) {
                             return Displaydatetimeformat($row->created_at);
                         })
@@ -77,19 +80,19 @@ class VenueController extends Controller
                                 $btn .= '<a href="' . admin_url('venue/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
 
-                            // if (CheckUserPermission('delete')) {
-                            //     $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
-                            // }
+                            if (CheckUserPermission('delete')) {
+                                $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
+                            }
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['action','projector_or_lcd_availability', 'created_date', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -145,7 +148,7 @@ class VenueController extends Controller
             try {
 
                 $venue = $this->venue->store();
-                Session::flash('success', 'Venue added successfully!');
+                Session::flash('success', 'Your data has been created successfully');
             } catch (Exception $ex) {
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -221,7 +224,7 @@ class VenueController extends Controller
 
             $this->venue->updates($id);
 
-            Session::flash('success', 'Venue updated successfully!');
+            Session::flash('success', 'Your data has been updated successfully');
             return redirect(admin_url('venue/list'));
         } catch (Exception $ex) {
             report($ex);
@@ -371,7 +374,7 @@ class VenueController extends Controller
                 $export[] =  $data->name_of_the_conference_hall;
                 $export[] =  $data->unit_name;
                 $export[] =  $data->capacity;
-                $export[] =  $data->projector_or_lcd_availability;
+                $export[] =  strtoupper($data->projector_or_lcd_availability);
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);

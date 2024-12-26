@@ -60,7 +60,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Projector/LCD Availability</label>
                                         <div class="view_data">
-                                            {{ isset($venue->projector_or_lcd_availability) ? $venue->projector_or_lcd_availability : '' }}
+                                            {{ strtoupper(isset($venue->projector_or_lcd_availability) ? $venue->projector_or_lcd_availability : '' )}}
                                         </div>
                                     </div>
 

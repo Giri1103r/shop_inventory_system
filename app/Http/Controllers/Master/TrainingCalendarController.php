@@ -79,7 +79,7 @@ class TrainingCalendarController extends Controller
                 ->leftJoin('training_masters_topic', 'training_schedule.topic_id', '=', 'training_masters_topic.id')
                 ->leftJoin('training_masters_venue', 'training_schedule.venue_id', '=', 'training_masters_venue.id')
                 ->leftJoin('masters_employee', 'training_schedule.trainer_id', '=', 'masters_employee.id')
-                ->whereBetween('from_date', [$request->start, $request->end]);
+                ->whereBetween('from_date', [$request->start, $request->end])->where('training_schedule.status', '1');
 
             if (CheckUserRole(ROLE_SUPERADMIN)) {
                 $query->where('training_schedule.trash', 'NO');

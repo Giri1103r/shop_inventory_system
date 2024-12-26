@@ -38,7 +38,7 @@
                                             value="{{ encryptId($training_schedule->id) }}">
 
                                         <div class="row">
-                                         
+
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label for="from_date" class="form-label require">From Date</label>
@@ -279,23 +279,31 @@
                 location.reload();
             });
 
+            const toDatePicker = flatpickr("#to_date_datepicker", {
+                dateFormat: "d-m-Y H:i",
+                minDate: "today",
+                enableTime: true,
+                time_24hr: true,
+            });
+
             flatpickr("#from_date_datepicker", {
                 dateFormat: "d-m-Y H:i",
                 minDate: "today",
                 enableTime: true,
                 time_24hr: true,
                 onChange: function(selectedDates, dateStr) {
-                    toDatePicker.set("minDate", dateStr);
-                    toDatePicker.setDate(
-                    dateStr); 
-                }
-            });
+                    if (selectedDates.length > 0) {
+                        const fromDate = selectedDates[0];
+                        const toDate = new Date(fromDate.getTime() + 8 * 60 * 60 * 1000);
 
-            const toDatePicker = flatpickr("#to_date_datepicker", {
-                dateFormat: "d-m-Y H:i",
-                minDate: "today",
-                enableTime: true,
-                time_24hr: true,
+                        if (toDatePicker) {
+                            toDatePicker.set("minDate",
+                                dateStr);
+                            toDatePicker.setDate(toDate,
+                                false);
+                        }
+                    }
+                },
             });
 
             $('#training_scheduleedit').validate({
@@ -351,7 +359,7 @@
                     },
                     target_trainees: {
                         required: "Target Trainees is Required.",
-                     digits: "Please enter only numeric values for Target Trainees."
+                        digits: "Please enter only numeric values for Target Trainees."
                     },
 
                 },

@@ -52,6 +52,12 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">No. of Questions</label>
+                                        <div class="view_data">
+                                            {{ isset($topic->no_of_questions) ? $topic->no_of_questions : '-' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Questionnaire</label>
                                         <div class="view_data">
                                             @if ($training_Files_questionnaire)

@@ -22,6 +22,7 @@ use App\Models\Master\Topic;
 use App\Models\Master\Venue;
 use App\Models\Master\TrainingSchedule;
 use App\Models\Master\TrainingAttendance;
+use App\Models\Master\TrainingAssessmentFeedback;
 use App\Models\User;
 use App\Models\Master\NominationProcess;
 use App\Models\UploadLog;
@@ -39,6 +40,7 @@ class TrainingScheduleController extends Controller
     private $topic;
     private $venue;
     private $training_attendance;
+    private $training_assessment_feedback;
     private $training_schedule;
     private $unit;
     private $nomination_process;
@@ -48,6 +50,7 @@ class TrainingScheduleController extends Controller
     public function __construct()
     {
 
+        $this->training_assessment_feedback = new TrainingAssessmentFeedback();
         $this->training_attendance = new TrainingAttendance();
         $this->training_schedule = new TrainingSchedule();
         $this->topic = new Topic();
@@ -111,7 +114,9 @@ class TrainingScheduleController extends Controller
                                          </a> ';
                             }
                             if ($row->training_status == 4) {
-                                $btn .= '<a href="' . admin_url('training_schedule/pdf/' . encryptId($row->id)) . '"  class="pdficon" title="Pdf"><i class="fas fa-file-pdf" aria-hidden="true" style="color: #e21e23;"></i> ';
+                                // $btn .= '<a href="' . admin_url('training_schedule/pdf/' . encryptId($row->id)) . '"  class="pdficon" title="Pdf"><i class="fas fa-file-pdf" aria-hidden="true" style="color: #e21e23;"></i> </a> ';
+
+                                $btn .= '<a href="' . admin_url('training/feedback/' . encryptId($row->id)) . '"  class="feedbackicon" title="feedback"><i class="fas fa-file-pdf" aria-hidden="true" style="color: #e21e23;"></i> </a> ';
                             }
                             if ($row->training_status == 3) {
                                 $btn .= '<a href="' . admin_url('training_schedule/attendance/' . encryptId($row->id)) . '" title="Attendance">
@@ -123,13 +128,14 @@ class TrainingScheduleController extends Controller
                                             <i class="fa-solid fa-eye"></i>
                                          </a> ';
                             }
+
                             if (in_array(ROLE_TRAINER, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id()))) {
                                 if ($row->training_status == 2) {
                                     $btn .= '<a href="' . admin_url('training_schedule/start/' . encryptId($row->id)) . '" title="Start Training">
                                                 <i class="fa fa-play-circle" style="color: green;"></i>
                                              </a> ';
                                 } elseif ($row->training_status == 3) {
-                                    $btn .= '<a href="' . admin_url('training_schedule/end/' . encryptId($row->id)) . '" title="End Training">
+                                    $btn .= '<a href="' . admin_url('training_schedule/end/' . encryptId($row->id)) . '" title="Training Completed">
                                                 <i class="fa fa-stop-circle" style="color: red;"></i>
                                              </a> ';
                                 }
@@ -288,7 +294,7 @@ class TrainingScheduleController extends Controller
                         notificationSave($notificationData);
                     }
                 }
-                Session::flash('success', 'Your data has been created successfully!');
+                Session::flash('success', 'Your data has been created successfully');
             } catch (Exception $ex) {
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -302,7 +308,6 @@ class TrainingScheduleController extends Controller
             return redirect(admin_url('training_schedule/list'));
         }
     }
-
 
     public function startTraining($id)
     {
@@ -448,21 +453,79 @@ class TrainingScheduleController extends Controller
 
         return response()->json(true);
     }
+    public function feedback($id)
+    {
+        try {
+            $trainingScheduleId = decryptId($id);
+
+            $training_schedule = $this->training_schedule->selectOne($trainingScheduleId);
+          
+            $data = [
+                'training_schedule' => $training_schedule,
+            ];
+
+            return view('master.training_schedule.feedback', $data);
+        } catch (Exception $ex) {
+            return redirect()->back()->withErrors(['error' => 'Something went wrong. Please try again later!']);
+        }
+    }
     public function endTraining($id)
     {
         try {
             $trainingScheduleId = decryptId($id);
+
+            $training_schedule = $this->training_schedule->selectOne($trainingScheduleId);
+            $nominationProcessList = $this->nomination_process->getNomination($trainingScheduleId);
+            $trainingAttendanceList = $this->training_attendance
+                ->where('status', 1)
+                ->where('training_schedule_id', $trainingScheduleId)
+                ->get();
+
+            // Normalize Employee Names
+            $attendedEmployees = $trainingAttendanceList
+                ->where('attendance_status', 1)
+                ->pluck('emp_name')
+                ->map(fn($name) => strtolower(trim($name)))
+                ->unique();
+
+            $allEmployees = $trainingAttendanceList
+                ->pluck('emp_name')
+                ->map(fn($name) => strtolower(trim($name)))
+                ->unique();
+
+            $nonAttendedEmployees = $allEmployees->diff($attendedEmployees);
+
+            $data = [
+                'training_schedule' => $training_schedule,
+                'nominationProcessList' => $nominationProcessList,
+                'trainingAttendanceList' => $trainingAttendanceList,
+                'attendedEmployees' => $attendedEmployees,
+                'nonAttendedEmployees' => $nonAttendedEmployees,
+            ];
+
+            return view('master.training_schedule.endtraining', $data);
+        } catch (Exception $ex) {
+            return redirect()->back()->withErrors(['error' => 'Something went wrong. Please try again later!']);
+        }
+    }
+
+
+    public function endTrainingStore(Request $request)
+    {
+        try {
+            $trainingScheduleId = decryptId($request->training_schedule_id);
             $training_status = 4;
 
-            $training = $this->training_schedule->updateStatus($trainingScheduleId, $training_status);
-            Session::flash('success', 'Training has ended successfully!');
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error', 'Something went wrong. Please try again later!');
-            return redirect(admin_url('training_schedule/list'));
-        }
+            $this->training_assessment_feedback->store();
+            $this->training_schedule->updateStatus($trainingScheduleId, $training_status);
 
-        return redirect(admin_url('training_schedule/list'));
+            Session::flash('success', 'Training has ended successfully!');
+            return redirect(admin_url('training_schedule/list'));
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', 'Something went wrong. Please try again later!');
+            return redirect()->back();
+        }
     }
 
     public function View(Request $request)
@@ -589,7 +652,7 @@ class TrainingScheduleController extends Controller
             }
 
             $this->training_schedule->updates($id);
-            Session::flash('success', 'Your data has been updated successfully!');
+            Session::flash('success', 'Your data has been updated successfully');
             return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
             report($ex);

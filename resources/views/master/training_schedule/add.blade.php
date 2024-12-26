@@ -241,24 +241,33 @@
                 location.reload();
             });
 
-            flatpickr("#from_date_datepicker", {
-                dateFormat: "d-m-Y H:i",
-                minDate: "today",
-                enableTime: true,
-                time_24hr: true,
-                onChange: function(selectedDates, dateStr) {
-                    toDatePicker.set("minDate", dateStr);
-                    toDatePicker.setDate(
-                    dateStr); 
-                }
-            });
-
             const toDatePicker = flatpickr("#to_date_datepicker", {
                 dateFormat: "d-m-Y H:i",
                 minDate: "today",
                 enableTime: true,
                 time_24hr: true,
             });
+
+            flatpickr("#from_date_datepicker", {
+                dateFormat: "d-m-Y H:i",
+                minDate: "today",
+                enableTime: true,
+                time_24hr: true,
+                onChange: function(selectedDates, dateStr) {
+                    if (selectedDates.length > 0) {
+                        const fromDate = selectedDates[0];
+                        const toDate = new Date(fromDate.getTime() + 8 * 60 * 60 * 1000);
+
+                        if (toDatePicker) {
+                            toDatePicker.set("minDate",
+                                dateStr); 
+                            toDatePicker.setDate(toDate,
+                                false); 
+                        }
+                    }
+                },
+            });
+
 
 
             $('#training_scheduleadd').validate({
@@ -313,7 +322,7 @@
                     },
                     target_trainees: {
                         required: "Target Trainees is Required.",
-                         digits: "Please enter only numeric values for Target Trainees."
+                        digits: "Please enter only numeric values for Target Trainees."
                     },
                 },
                 errorElement: 'span',

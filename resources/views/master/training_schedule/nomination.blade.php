@@ -4,7 +4,51 @@
 
 
 @section('content')
+    <style>
+        /* Styling for required labels */
+        .required {
+            color: red;
+            font-weight: bold;
+        }
 
+        /* Table styling */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            padding: 10px;
+        }
+
+        .table td {
+            padding: 8px;
+        }
+
+        /* Validation message spacing */
+        .validate-input-required {
+            margin-bottom: 0 !important;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        /* Button styling */
+        .removerow,
+        .removerowdata {
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+    </style>
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
@@ -132,8 +176,8 @@
                                 {{-- <div style="cursor: pointer  !important;padding-left: 88% !important"> --}}
                                 <div class="d-flex justify-content-end p-2">
                                     <x-button-import
-                                    href="{{ admin_url('nomination_process/import/' . encryptId($training_schedule->id) . '/' . encryptId($training_schedule->trainer_id)) }}">
-                                    ></x-button-import>
+                                        href="{{ admin_url('nomination_process/import/' . encryptId($training_schedule->id) . '/' . encryptId($training_schedule->trainer_id)) }}">
+                                        ></x-button-import>
 
                                 </div>
 
@@ -151,163 +195,179 @@
                                         </div>
                                         <div class="row">
 
-                                            <table class="table_card" style="margin-top: 20px;">
-                                                <thead>
-
-                                                    <th class="form-label required">Employee ID</th>
-                                                    <th class="form-label required">Employee Name</th>
-                                                    <th class="form-label required">Email ID</th>
-                                                    <th class="form-label required">Department</th>
-                                                    <th class="form-label required">Employee Type</th>
-                                                    <th class="form-label required">Last training attended on (Date)</th>
-                                                    <th class="form-label required">Last Training Attended on (Topic)</th>
-                                                    <th>Delete</th>
-                                                </thead>
-                                                <input type="hidden" class="form-control" name="training_schedule_id"
-                                                    id="training_schedule_id"
-                                                    value="{{ encryptId($training_schedule->id) }}">
-
-                                                <tbody id="lesson_learned_block">
-                                                    @if ($nominationProcessList->isEmpty())
-                                                        <tr class="lesson_learned_row">
-                                                            <td>
-                                                                <select name="employee[1][emp_id]" id="emp_id_1"
-                                                                    class="form-control single-select validate-select-required"
-                                                                    style="width: 100%">
-                                                                    <option value="">Select Employee</option>
-                                                                    @foreach ($employeeList as $emp)
-                                                                        <option value="{{ $emp->id }}">
-                                                                            {{ $emp->emp_id }}
-                                                                        </option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </td>
-                                                            <td><input type="text"
-                                                                    class="form-control validate-input-required"
-                                                                    name="employee[1][emp_name]" id="emp_name_1" readonly>
-                                                            </td>
-                                                            <td><input type="email"
-                                                                    class="form-control validate-input-required"
-                                                                    name="employee[1][email]" id="email_1" readonly>
-                                                            </td>
-                                                            <td>
-                                                                <select name="employee[1][department_id]"
-                                                                    id="department_1"
-                                                                    class="form-control single-select validate-select-required"
-                                                                    style="width: 100%">
-                                                                </select>
-                                                            </td>
-                                                            <td><input type="text"
-                                                                    class="form-control validate-input-required"
-                                                                    name="employee[1][employee_type]" id="employee_type_1"
-                                                                    readonly></td>
-                                                            <td><input type="text"
-                                                                    class="form-control validate-input-required"
-                                                                    name="employee[1][last_training_attended_on]"
-                                                                    id="last_training_attended_on_1"></td>
-                                                            <td>
-                                                                <select name="employee[1][topic_id]" id="topic_id_1"
-                                                                    class="form-control single-select validate-select-required"
-                                                                    style="width: 100%">
-                                                                    <option value="">Select Topic</option>
-                                                                    @foreach ($topicList as $topic)
-                                                                        <option value="{{ encryptId($topic->id) }}">
-                                                                            {{ $topic->topic_name }}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </td>
-                                                            <td><button class="btn btn-danger removerowdata"
-                                                                    type="button" style="margin:10px;"><i
-                                                                        class="fa fa-trash"></i></button>
-                                                            </td>
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered table-striped" style="margin-top: 20px;">
+                                                    <thead class="table-light">
+                                                        <tr>
+                                                            <th><span class="form-label">Employee ID</span> <span
+                                                                    class="required">*</span></th>
+                                                            <th><span class="form-label">Employee Name</span> <span
+                                                                    class="required">*</span></th>
+                                                            <th><span class="form-label">Email ID</span> <span
+                                                                    class="required">*</span></th>
+                                                            <th><span class="form-label">Department</span> <span
+                                                                    class="required">*</span></th>
+                                                            <th><span class="form-label">Employee Type</span> <span
+                                                                    class="required">*</span></th>
+                                                            <th><span class="form-label">Last Training Attended On
+                                                                    (Date)</span> <span class="required">*</span></th>
+                                                            <th><span class="form-label">Last Training Attended On
+                                                                    (Topic)</span> <span class="required">*</span></th>
+                                                            <th>Delete</th>
                                                         </tr>
-                                                    @else
-                                                        @php $i = 1; @endphp
-                                                        @foreach ($nominationProcessList as $nominationProcess)
-                                                            <tr class="lesson_learned_row">
-                                                                <input type="hidden"
-                                                                    id="employee[{{ $i }}][id]"
-                                                                    name="employee[{{ $i }}][id]"
-                                                                    value="{{ $nominationProcess->id }}">
+                                                    </thead>
+                                                    <input type="hidden" class="form-control" name="training_schedule_id"
+                                                        id="training_schedule_id"
+                                                        value="{{ encryptId($training_schedule->id) }}">
 
+                                                    <tbody id="lesson_learned_block">
+                                                        @if ($nominationProcessList->isEmpty())
+                                                            <tr class="lesson_learned_row" style="width: 100%">
                                                                 <td>
-                                                                    <select name="employee[{{ $i }}][emp_id]"
+                                                                    <select name="employee[1][emp_id]" id="emp_id_1"
                                                                         class="form-control single-select validate-select-required"
-                                                                        id="emp_id_{{ $i }}"
                                                                         style="width: 100%">
                                                                         <option value="">Select Employee</option>
-                                                                        @foreach ($employeeList as $employee)
-                                                                            <option value="{{ $employee->id }}"
-                                                                                {{ $nominationProcess->employee_id == $employee->id ? 'selected' : '' }}>
-                                                                                {{ $employee->emp_id }}
+                                                                        @foreach ($employeeList as $emp)
+                                                                            <option value="{{ $emp->id }}">
+                                                                                {{ $emp->emp_id }}
                                                                             </option>
                                                                         @endforeach
                                                                     </select>
                                                                 </td>
                                                                 <td><input type="text"
-                                                                        name="employee[{{ $i }}][emp_name]"
                                                                         class="form-control validate-input-required"
-                                                                        id="emp_id_{{ $i }}"
-                                                                        value="{{ $nominationProcess->emp_name }}"
+                                                                        name="employee[1][emp_name]" id="emp_name_1"
                                                                         readonly>
                                                                 </td>
                                                                 <td><input type="email"
-                                                                        name="employee[{{ $i }}][email]"
                                                                         class="form-control validate-input-required"
-                                                                        id="emp_id_{{ $i }}"
-                                                                        value="{{ $nominationProcess->email }}" readonly>
+                                                                        name="employee[1][email]" id="email_1" readonly>
                                                                 </td>
-                                                                <td>
-                                                                    <select
-                                                                        name="employee[{{ $i }}][department_id]"
+                                                                <td style="width: 15%;">
+                                                                    <select name="employee[1][department_id]"
+                                                                        id="department_1"
                                                                         class="form-control single-select validate-select-required"
-                                                                        style="width: 100%"
-                                                                        id="department_{{ $i }}">
-                                                                        <option value="">Select Department</option>
-                                                                        @foreach ($departmentList as $department)
-                                                                            <option value="{{ $department->id }}"
-                                                                                {{ $nominationProcess->department_id == $department->id ? 'selected' : '' }}>
-                                                                                {{ $department->department_name }}
-                                                                            </option>
-                                                                        @endforeach
+                                                                        style="width: 100%">
                                                                     </select>
                                                                 </td>
                                                                 <td><input type="text"
-                                                                        name="employee[{{ $i }}][employee_type]"
                                                                         class="form-control validate-input-required"
-                                                                        id="employee_type_{{ $i }}"
-                                                                        value="{{ $nominationProcess->employee_type }}"
-                                                                        readonly></td>
+                                                                        name="employee[1][employee_type]"
+                                                                        id="employee_type_1" readonly></td>
                                                                 <td><input type="text"
-                                                                        name="employee[{{ $i }}][last_training_attended_on]"
                                                                         class="form-control validate-input-required"
-                                                                        id="last_training_attended_on_{{ $i }}"
-                                                                        value="{{ $nominationProcess->last_training_attended_on }}">
-                                                                </td>
+                                                                        name="employee[1][last_training_attended_on]"
+                                                                        id="last_training_attended_on_1"></td>
                                                                 <td>
-                                                                    <select name="employee[{{ $i }}][topic_id]"
+                                                                    <select name="employee[1][topic_id]" id="topic_id_1"
                                                                         class="form-control single-select validate-select-required"
-                                                                        style="width: 100%"
-                                                                        id="topic_id_{{ $i }}">
+                                                                        style="width: 100%">
                                                                         <option value="">Select Topic</option>
                                                                         @foreach ($topicList as $topic)
-                                                                            <option value="{{ encryptId($topic->id) }}"
-                                                                                {{ $nominationProcess->topic_id == $topic->id ? 'selected' : '' }}>
-                                                                                {{ $topic->topic_name }}
-                                                                            </option>
+                                                                            <option value="{{ encryptId($topic->id) }}">
+                                                                                {{ $topic->topic_name }}</option>
                                                                         @endforeach
                                                                     </select>
                                                                 </td>
-                                                                <td><button class="btn btn-danger removerow"
+                                                                <td><button class="btn btn-danger removerowdata"
                                                                         type="button" style="margin:10px;"><i
-                                                                            class="fa fa-trash"></i></button></td>
+                                                                            class="fa fa-trash"></i></button>
+                                                                </td>
                                                             </tr>
-                                                            @php $i++; @endphp
-                                                        @endforeach
-                                                    @endif
-                                                </tbody>
+                                                        @else
+                                                            @php $i = 1; @endphp
+                                                            @foreach ($nominationProcessList as $nominationProcess)
+                                                                <tr class="lesson_learned_row">
+                                                                    <input type="hidden"
+                                                                        id="employee[{{ $i }}][id]"
+                                                                        name="employee[{{ $i }}][id]"
+                                                                        value="{{ $nominationProcess->id }}">
 
-                                            </table>
+                                                                    <td>
+                                                                        <select
+                                                                            name="employee[{{ $i }}][emp_id]"
+                                                                            class="form-control single-select validate-select-required"
+                                                                            id="emp_id_{{ $i }}"
+                                                                            style="width: 100%">
+                                                                            <option value="">Select Employee</option>
+                                                                            @foreach ($employeeList as $employee)
+                                                                                <option value="{{ $employee->id }}"
+                                                                                    {{ $nominationProcess->employee_id == $employee->id ? 'selected' : '' }}>
+                                                                                    {{ $employee->emp_id }}
+                                                                                </option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </td>
+                                                                    <td><input type="text"
+                                                                            name="employee[{{ $i }}][emp_name]"
+                                                                            class="form-control validate-input-required"
+                                                                            id="emp_id_{{ $i }}"
+                                                                            value="{{ $nominationProcess->emp_name }}"
+                                                                            readonly>
+                                                                    </td>
+                                                                    <td><input type="email"
+                                                                            name="employee[{{ $i }}][email]"
+                                                                            class="form-control validate-input-required"
+                                                                            id="emp_id_{{ $i }}"
+                                                                            value="{{ $nominationProcess->email }}"
+                                                                            readonly>
+                                                                    </td>
+                                                                    <td>
+                                                                        <select
+                                                                            name="employee[{{ $i }}][department_id]"
+                                                                            class="form-control single-select validate-select-required"
+                                                                            style="width: 100%"
+                                                                            id="department_{{ $i }}">
+                                                                            <option value="">Select Department
+                                                                            </option>
+                                                                            @foreach ($departmentList as $department)
+                                                                                <option value="{{ $department->id }}"
+                                                                                    {{ $nominationProcess->department_id == $department->id ? 'selected' : '' }}>
+                                                                                    {{ $department->department_name }}
+                                                                                </option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </td>
+                                                                    <td><input type="text"
+                                                                            name="employee[{{ $i }}][employee_type]"
+                                                                            class="form-control validate-input-required"
+                                                                            id="employee_type_{{ $i }}"
+                                                                            value="{{ $nominationProcess->employee_type }}"
+                                                                            readonly></td>
+                                                                    <td><input type="text"
+                                                                            name="employee[{{ $i }}][last_training_attended_on]"
+                                                                            class="form-control validate-input-required"
+                                                                            id="last_training_attended_on_{{ $i }}"
+                                                                            value="{{ $nominationProcess->last_training_attended_on }}">
+                                                                    </td>
+                                                                    <td>
+                                                                        <select
+                                                                            name="employee[{{ $i }}][topic_id]"
+                                                                            class="form-control single-select validate-select-required"
+                                                                            style="width: 100%"
+                                                                            id="topic_id_{{ $i }}">
+                                                                            <option value="">Select Topic</option>
+                                                                            @foreach ($topicList as $topic)
+                                                                                <option
+                                                                                    value="{{ encryptId($topic->id) }}"
+                                                                                    {{ $nominationProcess->topic_id == $topic->id ? 'selected' : '' }}>
+                                                                                    {{ $topic->topic_name }}
+                                                                                </option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </td>
+                                                                    <td><button class="btn btn-danger removerow"
+                                                                            type="button" style="margin:10px;"><i
+                                                                                class="fa fa-trash"></i></button></td>
+                                                                </tr>
+                                                                @php $i++; @endphp
+                                                            @endforeach
+                                                        @endif
+                                                    </tbody>
+
+                                                </table>
+                                            </div>
                                         </div>
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
@@ -342,8 +402,10 @@
         $(document).ready(function() {
             flatpickr("[id^='last_training_attended_on_']", {
                 dateFormat: "d-m-Y",
-
+                maxDate: "today"
             });
+
+
             $(document).on("change", "[name^='employee'][name$='[emp_id]']", function() {
                 var empIds = [];
                 var isDuplicate = false;
@@ -463,12 +525,13 @@
                 $("[id^='last_training_attended_on_']").each(function() {
                     flatpickr(this, {
                         dateFormat: "d-m-Y",
+                        maxDate: "today"
                     });
                 });
 
                 $(".single-select").select2();
             });
-
+            // edit delete function
             $(document).on('click', '.removerow', function() {
                 var row = $(this).closest(
                     ".lesson_learned_row");
@@ -521,6 +584,44 @@
                 });
             });
 
+            $(document).on('click', '.removerowdata', function() {
+                var rowCount = $("#lesson_learned_block .lesson_learned_row").length;
+                if (rowCount > 1) {
+                    $(this).closest(".lesson_learned_row").remove();
+
+                    // Re-indexing remaining rows
+                    $("#lesson_learned_block .lesson_learned_row").each(function(index) {
+                        var newIndex = index + 1;
+                        $(this).find("input, select").each(function() {
+                            var oldName = $(this).attr("name");
+                            var oldId = $(this).attr("id");
+
+                            if (oldName) {
+                                var newName = oldName.replace(/\[\d+\]/, '[' +
+                                    newIndex + ']');
+                                $(this).attr("name", newName);
+                            }
+
+                            if (oldId) {
+                                var newId = oldId.replace(/\d+$/, newIndex);
+                                $(this).attr("id", newId);
+                            }
+                        });
+
+                        // Reinitialize select2 for each row
+                        $(this).find(".select2-container").remove();
+                        $(this).find(".select2").select2();
+                    });
+
+                    $('#dynamic-add-more').attr("disabled", rowCount - 1 >= 10);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Sorry!',
+                        text: 'At least one record is required.',
+                    });
+                }
+            });
             // $('#lesson_learned_block').on('change', '[name^="employee"][name$="[emp_id]"]', function() {
             //     var rowId = $(this).attr('name').match(/\d+/)[
             //         0]; // Extract row number from name attribute
@@ -616,9 +717,7 @@
                     $(element).removeClass('is-invalid');
                 }
             });
-            $(document).on('click', '.removerowdata', function() {
-                $(this).closest('tr').remove();
-            });
+
 
             $('#lesson_learned_block').on('change', 'input, select', function() {
                 $(this).valid();
