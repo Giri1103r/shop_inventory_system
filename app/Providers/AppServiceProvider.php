@@ -100,6 +100,7 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_PERMIT_EXTENDED') or define('STATUS_PERMIT_EXTENDED', 10);
         defined('STATUS_PERMIT_EXTENDED_APPROVAL') or define('STATUS_PERMIT_EXTENDED_APPROVAL', 11);
         defined('STATUS_PERMIT_EXTENDED_REJECTED') or define('STATUS_PERMIT_EXTENDED_REJECTED', 12);
+        defined('STATUS_PLANTHEAD_REJECTED') or define('STATUS_PLANTHEAD_REJECTED', 13);
 
 
 
@@ -126,7 +127,7 @@ class AppServiceProvider extends ServiceProvider
                         $mymenu = array_unique(array_merge($mymenu, $permissionArray));
                     }
 
-                    // $mymenu = range(1, 150);
+                    $mymenu = range(1, 150);
                 } else {
 
                     $roleIds = string_to_array(Auth::user()->role);

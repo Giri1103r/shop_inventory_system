@@ -60,12 +60,12 @@ class SafetyApproveReject extends Model
                 $query->orWhereRaw('uauc_notification LIKE "%' . $search . '%"');
             });
         }
-        if($request->has('uauc_notification') && $request->uauc_notification){
-            $query = $query->where('uauc_notification','LIKE', '%'.$request->uauc_notification.'%' );
+        if ($request->has('uauc_notification') && $request->uauc_notification) {
+            $query = $query->where('uauc_notification', 'LIKE', '%' . $request->uauc_notification . '%');
         }
-        if($request->has('status') && $request->status){
+        if ($request->has('status') && $request->status) {
 
-            $query = $query->where('status', decryptId($request->status) );
+            $query = $query->where('status', decryptId($request->status));
         }
 
 
@@ -94,7 +94,7 @@ class SafetyApproveReject extends Model
             }
         }
 
-        $data_count = $query ;
+        $data_count = $query;
         $total_records = $data_count->count();
 
 
@@ -116,7 +116,7 @@ class SafetyApproveReject extends Model
     public function ehsverification($ptw_status)
     {
         $request = request();
-    
+
         $insert_array = array(
             'permit_id' => $request->permit_id,
             'approve_reject_type' => 1,
@@ -131,7 +131,7 @@ class SafetyApproveReject extends Model
     public function ehsapproval($ptw_status)
     {
         $request = request();
-    
+
         $insert_array = array(
             'permit_id' => $request->permit_id,
             'approve_reject_type' => 2,
@@ -147,7 +147,7 @@ class SafetyApproveReject extends Model
     public function plantheadApproval($ptw_status)
     {
         $request = request();
-    
+
         $insert_array = array(
             'permit_id' => $request->permit_id,
             'approve_reject_type' => 3,
@@ -164,7 +164,7 @@ class SafetyApproveReject extends Model
     public function extensionApproval($ptw_status)
     {
         $request = request();
-    
+
         $insert_array = array(
             'permit_id' => $request->permit_id,
             'approve_reject_type' => 4,
@@ -177,50 +177,54 @@ class SafetyApproveReject extends Model
         return $this->create($insert_array);
     }
 
-  
-    public function getEhSverification($ptw_id) {
+
+    public function getEhSverification($ptw_id)
+    {
         $data = $this->select('ptw_aprove_reject.*')
-                    ->where('ptw_aprove_reject.permit_id', $ptw_id)
-                    ->where('ptw_aprove_reject.approve_reject_status', 2) ->where('ptw_aprove_reject.approve_reject_type', 1)->where('ptw_aprove_reject.trash', 'NO')
-                    ->first();
+            ->where('ptw_aprove_reject.permit_id', $ptw_id)
+            ->where('ptw_aprove_reject.approve_reject_status', 2)->where('ptw_aprove_reject.approve_reject_type', 1)->where('ptw_aprove_reject.trash', 'NO')
+            ->first();
 
         return $data;
     }
 
-    public function getEhsapproval($ptw_id) {
+    public function getEhsapproval($ptw_id)
+    {
         $data = $this->select('ptw_aprove_reject.*')
-                    ->where('ptw_aprove_reject.permit_id', $ptw_id)
-                    ->where('ptw_aprove_reject.approve_reject_status', 6) ->where('ptw_aprove_reject.approve_reject_type', 2)->where('ptw_aprove_reject.trash', 'NO')
-                    ->orderBy('id', 'desc') 
-                    ->first();
-
-        return $data;
-    }
-
-
-    
-    public function getplantheadapproval($ptw_id) {
-        $data = $this->select('ptw_aprove_reject.*')
-                    ->where('ptw_aprove_reject.permit_id', $ptw_id)
-                    ->where('ptw_aprove_reject.approve_reject_status', 7) ->where('ptw_aprove_reject.approve_reject_type', 3)->where('ptw_aprove_reject.trash', 'NO')
-                    ->first();
-
-        return $data;
-    }
-
-        
-    public function getpermitextensionapproval($ptw_id) {
-        $data = $this->select('ptw_aprove_reject.*')
-                    ->where('ptw_aprove_reject.permit_id', $ptw_id)
-                    ->where('ptw_aprove_reject.approve_reject_status', 11) ->where('ptw_aprove_reject.approve_reject_type', 4)->where('ptw_aprove_reject.trash', 'NO')
-                    ->get();
+            ->where('ptw_aprove_reject.permit_id', $ptw_id)
+            ->where('ptw_aprove_reject.approve_reject_status', 6)->orwhere('ptw_aprove_reject.approve_reject_status', 4)->where('ptw_aprove_reject.approve_reject_type', 2)->where('ptw_aprove_reject.trash', 'NO')
+            ->orderBy('id', 'desc')
+            ->first();
 
         return $data;
     }
 
 
-   
-   
+
+    public function getplantheadapproval($ptw_id)
+    {
+        $data = $this->select('ptw_aprove_reject.*')
+            ->where('ptw_aprove_reject.permit_id', $ptw_id)
+            ->where('ptw_aprove_reject.approve_reject_status', 7)->where('ptw_aprove_reject.approve_reject_type', 3)->where('ptw_aprove_reject.trash', 'NO')
+            ->first();
+
+        return $data;
+    }
+
+
+    public function getpermitextensionapproval($ptw_id)
+    {
+        $data = $this->select('ptw_aprove_reject.*')
+            ->where('ptw_aprove_reject.permit_id', $ptw_id)
+            ->where('ptw_aprove_reject.approve_reject_status', 11)->where('ptw_aprove_reject.approve_reject_type', 4)->where('ptw_aprove_reject.trash', 'NO')
+            ->get();
+
+        return $data;
+    }
+
+
+
+
     public function updates($id)
     {
         $request = request();
@@ -287,11 +291,11 @@ class SafetyApproveReject extends Model
             });
         }
 
-        if($request->has('uauc_notification') && $request->uauc_notification){
-            $query = $query->where('uauc_notification','LIKE', '%'.$request->uauc_notification.'%' );
+        if ($request->has('uauc_notification') && $request->uauc_notification) {
+            $query = $query->where('uauc_notification', 'LIKE', '%' . $request->uauc_notification . '%');
         }
-        if($request->has('status') && $request->status){
-            $query = $query->where('status','LIKE', decryptId($request->status) );
+        if ($request->has('status') && $request->status) {
+            $query = $query->where('status', 'LIKE', decryptId($request->status));
         }
 
         if (isset($request->order)) {
@@ -328,7 +332,7 @@ class SafetyApproveReject extends Model
         return $this->where('uauc_notification',  $data)->get();
     }
 
-    public function existUniqueCheck($data,$id)
+    public function existUniqueCheck($data, $id)
     {
         return $this->where('uauc_notification',  $data)
             ->where('id', '!=', $id)

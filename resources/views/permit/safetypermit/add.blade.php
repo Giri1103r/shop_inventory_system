@@ -979,11 +979,11 @@
                         .text("Workman Name is required.");
                     isValid = false;
                 }
-                if (!designation) {
-                    parentRow.find('input[name="workman_desig"]').closest('.form-group').find(
-                        '.text-danger').text("Designation is required.");
-                    isValid = false;
-                }
+                // if (!designation) {
+                //     parentRow.find('input[name="workman_desig"]').closest('.form-group').find(
+                //         '.text-danger').text("Designation is required.");
+                //     isValid = false;
+                // }
                 if (!department) {
                     parentRow.find('select[name="workman_dept"]').closest('.form-group').find(
                         '.text-danger').text("Department is required.");
@@ -1443,49 +1443,49 @@
                 }
             });
 
-            $('#safetyPermitadd').on('submit', function(e) {
-                const container = $('#getprecaution-container');
-                const errorDiv = $(
-                    '<div class="text-danger">Please select at least one Precaution Taken.</div>');
+            // $('#safetyPermitadd').on('submit', function(e) {
+            //     const container = $('#getprecaution-container');
+            //     const errorDiv = $(
+            //         '<div class="text-danger">Please select at least one Precaution Taken.</div>');
 
 
-                container.find('.text-danger').remove();
+            //     container.find('.text-danger').remove();
 
-                let hasError = false;
-                let hasSelection = false;
+            //     let hasError = false;
+            //     let hasSelection = false;
 
-                $('.precaution_taken').each(function() {
-                    if ($(this).is(':checked')) {
-                        hasSelection =
-                            true;
-                    }
-                });
-
-
-                if (!hasSelection) {
-                    hasError = true;
-                    container.append(errorDiv);
-                    e.preventDefault();
-                }
+            //     $('.precaution_taken').each(function() {
+            //         if ($(this).is(':checked')) {
+            //             hasSelection =
+            //                 true;
+            //         }
+            //     });
 
 
-                if (hasError) {
-                    e.preventDefault();
-                }
-            });
+            //     if (!hasSelection) {
+            //         hasError = true;
+            //         container.append(errorDiv);
+            //         e.preventDefault();
+            //     }
 
 
-            $('#getprecaution-container').on('change', '.precaution_taken', function() {
-                const container = $('#getprecaution-container');
+            //     if (hasError) {
+            //         e.preventDefault();
+            //     }
+            // });
 
 
-                const hasSelection = container.find('.precaution_taken:checked').length > 0;
+            // $('#getprecaution-container').on('change', '.precaution_taken', function() {
+            //     const container = $('#getprecaution-container');
 
 
-                if (hasSelection) {
-                    container.find('.text-danger').remove();
-                }
-            });
+            //     const hasSelection = container.find('.precaution_taken:checked').length > 0;
+
+
+            //     if (hasSelection) {
+            //         container.find('.text-danger').remove();
+            //     }
+            // });
         });
 
 
@@ -1538,49 +1538,49 @@
                 }
             });
 
-            $('#safetyPermitadd').on('submit', function(e) {
-                const container = $('#getchecklist-container');
-                const errorDiv = $(
-                    '<div class="text-danger">Please select at least one Equipment Checklist.</div>');
+            // $('#safetyPermitadd').on('submit', function(e) {
+            //     const container = $('#getchecklist-container');
+            //     const errorDiv = $(
+            //         '<div class="text-danger">Please select at least one Equipment Checklist.</div>');
 
 
-                container.find('.text-danger').remove();
+            //     container.find('.text-danger').remove();
 
-                let hasError = false;
-                let hasSelection = false;
+            //     let hasError = false;
+            //     let hasSelection = false;
 
-                $('.equipment_checklist').each(function() {
-                    if ($(this).is(':checked')) {
-                        hasSelection =
-                            true;
-                    }
-                });
-
-
-                if (!hasSelection) {
-                    hasError = true;
-                    container.append(errorDiv);
-                    e.preventDefault();
-                }
+            //     $('.equipment_checklist').each(function() {
+            //         if ($(this).is(':checked')) {
+            //             hasSelection =
+            //                 true;
+            //         }
+            //     });
 
 
-                if (hasError) {
-                    e.preventDefault();
-                }
-            });
+            //     if (!hasSelection) {
+            //         hasError = true;
+            //         container.append(errorDiv);
+            //         e.preventDefault();
+            //     }
 
 
-            $('#getchecklist-container').on('change', '.equipment_checklist', function() {
-                const container = $('#getchecklist-container');
+            //     if (hasError) {
+            //         e.preventDefault();
+            //     }
+            // });
 
 
-                const hasSelection = container.find('.equipment_checklist:checked').length > 0;
+            // $('#getchecklist-container').on('change', '.equipment_checklist', function() {
+            //     const container = $('#getchecklist-container');
 
 
-                if (hasSelection) {
-                    container.find('.text-danger').remove();
-                }
-            });
+            //     const hasSelection = container.find('.equipment_checklist:checked').length > 0;
+
+
+            //     if (hasSelection) {
+            //         container.find('.text-danger').remove();
+            //     }
+            // });
         });
 
 
@@ -1632,49 +1632,49 @@
                 }
             });
 
-            $('#safetyPermitadd').on('submit', function(e) {
-                const container = $('#getinstruction-container');
-                const errorDiv = $(
-                    '<div class="text-danger">Please select at least one Safe Work Instruction.</div>');
+            // $('#safetyPermitadd').on('submit', function(e) {
+            //     const container = $('#getinstruction-container');
+            //     const errorDiv = $(
+            //         '<div class="text-danger">Please select at least one Safe Work Instruction.</div>');
 
 
-                container.find('.text-danger').remove();
+            //     container.find('.text-danger').remove();
 
-                let hasError = false;
-                let hasSelection = false;
+            //     let hasError = false;
+            //     let hasSelection = false;
 
-                $('.safework_instruction').each(function() {
-                    if ($(this).is(':checked')) {
-                        hasSelection =
-                            true;
-                    }
-                });
-
-
-                if (!hasSelection) {
-                    hasError = true;
-                    container.append(errorDiv);
-                    e.preventDefault();
-                }
+            //     $('.safework_instruction').each(function() {
+            //         if ($(this).is(':checked')) {
+            //             hasSelection =
+            //                 true;
+            //         }
+            //     });
 
 
-                if (hasError) {
-                    e.preventDefault();
-                }
-            });
+            //     if (!hasSelection) {
+            //         hasError = true;
+            //         container.append(errorDiv);
+            //         e.preventDefault();
+            //     }
 
 
-            $('#getinstruction-container').on('change', '.safework_instruction', function() {
-                const container = $('#getinstruction-container');
+            //     if (hasError) {
+            //         e.preventDefault();
+            //     }
+            // });
 
 
-                const hasSelection = container.find('.safework_instruction:checked').length > 0;
+            // $('#getinstruction-container').on('change', '.safework_instruction', function() {
+            //     const container = $('#getinstruction-container');
 
 
-                if (hasSelection) {
-                    container.find('.text-danger').remove();
-                }
-            });
+            //     const hasSelection = container.find('.safework_instruction:checked').length > 0;
+
+
+            //     if (hasSelection) {
+            //         container.find('.text-danger').remove();
+            //     }
+            // });
         });
 
 
@@ -1776,15 +1776,11 @@
                         minlength: 3,
                         maxlength: 600,
                     },
-                    shutdown_req: {
-                        required: true
-                    },
+                 
                     shut_down_takenby: {
                         required: true
                     },
-                    loto_req: {
-                        required: true
-                    },
+                   
                     loto_takenby: {
                         required: true
                     },
@@ -1862,17 +1858,11 @@
                         minlength: "Job Description between 3 and 600 characters.",
                         maxlength: "Job Description between 3 and 600 characters.",
                     },
-                    shutdown_req: {
-                        required: "Please select shutdown Required.",
-
-                    },
+                   
                     shut_down_takenby: {
                         required: "Please select the person responsible for shutting down."
                     },
-                    loto_req: {
-                        required: "Please select LOTO Required.",
-
-                    },
+                 
                     loto_takenby: {
                         required: "Please select the person responsible for LOTO."
                     },

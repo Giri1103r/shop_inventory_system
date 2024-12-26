@@ -678,7 +678,7 @@
                             </div>
                         </div>
                     @endif
-                    @if($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED || ( $safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&  $safetypermit['permit_extension_status'] == 1))
+                    @if($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED || ( $safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&  $safetypermit['permit_extension_status'] == 1)&&  $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED)
                     <div class="card-body ">
                         <div class="row">
                             <div class="card-header-inner">
@@ -750,7 +750,7 @@
                     </div>
                     @endif
                     @if (
-                        $safetypermit['permit_status'] != 8 &&  $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED &&
+                        $safetypermit['permit_status'] != 8 &&  $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED && $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED &&
                             $safetypermit['permit_status'] != 5 &&
                             ($safetypermit['permit_status'] > 3 || $safetypermit['permit_status'] > 4 ))
                         <div class="card-body ">

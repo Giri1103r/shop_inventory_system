@@ -701,7 +701,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/generalpdf/{id}', [PpeExemptionController::class, 'pdf']);
                 Route::get('/ajax-list', [PpeExemptionController::class, 'list']);
 
-
             });
         });
     });

@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Safety Permit')
-@section('pageurl', admin_url('ppe_request/list'))
+@section('pageurl', admin_url('safetypermit/list'))
 @section('content')
     <div class="container-fluid">
         <div class="row">
@@ -10,7 +10,8 @@
                     <h4 class="card-title"></h4>
                     <div class="d-flex justify-content-end p-2 me-2">
                         <x-button-filter dataId="" class="search me-2" href=""></x-button-filter>
-                        <x-button-add dataId="" class="add btn btn-primary" href="{{ admin_url('safetypermit/add') }}">Add</x-button-add>
+                        <x-button-add dataId="" class="add btn btn-primary"
+                            href="{{ admin_url('safetypermit/add') }}">Add</x-button-add>
                     </div>
 
 
@@ -20,40 +21,58 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">PPE Type</label>
-                                            <select name="ppe_type" id="ppe_type" style="width: 100%"
-                                                class="form-select form-select-sm  single-select">
-                                                <option value="">Select the ppe type</option>
-                                                {{-- @foreach ($ppetype as $type)
-                                                    <option value="{{ $type->id }}">{{ $type->ppe_type }}
-                                                    </option>
-                                                @endforeach --}}
-                                            </select>
+                                            <label for="permit_id" class="form-label ">Work Permit No</label>
+                                            <input type="text" name="permit_id" id="permit_id" class="form-control"
+                                                placeholder="Work Permit No">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">PPE Name</label>
-                                            <select name="ppe_name" id="ppe_name" style="width: 100%"
-                                                class="form-select form-select-sm single-select ">
-                                                <option value="">Select the PPE name</option>
-                                                {{-- @foreach ($ppename as $name)
-                                                    <option value="{{ $name->id }}">{{ $name->ppe_name }}
-                                                    </option>
-                                                @endforeach --}}
-                                            </select>
-                                        </div>
+                                            <label for="inspectiontype" class="form-label ">Unit</label>
+                                            <select name="unit_id" id="unit_id" class=" form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select Unit</option>
+                                                @foreach ($unitList as $unit)
+                                                    <option value="{{ encryptId($unit->id) }}">
+                                                        {{ $unit->unit_name }}</option>
+                                                @endforeach
 
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="ppe_status" id="ppe_status" style="width: 100%"
-                                                class="form-control single-select">
-                                                <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mt-3">
-                                            <button type="button" class="btn btn-primary" id="searchBtn">Search</button>
-                                            <button type="reset" class="btn btn-secondary" id="resetBtn">Reset</button>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="inspectiontype" class="form-label ">Status</label>
+                                            <select name="status" id="status" class=" form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select Status</option>
+                                                @foreach ($status as $status)
+                                                    <option value="{{ encryptId($status->id) }}">
+                                                        {{ $status->status_name }}</option>
+                                                @endforeach
+
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 mb-3 d-flex align-items-end gap-2">
+                                            <x-button-search class="me-2"></x-button-search>
+                                            <x-button-reset class="ms-1"></x-button-reset>
                                         </div>
                                     </div>
                                 </div>
@@ -73,9 +92,9 @@
                                         <th>Unit</th>
                                         <th>Date</th>
                                         <th>Exact Job Location</th>
-                                        <th>Status</th> 
-                                        <th>Verified By</th> 
-                                        <th>Approved By</th> 
+                                        <th>Status</th>
+                                        <th>Verified By</th>
+                                        <th>Approved By</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th data-priority="1">{{ __('common.action') }}</th>
@@ -96,6 +115,23 @@
         $(document).ready(function() {
             var firstTh = $('.datatable-list thead th:first');
             firstTh.removeClass('sorting_asc');
+        });
+        $(document).ready(function() {
+            var fromDatepicker = flatpickr("#from_date", {
+                dateFormat: "Y-m-d",
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        var startDate = selectedDates[0];
+                        toDatepicker.set('minDate', startDate);
+                        toDatepicker.clear();
+                    }
+                }
+            });
+
+            var toDatepicker = flatpickr("#to_date", {
+                dateFormat: "Y-m-d",
+                minDate: "today"
+            });
         });
 
         $(function() {
@@ -131,9 +167,11 @@
                             .attr('content')
                     },
                     data: function(d) {
-                        d.ppe_name = $('#ppe_name').val();
-                        d.ppe_type = $('#ppe_type').val();
-                        d.ppe_status = $('#ppe_status').val();
+                        d.permit_id = $('#permit_id').val();
+                        d.unit_id = $('#unit_id').val();
+                        d.from_date = $('#from_date').val();
+                        d.to_date = $('#to_date').val();
+                        d.status = $('#status').val();
 
                     }
                 },
@@ -208,18 +246,22 @@
                                 text: '{{ __('common.pdf') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    ppe_name = $('#ppe_name').val();
-                                    ppe_type = $('#ppe_type').val();
-                                    ppe_status = $('#ppe_status').val();
+                                    permit_id = $('#permit_id').val();
+                                    unit_id = $('#unit_id').val();
+                                    from_date = $('#from_date').val();
+                                    to_date = $('#to_date').val();
+                                    status = $('#status').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('ppe_request/export/pdf') }}" +
+                                        "{{ admin_url('safetypermit/export/pdf') }}" +
                                         '?search=' + searchValue +
-                                        '&ppe_name=' + ppe_name +
-                                        '&ppe_type=' + ppe_type +
-                                        '&ppe_status=' + ppe_status
+                                        '&permit_id=' + permit_id +
+                                        '&unit_id=' + unit_id +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
+                                        '&status=' + status
 
                                 }
                             },
@@ -228,18 +270,22 @@
                                 text: '{{ __('common.excel') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    ppe_name = $('#ppe_name').val();
-                                    ppe_type = $('#ppe_type').val();
-                                    ppe_status = $('#ppe_status').val();
+                                    permit_id = $('#permit_id').val();
+                                    unit_id = $('#unit_id').val();
+                                    from_date = $('#from_date').val();
+                                    to_date = $('#to_date').val();
+                                    status = $('#status').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('ppe_request/export/excel') }}" +
+                                        "{{ admin_url('safetypermit/export/excel') }}" +
                                         '?search=' + searchValue +
-                                        '&ppe_name=' + ppe_name +
-                                        '&ppe_type=' + ppe_type +
-                                        '&ppe_status=' + ppe_status
+                                        '&permit_id=' + permit_id +
+                                        '&unit_id=' + unit_id +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
+                                        '&status=' + status
 
                                 }
                             },
@@ -260,95 +306,20 @@
             });
 
             $(document).on('click', '#searchform', function() {
-                var ppeName = $('#ppe_name').val();
-                var ppeType = $('#ppe_type').val();
+                var permit_id = $('#permit_id').val();
+                var unit_id = $('#unit_id').val();
                 var ppeStatus = $('#ppe_status').val();
                 table.draw();
             });
 
             $(document).on('click', '#resetform', function() {
-                $('#ppe_name').val('');
-                $('#ppe_type').val('');
+                $('#permit_id').val('');
+                $('#unit_id').val('');
                 $('#formsearch .single-select').trigger('change');
                 setTimeout(function() {
                     table.draw();
                 }, 150);
             });
-
-
-
-
-            /* Status Change */
-            // $(document).on('click', '.statusChange', function() {
-            //     var id = $(this).data('id');
-            //     var types = $(this).data('type');
-            //     if (types == 1) {
-            //         var title = '{{ __('Do You want to In-Activate  PPE Request ') }}';
-            //         var text = '{{ __('common.inactive') }}';
-            //         var btncolor = '#dc3545'
-
-            //     } else {
-            //         var title = '{{ __('Do You want to Activate PPE Request') }}';
-            //         var text = '{{ __('common.active') }}';
-            //         var btncolor = '#7ddc35'
-            //     }
-
-            //     Swal.fire({
-            //         title: title,
-            //         icon: 'warning',
-            //         showCancelButton: true,
-            //         confirmButtonText: text,
-            //         confirmButtonColor: btncolor,
-            //         customClass: {
-            //             confirmButton: 'btn-skew',
-            //             cancelButton: 'btn-skew'
-            //         },
-            //     }).then((result) => {
-
-
-            //         if (result.value) {
-            //             $.ajax({
-            //                 url: "{{ admin_url('ppe_request/status') }}",
-            //                 type: 'post',
-
-            //                 data: {
-            //                     id: id,
-            //                     types: types
-            //                 },
-            //                 success: function(response) {
-            //                     const Toast = Swal.mixin({
-            //                         toast: true,
-            //                         position: 'top-right',
-            //                         showConfirmButton: false,
-            //                         timer: 3000,
-            //                         timerProgressBar: true,
-            //                         didOpen: (toast) => {
-            //                             toast.addEventListener(
-            //                                 'mouseenter',
-            //                                 Swal.stopTimer)
-            //                             toast.addEventListener(
-            //                                 'mouseleave',
-            //                                 Swal.resumeTimer
-            //                             )
-            //                         }
-            //                     });
-            //                     Toast.fire({
-            //                         icon: 'success',
-            //                         title: response.msg
-            //                     });
-            //                     table.draw();
-            //                 },
-            //                 error: function(data) {
-            //                     $.notify(data.responseJSON.msg, "error");
-            //                 }
-            //             });
-            //         } else if (result.isDenied) {
-            //             Swal.fire('Something went wrong', '', 'info');
-            //         }
-            //     })
-
-            // });
-
 
             // /* Delete Record */
             // $(document).on('click', '.recordDelete', function() {

@@ -691,6 +691,8 @@ class CronController extends Controller
                 }
             }
         } catch (Exception $ex) {
+
+            dd($ex);
             Log::error('Error in permitClose cron job.', ['error' => $ex->getMessage()]);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
