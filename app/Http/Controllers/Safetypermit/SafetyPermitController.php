@@ -330,6 +330,7 @@ class SafetyPermitController extends Controller
 
             $safetypermit = $this->safetypermit->selectOne($id);
 
+            // dd($safetypermit);
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $typeofwork = $this->typeofwork->gettypework();
 

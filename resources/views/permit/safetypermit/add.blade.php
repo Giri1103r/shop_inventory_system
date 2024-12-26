@@ -241,7 +241,7 @@
                                                                 <label class="form-label mb-0"
                                                                     for="air_checkbox">Air</label>
                                                                 <input type="checkbox"
-                                                                    class="validate-radio-required shutdowncheckbox"
+                                                                    class=" shutdowncheckbox"
                                                                     id="air_checkbox" name="state_isolation_loto[]"
                                                                     value="Air" disabled>
                                                             </div>
@@ -279,7 +279,7 @@
                                                                 <label class="form-label mb-0"
                                                                     for="electrical_checkbox">Electrical</label>
                                                                 <input type="checkbox"
-                                                                    class="validate-radio-required shutdowncheckbox"
+                                                                    class=" shutdowncheckbox"
                                                                     id="electrical_checkbox" name="state_isolation_loto[]"
                                                                     value="Electrical" disabled>
                                                             </div>
@@ -293,7 +293,7 @@
                                                                 <label class="form-label mb-0"
                                                                     for="water_checkbox">Water/Liquid</label>
                                                                 <input type="checkbox"
-                                                                    class="validate-radio-required shutdowncheckbox"
+                                                                    class=" shutdowncheckbox"
                                                                     id="water_checkbox" name="state_isolation_loto[]"
                                                                     value="Water/Liquid" disabled>
                                                             </div>
@@ -402,7 +402,7 @@
                                                             <label class="form-label">PPM and is therefore safe to enter
                                                                 from</label>
                                                             <input type="text"
-                                                                name="confined_space_entry[ppm_safe_to_enter]"
+                                                                name="confined_space_entry[ppm_safe_to_enter]" id="from_PPMTime"
                                                                 class="form-control" placeholder="" disabled>
                                                             <div class="text-danger"></div>
                                                         </div>
@@ -410,7 +410,7 @@
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">To</label>
-                                                            <input type="text" name="confined_space_entry[to]"
+                                                            <input type="text" name="confined_space_entry[to]" id="to_PPMTime"
                                                                 class="form-control" placeholder="" disabled>
                                                             <div class="text-danger"></div>
 
@@ -790,8 +790,9 @@
                                                         <input type="text" name="attendance_toolbox_talk"
                                                             id="attendance_toolbox_talk" class="form-control"
                                                             style="flex-grow: 1; max-width: 300px;">
-                                                        <div class="text-danger"></div>
+
                                                     </div>
+                                                    <div class="text-danger"></div>
                                                 </div>
                                             </div>
 
@@ -975,11 +976,7 @@
                         .text("Workman Name is required.");
                     isValid = false;
                 }
-                // if (!designation) {
-                //     parentRow.find('input[name="workman_desig"]').closest('.form-group').find(
-                //         '.text-danger').text("Designation is required.");
-                //     isValid = false;
-                // }
+
                 if (!department) {
                     parentRow.find('select[name="workman_dept"]').closest('.form-group').find(
                         '.text-danger').text("Department is required.");
@@ -1082,6 +1079,22 @@
             minDate: new Date(),
             dateFormat: "d-m-Y",
             minuteIncrement: 5,
+        });
+
+        flatpickr("#from_PPMTime",{
+            enableTime: true,
+            noCalendar: true,
+            time_24hr: true,
+            minuteIncrement: 5,
+            dateFormat: "H:i",
+        });
+
+        flatpickr("#to_PPMTime",{
+            enableTime: true,
+            noCalendar: true,
+            time_24hr: true,
+            minuteIncrement: 5,
+            dateFormat: "H:i",
         });
 
         const fromPicker = flatpickr("#time_from", {
@@ -1444,49 +1457,6 @@
                 }
             });
 
-            // $('#safetyPermitadd').on('submit', function(e) {
-            //     const container = $('#getprecaution-container');
-            //     const errorDiv = $(
-            //         '<div class="text-danger">Please select at least one Precaution Taken.</div>');
-
-
-            //     container.find('.text-danger').remove();
-
-            //     let hasError = false;
-            //     let hasSelection = false;
-
-            //     $('.precaution_taken').each(function() {
-            //         if ($(this).is(':checked')) {
-            //             hasSelection =
-            //                 true;
-            //         }
-            //     });
-
-
-            //     if (!hasSelection) {
-            //         hasError = true;
-            //         container.append(errorDiv);
-            //         e.preventDefault();
-            //     }
-
-
-            //     if (hasError) {
-            //         e.preventDefault();
-            //     }
-            // });
-
-
-            // $('#getprecaution-container').on('change', '.precaution_taken', function() {
-            //     const container = $('#getprecaution-container');
-
-
-            //     const hasSelection = container.find('.precaution_taken:checked').length > 0;
-
-
-            //     if (hasSelection) {
-            //         container.find('.text-danger').remove();
-            //     }
-            // });
         });
 
 
@@ -1540,49 +1510,7 @@
                 }
             });
 
-            // $('#safetyPermitadd').on('submit', function(e) {
-            //     const container = $('#getchecklist-container');
-            //     const errorDiv = $(
-            //         '<div class="text-danger">Please select at least one Equipment Checklist.</div>');
 
-
-            //     container.find('.text-danger').remove();
-
-            //     let hasError = false;
-            //     let hasSelection = false;
-
-            //     $('.equipment_checklist').each(function() {
-            //         if ($(this).is(':checked')) {
-            //             hasSelection =
-            //                 true;
-            //         }
-            //     });
-
-
-            //     if (!hasSelection) {
-            //         hasError = true;
-            //         container.append(errorDiv);
-            //         e.preventDefault();
-            //     }
-
-
-            //     if (hasError) {
-            //         e.preventDefault();
-            //     }
-            // });
-
-
-            // $('#getchecklist-container').on('change', '.equipment_checklist', function() {
-            //     const container = $('#getchecklist-container');
-
-
-            //     const hasSelection = container.find('.equipment_checklist:checked').length > 0;
-
-
-            //     if (hasSelection) {
-            //         container.find('.text-danger').remove();
-            //     }
-            // });
         });
 
 
@@ -1635,49 +1563,7 @@
                 }
             });
 
-            // $('#safetyPermitadd').on('submit', function(e) {
-            //     const container = $('#getinstruction-container');
-            //     const errorDiv = $(
-            //         '<div class="text-danger">Please select at least one Safe Work Instruction.</div>');
 
-
-            //     container.find('.text-danger').remove();
-
-            //     let hasError = false;
-            //     let hasSelection = false;
-
-            //     $('.safework_instruction').each(function() {
-            //         if ($(this).is(':checked')) {
-            //             hasSelection =
-            //                 true;
-            //         }
-            //     });
-
-
-            //     if (!hasSelection) {
-            //         hasError = true;
-            //         container.append(errorDiv);
-            //         e.preventDefault();
-            //     }
-
-
-            //     if (hasError) {
-            //         e.preventDefault();
-            //     }
-            // });
-
-
-            // $('#getinstruction-container').on('change', '.safework_instruction', function() {
-            //     const container = $('#getinstruction-container');
-
-
-            //     const hasSelection = container.find('.safework_instruction:checked').length > 0;
-
-
-            //     if (hasSelection) {
-            //         container.find('.text-danger').remove();
-            //     }
-            // });
         });
 
 
@@ -1780,17 +1666,7 @@
                         maxlength: 600,
                     },
 
-                    shut_down_takenby: {
-                        required: true
-                    },
 
-                    loto_takenby: {
-                        required: true
-                    },
-                    loto_no: {
-                        required: true,
-                        numeric: true
-                    },
                     equipment_checklist_inspection: {
                         required: true,
                     },
@@ -1849,17 +1725,9 @@
                         maxlength: "Job Description between 3 and 600 characters.",
                     },
 
-                    shut_down_takenby: {
-                        required: "Please select the person responsible for shutting down."
-                    },
 
-                    loto_takenby: {
-                        required: "Please select the person responsible for LOTO."
-                    },
-                    loto_no: {
-                        required: "Loto No is required.",
-                        numeric: "Please enter a valid numeric Loto No."
-                    },
+
+
                     equipment_checklist_inspection: {
                         required: "Equipment Checklist Inspection is required.",
                     },

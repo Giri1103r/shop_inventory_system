@@ -289,12 +289,12 @@
                                                             style="min-width: 200px;">
                                                             <textarea class="form-control shutdowncheckbox" name="state_isolation_loto[]" placeholder="Specify others" disabled>
 @if ($stateIsolationLoto)
-                                                  @foreach ($stateIsolationLoto as $item)
+@foreach ($stateIsolationLoto as $item)
 @if (!in_array($item, ['Air', 'Gas', 'Electrical', 'Water/Liquid']))
 {{ $item }}
 @endif
 @endforeach
-                                                @endif
+@endif
 </textarea>
                                                         </div>
                                                     </div>
@@ -1142,6 +1142,22 @@
             minuteIncrement: 5,
         });
 
+        flatpickr("#from_PPMTime",{
+            enableTime: true,
+            noCalendar: true,
+            time_24hr: true,
+            minuteIncrement: 5,
+            dateFormat: "H:i",
+        });
+
+        flatpickr("#to_PPMTime",{
+            enableTime: true,
+            noCalendar: true,
+            time_24hr: true,
+            minuteIncrement: 5,
+            dateFormat: "H:i",
+        });
+
         const fromPicker = flatpickr("#time_from", {
             enableTime: true,
             noCalendar: true,
@@ -1285,6 +1301,7 @@
             const selectedProtectiveEquipments = @json($safetypermit->mapped_protective_equip);
 
 
+            console.log(selectedProtectiveEquipments);
 
             function handleCheckboxChange(workId, checkboxState) {
                 const container = $('#getprotectivechecklist-container');
@@ -1305,7 +1322,7 @@
                                         .some(
                                             function(workType) {
                                                 return selectedProtectiveEquipments[workType]
-                                                    .checkpoints
+                                                    .checkid
                                                     .includes(item.id);
                                             }) ? 'checked' : '';
 
@@ -1407,10 +1424,10 @@
                                         .some(
                                             function(workType) {
                                                 return selectedEquipmentsInvolved[workType]
-                                                    .checkpoints
+                                                    .checkid
                                                     .includes(item.id);
                                             }) ? 'checked' : '';
-
+                                    console.log(item.id);
                                     checkpointsHtml += `
                                 <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
                                     <input type="checkbox" class="equiment_involved" name="equiment_involved[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}" ${isChecked}>
@@ -1506,7 +1523,7 @@
                                         .some(
                                             function(workType) {
                                                 return selectedPrecautionEquipments[workType]
-                                                    .checkpoints
+                                                    .checkid
                                                     .includes(item.id);
                                             }) ? 'checked' : '';
 
@@ -1575,7 +1592,7 @@
                                         .some(
                                             function(workType) {
                                                 return selectedChecklistEquipments[workType]
-                                                    .checkpoints
+                                                    .checkid
                                                     .includes(item.id);
                                             }) ? 'checked' : '';
 
@@ -1641,7 +1658,7 @@
 
                                     const isChecked = Object.keys(selectedSafeWork).some(
                                         function(workType) {
-                                            return selectedSafeWork[workType].checkpoints
+                                            return selectedSafeWork[workType].checkid
                                                 .includes(item.id);
                                         }) ? 'checked' : '';
 
@@ -1786,17 +1803,7 @@
                         minlength: 3,
                         maxlength: 600,
                     },
-                    shut_down_takenby: {
-                        required: true
-                    },
 
-                    loto_takenby: {
-                        required: true
-                    },
-                    loto_no: {
-                        required: true,
-                        numeric: true
-                    },
                     equipment_checklist_inspection: {
                         required: true,
                     },
@@ -1851,18 +1858,6 @@
                         required: "Job Description cannot be empty.",
                         minlength: "Job Description between 3 and 600 characters.",
                         maxlength: "Job Description between 3 and 600 characters.",
-                    },
-
-                    shut_down_takenby: {
-                        required: "Please select the person responsible for shutting down."
-                    },
-
-                    loto_takenby: {
-                        required: "Please select the person responsible for LOTO."
-                    },
-                    loto_no: {
-                        required: "Loto No is required.",
-                        numeric: "Please enter a valid numeric Loto No."
                     },
                     equipment_checklist_inspection: {
                         required: "Equipment Checklist Inspection is required.",

@@ -480,6 +480,10 @@ class SafetyPermit extends Model
                         ->whereIn('id', $checklistIds)
                         ->pluck('check_points')
                         ->toArray();
+                    $checkid = DB::table('ptw_masters_typeofwork_checklist')
+                        ->whereIn('id', $checklistIds)
+                        ->pluck('id')
+                        ->toArray();
 
                     $checkPointNames = DB::table('ptw_masters_protective_equip')
                         ->whereIn('id', $checkpoints)
@@ -488,7 +492,8 @@ class SafetyPermit extends Model
 
                     $mappedProtectiveEquip[$workName] = [
                         'checkpoints' => $checkpoints,
-                        'checkpoint_names' => $checkPointNames
+                        'checkpoint_names' => $checkPointNames,
+                        'checkid' => $checkid
                     ];
                 }
             }
@@ -510,6 +515,11 @@ class SafetyPermit extends Model
                         ->pluck('check_points')
                         ->toArray();
 
+                    $checkid = DB::table('ptw_masters_typeofwork_checklist')
+                        ->whereIn('id', $checklistIds)
+                        ->pluck('id')
+                        ->toArray();
+
                     $checkPointNames = DB::table('ptw_masters_equip_involved')
                         ->whereIn('id', $checkpoints)
                         ->pluck('equip_involve')
@@ -517,7 +527,8 @@ class SafetyPermit extends Model
 
                     $mappedequiment_involved[$workName] = [
                         'checkpoints' => $checkpoints,
-                        'checkpoint_names' => $checkPointNames
+                        'checkpoint_names' => $checkPointNames,
+                        'checkid' => $checkid
                     ];
                 }
             }
@@ -538,13 +549,18 @@ class SafetyPermit extends Model
                         ->pluck('check_points')
                         ->toArray();
 
+                    $checkid = DB::table('ptw_masters_typeofwork_checklist')
+                        ->whereIn('id', $checklistIds)
+                        ->pluck('id')
+                        ->toArray();
                     $checkPointNames = DB::table('ptw_masters_precaution')
                         ->whereIn('id', $checkpoints)
                         ->pluck('precaution')
                         ->toArray();
                     $mappeprecaution_taken[$workName] = [
                         'checkpoints' => $checkpoints,
-                        'checkpoint_names' => $checkPointNames
+                        'checkpoint_names' => $checkPointNames,
+                        'checkid' => $checkid
                     ];
                 }
             }
@@ -563,6 +579,10 @@ class SafetyPermit extends Model
                         ->whereIn('id', $checklistIds)
                         ->pluck('check_points')
                         ->toArray();
+                    $checkid = DB::table('ptw_masters_typeofwork_checklist')
+                        ->whereIn('id', $checklistIds)
+                        ->pluck('id')
+                        ->toArray();
 
                     $checkPointNames = DB::table('ptw_masters_checklist')
                         ->whereIn('id', $checkpoints)
@@ -573,7 +593,8 @@ class SafetyPermit extends Model
 
                     $mappeequipment_checklist[$workName] = [
                         'checkpoints' => $checkpoints,
-                        'checkpoint_names' => $checkPointNames
+                        'checkpoint_names' => $checkPointNames,
+                        'checkid' => $checkid
                     ];
                 }
             }
@@ -593,6 +614,10 @@ class SafetyPermit extends Model
                         ->whereIn('id', $checklistIds)
                         ->pluck('check_points')
                         ->toArray();
+                    $checkid = DB::table('ptw_masters_typeofwork_checklist')
+                        ->whereIn('id', $checklistIds)
+                        ->pluck('id')
+                        ->toArray();
 
                     $checkPointNames = DB::table('ptw_masters_safe_work')
                         ->whereIn('id', $checkpoints)
@@ -602,7 +627,8 @@ class SafetyPermit extends Model
 
                     $mappesafework_instruction[$workName] = [
                         'checkpoints' => $checkpoints,
-                        'checkpoint_names' => $checkPointNames
+                        'checkpoint_names' => $checkPointNames,
+                        'checkid' => $checkid
                     ];
                 }
             }
@@ -629,7 +655,7 @@ class SafetyPermit extends Model
     public function selectmail($id)
     {
         $data =  $this->select('ptw_safety.permit_id', 'ptw_safety.unit_id', 'ptw_safety.date', 'ptw_safety.time_from', 'ptw_safety.time_to', 'ptw_safety.exact_location_job', 'ptw_safety.job_location_area')
-            ->where('ptw_safety.id', $id)->where('ptw_safety.trash','NO')
+            ->where('ptw_safety.id', $id)->where('ptw_safety.trash', 'NO')
             ->first();
 
         return $data;
