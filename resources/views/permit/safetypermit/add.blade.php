@@ -1800,21 +1800,6 @@
                         maxlength: 30,
                        
                     },
-                    employee_code: {
-                        required: true,
-                    },
-                    workman_name: {
-                        required: true,
-                    },
-                    workman_desig: {
-                        required: true,
-                    },
-                    nature_of_job: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 30,
-                        regex: /^[a-zA-Z, ]{3,30}$/
-                    },
                     assigned_job: {
                         required: true,
                     },

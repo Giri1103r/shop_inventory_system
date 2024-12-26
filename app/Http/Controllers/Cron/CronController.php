@@ -658,6 +658,7 @@ class CronController extends Controller
 
             $permits = SafetyPermit::where('trash', 'NO')
                 ->where('permit_status', '!=', STATUS_PLANT_HEAD_APPROVED)
+                ->where('permit_status', '!=', STATUS_EHS_APPROVE_PENDING)
                 ->whereDate('date', Carbon::today())
                 ->whereTime('time_to', '>=', $currentTime->toTimeString())
                 ->whereTime('time_to', '<=', $timeThirtyMinutesAhead->toTimeString())
@@ -674,11 +675,14 @@ class CronController extends Controller
 
                 if ($assignedUser && $assignedUser->email) {
                     $safetypermitdetails = $this->safetypermit->selectmail($permit->id);
+                    $extensionLink = url('safetypermit/permitExtension/' . encryptId($permit->id));
+
                     $permitrray = $safetypermitdetails->toArray();
 
                     $permitrray['name'] = $assignedUser->name;
                     $permitrray['email_id'] = $assignedUser->email;
                     $permitrray['mail_subject'] = $mailsubject;
+                    $permitrray['extension_link'] = $extensionLink;
 
                     Mail::to($permitrray['email_id'])->queue(new PermitExpiryEmail($permitrray));
 

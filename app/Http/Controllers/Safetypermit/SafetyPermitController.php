@@ -145,7 +145,7 @@ class SafetyPermitController extends Controller
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
 
-                        $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';;
+                            $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';;
 
                             return $btn;
                         })
@@ -214,8 +214,8 @@ class SafetyPermitController extends Controller
                 $mailsubject = 'Safety Permit has been submitted';
                 $user_role = ROLE_EHS_OFFICER;
 
-                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
-                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $safetypermit->unit_id)->pluck('id')->toArray();
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $safetypermit->unit_id)->get();
 
                 if (count($users) > 0) {
 
@@ -252,7 +252,7 @@ class SafetyPermitController extends Controller
                         'id' => $safetypermit->id,
                         'module' => 1,
                     )),
-                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
+                    'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($userids),
                     'created_by' => Auth::id(),
                 );
@@ -453,7 +453,6 @@ class SafetyPermitController extends Controller
                     $email_id = $user->email;
 
                     if ($email_id != '' || $email_id != null) {
-                        // $safetypermit = new SafetyPermit();
                         $safetypermitdetails =  $this->safetypermit->selectmail($id);
                         $permitrray  = $safetypermitdetails->toArray();
 
@@ -466,7 +465,8 @@ class SafetyPermitController extends Controller
                 }
             }
 
-            $userids = User::where('id', $safetypermit->verified_by)->pluck('id')->toArray();
+            // $userids = User::where('id', $safetypermit->verified_by)->pluck('id')->toArray();
+            // $users = User::where('id', $safetypermit->verified_by)->pluck('id')->get();
             // dd($userids,$safetypermit->verified_by);
             // $users = User::where($notifywhere)->whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
             /**
@@ -484,8 +484,8 @@ class SafetyPermitController extends Controller
                     'id' => $safetypermit->id,
                     'module' => 1,
                 )),
-                 'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
-                'assigned_user' => array_to_string($userids),
+                'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
+                'assigned_user' => $safetypermit->verified_by,
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
@@ -532,7 +532,7 @@ class SafetyPermitController extends Controller
                 $permit_status = STATUS_PLANT_HEAD_PENDING;
             }
 
-            // dd($request);
+
             $approve =   $this->approvereject->ehsapproval($permit_status);
             if ($request->has('reassign')) {
                 $this->safetypermit->reassignto($request->reassign_to, $id);
@@ -545,12 +545,10 @@ class SafetyPermitController extends Controller
             if ($request->has('hold')) {
 
                 $mailsubject = 'EHS Holded the permit';
-                $Assignedusers = User::where('id', $safetypermit->resume_hold_by)
-                    ->orWhere('id', $safetypermit->created_by)
+                $Assignedusers = User::whereIn('id', [$safetypermit->resume_hold_by, $safetypermit->created_by])
                     ->select('name', 'email')
                     ->get()
                     ->unique('email');
-
 
                 if (count($Assignedusers) > 0) {
 
@@ -570,7 +568,11 @@ class SafetyPermitController extends Controller
                         }
                     }
                 }
-                $UserId =  User::where('id', $safetypermit->resume_hold_by)->orwhere('id', $safetypermit->created_by)->pluck('id')->toArray();
+                $UserIds = User::whereIn('id', [$safetypermit->resume_hold_by, $safetypermit->created_by])
+                    ->pluck('id')
+                    ->toArray();
+
+                $UserIdsCommaSeparated = implode(',', $UserIds);
                 $notificationData = array(
                     'notification_type' => 3,
                     'module_type' => 1,
@@ -582,15 +584,14 @@ class SafetyPermitController extends Controller
                         'id' => $safetypermit->id,
                         'module' => 1,
                     )),
-                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
-                    'assigned_user' => array_to_string($UserId),
+                    'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
+                    'assigned_user' => $UserIdsCommaSeparated,
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
             } elseif ($request->has('resume')) {
                 $mailsubject = 'EHS Resumed the permit';
-                $Assignedusers = User::where('id', $safetypermit->resume_hold_by)
-                    ->orWhere('id', $safetypermit->created_by)
+                $Assignedusers = User::whereIn('id', [$safetypermit->resume_hold_by, $safetypermit->created_by])
                     ->select('name', 'email')
                     ->get()
                     ->unique('email');
@@ -613,8 +614,11 @@ class SafetyPermitController extends Controller
                         }
                     }
                 }
-                $UserId =  User::where('id', $safetypermit->resume_hold_by)->orwhere('id', $safetypermit->created_by)->pluck('id')->toArray();
+                $UserIds = User::whereIn('id', [$safetypermit->resume_hold_by, $safetypermit->created_by])
+                    ->pluck('id')
+                    ->toArray();
 
+                $UserIdsCommaSeparated = implode(',', $UserIds);
                 $notificationData = array(
                     'notification_type' => 3,
                     'module_type' => 1,
@@ -626,8 +630,8 @@ class SafetyPermitController extends Controller
                         'id' => $safetypermit->id,
                         'module' => 1,
                     )),
-                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
-                    'assigned_user' => array_to_string($UserId),
+                    'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
+                    'assigned_user' => $UserIdsCommaSeparated,
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
@@ -646,7 +650,6 @@ class SafetyPermitController extends Controller
                         $email_id = $user->email;
 
                         if ($email_id != '' || $email_id != null) {
-                            $safetypermit = new SafetyPermit();
                             $safetypermitdetails =  $this->safetypermit->selectmail($id);
                             $permitrray  = $safetypermitdetails->toArray();
 
@@ -675,7 +678,7 @@ class SafetyPermitController extends Controller
                         'id' => $safetypermit->id,
                         'module' => 1,
                     )),
-                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
+                    'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($userids),
                     'created_by' => Auth::id(),
                 );
@@ -695,7 +698,6 @@ class SafetyPermitController extends Controller
                         $email_id = $user->email;
 
                         if ($email_id != '' || $email_id != null) {
-                            // $safetypermit = new SafetyPermit();
                             $safetypermitdetails =  $this->safetypermit->selectmail($id);
                             $permitrray  = $safetypermitdetails->toArray();
 
@@ -724,7 +726,7 @@ class SafetyPermitController extends Controller
                         'id' => $safetypermit->id,
                         'module' => 1,
                     )),
-                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
+                    'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($userids),
                     'created_by' => Auth::id(),
                 );
@@ -734,8 +736,8 @@ class SafetyPermitController extends Controller
                 $mailsubject = 'EHS Approved';
                 $user_role = ROLE_PLANT_HEAD;
 
-                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
-                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $safetypermit->unit_id)->pluck('id')->toArray();
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $safetypermit->unit_id)->get();
 
 
 
@@ -746,7 +748,6 @@ class SafetyPermitController extends Controller
                         $email_id = $user->email;
 
                         if ($email_id != '' || $email_id != null) {
-                            $safetypermit = new SafetyPermit();
                             $safetypermitdetails =  $this->safetypermit->selectmail($id);
                             $permitrray  = $safetypermitdetails->toArray();
 
@@ -775,7 +776,7 @@ class SafetyPermitController extends Controller
                         'id' => $safetypermit->id,
                         'module' => 1,
                     )),
-                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
+                    'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($userids),
                     'created_by' => Auth::id(),
                 );
@@ -876,7 +877,7 @@ class SafetyPermitController extends Controller
                     'id' => $safetypermit->id,
                     'module' => 1,
                 )),
-                 'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
+                'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                 'assigned_user' => array_to_string($assigned_user),
                 'created_by' => Auth::id(),
             );
@@ -1314,7 +1315,7 @@ class SafetyPermitController extends Controller
                     'id' => $safetypermit->id,
                     'module' => 1,
                 )),
-                 'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
+                'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                 'assigned_user' => array_to_string($userids),
                 'created_by' => Auth::id(),
             );
@@ -1410,7 +1411,7 @@ class SafetyPermitController extends Controller
                     'id' => $safetypermit->id,
                     'module' => 1,
                 )),
-                 'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
+                'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                 'assigned_user' => array_to_string($userids),
                 'created_by' => Auth::id(),
             );
