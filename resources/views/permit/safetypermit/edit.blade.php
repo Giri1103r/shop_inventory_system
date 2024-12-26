@@ -153,8 +153,10 @@
                                             <div class="col-12 col-md-6 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
                                                     <img src="{{ url('public/assets/images/safetypermit/power-off.png') }}"
-                                                        class="img-fluid" style="width: 50px; height: 50px;">
-                                                    <label class="form-label mb-0">Shut Down Required (Yes/No)</label>
+                                                        class="img-fluid"
+                                                        style="width: 50px; height: 50px; margin-right:30px">
+                                                    <label class="form-label mb-0"style="margin-right: 58px;">Shut Down
+                                                        Required (Yes/No)</label>
                                                     <input type="checkbox" id="shutdown-checkbox"
                                                         class="shutdown-checkbox" name="shutdown_req" value="1"
                                                         {{ $safetypermit->shutdown_req == 1 ? 'checked' : '' }}>
@@ -180,8 +182,10 @@
                                             <div class="col-12 col-md-6 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
                                                     <img src="{{ url('public/assets/images/safetypermit/process.png') }}"
-                                                        class="img-fluid" style="width: 50px; height: 50px;">
-                                                    <label class="form-label mb-0 ">Isolation/LOTO Required
+                                                        class="img-fluid"
+                                                        style="width: 50px; height: 50px; margin-right:30px">
+                                                    <label class="form-label mb-0 "
+                                                        style="margin-right: 34px;">Isolation/LOTO Required
                                                         (Yes/No)</label>
                                                     <input type="checkbox" id="loto-checkbox" class="loto-checkbox"
                                                         name= "loto_req" value="1"
@@ -207,24 +211,32 @@
                                         </div>
 
                                         <div class="row border p-3 mx-1">
-                                            <div class="col-12 col-md-4 mb-3">
-                                                <div class="form-group d-flex align-items-center gap-3">
-                                                    <label class="form-label mb-0">Loto No</label>
-                                                    <input type="text" name="loto_no"
-                                                        class="form-control lotocheckbox" placeholder="Loto No"
-                                                        value="{{ $safetypermit->tagfield == 1 ? $safetypermit->loto_no : '' }}"
-                                                        {{ $safetypermit->tagfield == 1 ? '' : 'disabled' }}>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-group d-flex align-items-center">
+                                                    <label class="form-label mb-0" style="margin-right: 50px">Loto
+                                                        No</label>
+                                                    <div class="col-sm-6 p-0">
+                                                        <input type="text" name="loto_no" class="form-control"
+                                                            placeholder="Loto No"
+                                                            value="{{ $safetypermit->tagfield == 1 ? $safetypermit->loto_no : '' }}"
+                                                            {{ $safetypermit->tagfield == 1 ? '' : 'disabled' }}>
+                                                    </div>
                                                 </div>
+
                                             </div>
-                                            <div class="col-12 col-md-8 mb-3">
-                                                <div class="form-group d-flex align-items-center gap-3">
-                                                    <label class="form-label mb-0">Tag Field properly (Yes/No)</label>
-                                                    <input type="checkbox" class=" shutdowncheckbox" name="tagfield"
+                                            <div class="col-md-4 mb-3 "style="margin-right: 50px">
+                                                <div class="form-group d-flex align-items-center ps-5 ">
+                                                    <label class="form-label mb-0" style="margin-right:30px;">Tag Field
+                                                        properly (Yes/No)</label>
+                                                    <input type="checkbox" class="shutdowncheckbox" name="tagfield"
                                                         value="1"
                                                         {{ $safetypermit->tagfield == 1 ? 'checked' : '' }}>
                                                 </div>
                                             </div>
                                         </div>
+
+
+
 
 
 
@@ -239,8 +251,10 @@
                                                         <div class="d-flex flex-shrink-0 align-items-center gap-1"
                                                             style="min-width: 200px;">
                                                             <img src="{{ url('public/assets/images/safetypermit/person.png') }}"
-                                                                class="img-fluid" style="width: 50px; height: 50px;">
-                                                            <label class="form-label mb-0">Air</label>
+                                                                class="img-fluid"
+                                                                style="width: 50px; height: 50px; margin-right: 20px">
+                                                            <label class="form-label mb-0 "
+                                                                style="margin-right: 100px;">Air</label>
                                                             <input type="checkbox" class="shutdowncheckbox"
                                                                 name="state_isolation_loto[]" value="Air"
                                                                 {{ in_array('Air', $stateIsolationLoto ?? []) ? 'checked' : '' }}
@@ -249,8 +263,10 @@
                                                         <div class="d-flex flex-shrink-0 align-items-center gap-1"
                                                             style="min-width: 200px;">
                                                             <img src="{{ url('public/assets/images/safetypermit/natural-gas.png') }}"
-                                                                class="img-fluid" style="width: 50px; height: 50px;">
-                                                            <label class="form-label mb-0">Gas</label>
+                                                                class="img-fluid"
+                                                                style="width: 50px; height: 50px; margin-right: 20px">
+                                                            <label class="form-label mb-0"
+                                                                style="margin-right: 115px;">Gas</label>
                                                             <input type="checkbox" class="shutdowncheckbox"
                                                                 name="state_isolation_loto[]" value="Gas"
                                                                 {{ in_array('Gas', $stateIsolationLoto ?? []) ? 'checked' : '' }}
@@ -268,8 +284,10 @@
                                                         <div class="d-flex flex-shrink-0 align-items-center gap-1"
                                                             style="min-width: 200px;">
                                                             <img src="{{ url('public/assets/images/safetypermit/electrician.png') }}"
-                                                                class="img-fluid" style="width: 50px; height: 50px;">
-                                                            <label class="form-label mb-0">Electrical</label>
+                                                                class="img-fluid"
+                                                                style="width: 50px; height: 50px; margin-right: 20px;">
+                                                            <label class="form-label mb-0"
+                                                                style="margin-right: 58px;">Electrical</label>
                                                             <input type="checkbox" class="shutdowncheckbox"
                                                                 name="state_isolation_loto[]" value="Electrical"
                                                                 {{ in_array('Electrical', $stateIsolationLoto ?? []) ? 'checked' : '' }}
@@ -278,8 +296,10 @@
                                                         <div class="d-flex flex-shrink-0 align-items-center gap-1"
                                                             style="min-width: 200px;">
                                                             <img src="{{ url('public/assets/images/safetypermit/leak.png') }}"
-                                                                class="img-fluid" style="width: 50px; height: 50px;">
-                                                            <label class="form-label mb-0">Water/Liquid</label>
+                                                                class="img-fluid"
+                                                                style="width: 50px; height: 50px; margin-right: 20px">
+                                                            <label class="form-label mb-0"
+                                                                style="margin-right: 58px;">Water/Liquid</label>
                                                             <input type="checkbox" class="shutdowncheckbox"
                                                                 name="state_isolation_loto[]" value="Water/Liquid"
                                                                 {{ in_array('Water/Liquid', $stateIsolationLoto ?? []) ? 'checked' : '' }}
@@ -306,106 +326,82 @@
 
                                                 <div class="row border rounded p-2 mx-1">
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">O2%</label>
-                                                            <input type="text"
-                                                                name="confined_space_entry[o2_percentage]"
-                                                                class="form-control"
-                                                                value="{{ $confinedSpaceEntry['o2_percentage'] ?? '' }}"
-                                                                disabled>
+                                                        <div class="form-group d-flex align-items-center">
+                                                            <label class="form-label mb-0 mr-3">O2%</label>
+                                                            <input type="text" name="confined_space_entry[o2_percentage]" class="form-control"
+                                                                value="{{ $confinedSpaceEntry['o2_percentage'] ?? '' }}" disabled>
                                                         </div>
                                                     </div>
+
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">System Isolated</label>
-                                                            <input type="hidden"
-                                                                name="confined_space_entry[system_isolated]"
-                                                                value="0">
-                                                            <input type="checkbox" class=""
-                                                                name="confined_space_entry[system_isolated]"
-                                                                value="1"
+                                                        <div class="form-group d-flex align-items-center justify-content-between">
+                                                            <label class="form-label mb-0">System Isolated</label>
+                                                            <input type="hidden" name="confined_space_entry[system_isolated]" value="0">
+                                                            <input type="checkbox" name="confined_space_entry[system_isolated]" value="1"
                                                                 {{ $confinedSpaceEntry['system_isolated'] ?? '' == 1 ? 'checked' : '' }}>
                                                         </div>
                                                     </div>
+
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Rescue System Available</label>
-                                                            <input type="hidden"
-                                                                name="confined_space_entry[rescue_system]" value="0">
-                                                            <input type="checkbox" class=""
-                                                                name="confined_space_entry[rescue_system]" value="1"
+                                                        <div class="form-group d-flex align-items-center justify-content-between">
+                                                            <label class="form-label mb-0">Rescue System Available</label>
+                                                            <input type="hidden" name="confined_space_entry[rescue_system]" value="0">
+                                                            <input type="checkbox" name="confined_space_entry[rescue_system]" value="1"
                                                                 {{ $confinedSpaceEntry['rescue_system'] ?? '' == 1 ? 'checked' : '' }}>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="row border rounded p-2 mx-1">
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Confined Space Attendant</label>
-                                                            <input type="hidden"
-                                                                name="confined_space_entry[confined_attendant]"
-                                                                value="0">
-                                                            <input type="checkbox" class=""
-                                                                name="confined_space_entry[confined_attendant]"
-                                                                value="1"
+                                                    <div class="col-12 col-md-2 mb-3">
+                                                        <div class="form-group d-flex align-items-center">
+                                                            <label class="form-label mb-0 mr-2 pe-2">Confined Space Attendant</label>
+                                                            <input type="checkbox" name="confined_space_entry[confined_attendant]" value="1"
                                                                 {{ $confinedSpaceEntry['confined_attendant'] ?? '' == 1 ? 'checked' : '' }}>
                                                         </div>
                                                     </div>
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Attendant Name</label>
-                                                            <input type="text"
-                                                                name="confined_space_entry[attendant_name]"
-                                                                class="form-control" placeholder="Search by Employee Name"
-                                                                value="{{ $confinedSpaceEntry['attendant_name'] ?? '' }}"
-                                                                disabled>
+
+                                                    <div class="col-12 col-md-4 p-2 mx-1 mb-3 me-2">
+                                                        <div class="form-group d-flex align-items-center justify-content-between">
+                                                            <label class="form-label mb-0 ml-auto" style="margin-right: 10px;">Attendant Name</label>
+                                                            <input type="text" name="confined_space_entry[attendant_name]" class="form-control"
+                                                                placeholder="Search by Employee Name" value="{{ $confinedSpaceEntry['attendant_name'] ?? '' }}" disabled>
                                                         </div>
                                                     </div>
+
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Register for entry & exits</label>
-                                                            <input type="checkbox" class=""
-                                                                name="confined_space_entry[register_entry_exits]"
-                                                                {{ $confinedSpaceEntry['register_entry_exits'] ?? '' == 1 ? 'checked' : '' }}
-                                                                disabled>
+                                                        <div class="form-group d-flex align-items-center justify-content-between">
+                                                            <label class="form-label mb-0" style="margin-right: 20px">Register for entry & exits</label>
+                                                            <input type="checkbox" name="confined_space_entry[register_entry_exits]"
+                                                                {{ $confinedSpaceEntry['register_entry_exits'] ?? '' == 1 ? 'checked' : '' }} disabled>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="row border rounded p-2 mx-1 mb-3">
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Any Other Gas / PPM</label>
-                                                            <input type="text" name="confined_space_entry[other_gas]"
-                                                                class="form-control" placeholder="Loto No"
-                                                                value="{{ $confinedSpaceEntry['other_gas'] ?? '' }}"
-                                                                disabled>
+                                                        <div class="form-group d-flex align-items-center">
+                                                            <label class="form-label mb-0">Any Other Gas / PPM</label>
+                                                            <input type="text" name="confined_space_entry[other_gas]" class="form-control" placeholder="Loto No"
+                                                                value="{{ $confinedSpaceEntry['other_gas'] ?? '' }}" disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">PPM and is therefore safe to enter
-                                                                from</label>
-                                                            <input type="date"
-                                                                name="confined_space_entry[ppm_entry_date]"
-                                                                class="form-control"
-                                                                value="{{ $confinedSpaceEntry['ppm_entry_date'] ?? '' }}"
-                                                                disabled>
+                                                        <div class="form-group d-flex align-items-center">
+                                                            <label class="form-label mb-0">PPM and is therefore safe to enter from</label>
+                                                            <input type="date" name="confined_space_entry[ppm_entry_date]" class="form-control"
+                                                                value="{{ $confinedSpaceEntry['ppm_entry_date'] ?? '' }}" disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">PPM and is therefore safe to enter
-                                                                to</label>
-                                                            <input type="date"
-                                                                name="confined_space_entry[ppm_entry_to]"
-                                                                class="form-control"
-                                                                value="{{ $confinedSpaceEntry['ppm_entry_to'] ?? '' }}"
-                                                                disabled>
+                                                        <div class="form-group d-flex align-items-center">
+                                                            <label class="form-label mb-0">PPM and is therefore safe to enter to</label>
+                                                            <input type="date" name="confined_space_entry[ppm_entry_to]" class="form-control"
+                                                                value="{{ $confinedSpaceEntry['ppm_entry_to'] ?? '' }}" disabled>
                                                         </div>
                                                     </div>
                                                 </div>
+
                                             </div>
                                         </div>
 
@@ -1036,11 +1032,7 @@
                         .text("Workman Name is required.");
                     isValid = false;
                 }
-                // if (!designation) {
-                //     parentRow.find('input[name="workman_desig"]').closest('.form-group').find(
-                //         '.text-danger').text("Designation is required.");
-                //     isValid = false;
-                // }
+
                 if (!department) {
                     parentRow.find('select[name="workman_dept"]').closest('.form-group').find(
                         '.text-danger').text("Department is required.");
@@ -1073,7 +1065,6 @@
 
                     $("#workman-list-entries").append(newRow);
 
-                    // Clear the form after adding
                     parentRow.find('select[name="employee_code"]').val("");
                     parentRow.find('select[name="employee_code"]').trigger("change");
                     parentRow.find('input[name="workman_name"]').val("");
@@ -1142,7 +1133,7 @@
             minuteIncrement: 5,
         });
 
-        flatpickr("#from_PPMTime",{
+        flatpickr("#from_PPMTime", {
             enableTime: true,
             noCalendar: true,
             time_24hr: true,
@@ -1150,7 +1141,7 @@
             dateFormat: "H:i",
         });
 
-        flatpickr("#to_PPMTime",{
+        flatpickr("#to_PPMTime", {
             enableTime: true,
             noCalendar: true,
             time_24hr: true,
@@ -1301,7 +1292,6 @@
             const selectedProtectiveEquipments = @json($safetypermit->mapped_protective_equip);
 
 
-            console.log(selectedProtectiveEquipments);
 
             function handleCheckboxChange(workId, checkboxState) {
                 const container = $('#getprotectivechecklist-container');
@@ -1403,7 +1393,6 @@
         $(document).ready(function() {
             const displayedEquipmentsInvolved = new Set();
             const selectedEquipmentsInvolved = @json($safetypermit->mapped_equiment_involved);
-            console.log(selectedEquipmentsInvolved);
 
             function handleCheckboxChange(workId, checkboxState) {
                 const container = $('#getequipmentinvolved-container');
@@ -1427,7 +1416,6 @@
                                                     .checkid
                                                     .includes(item.id);
                                             }) ? 'checked' : '';
-                                    console.log(item.id);
                                     checkpointsHtml += `
                                 <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
                                     <input type="checkbox" class="equiment_involved" name="equiment_involved[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}" ${isChecked}>
@@ -1502,7 +1490,6 @@
             const displayedPrecautionEquipments = new Set();
             const selectedPrecautionEquipments = @json($safetypermit->mapped_precaution_taken);
 
-            console.log(selectedPrecautionEquipments);
 
             function handleCheckboxChange(workId, checkboxState) {
                 const container = $('#getprecaution-container');
@@ -1571,7 +1558,6 @@
             const selectedChecklistEquipments = @json($safetypermit->mapped_equipment_checklist);
 
 
-            console.log(selectedChecklistEquipments);
 
             function handleCheckboxChange(workId, checkboxState) {
                 const container = $('#getchecklist-container');
@@ -1639,7 +1625,6 @@
             const displayedSafework = new Set();
             const selectedSafeWork = @json($safetypermit->mapped_safework_instruction);
 
-            console.log(selectedSafeWork);
 
             function handleCheckboxChange(workId, checkboxState) {
                 const container = $('#getinstruction-container');
@@ -1699,12 +1684,6 @@
 
 
         });
-
-
-
-
-
-
 
 
 

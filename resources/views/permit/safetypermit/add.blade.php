@@ -148,17 +148,19 @@
                                             </div>
                                         </div>
 
+
                                         <div class="row border p-3 mx-1">
                                             <div class="col-12 col-md-6 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
                                                     <img src="{{ url('public/assets/images/safetypermit/power-off.png') }}"
-                                                        class="img-fluid" style="width: 50px; height: 50px;">
-                                                    <label class="form-label mb-0">Shut Down Required (Yes/No)</label>
-                                                    <input type="checkbox" id="shutdown-checkbox"
+                                                        class="img-fluid"
+                                                        style="width: 50px; height: 50px; margin-right:30px">
+                                                    <label class="form-label mb-0"style="margin-right: 58px;">Shut Down
+                                                        Required (Yes/No)</label>
+                                                        <input type="checkbox" id="shutdown-checkbox"
                                                         class="shutdown-checkbox" name="shutdown_req" value="1">
                                                     <div class="text-danger"></div>
                                                 </div>
-
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
@@ -172,17 +174,18 @@
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
-
                                         </div>
 
                                         <div class="row border p-3 mx-1">
                                             <div class="col-12 col-md-6 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
                                                     <img src="{{ url('public/assets/images/safetypermit/process.png') }}"
-                                                        class="img-fluid" style="width: 50px; height: 50px;">
-                                                    <label class="form-label mb-0 ">Isolation/LOTO Required
+                                                        class="img-fluid"
+                                                        style="width: 50px; height: 50px; margin-right:30px">
+                                                    <label class="form-label mb-0 "
+                                                        style="margin-right: 34px;">Isolation/LOTO Required
                                                         (Yes/No)</label>
-                                                    <input type="checkbox" id="loto-checkbox" class="loto-checkbox"
+                                                        <input type="checkbox" id="loto-checkbox" class="loto-checkbox"
                                                         name= "loto_req">
                                                     <div class="text-danger"></div>
                                                 </div>
@@ -196,112 +199,105 @@
                                                         class="form-control lotocheckbox"
                                                         placeholder="Search by Employee Name" disabled> --}}
 
-                                                    <select name="loto_takenby" id="employeenameloto"
+                                                        <select name="loto_takenby" id="employeenameloto"
                                                         class="form-control lotocheckbox" disabled>
                                                         <option value="">Select Person</option>
                                                     </select>
-                                                    <div class="text-danger"></div>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="row border p-3 mx-1">
-                                            <div class="col-12 col-md-4 mb-3">
-                                                <div class="form-group d-flex align-items-center gap-3">
-                                                    <label class="form-label mb-0">Loto No</label>
-                                                    <input type="text" name="loto_no"
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-group d-flex align-items-center">
+                                                    <label class="form-label mb-0" style="margin-right: 50px">Loto
+                                                        No</label>
+                                                    <div class="col-sm-6 p-0">
+                                                        <input type="text" name="loto_no"
                                                         class="form-control lotocheckbox" placeholder="Loto No" disabled>
+
+
+                                                    </div>
                                                     <div class="text-danger"></div>
                                                 </div>
+
                                             </div>
-                                            <div class="col-12 col-md-8 mb-3">
-                                                <div class="form-group d-flex align-items-center gap-3">
-                                                    <label class="form-label mb-0 ">Tag Field properly (Yes/No)</label>
-                                                    <input type="checkbox" class=" shutdowncheckbox" name="tagfield"
+                                            <div class="col-md-4 mb-3 "style="margin-right: 50px">
+                                                <div class="form-group d-flex align-items-center ps-5 ">
+                                                    <label class="form-label mb-0" style="margin-right:30px;">Tag Field
+                                                        properly (Yes/No)</label>
+                                                        <input type="checkbox" class=" shutdowncheckbox" name="tagfield"
                                                         disabled>
-                                                    <div class="text-danger"></div>
+
                                                 </div>
+                                                <div class="text-danger"></div>
                                             </div>
                                         </div>
 
                                         <div class="row col-md-12 d-flex mt-3">
                                             <!-- Left Side: Scrollable on X-Axis -->
+
                                             <div class="col-md-4">
                                                 <p class="fw-bold fs-5 mt-3">State of Isolation & LOTO</p>
                                                 <div class="scroll-container border p-3"
                                                     style="overflow-x: auto; white-space: nowrap; width: 100%;">
                                                     <!-- First Row -->
-                                                    <div class="row mb-3"
-                                                        style="display: flex; flex-wrap: nowrap; justify-content: flex-start; align-items: center;">
-                                                        <div class="d-inline-block"
-                                                            style="margin: 0; padding: 0; flex-shrink: 0;">
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <img src="{{ url('public/assets/images/safetypermit/person.png') }}"
-                                                                    class="img-fluid" style="width: 50px; height: 50px;">
-                                                                <label class="form-label mb-0"
-                                                                    for="air_checkbox">Air</label>
-                                                                <input type="checkbox"
-                                                                    class=" shutdowncheckbox"
-                                                                    id="air_checkbox" name="state_isolation_loto[]"
-                                                                    value="Air" disabled>
-                                                            </div>
-                                                        </div>
-                                                        <div class="d-inline-block"
-                                                            style="margin-left: -200px; padding: 0; flex-shrink: 0;">
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <img src="{{ url('public/assets/images/safetypermit/natural-gas.png') }}"
-                                                                    class="img-fluid" style="width: 50px; height: 50px;">
-                                                                <label class="form-label mb-0"
-                                                                    for="gas_checkbox">Gas</label>
+                                                    <div class="row mb-3 d-flex flex-nowrap align-items-center">
+                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                            style="min-width: 200px;">
+                                                            <img src="{{ url('public/assets/images/safetypermit/person.png') }}"
+                                                                class="img-fluid"
+                                                                style="width: 50px; height: 50px; margin-right: 20px">
+                                                            <label class="form-label mb-0 "
+                                                                style="margin-right: 100px;">Air</label>
                                                                 <input type="checkbox" class=" shutdowncheckbox"
-                                                                    id="gas_checkbox" name="state_isolation_loto[]"
-                                                                    value="Gas" disabled>
-                                                            </div>
+                                                                id="air_checkbox" name="state_isolation_loto[]"
+                                                                value="Air" disabled>
                                                         </div>
-                                                        <div class="d-inline-block"
-                                                            style="margin-left: -200px; padding: 0; flex-shrink: 0;">
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <label class="form-label mb-0">Others if any please
-                                                                    specify</label>
-                                                            </div>
+                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                            style="min-width: 200px;">
+                                                            <img src="{{ url('public/assets/images/safetypermit/natural-gas.png') }}"
+                                                                class="img-fluid"
+                                                                style="width: 50px; height: 50px; margin-right: 20px">
+                                                            <label class="form-label mb-0"
+                                                                style="margin-right: 115px;">Gas</label>
+                                                                <input type="checkbox" class=" shutdowncheckbox"
+                                                                id="gas_checkbox" name="state_isolation_loto[]"
+                                                                value="Gas" disabled>
+                                                        </div>
+                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                            style="min-width: 200px;">
+                                                            <label class="form-label mb-0">Others if any please
+                                                                specify</label>
                                                         </div>
                                                     </div>
 
                                                     <!-- Second Row -->
-                                                    <div class="row mb-3"
-                                                        style="display: flex; flex-wrap: nowrap; justify-content: flex-start; align-items: center;">
-                                                        <div class="d-inline-block"
-                                                            style="margin: 0; padding: 0; flex-shrink: 0; margin-right: 50px;">
-                                                            <!-- Added margin-right for gap -->
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <img src="{{ url('public/assets/images/safetypermit/electrician.png') }}"
-                                                                    class="img-fluid" style="width: 50px; height: 50px;">
-                                                                <label class="form-label mb-0"
-                                                                    for="electrical_checkbox">Electrical</label>
-                                                                <input type="checkbox"
-                                                                    class=" shutdowncheckbox"
-                                                                    id="electrical_checkbox" name="state_isolation_loto[]"
-                                                                    value="Electrical" disabled>
-                                                            </div>
+                                                    <div class="row mb-3 d-flex flex-nowrap align-items-center">
+                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                            style="min-width: 200px;">
+                                                            <img src="{{ url('public/assets/images/safetypermit/electrician.png') }}"
+                                                                class="img-fluid"
+                                                                style="width: 50px; height: 50px; margin-right: 20px;">
+                                                            <label class="form-label mb-0"
+                                                                style="margin-right: 58px;">Electrical</label>
+                                                                <input type="checkbox" class=" shutdowncheckbox"
+                                                                id="electrical_checkbox" name="state_isolation_loto[]"
+                                                                value="Electrical" disabled>
                                                         </div>
-                                                        <div class="d-inline-block"
-                                                            style="margin-left: -200px; padding: 0; flex-shrink: 0; margin-right: 50px;">
-                                                            <!-- Added margin-right for gap -->
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <img src="{{ url('public/assets/images/safetypermit/leak.png') }}"
-                                                                    class="img-fluid" style="width: 50px; height: 50px;">
-                                                                <label class="form-label mb-0"
-                                                                    for="water_checkbox">Water/Liquid</label>
-                                                                <input type="checkbox"
-                                                                    class=" shutdowncheckbox"
-                                                                    id="water_checkbox" name="state_isolation_loto[]"
-                                                                    value="Water/Liquid" disabled>
-                                                            </div>
+                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                            style="min-width: 200px;">
+                                                            <img src="{{ url('public/assets/images/safetypermit/leak.png') }}"
+                                                                class="img-fluid"
+                                                                style="width: 50px; height: 50px; margin-right: 20px">
+                                                            <label class="form-label mb-0"
+                                                                style="margin-right: 58px;">Water/Liquid</label>
+                                                                <input type="checkbox" class=" shutdowncheckbox"
+                                                                id="water_checkbox" name="state_isolation_loto[]"
+                                                                value="Water/Liquid" disabled>
                                                         </div>
-                                                        <div class="d-inline-block"
-                                                            style="margin-left: -0px; padding: 0; flex-shrink: 0; margin-left: 100px;">
-                                                            <!-- Adjusted margin-left to give gap -->
-
+                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                            style="min-width: 200px;">
                                                             <textarea class="form-control shutdowncheckbox" name="state_isolation_loto[]" placeholder="Specify others" disabled></textarea>
                                                             <div class="text-danger" id="shutdowncheckbox_description">
                                                             </div>
@@ -402,16 +398,18 @@
                                                             <label class="form-label">PPM and is therefore safe to enter
                                                                 from</label>
                                                             <input type="text"
-                                                                name="confined_space_entry[ppm_safe_to_enter]" id="from_PPMTime"
-                                                                class="form-control" placeholder="" disabled>
+                                                                name="confined_space_entry[ppm_safe_to_enter]"
+                                                                id="from_PPMTime" class="form-control" placeholder=""
+                                                                disabled>
                                                             <div class="text-danger"></div>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group">
                                                             <label class="form-label">To</label>
-                                                            <input type="text" name="confined_space_entry[to]" id="to_PPMTime"
-                                                                class="form-control" placeholder="" disabled>
+                                                            <input type="text" name="confined_space_entry[to]"
+                                                                id="to_PPMTime" class="form-control" placeholder=""
+                                                                disabled>
                                                             <div class="text-danger"></div>
 
                                                         </div>
@@ -1081,7 +1079,7 @@
             minuteIncrement: 5,
         });
 
-        flatpickr("#from_PPMTime",{
+        flatpickr("#from_PPMTime", {
             enableTime: true,
             noCalendar: true,
             time_24hr: true,
@@ -1089,7 +1087,7 @@
             dateFormat: "H:i",
         });
 
-        flatpickr("#to_PPMTime",{
+        flatpickr("#to_PPMTime", {
             enableTime: true,
             noCalendar: true,
             time_24hr: true,
