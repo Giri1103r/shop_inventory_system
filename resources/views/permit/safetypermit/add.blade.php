@@ -148,27 +148,20 @@
                                             </div>
                                         </div>
 
-
                                         <div class="row border p-3 mx-1">
                                             <div class="col-12 col-md-6 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
-                                                    <img src="{{ url('public/assets/images/safetypermit/power-off.png') }}"
-                                                        class="img-fluid"
-                                                        style="width: 50px; height: 50px; margin-right:30px">
-                                                    <label class="form-label mb-0"style="margin-right: 58px;">Shut Down
-                                                        Required (Yes/No)</label>
-                                                        <input type="checkbox" id="shutdown-checkbox"
-                                                        class="shutdown-checkbox" name="shutdown_req" value="1">
+                                                    <img src="{{ url('public/assets/images/safetypermit/power-off.png') }}" class="img-fluid" style="width: 50px; height: 50px; margin-right: 30px;">
+                                                    <label class="form-label mb-0" style="margin-right: 58px;">Shut Down Required (Yes/No)</label>
+                                                    <input type="checkbox" id="shutdown-checkbox" class="shutdown-checkbox" name="shutdown_req" value="1">
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
-                                                    <img src="{{ url('public/assets/images/safetypermit/profile.png') }}"
-                                                        class="img-fluid" style="width: 50px; height: 50px;">
+                                                    <img src="{{ url('public/assets/images/safetypermit/profile.png') }}" class="img-fluid" style="width: 50px; height: 50px;">
                                                     <label class="form-label mb-0">Taken By (Name & Department)</label>
-                                                    <select name="shut_down_takenby" id="employeenameshutdown"
-                                                        class="form-control shutdowncheckbox" disabled>
+                                                    <select name="shut_down_takenby" id="employeenameshutdown" class="form-control shutdowncheckbox" disabled>
                                                         <option value="">Select Person</option>
                                                     </select>
                                                     <div class="text-danger"></div>
@@ -179,30 +172,20 @@
                                         <div class="row border p-3 mx-1">
                                             <div class="col-12 col-md-6 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
-                                                    <img src="{{ url('public/assets/images/safetypermit/process.png') }}"
-                                                        class="img-fluid"
-                                                        style="width: 50px; height: 50px; margin-right:30px">
-                                                    <label class="form-label mb-0 "
-                                                        style="margin-right: 34px;">Isolation/LOTO Required
-                                                        (Yes/No)</label>
-                                                        <input type="checkbox" id="loto-checkbox" class="loto-checkbox"
-                                                        name= "loto_req">
+                                                    <img src="{{ url('public/assets/images/safetypermit/process.png') }}" class="img-fluid" style="width: 50px; height: 50px; margin-right: 30px;">
+                                                    <label class="form-label mb-0" style="margin-right: 34px;">Isolation/LOTO Required (Yes/No)</label>
+                                                    <input type="checkbox" id="loto-checkbox" class="loto-checkbox" name="loto_req">
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
-                                                    <img src="{{ url('public/assets/images/safetypermit/profile.png') }}"
-                                                        class="img-fluid" style="width: 50px; height: 50px;">
-                                                    <label class="form-label mb-0 ">Taken By (Name & Department)</label>
-                                                    {{-- <input type="text" name="description"
-                                                        class="form-control lotocheckbox"
-                                                        placeholder="Search by Employee Name" disabled> --}}
-
-                                                        <select name="loto_takenby" id="employeenameloto"
-                                                        class="form-control lotocheckbox" disabled>
+                                                    <img src="{{ url('public/assets/images/safetypermit/profile.png') }}" class="img-fluid" style="width: 50px; height: 50px;">
+                                                    <label class="form-label mb-0">Taken By (Name & Department)</label>
+                                                    <select name="loto_takenby" id="employeenameloto" class="form-control lotocheckbox" disabled>
                                                         <option value="">Select Person</option>
                                                     </select>
+                                                    <div class="text-danger"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -313,111 +296,87 @@
 
                                                 <div class="row border rounded p-2 mx-1">
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">O2%</label>
-                                                            <input type="text"
-                                                                name="confined_space_entry[o2_percentage]"
-                                                                class="form-control" placeholder="" disabled>
-                                                            <div class="text-danger"></div>
+                                                        <div class="form-group d-flex align-items-center">
+                                                            <label class="form-label mb-0" style="margin-right: 20px">O2%</label>
+                                                            <input type="text" name="confined_space_entry[o2_percentage]" class="form-control"
+                                                               disabled>
                                                         </div>
                                                     </div>
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">System Isolated</label>
-                                                            <input type="hidden"
-                                                                name="confined_space_entry[system_isolated]"
-                                                                value="0">
-                                                            <input type="checkbox" class="system_isolated"
-                                                                name="confined_space_entry[system_isolated]"
-                                                                value="1">
-                                                            <div class="text-danger"></div>
 
+                                                    <div class="col-12 col-md-4 mb-3">
+                                                        <div class="form-group d-flex align-items-center">
+                                                            <label class="form-label mb-0" style="margin-right: 20px">System Isolated</label>
+                                                            <input type="hidden" name="confined_space_entry[system_isolated]" value="0">
+                                                            <input type="checkbox" name="confined_space_entry[system_isolated]" value="1"
+                                                                >
                                                         </div>
                                                     </div>
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Rescue System Available</label>
-                                                            <input type="hidden"
-                                                                name="confined_space_entry[rescue_system]" value="0">
-                                                            <input type="checkbox" class="rescue_system"
-                                                                name="confined_space_entry[rescue_system]" value="1">
-                                                            <div class="text-danger"></div>
 
+                                                    <div class="col-12 col-md-4 mb-3">
+                                                        <div class="form-group d-flex align-items-center justify-content-between">
+                                                            <label class="form-label mb-0">Rescue System Available</label>
+                                                            <input type="hidden" name="confined_space_entry[rescue_system]" value="0">
+                                                            <input type="checkbox" name="confined_space_entry[rescue_system]" value="1"
+                                                               >
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="row border rounded p-2 mx-1">
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Confined Space Attendant</label>
-                                                            <input type="hidden"
-                                                                name="confined_space_entry[confined_attendant]"
-                                                                value="0">
-                                                            <input type="checkbox" class="confined_attendant"
-                                                                name="confined_space_entry[confined_attendant]"
-                                                                value="1">
-                                                            <div class="text-danger"></div>
-
+                                                        <div class="form-group d-flex align-items-center">
+                                                            <label class="form-label col-md-5 mb-0 mr-2 pe-2">Confined Space Attendant</label>
+                                                            <input type="checkbox" name="confined_space_entry[confined_attendant]" value="1"
+                                                              >
                                                         </div>
                                                     </div>
+
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Attendant Name</label>
-                                                            <input type="text"
-                                                                name="confined_space_entry[attendant_name]"
-                                                                class="form-control" placeholder="Search by Employee Name"
+                                                        <div class="form-group d-flex align-items-center justify-content-between">
+                                                            <label class="form-label col-md-6 mb-0 " style="margin-right: 10px;">Attendant Name</label>
+                                                            <input type="text" name="confined_space_entry[attendant_name]" class="form-control"
+                                                                placeholder="Search by Employee Name"  disabled>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-12 col-md-4 mb-3">
+                                                        <div class="form-group d-flex align-items-center justify-content-between">
+                                                            <label class="form-label mb-0" style="margin-right: 20px">Register for entry & exits</label>
+                                                            <input type="checkbox" name="confined_space_entry[register_entry_exits]"
                                                                 disabled>
-                                                            <div class="text-danger"></div>
-
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Register for entry & exits</label>
-                                                            <input type="checkbox" class="register_entry_exits"
-                                                                name="confined_space_entry[register_entry_exits]" disabled>
-                                                            <div class="text-danger"></div>
-
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="row border rounded p-2 mx-1 mb-3">
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Any Other Gas / PPM</label>
-                                                            <input type="text" name="confined_space_entry[other_gas]"
-                                                                class="form-control" placeholder="Loto No" disabled>
-                                                            <div class="text-danger"></div>
-
+                                                        <div class="form-group d-flex align-items-center">
+                                                            <label class="form-label mb-0">Any Other Gas / PPM</label>
+                                                            <input type="text" name="confined_space_entry[other_gas]" class="form-control" placeholder="Loto No"
+                                                                disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">PPM and is therefore safe to enter
-                                                                from</label>
-                                                            <input type="text"
-                                                                name="confined_space_entry[ppm_safe_to_enter]"
-                                                                id="from_PPMTime" class="form-control" placeholder=""
-                                                                disabled>
-                                                            <div class="text-danger"></div>
+                                                        <div class="form-group d-flex align-items-center">
+                                                            <label class="form-label mb-0">PPM and is therefore safe to enter from</label>
+                                                            <input type="date" name="confined_space_entry[ppm_entry_date]" class="form-control"    id="from_PPMTime"
+                                                               disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">To</label>
-                                                            <input type="text" name="confined_space_entry[to]"
-                                                                id="to_PPMTime" class="form-control" placeholder=""
-                                                                disabled>
-                                                            <div class="text-danger"></div>
-
+                                                        <div class="form-group d-flex align-items-center">
+                                                            <label class="form-label mb-0">PPM and is therefore safe to enter to</label>
+                                                            <input type="date" name="confined_space_entry[ppm_entry_to]" class="form-control"    id="to_PPMTime"
+                                                               disabled>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
 
+                                            </div>
                                         </div>
+
+
+
 
                                         <p class="fw-bold fs-5 mt-3">Protective Equipment's to be Worn (<i
                                                 class="fas fa-check text-primary"></i>)
@@ -691,58 +650,48 @@
                                         <p class="fw-bold fs-5 mt-3">List of Workman involved in Job</span>
                                         </p>
                                         <div class="row">
-                                            <div class="col-md-2">
+                                            <div class="col-md-4 col-sm-6 col-12 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Employee Code / Visitor ID</label>
-                                                    <select name="employee_code" id="employee_code"
-                                                        class="single-select   form-control">
+                                                    <select name="employee_code" id="employee_code" class="single-select form-control">
                                                         <option value="">Select Employee ID</option>
                                                     </select>
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-4 col-sm-6 col-12 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Name of Workman</label>
-                                                    <input type="text" name="workman_name" id="workman_name"
-                                                        class="form-control" readonly>
+                                                    <input type="text" name="workman_name" id="workman_name" class="form-control" readonly>
                                                     <div class="text-danger"></div>
-
                                                 </div>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-4 col-sm-6 col-12 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Designation</label>
-                                                    <input type="text" name="workman_desig" id="workman_desig"
-                                                        class="form-control" readonly>
+                                                    <input type="text" name="workman_desig" id="workman_desig" class="form-control" readonly>
                                                     <div class="text-danger"></div>
-
                                                 </div>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-4 col-sm-6 col-12 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Department / Company</label>
-                                                    <select name="workman_dept" id="workman_dept"
-                                                        class="form-control single-select">
+                                                    <select name="workman_dept" id="workman_dept" class="form-control single-select">
                                                         <option value="">Select Department</option>
                                                     </select>
                                                     <div class="text-danger"></div>
-
                                                 </div>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-4 col-sm-6 col-12 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Nature of Job</label>
-                                                    <input type="text" name="nature_of_job" id="nature_of_job"
-                                                        class="form-control">
+                                                    <input type="text" name="nature_of_job" id="nature_of_job" class="form-control">
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-2 mt-3">
-                                                <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                                    href="{{ admin_url('ptw/typeofworkmaster/add') }}">Add</x-button-add>
+                                            <div class="col-md-4 col-sm-6 col-12 mb-3 d-flex align-items-end">
+                                                <x-button-add dataId="" class="add btn btn-primary" href="{{ admin_url('ptw/typeofworkmaster/add') }}">Add</x-button-add>
                                             </div>
-
                                         </div>
                                         <div class="table-responsive mt-3">
                                             <table class="table table-bordered text-center">

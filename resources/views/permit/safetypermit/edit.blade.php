@@ -327,15 +327,15 @@
                                                 <div class="row border rounded p-2 mx-1">
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group d-flex align-items-center">
-                                                            <label class="form-label mb-0 mr-3">O2%</label>
+                                                            <label class="form-label mb-0" style="margin-right: 20px">O2%</label>
                                                             <input type="text" name="confined_space_entry[o2_percentage]" class="form-control"
                                                                 value="{{ $confinedSpaceEntry['o2_percentage'] ?? '' }}" disabled>
                                                         </div>
                                                     </div>
 
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group d-flex align-items-center justify-content-between">
-                                                            <label class="form-label mb-0">System Isolated</label>
+                                                        <div class="form-group d-flex align-items-center">
+                                                            <label class="form-label mb-0" style="margin-right: 20px">System Isolated</label>
                                                             <input type="hidden" name="confined_space_entry[system_isolated]" value="0">
                                                             <input type="checkbox" name="confined_space_entry[system_isolated]" value="1"
                                                                 {{ $confinedSpaceEntry['system_isolated'] ?? '' == 1 ? 'checked' : '' }}>
@@ -353,17 +353,17 @@
                                                 </div>
 
                                                 <div class="row border rounded p-2 mx-1">
-                                                    <div class="col-12 col-md-2 mb-3">
+                                                    <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group d-flex align-items-center">
-                                                            <label class="form-label mb-0 mr-2 pe-2">Confined Space Attendant</label>
+                                                            <label class="form-label col-md-5 mb-0 mr-2 pe-2">Confined Space Attendant</label>
                                                             <input type="checkbox" name="confined_space_entry[confined_attendant]" value="1"
                                                                 {{ $confinedSpaceEntry['confined_attendant'] ?? '' == 1 ? 'checked' : '' }}>
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-12 col-md-4 p-2 mx-1 mb-3 me-2">
+                                                    <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group d-flex align-items-center justify-content-between">
-                                                            <label class="form-label mb-0 ml-auto" style="margin-right: 10px;">Attendant Name</label>
+                                                            <label class="form-label col-md-6 mb-0 " style="margin-right: 10px;">Attendant Name</label>
                                                             <input type="text" name="confined_space_entry[attendant_name]" class="form-control"
                                                                 placeholder="Search by Employee Name" value="{{ $confinedSpaceEntry['attendant_name'] ?? '' }}" disabled>
                                                         </div>
@@ -389,14 +389,14 @@
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group d-flex align-items-center">
                                                             <label class="form-label mb-0">PPM and is therefore safe to enter from</label>
-                                                            <input type="date" name="confined_space_entry[ppm_entry_date]" class="form-control"
+                                                            <input type="date" name="confined_space_entry[ppm_entry_date]" class="form-control"    id="from_PPMTime"
                                                                 value="{{ $confinedSpaceEntry['ppm_entry_date'] ?? '' }}" disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group d-flex align-items-center">
                                                             <label class="form-label mb-0">PPM and is therefore safe to enter to</label>
-                                                            <input type="date" name="confined_space_entry[ppm_entry_to]" class="form-control"
+                                                            <input type="date" name="confined_space_entry[ppm_entry_to]" class="form-control"    id="to_PPMTime"
                                                                 value="{{ $confinedSpaceEntry['ppm_entry_to'] ?? '' }}" disabled>
                                                         </div>
                                                     </div>
