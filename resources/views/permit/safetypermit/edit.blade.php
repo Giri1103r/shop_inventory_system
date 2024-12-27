@@ -431,7 +431,7 @@
                                                         <div class="form-group d-flex align-items-center">
                                                             <label class="form-label mb-0">PPM and is therefore safe to
                                                                 enter from</label>
-                                                            <input type="date"
+                                                            <input type="text"
                                                                 name="confined_space_entry[ppm_entry_date]"
                                                                 class="form-control" id="from_PPMTime"
                                                                 value="{{ $confinedSpaceEntry['ppm_entry_date'] ?? '' }}"
@@ -442,7 +442,7 @@
                                                         <div class="form-group d-flex align-items-center">
                                                             <label class="form-label mb-0">PPM and is therefore safe to
                                                                 enter to</label>
-                                                            <input type="date"
+                                                            <input type="text"
                                                                 name="confined_space_entry[ppm_entry_to]"
                                                                 class="form-control" id="to_PPMTime"
                                                                 value="{{ $confinedSpaceEntry['ppm_entry_to'] ?? '' }}"
@@ -1442,7 +1442,7 @@
         $(document).ready(function() {
             const displayedEquipmentsInvolved = new Set();
             const selectedEquipmentsInvolved = @json($safetypermit->mapped_equiment_involved);
-
+      
             function handleCheckboxChange(workId, checkboxState) {
                 const container = $('#getequipmentinvolved-container');
 
@@ -1465,6 +1465,7 @@
                                                     .checkid
                                                     .includes(item.id);
                                             }) ? 'checked' : '';
+
                                     checkpointsHtml += `
                                 <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
                                     <input type="checkbox" class="equiment_involved" name="equiment_involved[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}" ${isChecked}>
