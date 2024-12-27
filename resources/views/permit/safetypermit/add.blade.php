@@ -410,9 +410,6 @@
                                             </div>
                                         </div>
 
-
-
-
                                         <p class="fw-bold fs-5 mt-3">Protective Equipment's to be Worn (<i
                                                 class="fas fa-check text-primary"></i>)
                                             <span class="text-danger">*</span>

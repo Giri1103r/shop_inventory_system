@@ -124,7 +124,7 @@ class ImportPpeTypeJob implements ShouldQueue
                 'created_by' => Auth::id(),
                 'created_at'=>now(),
             ];
-           
+
 
             PpeType::create($data);
             $i++;
