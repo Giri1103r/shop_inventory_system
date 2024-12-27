@@ -134,6 +134,8 @@
                                                         value="{{ $nomination_process->id }}">
                                                     <input type="hidden" name="emp_name[]"
                                                         value="{{ $nomination_process->emp_name }}">
+                                                    <input type="hidden" name="email[]"
+                                                        value="{{ $nomination_process->email }}">
                                                     <tr class="lesson_learned_row">
 
                                                         <td>

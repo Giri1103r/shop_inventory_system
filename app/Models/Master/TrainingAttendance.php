@@ -22,6 +22,7 @@ class TrainingAttendance extends Model
         'training_schedule_id',
         'nomination_id',
         'emp_name',
+        'email',
         'from_date',
         'to_date',
         'topic_id',
@@ -41,7 +42,11 @@ class TrainingAttendance extends Model
         'trash' => 'NO',
     ];
 
-
+    protected $casts = [
+        'attendance_date' => 'date',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
     public function storeOrUpdate()
     {
         $request = request();
@@ -53,6 +58,7 @@ class TrainingAttendance extends Model
                 'attendance_date' => $request->attendance_date,
                 'attendance_status' => $request->attendance_status[$index], // Always defined now
                 'emp_name' => $request->emp_name[$index],
+                'email' => $request->email[$index],
                 'from_date' => DBdatetimeformat($request->from_date),
                 'to_date' => DBdatetimeformat($request->to_date),
                 'topic_id' => $request->topic_id,

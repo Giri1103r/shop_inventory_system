@@ -105,62 +105,7 @@
                                                     </div>
                                                 </div>
 
-                                                {{-- <table class="table_card" style="margin-top: 20px;">
-                                                    <thead>
-                                                        <tr>
-                                                            <th class="form-label">Employee Name</th>
-                                                            <th class="form-label required">Attendee/non-Attendee
-                                                            </th>
-                                                            <th><span class="form-label">Assessment</span> <span
-                                                                    class="required">*</span></th>
-                                                            <th class="form-label">Feedback</th>
-                                                        </tr>
-                                                    </thead>
 
-                                                    <tbody>
-                                                        @foreach ($trainingAttendanceList as $index => $training_attendance)
-                                                            <tr>
-                                                                <input type="hidden" name="attendance_id[]"
-                                                                    value="{{ $training_attendance->id }}">
-                                                                <input type="hidden" name="emp_name[]"
-                                                                    value="{{ $training_attendance->emp_name }}">
-                                                                <td>{{ $training_attendance->emp_name ?? '' }}</td>
-                                                                <td>
-                                                                    @if ($attendedEmployees->isNotEmpty())
-                                                                        @foreach ($attendedEmployees as $employee)
-                                                                            {{ $employee }}
-                                                                        @endforeach
-                                                                    @elseif($nonAttendedEmployees->isNotEmpty())
-                                                                        @foreach ($nonAttendedEmployees as $employee)
-                                                                            <li>{{ $employee }}</li>
-                                                                        @endforeach
-                                                                    @endif
-                                                                </td>
-                                                                <td>
-                                                                    @if ($training_attendance->attendance_status == 1)
-                                                                        <i class="fa fa-check"
-                                                                            style="font-size:24px;color: green;"></i>
-                                                                    @else
-                                                                        <i class="fa fa-close"
-                                                                            style="font-size:24px;color:red"></i>
-                                                                    @endif
-                                                                </td>
-                                                                <td>
-                                                                    <select name="assessment[{{ $index }}]"
-                                                                        class="form-control single-select validate-select-required">
-                                                                        <option value="">Select Assessment
-                                                                        </option>
-                                                                        <option value="1">Pass</option>
-                                                                        <option value="2">Fail</option>
-                                                                    </select>
-                                                                </td>
-                                                                <td>
-                                                                    <textarea class="form-control maxTextareaLength" name="feedback[{{ $index }}]"></textarea>
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table> --}}
                                                 <table class="table_card" style="margin-top: 20px;">
                                                     <thead>
                                                         <tr>
@@ -185,6 +130,8 @@
                                                                     value="{{ $training_attendance->id }}">
                                                                 <input type="hidden" name="emp_name[]"
                                                                     value="{{ $training_attendance->emp_name }}">
+                                                                <input type="hidden" name="email[]"
+                                                                    value="{{ $training_attendance->email }}">
 
                                                                 <!-- Display the employee name with attendance status -->
                                                                 <td>
@@ -197,10 +144,8 @@
                                                                     @endphp
 
                                                                     @if ($isAttended)
-                                                                   
                                                                         {{ $training_attendance->emp_name }} (Attended)
                                                                     @else
-                                                                      
                                                                         {{ $training_attendance->emp_name }} (Non-Attended)
                                                                     @endif
                                                                 </td>
@@ -211,14 +156,19 @@
                                                                                 trim($training_attendance->emp_name),
                                                                             ),
                                                                         );
+
                                                                     @endphp
 
                                                                     @if ($isAttended)
                                                                         <i class="fa fa-check"
                                                                             style="font-size:24px;color: green;"></i>
+                                                                        <input type="hidden" name="attended_status[]"
+                                                                            value="1">
                                                                     @else
                                                                         <i class="fa fa-close"
                                                                             style="font-size:24px;color:red"></i>
+                                                                            <input type="hidden" name="attended_status[]"
+                                                                            value="0">
                                                                     @endif
                                                                 </td>
 
@@ -267,6 +217,11 @@
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+
             $('#training_details').validate({
                 rules: {
                     'assessment[]': {
