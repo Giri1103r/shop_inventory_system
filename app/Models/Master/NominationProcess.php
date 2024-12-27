@@ -129,8 +129,8 @@ class NominationProcess extends Model
                             'email' => $employeeData['email'],
                             'department_id' => $employeeData['department_id'],
                             'employee_type' => $employeeData['employee_type'],
-                            'last_training_attended_on' => DBdateformat($employeeData['last_training_attended_on']),
-                            'topic_id' => decryptId($employeeData['topic_id']),
+                            'last_training_attended_on' => DBdateformat($employeeData['last_training_attended_on']) ?? '',
+                            'topic_id' => decryptId($employeeData['topic_id']) ?? '',
                             'created_by' => Auth::id(),
                         ];
                         $this->create($insertArray);
@@ -148,8 +148,8 @@ class NominationProcess extends Model
                             'email' => $employeeData['email'],
                             'department_id' => $employeeData['department_id'],
                             'employee_type' => $employeeData['employee_type'],
-                            'last_training_attended_on' => DBdateformat($employeeData['last_training_attended_on']),
-                            'topic_id' => decryptId($employeeData['topic_id']),
+                            'last_training_attended_on' => DBdateformat($employeeData['last_training_attended_on']) ?? '',
+                            'topic_id' => decryptId($employeeData['topic_id']) ?? '',
                             'updated_by' => Auth::id(),
                         ];
 
@@ -163,7 +163,7 @@ class NominationProcess extends Model
 
     public function getNomination($training_schedule)
     {
-        $data = $this->select('training_nomination_process.*', 'masters_employee.emp_id',  'masters_department.department_name', 'training_masters_topic.topic_name', 'training_schedule.from_date', 'training_schedule.to_date', 'training_schedule.venue_id', 'training_masters_venue.name_of_the_conference_hall')->leftJoin('masters_employee', 'training_nomination_process.employee_id', '=', 'masters_employee.id')
+        $data = $this->select('training_nomination_process.*', 'masters_employee.emp_id', 'masters_employee.login_id', 'masters_department.department_name', 'training_masters_topic.topic_name', 'training_schedule.from_date', 'training_schedule.to_date', 'training_schedule.venue_id', 'training_masters_venue.name_of_the_conference_hall')->leftJoin('masters_employee', 'training_nomination_process.employee_id', '=', 'masters_employee.id')
             ->leftJoin('masters_department', 'training_nomination_process.department_id', '=', 'masters_department.id')
             ->leftJoin('training_masters_topic', 'training_nomination_process.topic_id', '=', 'training_masters_topic.id')
             ->leftJoin('training_schedule', 'training_nomination_process.training_schedule_id', '=', 'training_schedule.id')

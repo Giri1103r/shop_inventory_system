@@ -315,6 +315,7 @@
                 @endforeach
             </tbody>
         </table>
+
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -342,9 +343,9 @@
                         <td>{{ $training_attendance->emp_name ?? '' }}</td>
                         <td>
                             @if ($training_attendance->attendance_status == 1)
-                            <i class="fa-solid fa-check" style="color: #267709;">✔</i>
+                                <i class="fa-solid fa-check" style="color: #267709;">✔</i>
                             @else
-                            <i class="fa-solid fa-x" style="color: #f72626;">✘</i>
+                                <i class="fa-solid fa-x" style="color: #f72626;">✘</i>
                             @endif
                         </td>
                     </tr>
@@ -352,6 +353,88 @@
             </tbody>
         </table>
 
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
+                        Training Assessment
+                    </td>
+                </tr>
+            </table>
+        </div>
+        @if (isset($trainingAssessmentList) && $trainingAssessmentList->isNotEmpty())
+            <table class="table_card" style="margin-top: 20px;">
+                <thead>
+                    <tr>
+                        <th class="form-label">Employee Name</th>
+                        <th class="form-label">Attendee/Non-Attendee</th>
+                        <th class="form-label">Assessment</th>
+                        <th class="form-label">Feedback</th>
+                    </tr>
+                </thead>
+
+                <tbody id="lesson_learned_block">
+                    @foreach ($trainingAssessmentList as $assessment)
+                        <tr>
+
+                            <td>{{ $assessment->emp_name ?? '' }}</td>
+                            <td>
+                                @if ($assessment->attendance_status == 1)
+                                    <i class="fa-solid fa-check" style="color: #267709;">✔</i>
+                                @else
+                                    <i class="fa-solid fa-x" style="color: #f72626;">✘</i>
+                                @endif
+                            </td>
+                            <td>
+                                @if ($assessment->assessment == 1)
+                                    Pass
+                                @else
+                                    Fail
+                                @endif
+                            </td>
+                            <td>{{ $assessment->feedback ?? '' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @else
+            <p>No training assessment data available.</p>
+        @endif
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
+                        Training Feedback
+                    </td>
+                </tr>
+            </table>
+        </div>
+        @if (isset($trainingFeedbackList) && $trainingFeedbackList->isNotEmpty())
+            <table class="table_card" style="margin-top: 20px;">
+                <thead>
+                    <tr>
+                        <th class="form-label">Employee ID</th>
+                        <th class="form-label">Feedback about the Trainer</th>
+                        <th class="form-label">Feedback about the Training</th>
+                    </tr>
+                </thead>
+
+                <tbody id="lesson_learned_block">
+                    @foreach ($trainingFeedbackList as $feedback)
+                        <tr>
+
+                            <td>{{ $feedback->emp_id ?? '' }}</td>
+
+                            <td>{{ $feedback->trainer_feedback ?? '' }}</td>
+
+                            <td>{{ $feedback->training_feedback ?? '' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @else
+            <p>No training feedback data available.</p>
+        @endif
 
 </body>
 

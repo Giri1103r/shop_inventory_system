@@ -23,12 +23,13 @@ use App\Models\Master\TrainingSchedule;
 use App\Models\User;
 use App\Models\UploadLog;
 use App\Jobs\ImporNominationProcessJob;
-
+use App\Models\Master\TrainingAttendance;
 
 class NominationProcessController extends Controller
 {
 
     private $user;
+    private $training_attendance;
     private $uploadlog;
     private $department;
     private $employee;
@@ -40,6 +41,7 @@ class NominationProcessController extends Controller
     public function __construct()
     {
         $this->training_schedule = new TrainingSchedule();
+        $this->training_attendance = new TrainingAttendance();
         $this->topic = new Topic();
         $this->employee = new Employee();
         $this->nomination_process = new NominationProcess();
@@ -100,7 +102,7 @@ class NominationProcessController extends Controller
         }
         $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
         $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
-        $employeeList  = $this->employee->select('id', 'emp_id')->where('user_role','!=',1)->where('status', '1')->get();
+        $employeeList  = $this->employee->select('id', 'emp_id')->where('user_role', '!=', 1)->where('status', '1')->get();
         $data = array(
             'departmentList' => $departmentList,
             'topicList' => $topicList,
@@ -111,17 +113,37 @@ class NominationProcessController extends Controller
     }
 
 
+
     public function fetchEmployeeDetails($emp_id)
     {
-        $employee = Employee::select('emp_name', 'email', 'department', 'employee_status')
+        $employee = Employee::select('id', 'emp_name', 'email', 'department', 'employee_status')
             ->where('id', $emp_id)
             ->first();
 
-        $departments = $this->department->select('id', 'department_name')->where('status', '1')->get();
+        if (!$employee) {
+            return response()->json([
+                'error' => 'Employee not found.',
+            ], 404);
+        }
 
+        $departments = $this->department->select('id', 'department_name')
+            ->where('status', '1')
+            ->get();
+            $lastTraining = TrainingAttendance::select('training_masters_topic.topic_name', 'training_attendance.attendance_date')
+            ->leftJoin('training_masters_topic', 'training_attendance.topic_id', '=', 'training_masters_topic.id')
+            ->where('training_attendance.email', $employee->email)
+            ->where('training_attendance.attendance_status', 1)
+            ->orderBy('training_attendance.attendance_date', 'desc')
+            ->first();
+    
+        $lastTrainingDate = optional($lastTraining)->attendance_date ? $lastTraining->attendance_date->format('d-m-Y') : 'No data';
+        $lastTrainingTopic = optional($lastTraining)->topic_name ?? 'No data';
+    
         return response()->json([
             'employee' => $employee,
-            'departments' => $departments
+            'departments' => $departments,
+            'lastTrainingDate' => $lastTrainingDate,
+            'lastTrainingTopic' => $lastTrainingTopic,
         ]);
     }
 
@@ -130,15 +152,11 @@ class NominationProcessController extends Controller
         try {
             $rules = [
                 'employee.*.emp_id' => 'required',
-                // 'employee.*.last_training_attended_on' => 'required',
-                'employee.*.topic_id' => 'required',
                 'employee.*.department_id' => 'required',
             ];
 
             $messages = [
                 'employee.*.emp_id.required' => 'Please select an Employee ID.',
-                // 'employee.*.last_training_attended_on.required' => 'Please select the last training attended date.',
-                'employee.*.topic_id.required' => 'Please select a topic.',
                 'employee.*.department_id.required' => 'Please select a department.',
             ];
 
@@ -148,13 +166,13 @@ class NominationProcessController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
             try {
-                 $this->nomination_process->storeOrUpdate();
+                $this->nomination_process->storeOrUpdate();
 
-                 $trainingScheduleId = decryptId($request->training_schedule_id);
+                $trainingScheduleId = decryptId($request->training_schedule_id);
 
-                if( $trainingScheduleId){
-                    $training_status = 2 ;
-                    $this->training_schedule->updateStatus($trainingScheduleId,$training_status);
+                if ($trainingScheduleId) {
+                    $training_status = 2;
+                    $this->training_schedule->updateStatus($trainingScheduleId, $training_status);
                 }
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
@@ -217,7 +235,7 @@ class NominationProcessController extends Controller
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
-    public function Import(Request $request,$training_schedule_id,$trainer_id)
+    public function Import(Request $request, $training_schedule_id, $trainer_id)
     {
         $decryptedId = decryptId($training_schedule_id);
         $trainerDecryptedId = decryptId($trainer_id);
@@ -292,7 +310,7 @@ class NominationProcessController extends Controller
                 ];
 
                 // dispatch(new ImporNominationProcessJob($details));
-                   dispatch((new ImporNominationProcessJob($details))->onQueue('nomination_process'));
+                dispatch((new ImporNominationProcessJob($details))->onQueue('nomination_process'));
             }
 
             $insert_data['log_id'] = $insert_id;
@@ -373,7 +391,7 @@ class NominationProcessController extends Controller
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-            
+
             $header = [
                 __("common.sno"),
                 'Employee ID',

@@ -38,7 +38,7 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {
-        session(['link' => url()->previous()]);
+     
         return view('auth.login');
     }
 
@@ -47,12 +47,12 @@ class LoginController extends Controller
         $rules = [
             'email' => 'required',
             'password' => 'required',
-            'g-recaptcha-response' => 'required',
+            // 'g-recaptcha-response' => 'required',
         ];
         $messages = [
             'email.required' => 'Please enter your email address!',
             'password.required' => 'Please enter your password',
-            'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification',
+            // 'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification',
         ];
         $validator = Validator::make($request->all(), $rules, $messages);
 
@@ -80,8 +80,12 @@ class LoginController extends Controller
             } else {
                 session()->put('locale', $user->language);
             }
-
+            $requested_url = session('requested_url');
             Session::flash('success', 'Login successfully');
+            if ($requested_url != null) {
+                session()->forget('requested_url');
+                return redirect()->to($requested_url);
+            }
             return redirect()->intended(admin_url('dashboard'));
         }
         Session::flash('error', 'Invalid Email and Password');
@@ -339,7 +343,7 @@ class LoginController extends Controller
                 return redirect(admin_url('password/forgot'));
             }
 
-            $expire_mins =10;
+            $expire_mins = 10;
             $userCheck   = User::where('otp_token', $token)->first();
 
             if (!$userCheck) {

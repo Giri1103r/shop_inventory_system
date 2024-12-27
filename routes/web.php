@@ -488,7 +488,10 @@ Route::middleware(['securityheader'])->group(function () {
 
 
             });
-            Route::get('training/feedback/{id}', [TrainingScheduleController::class, 'feedback']);
+            Route::get('training/feedback_approve/{id}', [TrainingScheduleController::class, 'adminApprove']);
+            Route::post('training/feedback_approve/submit', [TrainingScheduleController::class, 'adminfeedbackApprove']);
+            Route::get('training/feedback_link/{id}', [TrainingScheduleController::class, 'feedbackLinkPage']);
+            Route::post('training/feedback_link/submit', [TrainingScheduleController::class, 'feedbackLinkSubmit']);
 
 
             /**

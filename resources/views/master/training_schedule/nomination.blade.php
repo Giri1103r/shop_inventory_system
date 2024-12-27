@@ -210,9 +210,9 @@
                                                             <th><span class="form-label">Employee Type</span> <span
                                                                     class="required">*</span></th>
                                                             <th><span class="form-label">Last Training Attended On
-                                                                    (Date)</span> <span class="required">*</span></th>
+                                                                    (Date)</span></th>
                                                             <th><span class="form-label">Last Training Attended On
-                                                                    (Topic)</span> <span class="required">*</span></th>
+                                                                    (Topic)</span></th>
                                                             <th>Delete</th>
                                                         </tr>
                                                     </thead>
@@ -255,21 +255,13 @@
                                                                         class="form-control validate-input-required"
                                                                         name="employee[1][employee_type]"
                                                                         id="employee_type_1" readonly></td>
-                                                                <td><input type="text"
-                                                                        class="form-control validate-input-required"
+                                                                <td><input type="text" class="form-control"
                                                                         name="employee[1][last_training_attended_on]"
-                                                                        id="last_training_attended_on_1"></td>
-                                                                <td>
-                                                                    <select name="employee[1][topic_id]" id="topic_id_1"
-                                                                        class="form-control single-select validate-select-required"
-                                                                        style="width: 100%">
-                                                                        <option value="">Select Topic</option>
-                                                                        @foreach ($topicList as $topic)
-                                                                            <option value="{{ encryptId($topic->id) }}">
-                                                                                {{ $topic->topic_name }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </td>
+                                                                        id="last_training_attended_on_1" readonly></td>
+                                                                <td><input type="text" class="form-control"
+                                                                        name="employee[1][last_training_topic]"
+                                                                        id="last_training_topic_1" readonly></td>
+
                                                                 <td><button class="btn btn-danger removerowdata"
                                                                         type="button" style="margin:10px;"><i
                                                                             class="fa fa-trash"></i></button>
@@ -400,11 +392,6 @@
             });
         });
         $(document).ready(function() {
-            flatpickr("[id^='last_training_attended_on_']", {
-                dateFormat: "d-m-Y",
-                maxDate: "today"
-            });
-
 
             $(document).on("change", "[name^='employee'][name$='[emp_id]']", function() {
                 var empIds = [];
@@ -449,13 +436,18 @@
                                     'select[name*="[department_id]"]');
                                 departmentDropdown.empty().append(
                                     '<option value="">Select Department</option>');
-                                data.departments.forEach(function(department) {
-                                    var selected = data.employee.department ==
-                                        department.id ? "selected" : "";
+                                data.departments.forEach(function(dept) {
+                                    var selected = dept.id == data.employee.department ?
+                                        "selected" : "";
                                     departmentDropdown.append(
-                                        `<option value="${department.id}" ${selected}>${department.department_name}</option>`
+                                        `<option value="${dept.id}" ${selected}>${dept.department_name}</option>`
                                     );
                                 });
+
+                                currentRow.find('input[name*="[last_training_attended_on]"]')
+                                    .val(data.lastTrainingDate);
+                                currentRow.find('input[name*="[last_training_topic]"]').val(data
+                                    .lastTrainingTopic);
                             } else {
                                 Swal.fire({
                                     icon: "error",
@@ -478,6 +470,8 @@
                     currentRow.find('input[name*="[employee_type]"]').val("");
                     currentRow.find('select[name*="[department_id]"]').empty().append(
                         '<option value="">Select Department</option>');
+                    currentRow.find('input[name*="[last_training_attended_on]"]').val("");
+                    currentRow.find('input[name*="[last_training_topic]"]').val("");
                 }
             });
 
@@ -515,19 +509,7 @@
 
                 newRow.find(".select2-container").remove();
 
-                newRow.find("[id^='last_training_attended_on_']").each(function() {
-                    if (this._flatpickr) {
-                        this._flatpickr.destroy(); // Destroy existing flatpickr instance
-                    }
-                });
                 $("#lesson_learned_block").append(newRow);
-
-                $("[id^='last_training_attended_on_']").each(function() {
-                    flatpickr(this, {
-                        dateFormat: "d-m-Y",
-                        maxDate: "today"
-                    });
-                });
 
                 $(".single-select").select2();
             });
@@ -586,10 +568,10 @@
 
             $(document).on('click', '.removerowdata', function() {
                 var rowCount = $("#lesson_learned_block .lesson_learned_row").length;
+
                 if (rowCount > 1) {
                     $(this).closest(".lesson_learned_row").remove();
 
-                    // Re-indexing remaining rows
                     $("#lesson_learned_block .lesson_learned_row").each(function(index) {
                         var newIndex = index + 1;
                         $(this).find("input, select").each(function() {
@@ -597,8 +579,8 @@
                             var oldId = $(this).attr("id");
 
                             if (oldName) {
-                                var newName = oldName.replace(/\[\d+\]/, '[' +
-                                    newIndex + ']');
+                                var newName = oldName.replace(/\[\d+\]/, '[' + newIndex +
+                                    ']');
                                 $(this).attr("name", newName);
                             }
 
@@ -608,9 +590,7 @@
                             }
                         });
 
-                        // Reinitialize select2 for each row
-                        $(this).find(".select2-container").remove();
-                        $(this).find(".select2").select2();
+                        $(this).find("select").select2();
                     });
 
                     $('#dynamic-add-more').attr("disabled", rowCount - 1 >= 10);
@@ -622,33 +602,8 @@
                     });
                 }
             });
-            // $('#lesson_learned_block').on('change', '[name^="employee"][name$="[emp_id]"]', function() {
-            //     var rowId = $(this).attr('name').match(/\d+/)[
-            //         0]; // Extract row number from name attribute
-            //     var empIdField = `[name="employee[${rowId}][emp_id]"]`;
 
-            //     $(empIdField).rules('add', {
-            //         required: true,
-            //         remote: {
-            //             url: '{{ admin_url('training_schedule/nomination_process/unique') }}',
-            //             type: 'post',
-            //             data: {
-            //                 _token: '{{ csrf_token() }}',
-            //                 emp_id: function() {
-            //                     return $(empIdField)
-            //                         .val(); // Fetch Employee ID dynamically
-            //                 },
-            //                 training_schedule_id: function() {
-            //                     return $('#training_schedule_id').val();
-            //                 }
-            //             }
-            //         },
-            //         messages: {
-            //             required: "Employee ID is required.",
-            //             remote: "This Employee ID is already nominated for this training."
-            //         }
-            //     });
-            // });
+
 
             $('#nomination_processadd').validate({
 
@@ -669,12 +624,6 @@
                     'employee[1][employee_type]': {
                         required: true
                     },
-                    'employee[1][last_training_attended_on]': {
-                        required: true
-                    },
-                    'employee[1][topic_id]': {
-                        required: true
-                    }
                 },
                 messages: {
                     'employee[1][emp_id]': {
@@ -693,12 +642,6 @@
                     'employee[1][employee_type]': {
                         required: "Employee Type is required."
                     },
-                    'employee[1][last_training_attended_on]': {
-                        required: "Last training attended on is required."
-                    },
-                    'employee[1][topic_id]': {
-                        required: "Training Topic is required."
-                    }
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {

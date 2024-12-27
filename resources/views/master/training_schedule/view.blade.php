@@ -68,7 +68,7 @@
 
                                 </div>
                             </div>
-                            @if (Auth::user()->role != ROLE_USER)
+                            @if (Auth::user()->role == ROLE_SUPERADMIN || Auth::user()->role == ROLE_TRAINER)
                                 <nav class="nav nav-pills nav-fill">
                                     <a class="nav-link active" aria-current="page"
                                         href="#training_schedule_details">Training
@@ -76,10 +76,13 @@
 
                                     <a class="nav-link" href="#nomination_process">Nomination Process</a>
                                     <a class="nav-link" href="#training_attendance_details">Training Attendance</a>
+                                    <a class="nav-link" href="#training_assessment_details">Training Assessment</a>
+                                    <a class="nav-link" href="#training_feedback_details">Training Feedback By
+                                        Trainees</a>
                                 </nav>
                             @endif
                             <div class="tab-content">
-                                @if (Auth::user()->role != ROLE_USER)
+                                @if (Auth::user()->role == ROLE_SUPERADMIN || Auth::user()->role == ROLE_TRAINER)
                                     <div class="card-body">
 
                                         <div class="row">
@@ -360,8 +363,112 @@
                                             <p>No training attendance data available.</p>
                                         @endif
                                     </div>
+
+
+                                    <div class="card-body" id="training_assessment_details">
+
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">Training Assessment</h4>
+                                            </div>
+                                        </div>
+                                        @if (isset($trainingAssessmentList) && $trainingAssessmentList->isNotEmpty())
+                                            <div class="basic-form">
+                                                <div class="row">
+                                                    <div class="mb-3 col-md-4 form-input">
+                                                        <label class="form-label view_label">Department</label>
+                                                        <div class="view_data">
+                                                            {{ isset($training_schedule->department_name) ? $training_schedule->department_name : '' }}
+                                                        </div>
+                                                    </div>
+                                                    <table class="table_card" style="margin-top: 20px;">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="form-label">Employee Name</th>
+                                                                <th class="form-label">Attendee/Non-Attendee</th>
+                                                                <th class="form-label">Assessment</th>
+                                                                <th class="form-label">Feedback</th>
+                                                            </tr>
+                                                        </thead>
+
+                                                        <tbody id="lesson_learned_block">
+                                                            @foreach ($trainingAssessmentList as $assessment)
+                                                                <tr>
+
+                                                                    <td>{{ $assessment->emp_name ?? '' }}</td>
+                                                                    <td>
+                                                                        @if ($assessment->attended_status == 1)
+                                                                            <i class="fa fa-check"
+                                                                                style="font-size:24px;color: green;"></i>
+                                                                        @else
+                                                                            <i class="fa fa-close"
+                                                                                style="font-size:24px;color:red"></i>
+                                                                        @endif
+                                                                    </td>
+                                                                    <td>
+                                                                        @if ($assessment->assessment == 1)
+                                                                            Pass
+                                                                        @else
+                                                                            Fail
+                                                                        @endif
+                                                                    </td>
+                                                                    <td>{{ $assessment->feedback ?? '' }}</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                    <hr>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <p>No training assessment data available.</p>
+                                        @endif
+                                    </div>
+
+                                    <div class="card-body" id="training_feedback_details">
+
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">Training Feedback</h4>
+                                            </div>
+                                        </div>
+                                        @if (isset($trainingFeedbackList) && $trainingFeedbackList->isNotEmpty())
+                                            <div class="basic-form">
+                                                <div class="row">
+                                                    <table class="table_card" style="margin-top: 20px;">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="form-label">Employee ID</th>
+                                                                <th class="form-label">Feedback about the Trainer</th>
+                                                                <th class="form-label">Feedback about the Training</th>
+                                                            </tr>
+                                                        </thead>
+
+                                                        <tbody id="lesson_learned_block">
+                                                            @foreach ($trainingFeedbackList as $feedback)
+                                                                <tr>
+
+                                                                    <td>{{ $feedback->emp_id?? '' }}</td>
+                                                                    
+                                                                    <td>{{ $feedback->trainer_feedback ?? '' }}</td>
+
+                                                                    <td>{{ $feedback->training_feedback ?? '' }}</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                    <hr>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <p>No training feedback data available.</p>
+                                        @endif
+                                    </div>
                                 @endif
-                                @if (Auth::user()->role == ROLE_USER)
+
+
+
+                                @if (Auth::user()->role != ROLE_SUPERADMIN && Auth::user()->role != ROLE_TRAINER)
                                     <div class="card-body">
 
                                         <div class="row">
@@ -407,7 +514,7 @@
                                                     {{ isset($training_schedule->department_name) ? $training_schedule->department_name : '' }}
                                                 </div>
                                             </div>
-                                          
+
                                             <div class="mb-3 col-md-4 form-input">
                                                 <label class="form-label view_label">Venue/Location</label>
                                                 <div class="view_data">
