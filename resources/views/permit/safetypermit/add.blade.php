@@ -1,4 +1,3 @@
-
 @extends('admin.layouts.admin')
 @section('title', 'Safety Permit Add')
 @section('pageurl', admin_url('safetypermit/list'))
@@ -102,7 +101,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Work Permit No</label>
                                                     <input type="text" name="permit_id" id="permit_id"
-                                                        class="form-control" value = "{{ getsequence('safetypermit') }}">
+                                                        class="form-control" value = "{{ getsequence('safetypermit') }}"
+                                                        readonly>
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
@@ -152,14 +152,14 @@
                                             <div class="col-12 col-md-6 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
                                                     <img src="{{ url('public/assets/images/safetypermit/power-off.png') }}"
-                                                        class="img-fluid" style="width: 50px; height: 50px;">
-                                                    <label class="form-label mb-0">Shut Down Required (Yes/No)</label>
+                                                        class="img-fluid"
+                                                        style="width: 50px; height: 50px; margin-right: 30px;">
+                                                    <label class="form-label mb-0" style="margin-right: 58px;">Shut Down
+                                                        Required (Yes/No)</label>
                                                     <input type="checkbox" id="shutdown-checkbox"
-                                                        class="shutdown-checkbox" name="shutdown_req"
-                                                        value="1">
+                                                        class="shutdown-checkbox" name="shutdown_req" value="1">
                                                     <div class="text-danger"></div>
                                                 </div>
-
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
@@ -173,18 +173,19 @@
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
-
                                         </div>
 
                                         <div class="row border p-3 mx-1">
                                             <div class="col-12 col-md-6 mb-3">
                                                 <div class="form-group d-flex align-items-center gap-3">
                                                     <img src="{{ url('public/assets/images/safetypermit/process.png') }}"
-                                                        class="img-fluid" style="width: 50px; height: 50px;">
-                                                    <label class="form-label mb-0 ">Isolation/LOTO Required
+                                                        class="img-fluid"
+                                                        style="width: 50px; height: 50px; margin-right: 30px;">
+                                                    <label class="form-label mb-0"
+                                                        style="margin-right: 34px;">Isolation/LOTO Required
                                                         (Yes/No)</label>
-                                                    <input type="checkbox" id="loto-checkbox"
-                                                        class="loto-checkbox" name= "loto_req">
+                                                    <input type="checkbox" id="loto-checkbox" class="loto-checkbox"
+                                                        name="loto_req">
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
@@ -192,11 +193,7 @@
                                                 <div class="form-group d-flex align-items-center gap-3">
                                                     <img src="{{ url('public/assets/images/safetypermit/profile.png') }}"
                                                         class="img-fluid" style="width: 50px; height: 50px;">
-                                                    <label class="form-label mb-0 ">Taken By (Name & Department)</label>
-                                                    {{-- <input type="text" name="description"
-                                                        class="form-control lotocheckbox"
-                                                        placeholder="Search by Employee Name" disabled> --}}
-
+                                                    <label class="form-label mb-0">Taken By (Name & Department)</label>
                                                     <select name="loto_takenby" id="employeenameloto"
                                                         class="form-control lotocheckbox" disabled>
                                                         <option value="">Select Person</option>
@@ -207,104 +204,97 @@
                                         </div>
 
                                         <div class="row border p-3 mx-1">
-                                            <div class="col-12 col-md-4 mb-3">
-                                                <div class="form-group d-flex align-items-center gap-3">
-                                                    <label class="form-label mb-0">Loto No</label>
-                                                    <input type="text" name="loto_no"
-                                                        class="form-control lotocheckbox" placeholder="Loto No" disabled>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-group d-flex align-items-center">
+                                                    <label class="form-label mb-0" style="margin-right: 50px">Loto
+                                                        No</label>
+                                                    <div class="col-sm-6 p-0">
+                                                        <input type="text" name="loto_no"
+                                                            class="form-control lotocheckbox" placeholder="Loto No"
+                                                            disabled>
+
+
+                                                    </div>
                                                     <div class="text-danger"></div>
                                                 </div>
+
                                             </div>
-                                            <div class="col-12 col-md-8 mb-3">
-                                                <div class="form-group d-flex align-items-center gap-3">
-                                                    <label class="form-label mb-0 ">Tag Field properly (Yes/No)</label>
-                                                    <input type="checkbox"
-                                                        class=" shutdowncheckbox" name="tagfield"
+                                            <div class="col-md-4 mb-3 "style="margin-right: 50px">
+                                                <div class="form-group d-flex align-items-center ps-5 ">
+                                                    <label class="form-label mb-0" style="margin-right:30px;">Tag Field
+                                                        properly (Yes/No)</label>
+                                                    <input type="checkbox" class=" shutdowncheckbox" name="tagfield"
                                                         disabled>
-                                                    <div class="text-danger"></div>
+
                                                 </div>
+                                                <div class="text-danger"></div>
                                             </div>
                                         </div>
 
                                         <div class="row col-md-12 d-flex mt-3">
                                             <!-- Left Side: Scrollable on X-Axis -->
+
                                             <div class="col-md-4">
                                                 <p class="fw-bold fs-5 mt-3">State of Isolation & LOTO</p>
                                                 <div class="scroll-container border p-3"
                                                     style="overflow-x: auto; white-space: nowrap; width: 100%;">
                                                     <!-- First Row -->
-                                                    <div class="row mb-3"
-                                                        style="display: flex; flex-wrap: nowrap; justify-content: flex-start; align-items: center;">
-                                                        <div class="d-inline-block"
-                                                            style="margin: 0; padding: 0; flex-shrink: 0;">
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <img src="{{ url('public/assets/images/safetypermit/person.png') }}"
-                                                                    class="img-fluid" style="width: 50px; height: 50px;">
-                                                                <label class="form-label mb-0"
-                                                                    for="air_checkbox">Air</label>
-                                                                <input type="checkbox"
-                                                                    class="validate-radio-required shutdowncheckbox"
-                                                                    id="air_checkbox" name="state_isolation_loto[]"
-                                                                    value="Air" disabled>
-                                                            </div>
+                                                    <div class="row mb-3 d-flex flex-nowrap align-items-center">
+                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                            style="min-width: 200px;">
+                                                            <img src="{{ url('public/assets/images/safetypermit/person.png') }}"
+                                                                class="img-fluid"
+                                                                style="width: 50px; height: 50px; margin-right: 20px">
+                                                            <label class="form-label mb-0 "
+                                                                style="margin-right: 100px;">Air</label>
+                                                            <input type="checkbox" class=" shutdowncheckbox"
+                                                                id="air_checkbox" name="state_isolation_loto[]"
+                                                                value="Air" disabled>
                                                         </div>
-                                                        <div class="d-inline-block"
-                                                            style="margin-left: -200px; padding: 0; flex-shrink: 0;">
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <img src="{{ url('public/assets/images/safetypermit/natural-gas.png') }}"
-                                                                    class="img-fluid" style="width: 50px; height: 50px;">
-                                                                <label class="form-label mb-0"
-                                                                    for="gas_checkbox">Gas</label>
-                                                                <input type="checkbox"
-                                                                    class=" shutdowncheckbox"
-                                                                    id="gas_checkbox" name="state_isolation_loto[]"
-                                                                    value="Gas" disabled>
-                                                            </div>
+                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                            style="min-width: 200px;">
+                                                            <img src="{{ url('public/assets/images/safetypermit/natural-gas.png') }}"
+                                                                class="img-fluid"
+                                                                style="width: 50px; height: 50px; margin-right: 20px">
+                                                            <label class="form-label mb-0"
+                                                                style="margin-right: 115px;">Gas</label>
+                                                            <input type="checkbox" class=" shutdowncheckbox"
+                                                                id="gas_checkbox" name="state_isolation_loto[]"
+                                                                value="Gas" disabled>
                                                         </div>
-                                                        <div class="d-inline-block"
-                                                            style="margin-left: -200px; padding: 0; flex-shrink: 0;">
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <label class="form-label mb-0">Others if any please
-                                                                    specify</label>
-                                                            </div>
+                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                            style="min-width: 200px;">
+                                                            <label class="form-label mb-0">Others if any please
+                                                                specify</label>
                                                         </div>
                                                     </div>
 
                                                     <!-- Second Row -->
-                                                    <div class="row mb-3"
-                                                        style="display: flex; flex-wrap: nowrap; justify-content: flex-start; align-items: center;">
-                                                        <div class="d-inline-block"
-                                                            style="margin: 0; padding: 0; flex-shrink: 0; margin-right: 50px;">
-                                                            <!-- Added margin-right for gap -->
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <img src="{{ url('public/assets/images/safetypermit/electrician.png') }}"
-                                                                    class="img-fluid" style="width: 50px; height: 50px;">
-                                                                <label class="form-label mb-0"
-                                                                    for="electrical_checkbox">Electrical</label>
-                                                                <input type="checkbox"
-                                                                    class="validate-radio-required shutdowncheckbox"
-                                                                    id="electrical_checkbox" name="state_isolation_loto[]"
-                                                                    value="Electrical" disabled>
-                                                            </div>
+                                                    <div class="row mb-3 d-flex flex-nowrap align-items-center">
+                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                            style="min-width: 200px;">
+                                                            <img src="{{ url('public/assets/images/safetypermit/electrician.png') }}"
+                                                                class="img-fluid"
+                                                                style="width: 50px; height: 50px; margin-right: 20px;">
+                                                            <label class="form-label mb-0"
+                                                                style="margin-right: 58px;">Electrical</label>
+                                                            <input type="checkbox" class=" shutdowncheckbox"
+                                                                id="electrical_checkbox" name="state_isolation_loto[]"
+                                                                value="Electrical" disabled>
                                                         </div>
-                                                        <div class="d-inline-block"
-                                                            style="margin-left: -200px; padding: 0; flex-shrink: 0; margin-right: 50px;">
-                                                            <!-- Added margin-right for gap -->
-                                                            <div class="form-group d-flex align-items-center gap-1">
-                                                                <img src="{{ url('public/assets/images/safetypermit/leak.png') }}"
-                                                                    class="img-fluid" style="width: 50px; height: 50px;">
-                                                                <label class="form-label mb-0"
-                                                                    for="water_checkbox">Water/Liquid</label>
-                                                                <input type="checkbox"
-                                                                    class="validate-radio-required shutdowncheckbox"
-                                                                    id="water_checkbox" name="state_isolation_loto[]"
-                                                                    value="Water/Liquid" disabled>
-                                                            </div>
+                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                            style="min-width: 200px;">
+                                                            <img src="{{ url('public/assets/images/safetypermit/leak.png') }}"
+                                                                class="img-fluid"
+                                                                style="width: 50px; height: 50px; margin-right: 20px">
+                                                            <label class="form-label mb-0"
+                                                                style="margin-right: 58px;">Water/Liquid</label>
+                                                            <input type="checkbox" class=" shutdowncheckbox"
+                                                                id="water_checkbox" name="state_isolation_loto[]"
+                                                                value="Water/Liquid" disabled>
                                                         </div>
-                                                        <div class="d-inline-block"
-                                                            style="margin-left: -0px; padding: 0; flex-shrink: 0; margin-left: 100px;">
-                                                            <!-- Adjusted margin-left to give gap -->
-
+                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                            style="min-width: 200px;">
                                                             <textarea class="form-control shutdowncheckbox" name="state_isolation_loto[]" placeholder="Specify others" disabled></textarea>
                                                             <div class="text-danger" id="shutdowncheckbox_description">
                                                             </div>
@@ -320,109 +310,108 @@
 
                                                 <div class="row border rounded p-2 mx-1">
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">O2%</label>
+                                                        <div class="form-group d-flex align-items-center">
+                                                            <label class="form-label mb-0"
+                                                                style="margin-right: 20px">O2%</label>
                                                             <input type="text"
                                                                 name="confined_space_entry[o2_percentage]"
-                                                                class="form-control" placeholder="" disabled>
-                                                            <div class="text-danger"></div>
+                                                                class="form-control" disabled>
                                                         </div>
                                                     </div>
+
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">System Isolated</label>
+                                                        <div class="form-group d-flex align-items-center">
+                                                            <label class="form-label mb-0"
+                                                                style="margin-right: 20px">System Isolated</label>
                                                             <input type="hidden"
                                                                 name="confined_space_entry[system_isolated]"
                                                                 value="0">
-                                                            <input type="checkbox" class="validate-radio-required"
+                                                            <input type="checkbox"
                                                                 name="confined_space_entry[system_isolated]"
                                                                 value="1">
-                                                            <div class="text-danger"></div>
-
                                                         </div>
                                                     </div>
+
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Rescue System Available</label>
+                                                        <div
+                                                            class="form-group d-flex align-items-center justify-content-between">
+                                                            <label class="form-label mb-0">Rescue System Available</label>
                                                             <input type="hidden"
                                                                 name="confined_space_entry[rescue_system]" value="0">
-                                                            <input type="checkbox" class="validate-radio-required"
+                                                            <input type="checkbox"
                                                                 name="confined_space_entry[rescue_system]" value="1">
-                                                            <div class="text-danger"></div>
-
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="row border rounded p-2 mx-1">
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Confined Space Attendant</label>
-                                                            <input type="hidden"
-                                                                name="confined_space_entry[confined_attendant]"
-                                                                value="0">
-                                                            <input type="checkbox" class="validate-radio-required"
+                                                        <div class="form-group d-flex align-items-center">
+                                                            <label class="form-label col-md-5 mb-0 mr-2 pe-2">Confined
+                                                                Space Attendant</label>
+                                                            <input type="checkbox"
                                                                 name="confined_space_entry[confined_attendant]"
                                                                 value="1">
-                                                            <div class="text-danger"></div>
-
                                                         </div>
                                                     </div>
+
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Attendant Name</label>
+                                                        <div
+                                                            class="form-group d-flex align-items-center justify-content-between">
+                                                            <label class="form-label col-md-6 mb-0 "
+                                                                style="margin-right: 10px;">Attendant Name</label>
                                                             <input type="text"
                                                                 name="confined_space_entry[attendant_name]"
                                                                 class="form-control" placeholder="Search by Employee Name"
                                                                 disabled>
-                                                            <div class="text-danger"></div>
-
                                                         </div>
                                                     </div>
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Register for entry & exits</label>
-                                                            <input type="checkbox" class="validate-radio-required"
-                                                                name="confined_space_entry[register_entry_exits]" disabled>
-                                                            <div class="text-danger"></div>
 
+                                                    <div class="col-12 col-md-4 mb-3">
+                                                        <div
+                                                            class="form-group d-flex align-items-center justify-content-between">
+                                                            <label class="form-label mb-0"
+                                                                style="margin-right: 20px">Register for entry &
+                                                                exits</label>
+                                                            <input type="checkbox"
+                                                                name="confined_space_entry[register_entry_exits]" disabled>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="row border rounded p-2 mx-1 mb-3">
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Any Other Gas / PPM</label>
+                                                        <div class="form-group d-flex align-items-center">
+                                                            <label class="form-label mb-0">Any Other Gas / PPM</label>
                                                             <input type="text" name="confined_space_entry[other_gas]"
                                                                 class="form-control" placeholder="Loto No" disabled>
-                                                            <div class="text-danger"></div>
-
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">PPM and is therefore safe to enter
-                                                                from</label>
+                                                        <div class="form-group d-flex align-items-center">
+                                                            <label class="form-label mb-0">PPM and is therefore safe to
+                                                                enter from</label>
                                                             <input type="text"
-                                                                name="confined_space_entry[ppm_safe_to_enter]"
-                                                                class="form-control" placeholder="" disabled>
-                                                            <div class="text-danger"></div>
+                                                                name="confined_space_entry[ppm_entry_date]"
+                                                                class="form-control" id="from_PPMTime" disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">To</label>
-                                                            <input type="text" name="confined_space_entry[to]"
-                                                                class="form-control" placeholder="" disabled>
-                                                            <div class="text-danger"></div>
-
+                                                        <div class="form-group d-flex align-items-center">
+                                                            <label class="form-label mb-0">PPM and is therefore safe to
+                                                                enter to</label>
+                                                            <input type="text"
+                                                                name="confined_space_entry[ppm_entry_to]"
+                                                                class="form-control" id="to_PPMTime" disabled>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
 
+                                            </div>
                                         </div>
+
+
+
 
                                         <p class="fw-bold fs-5 mt-3">Protective Equipment's to be Worn (<i
                                                 class="fas fa-check text-primary"></i>)
@@ -616,11 +605,11 @@
                                                         All Involved Equipment's have been inspected as per the inspection
                                                         checklist prior to start work (Yes/No)
                                                         <span class="text-danger">*</span>
-                                                        <input type="checkbox" id="equipment_checklist_inspection"
-                                                            class=""
-                                                            name = "equipment_checklist_inspection">
-                                                        <div class="text-danger"></div>
                                                     </label>
+
+                                                        <input type="checkbox" id="equipment_checklist_inspection"
+                                                            class="" name = "equipment_checklist_inspection">
+                                                        <div class="text-danger"></div>
 
                                                 </div>
                                             </div>
@@ -650,10 +639,11 @@
                                                         Safe Work Procedure discussed in tool box talk before start the work
                                                         (Yes/No)
                                                         <span class="text-danger">*</span>
-                                                        <input type="checkbox" id="toolbox_talk"
-                                                            class="" name = "toolbox_talk">
-                                                        <div class="text-danger"></div>
                                                     </label>
+                                                    <input type="checkbox" id="toolbox_talk" class=""
+                                                        name = "toolbox_talk">
+                                                    <div class="text-danger"></div>
+
                                                 </div>
                                             </div>
 
@@ -697,46 +687,47 @@
                                         <p class="fw-bold fs-5 mt-3">List of Workman involved in Job</span>
                                         </p>
                                         <div class="row">
-                                            <div class="col-md-2">
+                                            <div class="col-md-4 col-sm-6 col-12 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Employee Code / Visitor ID</label>
                                                     <select name="employee_code" id="employee_code"
-                                                        class="single-select   form-control">
+                                                        class="single-select form-control">
                                                         <option value="">Select Employee ID</option>
                                                     </select>
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-4 col-sm-6 col-12 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Name of Workman</label>
                                                     <input type="text" name="workman_name" id="workman_name"
                                                         class="form-control" readonly>
                                                     <div class="text-danger"></div>
-
                                                 </div>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-4 col-sm-6 col-12 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Designation</label>
                                                     <input type="text" name="workman_desig" id="workman_desig"
                                                         class="form-control" readonly>
                                                     <div class="text-danger"></div>
-
                                                 </div>
                                             </div>
-                                            <div class="col-md-2">
+
+                                            <div class="col-md-4 col-sm-6 col-12 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Department / Company</label>
-                                                    <select name="workman_dept" id="workman_dept"
-                                                        class="form-control single-select">
-                                                        <option value="">Select Department</option>
-                                                    </select>
-                                                    <div class="text-danger"></div>
+                                                    <div class="col-sm-6" style="width: 100%">
+                                                        <select name="workman_dept" id="workman_dept" style="width: 100%"
+                                                            class="single-select form-control">
+                                                            <option value="">Select Department</option>
+                                                        </select>
+                                                    </div>
 
+                                                    <div class="text-danger"></div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-4 col-sm-6 col-12 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Nature of Job</label>
                                                     <input type="text" name="nature_of_job" id="nature_of_job"
@@ -744,11 +735,10 @@
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-2 mt-3">
-                                                <x-button-add dataId="" class="add btn btn-primary ms-1"
+                                            <div class="col-md-4 col-sm-6 col-12 mb-3 d-flex align-items-end">
+                                                <x-button-add dataId="" class="add btn btn-primary"
                                                     href="{{ admin_url('ptw/typeofworkmaster/add') }}">Add</x-button-add>
                                             </div>
-
                                         </div>
                                         <div class="table-responsive mt-3">
                                             <table class="table table-bordered text-center">
@@ -775,10 +765,11 @@
                                                         Are all above employee competent for assigned job & physically fit
                                                         for duty (Yes/No)
                                                         <span class="text-danger">*</span>
-                                                        <input type="checkbox" id="assigned_job" name = "assigned_job"
-                                                            class="">
-                                                        <div class="text-danger"></div>
                                                     </label>
+                                                    <input type="checkbox" id="assigned_job" name = "assigned_job"
+                                                        class="">
+                                                    <div class="text-danger"></div>
+
                                                 </div>
                                             </div>
 
@@ -794,12 +785,14 @@
                                                         <input type="text" name="attendance_toolbox_talk"
                                                             id="attendance_toolbox_talk" class="form-control"
                                                             style="flex-grow: 1; max-width: 300px;">
-                                                        <div class="text-danger"></div>
                                                     </div>
+                                                    <div class="text-danger"></div>
                                                 </div>
                                             </div>
 
                                         </div>
+
+
 
                                         <p class="fw-bold fs-5 mt-3">Note</span>
                                         </p>
@@ -953,7 +946,6 @@
 
                 var parentRow = $(this).closest(".row");
 
-
                 var employeeCode = parentRow.find('select[name="employee_code"] option:selected').val();
                 var employeeName = parentRow.find('select[name="employee_code"] option:selected').text();
                 var workmanName = parentRow.find('input[name="workman_name"]').val();
@@ -962,12 +954,9 @@
                 var departmentName = parentRow.find('select[name="workman_dept"] option:selected').text();
                 var natureOfJob = parentRow.find('input[name="nature_of_job"]').val();
 
-
                 var isValid = true;
 
-
                 parentRow.find('.text-danger').text("");
-
 
                 if (!employeeCode) {
                     parentRow.find('select[name="employee_code"]').closest('.form-group').find(
@@ -979,50 +968,38 @@
                         .text("Workman Name is required.");
                     isValid = false;
                 }
-                // if (!designation) {
-                //     parentRow.find('input[name="workman_desig"]').closest('.form-group').find(
-                //         '.text-danger').text("Designation is required.");
-                //     isValid = false;
-                // }
                 if (!department) {
                     parentRow.find('select[name="workman_dept"]').closest('.form-group').find(
                         '.text-danger').text("Department is required.");
                     isValid = false;
                 }
-
-
-                if (!natureOfJob || !/^[a-zA-Z]{3,30}$/.test(natureOfJob)) {
-                    parentRow.find('input[name="nature_of_job"]').next('.text-danger').text(
-                        "Nature of Job should only contain letters, and spaces (3 to 30 characters)."
-                    );
+                if (!natureOfJob || !/^[a-zA-Z\s]{3,30}$/.test(natureOfJob)) {
+                    parentRow.find('input[name="nature_of_job"]').closest('.form-group').find(
+                        '.text-danger').text(
+                        "Nature of Job should only contain letters and spaces (3 to 30 characters).");
                     isValid = false;
                 }
 
-
-
                 if (isValid) {
                     var newRow = `
-                    <tr>
-                        <td><input type="hidden" name="emp_id[]" value="${employeeCode}">${employeeName}</td>
-                        <td><input type="hidden" name="workman_name[]" value="${workmanName}">${workmanName}</td>
-                        <td><input type="hidden" name="workman_desig[]" value="${designation}">${designation}</td>
-                        <td><input type="hidden" name="workman_dept[]" value="${department}">${departmentName}</td>
-                        <td><input type="hidden" name="nature_of_job[]" value="${natureOfJob}">${natureOfJob}</td>
-                        <td>
-                            <button class="btn btn-danger btn-sm remove-entry">Remove</button>
-                        </td>
-                    </tr>
-                `;
+                        <tr>
+                            <td><input type="hidden" name="emp_id[]" value="${employeeCode}">${employeeName}</td>
+                            <td><input type="hidden" name="workman_name[]" value="${workmanName}">${workmanName}</td>
+                            <td><input type="hidden" name="workman_desig[]" value="${designation}">${designation}</td>
+                            <td><input type="hidden" name="workman_dept[]" value="${department}">${departmentName}</td>
+                            <td><input type="hidden" name="nature_of_job[]" value="${natureOfJob}">${natureOfJob}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm remove-entry">Remove</button>
+                            </td>
+                        </tr>
+                    `;
 
                     $("#workman-list-entries").append(newRow);
 
-                    // Clear the form after adding
-                    parentRow.find('select[name="employee_code"]').val("");
-                    parentRow.find('select[name="employee_code"]').trigger("change");
+                    parentRow.find('select[name="employee_code"]').val("").trigger("change");
                     parentRow.find('input[name="workman_name"]').val("");
                     parentRow.find('input[name="workman_desig"]').val("");
-                    parentRow.find('select[name="workman_dept"]').val("");
-                    parentRow.find('select[name="workman_dept"]').trigger("change");
+                    parentRow.find('select[name="workman_dept"]').val("").trigger("change");
                     parentRow.find('input[name="nature_of_job"]').val("");
 
                     Swal.fire({
@@ -1083,27 +1060,50 @@
         });
 
         flatpickr("#date", {
-            // enableTime: true,
+            minDate: new Date(),
             dateFormat: "d-m-Y",
-            // time_24hr: true,
             minuteIncrement: 5,
         });
 
-        flatpickr("#time_from", {
+        flatpickr("#from_PPMTime", {
             enableTime: true,
             noCalendar: true,
             time_24hr: true,
             minuteIncrement: 5,
-            dateFormat: "H:i"
+            dateFormat: "H:i",
         });
 
-        flatpickr("#time_to", {
+        flatpickr("#to_PPMTime", {
             enableTime: true,
             noCalendar: true,
             time_24hr: true,
             minuteIncrement: 5,
-            dateFormat: "H:i"
+            dateFormat: "H:i",
         });
+
+        const fromPicker = flatpickr("#time_from", {
+            enableTime: true,
+            noCalendar: true,
+            time_24hr: true,
+            minuteIncrement: 5,
+            dateFormat: "H:i",
+            onChange: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length > 0) {
+                    let fromTime = selectedDates[0];
+                    let toTime = new Date(fromTime.getTime() + 8 * 60 * 60 * 1000);
+
+                    let hours = String(toTime.getHours()).padStart(2, '0');
+                    let minutes = String(toTime.getMinutes()).padStart(2, '0');
+                    let formattedTime = `${hours}:${minutes}`;
+
+
+                    document.getElementById("time_to").value = formattedTime;
+                }
+            }
+        });
+
+
+        document.getElementById("time_to").readOnly = true;
     </script>
     <script type="text/javascript">
         $(document).ready(function() {
@@ -1221,7 +1221,6 @@
         $(document).ready(function() {
             const displayedEquipments = new Set();
 
-
             $('.work-type-checkbox').on('change', function() {
                 const workId = $(this).data('id');
                 const container = $('#getprotectivechecklist-container');
@@ -1233,13 +1232,17 @@
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
+
                             let checkpointsHtml = '';
                             data.forEach(function(item) {
+
                                 if (!displayedEquipments.has(item.protective_equip)) {
                                     displayedEquipments.add(item.protective_equip);
+                                    const isChecked = item.default_enable == 1 ?
+                                        'checked' : '';
                                     checkpointsHtml += `
                                 <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                    <input type="checkbox" class="protective-checkbox" name="protective_equip[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                    <input type="checkbox" class="protective-checkbox" name="protective_equip[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}" ${isChecked}>
                                     <label for="checkpoint-${workId}-${item.id}">${item.protective_equip}</label>
                                 </div>`;
                                 }
@@ -1258,12 +1261,10 @@
                 }
             });
 
-
             $('#safetyPermitadd').on('submit', function(e) {
                 const container = $('#getprotectivechecklist-container');
                 const errorDiv = $(
                     '<div class="text-danger">Please select at least one Protective Equipment.</div>');
-
 
                 container.find('.text-danger').remove();
 
@@ -1272,11 +1273,9 @@
 
                 $('.protective-checkbox').each(function() {
                     if ($(this).is(':checked')) {
-                        hasSelection =
-                            true;
+                        hasSelection = true;
                     }
                 });
-
 
                 if (!hasSelection) {
                     hasError = true;
@@ -1284,25 +1283,22 @@
                     e.preventDefault();
                 }
 
-
                 if (hasError) {
                     e.preventDefault();
                 }
             });
 
-
             $('#getprotectivechecklist-container').on('change', '.protective-checkbox', function() {
                 const container = $('#getprotectivechecklist-container');
 
-
                 const hasSelection = container.find('.protective-checkbox:checked').length > 0;
-
 
                 if (hasSelection) {
                     container.find('.text-danger').remove();
                 }
             });
         });
+
 
 
 
@@ -1330,10 +1326,11 @@
                             data.forEach(function(item) {
                                 if (!displayedEquipments.has(item.equip_involve)) {
                                     displayedEquipments.add(item.equip_involve);
-
+                                    const isChecked = item.default_enable == 1 ?
+                                        'checked' : '';
                                     checkpointsHtml += `
                                 <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                    <input type="checkbox" class="equiment_involved" name="equiment_involved[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                    <input type="checkbox" class="equiment_involved" name="equiment_involved[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}" ${isChecked}>
                                     <label for="checkpoint-${workId}-${item.id}">${item.equip_involve}</label>
                                 </div>`;
                                 }
@@ -1419,10 +1416,11 @@
                             data.forEach(function(item) {
                                 if (!displayedPrecautions.has(item.precaution)) {
                                     displayedPrecautions.add(item.precaution);
-
+                                    const isChecked = item.default_enable == 1 ?
+                                        'checked' : '';
                                     checkpointsHtml += `
                                 <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                    <input type="checkbox" class="precaution_taken" name="precaution_taken[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                    <input type="checkbox" class="precaution_taken" name="precaution_taken[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}"${isChecked}>
                                     <label for="checkpoint-${workId}-${item.id}">${item.precaution}</label>
                                 </div>`;
                                 }
@@ -1443,49 +1441,6 @@
                 }
             });
 
-            // $('#safetyPermitadd').on('submit', function(e) {
-            //     const container = $('#getprecaution-container');
-            //     const errorDiv = $(
-            //         '<div class="text-danger">Please select at least one Precaution Taken.</div>');
-
-
-            //     container.find('.text-danger').remove();
-
-            //     let hasError = false;
-            //     let hasSelection = false;
-
-            //     $('.precaution_taken').each(function() {
-            //         if ($(this).is(':checked')) {
-            //             hasSelection =
-            //                 true;
-            //         }
-            //     });
-
-
-            //     if (!hasSelection) {
-            //         hasError = true;
-            //         container.append(errorDiv);
-            //         e.preventDefault();
-            //     }
-
-
-            //     if (hasError) {
-            //         e.preventDefault();
-            //     }
-            // });
-
-
-            // $('#getprecaution-container').on('change', '.precaution_taken', function() {
-            //     const container = $('#getprecaution-container');
-
-
-            //     const hasSelection = container.find('.precaution_taken:checked').length > 0;
-
-
-            //     if (hasSelection) {
-            //         container.find('.text-danger').remove();
-            //     }
-            // });
         });
 
 
@@ -1514,10 +1469,11 @@
                             data.forEach(function(item) {
                                 if (!displayedEquipments.has(item.checklist)) {
                                     displayedEquipments.add(item.checklist);
-
+                                    const isChecked = item.default_enable == 1 ?
+                                        'checked' : '';
                                     checkpointsHtml += `
                                 <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                    <input type="checkbox" class="equipment_checklist" name="equipment_checklist[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                    <input type="checkbox" class="equipment_checklist" name="equipment_checklist[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}" ${isChecked}>
                                     <label for="checkpoint-${workId}-${item.id}">${item.checklist}</label>
                                 </div>`;
                                 }
@@ -1538,49 +1494,7 @@
                 }
             });
 
-            // $('#safetyPermitadd').on('submit', function(e) {
-            //     const container = $('#getchecklist-container');
-            //     const errorDiv = $(
-            //         '<div class="text-danger">Please select at least one Equipment Checklist.</div>');
 
-
-            //     container.find('.text-danger').remove();
-
-            //     let hasError = false;
-            //     let hasSelection = false;
-
-            //     $('.equipment_checklist').each(function() {
-            //         if ($(this).is(':checked')) {
-            //             hasSelection =
-            //                 true;
-            //         }
-            //     });
-
-
-            //     if (!hasSelection) {
-            //         hasError = true;
-            //         container.append(errorDiv);
-            //         e.preventDefault();
-            //     }
-
-
-            //     if (hasError) {
-            //         e.preventDefault();
-            //     }
-            // });
-
-
-            // $('#getchecklist-container').on('change', '.equipment_checklist', function() {
-            //     const container = $('#getchecklist-container');
-
-
-            //     const hasSelection = container.find('.equipment_checklist:checked').length > 0;
-
-
-            //     if (hasSelection) {
-            //         container.find('.text-danger').remove();
-            //     }
-            // });
         });
 
 
@@ -1608,10 +1522,11 @@
                             data.forEach(function(item) {
                                 if (!displayedEquipments.has(item.safe_work)) {
                                     displayedEquipments.add(item.safe_work);
-
+                                    const isChecked = item.default_enable == 1 ?
+                                        'checked' : '';
                                     checkpointsHtml += `
                                 <div class="col-12 col-md-12 d-flex align-items-center gap-2 checkpoint" data-work-id="${workId}" data-id="${item.id}">
-                                    <input type="checkbox" class="safework_instruction" name="safework_instruction[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}">
+                                    <input type="checkbox" class="safework_instruction" name="safework_instruction[${workId}][]" value="${item.id}" id="checkpoint-${workId}-${item.id}" ${isChecked}>
                                     <label for="checkpoint-${workId}-${item.id}">${item.safe_work}</label>
                                 </div>`;
                                 }
@@ -1632,49 +1547,7 @@
                 }
             });
 
-            // $('#safetyPermitadd').on('submit', function(e) {
-            //     const container = $('#getinstruction-container');
-            //     const errorDiv = $(
-            //         '<div class="text-danger">Please select at least one Safe Work Instruction.</div>');
 
-
-            //     container.find('.text-danger').remove();
-
-            //     let hasError = false;
-            //     let hasSelection = false;
-
-            //     $('.safework_instruction').each(function() {
-            //         if ($(this).is(':checked')) {
-            //             hasSelection =
-            //                 true;
-            //         }
-            //     });
-
-
-            //     if (!hasSelection) {
-            //         hasError = true;
-            //         container.append(errorDiv);
-            //         e.preventDefault();
-            //     }
-
-
-            //     if (hasError) {
-            //         e.preventDefault();
-            //     }
-            // });
-
-
-            // $('#getinstruction-container').on('change', '.safework_instruction', function() {
-            //     const container = $('#getinstruction-container');
-
-
-            //     const hasSelection = container.find('.safework_instruction:checked').length > 0;
-
-
-            //     if (hasSelection) {
-            //         container.find('.text-danger').remove();
-            //     }
-            // });
         });
 
 
@@ -1776,18 +1649,8 @@
                         minlength: 3,
                         maxlength: 600,
                     },
-                 
-                    shut_down_takenby: {
-                        required: true
-                    },
-                   
-                    loto_takenby: {
-                        required: true
-                    },
-                    loto_no: {
-                        required: true,
-                        numeric: true
-                    },
+
+
                     equipment_checklist_inspection: {
                         required: true,
                     },
@@ -1798,29 +1661,16 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                       
+
                     },
-                    employee_code: {
-                        required: true,
-                    },
-                    workman_name: {
-                        required: true,
-                    },
-                    workman_desig: {
-                        required: true,
-                    },
-                    nature_of_job: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 30,
-                        regex: /^[a-zA-Z, ]{3,30}$/
-                    },
+
+
                     assigned_job: {
                         required: true,
                     },
                     attendance_toolbox_talk: {
                         required: true,
-                        regex: /^[0-9]$/
+                        digits: true,
                     }
 
                 },
@@ -1858,18 +1708,10 @@
                         minlength: "Job Description between 3 and 600 characters.",
                         maxlength: "Job Description between 3 and 600 characters.",
                     },
-                   
-                    shut_down_takenby: {
-                        required: "Please select the person responsible for shutting down."
-                    },
-                 
-                    loto_takenby: {
-                        required: "Please select the person responsible for LOTO."
-                    },
-                    loto_no: {
-                        required: "Loto No is required.",
-                        numeric: "Please enter a valid numeric Loto No."
-                    },
+
+
+
+
                     equipment_checklist_inspection: {
                         required: "Equipment Checklist Inspection is required.",
                     },
@@ -1882,21 +1724,7 @@
                         maxlength: "Name is between 3 to 30 characters",
 
                     },
-                    employee_code: {
-                        required: "Employee ID is required",
-                    },
-                    workman_desig: {
-                        required: "Designation is required",
-                    },
-                    workman_dept: {
-                        required: "Department is required",
-                    },
-                    nature_of_job: {
-                        required: "Nature Of the job is required",
-                        minlength: "Nature Of the job between 3 and 30 characters.",
-                        maxlength: "Nature Of the job between 3 and 30 characters.",
-                        regex: "Only the Alphabes are Required"
-                    },
+
                     assigned_job: {
                         required: "Please check the Assigned job",
                     },
@@ -1910,10 +1738,19 @@
                 errorElement: 'div',
                 errorPlacement: function(error, element) {
                     if (element.hasClass('work-type-checkbox')) {
-                        var errorDiv = $('.work-type').find('.text-danger');
+
+                        var errorDiv = element.closest('.work-type').find('.text-danger');
+                        errorDiv.html(error);
+                    } else if (element.is(':checkbox')) {
+
+                        var errorDiv = element.siblings('.text-danger');
                         errorDiv.html(error);
                     } else {
-                        var errorDiv = element.siblings('div.text-danger');
+
+                        var errorDiv = element.closest('.form-group').find('.text-danger');
+                        if (errorDiv.length === 0) {
+                            errorDiv = element.siblings('.text-danger');
+                        }
                         errorDiv.html(error);
                     }
                 },

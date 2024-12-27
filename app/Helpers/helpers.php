@@ -1298,6 +1298,21 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('getEmployeeId')) {
+
+        function getEmployeeId($userid)
+        {
+
+            $emp_id = DB::table('masters_employee')->select('emp_id')->where('id', $userid)->where('status', 1)->where('trash', 'NO')->first();
+
+            if ($emp_id == null) {
+                return '';
+            } else {
+                return $emp_id->emp_id;
+            }
+        }
+    }
+
     if (!function_exists('getUnitname')) {
 
         function getUnitname($userid)

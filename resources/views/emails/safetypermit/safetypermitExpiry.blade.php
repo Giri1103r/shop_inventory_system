@@ -71,7 +71,17 @@
                         <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                             valign="top"> {{ $details['job_location_area'] }}</td>
                     </tr>
+
+                    
                 </tbody>
+            </table>
+             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 20px;">
+                <tr>
+                    <td align="center" style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                        <a href="{{ $details['extension_link'] }}" style="background-color: green; border: 1px solid green; border-radius: 5px; box-sizing: border-box; color: #ffffff; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 10px 20px; text-align: center; text-decoration: none; text-transform: capitalize;">Permit Extension</a>
+                       
+                    </td>
+                </tr>
             </table>
 
         </td>
