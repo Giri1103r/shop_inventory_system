@@ -384,7 +384,7 @@
                                                         <div class="form-group d-flex align-items-center">
                                                             <label class="form-label mb-0">Any Other Gas / PPM</label>
                                                             <input type="text" name="confined_space_entry[other_gas]"
-                                                                class="form-control" placeholder="Loto No" disabled>
+                                                                class="form-control" placeholder="Any Other Gas / PPM" disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">

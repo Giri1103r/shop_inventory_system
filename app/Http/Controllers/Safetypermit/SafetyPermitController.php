@@ -120,12 +120,12 @@ class SafetyPermitController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
 
-                            if ((!in_array(ROLE_USER, getUserRoleId(Auth::id()))) && ($row->permit_status == STATUS_EHS_VERIFICATION_PENDING || $row->permit_status == STATUS_EHS_APPROVE_PENDING || $row->permit_status == STATUS_PLANT_HEAD_PENDING || $row->permit_status == STATUS_EHS_HOLD || $row->permit_status == STATUS_EHS_RESUME || $row->permit_status == STATUS_EHS_REASSIGN || $row->permit_status == STATUS_PERMIT_EXTENDED || $row->permit_status == STATUS_PERMIT_EXTENDED_APPROVAL || $row->permit_status == STATUS_PLANTHEAD_REJECTED)) {
+                            if ((!in_array(ROLE_USER, getUserRoleId(Auth::id()))) && ((in_array(ROLE_EHS_OFFICER, getUserRoleId(Auth::id())) && $row->permit_status == STATUS_EHS_VERIFICATION_PENDING) || ( $row->verified_by == Auth::id() && $row->permit_status == STATUS_EHS_APPROVE_PENDING) || (in_array(ROLE_PLANT_HEAD, getUserRoleId(Auth::id())) && $row->permit_status == STATUS_PLANT_HEAD_PENDING) || ( $row->verified_by == Auth::id() && $row->permit_status == STATUS_EHS_HOLD ) || ($row->verified_by == Auth::id() && $row->permit_status == STATUS_EHS_RESUME) || ($row->reassign_to == Auth::id() && $row->permit_status == STATUS_EHS_REASSIGN) || ($row->verified_by == Auth::id() &&  $row->permit_status == STATUS_PERMIT_EXTENDED )|| ($row->verified_by == Auth::id() && $row->permit_status == STATUS_PERMIT_EXTENDED_APPROVAL ) || ($row->verified_by == Auth::id() && $row->permit_status == STATUS_PLANTHEAD_REJECTED ))) {
                                 $btn = '<a href="' . admin_url('safetypermit/approvereject/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="Approval">
                             <i class="fa-solid fa-check-to-slot text-success"></i>
                         </a>';
                             }
-                            if (($row->permit_status >= STATUS_EHS_APPROVE_PENDING) && ($row->permit_status != STATUS_PERMIT_EXPIRED && $row->permit_status != STATUS_PLANT_HEAD_APPROVED && $row->permit_status != STATUS_EHS_DECLINE) && ($row->created_by == Auth::id())) {
+                            if (($row->permit_status >= STATUS_EHS_APPROVE_PENDING) && ($row->permit_status != STATUS_PERMIT_EXPIRED && $row->permit_status != STATUS_PLANT_HEAD_APPROVED && $row->permit_status != STATUS_EHS_DECLINE) && ($row->created_by == Auth::id()) && ($row->permit_status == STATUS_PERMIT_EXTENDED_REJECTED)) {
                                 $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '" class="permitExtension" title="' . __('Permit Extension') . '"><i class="fa fa-external-link"></i> ';
                             }
 
@@ -442,7 +442,7 @@ class SafetyPermitController extends Controller
             $this->safetypermit->permitstatus($permit_status, $id);
 
             $mailsubject = 'EHS Verified';
-            $Assignedusers = User::where('id', $safetypermit->verified_by)
+            $Assignedusers = User::where('id', $approve->created_by)
                 ->select('name', 'email')
                 ->get()
                 ->unique('email');
@@ -486,7 +486,7 @@ class SafetyPermitController extends Controller
                     'module' => 1,
                 )),
                 'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
-                'assigned_user' => $safetypermit->verified_by,
+                'assigned_user' => $approve->created_by,
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
@@ -834,14 +834,14 @@ class SafetyPermitController extends Controller
                     ->select('name', 'email')
                     ->get()
                     ->unique('email');
-                $Assignedusers = User::where('id', $safetypermit->verified_by)->pluck('id')->toArray();
+                $assigned_user = User::where('id', $safetypermit->verified_by)->pluck('id')->toArray();
             }
 
             $approve =   $this->approvereject->plantheadApproval($permit_status);
             $this->safetypermit->approved_by($approve->created_by, $id);
             $this->safetypermit->permitstatus($permit_status, $id);
 
-
+             
 
             if ($Assignedusers != null) {
 
@@ -1017,7 +1017,7 @@ class SafetyPermitController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Hot Work Permit Details.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             dd($ex);
@@ -1081,26 +1081,28 @@ class SafetyPermitController extends Controller
             })
         );
     }
-    public function reassignemployeename(Request $request)
-    {
-        $name = $request->input('search');
+  public function reassignemployeename(Request $request)
+{
+    $name = $request->input('search');
+    $unitId = $request->input('unitId');
+    $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
+        ->where('status', 1)
+        ->where('unit', $unitId)
+        ->whereRaw("FIND_IN_SET(?, user_role)", [3])
+        ->where('login_id', '!=', Auth::id())
+        ->limit(10)
+        ->get();
 
-        $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
-            ->where('status', 1)
-            ->whereRaw("FIND_IN_SET(?, user_role)", [3])
-            ->where('login_id', '!=', Auth::id())
-            ->limit(10)
-            ->get();
+    return response()->json(
+        $employees->map(function ($employee) {
+            return [
+                'id' => $employee->login_id,
+                'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+            ];
+        })
+    );
+}
 
-        return response()->json(
-            $employees->map(function ($employee) {
-                return [
-                    'id' => $employee->login_id,
-                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
-                ];
-            })
-        );
-    }
 
 
     public function employeeid(Request $request)
@@ -1231,7 +1233,7 @@ class SafetyPermitController extends Controller
             $html = view('permit.safetypermit.exportpdf', $data)->render();
             $mpdf->WriteHTML($html);
             $filename = "Safety Permit.pdf";
-            return $mpdf->Output($filename, 'I');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);
             report($ex);

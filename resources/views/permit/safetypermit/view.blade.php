@@ -228,7 +228,7 @@
 
                                         <label class="form-label view_label m-1">{{ $item }}</label>
                                         <span class="view_data">
-                                            @if (in_array($item, $stateIsolationLoto))
+                                            @if ( isset($stateIsolationLoto) &&in_array($item, $stateIsolationLoto))
                                                 <b><i class="fa-solid fa-check"
                                                         style="color: #267709; width: 15px;"></i></b>
                                             @else
@@ -249,7 +249,7 @@
                                                     specify</label>
                                                 <div class="view_data">
 
-                                                    {{ $item }}
+                                                    {{ isset($item) ? $item : '' }}
                                                 </div>
                                             </div>
                                         @break

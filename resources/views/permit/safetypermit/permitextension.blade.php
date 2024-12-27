@@ -50,7 +50,7 @@
                                             </div>
                                             <div class="col-md-12 mb-3">
                                                 <div class="mb-1">
-                                                    <label for="remarks" class="form-label">Remarks</label>
+                                                    <label for="remarks" class="form-label require">Remarks</label>
                                                     <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="extension_remarks"
                                                         rows="3"></textarea>
                                                     <div class="text-danger" id="remarks_error"></div>
@@ -94,11 +94,11 @@
                     time_to: {
                         required: true,
                     },
-                    ehs_verification_remarks: {
+                    extension_remarks: {
                         required: true,
                         minlength: 3,
-                        maxlength: 255,
-                        regex: /^[a-zA-Z0-9\s]+$/
+                        maxlength: 600,
+                       
                     },
 
 
@@ -108,11 +108,11 @@
                         required: " Time is empty.",
                         
                     },
-                    ehs_verification_remarks: {
+                    extension_remarks: {
                         required: " Remarks cannot be empty.",
-                        minlength: "Remarks  must contain between 3 and 255 characters.",
-                        maxlength: "Remarks must contain between 3 and 255 characters.",
-                        regex: "Remarks must contain only letters and numbers."
+                        minlength: "Remarks  must contain between 3 and 600 characters.",
+                        maxlength: "Remarks must contain between 3 and 600 characters.",
+                        
                     },
 
                 },

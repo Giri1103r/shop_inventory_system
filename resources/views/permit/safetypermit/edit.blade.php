@@ -397,7 +397,7 @@
                                                                 style="margin-right: 10px;">Attendant Name</label>
                                                             <input type="text"
                                                                 name="confined_space_entry[attendant_name]"
-                                                                class="form-control" placeholder="Search by Employee Name"
+                                                                class="form-control" placeholder=""
                                                                 value="{{ $confinedSpaceEntry['attendant_name'] ?? '' }}"
                                                                 disabled>
                                                         </div>
@@ -422,7 +422,7 @@
                                                         <div class="form-group d-flex align-items-center">
                                                             <label class="form-label mb-0">Any Other Gas / PPM</label>
                                                             <input type="text" name="confined_space_entry[other_gas]"
-                                                                class="form-control" placeholder="Loto No"
+                                                                class="form-control" placeholder="Any Other Gas / PPM"
                                                                 value="{{ $confinedSpaceEntry['other_gas'] ?? '' }}"
                                                                 disabled>
                                                         </div>
