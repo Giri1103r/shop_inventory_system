@@ -391,7 +391,7 @@
                                                         <div class="form-group d-flex align-items-center">
                                                             <label class="form-label mb-0">PPM and is therefore safe to
                                                                 enter from</label>
-                                                            <input type="date"
+                                                            <input type="text"
                                                                 name="confined_space_entry[ppm_entry_date]"
                                                                 class="form-control" id="from_PPMTime" disabled>
                                                         </div>
@@ -400,7 +400,7 @@
                                                         <div class="form-group d-flex align-items-center">
                                                             <label class="form-label mb-0">PPM and is therefore safe to
                                                                 enter to</label>
-                                                            <input type="date"
+                                                            <input type="text"
                                                                 name="confined_space_entry[ppm_entry_to]"
                                                                 class="form-control" id="to_PPMTime" disabled>
                                                         </div>
