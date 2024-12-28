@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Type of work Show')
+@section('title', 'Type of work View')
 @section('pageurl', admin_url('ptw/typeofworkmaster/list'))
 
 
@@ -63,7 +63,7 @@
                                             <h3>
                                                 Protective Equipment's To be Worn
                                             </h3>
-                                           
+
                                             <div>
                                                 <table class="table view_card" id = "protective">
                                                     <thead>
@@ -78,12 +78,12 @@
                                                         @php
                                                             $index = 1;
                                                         @endphp
-                                                       
+
                                                         @foreach ($getprotectivedetails as $getprotectivedetails)
                                                         {{-- @dd($detail); --}}
-                                                       
+
                                                             <tr>
-                                                        
+
                                                                 <td>{{ $index }}</td>
 
                                                                 <td>
@@ -95,7 +95,7 @@
                                                                 </td>
                                                                 {{-- <td>
                                                                     <input type="checkbox" name="protective[protective_check][type1][{{ $detail->id }}]" class="row-checkbox validate-radio-required" value="1"{{ getCheckedVal($protective[$detail->id]['checked'], '1') }}>
-                                                                    
+
                                                                 </td> --}}
                                                                 <td> {{ $getprotectivedetails->protective_equip }}</td>
 
@@ -113,7 +113,7 @@
                                                         @endforeach
                                                     </tbody>
                                                 </table>
-                                                
+
                                             </div>
                                         </div>
 
@@ -121,7 +121,7 @@
                                             <h3>
                                                 Equipment Involved
                                             </h3>
-                                          
+
                                             <div>
                                                 <table class="table view_card" id = "equipment">
                                                     <thead>
@@ -140,11 +140,11 @@
                                                         @endphp
                                                         @foreach ($getequipmentdetails as $getequipmentdetails)
                                                             <tr>
-                                                               
+
                                                                 <td>{{ $index }}</td>
 
 
-                                                                
+
                                                                 <td>
                                                                     @if ($getequipmentdetails->checked == 1)
                                                                         <i class="fa-solid fa-check" style="color: #267709;"></i>
@@ -152,12 +152,12 @@
                                                                         <i class="fa-solid fa-x" style="color: #f72626;"></i>
                                                                     @endif
                                                                 </td>
-                                                             
+
                                                                 <td>
                                                                     {{ $getequipmentdetails->equip_involve }}
                                                                 </td>
 
-                                                                
+
                                                                 <td>
                                                                     @if ($getequipmentdetails->default_enable == 1)
                                                                         <i class="fa-solid fa-check" style="color: #267709;"></i>
@@ -181,7 +181,7 @@
                                         <div class="table-container">
                                             <h3>
                                                 Manual List</h3>
-                                               
+
                                             <div>
                                                 <table class="table view_card" id = "manual">
                                                     <thead>
@@ -201,7 +201,7 @@
                                                             <tr>
 
                                                                 <td>{{ $index }}</td>
- 
+
                                                                 <td>
                                                                     @if ($getmanualdetails->checked == 1)
                                                                         <i class="fa-solid fa-check" style="color: #267709;"></i>
@@ -209,7 +209,7 @@
                                                                         <i class="fa-solid fa-x" style="color: #f72626;"></i>
                                                                     @endif
                                                                 </td>
-                                                               
+
                                                                 <td>
                                                                     {{ $getmanualdetails->precaution }}
                                                                 </td>
@@ -221,7 +221,7 @@
                                                                         <i class="fa-solid fa-x" style="color: #f72626;"></i>
                                                                     @endif
                                                                 </td>
-                                                               
+
 
                                                             </tr>
                                                             @php
@@ -236,7 +236,7 @@
                                         <div class="table-container">
                                             <h3>
                                                 Check List</h3>
-                                                
+
                                             <div>
                                                 <table class="table view_card" id = "check">
                                                     <thead>
@@ -264,9 +264,9 @@
                                                                         <i class="fa-solid fa-x" style="color: #f72626;"></i>
                                                                     @endif
                                                                 </td>
-                                                          
+
                                                                 <td>
-                                                                   
+
                                                                     {{ $getcheckdetails->checklist }}
                                                                 </td>
 
@@ -277,7 +277,7 @@
                                                                         <i class="fa-solid fa-x" style="color: #f72626;"></i>
                                                                     @endif
                                                                 </td>
-                                                               
+
                                                             </tr>
                                                             @php
                                                                 $index++;
@@ -295,7 +295,7 @@
                                         <div class="table-container">
                                             <h3>
                                                 Instruction List</h3>
-                                               
+
                                             <div style="overflow-y: auto; max-height: 400px;">
                                                 <table class="table view_card" id = instruction>
                                                     <thead>
@@ -313,7 +313,7 @@
                                                         @endphp
                                                         @foreach ($getinstructiondetails as $getinstructiondetails)
                                                         <tr>
-                                                
+
                                                             <td>{{ $index }}</td>
 
                                                             <td>
@@ -323,7 +323,7 @@
                                                                     <i class="fa-solid fa-x" style="color: #f72626;"></i>
                                                                 @endif
                                                             </td>
-                                                           
+
                                                             <td>
                                                                 {{ $getinstructiondetails->safe_work }}
                                                             </td>
@@ -335,9 +335,9 @@
                                                                     <i class="fa-solid fa-x" style="color: #f72626;"></i>
                                                                 @endif
                                                             </td>
-                                                           
+
                                                         </tr>
-                                                        
+
                                                             @php
                                                                 $index++;
                                                             @endphp

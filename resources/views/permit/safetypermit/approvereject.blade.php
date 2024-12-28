@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Permit')
+@section('title', 'Safety Permit Approval')
 @section('pageurl', admin_url('safetypermit/list'))
 
 
@@ -229,7 +229,7 @@
                                         <label class="form-label view_label m-1">{{ $item }}</label>
                                         <span class="view_data">
                                             @if ( isset($stateIsolationLoto) && in_array($item, $stateIsolationLoto))
-                                            
+
                                                 <!-- Check if the item is in the array -->
                                                 <b><i class="fa-solid fa-check"
                                                         style="color: #267709; width: 15px;"></i></b>
@@ -326,7 +326,7 @@
                                         <span>No</span>
                                     @endif
                                 </span>
-                                
+
                             </div>
 
                             <div class="mb-3 col-md-4 form-input">
@@ -1208,7 +1208,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 600,
-                        
+
                     },
                     // reasigned: {
                     //     required: true,
@@ -1224,7 +1224,7 @@
                         required: "Remarks cannot be empty.",
                         minlength: "Remarks must contain between 3 and 600 characters.",
                         maxlength: "Remarks must contain between 3 and 600 characters.",
-                       
+
                     },
                     // reasigned: {
                     //     required: "Please check the 'Re-Assign' checkbox.",
@@ -1265,7 +1265,7 @@
         data: function(params) {
             return {
                 search: params.term,
-                unitId: $('#unit_id').val()  
+                unitId: $('#unit_id').val()
             };
         },
         processResults: function(data) {
@@ -1293,7 +1293,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 600,
-                       
+
                     },
                 },
                 messages: {
@@ -1302,7 +1302,7 @@
                         required: " Remarks cannot be empty.",
                         minlength: "Remarks  must contain between 3 and 600 characters.",
                         maxlength: "Remarks must contain between 3 and 600 characters.",
-                      
+
                     },
                 },
                 errorElement: 'div',
@@ -1335,7 +1335,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 600,
-                       
+
                     },
                 },
                 messages: {
@@ -1344,7 +1344,7 @@
                         required: " Remarks cannot be empty.",
                         minlength: "Remarks  must contain between 3 and 600 characters.",
                         maxlength: "Remarks must contain between 3 and 600 characters.",
-                      
+
                     },
                 },
                 errorElement: 'div',

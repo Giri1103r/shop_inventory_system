@@ -207,6 +207,12 @@ class SafetyPermitController extends Controller
 
             try {
 
+
+                // $lastStatus = $this->safetypermit->laststatus();
+                // if($lastStatus !=STATUS_PLANT_HEAD_APPROVED || $lastStatus !=STATUS_PERMIT_EXPIRED ||$lastStatus !=STATUS_EHS_DECLINE ){
+                //    Session::flash('error','last status is still in active');
+                //    return redirect('safetypermit/list');
+                // }
                 $safetypermit =   $this->safetypermit->store();
                 $WorkmanInvolved =   $this->workmaninvolved->store($safetypermit->id);
 
@@ -841,7 +847,7 @@ class SafetyPermitController extends Controller
             $this->safetypermit->approved_by($approve->created_by, $id);
             $this->safetypermit->permitstatus($permit_status, $id);
 
-             
+
 
             if ($Assignedusers != null) {
 
@@ -985,6 +991,7 @@ class SafetyPermitController extends Controller
                 __("Unit"),
                 __("Date"),
                 __("Exact Job Location"),
+                // __("From Status"),
                 __("Status"),
                 __("Verified By"),
                 __("Approved By"),
@@ -1016,7 +1023,7 @@ class SafetyPermitController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Hot Work Permit Details.pdf";
+            $filename = "Safety Permit.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
