@@ -384,7 +384,7 @@
                                                         <div class="form-group d-flex align-items-center">
                                                             <label class="form-label mb-0">Any Other Gas / PPM</label>
                                                             <input type="text" name="confined_space_entry[other_gas]"
-                                                                class="form-control" placeholder="Loto No" disabled>
+                                                                class="form-control" placeholder="Any Other Gas / PPM" disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
@@ -409,9 +409,6 @@
 
                                             </div>
                                         </div>
-
-
-
 
                                         <p class="fw-bold fs-5 mt-3">Protective Equipment's to be Worn (<i
                                                 class="fas fa-check text-primary"></i>)
@@ -687,16 +684,23 @@
                                         <p class="fw-bold fs-5 mt-3">List of Workman involved in Job</span>
                                         </p>
                                         <div class="row">
+
                                             <div class="col-md-4 col-sm-6 col-12 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Employee Code / Visitor ID</label>
-                                                    <select name="employee_code" id="employee_code"
-                                                        class="single-select form-control">
-                                                        <option value="">Select Employee ID</option>
-                                                    </select>
+                                                    <div class="col-sm-6" style="width: 100%">
+                                                        <select name="employee_code" id="employee_code" style="width: 100%"
+                                                            class="single-select form-control">
+                                                            <option value="">Select Employee ID</option>
+                                                        </select>
+                                                    </div>
+
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
+
+
+
                                             <div class="col-md-4 col-sm-6 col-12 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Name of Workman</label>

@@ -20,8 +20,8 @@ use App\Models\UploadLogError;
 use App\Models\Master\Checklist;
 use Illuminate\Support\Facades\Session;
 
-//  class ImportsafeworkJob implements ShouldQueue
-class ImportChecklistJob
+ class ImportChecklistJob implements ShouldQueue
+// class ImportChecklistJob
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

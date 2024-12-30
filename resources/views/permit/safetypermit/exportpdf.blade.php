@@ -329,7 +329,7 @@
                         <div style="margin-top: 5px; font-weight: bold;">{{ $item }}</div>
 
                         <span style="margin-top: 5px; display: inline-block;">
-                            @if (in_array($item, $stateIsolationLoto))
+                            @if ( isset($stateIsolationLoto) && in_array($item, $stateIsolationLoto))
                                 <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
                             @else
                                 <b><i class="fa-solid fa-xmark" style="color: #ff0000; width: 15px;">✘</i></b>
@@ -377,7 +377,7 @@
             <td width="20%" style="padding:5px;"><b>System Isolated</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                @if ($confined_space_entry->system_isolated == 1)
+                @if ( isset($confined_space_entry) && $confined_space_entry->system_isolated == 1)
                     <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
                 @endif
             </td>
@@ -386,7 +386,7 @@
             <td width="20%" style="padding:5px;"><b>Rescue System Available</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                @if ($confined_space_entry->rescue_system == 1)
+                @if (  isset($confined_space_entry) &&  $confined_space_entry->rescue_system == 1)
                     <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
                 @endif
             </td>
@@ -395,7 +395,7 @@
             <td width="20%" style="padding:5px;"><b>Confined Space Attendant</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                @if ($confined_space_entry->confined_attendant == 1)
+                @if (  isset($confined_space_entry) &&  $confined_space_entry->confined_attendant == 1)
                     <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
                 @endif
             </td>
@@ -412,7 +412,7 @@
             <td width="20%" style="padding:5px;"><b>Register for entry & exits</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                @if ($confined_space_entry->register_entry_exits == 'on')
+                @if (  isset($confined_space_entry) && $confined_space_entry->register_entry_exits == 'on')
                     <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
                 @endif
             </td>

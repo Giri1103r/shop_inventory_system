@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Permit Show')
+@section('title', 'Safety Permit view')
 @section('pageurl', admin_url('safetypermit/list'))
 
 
@@ -228,7 +228,7 @@
 
                                         <label class="form-label view_label m-1">{{ $item }}</label>
                                         <span class="view_data">
-                                            @if (in_array($item, $stateIsolationLoto))
+                                            @if (isset($stateIsolationLoto) && in_array($item, $stateIsolationLoto))
                                                 <b><i class="fa-solid fa-check"
                                                         style="color: #267709; width: 15px;"></i></b>
                                             @else
@@ -249,7 +249,7 @@
                                                     specify</label>
                                                 <div class="view_data">
 
-                                                    {{ $item }}
+                                                    {{ isset($item) ? $item : '' }}
                                                 </div>
                                             </div>
                                         @break
@@ -277,7 +277,7 @@
                             <div class="mb-3 col-md-4 form-input">
                                 <label class="form-label view_label m-1">System Isolated</label>
                                 <span class="view_data">
-                                    @if ($confined_space_entry->system_isolated == 1)
+                                    @if (isset($confined_space_entry) && $confined_space_entry->system_isolated == 1)
                                         <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
                                     @else
                                         <span>No</span>
@@ -288,7 +288,7 @@
                             <div class="mb-3 col-md-4 form-input">
                                 <label class="form-label view_label m-1">Rescue System Available</label>
                                 <span class="view_data">
-                                    @if ($confined_space_entry->rescue_system == 1)
+                                    @if (isset($confined_space_entry) && $confined_space_entry->rescue_system == 1)
                                         <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
                                     @else
                                         <span>No</span>
@@ -299,7 +299,7 @@
                             <div class="mb-3 col-md-4 form-input">
                                 <label class="form-label view_label m-1">Confined Space Attendant</label>
                                 <span class="view_data">
-                                    @if ($confined_space_entry->confined_attendant == 1)
+                                    @if (isset($confined_space_entry) && $confined_space_entry->confined_attendant == 1)
                                         <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
                                     @else
                                         <span>No</span>
@@ -317,11 +317,14 @@
                             <div class="mb-3 col-md-4 form-input">
                                 <label class="form-label view_label m-1">Register for entry & exits</label>
                                 <span class="view_data">
-                                    @if ($confined_space_entry->register_entry_exits == 'on')
+                                    @if (isset($confined_space_entry) &&
+                                            isset($confined_space_entry->register_entry_exits) &&
+                                            $confined_space_entry->register_entry_exits == 'on')
                                         <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
                                     @else
                                         <span>No</span>
                                     @endif
+
                                 </span>
                             </div>
 

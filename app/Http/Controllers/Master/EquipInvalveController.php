@@ -294,7 +294,7 @@ class EquipInvalveController extends Controller
                 $user_id = Auth::id();
 
                 $insert_data = array(
-                    'upload_type' => 1,
+                    'upload_type' => 12,
                     'upload_status' => 0,
                     'file_name' => $filenewname,
                     'file_orgname' => $fileName,
@@ -314,8 +314,8 @@ class EquipInvalveController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportequipinvalveJob($details));
-                //    dispatch((new ImportEmployeeJob($details))->onQueue('empimport'));
+                // dispatch(new ImportequipinvalveJob($details));
+                   dispatch((new ImportequipinvalveJob($details))->onQueue('equipinvalveimport'));
             }
 
             $insert_data['log_id'] = $insert_id;

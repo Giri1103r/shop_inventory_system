@@ -38,7 +38,7 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {
-     
+
         return view('auth.login');
     }
 
@@ -47,12 +47,12 @@ class LoginController extends Controller
         $rules = [
             'email' => 'required',
             'password' => 'required',
-            // 'g-recaptcha-response' => 'required',
+            'g-recaptcha-response' => 'required',
         ];
         $messages = [
             'email.required' => 'Please enter your email address!',
             'password.required' => 'Please enter your password',
-            // 'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification',
+            'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification',
         ];
         $validator = Validator::make($request->all(), $rules, $messages);
 

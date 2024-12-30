@@ -395,7 +395,7 @@ class PpeTypeController extends Controller
                 $user_id = Auth::id();
 
                 $insert_data = [
-                    'upload_type' => 1,
+                    'upload_type' => 16,
                     'upload_status' => 0,
                     'file_name' => $filenewname,
                     'file_orgname' => $fileName,

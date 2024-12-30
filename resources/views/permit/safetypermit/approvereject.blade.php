@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', '')
+@section('title', 'Safety Permit Approval')
 @section('pageurl', admin_url('safetypermit/list'))
 
 
@@ -228,7 +228,8 @@
 
                                         <label class="form-label view_label m-1">{{ $item }}</label>
                                         <span class="view_data">
-                                            @if (in_array($item, $stateIsolationLoto))
+                                            @if ( isset($stateIsolationLoto) && in_array($item, $stateIsolationLoto))
+
                                                 <!-- Check if the item is in the array -->
                                                 <b><i class="fa-solid fa-check"
                                                         style="color: #267709; width: 15px;"></i></b>
@@ -243,18 +244,17 @@
                             </div>
 
                             @if ($stateIsolationLoto)
-                                <div class="row">
-                                    @foreach ($stateIsolationLoto as $item)
-                                        @if (!in_array($item, ['Air', 'Gas', 'Electrical', 'Water/Liquid']))
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label m-1">Others if any please
-                                                    specify</label>
-                                                <div class="view_data">
+                            <div class="row">
+                                @foreach ($stateIsolationLoto as $item)
+                                    @if (!in_array($item, ['Air', 'Gas', 'Electrical', 'Water/Liquid']))
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label m-1">Others if any please specify</label>
+                                            <div class="view_data">
 
-                                                    {{ $item }}
-                                                </div>
+                                                {{ isset($item) ? $item : '' }}
                                             </div>
-                                        @break
+                                        </div>
+                                    @break
                                     @endif
                                 @endforeach
                             </div>
@@ -279,18 +279,19 @@
                             <div class="mb-3 col-md-4 form-input">
                                 <label class="form-label view_label m-1">System Isolated</label>
                                 <span class="view_data">
-                                    @if ($confined_space_entry->system_isolated == 1)
-                                        <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
-                                    @else
-                                        <span>No</span>
-                                    @endif
+                                    @if (isset($confined_space_entry) && $confined_space_entry->system_isolated == 1)
+                                    <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
+                                @else
+                                    <span>No</span>
+                                @endif
+
                                 </span>
                             </div>
 
                             <div class="mb-3 col-md-4 form-input">
                                 <label class="form-label view_label m-1">Rescue System Available</label>
                                 <span class="view_data">
-                                    @if ($confined_space_entry->rescue_system == 1)
+                                    @if ( isset($confined_space_entry) && $confined_space_entry->rescue_system == 1)
                                         <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
                                     @else
                                         <span>No</span>
@@ -301,7 +302,7 @@
                             <div class="mb-3 col-md-4 form-input">
                                 <label class="form-label view_label m-1">Confined Space Attendant</label>
                                 <span class="view_data">
-                                    @if ($confined_space_entry->confined_attendant == 1)
+                                    @if ( isset($confined_space_entry) && $confined_space_entry->confined_attendant == 1)
                                         <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
                                     @else
                                         <span>No</span>
@@ -319,12 +320,13 @@
                             <div class="mb-3 col-md-4 form-input">
                                 <label class="form-label view_label m-1">Register for entry & exits</label>
                                 <span class="view_data">
-                                    @if ($confined_space_entry->register_entry_exits == 'on')
+                                    @if (optional($confined_space_entry)->register_entry_exits == 'on')
                                         <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
                                     @else
                                         <span>No</span>
                                     @endif
                                 </span>
+
                             </div>
 
                             <div class="mb-3 col-md-4 form-input">
@@ -665,20 +667,20 @@
                                             value="{{ $safetypermit->id }}">
                                         <div class="mb-3 row">
                                             <div class="col-md-4 mb-3">
-                                                <label for="approver_name" class="form-label">Approver Name</label>
+                                                <label for="approver_name" class="form-label require">Approver Name</label>
                                                 <input type="text" class="form-control form-control-sm"
                                                     name= "approver_name" id="approver_name" readonly
                                                     value="{{ Auth::user()->name }}">
                                             </div>
                                             <div class="col-md-4 mb-3">
-                                                <label for="date" class="form-label">Date</label>
+                                                <label for="date" class="form-label require">Date</label>
                                                 <input type="text" class="form-control form-control-sm"
                                                     id="date" name="date" readonly
                                                     value="{{ date('d-m-Y H:i:s') }}">
                                             </div>
                                             <div class="col-md-12 mb-3">
                                                 <div class="mb-1">
-                                                    <label for="remarks" class="form-label">Remarks</label>
+                                                    <label for="remarks" class="form-label require">Remarks</label>
                                                     <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="ehs_verification_remarks"
                                                         rows="3"></textarea>
                                                     <div class="text-danger" id="remarks_error"></div>
@@ -776,7 +778,7 @@
                         </div>
                     </div>
                     <div class="basic-form">
-                        <form method="POST" id="ehs_verification"
+                        <form method="POST" id="extension_approval"
                             action="{{ admin_url('safetypermit/permitextensionapproval/submit') }}"
                             enctype="multipart/form-data">
                             @csrf
@@ -785,20 +787,20 @@
                                     value="{{ $safetypermit->id }}">
                                 <div class="mb-3 row">
                                     <div class="col-md-4 mb-3">
-                                        <label for="approver_name" class="form-label">Approver Name</label>
+                                        <label for="approver_name" class="form-label require">Approver Name</label>
                                         <input type="text" class="form-control form-control-sm"
                                             name= "approver_name" id="approver_name" readonly
                                             value="{{ Auth::user()->name }}">
                                     </div>
                                     <div class="col-md-4 mb-3">
-                                        <label for="date" class="form-label">Date</label>
+                                        <label for="date" class="form-label require">Date</label>
                                         <input type="text" class="form-control form-control-sm"
                                             id="date" name="date" readonly
                                             value="{{ date('d-m-Y H:i:s') }}">
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <div class="mb-1">
-                                            <label for="remarks" class="form-label">Remarks</label>
+                                            <label for="remarks" class="form-label require">Remarks</label>
                                             <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="extension_aproval_remarks"
                                                 rows="3"></textarea>
                                             <div class="text-danger" id="remarks_error"></div>
@@ -875,16 +877,18 @@
                                         <div class="">
                                             <input type="hidden" id= "permit_id" name="permit_id"
                                                 value="{{ $safetypermit->id }}">
+                                                <input type="hidden" id= "unit_id" name="unit_id"
+                                                value="{{ $safetypermit->unit_id }}">
                                             <div class="mb-3 row">
                                                 <div class="col-md-4 mb-3">
-                                                    <label for="approver_name" class="form-label">Approver
+                                                    <label for="approver_name" class="form-label require">Approver
                                                         Name</label>
                                                     <input type="text" class="form-control form-control-sm"
                                                         name= "approver_name" id="approver_name" readonly
                                                         value="{{ Auth::user()->name }}">
                                                 </div>
                                                 <div class="col-md-4 mb-3">
-                                                    <label for="date" class="form-label">Date</label>
+                                                    <label for="date" class="form-label require">Date</label>
                                                     <input type="text" class="form-control form-control-sm"
                                                         id="date" name="date" readonly
                                                         value="{{ date('d-m-Y H:i:s') }}">
@@ -897,7 +901,7 @@
                                                         <input type="checkbox" class="form-check-input"
                                                             id="reasigned" name="reasigned"
                                                             @error('remarks') is-invalid @enderror>
-                                                        
+
                                                     </div>
                                                 </div>
                                                @endif
@@ -918,7 +922,7 @@
 
                                                 <div class="col-md-12 mb-3">
                                                     <div class="mb-1">
-                                                        <label for="remarks" class="form-label">Remarks</label>
+                                                        <label for="remarks" class="form-label require">Remarks</label>
                                                         <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="ehs_approval_remarks"
                                                             rows="3"></textarea>
                                                         <div class="text-danger" id="remarks_error"></div>
@@ -1061,20 +1065,20 @@
                                             value="{{ $safetypermit->id }}">
                                         <div class="mb-3 row">
                                             <div class="col-md-4 mb-3">
-                                                <label for="approver_name" class="form-label">Approver Name</label>
+                                                <label for="approver_name" class="form-label require">Approver Name</label>
                                                 <input type="text" class="form-control form-control-sm"
                                                     name= "approver_name" id="approver_name" readonly
                                                     value="{{ Auth::user()->name }}">
                                             </div>
                                             <div class="col-md-4 mb-3">
-                                                <label for="date" class="form-label">Date</label>
+                                                <label for="date" class="form-label require">Date</label>
                                                 <input type="text" class="form-control form-control-sm"
                                                     id="date" name="date" readonly
                                                     value="{{ date('d-m-Y H:i:s') }}">
                                             </div>
                                             <div class="col-md-12 mb-3">
                                                 <div class="mb-1">
-                                                    <label for="remarks" class="form-label">Remarks</label>
+                                                    <label for="remarks" class="form-label require">Remarks</label>
                                                     <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks"
                                                         name="planthead_approval_remarks" rows="3"></textarea>
                                                     <div class="text-danger" id="remarks_error"></div>
@@ -1143,8 +1147,8 @@
                     ehs_verification_remarks: {
                         required: true,
                         minlength: 3,
-                        maxlength: 255,
-                        regex: /^[a-zA-Z0-9\s]+$/
+                        maxlength: 600,
+
                     },
 
 
@@ -1153,9 +1157,9 @@
 
                     ehs_verification_remarks: {
                         required: " Remarks cannot be empty.",
-                        minlength: "Remarks  must contain between 3 and 255 characters.",
-                        maxlength: "Remarks must contain between 3 and 255 characters.",
-                        regex: "Remarks must contain only letters and numbers."
+                        minlength: "Remarks  must contain between 3 and 600 characters.",
+                        maxlength: "Remarks must contain between 3 and 600 characters.",
+
                     },
 
                 },
@@ -1203,8 +1207,8 @@
                     ehs_approval_remarks: {
                         required: true,
                         minlength: 3,
-                        maxlength: 255,
-                        regex: /^[a-zA-Z0-9\s]+$/
+                        maxlength: 600,
+
                     },
                     // reasigned: {
                     //     required: true,
@@ -1218,9 +1222,9 @@
                 messages: {
                     ehs_approval_remarks: {
                         required: "Remarks cannot be empty.",
-                        minlength: "Remarks must contain between 3 and 255 characters.",
-                        maxlength: "Remarks must contain between 3 and 255 characters.",
-                        regex: "Remarks must contain only letters and numbers."
+                        minlength: "Remarks must contain between 3 and 600 characters.",
+                        maxlength: "Remarks must contain between 3 and 600 characters.",
+
                     },
                     // reasigned: {
                     //     required: "Please check the 'Re-Assign' checkbox.",
@@ -1254,31 +1258,33 @@
                 }
             });
             $('#reassign_to').select2({
-                ajax: {
-                    url: '{{ admin_url('safetypermit/reassignemployeename') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            })
-                        };
-                    }
-                },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control',
-                width: '100%'
-            });
+    ajax: {
+        url: '{{ admin_url('safetypermit/reassignemployeename') }}',
+        dataType: 'json',
+        delay: 250,
+        data: function(params) {
+            return {
+                search: params.term,
+                unitId: $('#unit_id').val()
+            };
+        },
+        processResults: function(data) {
+            return {
+                results: $.map(data, function(item) {
+                    return {
+                        id: item.id,
+                        text: item.text
+                    };
+                })
+            };
+        }
+    },
+    minimumInputLength: 1,
+    dropdownCssClass: 'form-control',
+    selectionCssClass: 'form-control',
+    width: '100%'
+});
+
 
 
             $('#planthead_approval').validate({
@@ -1286,17 +1292,59 @@
                     planthead_approval_remarks: {
                         required: true,
                         minlength: 3,
-                        maxlength: 255,
-                        regex: /^[a-zA-Z0-9\s]+$/
+                        maxlength: 600,
+
                     },
                 },
                 messages: {
 
                     planthead_approval_remarks: {
                         required: " Remarks cannot be empty.",
-                        minlength: "Remarks  must contain between 3 and 255 characters.",
-                        maxlength: "Remarks must contain between 3 and 255 characters.",
-                        regex: "Remarks must contain only letters and numbers."
+                        minlength: "Remarks  must contain between 3 and 600 characters.",
+                        maxlength: "Remarks must contain between 3 and 600 characters.",
+
+                    },
+                },
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    var errorDiv = element.siblings('div.text-danger');
+                    errorDiv.html(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    $('#submit').prop('disabled', true);
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log(errors + " field(s) are invalid");
+                    validator.errorList.forEach(function(error) {
+                        console.log("Field: " + error.element.name + ", Error: " + error
+                            .message);
+                    });
+                }
+            });
+            $('#extension_approval').validate({
+                rules: {
+                    extension_aproval_remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 600,
+
+                    },
+                },
+                messages: {
+
+                    extension_aproval_remarks: {
+                        required: " Remarks cannot be empty.",
+                        minlength: "Remarks  must contain between 3 and 600 characters.",
+                        maxlength: "Remarks must contain between 3 and 600 characters.",
+
                     },
                 },
                 errorElement: 'div',

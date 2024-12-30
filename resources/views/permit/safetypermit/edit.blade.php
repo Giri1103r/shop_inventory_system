@@ -397,7 +397,7 @@
                                                                 style="margin-right: 10px;">Attendant Name</label>
                                                             <input type="text"
                                                                 name="confined_space_entry[attendant_name]"
-                                                                class="form-control" placeholder="Search by Employee Name"
+                                                                class="form-control" placeholder=""
                                                                 value="{{ $confinedSpaceEntry['attendant_name'] ?? '' }}"
                                                                 disabled>
                                                         </div>
@@ -422,7 +422,7 @@
                                                         <div class="form-group d-flex align-items-center">
                                                             <label class="form-label mb-0">Any Other Gas / PPM</label>
                                                             <input type="text" name="confined_space_entry[other_gas]"
-                                                                class="form-control" placeholder="Loto No"
+                                                                class="form-control" placeholder="Any Other Gas / PPM"
                                                                 value="{{ $confinedSpaceEntry['other_gas'] ?? '' }}"
                                                                 disabled>
                                                         </div>
@@ -791,10 +791,13 @@
                                             <div class="col-md-4 col-sm-6 col-12 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Employee Code / Visitor ID</label>
-                                                    <select name="employee_code" id="employee_code"
-                                                        class="single-select form-control">
-                                                        <option value="">Select Employee ID</option>
-                                                    </select>
+                                                    <div class="col-sm-6" style="width: 100%">
+                                                        <select name="employee_code" id="employee_code" style="width: 100%"
+                                                            class="single-select form-control">
+                                                            <option value="">Select Employee ID</option>
+                                                        </select>
+                                                    </div>
+
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
@@ -1442,7 +1445,7 @@
         $(document).ready(function() {
             const displayedEquipmentsInvolved = new Set();
             const selectedEquipmentsInvolved = @json($safetypermit->mapped_equiment_involved);
-      
+
             function handleCheckboxChange(workId, checkboxState) {
                 const container = $('#getequipmentinvolved-container');
 

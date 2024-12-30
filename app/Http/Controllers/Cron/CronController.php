@@ -672,4 +672,109 @@ class CronController extends Controller
             return response()->json(['message' => 'No jobs in the Unit Import queue to process', 'exit_code' => 0]);
         }
     }
+
+
+    public function queueProtectiveequipmentmasterImport()
+    {
+        $queueLength = Queue::size('proteciveequipimport');
+        if ($queueLength > 0) {
+            $options = [
+                '--sleep' => 3,
+                '--tries' => 3,
+                '--queue' => 'proteciveequipimport',
+                '--timeout' => 600,
+                '--max-jobs' => 10,
+            ];
+
+            $exitCode = Artisan::call('queue:work', $options);
+            Session::invalidate();
+            return response()->json(['message' => 'Queue Nomination Process command executed successfully',  'exit_code' => $exitCode]);
+        } else {
+            Session::invalidate();
+            return response()->json(['message' => 'No jobs in the Nomination Process Import queue to process', 'exit_code' => 0]);
+        }
+    }
+
+    public function queueEquipinvolvemasterImport()
+    {
+        $queueLength = Queue::size('equipinvalveimport');
+        if ($queueLength > 0) {
+            $options = [
+                '--sleep' => 3,
+                '--tries' => 3,
+                '--queue' => 'equipinvalveimport',
+                '--timeout' => 600,
+                '--max-jobs' => 10,
+            ];
+
+            $exitCode = Artisan::call('queue:work', $options);
+            Session::invalidate();
+            return response()->json(['message' => 'Queue Nomination Process command executed successfully',  'exit_code' => $exitCode]);
+        } else {
+            Session::invalidate();
+            return response()->json(['message' => 'No jobs in the Nomination Process Import queue to process', 'exit_code' => 0]);
+        }
+    }
+
+    public function queueSafeworkmasterImport()
+    {
+        $queueLength = Queue::size('safeworkimport');
+        if ($queueLength > 0) {
+            $options = [
+                '--sleep' => 3,
+                '--tries' => 3,
+                '--queue' => 'safeworkimport',
+                '--timeout' => 600,
+                '--max-jobs' => 10,
+            ];
+
+            $exitCode = Artisan::call('queue:work', $options);
+            Session::invalidate();
+            return response()->json(['message' => 'Queue Nomination Process command executed successfully',  'exit_code' => $exitCode]);
+        } else {
+            Session::invalidate();
+            return response()->json(['message' => 'No jobs in the Nomination Process Import queue to process', 'exit_code' => 0]);
+        }
+    }
+
+    public function queuePrecautionmasterImport()
+    {
+        $queueLength = Queue::size('precautionimport');
+        if ($queueLength > 0) {
+            $options = [
+                '--sleep' => 3,
+                '--tries' => 3,
+                '--queue' => 'precautionimport',
+                '--timeout' => 600,
+                '--max-jobs' => 10,
+            ];
+
+            $exitCode = Artisan::call('queue:work', $options);
+            Session::invalidate();
+            return response()->json(['message' => 'Queue Nomination Process command executed successfully',  'exit_code' => $exitCode]);
+        } else {
+            Session::invalidate();
+            return response()->json(['message' => 'No jobs in the Nomination Process Import queue to process', 'exit_code' => 0]);
+        }
+    }
+    public function queueChecklistmasterImport()
+    {
+        $queueLength = Queue::size('checklistimport');
+        if ($queueLength > 0) {
+            $options = [
+                '--sleep' => 3,
+                '--tries' => 3,
+                '--queue' => 'checklistimport',
+                '--timeout' => 600,
+                '--max-jobs' => 10,
+            ];
+
+            $exitCode = Artisan::call('queue:work', $options);
+            Session::invalidate();
+            return response()->json(['message' => 'Queue Nomination Process command executed successfully',  'exit_code' => $exitCode]);
+        } else {
+            Session::invalidate();
+            return response()->json(['message' => 'No jobs in the Nomination Process Import queue to process', 'exit_code' => 0]);
+        }
+    }
 }

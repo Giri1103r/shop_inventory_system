@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Location Type List')
+@section('title', 'SafetyPermit')
 @section('content')
 
     <div style="width:100%;">
@@ -36,7 +36,9 @@
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->exact_location_job }}
                         </td>
-                        
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->to_status }}
+                        </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->status_name }}
                         </td>

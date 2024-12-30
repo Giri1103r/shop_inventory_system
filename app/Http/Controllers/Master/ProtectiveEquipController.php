@@ -317,8 +317,8 @@ class ProtectiveEquipController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportProtectiveEquipJob($details));
-                //    dispatch((new ImportEmployeeJob($details))->onQueue('empimport'));
+                // dispatch(new ImportProtectiveEquipJob($details));
+                   dispatch((new ImportProtectiveEquipJob($details))->onQueue('proteciveequipimport'));
             }
 
             $insert_data['log_id'] = $insert_id;
@@ -427,8 +427,9 @@ class ProtectiveEquipController extends Controller
             $filename = "Protective equipments to be worn Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
+            Session::flash('error', 'Something went wrong Please try again after some time');
+            return redirect()->back();
         }
     }
 

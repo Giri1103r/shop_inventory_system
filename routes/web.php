@@ -71,6 +71,12 @@ Route::get('queuelocationimport', [CronController::class, 'queuelocationimport']
 Route::get('queueunitimport', [CronController::class, 'queueunitimport']);
 Route::get('queueDepartmentuplodimport', [CronController::class, 'queueDepartmentuplodimport']);
 
+Route::get('cron/safetypermit/protectiveequipmentmaster/import', [CronController::class, 'queueProtectiveequipmentmasterImport']);
+Route::get('cron/safetypermit/equipinvolvemaster/import', [CronController::class, 'queueEquipinvolvemasterImport']);
+Route::get('cron/safetypermit/safeworkmaster/import', [CronController::class, 'queueSafeworkmasterImport']);
+Route::get('cron/safetypermit/precautionmaster/import', [CronController::class, 'queuePrecautionmasterImport']);
+Route::get('cron/safetypermit/checklistmaster/import', [CronController::class, 'queueChecklistmasterImport']);
+
 
 
 Route::get('stockitem', [CronController::class, 'storeItem']);

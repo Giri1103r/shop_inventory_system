@@ -299,7 +299,7 @@ class PrecautionController extends Controller
                 $user_id = Auth::id();
 
                 $insert_data = array(
-                    'upload_type' => 1,
+                    'upload_type' => 14,
                     'upload_status' => 0,
                     'file_name' => $filenewname,
                     'file_orgname' => $fileName,
@@ -319,8 +319,8 @@ class PrecautionController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportPrecautionJob($details));
-                //    dispatch((new ImportEmployeeJob($details))->onQueue('empimport'));
+                // dispatch(new ImportPrecautionJob($details));
+                   dispatch((new ImportPrecautionJob($details))->onQueue('precautionimport'));
             }
 
             $insert_data['log_id'] = $insert_id;

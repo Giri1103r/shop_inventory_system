@@ -294,7 +294,7 @@ class SafeWorkController extends Controller
                 $user_id = Auth::id();
 
                 $insert_data = array(
-                    'upload_type' => 1,
+                    'upload_type' => 13,
                     'upload_status' => 0,
                     'file_name' => $filenewname,
                     'file_orgname' => $fileName,
@@ -314,8 +314,8 @@ class SafeWorkController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportsafeworkJob($details));
-                //    dispatch((new ImportEmployeeJob($details))->onQueue('empimport'));
+                // dispatch(new ImportsafeworkJob($details));
+                   dispatch((new ImportsafeworkJob($details))->onQueue('safeworkimport'));
             }
 
             $insert_data['log_id'] = $insert_id;
