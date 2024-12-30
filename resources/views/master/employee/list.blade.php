@@ -75,8 +75,9 @@
                                         <th>Employee Email</th>
                                         <th>Phone Number</th>
                                         <th>Unit Name</th>
-                                        <th>Reporting Manager</th>
                                         <th>Employee Status</th>
+                                        <th>Reporting Manager</th>
+                                        <th>{{ __('common.status') }} </th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th data-priority="1" >{{ __('common.action') }}</th>
                                     </tr>
@@ -166,13 +167,18 @@
                             data: 'unit',
                             name: 'unit'
                         },
+
+                        {
+                            data: 'employee_status',
+                            name: 'employee_status'
+                        },
                         {
                             data: 'reporting_manager',
                             name: 'reporting_manager'
                         },
                         {
-                            data: 'employee_status',
-                            name: 'employee_status'
+                            data: 'status',
+                            name: 'status'
                         },
                         {
                             data: 'created_at',

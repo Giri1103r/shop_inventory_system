@@ -34,6 +34,9 @@
                             {{ $value->email }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->mobile_no }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
                             {{ getCompanyname($value->company) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
@@ -47,6 +50,9 @@
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->employee_status }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->reporting_manager }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php

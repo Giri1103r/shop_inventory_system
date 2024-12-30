@@ -426,7 +426,7 @@
                     },
                     id_number: {
                         required: true,
-                        digits: true,
+                        regex: /^[a-zA-Z0-9\-_'"()\s]+$/
                     },
                     company: {
                         required: true,
@@ -439,6 +439,9 @@
                     },
                     designation: {
                         required: true,
+                        minlength: 2,
+                        maxlength: 30,
+                         regex: /^[a-zA-Z]{2,}$/
                     },
                     unit: {
                         required: true,
@@ -451,7 +454,8 @@
                     },
                     mobile_no:{
                         required:true,
-                        regex:/^\+?[1-9]\d{1,2}[-\s]?\d{10}$/
+                        minlength: 10,
+                        maxlength: 10,
 
                     }
                 },
@@ -476,7 +480,8 @@
                     },
                     mobile_no:{
                         required: "{{ __('Mobile Number is Required') }}",
-                        regex:"{{ __('Please enter a valid mobile number') }}"
+                        minlength: "{{ __('Mobile number minimum length should be 10') }}",
+                        maxlength: "{{ __('Mobile number maximum length should be 10') }}",
                     },
                     employee_status: {
                         required: "{{ __('Employee Status is Required') }}",
@@ -493,7 +498,7 @@
                     },
                     id_number: {
                         required: "{{ __('ID Number is Required') }}",
-                        digits: "{{ __('ID Number accepts only numeric characters') }}",
+                        regex: "{{ __('ID Number allows alphanumeric characters') }}",
                     },
                     reporting_manager: {
                         required: "{{ __('Reporting Manager is Required') }}",
@@ -515,6 +520,9 @@
                     },
                     designation: {
                         required: "{{ __('Designation is Required') }}",
+                        minlength: "{{ __('Designation must be at least 2 characters') }}",
+                        maxlength: "{{ __('Designation must be less than 30 characters') }}",
+                        regex: "{{ __('Designation accepts only alphabets') }}",
                     }
                 },
                 errorElement: 'span',

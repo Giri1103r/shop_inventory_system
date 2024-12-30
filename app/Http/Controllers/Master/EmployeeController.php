@@ -217,11 +217,13 @@ class EmployeeController extends Controller
                 'Employee Id',
                 'Employee Name',
                 'Email',
+                'Mobile Number',
                 'Company Name',
                 'Location Name',
                 'Unit Name',
                 'Department Name',
                 'Employee Status',
+                'Reporting Manager',
                 __("common.status"),
                 __("common.created_date"),
             ];
@@ -234,11 +236,13 @@ class EmployeeController extends Controller
                 $export[] =  $data->emp_id;
                 $export[] =  $data->emp_name;
                 $export[] =  $data->email;
+                $export[] =  $data->mobile_no;
                 $export[] =  getCompanyname($data->company);
                 $export[] =  getLocationname($data->location);
                 $export[] =  getUnitname($data->unit);
                 $export[] =  getDepartment($data->department);
                 $export[] =  $data->employee_status;
+                $export[] =  $data->reporting_manager;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  Displaydateformat($data->created_at);
 
@@ -274,11 +278,13 @@ class EmployeeController extends Controller
                 'Employee Id',
                 'Employee Name',
                 'Email',
+                'Mobile Number',
                 'Company Name',
                 'Location Name',
                 'Unit Name',
                 'Department Name',
                 'Employee Status',
+                'Reporting Manager',
                 __("common.status"),
                 __("common.created_date"),
             ];
