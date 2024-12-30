@@ -12,10 +12,14 @@
                     We value your feedback for the training session you recently attended. Please click on the link below to
                     provide your feedback:
                 </p>
-          
-                <a href="{{ $details['link'] }}">
-                    <button type="button" class="btn btn-success" target="_blank">Give Feedback</button>
+
+                <a href="{{ $details['link'] }}" target="_blank">
+                    <button type="button"
+                        style="background-color: #0986e0; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 5px; cursor: pointer;">
+                        Give Feedback
+                    </button>
                 </a>
+
                 <p style="font-family: Arial, sans-serif; font-size: 14px; margin: 0; margin-top: 20px;">
                     Your feedback is valuable to us and will help improve future training sessions.
                 </p>

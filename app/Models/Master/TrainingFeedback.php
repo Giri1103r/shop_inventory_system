@@ -19,6 +19,7 @@ class TrainingFeedback extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
+        'training_schedule_id',
         'training_assessment_feedback_id',
         'emp_id',
         'emp_name',
@@ -43,6 +44,7 @@ class TrainingFeedback extends Model
     {
         $request = request();
         $insert_array = [
+            'training_schedule_id' => decryptId($request->training_schedule_id),
             'training_assessment_feedback_id' => decryptId($request->training_assessment_feedback_id),
             'emp_id' => $request->emp_id ?? null,
             'emp_name' => $request->emp_name ?? null,

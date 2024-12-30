@@ -70,9 +70,9 @@ $.validator.addMethod("allowedAlphabets", function (value, element) {
     return false;
 }, "Only capital and small letters are allowed.");
 
-$.validator.addMethod("numericOnly", function(value, element) {
+$.validator.addMethod("numericOnly", function (value, element) {
     return this.optional(element) || $.isNumeric(value);
-  }, "Please enter only numbers");
+}, "Please enter only numbers");
 
 /**
  * Mobile Number Validation
@@ -314,6 +314,27 @@ $.validator.addMethod("customEmployeeID", function (value, element) {
  */
 
 /**
+ * Class based range Required Validation
+ */
+$.validator.addClassRules("validate-range-required", {
+    iRange: true ,
+    iRequired: true// Use the custom range validation
+});
+$.validator.addMethod("iRange", function (value, element) {
+    return this.optional(element) || (value >= 0 && value <= 100 && !isNaN(value));
+}, function (value, element) {
+    var customErrorMessage = $(element).data('error');
+
+    if (customErrorMessage) {
+        return customErrorMessage;
+    } else {
+        return "Please enter a number between 0 and 100.";
+    }
+});
+
+
+
+/**
  * Class based Input Required Validation
  */
 
@@ -465,7 +486,7 @@ $.validator.addMethod("fRequired", function (value, element) {
     return element.files.length > 0;
 }, function (value, element) {
     var customErrorMessage = $(element).data('error');
-    console.log(customErrorMessage,"data-error")
+    console.log(customErrorMessage, "data-error")
     if (customErrorMessage) {
         return customErrorMessage;
     } else {
@@ -490,7 +511,7 @@ $.validator.addMethod("talpnum", function (value, element) {
 
 
 // Add a custom jQuery validation rule for file input with accepted file types
-$.validator.addMethod("validateFileType", function(value, element) {
+$.validator.addMethod("validateFileType", function (value, element) {
     // Get the accepted file types from the options
     params = ".jpeg,.jpg,.png,.doc,.docx,.pdf,.xls,.xlsx,.ppt,.pptx";
     var acceptedTypes = params.split(',');
@@ -498,7 +519,7 @@ $.validator.addMethod("validateFileType", function(value, element) {
     var fileExtension = value.split('.').pop().toLowerCase();
     // Check if the file extension matches any of the accepted file types
     return $.inArray('.' + fileExtension, acceptedTypes) !== -1;
-}, function(params, element) {
+}, function (params, element) {
     // Generate custom error message
     return "Please select a file with a valid file type.";
 });

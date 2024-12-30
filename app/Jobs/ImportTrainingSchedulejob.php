@@ -253,19 +253,6 @@ class ImportTrainingSchedulejob implements ShouldQueue
 
 
 
-            $data = [
-                'topic_id' => $topicId,
-                'trainer_id' => $trainerId,
-                'from_date' => $fromDate->format('Y-m-d'),
-                'to_date' => $toDate->format('Y-m-d'),
-                'target_trainees' => $target_trainee,
-                'venue_id' => $venueId,
-                'unit_id' => $unitId,
-                'department_id' => $departmentId,
-                'created_by' => $this->details['user_id'],
-            ];
-
-            TrainingSchedule::create($data);
             $i++;
         }
 

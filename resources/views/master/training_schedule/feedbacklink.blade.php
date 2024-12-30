@@ -44,6 +44,9 @@
                                         <input type="hidden" name="training_assessment_feedback_id"
                                             id="training_assessment_feedback_id" value="{{ encryptId($feedback_id) }}">
 
+                                        <input type="hidden" name="training_schedule_id"
+                                            id="training_schedule_id" value="{{ encryptId($training_schedule->id) }}">
+
                                         <input type="hidden" name="emp_id"
                                             id="emp_id" value="{{  $trainingAssessmentFeedback->emp_id  }}">
                                         <input type="hidden" name="emp_name"
@@ -52,19 +55,54 @@
                                         <div class="basic-form">
                                             <div class="row">
                                                 <div class="mb-3 col-md-4 form-input">
-                                                    <label class="form-label view_label">Employee ID</label>
+                                                    <label class="form-label view_label">From Date</label>
                                                     <div class="view_data">
-                                                        {{ $trainingAssessmentFeedback->emp_id ?? 'N/A' }}
+                                                        {{ Displaydatetimeformat($training_schedule->from_date) }}
                                                     </div>
                                                 </div>
-
-                                                <div class="col-md-4">
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">To Date</label>
+                                                    <div class="view_data">
+                                                        {{ Displaydatetimeformat($training_schedule->to_date) }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">Training Topic</label>
+                                                    <div class="view_data">
+                                                        {{ isset($training_schedule->topic_name) ? $training_schedule->topic_name : '' }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">Trainer </label>
+                                                    <div class="view_data">
+                                                        {{ isset($training_schedule->emp_name) ? $training_schedule->emp_name : '' }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">Unit</label>
+                                                    <div class="view_data">
+                                                        {{ isset($training_schedule->unit_name) ? $training_schedule->unit_name : '' }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">Department</label>
+                                                    <div class="view_data">
+                                                        {{ isset($training_schedule->department_name) ? $training_schedule->department_name : '' }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">Venue</label>
+                                                    <div class="view_data">
+                                                        {{ $training_schedule->name_of_the_conference_hall ?? '' }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">Feedback about the Trainer</label>
                                                         <textarea name="trainer_feedback" id="trainer_feedback" class="form-control" rows="4">{{ old('trainer_feedback') }}</textarea>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4">
+                                                <div class="col-md-12">
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">Feedback about the
                                                             Training</label>
