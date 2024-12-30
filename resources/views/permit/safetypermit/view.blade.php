@@ -299,7 +299,7 @@
                             <div class="mb-3 col-md-4 form-input">
                                 <label class="form-label view_label m-1">Confined Space Attendant</label>
                                 <span class="view_data">
-                                    @if (isset($confined_space_entry) && $confined_space_entry->confined_attendant == 1)
+                                    @if (isset($confined_space_entry) && isset($confined_space_entry->confined_attendant) && $confined_space_entry->confined_attendant == 1)
                                         <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
                                     @else
                                         <span>No</span>
@@ -491,17 +491,25 @@
 
                         <div class="mb-3 col-md-12 form-input">
                             <div class="view_data">
-                                @foreach ($safetypermit->mapped_precaution_taken as $job => $details)
-                                    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                                        @foreach ($details['checkpoint_names'] as $checkpoint_name)
-                                            <div
-                                                style="flex: 1 1 calc(33% - 10px); display: flex; align-items: center; gap: 5px;">
-                                                <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
-                                                {{ $checkpoint_name }}
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                @endforeach
+                                @if (empty($safetypermit->mapped_precaution_taken) ||
+                                        !collect($safetypermit->mapped_precaution_taken)->contains(function ($details) {
+                                            return !empty($details['checkpoint_names']);
+                                        }))
+                                    <p class="text-center">No data is available</p>
+                                @else
+                                    @foreach ($safetypermit->mapped_precaution_taken as $job => $details)
+                                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                                            @foreach ($details['checkpoint_names'] as $checkpoint_name)
+                                                <div
+                                                    style="flex: 1 1 calc(33% - 10px); display: flex; align-items: center; gap: 5px;">
+                                                    <i class="fa-solid fa-check"
+                                                        style="color: #267709; width: 15px;"></i>
+                                                    {{ $checkpoint_name }}
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endforeach
+                                @endif
                             </div>
                         </div>
 
@@ -518,20 +526,28 @@
 
                             <div class="mb-3 col-md-12 form-input">
                                 <div class="view_data">
-                                    @foreach ($safetypermit->mapped_equipment_checklist as $job => $details)
-                                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                                            @foreach ($details['checkpoint_names'] as $checkpoint_name)
-                                                <div
-                                                    style="flex: 1 1 calc(33% - 10px); display: flex; align-items: center; gap: 5px;">
-                                                    <i class="fa-solid fa-check"
-                                                        style="color: #267709; width: 15px;"></i>
-                                                    {{ $checkpoint_name }}
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    @endforeach
+                                    @if (empty($safetypermit->mapped_equipment_checklist) ||
+                                            !collect($safetypermit->mapped_equipment_checklist)->contains(function ($details) {
+                                                return !empty($details['checkpoint_names']);
+                                            }))
+                                        <p class="text-center">No data is available</p>
+                                    @else
+                                        @foreach ($safetypermit->mapped_equipment_checklist as $job => $details)
+                                            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                                                @foreach ($details['checkpoint_names'] as $checkpoint_name)
+                                                    <div
+                                                        style="flex: 1 1 calc(33% - 10px); display: flex; align-items: center; gap: 5px;">
+                                                        <i class="fa-solid fa-check"
+                                                            style="color: #267709; width: 15px;"></i>
+                                                        {{ $checkpoint_name }}
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @endforeach
+                                    @endif
                                 </div>
                             </div>
+
 
                             <div class="mb-3 col-md-12 form-input">
                                 <label class="form-label view_label m-1">All Involved Equipment's have been
@@ -556,18 +572,25 @@
 
                             <div class="mb-3 col-md-12 form-input">
                                 <div class="view_data">
-                                    @foreach ($safetypermit->mapped_safework_instruction as $job => $details)
-                                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                                            @foreach ($details['checkpoint_names'] as $checkpoint_name)
-                                                <div
-                                                    style="flex: 1 1 calc(33% - 10px); display: flex; align-items: center; gap: 5px;">
-                                                    <i class="fa-solid fa-check"
-                                                        style="color: #267709; width: 15px;"></i>
-                                                    {{ $checkpoint_name }}
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    @endforeach
+                                    @if (empty($safetypermit->mapped_safework_instruction) ||
+                                            !collect($safetypermit->mapped_safework_instruction)->contains(function ($details) {
+                                                return !empty($details['checkpoint_names']);
+                                            }))
+                                        <p class="text-center">No data is available</p>
+                                    @else
+                                        @foreach ($safetypermit->mapped_safework_instruction as $job => $details)
+                                            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                                                @foreach ($details['checkpoint_names'] as $checkpoint_name)
+                                                    <div
+                                                        style="flex: 1 1 calc(33% - 10px); display: flex; align-items: center; gap: 5px;">
+                                                        <i class="fa-solid fa-check"
+                                                            style="color: #267709; width: 15px;"></i>
+                                                        {{ $checkpoint_name }}
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @endforeach
+                                    @endif
                                 </div>
                             </div>
 
@@ -605,7 +628,7 @@
 
                             <div class="table-responsive mt-3">
                                 <table class="table table-bordered text-center">
-                                    <thead class=" text-white" style="background-color:#5b626b">
+                                    <thead class="text-white" style="background-color:#5b626b">
                                         <tr>
                                             <th>Employee Code / Visitor ID</th>
                                             <th>Name of Workman</th>
@@ -615,40 +638,43 @@
                                         </tr>
                                     </thead>
                                     <tbody id="workman-list-entries">
-                                        @foreach ($workmaninvolved as $workmaninvolved)
+                                        @if ($workmaninvolved->isEmpty())
                                             <tr>
-                                                <td>{{ $workmaninvolved->employee_id }}</td>
-                                                <td>{{ $workmaninvolved->workman_name }}</td>
-                                                <td>{{ $workmaninvolved->workman_desig }}</td>
-                                                <td>{{ $workmaninvolved->department_name }}</td>
-                                                <td>{{ $workmaninvolved->nature_of_job }}</td>
+                                                <td colspan="5">No data is available</td>
                                             </tr>
-                                        @endforeach
-
+                                        @else
+                                            @foreach ($workmaninvolved as $workman)
+                                                <tr>
+                                                    <td>{{ $workman->employee_id }}</td>
+                                                    <td>{{ $workman->workman_name }}</td>
+                                                    <td>{{ $workman->workman_desig }}</td>
+                                                    <td>{{ $workman->department_name }}</td>
+                                                    <td>{{ $workman->nature_of_job }}</td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
                                     </tbody>
-
                                 </table>
                             </div>
 
+
                             <div class="mb-3 col-md-12 form-input">
-                                <label class="form-label view_label m-1"> Are all above employee competent for
-                                    assigned job & physically fit for duty (Yes/No)</label>
+                                <label class="form-label view_label m-1">Are all above employees competent for the assigned job & physically fit for duty (Yes/No)</label>
 
                                 @if ($safetypermit->assigned_job == 1)
                                     <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
                                 @endif
-
                             </div>
-                            <div class="mb-3 col-md-4 form-input">
 
-                                <label class="form-label view_label">Total number of attendance in Tool box
-                                    Talk</label>
+                            <div class="mb-3 col-md-4 form-input">
+                                <label class="form-label view_label">Total number of attendance in Tool box Talk</label>
                                 <span class="view_data">
                                     {{ $safetypermit->attendance_toolbox_talk }}
                                 </span>
                             </div>
                         </div>
                     </div>
+
 
                     @if ($safetypermit['permit_status'] >= 2)
                         <div class="card-body ">
