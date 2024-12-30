@@ -52,45 +52,45 @@ class SafetyPermitExtension extends Model
 
         return $data;
     }
-    
+
 
 
     public function store($permit_status, $id)
     {
         $request = request();
-    
+
         $currentExtension = $this->select ? $this->select->where('permit_id', $id)->count() : 0;
-    
+
         if ($currentExtension === 0) {
             $newExtendedTime = 1;
         } else {
             $newExtendedTime = $currentExtension + 1;
         }
-    
+
         $insert_array = array(
             'permit_id' => $id,
             'extended_time' => $newExtendedTime,
             'date' => DBdateformat($request->date),
             'to_time' => $request->time_to,
-            'remarks' => $request->remarks,
+            'remarks' => $request->extension_remarks,
             'approve_reject_status' => $permit_status,
             'created_by' => Auth::id()
         );
-    
+
         return $this->create($insert_array);
     }
-    
-    
+
+
     public function getPermitExtension($id)
     {
         $data = $this->select('hotcold_permit_extension.*')
             ->where('hotcold_permit_extension.permit_id', $id)
             ->where('hotcold_permit_extension.approve_reject_status', 15)
-            ->orderBy('hotcold_permit_extension.id', 'desc') 
+            ->orderBy('hotcold_permit_extension.id', 'desc')
             ->first();
         return $data;
     }
-    
+
 
     public function statuschange($id)
     {

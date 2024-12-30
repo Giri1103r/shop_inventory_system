@@ -638,9 +638,11 @@
                                         </tr>
                                     </thead>
                                     <tbody id="workman-list-entries">
-                                        @if ($workmaninvolved->isEmpty())
+                                        @if (empty($workmaninvolved) || $workmaninvolved->every(function ($item) {
+                                            return is_null($item->employee_id) && is_null($item->workman_name) && is_null($item->workman_desig) && is_null($item->department_name) && is_null($item->nature_of_job);
+                                        }))
                                             <tr>
-                                                <td colspan="5">No data is available</td>
+                                                <td colspan="5" class="text-center">No data is available</td>
                                             </tr>
                                         @else
                                             @foreach ($workmaninvolved as $workman)

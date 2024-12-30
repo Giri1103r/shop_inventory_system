@@ -14,9 +14,17 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
-                        <x-button-import href="{{ admin_url('ppe_type/import') }}"></x-button-import>
+
+
+
+                            @if (CheckUserPermission('import'))
+                            <x-button-import href="{{ admin_url('ppe_type/import') }}"></x-button-import>
+                        @endif
+
+                        @if (CheckUserPermission('add'))
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('ppe_type/add') }}">Add</x-button-add>
+                        href="{{ admin_url('ppe_type/add') }}">Add</x-button-add>
+                        @endif
                     </div>
 
                     <div id="search" class="collapse">

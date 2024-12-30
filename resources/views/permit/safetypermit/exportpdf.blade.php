@@ -412,7 +412,7 @@
             <td width="20%" style="padding:5px;"><b>Register for entry & exits</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                @if (  isset($confined_space_entry) && $confined_space_entry->register_entry_exits == 'on')
+                @if (optional($confined_space_entry)->register_entry_exits == 'on')
                     <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
                 @endif
             </td>
@@ -703,7 +703,7 @@
                 <td width="50%" style="padding:5px;"><b>Name</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ isset($getsafetyPermitExtension->created_by) ? $getsafetyPermitExtension->created_by : '' }}
+                    {{ isset($getsafetyPermitExtension->created_by) ? getUsername($getsafetyPermitExtension->created_by) : '' }}
                 </td>
             </tr>
             <tr>
@@ -717,7 +717,7 @@
                 <td width="50%" style="padding:5px;"><b>To Time</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ displaydateformat(isset($getsafetyPermitExtension->to_time) ? $getsafetyPermitExtension->to_time : '') }}
+                    {{ displaytimeformat(isset($getsafetyPermitExtension->to_time) ? $getsafetyPermitExtension->to_time : '') }}
                 </td>
             </tr>
             <tr>
