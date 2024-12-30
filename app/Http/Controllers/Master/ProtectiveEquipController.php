@@ -427,8 +427,9 @@ class ProtectiveEquipController extends Controller
             $filename = "Protective equipments to be worn Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
+            Session::flash('error', 'Something went wrong Please try again after some time');
+            return redirect()->back();
         }
     }
 

@@ -36,9 +36,9 @@
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->exact_location_job }}
                         </td>
-                        {{-- <td style='padding: 7px;border: 0.5px solid'>
+                        <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->to_status }}
-                        </td> --}}
+                        </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->status_name }}
                         </td>
