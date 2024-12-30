@@ -886,6 +886,7 @@ class SafetyPermitController extends Controller
                 'remarks' => $request->ehs_approval_remarks,
                 'approved_by' => Auth::id(),
             );
+
             $this->statuslog->create($insert_array);
 
             return redirect(admin_url('safetypermit/list'));

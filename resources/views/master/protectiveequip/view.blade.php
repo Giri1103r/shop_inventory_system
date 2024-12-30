@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Protective Equipments to be wornShow')
+@section('title', 'Protective Equipments to be worn Show')
 @section('pageurl', admin_url('ptw/protectiveequipmentmaster/list'))
 
 
@@ -10,7 +10,7 @@
             {{-- <h4 class="text-black">{{ __('Company Show') }}</h4> --}}
 
         </div>
-       
+
     </div>
 
     <div class="content-body  default-height">

@@ -17,7 +17,7 @@ class Statuslog extends Model
         'remarks',
         'status',
         'trash',
-        'created_by',
+        'approved_by',
         'updated_by',
         'created_at',
         'updated_at'
@@ -25,7 +25,7 @@ class Statuslog extends Model
     ];
 
 
-    
+
     public function selectOne($id)
     {
 

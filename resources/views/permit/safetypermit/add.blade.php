@@ -349,6 +349,9 @@
                                                         <div class="form-group d-flex align-items-center">
                                                             <label class="form-label col-md-5 mb-0 mr-2 pe-2">Confined
                                                                 Space Attendant</label>
+                                                                <input type="hidden"
+                                                                name="confined_space_entry[confined_attendant]" value="0">
+                                                            <input type="checkbox">
                                                             <input type="checkbox"
                                                                 name="confined_space_entry[confined_attendant]"
                                                                 value="1">
