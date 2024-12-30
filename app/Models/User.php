@@ -143,10 +143,10 @@ class User extends Authenticatable
             //     $decryptedRoleIds = array_map(function ($encryptedId) {
             //         return $encryptedId;
             //     }, $item['user_role']);
-    
+
             //     $commaSeparatedRoles = implode(',', $decryptedRoleIds);
             // }
-    
+
             $userData = [
                 'name' => $item['emp_name'],
                 'first_name' => $item['emp_name'],
@@ -223,8 +223,11 @@ class User extends Authenticatable
             'email' => $employee->email,
             'role' => $commaSeparatedRoles,
             'employee_id' => $employee->emp_id,
-            'department_id' => decryptId($employee->emp_department_id),
-            'designation_id' => decryptId($employee->emp_designation_id),
+            'company_id' => decryptId($employee->company),
+            'unit_id' => decryptId($employee->unit),
+            'location_id' => decryptId($employee->location),
+            'department_id' => decryptId($employee->department),
+            'designation_id' => decryptId($employee->designation),
             'mobile' => $employee->emp_phone_no,
             'updated_by' => Auth::id()
         );

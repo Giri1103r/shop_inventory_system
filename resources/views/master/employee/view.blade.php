@@ -51,12 +51,24 @@
                                         </div>
                                     </div>
 
-                                    {{-- <div class="mb-3 col-md-4 form-input">
+                                    <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Nationality') }}</label>
                                         <div class="view_data">
                                             {{ isset($employee->nationality) ? $employee->nationality : '' }}
                                         </div>
-                                    </div> --}}
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('ID Type') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($employee->id_type) ? $employee->id_type : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('ID Type') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($employee->id_number) ? $employee->id_number : '' }}
+                                        </div>
+                                    </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Employee Email') }}</label>
                                         <div class="view_data">
@@ -88,7 +100,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Joining Date') }}</label>
                                         <div class="view_data">
-                                            {{ Displaydatetimeformat(isset($employee->joining_date) ? $employee->joining_date : '') }}
+                                            {{ Displaydateformat(isset($employee->joining_date) ? $employee->joining_date : '') }}
                                         </div>
                                     </div>
 
@@ -122,7 +134,18 @@
                                             {{ getDepartment(isset($employee->department) ? $employee->department : '') }}
                                         </div>
                                     </div>
-
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Designation Name') }}</label>
+                                        <div class="view_data">
+                                            {{ ($employee->designation) ? $employee->designation : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Reporting Manager') }}</label>
+                                        <div class="view_data">
+                                            {{ ($employee->reporting_manager) ? $employee->reporting_manager : '' }}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

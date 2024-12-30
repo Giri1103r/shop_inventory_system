@@ -69,7 +69,30 @@
                                                     </select>
                                                 </div>
                                             </div>
-
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Nationality</label>
+                                                    <input type="text" name="nationality" id="nationality"
+                                                        class="form-control form-control-sm" placeholder=" Enter the Nationality"
+                                                        value="{{ $employee->nationality }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">ID Type</label>
+                                                    <input type="text" name="id_type" id="id_type"
+                                                        class="form-control form-control-sm"  placeholder=" Enter the ID Type"
+                                                        value="{{ $employee->id_type }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">ID Number</label>
+                                                    <input type="text" name="id_number" id="id_number"
+                                                        class="form-control form-control-sm" placeholder="ID Number"
+                                                        value="{{ $employee->id_number }}">
+                                                </div>
+                                            </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">User Role</label>
@@ -101,7 +124,17 @@
                                                     <input type="text" name ="joining_date"
                                                         id="joining_date_datetime_datepicker" class="form-control"
                                                         placeholder="Joining Date"
-                                                        value="{{ Displaydatetimeformat($employee->joining_date) }}">
+                                                        value="{{ Displaydateformat($employee->joining_date) }}">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Phone Number</label>
+                                                    <input type="text" name ="mobile_no"
+                                                        id="mobile_no" class="form-control"
+                                                        placeholder="Mobile No"
+                                                        value="{{$employee->mobile_no}}">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -160,26 +193,41 @@
                                                     </select>
                                                 </div>
                                             </div>
-
-
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Designation</label>
+                                                    <input type="text" name="designation" id="designation"
+                                                        class="form-control form-control-sm"
+                                                        value="{{ $employee->designation }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Reporting Manager</label>
+                                                    <input type="text" name="reporting_manager" id="reporting_manager"
+                                                        class="form-control form-control-sm"
+                                                        value="{{ $employee->reporting_manager }}">
+                                                </div>
+                                            </div>
                                         </div>
-                                        <hr>
-                                        <div class="submit-button" style="text-align: right;">
-                                            <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-reset class="submit"></x-button-reset>
-                                            <x-button-cancel href="{{ admin_url('employee/list') }}"></x-button-cancel>
-                                        </div>
-
-                                    </form>
+                                </div>
+                                <hr>
+                                <div class="submit-button" style="text-align: right;">
+                                    <x-button-submit class="submit"></x-button-submit>
+                                    <x-button-reset class="submit"></x-button-reset>
+                                    <x-button-cancel href="{{ admin_url('employee/list') }}"></x-button-cancel>
                                 </div>
 
+                                </form>
                             </div>
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        </form>
+    </div>
+    </form>
     </div>
 
 @stop
@@ -320,10 +368,18 @@
             }
         });
 
-        jQuery.validator.addMethod("strictEmail", function(value, element) {
-            return this.optional(element) || /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
-        }, "Please enter a valid email address");
-        $(function() {
+        $(document).ready(function() {
+            // Custom method for strict email validation
+            jQuery.validator.addMethod("strictEmail", function(value, element) {
+                return this.optional(element) || /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+                    value);
+            }, "Please enter a valid email address");
+
+            // Custom method for regex validation
+            jQuery.validator.addMethod("regex", function(value, element, regexpr) {
+                return regexpr.test(value);
+            }, "Please check your input.");
+
             $('#employeeedit').validate({
                 rules: {
                     emp_name: {
@@ -331,6 +387,7 @@
                     },
                     email: {
                         required: true,
+                        email: true,
                         strictEmail: true,
                         remote: {
                             url: '{{ admin_url('employee/unique') }}',
@@ -356,8 +413,47 @@
                     },
                     employee_status: {
                         required: true,
-                    }
+                    },
+                    nationality: {
+                        required: true,
+                        minlength: 2,
+                        maxlength: 30,
+                        regex: /^[a-zA-Z]{2,}$/
+                    },
+                    id_type: {
+                        required: true,
+                        regex: /^[a-zA-Z0-9\-_'"()\s]+$/
+                    },
+                    id_number: {
+                        required: true,
+                        digits: true,
+                    },
+                    company: {
+                        required: true,
+                    },
+                    location: {
+                        required: true,
+                    },
+                    department: {
+                        required: true,
+                    },
+                    designation: {
+                        required: true,
+                    },
+                    unit: {
+                        required: true,
+                    },
+                    reporting_manager: {
+                        required: true,
+                        minlength: 2,
+                        maxlength: 30,
+                        regex: /^[a-zA-Z]{2,}$/
+                    },
+                    mobile_no:{
+                        required:true,
+                        regex:/^\+?[1-9]\d{1,2}[-\s]?\d{10}$/
 
+                    }
                 },
                 messages: {
                     emp_name: {
@@ -365,6 +461,7 @@
                     },
                     email: {
                         required: "{{ __('Employee Email is Required') }}",
+                        email: "Please enter a valid email address",
                         strictEmail: "Please enter a valid email address",
                         remote: "{{ __('Email should be unique') }}"
                     },
@@ -376,13 +473,49 @@
                     },
                     joining_date: {
                         required: "{{ __('Joining Date is Required') }}",
-
+                    },
+                    mobile_no:{
+                        required: "{{ __('Mobile Number is Required') }}",
+                        regex:"{{ __('Please enter a valid mobile number') }}"
                     },
                     employee_status: {
                         required: "{{ __('Employee Status is Required') }}",
-
+                    },
+                    nationality: {
+                        required: "{{ __('Nationality is Required') }}",
+                        minlength: "{{ __('Nationality must be at least 2 characters') }}",
+                        maxlength: "{{ __('Nationality must be less than 30 characters') }}",
+                        regex: "{{ __('Nationality accepts only alphabets') }}",
+                    },
+                    id_type: {
+                        required: "{{ __('ID Type is Required') }}",
+                        regex: "{{ __('ID Type allows alphanumeric characters') }}",
+                    },
+                    id_number: {
+                        required: "{{ __('ID Number is Required') }}",
+                        digits: "{{ __('ID Number accepts only numeric characters') }}",
+                    },
+                    reporting_manager: {
+                        required: "{{ __('Reporting Manager is Required') }}",
+                        minlength: "{{ __('Reporting Manager must be at least 2 characters') }}",
+                        maxlength: "{{ __('Reporting Manager must be less than 30 characters') }}",
+                        regex: "{{ __('Reporting Manager accepts only alphabets') }}",
+                    },
+                    company: {
+                        required: "{{ __('Company is Required') }}",
+                    },
+                    location: {
+                        required: "{{ __('Location is Required') }}",
+                    },
+                    department: {
+                        required: "{{ __('Department is Required') }}",
+                    },
+                    unit: {
+                        required: "{{ __('Unit is Required') }}",
+                    },
+                    designation: {
+                        required: "{{ __('Designation is Required') }}",
                     }
-
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
@@ -398,7 +531,6 @@
                 submitHandler: function(form) {
                     console.log('test');
                     form.submit();
-
                 },
                 invalidHandler: function(event, validator) {
                     var errors = validator.numberOfInvalids();

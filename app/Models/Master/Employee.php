@@ -207,6 +207,8 @@ class Employee extends Model
             'emp_name' => $request->emp_name ?? null,
             'gender' => $request->gender ?? null,
             'nationality' => $request->nationality ?? null,
+            'id_type'=>$request->id_type  ?? null,
+            'id_number'=>$request->id_number  ?? null,
             'email' => $request->email ?? null,
             'joining_date' => DBdatetimeformat($request->joining_date),
             'mobile_no' => $request->mobile_no ?? null,
@@ -216,12 +218,13 @@ class Employee extends Model
             'unit' => decryptId($request->unit),
             'department' => decryptId($request->department),
             'designation' => $request->designation ?? null,
+            'reporting_manager'=>$request->reporting_manager ?? null,
             'employee_status' => $request->employee_status ?? null,
             'status' => 1,
             'updated_by' => Auth::id(),
             'updated_at' => now(),
         ];
-       
+
         $this->where('id', $id)->update($update_array);
 
         return $this->find($id);
@@ -288,7 +291,6 @@ class Employee extends Model
         $query = $query->leftJoin('masters_department', 'masters_employee.department', '=', 'masters_department.id');
         $query = $query->leftJoin('masters_unit', 'masters_employee.unit', '=', 'masters_unit.id');
 
-
         if (!empty($request->search)) {
             $search = $request->search;
             $query->where(function ($query) use ($search) {
@@ -299,6 +301,8 @@ class Employee extends Model
                     ->orWhere('masters_employee.employee_status', 'LIKE', '%' . $search . '%');
             });
         }
+
+
         if ($request->has('emp_id') && $request->emp_id) {
             $query = $query->where('masters_employee.emp_id', 'LIKE', '%' . $request->emp_id . '%');
         }
@@ -309,6 +313,8 @@ class Employee extends Model
         if ($request->has('email') && $request->email) {
             $query = $query->where('masters_employee.email', 'LIKE', '%' . $request->email . '%');
         }
+
+
         if ($request->has('employee_status') && $request->employee_status) {
             $query = $query->where('masters_employee.employee_status', 'LIKE', '%' . $request->employee_status . '%');
         }

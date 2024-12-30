@@ -73,10 +73,12 @@
                                         <th>Employee Id</th>
                                         <th>Employee Name</th>
                                         <th>Employee Email</th>
+                                        <th>Phone Number</th>
+                                        <th>Unit Name</th>
+                                        <th>Reporting Manager</th>
                                         <th>Employee Status</th>
-                                        <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
-                                        <th>{{ __('common.action') }}</th>
+                                        <th data-priority="1" >{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -157,12 +159,20 @@
                             name: 'email'
                         },
                         {
-                            data: 'employee_status',
-                            name: 'employee_status'
+                            data: 'mobile_no',
+                            name: 'mobile_no'
                         },
                         {
-                            data: 'status',
-                            name: 'status'
+                            data: 'unit',
+                            name: 'unit'
+                        },
+                        {
+                            data: 'reporting_manager',
+                            name: 'reporting_manager'
+                        },
+                        {
+                            data: 'employee_status',
+                            name: 'employee_status'
                         },
                         {
                             data: 'created_at',
@@ -201,6 +211,7 @@
                                         emp_name = $('#emp_name').val();
                                         email = $('#email').val();
                                         employee_status = $('#employee_status').val();
+
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -209,9 +220,9 @@
                                             '?search=' + searchValue +
                                             '&emp_id=' + emp_id +
                                             '&emp_name=' + emp_name +
-                                            '&email=' + email;
-                                        '&employee_status=' + employee_status;
-                                        '&status=' + status;
+                                            '&email=' + email +
+                                            '&employee_status=' + employee_status +
+                                            '&status=' + status
                                     } // Closing brace for action function
                                 },
                                 {
@@ -231,9 +242,9 @@
                                             '?search=' + searchValue +
                                             '&emp_id=' + emp_id +
                                             '&emp_name=' + emp_name +
-                                            '&email=' + email;
-                                        '&employee_status=' + employee_status;
-                                        '&status=' + status;
+                                            '&email=' + email +
+                                            '&employee_status=' + employee_status +
+                                            '&status=' + status
                                     } // Closing brace for action function
                                 }
                             ]

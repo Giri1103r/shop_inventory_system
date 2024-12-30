@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\File;
 use Str;
 use PDF;
 use Mail;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
-use Session;
 use Exception;
 use DataTables;
 use Response;
@@ -27,7 +27,8 @@ use App\Models\Master\Department;
 use App\Models\User;
 use App\Models\UploadLog;
 use App\Models\Master\UserRole;
-
+use Illuminate\Contracts\Session\Session as SessionSession;
+use Illuminate\Support\Facades\Session as FacadesSession;
 
 class EmployeeController extends Controller
 {
@@ -86,6 +87,9 @@ class EmployeeController extends Controller
                                 $btn .= '<a href="' . admin_url('employee/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
                             return $btn;
+                        })
+                        ->editColumn('unit',function($row){
+                            return getUnitname($row->unit);
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
@@ -175,7 +179,7 @@ class EmployeeController extends Controller
             return redirect(admin_url('employee/list'));
         } catch (Exception $ex) {
 
-           
+
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('employee/list'));
@@ -309,6 +313,8 @@ class EmployeeController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went Wrong please try again after some time');
+            return redirect()->back();
         }
     }
 
