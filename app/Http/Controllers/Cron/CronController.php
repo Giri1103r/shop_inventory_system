@@ -28,6 +28,8 @@ use App\Models\Permit\SafetyPermit;
 use App\Mail\EmployeeRegisterEmail;
 use App\Mail\PermitExpiryEmail;
 
+use App\Models\Permit\Statuslog;
+
 
 use Exception;
 
@@ -41,6 +43,7 @@ class CronController extends Controller
     private $user;
     private $ppestock;
     private $safetypermit;
+    private $statuslog;
 
     public function __construct()
     {
@@ -51,6 +54,7 @@ class CronController extends Controller
         $this->employee = new Employee();
         $this->user = new User();
         $this->ppestock = new PpeStockinventory();
+        $this->statuslog = new Statuslog();
     }
     public function queueHigh()
     {
@@ -115,7 +119,7 @@ class CronController extends Controller
         }
     }
 
-  
+
     public function queueRoleImport()
     {
         $queueLength = Queue::size('roleimport');
@@ -136,7 +140,7 @@ class CronController extends Controller
         }
     }
 
-   
+
     public function queueDesignationImport()
     {
         $queueLength = Queue::size('designationimport');
@@ -176,7 +180,7 @@ class CronController extends Controller
             return response()->json(['message' => 'No jobs in the Employee Import queue to process', 'exit_code' => 0]);
         }
     }
- 
+
 
     public function workMasterTemp()
     {
@@ -419,6 +423,18 @@ class CronController extends Controller
                 foreach ($permits as $permit) {
                     $permit->permit_status = STATUS_PERMIT_EXPIRED;
                     $permit->save();
+
+
+                    $insert_array = array(
+                        'permit_type' => 1,
+                        'permit_id' => $permit->id,
+                        'from_status' => $permit->permit_status,
+                        'to_status' => STATUS_PERMIT_EXPIRED,
+                        'is_reject' => null,
+                        'remarks' => 'Permit Expired',
+                        'approved_by' => null,
+                    );
+                    $this->statuslog->create($insert_array);
                 }
 
                 Log::info('Expired permits updated successfully.', ['count' => $permits->count()]);
