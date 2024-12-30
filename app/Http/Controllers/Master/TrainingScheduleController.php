@@ -80,20 +80,20 @@ class TrainingScheduleController extends Controller
                         ->addIndexColumn()
 
                         ->addColumn('status', function ($row) {
-                            if (Auth::user()->role == ROLE_USER) {
-                                $text = "<span style='color:red'>In-Active<span>";
-                                if ($row->status == 1) {
-                                    $text = "<span style='color:green;' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
-                                } else if ($row->status == 0) {
-                                    $text = "<span style='color:red;'  data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
-                                }
-                                return $text;
-                            } else {
+                            if (Auth::user()->role == ROLE_SUPERADMIN){
                                 $text = "<span style='color:red'>In-Active<span>";
                                 if ($row->status == 1) {
                                     $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
                                 } else if ($row->status == 0) {
                                     $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
+                                }
+                                return $text;
+                            } else {
+                                $text = "<span style='color:red'>In-Active<span>";
+                                if ($row->status == 1) {
+                                    $text = "<span style='color:green;' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
+                                } else if ($row->status == 0) {
+                                    $text = "<span style='color:red;'  data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
                                 }
                                 return $text;
                             }
@@ -954,7 +954,7 @@ class TrainingScheduleController extends Controller
             return redirect(admin_url('training_schedule/list'));
         }
     }
- 
+
     public function ExportExcel(Request $request)
     {
 

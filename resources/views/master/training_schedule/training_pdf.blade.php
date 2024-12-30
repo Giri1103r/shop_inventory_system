@@ -233,14 +233,14 @@
                         Training Started
                     </td>
                 </tr>
-            @elseif($training_schedule->training_status == 4)
+            @elseif($training_schedule->training_status == 5)
                 <tr>
                     <td width="40%" style="padding:5px;text-transform: uppercase;">
                         <b>Training Status</b>
                     </td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="58%" style="padding:5px;">
-                        Training Ended
+                        Training Completed
                     </td>
                 </tr>
             @endif

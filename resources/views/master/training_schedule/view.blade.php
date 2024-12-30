@@ -173,11 +173,11 @@
                                                         <div class="view_data"> Training Started
                                                         </div>
                                                     </div>
-                                                @elseif($training_schedule->training_status == 4)
+                                                @elseif($training_schedule->training_status == 5)
                                                     <div class="mb-3 col-md-4 form-input">
                                                         <label class="form-label view_label">Training Status</label>
                                                         <div class="view_data">
-                                                            Training Ended
+                                                            Training Completed
                                                         </div>
                                                     </div>
                                                 @endif
