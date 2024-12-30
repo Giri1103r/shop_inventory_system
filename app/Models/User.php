@@ -227,8 +227,8 @@ class User extends Authenticatable
             'unit_id' => decryptId($employee->unit),
             'location_id' => decryptId($employee->location),
             'department_id' => decryptId($employee->department),
-            'designation_id' => decryptId($employee->designation),
-            'mobile' => $employee->emp_phone_no,
+            'designation_id' => $employee->designation,
+            'mobile' => $employee->mobile_no,
             'updated_by' => Auth::id()
         );
 
