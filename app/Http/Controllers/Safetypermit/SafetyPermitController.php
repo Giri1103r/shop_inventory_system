@@ -120,7 +120,7 @@ class SafetyPermitController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
 
-                            if ((!in_array(ROLE_USER, getUserRoleId(Auth::id()))) && ((in_array(ROLE_EHS_OFFICER, getUserRoleId(Auth::id())) && $row->permit_status == STATUS_EHS_VERIFICATION_PENDING) || ( $row->verified_by == Auth::id() && $row->permit_status == STATUS_EHS_APPROVE_PENDING) || (in_array(ROLE_PLANT_HEAD, getUserRoleId(Auth::id())) && $row->permit_status == STATUS_PLANT_HEAD_PENDING) || ( $row->verified_by == Auth::id() && $row->permit_status == STATUS_EHS_HOLD ) || ($row->verified_by == Auth::id() && $row->permit_status == STATUS_EHS_RESUME) || ($row->reassign_to == Auth::id() && $row->permit_status == STATUS_EHS_REASSIGN) || ($row->verified_by == Auth::id() &&  $row->permit_status == STATUS_PERMIT_EXTENDED )|| ($row->verified_by == Auth::id() && $row->permit_status == STATUS_PERMIT_EXTENDED_APPROVAL ) || ($row->verified_by == Auth::id() && $row->permit_status == STATUS_PLANTHEAD_REJECTED ))) {
+                            if ((!in_array(ROLE_USER, getUserRoleId(Auth::id()))) && ((in_array(ROLE_EHS_OFFICER, getUserRoleId(Auth::id())) && $row->permit_status == STATUS_EHS_VERIFICATION_PENDING) || ($row->verified_by == Auth::id() && $row->permit_status == STATUS_EHS_APPROVE_PENDING) || (in_array(ROLE_PLANT_HEAD, getUserRoleId(Auth::id())) && $row->permit_status == STATUS_PLANT_HEAD_PENDING) || ($row->verified_by == Auth::id() && $row->permit_status == STATUS_EHS_HOLD) || ($row->verified_by == Auth::id() && $row->permit_status == STATUS_EHS_RESUME) || ($row->reassign_to == Auth::id() && $row->permit_status == STATUS_EHS_REASSIGN) || ($row->verified_by == Auth::id() &&  $row->permit_status == STATUS_PERMIT_EXTENDED) || ($row->verified_by == Auth::id() && $row->permit_status == STATUS_PERMIT_EXTENDED_APPROVAL) || ($row->verified_by == Auth::id() && $row->permit_status == STATUS_PLANTHEAD_REJECTED))) {
                                 $btn = '<a href="' . admin_url('safetypermit/approvereject/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="Approval">
                             <i class="fa-solid fa-check-to-slot text-success"></i>
                         </a>';
@@ -157,7 +157,7 @@ class SafetyPermitController extends Controller
                     return $datatables;
                 } catch (Exception $ex) {
 
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ptw.please_try_after_some_time')], 406);
                 }
             }
@@ -279,12 +279,13 @@ class SafetyPermitController extends Controller
 
                 return redirect(admin_url('safetypermit/list'));
             } catch (Exception $ex) {
-                dd($ex);
-                Session::flash('error', __('common.message_error'));
+                report($ex);
+                Session::flash('error', 'Something went wrong Please try again after some time');
+                return redirect(admin_url('safetypermit/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
-            Session::flash('error',  __('common.message_error'));
+            report($ex);
+            Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
         }
     }
@@ -323,8 +324,9 @@ class SafetyPermitController extends Controller
             return view('permit.safetypermit.view', $data);
         } catch (Exception $ex) {
 
-            dd($ex);
             report($ex);
+            Session::flash('error', 'Something went wrong Please try again after some time');
+            return redirect(admin_url('safetypermit/list'));
         }
     }
 
@@ -372,7 +374,7 @@ class SafetyPermitController extends Controller
             ];
             return view('permit.safetypermit.edit', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something Went Wrong Please try again after some time');
             return redirect('safetypermit/list');
         }
@@ -390,8 +392,8 @@ class SafetyPermitController extends Controller
             Session::flash('success', __('Your data has been updated successfully'));
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
-            dd($ex);
-            Session::flash('error', __('common.message_error'));
+            report($ex);
+            Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
         }
     }
@@ -427,8 +429,9 @@ class SafetyPermitController extends Controller
             return view('permit.safetypermit.approvereject', $data);
         } catch (Exception $ex) {
 
-            dd($ex);
             report($ex);
+            Session::flash('error', 'Something went wrong Please try again after some time');
+            return redirect(admin_url('safetypermit/list'));
         }
     }
     public function ehsverification(Request $request)
@@ -511,10 +514,8 @@ class SafetyPermitController extends Controller
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
             report($ex);
-
-
+            Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
         }
     }
@@ -804,10 +805,8 @@ class SafetyPermitController extends Controller
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
             report($ex);
-
-
+            Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
         }
     }
@@ -904,10 +903,8 @@ class SafetyPermitController extends Controller
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
             report($ex);
-
-
+            Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
         }
     }
@@ -939,7 +936,8 @@ class SafetyPermitController extends Controller
                 __("Unit"),
                 __("Date"),
                 __("Exact Job Location"),
-                __("Status"),
+                __("From Status"),
+                __("To Status"),
                 __("Verified By"),
                 __("Approved By"),
                 __("Created By"),
@@ -953,6 +951,7 @@ class SafetyPermitController extends Controller
                 $export[] = getUnitname($data->unit_id);
                 $export[] = Displaydateformat($data->date);
                 $export[] = $data->exact_location_job;
+                $export[] =  $data->to_status;
                 $export[] =  $data->status_name;
                 $export[] =  getUsername($data->verified_by);
                 $export[] =  getUsername($data->approved_by);
@@ -991,8 +990,8 @@ class SafetyPermitController extends Controller
                 __("Unit"),
                 __("Date"),
                 __("Exact Job Location"),
-                // __("From Status"),
-                __("Status"),
+                __("From Status"),
+                __("To Status"),
                 __("Verified By"),
                 __("Approved By"),
                 __("Created By"),
@@ -1026,9 +1025,8 @@ class SafetyPermitController extends Controller
             $filename = "Safety Permit.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
-            dd($ex);
             report($ex);
+            Session::flash('error', 'Something went wrong Please try again after some time');
         }
     }
 
@@ -1088,27 +1086,27 @@ class SafetyPermitController extends Controller
             })
         );
     }
-  public function reassignemployeename(Request $request)
-{
-    $name = $request->input('search');
-    $unitId = $request->input('unitId');
-    $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
-        ->where('status', 1)
-        ->where('unit', $unitId)
-        ->whereRaw("FIND_IN_SET(?, user_role)", [3])
-        ->where('login_id', '!=', Auth::id())
-        ->limit(10)
-        ->get();
+    public function reassignemployeename(Request $request)
+    {
+        $name = $request->input('search');
+        $unitId = $request->input('unitId');
+        $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->where('unit', $unitId)
+            ->whereRaw("FIND_IN_SET(?, user_role)", [3])
+            ->where('login_id', '!=', Auth::id())
+            ->limit(10)
+            ->get();
 
-    return response()->json(
-        $employees->map(function ($employee) {
-            return [
-                'id' => $employee->login_id,
-                'text' => $employee->emp_name . ' - ' . $employee->emp_id,
-            ];
-        })
-    );
-}
+        return response()->json(
+            $employees->map(function ($employee) {
+                return [
+                    'id' => $employee->login_id,
+                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+                ];
+            })
+        );
+    }
 
 
 
@@ -1242,7 +1240,6 @@ class SafetyPermitController extends Controller
             $filename = "Safety Permit.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
@@ -1439,10 +1436,8 @@ class SafetyPermitController extends Controller
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
             report($ex);
-
-
+            Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
         }
     }
