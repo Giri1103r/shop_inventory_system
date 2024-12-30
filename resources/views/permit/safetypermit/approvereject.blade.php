@@ -302,13 +302,14 @@
                             <div class="mb-3 col-md-4 form-input">
                                 <label class="form-label view_label m-1">Confined Space Attendant</label>
                                 <span class="view_data">
-                                    @if ( isset($confined_space_entry) && $confined_space_entry->confined_attendant == 1)
+                                    @if (isset($confined_space_entry) && isset($confined_space_entry->confined_attendant) && $confined_space_entry->confined_attendant == 1)
                                         <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
                                     @else
                                         <span>No</span>
                                     @endif
                                 </span>
                             </div>
+
 
                             <div class="mb-3 col-md-4 form-input">
                                 <label class="form-label view_label">Attendant Name</label>
