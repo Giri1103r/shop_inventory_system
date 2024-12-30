@@ -856,9 +856,11 @@
                     @endforeach
                 </div>
                 @endif
+
                     @if (
                         $safetypermit['reassign_to'] == Auth::id() ||
-                            ($safetypermit['verified_by'] == Auth::id() && !$safetypermit['reassign_to']) || isAdmin())
+                            ($safetypermit['verified_by'] == Auth::id()) || isAdmin())
+
                         @if (
                             $safetypermit['permit_status'] == STATUS_EHS_APPROVE_PENDING ||  $safetypermit['permit_status'] == STATUS_PERMIT_EXTENDED_APPROVAL ||
                                 $safetypermit['permit_status'] == STATUS_EHS_HOLD ||
