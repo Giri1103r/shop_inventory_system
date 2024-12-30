@@ -296,9 +296,9 @@ class CronController extends Controller
                 $employee = $this->employee->store($emp_temp);
                 $users = $this->user->store($employee);
                 foreach ($users as $user) {
-                    if (!empty($user) && isset($user['email'])) {
-                        Mail::to($user['email'])->queue(new EmployeeRegisterEmail($user));
-                    }
+                    // if (!empty($user) && isset($user['email'])) {
+                    //     Mail::to($user['email'])->queue(new EmployeeRegisterEmail($user));
+                    // }
                     if (!empty($user) && isset($user['employee_id'])) {
                         $userID = DB::table('users')
                             ->select('id')

@@ -90,6 +90,7 @@ class EmployeeTemp extends Model
                     'status' => isset($item['Emp_Active']) ? $item['Emp_Active'] : null,
                     'employee_status' => isset($item['Emp_Status']) ? $item['Emp_Status'] : null,
                     'email' => isset($item['Emp_OfficialMail']) ? $item['Emp_OfficialMail'] : null,
+                    'reporting_manager' => isset($item['Emp_FirstApprover']) ? $item['Emp_FirstApprover'] : null,
                     'upload_status' => 0,
                     'error_status' => 0,
                     'error_remarks' => null,
