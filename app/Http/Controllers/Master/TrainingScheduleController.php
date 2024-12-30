@@ -112,7 +112,7 @@ class TrainingScheduleController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            if ($row->training_status == 1) {
+                            if ($row->training_status == 1 && (in_array(ROLE_TRAINER, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
                                 $btn .= '<a href="' . admin_url('training_schedule/nominationProcess/' . encryptId($row->id)) . '" title="Nomination">
                                             <i class="fa fa-calendar" style="color: #0013ff;"></i>
                                          </a> ';
@@ -124,7 +124,7 @@ class TrainingScheduleController extends Controller
 
                                 $btn .= '<a href="' . admin_url('training/feedback_approve/' . encryptId($row->id)) . '"  class="feedbackicon" title="feedback"><i class="fa-solid fa-comments" aria-hidden="true" style="color:rgb(13, 163, 244);"></i> </a> ';
                             }
-                            if ($row->training_status == 3) {
+                            if ($row->training_status == 3 && (in_array(ROLE_TRAINER, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
                                 $btn .= '<a href="' . admin_url('training_schedule/attendance/' . encryptId($row->id)) . '" title="Attendance">
                                             <i class="fas fa-portrait" style="color: #811378;font-size: 16px;"></i>
                                          </a> ';
@@ -159,12 +159,12 @@ class TrainingScheduleController extends Controller
                                     }
                                 }
                             }
-                            if (CheckUserPermission('edit')  && $row->training_status == 1) {
+                            if (CheckUserPermission('edit')  && $row->training_status == 1 && (in_array(ROLE_TRAINER, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
                                 $btn .= '<a href="' . admin_url('training_schedule/edit/' . encryptId($row->id)) . '" title="Edit">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                          </a> ';
                             }
-                            if (CheckUserPermission('delete') && $row->training_status == 1) {
+                            if (CheckUserPermission('delete') && $row->training_status == 1 && (in_array(ROLE_TRAINER, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
                                 $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             }
                             return $btn;
