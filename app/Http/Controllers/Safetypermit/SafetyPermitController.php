@@ -1385,6 +1385,7 @@ class SafetyPermitController extends Controller
             $filename = "Safety Permit.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
         }
     }
