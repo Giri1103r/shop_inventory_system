@@ -317,8 +317,8 @@ class ProtectiveEquipController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportProtectiveEquipJob($details));
-                //    dispatch((new ImportEmployeeJob($details))->onQueue('empimport'));
+                // dispatch(new ImportProtectiveEquipJob($details));
+                   dispatch((new ImportProtectiveEquipJob($details))->onQueue('proteciveequipimport'));
             }
 
             $insert_data['log_id'] = $insert_id;

@@ -20,8 +20,8 @@ use App\Models\UploadLogError;
 use App\Models\Master\ProtectiveEquip;
 use Illuminate\Support\Facades\Session;
 
-//  class ImportProtectiveEquipJob implements ShouldQueue
-class ImportProtectiveEquipJob
+ class ImportProtectiveEquipJob implements ShouldQueue
+// class ImportProtectiveEquipJob
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

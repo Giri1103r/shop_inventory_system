@@ -314,8 +314,8 @@ class EquipInvalveController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportequipinvalveJob($details));
-                //    dispatch((new ImportEmployeeJob($details))->onQueue('empimport'));
+                // dispatch(new ImportequipinvalveJob($details));
+                   dispatch((new ImportequipinvalveJob($details))->onQueue('equipinvalveimport'));
             }
 
             $insert_data['log_id'] = $insert_id;

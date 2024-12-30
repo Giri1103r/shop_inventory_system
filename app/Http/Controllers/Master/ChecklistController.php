@@ -317,8 +317,8 @@ class ChecklistController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportChecklistJob($details));
-                //    dispatch((new ImportEmployeeJob($details))->onQueue('empimport'));
+                // dispatch(new ImportChecklistJob($details));
+                   dispatch((new ImportChecklistJob($details))->onQueue('checklistimport'));
             }
 
             $insert_data['log_id'] = $insert_id;

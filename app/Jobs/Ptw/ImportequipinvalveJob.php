@@ -20,8 +20,8 @@ use App\Models\UploadLogError;
 use App\Models\Master\EquipInvalve;
 use Illuminate\Support\Facades\Session;
 
-//  class ImportequipinvalveJob implements ShouldQueue
-class ImportequipinvalveJob
+ class ImportequipinvalveJob implements ShouldQueue
+// class ImportequipinvalveJob
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

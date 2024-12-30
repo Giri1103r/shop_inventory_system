@@ -314,8 +314,8 @@ class SafeWorkController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportsafeworkJob($details));
-                //    dispatch((new ImportEmployeeJob($details))->onQueue('empimport'));
+                // dispatch(new ImportsafeworkJob($details));
+                   dispatch((new ImportsafeworkJob($details))->onQueue('safeworkimport'));
             }
 
             $insert_data['log_id'] = $insert_id;

@@ -20,8 +20,8 @@ use App\Models\UploadLogError;
 use App\Models\Master\Precaution;
 use Illuminate\Support\Facades\Session;
 
-//  class ImportsafeworkJob implements ShouldQueue
-class ImportPrecautionJob
+ class ImportPrecautionJob implements ShouldQueue
+// class ImportPrecautionJob
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

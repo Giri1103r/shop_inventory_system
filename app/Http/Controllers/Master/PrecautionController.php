@@ -319,8 +319,8 @@ class PrecautionController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportPrecautionJob($details));
-                //    dispatch((new ImportEmployeeJob($details))->onQueue('empimport'));
+                // dispatch(new ImportPrecautionJob($details));
+                   dispatch((new ImportPrecautionJob($details))->onQueue('precautionimport'));
             }
 
             $insert_data['log_id'] = $insert_id;
