@@ -153,7 +153,8 @@
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
-                    <td style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
+                    <td
+                        style="width:100%;background-color: #ce0f1f;color:#ffffff;font-weight:bold;padding: 10px 10px 10px;">
                         Training Schedule
                     </td>
                 </tr>
@@ -263,7 +264,8 @@
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
-                    <td style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
+                    <td
+                        style="width:100%;background-color: #ce0f1f;color:#ffffff;font-weight:bold;padding: 10px 10px 10px;">
                         Nomination Process
                     </td>
                 </tr>
@@ -290,25 +292,25 @@
                     <tr class="lesson_learned_row">
 
                         <td>
-                            {{ isset($nomination_process->emp_id) ? $nomination_process->emp_id : '' }}
+                            {{ isset($nomination_process->emp_id) ? $nomination_process->emp_id : '-' }}
                         </td>
                         <td>
-                            {{ isset($nomination_process->emp_name) ? $nomination_process->emp_name : '' }}
+                            {{ isset($nomination_process->emp_name) ? $nomination_process->emp_name : '-' }}
                         </td>
                         <td>
-                            {{ isset($nomination_process->email) ? $nomination_process->email : '' }}
+                            {{ isset($nomination_process->email) ? $nomination_process->email : '-' }}
                         </td>
                         <td>
-                            {{ isset($nomination_process->department_name) ? $nomination_process->department_name : '' }}
+                            {{ isset($nomination_process->department_name) ? $nomination_process->department_name : '-' }}
                         </td>
                         <td>
-                            {{ isset($nomination_process->employee_type) ? $nomination_process->employee_type : '' }}
+                            {{ isset($nomination_process->employee_type) ? $nomination_process->employee_type : '-' }}
                         </td>
                         <td>
-                            {{ displayDateformat($nomination_process->last_training_attended_on) }}
+                            {{ $nomination_process->last_training_attended_on ? displayDateformat($nomination_process->last_training_attended_on) : '-' }}
                         </td>
                         <td>
-                            {{ isset($nomination_process->topic_name) ? $nomination_process->topic_name : '' }}
+                            {{ isset($nomination_process->topic_name) ? $nomination_process->topic_name : '-' }}
                         </td>
                     </tr>
                     @php $i++; @endphp
@@ -319,7 +321,8 @@
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
-                    <td style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
+                    <td
+                        style="width:100%;background-color: #ce0f1f;color:#ffffff;font-weight:bold;padding: 10px 10px 10px;">
                         Training Attendance
                     </td>
                 </tr>
@@ -338,9 +341,9 @@
             <tbody id="lesson_learned_block">
                 @foreach ($trainingAttendanceList as $training_attendance)
                     <tr>
-                        <td>{{ Displaydateformat($training_attendance->attendance_date) ?? '' }}
+                        <td>{{ Displaydateformat($training_attendance->attendance_date) ?? '-' }}
                         </td>
-                        <td>{{ $training_attendance->emp_name ?? '' }}</td>
+                        <td>{{ $training_attendance->emp_name ?? '-' }}</td>
                         <td>
                             @if ($training_attendance->attendance_status == 1)
                                 <i class="fa-solid fa-check" style="color: #267709;">✔</i>
@@ -353,57 +356,56 @@
             </tbody>
         </table>
 
-        <div style="width:100%;">
-            <table style="width:100%;">
+        <div style="width: 100%;">
+            <table style="width: 100%;">
                 <tr>
-                    <td style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
+                    <td
+                        style="width: 100%; background-color: #ce0f1f; color: #ffffff; font-weight: bold; padding: 10px;">
                         Training Assessment
                     </td>
                 </tr>
             </table>
         </div>
+
         @if (isset($trainingAssessmentList) && $trainingAssessmentList->isNotEmpty())
-            <table class="table_card" style="margin-top: 20px;">
+            <table class="table_card" style="margin-top: 20px; width: 100%; border-collapse: collapse;">
                 <thead>
                     <tr>
                         <th class="form-label">Employee Name</th>
                         <th class="form-label">Attendee/Non-Attendee</th>
+                        <th class="form-label">Mark</th>
                         <th class="form-label">Assessment</th>
                         <th class="form-label">Feedback</th>
                     </tr>
                 </thead>
-
                 <tbody id="lesson_learned_block">
                     @foreach ($trainingAssessmentList as $assessment)
+                  
                         <tr>
-
-                            <td>{{ $assessment->emp_name ?? '' }}</td>
+                            <td>{{ $assessment->emp_name ?? '-' }}</td>
                             <td>
-                                @if ($assessment->attendance_status == 1)
-                                    <i class="fa-solid fa-check" style="color: #267709;">✔</i>
+                                @if ($assessment->attended_status == 1)
+                                    <i class="fa fa-check" style="color: #267709;">✔</i>
                                 @else
-                                    <i class="fa-solid fa-x" style="color: #f72626;">✘</i>
+                                    <i class="fa fa-times" style="color: #f72626;">✘</i>
                                 @endif
                             </td>
-                            <td>
-                                @if ($assessment->assessment == 1)
-                                    Pass
-                                @else
-                                    Fail
-                                @endif
-                            </td>
-                            <td>{{ $assessment->feedback ?? '' }}</td>
+                            <td>{{ $assessment->mark ?? '-' }}</td>
+                            <td>{{ $assessment->assessment == 1 ? 'Pass' : 'Fail' }}</td>
+                            <td>{{ strip_tags($assessment->feedback ?? '-') }}</td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
         @else
-            <p>No training assessment data available.</p>
+            <p style="text-align: center; margin-top: 20px;">No training assessment data available.</p>
         @endif
+
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
-                    <td style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
+                    <td
+                        style="width:100%;background-color: #ce0f1f;color:#ffffff;font-weight:bold;padding: 10px 10px 10px;">
                         Training Feedback
                     </td>
                 </tr>
@@ -414,6 +416,7 @@
                 <thead>
                     <tr>
                         <th class="form-label">Employee ID</th>
+                        <th class="form-label">Employee Name</th>
                         <th class="form-label">Feedback about the Trainer</th>
                         <th class="form-label">Feedback about the Training</th>
                     </tr>
@@ -423,11 +426,13 @@
                     @foreach ($trainingFeedbackList as $feedback)
                         <tr>
 
-                            <td>{{ $feedback->emp_id ?? '' }}</td>
+                            <td>{{ $feedback->emp_id ?? '-' }}</td>
 
-                            <td>{{ $feedback->trainer_feedback ?? '' }}</td>
+                            <td>{{ $feedback->emp_name ?? '-' }}</td>
 
-                            <td>{{ $feedback->training_feedback ?? '' }}</td>
+                            <td>{{ strip_tags($feedback->trainer_feedback) ?? '-' }}</td>
+
+                            <td>{{ strip_tags($feedback->training_feedback) ?? '-' }}</td>
                         </tr>
                     @endforeach
                 </tbody>

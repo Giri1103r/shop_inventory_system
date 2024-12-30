@@ -86,10 +86,35 @@
                                         <div class="basic-form">
                                             <div class="row">
 
+
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">From Date</label>
+                                                    <div class="view_data">
+                                                        {{ Displaydatetimeformat($training_schedule->from_date) }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">To Date</label>
+                                                    <div class="view_data">
+                                                        {{ Displaydatetimeformat($training_schedule->to_date) }}
+                                                    </div>
+                                                </div>
                                                 <div class="mb-3 col-md-4 form-input">
                                                     <label class="form-label view_label">Training Topic</label>
                                                     <div class="view_data">
                                                         {{ isset($training_schedule->topic_name) ? $training_schedule->topic_name : '' }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">Trainer </label>
+                                                    <div class="view_data">
+                                                        {{ isset($training_schedule->emp_name) ? $training_schedule->emp_name : '' }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">Unit</label>
+                                                    <div class="view_data">
+                                                        {{ isset($training_schedule->unit_name) ? $training_schedule->unit_name : '' }}
                                                     </div>
                                                 </div>
                                                 <div class="mb-3 col-md-4 form-input">
@@ -111,6 +136,8 @@
                                                         <tr>
                                                             <th class="form-label">Employee Name</th>
                                                             <th class="form-label required">Attendee/Non-Attendee</th>
+                                                            <th><span class="form-label">Mark</span> <span
+                                                                    class="required">*</span></th>
                                                             <th><span class="form-label">Assessment</span> <span
                                                                     class="required">*</span></th>
                                                             <th class="form-label">Feedback</th>
@@ -133,7 +160,6 @@
                                                                 <input type="hidden" name="email[]"
                                                                     value="{{ $training_attendance->email }}">
 
-                                                                <!-- Display the employee name with attendance status -->
                                                                 <td>
                                                                     @php
                                                                         $isAttended = $attendedEmployees->contains(
@@ -144,9 +170,9 @@
                                                                     @endphp
 
                                                                     @if ($isAttended)
-                                                                        {{ $training_attendance->emp_name }} (Attended)
+                                                                        {{ $training_attendance->emp_name }}
                                                                     @else
-                                                                        {{ $training_attendance->emp_name }} (Non-Attended)
+                                                                        {{ $training_attendance->emp_name }}
                                                                     @endif
                                                                 </td>
                                                                 <td>
@@ -167,12 +193,16 @@
                                                                     @else
                                                                         <i class="fa fa-close"
                                                                             style="font-size:24px;color:red"></i>
-                                                                            <input type="hidden" name="attended_status[]"
+                                                                        <input type="hidden" name="attended_status[]"
                                                                             value="0">
                                                                     @endif
                                                                 </td>
 
-                                                                <!-- Assessment Dropdown -->
+                                                                <td>
+                                                                    <input type="text" name ="mark[{{ $index }}]"
+                                                                        class="form-control validate-range-required" placeholder="Mark">
+                                                                </td>
+
                                                                 <td>
                                                                     <select name="assessment[{{ $index }}]"
                                                                         class="form-control single-select validate-select-required">
@@ -182,7 +212,6 @@
                                                                     </select>
                                                                 </td>
 
-                                                                <!-- Feedback Field -->
                                                                 <td>
                                                                     <textarea class="form-control maxTextareaLength" name="feedback[{{ $index }}]"></textarea>
                                                                 </td>
@@ -224,6 +253,10 @@
 
             $('#training_details').validate({
                 rules: {
+                    'mark[]': {
+                        required: true,
+                        iRange: true
+                    },
                     'assessment[]': {
                         required: true,
                     },
@@ -232,6 +265,10 @@
                     },
                 },
                 messages: {
+                    'mark[]': {
+                        required: "Please enter a mark.",
+                        iRange: "Mark must be between 0 and 100."
+                    },
                     'assessment[]': {
                         required: "Please select an assessment."
                     },
@@ -243,20 +280,17 @@
                 errorPlacement: function(error, element) {
                     error.addClass('invalid-feedback');
 
-                    // Place the error message appropriately
                     if (element.hasClass('single-select')) {
-                        // For select2 dropdowns
                         element.next('.select2-container').append(error);
                     } else {
-                        // Place in the closest <td>
                         element.closest('td').append(error);
                     }
                 },
                 highlight: function(element) {
-                    $(element).addClass('is-invalid'); // Add error class
+                    $(element).addClass('is-invalid');
                 },
                 unhighlight: function(element) {
-                    $(element).removeClass('is-invalid'); // Remove error class
+                    $(element).removeClass('is-invalid');
                 }
             });
         });

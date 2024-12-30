@@ -24,6 +24,7 @@ class TrainingAssessmentFeedback extends Model
         'emp_name',
         'email',
         'attended_status',
+        'mark',
         'assessment',
         'feedback',
         'feedback_send_status',
@@ -61,8 +62,9 @@ class TrainingAssessmentFeedback extends Model
                     'emp_name' => $request->emp_name[$index],
                     'email' => $request->email[$index],
                     'attended_status' => $request->attended_status[$index],
-                    'assessment' => $request->assessment[$index], // Indexed value
-                    'feedback' => $request->feedback[$index],    // Indexed value
+                    'mark' => $request->mark[$index], 
+                    'assessment' => $request->assessment[$index], 
+                    'feedback' => $request->feedback[$index],   
                     'status' => 1,
                     'created_by' => Auth::id(),
                     'created_at' => now(),

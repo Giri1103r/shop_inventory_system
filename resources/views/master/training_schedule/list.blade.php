@@ -133,7 +133,6 @@
             });
             flatpickr("#from_date_datepicker", {
                 dateFormat: "d-m-Y H:i",
-                minDate: "today",
                 enableTime: true,
                 time_24hr: true,
                 onChange: function(selectedDates, dateStr, instance) {

@@ -140,10 +140,23 @@ class TrainingScheduleController extends Controller
                                     $btn .= '<a href="' . admin_url('training_schedule/start/' . encryptId($row->id)) . '" title="Start Training">
                                                 <i class="fa fa-play-circle" style="color: green;"></i>
                                              </a> ';
-                                } elseif ($row->training_status == 3) {
-                                    $btn .= '<a href="' . admin_url('training_schedule/end/' . encryptId($row->id)) . '" title="Training Completed">
-                                                <i class="fa fa-check-circle" style="color: #5541b0;"></i>
-                                             </a> ';
+                                }
+                                $attendance = TrainingAttendance::select('training_schedule_id', 'attendance_date')
+                                    ->where('training_schedule_id', $row->id)
+                                    ->first();
+
+                                if ($attendance) {
+                                    $attendanceDate = \Carbon\Carbon::parse($attendance->attendance_date);
+                                    $fromDate = \Carbon\Carbon::parse($row->from_date)->startOfDay();
+                                    $toDate = \Carbon\Carbon::parse($row->to_date)->endOfDay();
+
+                                    if ($attendanceDate->between($fromDate, $toDate)) {
+                                        if ($row->training_status == 3) {
+                                            $btn .= '<a href="' . admin_url('training_schedule/end/' . encryptId($row->id)) . '" title="Training Completed">
+                                                    <i class="fa fa-check-circle" style="color: #5541b0;"></i>
+                                                 </a> ';
+                                        }
+                                    }
                                 }
                             }
                             if (CheckUserPermission('edit')  && $row->training_status == 1) {
@@ -280,7 +293,7 @@ class TrainingScheduleController extends Controller
                         /**
                          * Send Web notification
                          */
-                        $assigned_users = $trainingSchedule->trainer_id;
+                        $assigned_users = $trainingSchedule->login_id;
                         $img = admin_url('public/assets/icons/traning.png');
                         $notificationData = [
                             'notification_type' => 2,
@@ -462,15 +475,19 @@ class TrainingScheduleController extends Controller
 
         return response()->json(true);
     }
-    public function feedbackLinkPage($id)
+    public function feedbackLinkPage($id, $trainingScheduleId)
     {
         try {
             $feedback_id = decryptId($id);
+            $training_schedule_id = decryptId($trainingScheduleId);
 
             $trainingAssessmentFeedback = $this->training_assessment_feedback->getempId($feedback_id);
+            $training_schedule = $this->training_schedule->selectOne($training_schedule_id);
+
 
             $data = [
                 'feedback_id' => $feedback_id,
+                'training_schedule' => $training_schedule,
                 'trainingAssessmentFeedback' => $trainingAssessmentFeedback,
             ];
 
@@ -512,10 +529,13 @@ class TrainingScheduleController extends Controller
     {
         try {
             $trainingScheduleId = decryptId($id);
+            $training_schedule = $this->training_schedule->selectOne($trainingScheduleId);
+            $trainingAssessmentList = $this->training_assessment_feedback->getAssessmentList($trainingScheduleId);
 
 
             $data = [
-                'trainingScheduleId' => $trainingScheduleId,
+                'training_schedule' => $training_schedule,
+                'trainingAssessmentList' => $trainingAssessmentList,
             ];
 
             return view('master.training_schedule.adminapprove', $data);
@@ -545,7 +565,7 @@ class TrainingScheduleController extends Controller
 
                     foreach ($trainingAttendEmp as $emp) {
                         $id = encryptId($emp->id);
-                        $feedbackLink = url('training/feedback_link/' . $id);
+                        $feedbackLink = url('training/feedback_link/' . $id . '/' . $request->training_schedule_id);
 
                         if (!empty($emp->email)) {
                             $nomineeArray = [
@@ -656,14 +676,10 @@ class TrainingScheduleController extends Controller
                 $training_schedule = $this->training_schedule->selectOne($id);
                 $nominationProcessList = $this->nomination_process->getNomination($training_schedule->id);
                 $trainingAssessmentList = $this->training_assessment_feedback->getAssessmentList($training_schedule->id);
-
-                // Initialize an empty collection for training feedback
                 $trainingFeedbackList = collect();
 
-                // Iterate over each assessment to gather related feedback
                 foreach ($trainingAssessmentList as $assessment) {
                     $feedbackList = $this->training_feedback->getfeedbackList($assessment->id);
-                    // Merge the feedback into the main collection
                     $trainingFeedbackList = $trainingFeedbackList->merge($feedbackList);
                 }
 
@@ -697,6 +713,28 @@ class TrainingScheduleController extends Controller
             dd($ex);
             Session::flash('error', 'Something went wrong. Please try again later!');
             return redirect()->back();
+        }
+    }
+    public function filterAttendance(Request $request)
+    {
+        try {
+            $trainingScheduleId = decryptId($request->training_schedule_id);
+            $attendanceDate = $request->attendance_date;
+
+            $trainingAttendanceList = $this->training_attendance
+                ->where('status', 1)
+                ->where('training_schedule_id', $trainingScheduleId)
+                ->when($attendanceDate, function ($query, $attendanceDate) {
+                    return $query->whereDate('attendance_date', DBdateformat($attendanceDate));
+                })
+                ->get();
+
+            $html = view('master.training_schedule.training_attendance_table', compact('trainingAttendanceList'))->render();
+
+            return response()->json(['html' => $html]);
+        } catch (Exception $ex) {
+            dd($ex);
+            return response()->json(['error' => 'Something went wrong.'], 500);
         }
     }
 
@@ -916,6 +954,7 @@ class TrainingScheduleController extends Controller
             return redirect(admin_url('training_schedule/list'));
         }
     }
+ 
     public function ExportExcel(Request $request)
     {
 
@@ -1055,7 +1094,6 @@ class TrainingScheduleController extends Controller
         }
     }
 
-
     public function exportViewPdf(Request $request)
     {
         try {
@@ -1075,44 +1113,43 @@ class TrainingScheduleController extends Controller
             $trainingAssessmentList = $this->training_assessment_feedback->getAssessmentList($training_schedule->id);
             // Initialize an empty collection for training feedback
             $trainingFeedbackList = collect();
-
             foreach ($trainingAssessmentList as $assessment) {
                 $feedbackList = $this->training_feedback->getfeedbackList($assessment->id);
                 $trainingFeedbackList = $trainingFeedbackList->merge($feedbackList);
             }
 
-            $data = array(
+            $data = [
                 'training_schedule' => $training_schedule,
                 'nominationProcessList' => $nominationProcessList,
                 'trainingAttendanceList' => $trainingAttendanceList,
                 'trainingAssessmentList' => $trainingAssessmentList,
                 'trainingFeedbackList' => $trainingFeedbackList,
-            );
+            ];
+
             $property = [
                 'tempDir' => 'public/pdf/temp/',
-                'mode' => 'c',
+                'mode' => 'utf-8',
                 'margin_left' => 10,
                 'margin_right' => 10,
                 'margin_top' => 10,
                 'default_font' => 'arial',
-
             ];
 
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
+
             $view = view('master.training_schedule.training_pdf', $data);
             $html = $view->render();
 
-
-
             $mpdf->WriteHTML($html);
-
             $filename = "Training.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
+            return response()->json(['error' => 'Something went wrong while generating the PDF.']);
         }
     }
+
     public function DownloadSample(Request $request)
     {
 

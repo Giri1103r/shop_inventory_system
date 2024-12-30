@@ -120,6 +120,13 @@ class NominationProcess extends Model
 
         if (!empty($employees) && is_array($employees)) {
             foreach ($employees as $employeeData) {
+                $topic_id = DB::table('training_masters_topic')->select('id')
+                    ->where('topic_name', $employeeData['last_training_topic'])
+                    ->first();
+
+                $lastTrainingAttendedOn = ($employeeData['last_training_attended_on'] === 'No data') ? null : DBdateformat($employeeData['last_training_attended_on']);
+                $lastTrainingTopic = ($employeeData['last_training_topic'] === 'No data') ? null : $employeeData['last_training_topic'];
+
                 if (!empty($employeeData)) {
                     if (empty($employeeData['id'])) {
                         $insertArray = [
@@ -129,8 +136,8 @@ class NominationProcess extends Model
                             'email' => $employeeData['email'],
                             'department_id' => $employeeData['department_id'],
                             'employee_type' => $employeeData['employee_type'],
-                            'last_training_attended_on' => DBdateformat($employeeData['last_training_attended_on']) ?? '',
-                            'topic_id' => decryptId($employeeData['topic_id']) ?? '',
+                            'last_training_attended_on' => $lastTrainingAttendedOn,
+                            'topic_id' => $topic_id->id ?? null,
                             'created_by' => Auth::id(),
                         ];
                         $this->create($insertArray);
@@ -148,8 +155,8 @@ class NominationProcess extends Model
                             'email' => $employeeData['email'],
                             'department_id' => $employeeData['department_id'],
                             'employee_type' => $employeeData['employee_type'],
-                            'last_training_attended_on' => DBdateformat($employeeData['last_training_attended_on']) ?? '',
-                            'topic_id' => decryptId($employeeData['topic_id']) ?? '',
+                            'last_training_attended_on' => $lastTrainingAttendedOn,
+                            'topic_id' => $topic_id->id ?? null,
                             'updated_by' => Auth::id(),
                         ];
 

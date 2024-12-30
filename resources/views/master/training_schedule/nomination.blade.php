@@ -258,6 +258,7 @@
                                                                 <td><input type="text" class="form-control"
                                                                         name="employee[1][last_training_attended_on]"
                                                                         id="last_training_attended_on_1" readonly></td>
+                                                                        
                                                                 <td><input type="text" class="form-control"
                                                                         name="employee[1][last_training_topic]"
                                                                         id="last_training_topic_1" readonly></td>
