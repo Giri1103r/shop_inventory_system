@@ -206,7 +206,49 @@ class SafetyPermitController extends Controller
         try {
 
             try {
+                $rules = [
+                    'date' => 'required|date',
+                    'time_from' => 'required',
+                    'time_to' => 'required',
+                    'unit_id' => 'required',
+                    'exact_location_job' => 'required|regex:/^[a-zA-Z, ]{3,30}$/',
+                    'job_location_area' => 'required|regex:/^[a-zA-Z, ]{3,50}$/',
+                    'sub_permit' => 'required|array|min:1',
+                    'job_description' => 'required|min:3|max:600',
+                    'equipment_checklist_inspection' => 'required',
+                    'toolbox_talk' => 'required',
+                    'talk_givenby' => 'required|min:3|max:30',
+                    'assigned_job' => 'required',
+                    'attendance_toolbox_talk' => 'required',
+                ];
 
+                $messages = [
+                    'date.required' => 'Date cannot be empty.',
+                    'time_from.required' => 'From Time cannot be empty.',
+                    'time_to.required' => 'To Time cannot be empty.',
+                    'unit_id.required' => 'Please Select the unit.',
+                    'exact_location_job.required' => 'Exact Job Location cannot be empty.',
+                    'exact_location_job.regex' => 'Exact Job Location contains only the letters and must be between 3 and 30 characters.',
+                    'job_location_area.required' => 'Job Location Area cannot be empty.',
+                    'job_location_area.regex' => 'Job Location Area contains only the letters and must be between 3 and 50 characters.',
+                    'sub_permit.required' => 'At least one work type should be selected.',
+                    'job_description.required' => 'Job Description cannot be empty.',
+                    'job_description.min' => 'Job Description must be between 3 and 600 characters.',
+                    'job_description.max' => 'Job Description must be between 3 and 600 characters.',
+                    'equipment_checklist_inspection.required' => 'Equipment Checklist Inspection is required.',
+                    'toolbox_talk.required' => 'Toolbox Talk is required.',
+                    'talk_givenby.required' => 'Talk Given By is required',
+                    'talk_givenby.min' => 'Name must be between 3 and 30 characters',
+                    'talk_givenby.max' => 'Name must be between 3 and 30 characters',
+                    'assigned_job.required' => 'Please check the Assigned job',
+                    'attendance_toolbox_talk.required' => 'Attendance Tool box talk is required ',
+                ];
+
+                $validator = Validator::make($request->all(), $rules, $messages);
+
+                if ($validator->fails()) {
+                    return redirect()->back()->withErrors($validator)->withInput();
+                }
 
                 // $lastStatus = $this->safetypermit->laststatus();
                 // if($lastStatus !=STATUS_PLANT_HEAD_APPROVED || $lastStatus !=STATUS_PERMIT_EXPIRED ||$lastStatus !=STATUS_EHS_DECLINE ){
@@ -384,6 +426,50 @@ class SafetyPermitController extends Controller
     {
         try {
             $id = decryptId($request->id);
+
+            $rules = [
+                'date' => 'required|date',
+                'time_from' => 'required',
+                'time_to' => 'required',
+                'unit_id' => 'required',
+                'exact_location_job' => 'required|regex:/^[a-zA-Z, ]{3,30}$/',
+                'job_location_area' => 'required|regex:/^[a-zA-Z, ]{3,50}$/',
+                'sub_permit' => 'required|array|min:1',
+                'job_description' => 'required|min:3|max:600',
+                'equipment_checklist_inspection' => 'required',
+                'toolbox_talk' => 'required',
+                'talk_givenby' => 'required|min:3|max:30',
+                'assigned_job' => 'required',
+                'attendance_toolbox_talk' => 'required',
+            ];
+
+            $messages = [
+                'date.required' => 'Date cannot be empty.',
+                'time_from.required' => 'From Time cannot be empty.',
+                'time_to.required' => 'To Time cannot be empty.',
+                'unit_id.required' => 'Please Select the unit.',
+                'exact_location_job.required' => 'Exact Job Location cannot be empty.',
+                'exact_location_job.regex' => 'Exact Job Location contains only the letters and must be between 3 and 30 characters.',
+                'job_location_area.required' => 'Job Location Area cannot be empty.',
+                'job_location_area.regex' => 'Job Location Area contains only the letters and must be between 3 and 50 characters.',
+                'sub_permit.required' => 'At least one work type should be selected.',
+                'job_description.required' => 'Job Description cannot be empty.',
+                'job_description.min' => 'Job Description must be between 3 and 600 characters.',
+                'job_description.max' => 'Job Description must be between 3 and 600 characters.',
+                'equipment_checklist_inspection.required' => 'Equipment Checklist Inspection is required.',
+                'toolbox_talk.required' => 'Toolbox Talk is required.',
+                'talk_givenby.required' => 'Talk Given By is required',
+                'talk_givenby.min' => 'Name must be between 3 and 30 characters',
+                'talk_givenby.max' => 'Name must be between 3 and 30 characters',
+                'assigned_job.required' => 'Please check the Assigned job',
+                'attendance_toolbox_talk.required' => 'Attendance Tool box talk is required ',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
 
             $safetypermitdetails = $this->safetypermit->find($id);
             $this->safetypermit->updates($id);
