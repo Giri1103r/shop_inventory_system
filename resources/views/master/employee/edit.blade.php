@@ -247,9 +247,7 @@
         });
 
         flatpickr("#joining_date_datetime_datepicker", {
-            enableTime: true,
-            dateFormat: "d-m-Y H:i",
-            time_24hr: true,
+            dateFormat: "d-m-Y ",
             minuteIncrement: 5,
             minDate: "1995-01-01",
             clickOpens: true,
@@ -456,7 +454,7 @@
                         required:true,
                         minlength: 10,
                         maxlength: 10,
-
+                        digits:true,
                     }
                 },
                 messages: {
@@ -482,6 +480,7 @@
                         required: "{{ __('Mobile Number is Required') }}",
                         minlength: "{{ __('Mobile number minimum length should be 10') }}",
                         maxlength: "{{ __('Mobile number maximum length should be 10') }}",
+                        digits: "{{ __('Mobile number allows only numeric') }}",
                     },
                     employee_status: {
                         required: "{{ __('Employee Status is Required') }}",
