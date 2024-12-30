@@ -26,7 +26,7 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4>Worker Details</h4>
+                                        <h4 style="color:#fff">Worker Details</h4>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -50,7 +50,7 @@
                                             {{ isset($work->gender) ? $work->gender : '' }}
                                         </div>
                                     </div>
-                                    
+
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Nationality') }}</label>
                                         <div class="view_data">
@@ -87,7 +87,7 @@
                                         <div class="view_data">
                                             {{ isset($work->company_name) ? $work->company_name : '' }}
                                         </div>
-                                    </div>                                  
+                                    </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Location Name') }}</label>
                                         <div class="view_data">
