@@ -412,7 +412,7 @@
             <td width="20%" style="padding:5px;"><b>Register for entry & exits</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                @if (optional($confined_space_entry) && $confined_space_entry->register_entry_exits == 'on')
+                @if (optional($confined_space_entry)->register_entry_exits == 'on')
                     <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
                 @endif
             </td>
