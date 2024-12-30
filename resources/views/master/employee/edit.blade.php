@@ -382,6 +382,9 @@
                 rules: {
                     emp_name: {
                         required: true,
+                        minlength: 3,
+                        maxlength: 50,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
                     },
                     email: {
                         required: true,
@@ -401,7 +404,7 @@
                         }
                     },
                     'user_role[]': {
-                        required: true
+                        required: true,
                     },
                     gender: {
                         required: true,
@@ -411,20 +414,26 @@
                     },
                     employee_status: {
                         required: true,
+                        minlength: 3,
+                        maxlength: 50,
                     },
                     nationality: {
                         required: true,
-                        minlength: 2,
-                        maxlength: 30,
-                        regex: /^[a-zA-Z]{2,}$/
+                        minlength: 3,
+                        maxlength: 50,
+                        regex: /^[a-zA-Z]{2,}$/,
                     },
                     id_type: {
                         required: true,
-                        regex: /^[a-zA-Z0-9\-_'"()\s]+$/
+                        minlength: 3,
+                        maxlength: 30,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
                     },
                     id_number: {
                         required: true,
-                        regex: /^[a-zA-Z0-9\-_'"()\s]+$/
+                        minlength: 3,
+                        maxlength: 30,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
                     },
                     company: {
                         required: true,
@@ -437,18 +446,18 @@
                     },
                     designation: {
                         required: true,
-                        minlength: 2,
-                        maxlength: 30,
-                         regex: /^[a-zA-Z]{2,}$/
+                        minlength: 3,
+                        maxlength: 50,
+                        regex: /^[a-zA-Z]{2,}$/
                     },
                     unit: {
                         required: true,
                     },
                     reporting_manager: {
                         required: true,
-                        minlength: 2,
-                        maxlength: 30,
-                        regex: /^[a-zA-Z]{2,}$/
+                        minlength: 3,
+                        maxlength: 50,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
                     },
                     mobile_no:{
                         required:true,
@@ -460,6 +469,10 @@
                 messages: {
                     emp_name: {
                         required: "{{ __('Employee Name is Required') }}",
+                        minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 50",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+
                     },
                     email: {
                         required: "{{ __('Employee Email is Required') }}",
@@ -484,26 +497,32 @@
                     },
                     employee_status: {
                         required: "{{ __('Employee Status is Required') }}",
+                        minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 50",
                     },
                     nationality: {
                         required: "{{ __('Nationality is Required') }}",
-                        minlength: "{{ __('Nationality must be at least 2 characters') }}",
-                        maxlength: "{{ __('Nationality must be less than 30 characters') }}",
+                        minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 50",
                         regex: "{{ __('Nationality accepts only alphabets') }}",
                     },
                     id_type: {
                         required: "{{ __('ID Type is Required') }}",
-                        regex: "{{ __('ID Type allows alphanumeric characters') }}",
-                    },
+                        minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 30",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+                      },
                     id_number: {
                         required: "{{ __('ID Number is Required') }}",
-                        regex: "{{ __('ID Number allows alphanumeric characters') }}",
+                        minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 30",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
                     },
                     reporting_manager: {
                         required: "{{ __('Reporting Manager is Required') }}",
-                        minlength: "{{ __('Reporting Manager must be at least 2 characters') }}",
-                        maxlength: "{{ __('Reporting Manager must be less than 30 characters') }}",
-                        regex: "{{ __('Reporting Manager accepts only alphabets') }}",
+                        minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 50",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
                     },
                     company: {
                         required: "{{ __('Company is Required') }}",
@@ -519,8 +538,8 @@
                     },
                     designation: {
                         required: "{{ __('Designation is Required') }}",
-                        minlength: "{{ __('Designation must be at least 2 characters') }}",
-                        maxlength: "{{ __('Designation must be less than 30 characters') }}",
+                        minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 50",
                         regex: "{{ __('Designation accepts only alphabets') }}",
                     }
                 },

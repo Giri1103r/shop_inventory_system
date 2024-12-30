@@ -152,6 +152,7 @@ class Employee extends Model
                 'user_role' => $role->id ?? null,
                 'designation' => $item->designation ?? null,
                 'employee_status' => $item->employee_status ?? null,
+                'reporting_manager' => $item->reporting_manager ?? null,
                 'status' => 1,
                 'error_status' => 0,
                 'error_remarks' => null,
