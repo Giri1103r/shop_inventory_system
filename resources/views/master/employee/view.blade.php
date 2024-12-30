@@ -103,7 +103,12 @@
                                             {{ Displaydateformat(isset($employee->joining_date) ? $employee->joining_date : '') }}
                                         </div>
                                     </div>
-
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Phone Number') }}</label>
+                                        <div class="view_data">
+                                            {{ ($employee->mobile_no) ? $employee->mobile_no : ''}}
+                                        </div>
+                                    </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Employee Status') }}</label>
                                         <div class="view_data">

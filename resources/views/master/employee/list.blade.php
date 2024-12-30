@@ -77,7 +77,7 @@
                                         <th>Unit Name</th>
                                         <th>Employee Status</th>
                                         <th>Reporting Manager</th>
-                                        <th>{{ __('common.status') }} </th>
+                                        <th data-priority="2">{{ __('common.status') }} </th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th data-priority="1" >{{ __('common.action') }}</th>
                                     </tr>
