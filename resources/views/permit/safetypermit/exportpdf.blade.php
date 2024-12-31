@@ -115,7 +115,7 @@
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
-                    <td style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
+                    <td style="width:100%;background-color: #ce0f1f;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
                         Safety Permit
                     </td>
                 </tr>
@@ -187,8 +187,9 @@
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
-                    <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 5px 5px 5px;">
-                        Type of Job
+                    <td
+                       style="width:100%;background-color: #6c757d;color:#fff;padding: 10px 10px 10px;"  >
+                       Type of Job
                     </td>
                 </tr>
             </table>
@@ -303,11 +304,13 @@
             </tr>
         </table>
 
+
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
-                    <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 5px 5px 5px;">
-                        State of Isolation & LOTO
+                    <td
+                       style="width:100%;background-color: #6c757d;color:#fff;padding: 10px 10px 10px;">
+                       State of Isolation & LOTO
                     </td>
                 </tr>
             </table>
@@ -373,7 +376,8 @@
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
-                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 5px 5px 5px;">
+                <td
+                   style="width:100%;background-color: #6c757d;color:#fff;padding: 10px 10px 10px;">
                     Applicable for Confined Space Entry
                 </td>
             </tr>
@@ -439,7 +443,7 @@
             <td width="48%" style="padding:5px;">
                 @if (optional($confined_space_entry)->register_entry_exits == 'on')
                     <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
-                    
+
                 @endif
             </td>
         </tr>
@@ -466,7 +470,7 @@
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
-                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 5px 5px 5px;">
+                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
                     Protective Equipment's to be Worn
                 </td>
             </tr>
@@ -490,7 +494,7 @@
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
-                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 5px 5px 5px;">
+                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
                     Name of Equipment's involved in Job
                 </td>
             </tr>
@@ -521,7 +525,7 @@
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
-                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 5px 5px 5px;">
+                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
                     Precaution To be Taken
                 </td>
             </tr>
@@ -545,7 +549,7 @@
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
-                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 5px 5px 5px;">
+                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
                     Equipment's Check List
                 </td>
             </tr>
@@ -581,7 +585,7 @@
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
-                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 5px 5px 5px;">
+                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
                     Safe Work Instructions
                 </td>
             </tr>
@@ -625,7 +629,7 @@
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
-                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 5px 5px 5px;">
+                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
                     List of Workman involved in Job
                 </td>
             </tr>
@@ -682,7 +686,7 @@
             <table style="width:100%;">
                 <tr>
                     <td
-                        style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
+                        style="width:100%;background-color: #ce0f1f;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
                         EHS Verification
                     </td>
                 </tr>
@@ -719,7 +723,7 @@
             <table style="width:100%;">
                 <tr>
                     <td
-                        style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
+                        style="width:100%;background-color: #ce0f1f;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
                         Permit Extension
                     </td>
                 </tr>
@@ -766,7 +770,7 @@
             <table style="width:100%;">
                 <tr>
                     <td
-                        style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
+                        style="width:100%;background-color: #ce0f1f;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
                         Permit Extension Approval
                     </td>
                 </tr>
@@ -806,7 +810,7 @@
             <table style="width:100%;">
                 <tr>
                     <td
-                        style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
+                        style="width:100%;background-color: #ce0f1f;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
                         EHS Approval
                     </td>
                 </tr>
@@ -841,7 +845,7 @@
             <table style="width:100%;">
                 <tr>
                     <td
-                        style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
+                        style="width:100%;background-color: #ce0f1f;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
                         Plant Head Approval
                     </td>
                 </tr>

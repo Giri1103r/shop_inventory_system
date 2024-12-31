@@ -120,12 +120,12 @@ class SafetyPermitController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
 
-                            if ((!in_array(ROLE_USER, getUserRoleId(Auth::id()))) && ((in_array(ROLE_EHS_OFFICER, getUserRoleId(Auth::id())) && $row->permit_status == STATUS_EHS_VERIFICATION_PENDING) || ($row->verified_by == Auth::id() && $row->permit_status == STATUS_EHS_APPROVE_PENDING) || (in_array(ROLE_PLANT_HEAD, getUserRoleId(Auth::id())) && $row->permit_status == STATUS_PLANT_HEAD_PENDING) || (($row->verified_by == Auth::id() && $row->reassign_to == null ) && $row->permit_status == STATUS_EHS_HOLD) || ($row->reassign_to == Auth::id() && $row->permit_status == STATUS_EHS_HOLD) || (($row->verified_by == Auth::id() && $row->reassign_to == null ) && $row->permit_status == STATUS_EHS_RESUME) || ($row->reassign_to == Auth::id() && $row->permit_status == STATUS_EHS_RESUME)|| ($row->reassign_to == Auth::id() && $row->permit_status == STATUS_EHS_REASSIGN) || ($row->verified_by == Auth::id() &&  $row->permit_status == STATUS_PERMIT_EXTENDED) || ($row->verified_by == Auth::id() && $row->permit_status == STATUS_PERMIT_EXTENDED_APPROVAL) || ($row->verified_by == Auth::id() && $row->permit_status == STATUS_PLANTHEAD_REJECTED))) {
+                            if ( (CheckUserRole(ROLE_SUPERADMIN) && $row->permit_status != STATUS_PLANT_HEAD_APPROVED && $row->permit_status != STATUS_EHS_DECLINE && $row->permit_status != STATUS_PERMIT_EXPIRED) || (!in_array(ROLE_USER, getUserRoleId(Auth::id()))) && ((in_array(ROLE_EHS_OFFICER, getUserRoleId(Auth::id())) && $row->permit_status == STATUS_EHS_VERIFICATION_PENDING) || ($row->verified_by == Auth::id() && $row->permit_status == STATUS_EHS_APPROVE_PENDING) || (in_array(ROLE_PLANT_HEAD, getUserRoleId(Auth::id())) && $row->permit_status == STATUS_PLANT_HEAD_PENDING) || (($row->verified_by == Auth::id() && $row->reassign_to == null ) && $row->permit_status == STATUS_EHS_HOLD) || ($row->reassign_to == Auth::id() && $row->permit_status == STATUS_EHS_HOLD) || (($row->verified_by == Auth::id() && $row->reassign_to == null ) && $row->permit_status == STATUS_EHS_RESUME) || ($row->reassign_to == Auth::id() && $row->permit_status == STATUS_EHS_RESUME)|| ($row->reassign_to == Auth::id() && $row->permit_status == STATUS_EHS_REASSIGN) || ($row->verified_by == Auth::id() &&  $row->permit_status == STATUS_PERMIT_EXTENDED) || ($row->verified_by == Auth::id() && $row->permit_status == STATUS_PERMIT_EXTENDED_APPROVAL) || ($row->verified_by == Auth::id() && $row->permit_status == STATUS_PLANTHEAD_REJECTED))) {
                                 $btn = '<a href="' . admin_url('safetypermit/approvereject/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="Approval">
                             <i class="fa-solid fa-check-to-slot text-success"></i>
                         </a>';
                             }
-                            if ((($row->permit_status >= STATUS_EHS_APPROVE_PENDING) || ($row->permit_status != STATUS_PERMIT_EXPIRED && $row->permit_status != STATUS_PLANT_HEAD_APPROVED && $row->permit_status != STATUS_EHS_DECLINE)  || ($row->permit_status == STATUS_PERMIT_EXTENDED_REJECTED))&& ($row->created_by == Auth::id())) {
+                            if ((($row->permit_status >= STATUS_EHS_APPROVE_PENDING)  || ($row->permit_status != STATUS_PERMIT_EXPIRED && $row->permit_status != STATUS_PLANT_HEAD_APPROVED && $row->permit_status != STATUS_EHS_DECLINE)  || ($row->permit_status == STATUS_PERMIT_EXTENDED_REJECTED))&& ($row->created_by == Auth::id())) {
                                 $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '" class="permitExtension" title="' . __('Permit Extension') . '"><i class="fa fa-external-link"></i> ';
                             }
 
@@ -135,11 +135,14 @@ class SafetyPermitController extends Controller
                             if (($row->created_by == Auth::id() && $row->permit_status == STATUS_EHS_VERIFICATION_PENDING)) {
                                 $btn .= '<a href="' . admin_url('safetypermit/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             }
-                            if ($row->permit_status >= STATUS_EHS_APPROVE_PENDING) {
+
+
+                            if (($row->permit_status >= STATUS_EHS_APPROVE_PENDING) && ($row->date > Carbon::now())) {
                                 $btn .= '<a href="' . admin_url('safetypermit/qr/pdf/' . encryptId($row->id)) . '" target="__blank" style="margin-right: 5px;" title="QR PDF">
-                            <i class="fa-solid fa-qrcode"></i>
-                        </a>';
+                                    <i class="fa-solid fa-qrcode"></i>
+                                </a>';
                             }
+
 
                             $btn .= '<a href="' . admin_url('safetypermit/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
