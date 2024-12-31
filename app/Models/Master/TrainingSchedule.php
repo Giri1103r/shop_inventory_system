@@ -72,14 +72,14 @@ class TrainingSchedule extends Model
                 $query->where('training_schedule.trainer_id', $trainer->id)
                     ->where('training_schedule.trash', 'NO');
             }
-        } elseif (Auth::user()->role == ROLE_USER) {
+        } elseif (Auth::user()->role != ROLE_TRAINER || Auth::user()->role != ROLE_SUPERADMIN) {
             $nomination = DB::table('masters_employee')
                 ->select('id', 'emp_id')
                 ->where('emp_id', Auth::user()->employee_id)
                 ->first();
 
-            if ($nomination) { // Ensure $nomination exists before proceeding
-                $query->where(function ($q) use ($nomination) { // Pass $nomination into the closure
+            if ($nomination) { 
+                $query->where(function ($q) use ($nomination) { 
                     $q->whereExists(function ($subQuery) use ($nomination) {
                         $subQuery->select(DB::raw(1))
                             ->from('training_nomination_process')

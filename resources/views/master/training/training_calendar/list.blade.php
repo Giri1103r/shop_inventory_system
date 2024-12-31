@@ -103,7 +103,7 @@
                     });
                 },
                 eventClick: function(info) {
-                    const editUrl = `{{ url('training_schedule/edit/') }}/${info.event.id}`;
+                    const editUrl = `{{ url('training_schedule/view/') }}/${info.event.id}`;
                     window.location.href = editUrl;
                 },
 
