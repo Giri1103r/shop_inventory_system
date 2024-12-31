@@ -248,14 +248,19 @@
                 <td width="48%" style="padding:5px;">
                     @if ($safetypermit->shutdown_req == 1)
                         <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                    @elseif ($safetypermit->shutdown_req == 0)
+                        <b><i class="fa-solid fa-times" style="color: #f31008; width: 15px;">✖</i></b>
+                    @else
+                        <p>N/A</p>
                     @endif
+
                 </td>
             </tr>
             <tr>
                 <td width="20%" style="padding:5px;"><b>Taken By (Name & Department)</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ isset($safetypermit->shut_down_takenby) ? $safetypermit->shut_down_takenby : '' }}</td>
+                    {{ isset($safetypermit->shut_down_takenby) ? $safetypermit->shut_down_takenby : 'N/A' }}</td>
             </tr>
 
             <tr>
@@ -264,6 +269,10 @@
                 <td width="48%" style="padding:5px;">
                     @if ($safetypermit->loto_req == 1)
                         <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                    @elseif ($safetypermit->loto_req == 0)
+                        <b><i class="fa-solid fa-times" style="color: #f31008; width: 15px;">✖</i></b>
+                    @else
+                        <p>N/A</p>
                     @endif
                 </td>
             </tr>
@@ -271,13 +280,13 @@
                 <td width="20%" style="padding:5px;"><b>Taken By (Name & Department)</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ isset($safetypermit->loto_takenby) ? $safetypermit->loto_takenby : '' }}</td>
+                    {{ isset($safetypermit->loto_takenby) ? $safetypermit->loto_takenby : 'N/A' }}</td>
             </tr>
             <tr>
                 <td width="20%" style="padding:5px;"><b>Loto No</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ isset($safetypermit->loto_no) ? $safetypermit->loto_no : '' }}</td>
+                    {{ isset($safetypermit->loto_no) ? $safetypermit->loto_no : 'N/A' }}</td>
             </tr>
             <tr>
                 <td width="20%" style="padding:5px;"><b>Tag Field properly (Yes/No)</b></td>
@@ -285,6 +294,10 @@
                 <td width="48%" style="padding:5px;">
                     @if ($safetypermit->tagfield == 1)
                         <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                    @elseif ($safetypermit->tagfield == 0)
+                        <b><i class="fa-solid fa-times" style="color: #f31008; width: 15px;">✖</i></b>
+                    @else
+                        <p>N/A</p>
                     @endif
                 </td>
             </tr>
@@ -329,7 +342,7 @@
                         <div style="margin-top: 5px; font-weight: bold;">{{ $item }}</div>
 
                         <span style="margin-top: 5px; display: inline-block;">
-                            @if ( isset($stateIsolationLoto) && in_array($item, $stateIsolationLoto))
+                            @if (isset($stateIsolationLoto) && in_array($item, $stateIsolationLoto))
                                 <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
                             @else
                                 <b><i class="fa-solid fa-xmark" style="color: #ff0000; width: 15px;">✘</i></b>
@@ -377,8 +390,12 @@
             <td width="20%" style="padding:5px;"><b>System Isolated</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                @if ( isset($confined_space_entry) && $confined_space_entry->system_isolated == 1)
+                @if (isset($confined_space_entry) && $confined_space_entry->system_isolated == 1)
                     <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                @elseif (isset($confined_space_entry) && $confined_space_entry->system_isolated == 0)
+                    <b><i class="fa-solid fa-times" style="color: #f31008; width: 15px;">✖</i></b>
+                @else
+                    <p>N/A</p>
                 @endif
             </td>
         </tr>
@@ -386,8 +403,12 @@
             <td width="20%" style="padding:5px;"><b>Rescue System Available</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                @if (  isset($confined_space_entry) &&  $confined_space_entry->rescue_system == 1)
+                @if (isset($confined_space_entry) && $confined_space_entry->rescue_system == 1)
                     <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                @elseif (isset($confined_space_entry) && $confined_space_entry->rescue_system == 0)
+                    <b><i class="fa-solid fa-times" style="color: #f31008; width: 15px;">✖</i></b>
+                @else
+                    <p>N/A</p>
                 @endif
             </td>
         </tr>
@@ -395,8 +416,12 @@
             <td width="20%" style="padding:5px;"><b>Confined Space Attendant</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                @if (  isset($confined_space_entry) &&  $confined_space_entry->confined_attendant == 1)
+                @if (isset($confined_space_entry) && $confined_space_entry->confined_attendant == 1)
                     <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                @elseif (isset($confined_space_entry) && $confined_space_entry->confined_attendant == 0)
+                    <b><i class="fa-solid fa-times" style="color: #f31008; width: 15px;">✖</i></b>
+                @else
+                    <p>N/A</p>
                 @endif
             </td>
         </tr>
@@ -414,6 +439,7 @@
             <td width="48%" style="padding:5px;">
                 @if (optional($confined_space_entry)->register_entry_exits == 'on')
                     <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                    
                 @endif
             </td>
         </tr>
@@ -686,7 +712,9 @@
         </table>
     @endif
 
-    @if($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED || ( $safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&  $safetypermit['permit_extension_status'] == 1))
+    @if (
+        $safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED ||
+            ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING && $safetypermit['permit_extension_status'] == 1))
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -699,73 +727,77 @@
         </div>
         <table>
             @foreach ($getsafetyPermitExtension as $getsafetyPermitExtension)
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Name</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ isset($getsafetyPermitExtension->created_by) ? getUsername($getsafetyPermitExtension->created_by) : '' }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Date</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ displaydateformat(isset($getsafetyPermitExtension->date) ? $getsafetyPermitExtension->date : '') }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>To Time</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ displaytimeformat(isset($getsafetyPermitExtension->to_time) ? $getsafetyPermitExtension->to_time : '') }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Reason</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ isset($getsafetyPermitExtension->remarks) ? $getsafetyPermitExtension->remarks : '' }}</td>
-            </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Name</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ isset($getsafetyPermitExtension->created_by) ? getUsername($getsafetyPermitExtension->created_by) : '' }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Date</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ displaydateformat(isset($getsafetyPermitExtension->date) ? $getsafetyPermitExtension->date : '') }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>To Time</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ displaytimeformat(isset($getsafetyPermitExtension->to_time) ? $getsafetyPermitExtension->to_time : '') }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Reason</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ isset($getsafetyPermitExtension->remarks) ? $getsafetyPermitExtension->remarks : '' }}
+                    </td>
+                </tr>
             @endforeach
         </table>
     @endif
 
-    @if($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED_APPROVAL || ( $safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&  $safetypermit['permit_extension_status'] == 1))
-    <div style="width:100%;">
-        <table style="width:100%;">
-            <tr>
-                <td
-                    style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
-                    Permit Extension Approval
-                </td>
-            </tr>
+    @if (
+        $safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED_APPROVAL ||
+            ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING && $safetypermit['permit_extension_status'] == 1))
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td
+                        style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
+                        Permit Extension Approval
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <table>
+            @foreach ($getpermitextensionapproval as $getpermitextensionapproval)
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ isset($getpermitextensionapproval->approve_reject_by) ? $getpermitextensionapproval->approve_reject_by : '' }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ displaydateformat(isset($getpermitextensionapproval->date) ? $getpermitextensionapproval->date : '') }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Reason</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ isset($getpermitextensionapproval->remarks) ? $getpermitextensionapproval->remarks : '' }}
+                    </td>
+                </tr>
+            @endforeach
         </table>
-    </div>
-    <table>
-        @foreach($getpermitextensionapproval as $getpermitextensionapproval)
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($getpermitextensionapproval->approve_reject_by) ? $getpermitextensionapproval->approve_reject_by : '' }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ displaydateformat(isset($getpermitextensionapproval->date) ? $getpermitextensionapproval->date : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Reason</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($getpermitextensionapproval->remarks) ? $getpermitextensionapproval->remarks : '' }}</td>
-        </tr>
-        @endforeach
-    </table>
-@endif
+    @endif
     @if (
         $safetypermit['permit_status'] != 8 &&
             $safetypermit['permit_status'] != 5 &&
