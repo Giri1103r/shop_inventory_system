@@ -66,13 +66,15 @@
             box-shadow: none;
             border-color: #0056b3;
         }
+
         .form-check-label:hover {
-            color:black;
-            
+            color: black;
+
             cursor: pointer;
         }
+
         .form-check-label {
-            color:black;
+            color: black;
         }
     </style>
 
@@ -209,15 +211,16 @@
                                                         <p>No training assessment data available.</p>
                                                     @endif
                                                 </div>
-                                                <div class="mb-3 col-md-12" style="font-size: 17px;">
-                                                        <label class="form-label fw-bold" for="feedback">
-                                                            Are you sure you want to send the feedback link to the attending trainees?
-                                                        </label>
-                                                        <input class="form-check-input" type="checkbox" id="feedback"
-                                                            name="feedback" value="1">
-                                                        <label class="form-check-label" for="feedback">
-                                                            Yes, send feedback link.
-                                                        </label>
+                                                <div class="mb-3 col-md-12 form-input" style="font-size: 17px;">
+                                                    <label class="form-label fw-bold" for="feedback">
+                                                        Are you sure you want to send the feedback link to the attending
+                                                        trainees?
+                                                    </label>
+                                                    <input class="form-check-input" type="checkbox" id="feedback"
+                                                        name="feedback" value="1">
+                                                    <label class="form-check-label" for="feedback">
+                                                        Yes, send feedback link.
+                                                    </label>
                                                 </div>
 
                                             </div>
@@ -245,6 +248,45 @@
         $('#resetform').on('click', function(e) {
             e.preventDefault();
             location.reload();
+        });
+        $('#training_details').validate({
+            rules: {
+                feedback: {
+                    required: true
+                },
+            },
+            messages: {
+                feedback: {
+                    required: "You must select the checkbox to send the feedback link."
+                }
+            },
+            errorElement: 'span',
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-input').append(error);
+            },
+            highlight: function(element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            },
+            submitHandler: function(form) {
+                if ($('#training_details').data('conflict') === true) {
+                    // Prevent form submission if there are conflicts
+                    return false;
+                } else {
+                    form.submit(); // Submit the form when valid
+                }
+            },
+            invalidHandler: function(event, validator) {
+                var errors = validator.numberOfInvalids();
+                console.log(errors + " field(s) are invalid");
+                validator.errorList.forEach(function(error) {
+                    console.log("Field: " + error.element.name + ", Error: " + error
+                        .message);
+                });
+            }
         });
     </script>
 @endpush

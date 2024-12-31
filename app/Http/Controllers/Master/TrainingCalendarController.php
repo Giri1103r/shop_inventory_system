@@ -93,6 +93,22 @@ class TrainingCalendarController extends Controller
                     $query->where('training_schedule.trainer_id', $trainer->id)
                         ->where('training_schedule.trash', 'NO');
                 }
+            } elseif (Auth::user()->role != ROLE_TRAINER || Auth::user()->role != ROLE_SUPERADMIN) {
+                $nomination = DB::table('masters_employee')
+                    ->select('id', 'emp_id')
+                    ->where('emp_id', Auth::user()->employee_id)
+                    ->first();
+
+                if ($nomination) {
+                    $query->where(function ($q) use ($nomination) {
+                        $q->whereExists(function ($subQuery) use ($nomination) {
+                            $subQuery->select(DB::raw(1))
+                                ->from('training_nomination_process')
+                                ->whereColumn('training_nomination_process.training_schedule_id', 'training_schedule.id')
+                                ->where('training_nomination_process.employee_id', $nomination->id); // Check if user is nominated
+                        });
+                    })->where('training_schedule.trash', 'NO');
+                }
             }
 
             if ($request->filled('topic_id')) {
