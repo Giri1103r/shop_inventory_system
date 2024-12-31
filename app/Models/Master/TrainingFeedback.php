@@ -48,8 +48,6 @@ class TrainingFeedback extends Model
             'training_assessment_feedback_id' => decryptId($request->training_assessment_feedback_id),
             'emp_id'=>Auth::user()->employee_id,
             'emp_name'=>Auth::user()->name,
-            // 'emp_id' => $request->emp_id ?? null,
-            // 'emp_name' => $request->emp_name ?? null,
             'trainer_feedback' => $request->trainer_feedback,
             'training_feedback' => $request->training_feedback,
             'created_by' => Auth::id(),
