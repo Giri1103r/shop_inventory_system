@@ -366,8 +366,7 @@ class CronController extends Controller
 
                 if (!empty($data)) {
                     $work = $this->ppestock->store($data);
-                    Session::flash('sucess', 'Your data has been created Sucessfully');
-                    return redirect('ppe_stock_inventory/list');
+                    return response()->json(['message' => 'Data saved successfully.']);
                 } else {
                     return response()->json(['message' => 'No data found in API response.']);
                 }
@@ -392,7 +391,7 @@ class CronController extends Controller
                 $data = $response->json();
 
                 if (!empty($data)) {
-                    $work = $this->ppestock->update($data);
+                    $work = $this->ppestock->store($data);
                     Session::flash('sucess', 'Your data has been created Sucessfully');
                     return redirect('ppe_stock_inventory/list');
                 } else {

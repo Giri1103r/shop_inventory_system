@@ -610,7 +610,7 @@ class PpeRequestController extends Controller
                     'status' => $updateEhsData['approve_status'],
                     'department' => $empDetails->department,
                     'approved_by' => $empDetails->approved_by,
-                    'approve_link' => url('stockitem'),
+                    'approve_link' => url('updateStockitem'),
                 ];
 
                 if ($action == 'approve') {

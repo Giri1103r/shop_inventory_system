@@ -81,7 +81,7 @@ Route::get('cron/safetypermit/checklistmaster/import', [CronController::class, '
 
 Route::get('stockitem', [CronController::class, 'storeItem']);
 
-Route::get('stockitem', [CronController::class, 'storeItem']);
+Route::get('updateStockitem', [CronController::class, 'updateItem']);
 Route::get('workmastertemp', [CronController::class, 'workMasterTemp']);
 Route::get('worksave', [CronController::class, 'workSave']);
 Route::get('employee_master_temp', [CronController::class, 'employeeMasterTemp']);

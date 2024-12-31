@@ -54,7 +54,11 @@ class PpeRequest extends Model
             $departmentId = $user->department_id;
             $query->where('ppe_pperequest.department', $departmentId)
                 ->orderBy('ppe_pperequest.id', 'DESC');
-        } elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+
+        } elseif(in_array(ROLE_STORE_MANAGER, $userRole)){
+            $query->orderBy('ppe_pperequest.id', 'DESC');
+        }
+        elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
         } else {
             $query->where('ppe_pperequest.emp_id', $empId);
         }
