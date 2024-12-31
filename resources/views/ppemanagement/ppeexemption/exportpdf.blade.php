@@ -116,8 +116,9 @@
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
-                    <td style="width:100%;background-color: #ce0f1f;color:#000;font-weight:bold;padding: 5px 5px 5px;">
-                        PPE Exemption
+                    <td
+                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;"  class="fw-bold">
+                       PPE Exemption
                     </td>
                 </tr>
             </table>
@@ -200,7 +201,10 @@
             <div style="width:100%;">
                 <table style="width:100%;">
                     <tr>
-                        <td class="header-cell">Status Logs</td>
+                        <td
+                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;"  class="fw-bold">
+                            Status Logs
+                        </td>
                     </tr>
                 </table>
             </div>

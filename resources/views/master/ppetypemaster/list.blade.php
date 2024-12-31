@@ -109,6 +109,7 @@
                                         <th>Item Code</th>
                                         <th>PPE Name</th>
                                         <th>PPE Type</th>
+                                        <th>PPE Standard</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -215,6 +216,10 @@
                     {
                         data: 'ppe_type',
                         name: 'ppe_type'
+                    },
+                    {
+                        data: 'ppe_standard',
+                        name: 'ppe_standard'
                     },
 
                     {

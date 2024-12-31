@@ -74,6 +74,43 @@
             font-weight: bold;
             padding: 5px;
         }
+
+        .table_card {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 16px;
+            text-align: left;
+        }
+
+        .table_card th,
+        .table_card td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .table_card th {
+            background-color: #f2f2f2;
+            color: #333;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .table_card tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .table_card tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .table_card td {
+            text-align: center;
+        }
+
+        .table-container {
+            padding: 20px;
+        }
     </style>
 </head>
 
@@ -111,7 +148,10 @@
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
-                <td class="header-cell">PPE Request</td>
+                <td
+                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;" class="fw-bold">
+                   PPE Request
+                </td>
             </tr>
         </table>
     </div>
@@ -159,7 +199,10 @@
             <div style="width:100%;">
                 <table style="width:100%;">
                     <tr>
-                        <td class="header-cell">Status Logs</td>
+                        <td
+                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;"  class="fw-bold">
+                            Status Logs
+                        </td>
                     </tr>
                 </table>
             </div>
@@ -227,7 +270,10 @@
             <div style="width:100%;">
                 <table style="width:100%;">
                     <tr>
-                        <td class="header-cell">Previous History</td>
+                        <td
+                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;" class="fw-bold">
+                           Previous History
+                        </td>
                     </tr>
                 </table>
             </div>
