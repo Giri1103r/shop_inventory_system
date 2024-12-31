@@ -47,11 +47,6 @@
                                         <input type="hidden" name="training_schedule_id"
                                             id="training_schedule_id" value="{{ encryptId($training_schedule->id) }}">
 
-                                        <input type="hidden" name="emp_id"
-                                            id="emp_id" value="{{  $trainingAssessmentFeedback->emp_id  }}">
-                                        <input type="hidden" name="emp_name"
-                                            id="emp_name" value="{{  $trainingAssessmentFeedback->emp_name  }}">
-
                                         <div class="basic-form">
                                             <div class="row">
                                                 <div class="mb-3 col-md-4 form-input">

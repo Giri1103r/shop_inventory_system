@@ -80,7 +80,7 @@ class TrainingScheduleController extends Controller
                         ->addIndexColumn()
 
                         ->addColumn('status', function ($row) {
-                            if (Auth::user()->role == ROLE_SUPERADMIN){
+                            if (Auth::user()->role == ROLE_SUPERADMIN) {
                                 $text = "<span style='color:red'>In-Active<span>";
                                 if ($row->status == 1) {
                                     $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
@@ -484,13 +484,11 @@ class TrainingScheduleController extends Controller
             $trainingAssessmentFeedback = $this->training_assessment_feedback->getempId($feedback_id);
             $training_schedule = $this->training_schedule->selectOne($training_schedule_id);
 
-
             $data = [
                 'feedback_id' => $feedback_id,
                 'training_schedule' => $training_schedule,
                 'trainingAssessmentFeedback' => $trainingAssessmentFeedback,
             ];
-
             return view('master.training_schedule.feedbacklink', $data);
         } catch (Exception $ex) {
             return redirect()->back()->withErrors(['error' => 'Something went wrong. Please try again later!']);
@@ -555,17 +553,16 @@ class TrainingScheduleController extends Controller
             $this->training_schedule->updateStatus($trainingScheduleId, $training_status);
 
             if ($training->feedback_send_status == 1) {
-
                 $trainingAttendEmp = $this->training_assessment_feedback->getemployee($trainingScheduleId);
 
                 if ($trainingAttendEmp->isNotEmpty()) {
                     $mailSubject = 'Training Feedback';
-                    $assignedUsers = [];
                     $img = admin_url('public/assets/icons/traning.png');
 
                     foreach ($trainingAttendEmp as $emp) {
                         $id = encryptId($emp->id);
-                        $feedbackLink = url('training/feedback_link/' . $id . '/' . $request->training_schedule_id);
+                        $scheduleIdEncrypted = encryptId($trainingScheduleId);
+                        $feedbackLink = url("training/feedback_link/$id/$scheduleIdEncrypted");
 
                         if (!empty($emp->email)) {
                             $nomineeArray = [
@@ -573,13 +570,10 @@ class TrainingScheduleController extends Controller
                                 'link' => $feedbackLink,
                                 'mail_subject' => $mailSubject,
                             ];
-
                             Mail::to($emp->email)->queue(new TrainingFeedbackMail($nomineeArray));
                         }
-                        $assignedUsers[] = $emp->login_id;
-                    }
 
-                    if (!empty($assignedUsers)) {
+                        // Prepare a single notification
                         $notificationData = [
                             'notification_type' => 2,
                             'module_type' => 2,
@@ -591,11 +585,11 @@ class TrainingScheduleController extends Controller
                                 'module' => 2,
                             ]),
                             'web_link' => $feedbackLink,
-                            'assigned_user' => implode(',', array_unique($assignedUsers)),
+                            'assigned_user' => $emp->login_id,
                             'created_by' => Auth::id(),
                         ];
 
-                        notificationSave($notificationData);
+                        notificationSave($notificationData); // Save one notification at a time
                     }
                 }
 
