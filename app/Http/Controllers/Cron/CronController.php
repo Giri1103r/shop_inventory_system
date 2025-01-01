@@ -24,7 +24,7 @@ use App\Models\Master\Work;
 use App\Models\Master\Employee;
 use App\Models\Master\PpeStockinventory;
 use App\Models\Permit\SafetyPermit;
-
+use App\Models\Master\PpeExemption;
 use App\Mail\EmployeeRegisterEmail;
 use App\Mail\PermitExpiryEmail;
 
@@ -42,6 +42,7 @@ class CronController extends Controller
     private $employee;
     private $user;
     private $ppestock;
+    private $ppeexemption;
     private $safetypermit;
     private $statuslog;
 
@@ -55,6 +56,7 @@ class CronController extends Controller
         $this->user = new User();
         $this->ppestock = new PpeStockinventory();
         $this->statuslog = new Statuslog();
+        $this->ppeexemption = new PpeExemption();
     }
     public function queueHigh()
     {
@@ -280,6 +282,16 @@ class CronController extends Controller
             }
         } catch (Exception $ex) {
             dd($ex);
+            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
+        }
+    }
+
+    public function ExpireExemption(){
+        try{
+            $status=$this->ppeexemption->getExpirestatus();
+            return response()->json(['message' => 'Data saved successfully.']);
+        }catch(Exception $ex)
+        {
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
