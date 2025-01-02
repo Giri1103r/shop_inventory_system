@@ -651,6 +651,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/export/excel', [PpeRequestController::class, 'exportExcel']);
                 Route::get('/export/pdf', [PpeRequestController::class, 'exportPdf']);
                 Route::get('/generalpdf/{id}', [PpeRequestController::class, 'pdf']);
+                Route::get('/checkuserDepartment', [PpeRequestController::class, 'checkDepartmentrequest']);
 
             });
 

@@ -109,12 +109,12 @@
                                                 @enderror
                                                 <div class="text-danger" id="reason_error"></div>
                                             </div>
-                                            <div class="col-md-12 mb-2">
-                                                <input type="checkbox" id="checkbox" name="checkbox">
-                                                <label for="checkbox" class="form-label">I agree to the terms and
-                                                    conditions</label>
-                                                <div class="text-danger" id="checkbox_error"></div>
-                                            </div>
+                                                <div class="col-md-12 mb-2">
+                                                    <input type="checkbox" id="checkbox" name="checkbox">
+                                                    <label for="checkbox" class="form-label">I agree to the terms and
+                                                        conditions</label>
+                                                    <div class="text-danger" id="checkbox_error"></div>
+                                                </div>
 
                                         </div>
                                         <hr>

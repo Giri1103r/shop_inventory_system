@@ -496,7 +496,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 50,
-                        pattern: /^[a-zA-Z0-9\s\-_'"(),&/]*$/, 
+                        pattern: /^[a-zA-Z0-9\s\-_'"(),&/]*$/,
                         remote: {
                             url: '{{ admin_url('ptw/typeofworkmaster/unique') }}',
                             type: 'post',
@@ -512,7 +512,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 50,
-                        pattern: /^[a-zA-Z0-9\s\-_'"(),&/]*$/, 
+                        pattern: /^[a-zA-Z0-9\s\-_'"(),&/]*$/,
 
                     },
 

@@ -279,7 +279,7 @@
                             <div class="mb-3 col-md-4 form-input">
                                 <label class="form-label view_label m-1">System Isolated</label>
                                 <span class="view_data">
-                                    @if (isset($confined_space_entry) && $confined_space_entry->system_isolated == 1)
+                                    @if (isset($confined_space_entry) && isset($confined_space_entry->system_isolated) && $confined_space_entry->system_isolated == 1)
                                     <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
                                 @else
                                     <span>No</span>
@@ -291,7 +291,7 @@
                             <div class="mb-3 col-md-4 form-input">
                                 <label class="form-label view_label m-1">Rescue System Available</label>
                                 <span class="view_data">
-                                    @if ( isset($confined_space_entry) && $confined_space_entry->rescue_system == 1)
+                                    @if ( isset($confined_space_entry) && isset($confined_space_entry->rescue_system) && $confined_space_entry->rescue_system == 1)
                                         <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
                                     @else
                                         <span>No</span>

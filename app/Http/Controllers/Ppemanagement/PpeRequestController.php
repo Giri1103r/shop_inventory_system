@@ -168,16 +168,48 @@ class PpeRequestController extends Controller
         $ppetypedata = $this->ppetype->getPpetypedata();
         $ppetypemaster = $this->ppetypemaster->getppetypemaster();
         $userdata = $this->pperequest->userdata();
+
         $data = [
             'employee' => $employee,
             'ppetypedata' => $ppetypedata,
             'ppetypemaster' => $ppetypemaster,
-            'userdata' => $userdata
+            'userdata' => $userdata,
+
 
         ];
         return view('ppemanagement.pperequest.add', $data);
     }
 
+    public function checkDepartmentrequest(Request $request)
+    {
+        $empId = $request->input('empId');
+        $department = $request->input('department');
+
+        $chemicaldepartment = $this->pperequest->lastsixmonthrequest();
+        $lastPPERequest = $this->pperequest->lastPpeRequest();
+        if ($lastPPERequest) {
+            $lastRequestDate = Carbon::parse($lastPPERequest->created_at)->addYear()->format('Y-m-d');
+            $currentDate = Carbon::now()->format('Y-m-d');
+
+            $oneYearBeforeLastRequest = Carbon::parse($lastRequestDate)->subYear()->format('Y-m-d');
+            if ($currentDate >= $oneYearBeforeLastRequest && $currentDate <= $lastRequestDate) {
+                return response()->json(['showFields' => true]);
+            }
+        }
+
+        if ($chemicaldepartment) {
+            $RequestDate = Carbon::parse($chemicaldepartment->created_at)->addMonths(6);
+            $currentDate = Carbon::now();
+
+            $sixMonthsBeforeRequest = Carbon::parse($RequestDate)->subMonths(6);
+
+            if ($currentDate >= $sixMonthsBeforeRequest && $currentDate <= $RequestDate) {
+                return response()->json(['showFields' => true]);
+            }
+        }
+
+        return response()->json(['showFields' => false]);
+    }
 
 
     public function store(Request $request)

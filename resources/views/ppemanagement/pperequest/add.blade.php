@@ -39,7 +39,8 @@
                                                     <label for="emp_id" class="form-label require">Employee ID</label>
                                                     <input type="text" name="emp_id"
                                                         class="form-control form-control-sm "id="emp_id"
-                                                        value="{{ $employee->employee_id }}"  @if(Auth::user()->role != ROLE_SUPERADMIN) readonly @endif>
+                                                        value="{{ $employee->employee_id }}"
+                                                        @if (Auth::user()->role != ROLE_SUPERADMIN) readonly @endif>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">
@@ -47,7 +48,8 @@
                                                     <label for="emp_name" class="form-label require">Employee Name</label>
                                                     <input type="text" name="emp_name"
                                                         class="form-control form-control-sm " id="emp_name"
-                                                        value="{{ $employee->name }}"  @if(Auth::user()->role != ROLE_SUPERADMIN) readonly @endif>
+                                                        value="{{ $employee->name }}"
+                                                        @if (Auth::user()->role != ROLE_SUPERADMIN) readonly @endif>
                                                 </div>
                                             </div>
 
@@ -56,16 +58,19 @@
                                                     <label for="department" class="form-label require">Department</label>
                                                     <input type="text" name="department" id="department"
                                                         class="form-control form-control-sm"
-                                                        value="{{ getDepartment($employee->department_id) }}"   @if(Auth::user()->role != ROLE_SUPERADMIN) readonly @endif>
+                                                        value="{{ getDepartment($employee->department_id) }}"
+                                                        @if (Auth::user()->role != ROLE_SUPERADMIN) readonly @endif>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Item Code</label>
-                                                    <select name="item_code" id="item_code" style="width: 100%" class="form-select form-select-sm single-select">
+                                                    <select name="item_code" id="item_code" style="width: 100%"
+                                                        class="form-select form-select-sm single-select">
                                                         <option value="">Select the Item Code</option>
                                                         @foreach ($ppetypemaster as $itemcode)
-                                                            <option value="{{ $itemcode->id }}">{{ $itemcode->item_code }}</option>
+                                                            <option value="{{ $itemcode->id }}">{{ $itemcode->item_code }}
+                                                            </option>
                                                         @endforeach
                                                     </select>
                                                     @error('ppe_type')
@@ -77,7 +82,8 @@
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Type</label>
-                                                    <input type="text" name="ppe_type" id="ppe_type" class="form-control form-control-sm">
+                                                    <input type="text" name="ppe_type" id="ppe_type"
+                                                        class="form-control form-control-sm">
                                                     <input type="hidden" name="ppe_type_id" id="ppe_type_id">
                                                     @error('ppe_type')
                                                         <div class="text-danger">{{ $message }}</div>
@@ -88,13 +94,39 @@
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Name</label>
-                                                    <input type="text" name="ppe_name" id="ppe_name" class="form-control form-control-sm">
+                                                    <input type="text" name="ppe_name" id="ppe_name"
+                                                        class="form-control form-control-sm">
                                                     <input type="hidden" name="ppe_name_id" id="ppe_name_id">
                                                     @error('ppe_name')
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
                                                     <div class="text-danger" id="ppe_name_error"></div>
                                                 </div>
+                                            </div>
+
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">Image</label>
+                                                    <input type="file" name="ppe_file" id="ppe_file"
+                                                        class="form-control form-control-sm"
+                                                        accept="image/png, image/jpeg, image/jpg"
+                                                        placeholder="Enter the image" onchange="validateImage()">
+                                                    <small>Allowed file types: png, jpeg , jpg</small>
+                                                    @error('ppe_name')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                    <div class="text-danger" id="ppe_name_error"></div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12 mb-2">
+                                                <label for="remarks" class="form-label require">Remarks</label>
+                                                <textarea name="remarks" id="remarks" cols="3" rows="4" class="form-control form-control-sm"
+                                                    placeholder="Enter the remarks"></textarea>
+                                                @error('reason')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                                <div class="text-danger" id="reason_error"></div>
                                             </div>
 
                                             <div class="col-md-12 mb-2">
@@ -133,49 +165,78 @@
                 location.reload();
             });
         });
+        $(document).ready(function() {
+            var empId = $('#emp_id').val();
+            var department = $('#department').val();
+
+            function checkRequestCondition(empId, department) {
+                $.ajax({
+                    url: 'checkuserDepartment',
+                    method: 'GET',
+                    data: {
+                        department: department,
+                        empId: empId
+                    },
+                    success: function(response) {
+                        if (response.showFields) {
+                            $('#ppe_file').closest('.col-md-4').show();
+                            $('#remarks').closest('.col-md-12').show();
+                            $('#reason').closest('.col-md-12').hide();
+
+                        } else {
+                            $('#ppe_file').closest('.col-md-4').hide();
+                            $('#remarks').closest('.col-md-12').hide();
+                        }
+                    }
+                });
+            }
+
+            checkRequestCondition(empId, department);
+        });
+
         $(document).on('change', '#item_code', function() {
-    let PPEtypeId = $(this).val();
-    console.log(PPEtypeId);
+            let PPEtypeId = $(this).val();
+            console.log(PPEtypeId);
 
-    if (PPEtypeId) {
-        $.ajax({
-            url: "{{ admin_url('ppe_ppetype_master/ajax-list') }}",
-            type: 'GET',
-            data: {
-                id: PPEtypeId,
-                _ts: new Date().getTime()
-            },
-            success: function(data) {
-                console.log(data);
-                if (data.length > 0) {
-                    let ppeType = data[0].ppe_type;
-                    let ppeName = data[0].ppe_name;
-                    let ppeTypeId = data[0].ppe_type_id;
-                    let ppeMasterId = data[0].ppe_master_id;
+            if (PPEtypeId) {
+                $.ajax({
+                    url: "{{ admin_url('ppe_ppetype_master/ajax-list') }}",
+                    type: 'GET',
+                    data: {
+                        id: PPEtypeId,
+                        _ts: new Date().getTime()
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        if (data.length > 0) {
+                            let ppeType = data[0].ppe_type;
+                            let ppeName = data[0].ppe_name;
+                            let ppeTypeId = data[0].ppe_type_id;
+                            let ppeMasterId = data[0].ppe_master_id;
 
-                    $('#ppe_type').val(ppeType);
-                    $('#ppe_name').val(ppeName);
+                            $('#ppe_type').val(ppeType);
+                            $('#ppe_name').val(ppeName);
 
-                    $('#ppe_type_id').val(ppeTypeId);
-                    $('#ppe_name_id').val(ppeMasterId);
-                } else {
-                    $('#ppe_type').val('');
-                    $('#ppe_name').val('');
-                    $('#ppe_type_id').val('');
-                    $('#ppe_name_id').val('');
-                }
-            },
-            error: function(xhr) {
-                alert('Error fetching PPE Types. Please try again.');
+                            $('#ppe_type_id').val(ppeTypeId);
+                            $('#ppe_name_id').val(ppeMasterId);
+                        } else {
+                            $('#ppe_type').val('');
+                            $('#ppe_name').val('');
+                            $('#ppe_type_id').val('');
+                            $('#ppe_name_id').val('');
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching PPE Types. Please try again.');
+                    }
+                });
+            } else {
+                $('#ppe_type').val('');
+                $('#ppe_name').val('');
+                $('#ppe_type_id').val('');
+                $('#ppe_name_id').val('');
             }
         });
-    } else {
-        $('#ppe_type').val('');
-        $('#ppe_name').val('');
-        $('#ppe_type_id').val('');
-        $('#ppe_name_id').val('');
-    }
-});
 
 
 
@@ -200,9 +261,15 @@
                         required: true,
                         minlength: 3,
                         maxlength: 600,
-
-
                     },
+                    ppe_file: {
+                        extension: "png|jpeg|jpg"
+                    },
+                    remarks:{
+                        required: true,
+                        minlength: 3,
+                        maxlength: 600,
+                    }
                 },
                 messages: {
 
@@ -221,6 +288,15 @@
                         minlength: "Reason must contain between 3 and 600 characters.",
                         maxlength: "Reason must contain between 3 and 600 characters.",
                     },
+                    ppe_file: {
+                        extension: "Please enter a value with a valid mimetype."
+                    },
+                    remarks: {
+                        required: "Reason cannot be empty.",
+                        minlength: "Reason must contain between 3 and 600 characters.",
+                        maxlength: "Reason must contain between 3 and 600 characters.",
+                    },
+
                 },
                 errorElement: 'div',
                 errorPlacement: function(error, element) {
