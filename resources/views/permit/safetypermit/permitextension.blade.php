@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', '')
+@section('title', 'Permit Extension')
 @section('pageurl', admin_url('safetypermit/list'))
 
 
@@ -16,7 +16,7 @@
 
                             </div>
                         </div>
-            
+
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">
@@ -80,7 +80,7 @@
 
 @push('script')
     <script>
-        
+
         flatpickr("#time_to", {
             enableTime: true,
             noCalendar: true,
@@ -98,7 +98,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 600,
-                       
+
                     },
 
 
@@ -106,13 +106,13 @@
                 messages: {
                     time_to: {
                         required: " Time is empty.",
-                        
+
                     },
                     extension_remarks: {
                         required: " Remarks cannot be empty.",
                         minlength: "Remarks  must contain between 3 and 600 characters.",
                         maxlength: "Remarks must contain between 3 and 600 characters.",
-                        
+
                     },
 
                 },
@@ -145,7 +145,7 @@
                 return this.optional(element) || regexp.test(value);
             }, "Please check your input.");
 
-        
+
         });
     </script>
 @endpush
