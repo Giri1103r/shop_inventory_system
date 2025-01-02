@@ -256,7 +256,11 @@ class SafetyPermitController extends Controller
                     return redirect()->back()->withErrors($validator)->withInput();
                 }
 
-
+                // $lastStatus = $this->safetypermit->laststatus();
+                // if($lastStatus !=STATUS_PLANT_HEAD_APPROVED || $lastStatus !=STATUS_PERMIT_EXPIRED ||$lastStatus !=STATUS_EHS_DECLINE ){
+                //    Session::flash('error','last status is still in active');
+                //    return redirect('safetypermit/list');
+                // }
                 $safetypermit =   $this->safetypermit->store();
                 $WorkmanInvolved =   $this->workmaninvolved->store($safetypermit->id);
 
@@ -552,8 +556,8 @@ class SafetyPermitController extends Controller
             if (Auth::check()) {
                 $safetypermit = $this->safetypermit->selectOne($id);
                 $workmaninvolved = $this->safetypermit->workmaninvolved($id);
-                $stateIsolationLoto = $safetypermit->state_isolation_loto ? json_decode($safetypermit->state_isolation_loto) : [];
-                $confined_space_entry = $safetypermit->confined_space_entry ? json_decode($safetypermit->confined_space_entry) : [];
+                $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto);
+                $confined_space_entry = json_decode($safetypermit->confined_space_entry);
 
                 $getEhSverification =   $this->approvereject->getEhSverification($id);
                 $getEhsapproval =   $this->approvereject->getEhsapproval($id);
