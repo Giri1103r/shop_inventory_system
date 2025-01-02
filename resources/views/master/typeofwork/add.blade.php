@@ -86,7 +86,7 @@
                                                                 <tr>
                                                                     <th>Sr.No</th>
                                                                     <th><input type="checkbox" id="select-all"
-                                                                            class="validate-radio-required"></th>
+                                                                            name="select-all" class=""></th>
                                                                     <th>Check Points</th>
                                                                     <th>Is Default Enable</th>
                                                                 </tr>
@@ -104,8 +104,7 @@
                                                                                 value="0">
                                                                             <input type="checkbox"
                                                                                 name="protective[protective_check][type1][{{ $detail->id }}]"
-                                                                                class="row-checkbox validate-radio-required"
-                                                                                value="1">
+                                                                                class="row-checkbox " value="1">
 
                                                                         </td>
                                                                         <td>
@@ -122,8 +121,7 @@
                                                                                 value="0">
                                                                             <input type="checkbox"
                                                                                 name="protective[protectivequip_checklist][type1][{{ $detail->id }}]"
-                                                                                class="validate-radio-required"
-                                                                                value="1">
+                                                                                class="" value="1">
                                                                         </td>
                                                                     </tr>
                                                                     @php
@@ -147,7 +145,7 @@
                                                                 <tr>
                                                                     <th>Sr.No</th>
                                                                     <th><input type="checkbox" id="select-all1"
-                                                                            class="validate-radio-required"></th>
+                                                                            name="select-all1" class=""></th>
                                                                     <th>Check Points</th>
                                                                     <th>Is Default Enable</th>
                                                                 </tr>
@@ -167,8 +165,7 @@
                                                                                 value="0">
                                                                             <input type="checkbox"
                                                                                 name="equipment[equipinvalve_check][type2][{{ $equipinvalve_checklist->id }}]"
-                                                                                class="row-checkbox1 validate-radio-required"
-                                                                                value="1">
+                                                                                class="row-checkbox1 " value="1">
 
                                                                         </td>
 
@@ -186,8 +183,7 @@
                                                                                 value="0">
                                                                             <input type="checkbox"
                                                                                 name="equipment[equipinvalve_checklist][type2][{{ $equipinvalve_checklist->id }}]"
-                                                                                class="validate-radio-required"
-                                                                                value="1">
+                                                                                class="" value="1">
                                                                         </td>
                                                                     </tr>
                                                                     @php
@@ -214,7 +210,7 @@
                                                                 <tr>
                                                                     <th>Sr.No</th>
                                                                     <th><input type="checkbox" id="select-all2"
-                                                                            class="validate-radio-required"></th>
+                                                                            name="select-all2" class=""></th>
                                                                     <th>Check Points</th>
                                                                     <th>Is Default Enable</th>
                                                                 </tr>
@@ -234,8 +230,7 @@
                                                                                 value="0">
                                                                             <input type="checkbox"
                                                                                 name="manual[precaution_check][type3][{{ $precaution_checklist->id }}]"
-                                                                                class="row-checkbox2 validate-radio-required"
-                                                                                value="1">
+                                                                                class="row-checkbox2 " value="1">
 
 
                                                                         </td>
@@ -254,8 +249,7 @@
                                                                                 value="0">
                                                                             <input type="checkbox"
                                                                                 name="manual[precaution_checklist][type3][{{ $precaution_checklist->id }}]"
-                                                                                class="validate-radio-required"
-                                                                                value="1">
+                                                                                class="" value="1">
                                                                         </td>
                                                                     </tr>
                                                                     @php
@@ -277,7 +271,7 @@
                                                                 <tr>
                                                                     <th>Sr.No</th>
                                                                     <th><input type="checkbox" id="select-all3"
-                                                                            class="validate-radio-required"></th>
+                                                                            name="select-all3" class=""></th>
                                                                     <th>Check Points</th>
                                                                     <th>Is Default Enable</th>
                                                                 </tr>
@@ -298,8 +292,7 @@
                                                                                 value="0">
                                                                             <input type="checkbox"
                                                                                 name="check[equipchecklist_check][type4][{{ $equipchecklist_checklist->id }}]"
-                                                                                class="row-checkbox3 validate-radio-required"
-                                                                                value="1">
+                                                                                class="row-checkbox3" value="1">
 
                                                                         </td>
                                                                         <td>
@@ -316,8 +309,7 @@
                                                                                 value="0">
                                                                             <input type="checkbox"
                                                                                 name="check[equipchecklist_checklist][type4][{{ $equipchecklist_checklist->id }}]"
-                                                                                class=" validate-radio-required"
-                                                                                value="1">
+                                                                                class=" " value="1">
                                                                         </td>
                                                                     </tr>
                                                                     @php
@@ -343,7 +335,7 @@
                                                                 <tr>
                                                                     <th>Sr.No</th>
                                                                     <th><input type="checkbox" id="select-all4"
-                                                                            class="validate-radio-required"></th>
+                                                                            name="select-all4" class=""></th>
                                                                     <th>Check Points</th>
                                                                     <th>Is Default Enable</th>
                                                                 </tr>
@@ -362,8 +354,7 @@
                                                                                 value="0">
                                                                             <input type="checkbox"
                                                                                 name="instruction[safework_check][type5][{{ $safework_checklist->id }}]"
-                                                                                class="row-checkbox4 validate-radio-required"
-                                                                                value="1">
+                                                                                class="row-checkbox4 " value="1">
 
                                                                         </td>
                                                                         <td>
@@ -380,8 +371,7 @@
                                                                                 value="0">
                                                                             <input type="checkbox"
                                                                                 name="instruction[safework_checklist][type5][{{ $safework_checklist->id }}]"
-                                                                                class="validate-radio-required"
-                                                                                value="1">
+                                                                                class="" value="1">
 
                                                                         </td>
                                                                     </tr>
@@ -490,84 +480,86 @@
             }
         });
         $(function() {
-            $('#typeofwork_add').validate({
-                rules: {
-                    work_name: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 50,
-                        pattern: /^[a-zA-Z0-9\s\-_'"(),&/]*$/,
-                        remote: {
-                            url: '{{ admin_url('ptw/typeofworkmaster/unique') }}',
-                            type: 'post',
-                            data: {
-                                location_type_name: function() {
-                                    return $('#work_name').val();
+
+            if ($.validator) {
+
+                $.validator.addMethod("regex", function(value, element, regexp) {
+                    var re = new RegExp(regexp);
+                    return this.optional(element) || re.test(value);
+                }, "Please check your input.");
+
+                // Initialize validation on the form
+                $('#typeofwork_add').validate({
+                    rules: {
+                        work_name: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 30,
+                            regex: /^[a-zA-Z0-9-\s]*$/,
+                            remote: {
+                                url: '{{ admin_url('ptw/typeofworkmaster/unique') }}',
+                                type: 'post',
+                                data: {
+                                    work_name: function() {
+                                        return $('#work_name').val();
+                                    }
                                 }
                             }
-                        }
+                        },
+                        description: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 50,
+                            regex: /^[a-zA-Z0-9\s\-_'"(),&/]*$/,
+                        },
+                        typeofwork_upload: {
+                            required: true,
+                        },
                     },
-
-                    description: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 50,
-                        pattern: /^[a-zA-Z0-9\s\-_'"(),&/]*$/,
-
+                    messages: {
+                        work_name: {
+                            required: "{{ __('Name is Required') }}",
+                            minlength: "{{ __('common.validate_min_length') }}",
+                            maxlength: "Maximum Characters should not exceed 50",
+                            remote: "{{ __('Name should be unique') }}",
+                        },
+                        description: {
+                            required: "{{ __('Description is Required') }}",
+                            minlength: "{{ __('common.validate_min_length') }}",
+                            maxlength: "Maximum Characters should not exceed 50",
+                            regex: "PPE Name should be alphanumeric and can include -, _, ', \", (, ).,:,;",
+                        },
+                        typeofwork_upload: {
+                            required: "{{ __('Image is Required') }}",
+                        },
                     },
-
-                    typeofwork_upload: {
-                        required: true,
-
+                    errorElement: 'span',
+                    errorPlacement: function(error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-input').append(error);
                     },
-
-                },
-                messages: {
-                    work_name: {
-                        required: "{{ __('Name is Required') }}",
-                        minlength: "{{ __('common.validate_min_length') }}",
-                        maxlength: "Maximum Characters should not exceed 50",
-                        remote: "{{ __('Name should be unique') }}",
-                        pattern: "Only alphanumeric characters and -, _, ', \", (), ,, / and & are allowed",
+                    highlight: function(element, errorClass, validClass) {
+                        $(element).addClass('is-invalid');
                     },
-
-                    description: {
-                        required: "{{ __('Description is Required') }}",
-                        minlength: "{{ __('common.validate_min_length') }}",
-                        maxlength: "Maximum Characters should not exceed 50",
-                        pattern: "Only alphanumeric characters and -, _, ', \", (), ,, / and & are allowed",
+                    unhighlight: function(element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid');
                     },
-
-                    typeofwork_upload: {
-                        required: "{{ __('Image is Required') }}",
+                    submitHandler: function(form) {
+                        console.log('Form is valid and ready for submission');
+                        form.submit();
                     },
-
-                },
-                errorElement: 'span',
-                errorPlacement: function(error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-input').append(error);
-                },
-                highlight: function(element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                },
-                submitHandler: function(form) {
-                    console.log('test');
-                    form.submit();
-
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                    console.log(errors + " field(s) are invalid");
-                    validator.errorList.forEach(function(error) {
-                        console.log("Field: " + error.element.name + ", Error: " + error
-                            .message);
-                    });
-                }
-            });
+                    invalidHandler: function(event, validator) {
+                        var errors = validator.numberOfInvalids();
+                        console.log(errors + " field(s) are invalid");
+                        validator.errorList.forEach(function(error) {
+                            console.log("Field: " + error.element.name + ", Error: " + error
+                                .message);
+                        });
+                    }
+                });
+            } else {
+                console.error("jQuery Validate plugin is not loaded.");
+            }
         });
     </script>
 @endpush

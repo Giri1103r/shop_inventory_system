@@ -25,7 +25,7 @@ class PpeRequest extends Model
         'approve_status',
         'employee_reason',
         'ppe_image',
-        'reapply'
+        'employee_remarks',
         'status',
         'trash',
         'created_by',
@@ -136,7 +136,7 @@ class PpeRequest extends Model
             'ppe_name' => $request->ppe_name_id,
             'employee_reason' => $request->reason,
             'ppe_image'=>$request->image,
-             'reapply_remarks'=>$request->remarks,
+             'employee_remarks'=>$request->remarks,
             'approve_status' => STATUS_HOD_APPROVAL_PENDING,
             'created_by' => Auth::id()
         );

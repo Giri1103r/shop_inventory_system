@@ -187,7 +187,7 @@
                                         enctype="multipart/form-data">
                                         @csrf
                                         <div clase="nominationaddmorebutton"
-                                            style="padding-left: 81% !important; margin-top: -59px;">
+                                            style="padding-left: 82% !important; margin-top: -59px;">
                                             <button class="btn btn-primary addmorebutton" data-block='lesson_learned_block'
                                                 data-row='lesson_learned_row' type="button" id="dynamic-add-more"
                                                 style="margin:10px;width: 84px;">Add</button>
@@ -476,15 +476,44 @@
                 }
             });
 
+            $("#dynamic-add-more").on("click", function() {
+                var rowCount = $("#lesson_learned_block .lesson_learned_row").length;
 
+                if (rowCount >= 10) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Sorry!",
+                        text: "Maximum 10 records only.",
+                    });
+                    return;
+                }
 
+                var newRow = $(".lesson_learned_row").first().clone();
 
+                newRow.find("input, select").each(function() {
+                    var oldName = $(this).attr("name");
+                    var oldId = $(this).attr("id");
 
-            // Remove row functionality
-            $(document).on('click', '.removerowdata', function() {
-                $(this).closest('tr').remove();
+                    if (oldName) {
+                        var newName = oldName.replace(/\[\d+\]/, "[" + (rowCount + 1) + "]");
+                        $(this).attr("name", newName);
+                    }
+
+                    if (oldId) {
+                        var newId = oldId.replace(/\d+$/, rowCount + 1);
+                        $(this).attr("id", newId);
+                    }
+                });
+
+                newRow.find("input").val("");
+                newRow.find("select").val("");
+
+                newRow.find(".select2-container").remove();
+
+                $("#lesson_learned_block").append(newRow);
+
+                $(".single-select").select2();
             });
-
             // edit delete function
             $(document).on('click', '.removerow', function() {
                 var row = $(this).closest(
@@ -576,152 +605,62 @@
             });
 
 
-            let nominationRowCount = 1;
 
-$('#dynamic-add-more').on('click', function() {
-    const tableBody = $('#lesson_learned_block');
-    if (nominationRowCount >= 10) {
-        Swal.fire({
-            icon: "error",
-            title: "Sorry!",
-            text: "Maximum 10 records only."
-        });
-        return;
-    }
+            $('#nomination_processadd').validate({
 
-    const newRow = `
-        <tr class="lesson_learned_row" style="width: 100%">
-            <td>
-                <select name="employee[${nominationRowCount}][emp_id]" id="emp_id_${nominationRowCount}"
-                    class="form-control single-select validate-select-required" style="width: 100%">
-                    <option value="">Select Employee</option>
-                    @foreach ($employeeList as $emp)
-                        <option value="{{ $emp->id }}">{{ $emp->emp_id }}</option>
-                    @endforeach
-                </select>
-            </td>
-            <td><input type="text" class="form-control validate-input-required"
-                    name="employee[${nominationRowCount}][emp_name]" id="emp_name_${nominationRowCount}" readonly>
-            </td>
-            <td><input type="email" class="form-control validate-input-required"
-                    name="employee[${nominationRowCount}][email]" id="email_${nominationRowCount}" readonly>
-            </td>
-            <td style="width: 15%;">
-                <select name="employee[${nominationRowCount}][department_id]" id="department_${nominationRowCount}"
-                    class="form-control single-select validate-select-required" style="width: 100%">
-                </select>
-            </td>
-            <td><input type="text" class="form-control validate-input-required"
-                    name="employee[${nominationRowCount}][employee_type]" id="employee_type_${nominationRowCount}" readonly></td>
-            <td><input type="text" class="form-control"
-                    name="employee[${nominationRowCount}][last_training_attended_on]" id="last_training_attended_on_${nominationRowCount}" readonly></td>
-            <td><input type="text" class="form-control"
-                    name="employee[${nominationRowCount}][last_training_topic]" id="last_training_topic_${nominationRowCount}" readonly></td>
-            <td><button class="btn btn-danger removerowdata" type="button" style="margin:10px;"><i class="fa fa-trash"></i></button></td>
-        </tr>`;
-
-    tableBody.append(newRow);
-
-    $('.single-select').select2();
-
-    // Apply validation rules dynamically for the new row
-    $(`select[name="employee[${nominationRowCount}][emp_id]"]`).rules('add', {
-        required: true,
-        messages: {
-            required: 'Select the Employee ID'
-        }
-    });
-
-    $(`input[name="employee[${nominationRowCount}][emp_name]"]`).rules('add', {
-        required: true,
-        messages: {
-            required: 'Employee Name is required'
-        }
-    });
-
-    $(`input[name="employee[${nominationRowCount}][email]"]`).rules('add', {
-        required: true,
-        email: true,
-        messages: {
-            required: 'Email ID is required',
-            email: 'Please enter a valid email address'
-        }
-    });
-
-    $(`select[name="employee[${nominationRowCount}][department_id]"]`).rules('add', {
-        required: true,
-        messages: {
-            required: 'Department is required'
-        }
-    });
-
-    $(`input[name="employee[${nominationRowCount}][employee_type]"]`).rules('add', {
-        required: true,
-        messages: {
-            required: 'Employee Type is required'
-        }
-    });
-
-    // Update the nomination row count
-    nominationRowCount++;
-});
-
-$('#nomination_processadd').validate({
-    rules: {
-        // Validation rules for the first row
-        'employee[1][emp_id]': {
-            required: true,
-        },
-        'employee[1][emp_name]': {
-            required: true
-        },
-        'employee[1][email]': {
-            required: true,
-            email: true
-        },
-        'employee[1][department_id]': {
-            required: true
-        },
-        'employee[1][employee_type]': {
-            required: true
-        },
-    },
-    messages: {
-        'employee[1][emp_id]': {
-            required: "Select an Employee ID."
-        },
-        'employee[1][emp_name]': {
-            required: "Employee Name is required."
-        },
-        'employee[1][email]': {
-            required: "Email ID is required.",
-            email: "Enter a valid Email ID."
-        },
-        'employee[1][department_id]': {
-            required: "Department is required."
-        },
-        'employee[1][employee_type]': {
-            required: "Employee Type is required."
-        },
-    },
-    errorElement: 'span',
-    errorPlacement: function(error, element) {
-        error.addClass('invalid-feedback');
-        if (element.hasClass('single-select')) {
-            element.next('.select2-container').append(error);
-        } else {
-            element.closest('td').append(error);
-        }
-    },
-    highlight: function(element) {
-        $(element).addClass('is-invalid');
-    },
-    unhighlight: function(element) {
-        $(element).removeClass('is-invalid');
-    }
-});
-
-
+                rules: {
+                    'employee[1][emp_id]': {
+                        required: true,
+                    },
+                    'employee[1][emp_name]': {
+                        required: true
+                    },
+                    'employee[1][email]': {
+                        required: true,
+                        email: true
+                    },
+                    'employee[1][department_id]': {
+                        required: true
+                    },
+                    'employee[1][employee_type]': {
+                        required: true
+                    },
+                },
+                messages: {
+                    'employee[1][emp_id]': {
+                        required: "Select an Employee ID."
+                    },
+                    'employee[1][emp_name]': {
+                        required: "Employee Name is required."
+                    },
+                    'employee[1][email]': {
+                        required: "Email ID is required.",
+                        email: "Enter a valid Email ID."
+                    },
+                    'employee[1][department_id]': {
+                        required: "Department is required."
+                    },
+                    'employee[1][employee_type]': {
+                        required: "Employee Type is required."
+                    },
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    if (element.hasClass('single-select')) {
+                        element.next('.select2-container').append(
+                            error);
+                    } else {
+                        element.closest('td').append(error);
+                    }
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
 
 
             $('#lesson_learned_block').on('change', 'input, select', function() {
