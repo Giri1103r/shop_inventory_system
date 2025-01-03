@@ -323,7 +323,7 @@ class SafetyPermitController extends Controller
                 );
                 $this->statuslog->create($insert_array);
 
-                Session::flash('success', __('Your data has been creted successfully'));
+                Session::flash('success', __('Your data has been created successfully'));
 
                 return redirect(admin_url('safetypermit/list'));
             } catch (Exception $ex) {
