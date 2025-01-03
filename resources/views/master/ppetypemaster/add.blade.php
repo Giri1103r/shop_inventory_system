@@ -111,8 +111,9 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Image</label>
                                                     <input type="file" name="ppe_file" id="ppe_file"
-                                                        class="form-control form-control-sm" accept="image/png, image/jpeg, image/jpg" placeholder="Enter the image"
-                                                        onchange="validateImage()">
+                                                        class="form-control form-control-sm"
+                                                        accept="image/png, image/jpeg, image/jpg"
+                                                        placeholder="Enter the image" onchange="validateImage()">
                                                     <small>Allowed file types: png, jpeg , jpg</small>
                                                     <div id="ppe_file_error" class="text-danger"></div>
                                                     @error('ppe_file')
@@ -150,125 +151,125 @@
             });
         });
         $(document).ready(function() {
-                    $.validator.addMethod("regex", function(value, element, regexp) {
-                        return this.optional(element) || regexp.test(value);
-                    }, "Please check your input.");
+            $.validator.addMethod("regex", function(value, element, regexp) {
+                return this.optional(element) || regexp.test(value);
+            }, "Please check your input.");
 
-                    $('#PpeTypeMasterForm').validate({
-                            rules: {
-                                item_code: {
-                                    required: true,
-                                    minlength: 3,
-                                    maxlength: 30,
-                                    regex: /^[a-zA-Z0-9-\s]*$/,
-                                    remote: {
-                                        url: '{{ admin_url('ppe_ppetype_master/unique') }}',
-                                        type: 'get',
-                                        data: {
-                                            item_code: function() {
-                                                var itemCode = $('#item_code').val();
-                                                console.log('Item Code:', itemCode);
-                                                return itemCode;
-                                            },
-                                        }
-                                    },
-                                    },
-                                    ppe_name: {
-                                        required: true,
-                                        minlength: 3,
-                                        maxlength: 100,
-                                        regex: /^[a-zA-Z0-9\-_'"()\s]{3,100}$/,
-                                    //     remote: {
-                                    //     url: '{{ admin_url('ppe_ppetype_master/ppename/unique') }}',
-                                    //     type: 'get',
-                                    //     data: {
-                                    //         item_code: function() {
-                                    //             var ppeName = $('#ppe_name').val();
-                                    //             console.log('PPE Name:', ppeName);
-                                    //             return ppeName;
-                                    //         },
-                                    //     }
-                                    // },
-                                    },
-                                    ppe_type: {
-                                        required: true
-                                    },
-                                    protection_category: {
-                                        required: true,
-                                        minlength: 3,
-                                        maxlength: 30,
-                                        regex: /^[a-zA-Z0-9\-_'"():;\s]{3,30}$/
-                                    },
-                                    ppe_standard: {
-                                        required: true,
-                                        minlength: 3,
-                                        maxlength: 30,
-                                        regex:/^[a-zA-Z0-9\-_'"()\s.:;]*$/
-                                    },
-                                    ppe_file: {
-                                        extension: "png|jpeg|jpg"
-                                    }
+            $('#PpeTypeMasterForm').validate({
+                rules: {
+                    item_code: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
+                        regex: /^[a-zA-Z0-9-\s]*$/,
+                        remote: {
+                            url: '{{ admin_url('ppe_ppetype_master/unique') }}',
+                            type: 'get',
+                            data: {
+                                item_code: function() {
+                                    var itemCode = $('#item_code').val();
+                                    console.log('Item Code:', itemCode);
+                                    return itemCode;
                                 },
-                                messages: {
-                                    item_code: {
-                                        required: "Item Code cannot be empty.",
-                                        minlength: "Item code must contain between 3 and 30 characters.",
-                                        maxlength: "Item code must contain between 3 and 30 characters.",
-                                        regex: "Item code should be alphanumeric.",
-                                        remote: "Item code already exists."
-                                    },
-                                    ppe_name: {
-                                        required: "PPE Name cannot be empty.",
-                                        minlength: "PPE Name must be between 3 and 100 characters.",
-                                        maxlength: "PPE Name must be between 3 and 100 characters.",
-                                        regex: "PPE Name should be alphanumeric and can include -, _, ', \", (, ).,:,;",
-                                        //  remote: "PPE Name already exists."
-                                    },
-                                    ppe_type: {
-                                        required: "Please select the PPE Type."
-                                    },
-                                    protection_category: {
-                                        required: "Protection Category cannot be empty.",
-                                        minlength: "Protection Category must be between 3 and 30 characters.",
-                                        maxlength: "Protection Category must be between 3 and 30 characters.",
-                                        regex: "Protection Category should be alphanumeric and can include -, _, ', \", (, )."
-                                    },
-                                    ppe_standard: {
-                                        required: "PPE Standard cannot be empty.",
-                                        minlength: "PPE  Standard must be between 3 and 30 characters.",
-                                        maxlength: "PPE  Standard must be between 3 and 30 characters.",
-                                        regex: "PPE Standard should be alphanumeric and can include -, _, ', \", (, ),:,;,."
-                                    },
-                                    ppe_file: {
-                                        extension: "Please enter a value with a valid mimetype."
-                                    }
-                                },
-                                errorElement: 'div',
-                                errorPlacement: function(error, element) {
-                                    var errorDiv = element.siblings('div.text-danger');
-                                    if (errorDiv.length === 0) {
-                                        errorDiv = $('<div class="text-danger"></div>').insertAfter(element);
-                                    }
-                                    errorDiv.html(error);
-                                },
-                                highlight: function(element, errorClass, validClass) {
-                                    $(element).addClass('is-invalid');
-                                },
-                                unhighlight: function(element, errorClass, validClass) {
-                                    $(element).removeClass('is-invalid');
-                                },
-                                submitHandler: function(form) {
-                                    form.submit();
-                                },
-                                invalidHandler: function(event, validator) {
-                                    var errors = validator.numberOfInvalids();
-                                    console.log(errors + " field(s) are invalid");
-                                    validator.errorList.forEach(function(error) {
-                                        console.log("Field: " + error.element.name + ", Error: " + error
-                                            .message);
-                                    });
-                                }
-                            });
+                            }
+                        },
+                    },
+                    ppe_name: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        regex: /^[a-zA-Z0-9\-_'"()\s]{3,100}$/,
+                        //     remote: {
+                        //     url: '{{ admin_url('ppe_ppetype_master/ppename/unique') }}',
+                        //     type: 'get',
+                        //     data: {
+                        //         item_code: function() {
+                        //             var ppeName = $('#ppe_name').val();
+                        //             console.log('PPE Name:', ppeName);
+                        //             return ppeName;
+                        //         },
+                        //     }
+                        // },
+                    },
+                    ppe_type: {
+                        required: true
+                    },
+                    protection_category: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
+                        regex: /^[a-zA-Z0-9\-_'"():;\s]{3,30}$/
+                    },
+                    ppe_standard: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
+                        regex: /^[a-zA-Z0-9\-_'"()\s.:;]*$/
+                    },
+                    ppe_file: {
+                        extension: "png|jpeg|jpg"
+                    }
+                },
+                messages: {
+                    item_code: {
+                        required: "Item Code cannot be empty.",
+                        minlength: "Item code must contain between 3 and 30 characters.",
+                        maxlength: "Item code must contain between 3 and 30 characters.",
+                        regex: "Item code should be alphanumeric.",
+                        remote: "Item code already exists."
+                    },
+                    ppe_name: {
+                        required: "PPE Name cannot be empty.",
+                        minlength: "PPE Name must be between 3 and 100 characters.",
+                        maxlength: "PPE Name must be between 3 and 100 characters.",
+                        regex: "PPE Name should be alphanumeric and can include -, _, ', \", (, ).,:,;",
+                        //  remote: "PPE Name already exists."
+                    },
+                    ppe_type: {
+                        required: "Please select the PPE Type."
+                    },
+                    protection_category: {
+                        required: "Protection Category cannot be empty.",
+                        minlength: "Protection Category must be between 3 and 30 characters.",
+                        maxlength: "Protection Category must be between 3 and 30 characters.",
+                        regex: "Protection Category should be alphanumeric and can include -, _, ', \", (, )."
+                    },
+                    ppe_standard: {
+                        required: "PPE Standard cannot be empty.",
+                        minlength: "PPE  Standard must be between 3 and 30 characters.",
+                        maxlength: "PPE  Standard must be between 3 and 30 characters.",
+                        regex: "PPE Standard should be alphanumeric and can include -, _, ', \", (, ),:,;,."
+                    },
+                    ppe_file: {
+                        extension: "Please enter a value with a valid mimetype."
+                    }
+                },
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    var errorDiv = element.siblings('div.text-danger');
+                    if (errorDiv.length === 0) {
+                        errorDiv = $('<div class="text-danger"></div>').insertAfter(element);
+                    }
+                    errorDiv.html(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log(errors + " field(s) are invalid");
+                    validator.errorList.forEach(function(error) {
+                        console.log("Field: " + error.element.name + ", Error: " + error
+                            .message);
                     });
+                }
+            });
+        });
     </script>
 @endpush

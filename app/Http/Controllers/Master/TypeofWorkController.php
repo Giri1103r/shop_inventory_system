@@ -305,6 +305,7 @@ class TypeofWorkController extends Controller
 
             $typeofwork =  $this->typeofwork->updates($id);
             $updatedRecord = $this->typeofwork->find($id);
+           
             $this->typeofworkupload->updates($updatedRecord->id);
             $this->typeofworkchecklist->update1($updatedRecord->id);
             $this->typeofworkchecklist->update2($updatedRecord->id);

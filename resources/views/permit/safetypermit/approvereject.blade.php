@@ -279,7 +279,7 @@
                             <div class="mb-3 col-md-4 form-input">
                                 <label class="form-label view_label m-1">System Isolated</label>
                                 <span class="view_data">
-                                    @if (isset($confined_space_entry) && $confined_space_entry->system_isolated == 1)
+                                    @if (isset($confined_space_entry) && isset($confined_space_entry->system_isolated) && $confined_space_entry->system_isolated == 1)
                                     <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
                                 @else
                                     <span>No</span>
@@ -291,7 +291,7 @@
                             <div class="mb-3 col-md-4 form-input">
                                 <label class="form-label view_label m-1">Rescue System Available</label>
                                 <span class="view_data">
-                                    @if ( isset($confined_space_entry) && $confined_space_entry->rescue_system == 1)
+                                    @if ( isset($confined_space_entry) && isset($confined_space_entry->rescue_system) && $confined_space_entry->rescue_system == 1)
                                         <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
                                     @else
                                         <span>No</span>
@@ -933,7 +933,9 @@
                                                         <input type="checkbox" class="form-check-input"
                                                             id="reasigned" name="reasigned"
                                                             @error('remarks') is-invalid @enderror>
-
+                                                            <div id="reasigned-error" class="invalid-feedback" style="display:none;">
+                                                                Please check the box to confirm re-assignment.
+                                                            </div>
                                                     </div>
                                                 </div>
                                                @endif
@@ -986,7 +988,7 @@
                                                 <button type="submit" name="forward" value="forward"
                                                     class="btn btn-success w-100">Forward</button>
                                             </div>
-                                        @elseif($safetypermit['permit_status'] == STATUS_EHS_REASSIGN && $safetypermit['reassign_to'] == Auth::id())
+                                        @elseif($safetypermit['permit_status'] == STATUS_EHS_REASSIGN && $safetypermit['reassign_to'] == Auth::id() )
                                             <div class="d-flex float-end gap-2 mx-auto">
                                                 <button type="submit" name="hold" value="hold"
                                                     class="btn btn-info w-100">Hold</button>
@@ -1173,6 +1175,7 @@
 
 @push('script')
     <script>
+       
         $(document).ready(function() {
             $('#ehs_verification').validate({
                 rules: {
@@ -1182,8 +1185,6 @@
                         maxlength: 600,
 
                     },
-
-
                 },
                 messages: {
 
@@ -1232,6 +1233,17 @@
                     $('.reassign-div').hide();
                 }
             });
+
+            $('.reassign-btn').on('click', function(e) {
+            
+                if (!$('#reasigned').is(':checked')) {
+                    $('#reasigned-error').show(); 
+                    e.preventDefault(); 
+                } else {
+                    $('#reasigned-error').hide(); 
+                }
+            });
+
 
 
             $('#ehs_approval').validate({

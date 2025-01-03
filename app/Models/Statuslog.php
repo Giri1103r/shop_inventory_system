@@ -33,7 +33,7 @@ class Statuslog extends Model
             'reference_id' => $id,
             'from_status' => $pperequest->approve_status,
             'to_status' => STATUS_USER_APPLIED,
-            'remarks' => $pperequest->employee_reason,
+           'remarks' => !empty($pperequest->employee_reason) ? $pperequest->employee_reason : $pperequest->employee_remarks,
             'created_by' => Auth::id(),
         ];
         return $this->create($insert_data);

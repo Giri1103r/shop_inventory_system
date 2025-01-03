@@ -90,8 +90,18 @@
                                             {{ displayDateformat($ppeexemption->created_at) }}
                                         </div>
                                     </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('common.status') }}</label>
+                                        <div class="view_data">
+                                            @if ($ppeexemption->status == 1)
+                                                {{ __('common.active') }}
+                                            @else
+                                                {{ __('common.inactive') }}
+                                            @endif
 
-                                    <div class="mb-3 col-md-12 form-input">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-8 form-input">
                                         <label class="form-label view_label">{{ __('Reason') }}</label>
                                         <div class="view_data">
                                             {{ isset($ppeexemption->reason) ? $ppeexemption->reason : '' }}
