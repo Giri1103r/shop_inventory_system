@@ -20,6 +20,8 @@ use App\Models\Master\Topic;
 use App\Models\User;
 use App\Models\UploadLog;
 use App\Jobs\ImportTopicJob;
+use App\Models\Master\TrainingMatrix;
+use App\Models\Master\TrainingSchedule;
 
 
 class TopicController extends Controller
@@ -28,6 +30,8 @@ class TopicController extends Controller
     private $topic;
     private $user;
     private $uploadlog;
+    private $training_schedule;
+    private $training_matrix;
     private $training_matrix_file;
 
 
@@ -35,6 +39,8 @@ class TopicController extends Controller
     public function __construct()
     {
 
+        $this->training_schedule = new TrainingSchedule();
+        $this->training_matrix = new TrainingMatrix();
         $this->topic = new Topic();
         $this->training_matrix_file = new TrainingMatrixFile();
         $this->user = new User();
@@ -232,7 +238,12 @@ class TopicController extends Controller
     {
         try {
             $id = decryptId($request->id);
+            $training_schedule = $this->training_schedule->where('topic_id', $id)->exists();
+            $training_matrix = $this->training_matrix->where('topic_id', $id)->exists();
 
+            if ($training_schedule || $training_matrix) {
+                return response()->json(['status' => 'error', 'msg' => 'module_exits'], 406);
+            }
             $this->topic->deleterecord($id);
 
             return response()->json(['status' => 'success', 'msg' => 'Topic deleted successfully'], 200);

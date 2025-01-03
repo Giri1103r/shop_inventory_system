@@ -21,7 +21,7 @@ use App\Models\Master\Venue;
 use App\Models\User;
 use App\Models\UploadLog;
 use App\Jobs\ImportVenueJob;
-
+use App\Models\Master\TrainingSchedule;
 
 class VenueController extends Controller
 {
@@ -30,11 +30,11 @@ class VenueController extends Controller
     private $user;
     private $uploadlog;
     private $unit;
-
+    private $training_schedule;
 
     public function __construct()
     {
-
+        $this->training_schedule = new TrainingSchedule();
         $this->venue = new Venue();
         $this->user = new User();
         $this->unit = new Unit();
@@ -85,7 +85,7 @@ class VenueController extends Controller
                             }
                             return $btn;
                         })
-                        ->rawColumns(['action','projector_or_lcd_availability', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['action', 'projector_or_lcd_availability', 'created_date', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -253,7 +253,11 @@ class VenueController extends Controller
     {
         try {
             $id = decryptId($request->id);
+            $training_schedule = $this->training_schedule->where('venue_id', $id)->exists();
 
+            if ($training_schedule) {
+                return response()->json(['status' => 'error', 'msg' => 'module_exits'], 406);
+            }
             $this->venue->deleterecord($id);
 
             return response()->json(['status' => 'success', 'msg' => 'Venue deleted successfully'], 200);
@@ -330,7 +334,7 @@ class VenueController extends Controller
                 ];
 
                 // dispatch(new ImportVenueJob($details));
-                   dispatch((new ImportVenueJob($details))->onQueue('venue'));
+                dispatch((new ImportVenueJob($details))->onQueue('venue'));
             }
 
             $insert_data['log_id'] = $insert_id;
@@ -448,6 +452,20 @@ class VenueController extends Controller
 
             report($ex);
         }
+    }
+    public function list(Request $request, $unit_id)
+    {
+        $unit_id = decryptId($unit_id);
+        $id = decryptId($request->id);
+        $venues = $this->venue->ajaxList($unit_id, $id);
+
+        return response()->json($venues);
+    }
+    public function alllist(Request $request)
+    {
+        $unitID = decryptId($request->unit_id);
+        $unit = $this->venue->ajaxallList($unitID);
+        return response()->json($unit);
     }
     public function Uniquecheck(Request $request)
     {

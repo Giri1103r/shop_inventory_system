@@ -132,6 +132,8 @@
                                                 @foreach ($nominationProcessList as $nomination_process)
                                                     <input type="hidden" name="nomination_id[]"
                                                         value="{{ $nomination_process->id }}">
+                                                    <input type="hidden" name="emp_id[]"
+                                                        value="{{ $nomination_process->emp_id }}">
                                                     <input type="hidden" name="emp_name[]"
                                                         value="{{ $nomination_process->emp_name }}">
                                                     <input type="hidden" name="email[]"
@@ -180,17 +182,15 @@
                 location.reload();
             });
 
-         
-            var fromDate = '{{ \Carbon\Carbon::parse($training_schedule->from_date)->toDateString() }}';
-            var toDate = '{{ \Carbon\Carbon::parse($training_schedule->to_date)->toDateString() }}';
+
+            var fromDate = '{{ \Carbon\Carbon::parse($training_schedule->from_date)->format('d-m-Y') }}';
+            var toDate = '{{ \Carbon\Carbon::parse($training_schedule->to_date)->format('d-m-Y') }}';
 
             flatpickr("#date_datepicker", {
-                // dateFormat: "d-m-Y", 
-                minDate: fromDate, 
-                maxDate: toDate, 
-              
+                dateFormat: "d-m-Y",
+                minDate: fromDate,
+                maxDate: toDate
             });
-
             $(function() {
                 $('#attendance').validate({
                     rules: {

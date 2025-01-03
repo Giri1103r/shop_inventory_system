@@ -436,6 +436,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/submit', [VenueController::class, 'importSubmit']);
                 Route::post('/status', [VenueController::class, 'statusChange']);
                 Route::post('/unique', [VenueController::class, 'Uniquecheck']);
+                Route::get('/ajax-list/{unit_id}/{id}', [VenueController::class, 'list']);
+                Route::get('/alllist/{unitId}', [VenueController::class, 'alllist']);
             });
 
             /**
@@ -482,6 +484,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/submit', [TrainingScheduleController::class, 'importSubmit']);
                 Route::post('/status', [TrainingScheduleController::class, 'statusChange']);
                 Route::get('/topic/ajax-list', [TrainingScheduleController::class, 'Uniquecheck']);
+                Route::get('/vp_approval/{id}', [TrainingScheduleController::class, 'vpApproval']);
+                Route::post('/vp_approval/submit', [TrainingScheduleController::class, 'vpApprovalStore']);
                 Route::get('/nominationProcess/{id}', [TrainingScheduleController::class, 'nominationProcess']);
                 Route::get('/start/{id}', [TrainingScheduleController::class, 'startTraining']);
                 Route::get('/end/{id}', [TrainingScheduleController::class, 'endTraining']);

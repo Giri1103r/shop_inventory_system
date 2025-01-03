@@ -194,8 +194,10 @@
                                                                                 <td>
                                                                                     @if ($assessment->assessment == 1)
                                                                                         Pass
-                                                                                    @else
+                                                                                    @elseif($assessment->assessment == 2)
                                                                                         Fail
+                                                                                    @elseif($assessment->assessment == 3)
+                                                                                        Not Attended
                                                                                     @endif
                                                                                 </td>
                                                                                 <td>{{ strip_tags($assessment->feedback) ?? '-' }}

@@ -170,7 +170,51 @@ class Venue extends Model
 
         return $this->where('id', $id)->update($update_data);
     }
+    public function ajaxList($unitId = '', $venue_id)
+    {
+        $query = $this->select('id', 'name_of_the_conference_hall')->where('status', 1);
 
+        if ($unitId != '') {
+            $query->where('unit_id', $unitId);
+        }
+        if (!empty($unitId) && !empty($venue_id)) {
+            $query = $query->where('unit_id', $unitId)->where('status', 1)->orWhere(function ($query) use ($venue_id, $unitId) {
+                $query->where('unit_id', $unitId)->where('id', $venue_id);
+            });
+        }
+        $datas = $query->get();
+
+        $list = [];
+        foreach ($datas as $data) {
+            $listvalue = [];
+            $listvalue['id'] = encryptId($data->id);
+            $listvalue['name'] = $data->name_of_the_conference_hall;
+            $list[] = $listvalue;
+        }
+
+        return $list;
+    }
+
+    public function ajaxallList($unitId = '')
+    {
+        $query = $this->select('id', 'name_of_the_conference_hall')->where('status', 1);
+
+        if ($unitId != '') {
+
+            $query = $query->where('unit_id', $unitId);
+        }
+
+        $datas = $query->get();
+
+        $list = [];
+        foreach ($datas as $data) {
+            $listvalue = [];
+            $listvalue['id'] = encryptId($data->id);
+            $listvalue['name'] = $data->name_of_the_conference_hall;
+            $list[] = $listvalue;
+        }
+        return $list;
+    }
     public function exportdata()
     {
         $request = request();

@@ -199,31 +199,42 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    <input type="text" name ="mark[{{ $index }}]"
-                                                                        class="form-control validate-range-required"
-                                                                        placeholder="Mark">
+                                                                    @if (!$isAttended)
+                                                                   
+                                                                        <input type="hidden"
+                                                                            name="assessment[{{ $index }}]"
+                                                                            value="2">
+                                                                    @else
+                                                                        <input type="text"
+                                                                            name ="mark[{{ $index }}]"
+                                                                            class="form-control validate-range-required"
+                                                                            placeholder="Mark">
+                                                                    @endif
                                                                 </td>
                                                                 <td>
                                                                     @if (!$isAttended)
                                                                         <select name="assessment[{{ $index }}]"
                                                                             class="form-control single-select validate-select-required"
                                                                             disabled>
-                                                                            <option value="2" selected>Fail</option>
+                                                                            <option value="3" selected>Not Attended
+                                                                            </option>
                                                                         </select>
                                                                         <input type="hidden"
                                                                             name="assessment[{{ $index }}]"
-                                                                            value="2">
+                                                                            value="3">
                                                                     @else
                                                                         <select name="assessment[{{ $index }}]"
-                                                                            class="form-control single-select validate-select-required">
+                                                                            class="form-control single-select validate-select-required"
+                                                                            style="width: 80%">
                                                                             <option value="">Select Assessment
                                                                             </option>
                                                                             <option value="1">Pass</option>
                                                                             <option value="2">Fail</option>
+                                                                            <option value="3">Not Attended</option>
                                                                         </select>
                                                                     @endif
                                                                 </td>
-                                                                
+
 
                                                                 <td>
                                                                     <textarea class="form-control maxTextareaLength" name="feedback[{{ $index }}]"></textarea>
