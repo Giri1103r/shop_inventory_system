@@ -68,7 +68,10 @@
 
                                 </div>
                             </div>
-                            @if (Auth::user()->role == ROLE_SUPERADMIN || Auth::user()->role == ROLE_TRAINER)
+                            @if (Auth::user()->role == ROLE_SUPERADMIN ||
+                                    Auth::user()->role == ROLE_TRAINER ||
+                                    Auth::user()->role == ROLE_ADMIN ||
+                                    Auth::user()->role == ROLE_VISE_PRESIDENT)
                                 <div class="row">
                                     <div class="col-12">
                                         <ul class="nav nav-pills" style="padding-left: 30px;">
@@ -76,6 +79,11 @@
                                                 <a class="nav-link active" aria-current="page"
                                                     href="#training_schedule_details" data-bs-toggle="tab">Training
                                                     Schedule</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="#vise_president_approval"
+                                                    data-bs-toggle="tab">Vise President Approval
+                                                </a>
                                             </li>
                                             <li class="nav-item">
                                                 <a class="nav-link" href="#nomination_process"
@@ -102,7 +110,10 @@
                                 </div>
                             @endif
                             <div class="tab-content">
-                                @if (Auth::user()->role == ROLE_SUPERADMIN || Auth::user()->role == ROLE_TRAINER)
+                                @if (Auth::user()->role == ROLE_SUPERADMIN ||
+                                        Auth::user()->role == ROLE_TRAINER ||
+                                        Auth::user()->role == ROLE_ADMIN ||
+                                        Auth::user()->role == ROLE_VISE_PRESIDENT)
                                     <div class="tab-pane fade show active" id="training_schedule_details">
                                         <div class="card-body">
 
@@ -167,20 +178,26 @@
                                                         {{ $totalTrainingHours ?? 'N/A' }}
                                                     </div>
                                                 </div>
-                                                @if ($training_schedule->training_status == 3)
-                                                    <div class="mb-3 col-md-4 form-input">
-                                                        <label class="form-label view_label">Training Status</label>
-                                                        <div class="view_data"> Training Started
-                                                        </div>
-                                                    </div>
-                                                @elseif($training_schedule->training_status == 5)
-                                                    <div class="mb-3 col-md-4 form-input">
-                                                        <label class="form-label view_label">Training Status</label>
-                                                        <div class="view_data">
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">Training Status</label>
+                                                    @if ($training_schedule->training_status == 1 || $training_schedule->training_status == 2)
+                                                        <div class="view_data"
+                                                            style="background-color: #FFA500; width: 40%;padding: 1px 9px; border: 1px solid #FFA500; color: black;">
+                                                            Training Pending
+                                                        </div> <!-- Orange -->
+                                                    @elseif ($training_schedule->training_status == 5)
+                                                        <div class="view_data"
+                                                            style="background-color: #008000; width: 40%;padding: 1px 9px; border: 1px solid #008000; color: black;">
                                                             Training Completed
-                                                        </div>
-                                                    </div>
-                                                @endif
+                                                        </div> <!-- Green -->
+                                                    @elseif ($training_schedule->training_status == 3 || $training_schedule->training_status == 4)
+                                                        <div class="view_data"
+                                                            style="background-color: #FFFF00; width: 40%;padding: 1px 9px; border: 1px solid #FFFF00; color: black;">
+                                                            Training in Progress
+                                                        </div> <!-- Yellow -->
+                                                    @endif
+                                                </div>
+
                                                 <div class="mb-3 col-md-4 form-input">
                                                     <label
                                                         class="form-label view_label">{{ __('common.created_by') }}</label>
@@ -206,6 +223,72 @@
 
                                                     </div>
                                                 </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="vise_president_approval">
+                                        <div class="card-body">
+                                            @if (isset($rejectedlog) && $rejectedlog->isNotEmpty())
+
+                                                <div class="row">
+                                                    <div class="card-header-inner">
+                                                        <h4 class="text-white">Training Rejection Log List</h4>
+                                                    </div>
+                                                </div>
+                                                <div class="basic-form">
+                                                    <div class="row">
+                                                        <table class="table_card" style="margin-top: 20px;">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="form-label ">Date</th>
+                                                                    <th class="form-label ">Remark</th>
+
+                                                                </tr>
+                                                            </thead>
+
+                                                            <tbody id="lesson_learned_block">
+                                                                @foreach ($rejectedlog as $log)
+                                                                    <tr class="lesson_learned_row">
+                                                                        <td>
+                                                                            {{ Displaydateformat($log->created_at) ?? '' }}
+                                                                        </td>
+                                                                        <td>
+                                                                            {{ isset($log->remark) ? $log->remark : '' }}
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <hr>
+                                                </div>
+                                            @endif
+                                            <div class="row">
+                                                <div class="card-header-inner">
+                                                    <h4 class="text-white">Vise President Approval</h4>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">Approver Name</label>
+                                                    <div class="view_data">
+                                                        {{ $training_schedule->approver_name }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">Date</label>
+                                                    <div class="view_data">
+                                                        {{ Displaydateformat($training_schedule->date) }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">Remark</label>
+                                                    <div class="view_data">
+                                                        {{ isset($training_schedule->remark) ? $training_schedule->remark : '' }}
+                                                    </div>
+                                                </div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -438,7 +521,7 @@
                                                                 @foreach ($trainingAssessmentList as $assessment)
                                                                     <tr>
 
-                                                                        <td>{{ $assessment->emp_name ?? '' }}</td>
+                                                                        <td>{{ $assessment->emp_name ?? '-' }}</td>
                                                                         <td>
                                                                             @if ($assessment->attended_status == 1)
                                                                                 <i class="fa fa-check"
@@ -450,8 +533,14 @@
                                                                         </td>
                                                                         <td>{{ $assessment->mark ?? '-' }}</td>
                                                                         <td>
-                                                                            {{ $assessment->assessment == 1 ? 'Pass' : 'Fail' }}
-                                                                          
+                                                                            @if ($assessment->assessment == 1)
+                                                                                Pass
+                                                                            @elseif($assessment->assessment == 2)
+                                                                                Fail
+                                                                            @elseif($assessment->assessment == 3)
+                                                                                Not Attended
+                                                                            @endif
+
                                                                         </td>
                                                                         <td>{{ strip_tags($assessment->feedback) ?? '-' }}
                                                                         </td>
@@ -516,7 +605,10 @@
                             </div>
 
 
-                            @if (Auth::user()->role != ROLE_SUPERADMIN && Auth::user()->role != ROLE_TRAINER)
+                            @if (Auth::user()->role != ROLE_SUPERADMIN &&
+                                    Auth::user()->role != ROLE_TRAINER &&
+                                    Auth::user()->role != ROLE_ADMIN &&
+                                    Auth::user()->role != ROLE_VISE_PRESIDENT)
                                 <div class="card-body">
 
                                     <div class="row">
@@ -569,56 +661,73 @@
                                                 {{ isset($training_schedule->name_of_the_conference_hall) ? $training_schedule->name_of_the_conference_hall : '' }}
                                             </div>
                                         </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Training Status</label>
+                                            @if ($training_schedule->training_status == 1 || $training_schedule->training_status == 2)
+                                                <div class="view_data"
+                                                    style="background-color: #FFA500; width: 40%;padding: 1px 9px; border: 1px solid #FFA500; color: black;">
+                                                    Training Pending
+                                                </div> <!-- Orange -->
+                                            @elseif ($training_schedule->training_status == 5)
+                                                <div class="view_data"
+                                                    style="background-color: #008000; width: 40%;padding: 1px 9px; border: 1px solid #008000; color: black;">
+                                                    Training Completed
+                                                </div> <!-- Green -->
+                                            @elseif ($training_schedule->training_status == 3 || $training_schedule->training_status == 4)
+                                                <div class="view_data"
+                                                    style="background-color: #FFFF00; width: 40%;padding: 1px 9px; border: 1px solid #FFFF00; color: black;">
+                                                    Training in Progress
+                                                </div> <!-- Yellow -->
+                                            @endif
+                                        </div>
                                     </div>
 
                                 </div>
-                                {{-- <div class="card-body">
-                                        <div class="row">
-                                            <div class="card-header-inner">
-                                                <h4 class="text-white">Training Attendance</h4>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">Training Attendance</h4>
+                                        </div>
+                                    </div>
+                                    @if (isset($userAttendanceList) && $userAttendanceList->isNotEmpty())
+                                        <div class="basic-form">
+                                            <div class="row">
+
+                                                <table class="table_card" style="margin-top: 20px;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="form-label">Attendance Date</th>
+                                                            <th class="form-label required">Attendance(present
+                                                                /absent)
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody id="lesson_learned_block">
+                                                        @foreach ($userAttendanceList as $training_attendance)
+                                                            <tr>
+                                                                <td>{{ Displaydateformat($training_attendance->attendance_date) ?? '' }}
+                                                                </td>
+                                                                <td>
+                                                                    @if ($training_attendance->attendance_status == 1)
+                                                                        <i class="fa fa-check"
+                                                                            style="font-size:24px;color: green;"></i>
+                                                                    @else
+                                                                        <i class="fa fa-close"
+                                                                            style="font-size:24px;color:red"></i>
+                                                                    @endif
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                                <hr>
                                             </div>
                                         </div>
-                                        @if (isset($trainingAttendanceList) && $trainingAttendanceList->isNotEmpty())
-                                            <div class="basic-form">
-                                                <div class="row">
-
-                                                    <table class="table_card" style="margin-top: 20px;">
-                                                        <thead>
-                                                            <tr>
-                                                                <th class="form-label">Attendance Date</th>
-                                                                <th class="form-label">Employee Name</th>
-                                                                <th class="form-label required">Attendance(present
-                                                                    /absent)
-                                                                </th>
-                                                            </tr>
-                                                        </thead>
-
-                                                        <tbody id="lesson_learned_block">
-                                                            @foreach ($trainingAttendanceList as $training_attendance)
-                                                                <tr>
-                                                                    <td>{{ Displaydateformat($training_attendance->attendance_date) ?? '' }}
-                                                                    </td>
-                                                                    <td>{{ $training_attendance->emp_name ?? '' }}</td>
-                                                                    <td>
-                                                                        @if ($training_attendance->attendance_status == 1)
-                                                                            <i class="fa fa-check"
-                                                                                style="font-size:24px;color: green;"></i>
-                                                                        @else
-                                                                            <i class="fa fa-close"
-                                                                                style="font-size:24px;color:red"></i>
-                                                                        @endif
-                                                                    </td>
-                                                                </tr>
-                                                            @endforeach
-                                                        </tbody>
-                                                    </table>
-                                                    <hr>
-                                                </div>
-                                            </div>
-                                        @else
-                                            <p>No training attendance data available.</p>
-                                        @endif
-                                    </div> --}}
+                                    @else
+                                        <p>No training attendance data available.</p>
+                                    @endif
+                                </div>
                             @endif
 
                         </div>
@@ -631,7 +740,6 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
- 
         $(document).ready(function() {
             flatpickr("#attendance_date", {
                 dateFormat: "d-m-Y",

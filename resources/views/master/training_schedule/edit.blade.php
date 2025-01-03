@@ -129,11 +129,7 @@
                                                     <select name="venue_id" id="venue_id"
                                                         class="form-control single-select" style="width: 100%">
                                                         <option value="">Select Venue/Location </option>
-                                                        @foreach ($venueList as $venue)
-                                                            <option @if ($training_schedule->venue_id == $venue->id) selected @endif
-                                                                value="{{ encryptId($venue->id) }}">
-                                                                {{ $venue->name_of_the_conference_hall }}</option>
-                                                        @endforeach
+                                                       
                                                     </select>
                                                 </div>
                                             </div>
@@ -229,10 +225,15 @@
 
             var initialUnitId = $('#unit_id').val();
             var preselectedDepartmentId = "{{ encryptId($training_schedule->department_id) ?? '0' }}";
+            var preselectedVenueId = "{{ encryptId($training_schedule->venue_id) ?? '0' }}";
 
             if (initialUnitId) {
                 fetchDepartments(initialUnitId, preselectedDepartmentId, function() {
                     var department_id = preselectedDepartmentId;
+
+                });
+                fetchVenues(initialUnitId, preselectedVenueId, function() {
+                    var venue_id = preselectedVenueId;
 
                 });
             }
@@ -241,6 +242,9 @@
                 var unit_id = $(this).val();
                 fetchDepartments(unit_id, preselectedDepartmentId, function() {
                     $('#department_id').trigger('change');
+                });
+                fetchVenues(unit_id, preselectedVenueId, function() {
+                    $('venue_id').trigger('change');
                 });
             });
 
@@ -269,6 +273,30 @@
                 }
             }
 
+            function fetchVenues(unit_id, preselectedVenueId, callback) {
+                if (unit_id) {
+                    $.ajax({
+                        url: "{{ admin_url('venue/ajax-list/') }}" + unit_id + '/' +
+                        preselectedVenueId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#venue_id').empty().append(
+                                '<option value="">Select Venue/Location</option>');
+                            $.each(data, function(key, value) {
+                                var selected = (value.id == preselectedVenueId) ?
+                                    'selected' : '';
+                                $('#venue_id').append('<option value="' + value.id + '" ' +
+                                    selected + '>' + value.name + '</option>');
+                            });
+                            if (callback) callback();
+                        }
+                    });
+                } else {
+                    $('#venue_id').empty().append('<option value="">Select Venue/Location</option>');
+                }
+            }
+
 
 
 
@@ -284,6 +312,8 @@
                 minDate: "today",
                 enableTime: true,
                 time_24hr: true,
+                defaultHour: 9, // Default to 9 AM
+                defaultMinute: 0,
             });
 
             flatpickr("#from_date_datepicker", {
@@ -291,16 +321,18 @@
                 minDate: "today",
                 enableTime: true,
                 time_24hr: true,
+                defaultHour: 9, // Default to 9 AM
+                defaultMinute: 0,
                 onChange: function(selectedDates, dateStr) {
                     if (selectedDates.length > 0) {
                         const fromDate = selectedDates[0];
-                        const toDate = new Date(fromDate.getTime() + 8 * 60 * 60 * 1000);
+
+                        const toDate = new Date(fromDate);
+                        toDate.setHours(18, 0, 0);
 
                         if (toDatePicker) {
-                            toDatePicker.set("minDate",
-                                dateStr);
-                            toDatePicker.setDate(toDate,
-                                false);
+                            toDatePicker.set("minDate", dateStr);
+                            toDatePicker.setDate(toDate, false);
                         }
                     }
                 },

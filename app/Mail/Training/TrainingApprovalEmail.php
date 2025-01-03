@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class TrainingScheduledEmail extends Mailable
+class TrainingApprovalEmail extends Mailable
 {
 
     use Queueable, SerializesModels;
@@ -31,8 +31,8 @@ class TrainingScheduledEmail extends Mailable
     public function build()
     {
 
-        return $this->view('emails.training.scheduled_training')
-            ->subject(config('app.name') . " - New Training Scheduled")
+        return $this->view('emails.training.training_approval')
+            ->subject(config('app.name') . " - Training Scheduled")
             ->with("details", $this->details);
     }
 }

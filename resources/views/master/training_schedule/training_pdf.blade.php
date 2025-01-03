@@ -1,6 +1,5 @@
 <html>
 
-
 <head>
     <title> Training Details | KARAM</title>
     <style>
@@ -223,27 +222,26 @@
                     {{ isset($training_schedule->name_of_the_conference_hall) ? $training_schedule->name_of_the_conference_hall : '' }}
                 </td>
             </tr>
-            @if ($training_schedule->training_status == 3)
-                <tr>
-                    <td width="40%" style="padding:5px;text-transform: uppercase;">
-                        <b>Training Status</b>
+            <tr>
+                <td width="40%" style="padding:5px;text-transform: uppercase;">
+                    <b>Training Status</b>
+                </td>
+                <td width="2%" style="padding:5px;">:</td>
+                @if ($training_schedule->training_status == 1 || $training_schedule->training_status == 2)
+                    <td width="58%">
+                        Training Pending
                     </td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="58%" style="padding:5px;">
-                        Training Started
-                    </td>
-                </tr>
-            @elseif($training_schedule->training_status == 5)
-                <tr>
-                    <td width="40%" style="padding:5px;text-transform: uppercase;">
-                        <b>Training Status</b>
-                    </td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="58%" style="padding:5px;">
+                @elseif ($training_schedule->training_status == 5)
+                    <td width="58%">
                         Training Completed
                     </td>
-                </tr>
-            @endif
+                @elseif ($training_schedule->training_status == 3 || $training_schedule->training_status == 4)
+                    <td width="58%">
+                        Training in Progress
+                    </td>
+                @endif
+            </tr>
+    
             <tr>
                 <td width="40%" style="padding:5px;text-transform: uppercase;">
                     <b>Created By</b>
@@ -380,7 +378,6 @@
                 </thead>
                 <tbody id="lesson_learned_block">
                     @foreach ($trainingAssessmentList as $assessment)
-                  
                         <tr>
                             <td>{{ $assessment->emp_name ?? '-' }}</td>
                             <td>
@@ -391,7 +388,15 @@
                                 @endif
                             </td>
                             <td>{{ $assessment->mark ?? '-' }}</td>
-                            <td>{{ $assessment->assessment == 1 ? 'Pass' : 'Fail' }}</td>
+                            <td>
+                                @if ($assessment->assessment == 1)
+                                    Pass
+                                @elseif($assessment->assessment == 2)
+                                    Fail
+                                @elseif($assessment->assessment == 3)
+                                    Not Attended
+                                @endif
+                            </td>
                             <td>{{ strip_tags($assessment->feedback ?? '-') }}</td>
                         </tr>
                     @endforeach

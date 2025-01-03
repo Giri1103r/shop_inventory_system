@@ -177,7 +177,7 @@
                                 <div class="d-flex justify-content-end p-2">
                                     <x-button-import
                                         href="{{ admin_url('nomination_process/import/' . encryptId($training_schedule->id) . '/' . encryptId($training_schedule->trainer_id)) }}">
-                                        ></x-button-import>
+                                        </x-button-import>
 
                                 </div>
 
@@ -567,21 +567,22 @@
                 });
             });
 
+       
             $(document).on('click', '.removerowdata', function() {
                 var rowCount = $("#lesson_learned_block .lesson_learned_row").length;
-
                 if (rowCount > 1) {
                     $(this).closest(".lesson_learned_row").remove();
 
                     $("#lesson_learned_block .lesson_learned_row").each(function(index) {
-                        var newIndex = index + 1;
+                        var newIndex = index + 1; 
+
                         $(this).find("input, select").each(function() {
                             var oldName = $(this).attr("name");
                             var oldId = $(this).attr("id");
 
                             if (oldName) {
-                                var newName = oldName.replace(/\[\d+\]/, '[' + newIndex +
-                                    ']');
+                                var newName = oldName.replace(/\[\d+\]/, "[" + newIndex +
+                                    "]");
                                 $(this).attr("name", newName);
                             }
 
@@ -591,7 +592,11 @@
                             }
                         });
 
-                        $(this).find("select").select2();
+                        $(this).find("select").select2("destroy");
+
+                        $(this).find("select").select2({
+                            width: '100%' 
+                        });
                     });
 
                     $('#dynamic-add-more').attr("disabled", rowCount - 1 >= 10);
@@ -603,7 +608,6 @@
                     });
                 }
             });
-
 
 
             $('#nomination_processadd').validate({

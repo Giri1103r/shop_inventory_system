@@ -117,10 +117,7 @@
                                                     <select name="venue_id" id="venue_id"
                                                         class="form-control single-select" style="width: 100%">
                                                         <option value="">Select Venue/Location </option>
-                                                        @foreach ($venueList as $venue)
-                                                            <option value="{{ encryptId($venue->id) }}">
-                                                                {{ $venue->name_of_the_conference_hall }}</option>
-                                                        @endforeach
+                                                  
                                                     </select>
                                                 </div>
                                             </div>
@@ -234,6 +231,29 @@
                     $('#department_id').empty().append('<option value="">Select Department</option>');
                     $('#department_id').trigger('change.');
                 }
+
+                if (unitId) {
+                    $.ajax({
+                        url: "{{ admin_url('venue/ajax-list') }}/" + unitId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#venue_id').empty().append(
+                                '<option value="">Select Venue/Location</option>');
+                            $.each(data, function(key, value) {
+                                $('#venue_id').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#venue_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching Venue. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#venue_id').empty().append('<option value="">Select Venue/Location</option>');
+                    $('#venue_id').trigger('change.');
+                }
             });
 
             $('#resetform').on('click', function(e) {
@@ -246,6 +266,8 @@
                 minDate: "today",
                 enableTime: true,
                 time_24hr: true,
+                defaultHour: 9, // Default to 9 AM
+                defaultMinute: 0,
             });
 
             flatpickr("#from_date_datepicker", {
@@ -253,20 +275,23 @@
                 minDate: "today",
                 enableTime: true,
                 time_24hr: true,
+                defaultHour: 9, // Default to 9 AM
+                defaultMinute: 0,
                 onChange: function(selectedDates, dateStr) {
                     if (selectedDates.length > 0) {
-                        const fromDate = selectedDates[0];
-                        const toDate = new Date(fromDate.getTime() + 8 * 60 * 60 * 1000);
+                        const fromDate = selectedDates[0]; 
+
+                        const toDate = new Date(fromDate);
+                        toDate.setHours(18, 0, 0); 
 
                         if (toDatePicker) {
-                            toDatePicker.set("minDate",
-                                dateStr); 
-                            toDatePicker.setDate(toDate,
-                                false); 
+                            toDatePicker.set("minDate", dateStr); 
+                            toDatePicker.setDate(toDate, false); 
                         }
                     }
                 },
             });
+
 
 
 

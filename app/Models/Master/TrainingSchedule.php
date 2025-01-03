@@ -29,6 +29,10 @@ class TrainingSchedule extends Model
         'venue_id',
         'target_trainees',
         'training_man_hours',
+        'approver_emp_id',
+        'approver_name',
+        'date',
+        'remark',
         'training_status',
         'status',
         'trash',
@@ -63,6 +67,10 @@ class TrainingSchedule extends Model
 
         if (CheckUserRole(ROLE_SUPERADMIN)) {
             $query->where('training_schedule.trash', 'NO');
+        } elseif (CheckUserRole(ROLE_ADMIN)) {
+            $query->where('training_schedule.trash', 'NO');
+        } elseif (CheckUserRole(ROLE_VISE_PRESIDENT)) {
+            $query->where('training_schedule.trash', 'NO');
         } elseif (CheckUserRole(ROLE_TRAINER)) {
             $trainer = DB::table('masters_employee')
                 ->select('id', 'emp_id')
@@ -78,8 +86,8 @@ class TrainingSchedule extends Model
                 ->where('emp_id', Auth::user()->employee_id)
                 ->first();
 
-            if ($nomination) { 
-                $query->where(function ($q) use ($nomination) { 
+            if ($nomination) {
+                $query->where(function ($q) use ($nomination) {
                     $q->whereExists(function ($subQuery) use ($nomination) {
                         $subQuery->select(DB::raw(1))
                             ->from('training_nomination_process')
@@ -248,6 +256,21 @@ class TrainingSchedule extends Model
             ->get();
     }
 
+    public function vpApproval($id, $training_status)
+    {
+        $request = request();
+
+        $update_array = array(
+            'date' => DBdateformat($request->date),
+            'approver_emp_id' => $request->approver_emp_id,
+            'approver_name' => $request->approver_name,
+            'remark' => $request->remark,
+            'training_status' => $training_status,
+            'updated_by' => Auth::id(),
+            'updated_at' => now(),
+        );
+        return $this->where('id', $id)->update($update_array);
+    }
     public function store()
     {
         $request = request();
@@ -293,6 +316,7 @@ class TrainingSchedule extends Model
             'department_id' => decryptId($request->department_id),
             'target_trainees' => $request->target_trainees,
             'training_man_hours' => $request->training_man_hours ?? '',
+            'training_status' => TRAINING_RESCHEDULE_APPROVAL,
             'updated_by' => Auth::id(),
             'updated_at' => now(),
         );
@@ -368,6 +392,10 @@ class TrainingSchedule extends Model
 
         if (CheckUserRole(ROLE_SUPERADMIN)) {
             $query->where('training_schedule.trash', 'NO');
+        } elseif (CheckUserRole(ROLE_ADMIN)) {
+            $query->where('training_schedule.trash', 'NO');
+        } elseif (CheckUserRole(ROLE_VISE_PRESIDENT)) {
+            $query->where('training_schedule.trash', 'NO');
         } elseif (CheckUserRole(ROLE_TRAINER)) {
             $trainer = DB::table('masters_employee')
                 ->select('id', 'emp_id')
@@ -384,12 +412,12 @@ class TrainingSchedule extends Model
                 ->first();
 
             if ($nomination) {
-                $query->where(function ($q) use ($nomination) { 
+                $query->where(function ($q) use ($nomination) {
                     $q->whereExists(function ($subQuery) use ($nomination) {
                         $subQuery->select(DB::raw(1))
                             ->from('training_nomination_process')
                             ->whereColumn('training_nomination_process.training_schedule_id', 'training_schedule.id')
-                            ->where('training_nomination_process.employee_id', $nomination->id); 
+                            ->where('training_nomination_process.employee_id', $nomination->id);
                     });
                 })->where('training_schedule.trash', 'NO');
             }
@@ -439,11 +467,11 @@ class TrainingSchedule extends Model
 
         return  $query->get();
     }
-   
+
     public function selectOne($id)
     {
 
-        $data = $this->select('training_schedule.*', 'masters_unit.unit_name', 'masters_employee.emp_name' , 'masters_employee.login_id', 'masters_employee.email', 'masters_department.department_name', 'training_masters_topic.topic_name', 'training_masters_venue.name_of_the_conference_hall')->leftJoin('masters_unit', 'training_schedule.unit_id', '=', 'masters_unit.id')->leftJoin('training_masters_topic', 'training_schedule.topic_id', '=', 'training_masters_topic.id')->leftJoin('masters_department', 'training_schedule.department_id', '=', 'masters_department.id')->leftJoin('masters_employee', 'training_schedule.trainer_id', '=', 'masters_employee.id')->leftJoin('training_masters_venue', 'training_schedule.venue_id', '=', 'training_masters_venue.id')
+        $data = $this->select('training_schedule.*', 'masters_unit.unit_name', 'masters_employee.emp_name', 'masters_employee.login_id', 'masters_employee.email', 'masters_department.department_name', 'training_masters_topic.topic_name', 'training_masters_venue.name_of_the_conference_hall')->leftJoin('masters_unit', 'training_schedule.unit_id', '=', 'masters_unit.id')->leftJoin('training_masters_topic', 'training_schedule.topic_id', '=', 'training_masters_topic.id')->leftJoin('masters_department', 'training_schedule.department_id', '=', 'masters_department.id')->leftJoin('masters_employee', 'training_schedule.trainer_id', '=', 'masters_employee.id')->leftJoin('training_masters_venue', 'training_schedule.venue_id', '=', 'training_masters_venue.id')
             ->where('training_schedule.id', $id)
             ->first();
 

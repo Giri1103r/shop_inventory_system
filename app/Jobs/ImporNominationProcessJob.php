@@ -352,17 +352,17 @@ class ImporNominationProcessJob  implements ShouldQueue
 
             $nomination = NominationProcess::create($data);
 
-            if ($nomination) {
-                TrainingSchedule::where('id', $this->details['trainingScheduleIid'])->update([
-                    'training_status' => 2,
-                    'updated_by' => Auth::id(),
-                    'updated_at' => now(),
-                ]);
-            }
+            // if ($nomination) {
+            //     TrainingSchedule::where('id', $this->details['trainingScheduleIid'])->update([
+            //         'training_status' => 5,
+            //         'updated_by' => Auth::id(),
+            //         'updated_at' => now(),
+            //     ]);
+            // }
 
             $i++;
         }
-
+      
 
         // Log errors or mark as successful
         if (count($cond_error_datas) > 0) {
