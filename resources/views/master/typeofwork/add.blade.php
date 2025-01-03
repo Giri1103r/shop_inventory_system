@@ -71,7 +71,7 @@
                                             </div>
                                             <div class="col-md-4 form-input">
                                                 <label class = "form-label require">Image</label>
-                                                <input type="file" name="typeofwork_upload" id="typeofwork_upload"
+                                                <input type="file" name="typeofwork_upload" id="typeofwork_upload"   accept="image/png, image/jpeg, image/jpg"
                                                     class="form-control" placeholder="Signature">
                                             </div>
                                             <div class="table-wrapper">
@@ -514,6 +514,7 @@
                         },
                         typeofwork_upload: {
                             required: true,
+                            extension: "png|jpeg|jpg"
                         },
                     },
                     messages: {
@@ -531,6 +532,7 @@
                         },
                         typeofwork_upload: {
                             required: "{{ __('Image is Required') }}",
+                             extension: "Please enter a value with a valid mimetype."
                         },
                     },
                     errorElement: 'span',

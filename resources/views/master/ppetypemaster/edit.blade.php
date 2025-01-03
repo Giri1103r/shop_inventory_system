@@ -260,7 +260,7 @@
                         regex: "PPE Standard should be alphanumeric and can include -, _, ', \", (, )."
                     },
                     ppe_file: {
-                        extension: "Allowed file types: png, jpeg, jpg."
+                        extension: "Please enter a value with a valid mimetype."
                     }
                 },
                 errorElement: 'div',

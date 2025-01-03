@@ -41,6 +41,8 @@
                                                         class="form-control form-control-sm "id="emp_id"
                                                         value="{{ $employee->employee_id }}"
                                                         @if (Auth::user()->role != ROLE_SUPERADMIN) readonly @endif>
+                                                <div class="text-danger" ></div>
+
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">
@@ -50,6 +52,8 @@
                                                         class="form-control form-control-sm " id="emp_name"
                                                         value="{{ $employee->name }}"
                                                         @if (Auth::user()->role != ROLE_SUPERADMIN) readonly @endif>
+                                                <div class="text-danger"></div>
+
                                                 </div>
                                             </div>
 
@@ -60,6 +64,8 @@
                                                         class="form-control form-control-sm"
                                                         value="{{ getDepartment($employee->department_id) }}"
                                                         @if (Auth::user()->role != ROLE_SUPERADMIN) readonly @endif>
+                                                <div class="text-danger" ></div>
+
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">
@@ -248,6 +254,15 @@
         $(document).ready(function() {
             $('#pperequestadd').validate({
                 rules: {
+                   emp_id:{
+                      required: true,
+                   },
+                   emp_name:{
+                    required:true,
+                   },
+                   department:{
+                    required:true,
+                   },
                     item_code: {
                         required: true,
                     },
@@ -272,7 +287,15 @@
                     }
                 },
                 messages: {
-
+                    emp_id: {
+                        required: "Employee Id cannot be empty.",
+                    },
+                    emp_name: {
+                        required: "Employee name cannot be empty.",
+                    },
+                    department: {
+                        required: "Department cannot be empty.",
+                    },
                     item_code: {
                         required: "Please Select the Item Code.",
                     },

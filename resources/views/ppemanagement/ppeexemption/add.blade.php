@@ -2,9 +2,7 @@
 @section('title', 'PPE Shoe Exemption Add')
 @section('pageurl', admin_url('ppe_exemption/list'))
 @section('content')
-    @push('style')
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    @endpush
+
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
@@ -44,7 +42,9 @@
                                                     <input type="text" name="emp_id"
                                                         class="form-control form-control-sm" id="emp_id"
                                                         value="{{ $employee->employee_id }}"
-                                                        @if (Auth::user()->role !=ROLE_SUPERADMIN) readonly @endif>
+                                                        @if (Auth::user()->role != ROLE_SUPERADMIN) readonly @endif>
+                                                    <div class="text-danger"></div>
+
                                                 </div>
                                             </div>
 
@@ -55,6 +55,8 @@
                                                         class="form-control form-control-sm" id="emp_name"
                                                         value="{{ $employee->name }}"
                                                         @if (Auth::user()->role != ROLE_SUPERADMIN) readonly @endif>
+                                                    <div class="text-danger"></div>
+
                                                 </div>
                                             </div>
 
@@ -65,6 +67,8 @@
                                                         class="form-control form-control-sm"
                                                         value="{{ getDepartment($employee->department_id) }}"
                                                         @if (Auth::user()->role != ROLE_SUPERADMIN) readonly @endif>
+                                                    <div class="text-danger"></div>
+
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -109,12 +113,7 @@
                                                 @enderror
                                                 <div class="text-danger" id="reason_error"></div>
                                             </div>
-                                                <div class="col-md-12 mb-2">
-                                                    <input type="checkbox" id="checkbox" name="checkbox">
-                                                    <label for="checkbox" class="form-label">I agree to the terms and
-                                                        conditions</label>
-                                                    <div class="text-danger" id="checkbox_error"></div>
-                                                </div>
+
 
                                         </div>
                                         <hr>
@@ -134,23 +133,47 @@
             </div>
         </div>
         </form>
+
+        <div id="termsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="termsModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
+                    </div>
+                    <div class="modal-body">
+                        <ul>
+                            <!-- Display the 10 points (for example) -->
+                            <li>The PPE Shoe Exemption Policy is designed to address cases where individuals are unable to wear safety shoes due to medical, religious, or other legitimate reasons.</li>
+
+                        </ul>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="agreeTerms">
+                            <label class="form-check-label" for="agreeTerms">I agree to the terms and conditions.</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+
+                        <button type="button" class="btn btn-secondary" id="closeModal">Close</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 
 @stop
 
 @push('script')
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
             $('#resetform').on('click', function(e) {
                 e.preventDefault();
                 location.reload();
             });
-            $('label[for="checkbox"]').on('click', function(e) {
-                e.preventDefault();
-                $('#checkbox').prop('checked', !$('#checkbox').prop('checked'));
-            });
+
         });
         $(document).ready(function() {
             var fromDatepicker = flatpickr("#from_date", {
@@ -170,11 +193,17 @@
                 minDate: new Date()
             });
 
-
-
-
             $('#ppeExemptionForm').validate({
                 rules: {
+                    emp_id: {
+                        required: true,
+                    },
+                    emp_name: {
+                        required: true,
+                    },
+                    department: {
+                        required: true,
+                    },
                     from_date: {
                         required: true
                     },
@@ -185,14 +214,18 @@
                         required: true,
                         minlength: 3,
                         maxlength: 600,
-
-
                     },
-                    checkbox: {
-                        required: true
-                    }
                 },
                 messages: {
+                    emp_id: {
+                        required: "Employee Id cannot be empty.",
+                    },
+                    emp_name: {
+                        required: "Employee name cannot be empty.",
+                    },
+                    department: {
+                        required: "Department cannot be empty.",
+                    },
                     from_date: {
                         required: "Please Select the From date."
                     },
@@ -202,12 +235,8 @@
                     reason: {
                         required: "Reason cannot be empty.",
                         minlength: "Reason must contain between 3 and 600 characters.",
-                        maxlength: "Reason must contain between 3 and  600 characters.",
-
+                        maxlength: "Reason must contain between 3 and 600 characters.",
                     },
-                    checkbox: {
-                        required: "You must agree to the terms and conditions."
-                    }
                 },
                 errorElement: 'div',
                 errorPlacement: function(error, element) {
@@ -217,8 +246,6 @@
                         error.appendTo("#to_date_error");
                     } else if (element.attr("name") == "reason") {
                         error.appendTo("#reason_error");
-                    } else if (element.attr("name") == "checkbox") {
-                        error.appendTo("#checkbox_error");
                     } else {
                         error.appendTo(element.siblings('div.text-danger'));
                     }
@@ -230,22 +257,35 @@
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
-                    $('#submit').prop('disabled', true);
-                    form.submit();
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                    console.log(errors + " field(s) are invalid");
-                    validator.errorList.forEach(function(error) {
-                        console.log("Field: " + error.element.name + ", Error: " + error
-                            .message);
-                    });
+
+                    if ($('#agreeTerms').is(':checked')) {
+
+                        form.submit();
+                    } else {
+
+                        $('#termsModal').modal('show');
+                    }
                 }
             });
 
-            $.validator.addMethod("regex", function(value, element, regexp) {
-                return this.optional(element) || regexp.test(value);
-            }, "Please check your input.");
+
+            $('#agreeTerms').on('change', function() {
+                if ($(this).is(':checked')) {
+
+                    $('#submitBtn').prop('disabled', false);
+                } else {
+
+                    $('#submitBtn').prop('disabled', true);
+                }
+            });
+
+
+            $('#closeModal').on('click', function() {
+
+                $('#termsModal').modal('hide');
+            });
+
+
 
         });
     </script>

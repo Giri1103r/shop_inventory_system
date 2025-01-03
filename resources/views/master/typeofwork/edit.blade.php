@@ -56,7 +56,7 @@
                                             </div>
                                             <div class="col-md-4 form-input">
                                                 <label class="form-label require">Image</label>
-                                                <input type="file" name="typeofwork_upload" id="typeofwork_upload"
+                                                <input type="file" name="typeofwork_upload" id="typeofwork_upload"   accept="image/png, image/jpeg, image/jpg"
                                                     value="{{ $file->file_path }}" class="form-control"
                                                     placeholder="Signature">
                                                 @if (isset($file->file_path))
@@ -532,13 +532,15 @@
                         typeofwork_upload: {
 
                             required: function(element) {
-                              
+
                                 if ($('#typeofwork_upload').val() === "" && !$(
                                         'input[name="existing_file_path"]').val()) {
                                     return true;
                                 }
                                 return false;
                             },
+                            extension: "png|jpeg|jpg"
+
 
                         }
                     },
@@ -557,6 +559,7 @@
                         },
                         typeofwork_upload: {
                             required: "{{ __('Image is Required') }}",
+                            extension: "Please enter a value with a valid mimetype."
                         },
                     },
                     errorElement: 'span',
