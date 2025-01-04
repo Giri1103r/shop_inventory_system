@@ -147,18 +147,18 @@
                 eventDidMount: function(info) {
                     const status = info.event.extendedProps.training_status;
 
-                    if (status == "1" || status == "2") {
-                        info.el.style.backgroundColor = '#FFA500'; // Orange
-                        info.el.style.borderColor = '#FFA500'; // Orange
-                    } else if (status == "5") {
-                        info.el.style.backgroundColor = 'rgb(57 190 57)'; // Green
-                        info.el.style.borderColor = 'rgb(57 190 57)'; // Green
-                    } else if (status == "3" || status == "4") {
-                        info.el.style.backgroundColor = '#FFFF00'; // Yellow
-                        info.el.style.borderColor = '#FFFF00'; // Yellow
-                    } else {
-                        info.el.style.backgroundColor = '#0000FF'; // Blue
-                        info.el.style.borderColor = '#0000FF'; // Blue
+                    if (status == "1" || status == "2" || status == "4" || status == "5") {
+                        info.el.style.backgroundColor = '#FFA500'; // before start
+                        info.el.style.borderColor = '#FFA500'; 
+                    } else if (status == "8") {
+                        info.el.style.backgroundColor = 'rgb(57 190 57)'; 
+                        info.el.style.borderColor = 'rgb(57 190 57)'; // completed
+                    } else if (status == "6" || status == "7") {
+                        info.el.style.backgroundColor = '#FFFF00'; 
+                        info.el.style.borderColor = '#FFFF00'; // in Progress
+                    } else if (status == "3") {
+                        info.el.style.backgroundColor = '#e21e23'; 
+                        info.el.style.borderColor = '#e21e23'; // rejected
                     }
 
 

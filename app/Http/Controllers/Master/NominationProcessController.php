@@ -120,9 +120,9 @@ class NominationProcessController extends Controller
     public function fetchEmployeeDetails($emp_id)
     {
         $employee = Employee::select('id', 'emp_name', 'email', 'department', 'employee_status')
-            ->where('id', $emp_id)->where('status', 1)
+            ->where('id', $emp_id)->where('user_role', '!=', 10)
+            ->where('status', 1)
             ->first();
-
         if (!$employee) {
             return response()->json([
                 'error' => 'Employee not found.',

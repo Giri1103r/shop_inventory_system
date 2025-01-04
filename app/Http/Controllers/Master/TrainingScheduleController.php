@@ -118,13 +118,13 @@ class TrainingScheduleController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // dd($row->training_status);
-                            if ($row->training_status == NEW_TRAINING_SCHEDULE  && (in_array(ROLE_VISE_PRESIDENT, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
+                            if (($row->training_status == NEW_TRAINING_SCHEDULE || $row->training_status == TRAINING_RESCHEDULE_APPROVAL) && (in_array(ROLE_VISE_PRESIDENT, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
                                 $btn .= '<a href="' . admin_url('training_schedule/vp_approval/' . encryptId($row->id)) . '" title="Vise President Approval">
                                             <i class="fa fa-external-link" aria-hidden="true" style="color: #000000;"></i>
                                          </a> ';
                             }
 
-                            if (($row->training_status == VP_APPROVE || $row->training_status == TRAINING_RESCHEDULE_APPROVAL) && (in_array(ROLE_TRAINER, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
+                            if (($row->training_status == VP_APPROVE) && (in_array(ROLE_TRAINER, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
                                 $btn .= '<a href="' . admin_url('training_schedule/nominationProcess/' . encryptId($row->id)) . '" title="Nomination">
                                             <i class="fa fa-calendar" style="color: #0013ff;"></i>
                                          </a> ';
@@ -176,22 +176,28 @@ class TrainingScheduleController extends Controller
                                     }
                                 }
                             }
-                            if ($row->training_status == TRAINING_FEEDBACK_ADMIN_APPROVE && (in_array(ROLE_ADMIN, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id()))) ) {
+                            if ($row->training_status == TRAINING_FEEDBACK_ADMIN_APPROVE && (in_array(ROLE_ADMIN, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
 
                                 $btn .= '<a href="' . admin_url('training/feedback_approve/' . encryptId($row->id)) . '"  class="feedbackicon" title="feedback"><i class="fa-solid fa-comments" aria-hidden="true" style="color:rgb(13, 163, 244);"></i> </a> ';
                             }
 
-                            
+
                             if (($row->training_status == TRAINING_FEEDBACK_ADMIN_APPROVE || $row->training_status == TRAINING_COMPLETED) && (in_array(ROLE_TRAINER, getUserRoleId(Auth::id())) || in_array(ROLE_ADMIN, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
                                 $btn .= '<a href="' . admin_url('training_schedule/pdf/' . encryptId($row->id)) . '"  class="pdficon" title="Pdf"><i class="fas fa-file-pdf" aria-hidden="true" style="color: #e21e23;"></i> </a> ';
                             }
 
+                            // if ($row->training_status == TRAINING_COMPLETED && (in_array(ROLE_VISE_PRESIDENT, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())) || in_array(ROLE_TRAINER, getUserRoleId(Auth::id())) || in_array(ROLE_ADMIN, getUserRoleId(Auth::id())))) {
+                            //     $btn .= '<a href="' . admin_url('training_schedule/certificate/' . encryptId($row->id)) . '" title="Certificate">
+                            //            <i class="fas fa-award"></i>
+                            //              </a> ';
+                            // }
+                            
                             if (CheckUserPermission('view')) {
                                 $btn .= '<a href="' . admin_url('training_schedule/view/' . encryptId($row->id)) . '" title="View">
                                             <i class="fa-solid fa-eye"></i>
                                          </a> ';
                             }
-                            
+
 
                             if (CheckUserPermission('edit')  && $row->training_status == VP_REJECTED && (in_array(ROLE_TRAINER, getUserRoleId(Auth::id())) || in_array(ROLE_ADMIN, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
                                 $btn .= '<a href="' . admin_url('training_schedule/edit/' . encryptId($row->id)) . '" title="Edit">
@@ -530,9 +536,18 @@ class TrainingScheduleController extends Controller
                 ];
                 return view('master.training_schedule.feedbacklink', $data);
             } else {
-                $data = [
-                    'training_schedule' => $training_schedule,
-                ];
+                if (Auth::user()->role != ROLE_TRAINER  &&  Auth::user()->role != ROLE_SUPERADMIN &&  Auth::user()->role != ROLE_ADMIN) {
+                    $userAttendanceList = $this->training_attendance
+                        ->where('status', 1)
+                        ->where('emp_id', Auth::user()->employee_id)
+                        ->where('training_schedule_id', $training_schedule_id)
+                        ->get();
+
+                    $data = [
+                        'training_schedule' => $training_schedule,
+                        'userAttendanceList' => $userAttendanceList,
+                    ];
+                }
                 return view('master.training_schedule.view', $data);
             }
         } catch (Exception $ex) {
@@ -716,7 +731,7 @@ class TrainingScheduleController extends Controller
                 $training_schedule = $this->training_schedule->selectOne($id);
                 $nominationProcessList = $this->nomination_process->getNomination($training_schedule->id);
                 $trainingAssessmentList = $this->training_assessment_feedback->getAssessmentList($training_schedule->id);
-                $rejectedlog = $this->training_statuslog->where('training_schedule_id',$training_schedule->id)->where('training_status',3)->get();
+                $rejectedlog = $this->training_statuslog->where('training_schedule_id', $training_schedule->id)->where('training_status', 3)->get();
 
                 $trainingFeedbackList = collect();
 
@@ -752,7 +767,7 @@ class TrainingScheduleController extends Controller
                     'rejectedlog' => $rejectedlog,
                 ];
 
-                if (Auth::user()->role != ROLE_TRAINER  &&  Auth::user()->role != ROLE_SUPERADMIN) {
+                if (Auth::user()->role != ROLE_TRAINER  &&  Auth::user()->role != ROLE_SUPERADMIN &&  Auth::user()->role != ROLE_ADMIN) {
                     $userAttendanceList = $this->training_attendance
                         ->where('status', 1)
                         ->where('emp_id', Auth::user()->employee_id)
@@ -803,14 +818,30 @@ class TrainingScheduleController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $training_schedule = $this->training_schedule->selectOne($id);
+                $approveexists = $this->training_schedule
+                    ->where('id', $id)
+                    ->where(function ($query) {
+                        $query->where('training_status', 1)
+                            ->orWhere('training_status', 4);
+                    })
+                    ->first();
                 $vp_detail = $this->user->select('id', 'role', 'name', 'employee_id', 'email')->where('role', 10)->first();
+                if ($approveexists) {
+                    $data = array(
+                        'training_schedule' => $training_schedule,
+                        'vp_detail' => $vp_detail,
+                    );
+                    return view('master.training_schedule.vpapproval', $data);
+                } else {
+                    $rejectedlog = $this->training_statuslog->where('training_schedule_id', $id)->where('training_status', 3)->get();
+                    $data = [
+                        'training_schedule' => $training_schedule,
+                        'rejectedlog' => $rejectedlog,
+                    ];
 
-                $data = array(
-                    'training_schedule' => $training_schedule,
-                    'vp_detail' => $vp_detail,
-                );
+                    return view('master.training_schedule.view', $data);
+                }
             }
-            return view('master.training_schedule.vpapproval', $data);
         } catch (Exception $ex) {
             dd($ex);
         }
@@ -894,7 +925,7 @@ class TrainingScheduleController extends Controller
                     $training =  $this->training_schedule->vpApproval($id, $training_status);
                     $statuslog =  $this->training_statuslog->storestatus($id, $training_status);
                     if ($training) {
-                        $trainingSchedule = $this->training_schedule->selectOne($training->id);
+                        $trainingSchedule = $this->training_schedule->selectOne($id);
                         $adminEmail = $this->user->select('email', 'name', 'id')->where('role', 2)->first();
                         if (!empty($adminEmail)) {
                             $mailsubject = 'Training Rejected by Vice President';
@@ -966,7 +997,7 @@ class TrainingScheduleController extends Controller
                 $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
                 $employeeList = Employee::select('id', 'emp_id', 'emp_name', 'email', 'department', 'employee_status')
                     ->where('id', '!=', $training_schedule->trainer_id)
-                    ->where('user_role', '!=', 1)
+                    ->where('user_role', '!=', 1)->where('user_role', '!=', 10)->where('user_role', '!=', 2)
                     ->where('status', 1)
                     ->get();
                 $nominationProcessList = $this->nomination_process->getNomination($training_schedule->id);
@@ -1043,9 +1074,9 @@ class TrainingScheduleController extends Controller
 
             $training = $this->training_schedule->updates($id);
             $training_status = TRAINING_RESCHEDULE_APPROVAL;
-            $statuslog =  $this->training_statuslog->storestatus($training->id, $training_status);
+            $statuslog =  $this->training_statuslog->storestatus($id, $training_status);
             if ($training) {
-                $trainingSchedule = $this->training_schedule->selectOne($training->id);
+                $trainingSchedule = $this->training_schedule->selectOne($id);
                 $vp_detail = $this->user->select('id', 'role', 'name', 'employee_id', 'email')->where('role', 10)->first();
 
                 if (!empty($trainingSchedule)) {
@@ -1095,7 +1126,7 @@ class TrainingScheduleController extends Controller
             Session::flash('success', 'Your data has been updated successfully');
             return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('training_schedule/list'));
         }
@@ -1358,6 +1389,62 @@ class TrainingScheduleController extends Controller
         }
     }
 
+    // public function certificateView(Request $request)
+    // {
+    //     try {
+    //         $id = decryptId($request->id);
+    //         $training_schedule = $this->training_schedule->selectOne($id);
+    //         $nominationProcessList = $this->nomination_process->getNomination($training_schedule->id);
+
+    //         $attendanceDate = $request->attendance_date;
+
+    //         $trainingAttendanceList = $this->training_attendance
+    //             ->where('status', 1)
+    //             ->where('training_schedule_id', $training_schedule->id)
+    //             ->when($attendanceDate, function ($query, $attendanceDate) {
+    //                 return $query->whereDate('attendance_date', DBdateformat($attendanceDate));
+    //             })
+    //             ->get();
+    //         $trainingAssessmentList = $this->training_assessment_feedback->getAssessmentList($training_schedule->id);
+    //         // Initialize an empty collection for training feedback
+    //         $trainingFeedbackList = collect();
+    //         foreach ($trainingAssessmentList as $assessment) {
+    //             $feedbackList = $this->training_feedback->getfeedbackList($assessment->id);
+    //             $trainingFeedbackList = $trainingFeedbackList->merge($feedbackList);
+    //         }
+    //         $rejectedlog = $this->training_statuslog->where('training_schedule_id', $training_schedule->id)->where('training_status', 3)->get();
+    //         $data = [
+    //              'training_Details' => $training_schedule,
+    //             'nominationProcessList' => $nominationProcessList,
+    //             'trainingAttendanceList' => $trainingAttendanceList,
+    //             'trainingAssessmentList' => $trainingAssessmentList,
+    //             'trainingFeedbackList' => $trainingFeedbackList,
+    //             'rejectedlog' => $rejectedlog,
+    //         ];
+
+    //         $property = [
+    //             'tempDir' => 'public/pdf/temp/',
+    //             'mode' => 'utf-8',
+    //             'margin_left' => 10,
+    //             'margin_right' => 10,
+    //             'margin_top' => 10,
+    //             'default_font' => 'arial',
+    //         ];
+
+    //         $mpdf = new \Mpdf\Mpdf($property);
+    //         $mpdf->setAutoTopMargin = 'stretch';
+
+    //         $view = view('master.training_schedule.certificate', $data);
+    //         $html = $view->render();
+
+    //         $mpdf->WriteHTML($html);
+    //         $filename = "Certificate.pdf";
+    //         $mpdf->Output($filename, 'D');
+    //     } catch (Exception $ex) {
+    //         report($ex);
+    //         return response()->json(['error' => 'Something went wrong while generating the PDF.']);
+    //     }
+    // }
     public function exportViewPdf(Request $request)
     {
         try {
@@ -1381,13 +1468,14 @@ class TrainingScheduleController extends Controller
                 $feedbackList = $this->training_feedback->getfeedbackList($assessment->id);
                 $trainingFeedbackList = $trainingFeedbackList->merge($feedbackList);
             }
-
+            $rejectedlog = $this->training_statuslog->where('training_schedule_id', $training_schedule->id)->where('training_status', 3)->get();
             $data = [
                 'training_schedule' => $training_schedule,
                 'nominationProcessList' => $nominationProcessList,
                 'trainingAttendanceList' => $trainingAttendanceList,
                 'trainingAssessmentList' => $trainingAssessmentList,
                 'trainingFeedbackList' => $trainingFeedbackList,
+                'rejectedlog' => $rejectedlog,
             ];
 
             $property = [

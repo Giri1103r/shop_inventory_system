@@ -180,21 +180,30 @@
                                                 </div>
                                                 <div class="mb-3 col-md-4 form-input">
                                                     <label class="form-label view_label">Training Status</label>
-                                                    @if ($training_schedule->training_status == 1 || $training_schedule->training_status == 2)
+                                                    @if (
+                                                        $training_schedule->training_status == 1 ||
+                                                            $training_schedule->training_status == 2 ||
+                                                            $training_schedule->training_status == 4 ||
+                                                            $training_schedule->training_status == 5)
                                                         <div class="view_data"
                                                             style="background-color: #FFA500; width: 40%;padding: 1px 9px; border: 1px solid #FFA500; color: black;">
                                                             Training Pending
                                                         </div> <!-- Orange -->
-                                                    @elseif ($training_schedule->training_status == 5)
+                                                    @elseif ($training_schedule->training_status == 8)
                                                         <div class="view_data"
                                                             style="background-color: #008000; width: 40%;padding: 1px 9px; border: 1px solid #008000; color: black;">
                                                             Training Completed
                                                         </div> <!-- Green -->
-                                                    @elseif ($training_schedule->training_status == 3 || $training_schedule->training_status == 4)
+                                                    @elseif ($training_schedule->training_status == 6 || $training_schedule->training_status == 7)
                                                         <div class="view_data"
                                                             style="background-color: #FFFF00; width: 40%;padding: 1px 9px; border: 1px solid #FFFF00; color: black;">
                                                             Training in Progress
                                                         </div> <!-- Yellow -->
+                                                    @elseif ($training_schedule->training_status == 3)
+                                                        <div class="view_data"
+                                                            style="background-color: #FFFF00; width: 40%;padding: 1px 9px; border: 1px solid #FFFF00; color: black;">
+                                                            Training Rejected
+                                                        </div> <!-- red -->
                                                     @endif
                                                 </div>
 
@@ -253,7 +262,7 @@
                                                                             {{ Displaydateformat($log->created_at) ?? '' }}
                                                                         </td>
                                                                         <td>
-                                                                            {{ isset($log->remark) ? $log->remark : '' }}
+                                                                            {{ isset($log->remarks) ? $log->remarks : '' }}
                                                                         </td>
                                                                     </tr>
                                                                 @endforeach
@@ -683,13 +692,14 @@
                                     </div>
 
                                 </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">Training Attendance</h4>
+                                @if (isset($userAttendanceList) && $userAttendanceList->isNotEmpty())
+
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">Training Attendance</h4>
+                                            </div>
                                         </div>
-                                    </div>
-                                    @if (isset($userAttendanceList) && $userAttendanceList->isNotEmpty())
                                         <div class="basic-form">
                                             <div class="row">
 
@@ -724,12 +734,9 @@
                                                 <hr>
                                             </div>
                                         </div>
-                                    @else
-                                        <p>No training attendance data available.</p>
-                                    @endif
-                                </div>
+                                    </div>
+                                @endif
                             @endif
-
                         </div>
                     </div>
                 </div>

@@ -227,21 +227,28 @@
                     <b>Training Status</b>
                 </td>
                 <td width="2%" style="padding:5px;">:</td>
-                @if ($training_schedule->training_status == 1 || $training_schedule->training_status == 2)
+                @if ($training_schedule->training_status == 1 ||
+                $training_schedule->training_status == 2 ||
+                $training_schedule->training_status == 4 ||
+                $training_schedule->training_status == 5)
                     <td width="58%">
                         Training Pending
                     </td>
-                @elseif ($training_schedule->training_status == 5)
+                @elseif ($training_schedule->training_status == 8)
                     <td width="58%">
                         Training Completed
                     </td>
-                @elseif ($training_schedule->training_status == 3 || $training_schedule->training_status == 4)
+                @elseif ($training_schedule->training_status == 6 || $training_schedule->training_status == 7)
                     <td width="58%">
                         Training in Progress
                     </td>
+                @elseif ($training_schedule->training_status == 3)
+                    <td width="58%">
+                        Training Rejected
+                    </td>
                 @endif
             </tr>
-    
+
             <tr>
                 <td width="40%" style="padding:5px;text-transform: uppercase;">
                     <b>Created By</b>
@@ -259,6 +266,75 @@
                     {{ displayDateformat($training_schedule->created_at) }}</td>
             </tr>
         </table>
+        @if (isset($rejectedlog) && $rejectedlog->isNotEmpty())
+            <div style="width:100%;">
+                <table style="width:100%;">
+                    <tr>
+                        <td
+                            style="width:100%;background-color: #ce0f1f;color:#ffffff;font-weight:bold;padding: 10px 10px 10px;">
+                            Training Rejection Log List
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <table class="table_card" style="margin-top: 20px;">
+                <thead>
+                    <tr>
+                        <th class="form-label">Date</th>
+                        <th class="form-label">Remark</th>
+                    </tr>
+                </thead>
+                <tbody id="lesson_learned_block">
+                    @foreach ($rejectedlog as $log)
+                        <tr class="lesson_learned_row">
+
+                            <td>
+                                {{ Displaydateformat($log->created_at) ?? '' }}
+                            </td>
+                            <td>
+                                {{ isset($log->remarks) ? $log->remarks : '' }}
+                            </td>
+
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td
+                        style="width:100%;background-color: #ce0f1f;color:#ffffff;font-weight:bold;padding: 10px 10px 10px;">
+                        Vise President Approval
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <table width="100%" style="width:100%;">
+            <tr>
+                <td width="40%" style="padding:5px;text-transform: uppercase;"><b>Approver Name</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="58%" style="padding:5px;">
+                    {{ $training_schedule->approver_name }}</td>
+            </tr>
+            <tr>
+                <td width="40%" style="padding:5px;text-transform: uppercase;"><b>Date</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="58%" style="padding:5px;">
+                    {{ Displaydateformat($training_schedule->date) }}</td>
+            </tr>
+            <tr>
+                <td width="40%" style="padding:5px;text-transform: uppercase;">
+                    <b>Remark</b>
+                </td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="58%" style="padding:5px;">
+                    {{ isset($training_schedule->remark) ? $training_schedule->remark : '' }}</td>
+            </tr>
+        </table>
+
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -411,7 +487,7 @@
                 <tr>
                     <td
                         style="width:100%;background-color: #ce0f1f;color:#ffffff;font-weight:bold;padding: 10px 10px 10px;">
-                        Training Feedback
+                        Training Feedback By Trainees
                     </td>
                 </tr>
             </table>
