@@ -58,68 +58,9 @@
 
 @push('script')
     <!--calender-->
-    {{-- <script src="{{ public_plugins('fullcalendar/locales-all.min.js') }}"></script> --}}
     <script src="{{ public_plugins('fullcalendar/main.min.js') }}"></script>
 
     <script>
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     const calendarEl = document.getElementById('calendar');
-
-        //     const calendar = new FullCalendar.Calendar(calendarEl, {
-        //         initialView: 'dayGridMonth',
-        //         headerToolbar: {
-        //             left: 'prev,next today',
-        //             center: 'title',
-        //             right: 'dayGridMonth,timeGridWeek,timeGridDay',
-        //         },
-        //         editable: false,
-        //         events: {
-        //             url: '{{ url('training_calendar/fetch/schedule') }}',
-        //             method: 'GET',
-        //             extraParams: function() {
-        //                 return {
-        //                     topic_id: $('#topic_id').val(),
-        //                     trainer_id: $('#trainer_id').val(),
-        //                 };
-        //             },
-        //             failure: function() {
-        //                 alert('Failed to fetch events!');
-        //             }
-        //         },
-        //         eventDidMount: function(info) {
-        //             const tooltip = document.createElement('div');
-        //             tooltip.classList.add('custom-tooltip');
-        //             tooltip.innerHTML = `
-    //     <b>Trainer:</b> ${info.event.extendedProps.trainer_name || 'N/A'}<br>
-    //     <b>Venue:</b> ${info.event.extendedProps.venue_name || 'N/A'}`;
-        //             info.el.style.position = 'relative';
-        //             info.el.appendChild(tooltip);
-
-        //             info.el.addEventListener('mouseenter', function() {
-        //                 tooltip.style.display = 'block';
-        //             });
-        //             info.el.addEventListener('mouseleave', function() {
-        //                 tooltip.style.display = 'none';
-        //             });
-        //         },
-        //         eventClick: function(info) {
-        //             const editUrl = `{{ url('training_schedule/view/') }}/${info.event.id}`;
-        //             window.location.href = editUrl;
-        //         },
-
-        //     });
-
-        //     calendar.render();
-
-        //     $(document).on('click', '#searchform', function() {
-        //         calendar.refetchEvents();
-        //     });
-
-        //     $(document).on('click', '#resetform', function() {
-        //         $('#formsearch .single-select').val('').trigger('change');
-        //         calendar.refetchEvents();
-        //     });
-        // });
         document.addEventListener('DOMContentLoaded', function() {
             const calendarEl = document.getElementById('calendar');
 
@@ -131,6 +72,9 @@
                     right: 'dayGridMonth,timeGridWeek,timeGridDay',
                 },
                 editable: false,
+                eventOverlap: true,
+                slotEventOverlap: false,
+                eventDisplay: 'block',
                 events: {
                     url: '{{ url('training_calendar/fetch/schedule') }}',
                     method: 'GET',
@@ -149,15 +93,15 @@
 
                     if (status == "1" || status == "2" || status == "4" || status == "5") {
                         info.el.style.backgroundColor = '#FFA500'; // before start
-                        info.el.style.borderColor = '#FFA500'; 
+                        info.el.style.borderColor = '#FFA500';
                     } else if (status == "8") {
-                        info.el.style.backgroundColor = 'rgb(57 190 57)'; 
+                        info.el.style.backgroundColor = 'rgb(57 190 57)';
                         info.el.style.borderColor = 'rgb(57 190 57)'; // completed
                     } else if (status == "6" || status == "7") {
-                        info.el.style.backgroundColor = '#FFFF00'; 
+                        info.el.style.backgroundColor = '#FFFF00';
                         info.el.style.borderColor = '#FFFF00'; // in Progress
                     } else if (status == "3") {
-                        info.el.style.backgroundColor = '#e21e23'; 
+                        info.el.style.backgroundColor = '#e21e23';
                         info.el.style.borderColor = '#e21e23'; // rejected
                     }
 
@@ -194,6 +138,8 @@
                 $('#formsearch .single-select').val('').trigger('change');
                 calendar.refetchEvents();
             });
+
+
         });
     </script>
 @endpush
