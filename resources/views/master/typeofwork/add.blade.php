@@ -521,13 +521,13 @@
                         work_name: {
                             required: "{{ __('Name is Required') }}",
                             minlength: "{{ __('common.validate_min_length') }}",
-                            maxlength: "Maximum Characters should not exceed 50",
+                            maxlength: "Maximum Characters should not exceed 100",
                             remote: "{{ __('Name should be unique') }}",
                         },
                         description: {
                             required: "{{ __('Description is Required') }}",
                             minlength: "{{ __('common.validate_min_length') }}",
-                            maxlength: "Maximum Characters should not exceed 50",
+                            maxlength: "Maximum Characters should not exceed 100",
                             regex: "PPE Name should be alphanumeric and can include -, _, ', \", (, ).,:,;",
                         },
                         typeofwork_upload: {
