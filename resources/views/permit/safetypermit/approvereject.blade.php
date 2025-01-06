@@ -720,6 +720,21 @@
                                                     @enderror
                                                 </div>
                                             </div>
+                                            <div id="file-upload-container" class="row">
+                                                <div class="col-12 mb-3">
+                                                    <button class="btn btn-primary addmorebutton" type="button" id="dynamic-add-more">
+                                                        Add
+                                                    </button>
+                                                </div>
+                                                <div class="col-md-4 mb-3 file-upload-block" id="file-upload-0">
+                                                    <label for="site_image_0" class="form-label require">Site Image</label>
+                                                    <input type="file" class="form-control validate-file-accept validate-file-required"
+                                                           name="site_images[0][]" id="site_image_0" multiple>
+                                                    <div class="text-danger"></div>
+                                                    <small>Allowed file types: png, jpeg , jpg</small>
+                                                </div>
+                                            </div>
+
                                         </div>
                                     </div>
                                     <hr>
@@ -755,6 +770,19 @@
                                     <label class="form-label view_label">{{ __('Additional suggestion') }}</label>
                                     <div class="view_data">
                                         {{ isset($getEhSverification->remarks) ? $getEhSverification->remarks : '' }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-6 form-input">
+                                    <label class="form-label ">{{ __('Signature') }}</label>
+                                    <div>
+                                        <div>
+
+                                            @foreach(explode(',', $getEhSverification->file_paths) as $file_path)
+                                                <a href="{{ asset($file_path) }}" target="_blank">
+                                                    <img src="{{ asset($file_path) }}" alt="Signature" style="max-width: 30%;">
+                                                </a>
+                                            @endforeach
+                                        </div>
                                     </div>
                                 </div>
 
@@ -977,7 +1005,8 @@
                                             </div>
                                         @elseif($safetypermit['permit_status'] == STATUS_EHS_RESUME)
                                             <div class="d-flex float-end gap-2 mx-auto">
-
+                                                <button type="submit" name="hold" value="hold"
+                                                class="btn btn-info w-100">Hold</button>
                                                 <button type="submit" name="decline" value="decline"
                                                     class="btn btn-danger w-100">Decline</button>
 
@@ -1174,247 +1203,237 @@
 @stop
 
 @push('script')
-    <script>
-       
-        $(document).ready(function() {
-            $('#ehs_verification').validate({
+<script>
+    $(document).ready(function () {
+        // Maximum number of uploads allowed
+        const maxUploads = 5;
+
+        // Add more file upload blocks dynamically
+        $('#dynamic-add-more').on('click', function () {
+            let currentFileUploads = $('.file-upload-block').length;
+
+            if (currentFileUploads >= maxUploads) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Sorry!',
+                    text: 'Maximum 5 records only.',
+                });
+                return;
+            }
+
+            // Create new file upload block HTML
+            let newFileUploadBlock = `
+                <div class="col-md-4 mb-3 file-upload-block">
+                    <label for="site_image_${currentFileUploads}" class="form-label require">Site Image</label>
+                    <input type="file" class="form-control validate-file-accept validate-file-required"
+                        name="site_images[${currentFileUploads}][]"
+                        id="site_image_${currentFileUploads}"
+                        multiple data-error="Please upload with a valid file type">
+                    <div class="text-danger"></div>
+                    <small>Allowed file types: png, jpeg , jpg</small>
+                    <button type="button" class="btn btn-danger btn-sm remove-upload-block">
+                 <i class="fas fa-trash"></i>
+                </button>
+                        </div>
+                    `;
+
+            // Append the new file upload block to the container
+            $('#file-upload-container').append(newFileUploadBlock);
+            $(document).on('click', '.remove-upload-block', function() {
+                 $(this).closest('.file-upload-block').remove();
+            });
+            // Revalidate the newly added file input
+            $('#ehs_verification').validate().element(`#site_image_${currentFileUploads}`);
+        });
+
+        // Initialize form validation
+        $('#ehs_verification').validate({
+            rules: {
+                ehs_verification_remarks: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 600,
+                },
+
+            },
+            messages: {
+                ehs_verification_remarks: {
+                    required: "Remarks cannot be empty.",
+                    minlength: "Remarks must contain between 3 and 600 characters.",
+                    maxlength: "Remarks must contain between 3 and 600 characters.",
+                },
+
+            },
+            errorElement: 'div',
+            errorPlacement: function (error, element) {
+                var errorDiv = element.siblings('div.text-danger');
+                errorDiv.html(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            },
+            submitHandler: function (form) {
+                $('#submit').prop('disabled', true);
+                form.submit();
+            },
+            invalidHandler: function (event, validator) {
+                var errors = validator.numberOfInvalids();
+                console.log(errors + " field(s) are invalid");
+                validator.errorList.forEach(function (error) {
+                    console.log("Field: " + error.element.name + ", Error: " + error.message);
+                });
+            }
+        });
+
+        // Dynamic validation for newly added site image inputs
+        $('form').on('change', '.validate-file-siteImage', function () {
+            $(this).valid();
+        });
+
+        // Additional validation logic for other sections
+        $.validator.addMethod("regex", function (value, element, regexp) {
+            return this.optional(element) || regexp.test(value);
+        }, "Please check your input.");
+
+        $('#reasigned').on('change', function () {
+            if ($(this).is(':checked')) {
+                $('.reassign-div').show();
+                $('#ehs_approval').validate().element('#reassign_to');
+            } else {
+                $('.reassign-div').hide();
+            }
+        });
+
+        $('.reassign-btn').on('click', function (e) {
+            if (!$('#reasigned').is(':checked')) {
+                $('#reasigned-error').show();
+                e.preventDefault();
+            } else {
+                $('#reasigned-error').hide();
+            }
+        });
+
+        $('#ehs_approval').validate({
+            rules: {
+                ehs_approval_remarks: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 600,
+                },
+                reassign_to: {
+                    required: function () {
+                        return $('#reasigned').is(':checked');
+                    }
+                }
+            },
+            messages: {
+                ehs_approval_remarks: {
+                    required: "Remarks cannot be empty.",
+                    minlength: "Remarks must contain between 3 and 600 characters.",
+                    maxlength: "Remarks must contain between 3 and 600 characters.",
+                },
+                reassign_to: {
+                    required: "Please select a person to reassign.",
+                }
+            },
+            errorElement: 'div',
+            errorPlacement: function (error, element) {
+                var errorDiv = element.siblings('div.text-danger');
+                errorDiv.html(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            },
+            submitHandler: function (form) {
+                $('#submit').prop('disabled', true);
+                form.submit();
+            },
+            invalidHandler: function (event, validator) {
+                var errors = validator.numberOfInvalids();
+                console.log(errors + " field(s) are invalid");
+                validator.errorList.forEach(function (error) {
+                    console.log("Field: " + error.element.name + ", Error: " + error.message);
+                });
+            }
+        });
+
+        // Initialize select2 for reassign_to
+        $('#reassign_to').select2({
+            ajax: {
+                url: '{{ admin_url('safetypermit/reassignemployeename') }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        search: params.term,
+                        unitId: $('#unit_id').val()
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: $.map(data, function (item) {
+                            return {
+                                id: item.id,
+                                text: item.text
+                            };
+                        })
+                    };
+                }
+            },
+            minimumInputLength: 1,
+            dropdownCssClass: 'form-control',
+            selectionCssClass: 'form-control',
+            width: '100%'
+        });
+
+        // Validation for other sections
+        $('#planthead_approval, #extension_approval').each(function () {
+            $(this).validate({
                 rules: {
-                    ehs_verification_remarks: {
+                    remarks: {
                         required: true,
                         minlength: 3,
                         maxlength: 600,
-
-                    },
-                },
-                messages: {
-
-                    ehs_verification_remarks: {
-                        required: " Remarks cannot be empty.",
-                        minlength: "Remarks  must contain between 3 and 600 characters.",
-                        maxlength: "Remarks must contain between 3 and 600 characters.",
-
-                    },
-
-                },
-                errorElement: 'div',
-                errorPlacement: function(error, element) {
-                    var errorDiv = element.siblings('div.text-danger');
-                    errorDiv.html(error);
-                },
-                highlight: function(element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                },
-                submitHandler: function(form) {
-                    $('#submit').prop('disabled', true);
-                    form.submit();
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                    console.log(errors + " field(s) are invalid");
-                    validator.errorList.forEach(function(error) {
-                        console.log("Field: " + error.element.name + ", Error: " + error
-                            .message);
-                    });
-                }
-            });
-
-            $.validator.addMethod("regex", function(value, element, regexp) {
-                return this.optional(element) || regexp.test(value);
-            }, "Please check your input.");
-
-            $('#reasigned').on('change', function() {
-                if ($(this).is(':checked')) {
-                    $('.reassign-div').show();
-                    $('#ehs_approval').validate().element('#reassign_to');
-                } else {
-                    $('.reassign-div').hide();
-                }
-            });
-
-            $('.reassign-btn').on('click', function(e) {
-            
-                if (!$('#reasigned').is(':checked')) {
-                    $('#reasigned-error').show(); 
-                    e.preventDefault(); 
-                } else {
-                    $('#reasigned-error').hide(); 
-                }
-            });
-
-
-
-            $('#ehs_approval').validate({
-                rules: {
-                    ehs_approval_remarks: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 600,
-
-                    },
-                    // reasigned: {
-                    //     required: true,
-                    // },
-                    reassign_to: {
-                        required: function() {
-                            return $('#reasigned').is(':checked');
-                        }
                     }
                 },
                 messages: {
-                    ehs_approval_remarks: {
+                    remarks: {
                         required: "Remarks cannot be empty.",
                         minlength: "Remarks must contain between 3 and 600 characters.",
                         maxlength: "Remarks must contain between 3 and 600 characters.",
-
-                    },
-                    // reasigned: {
-                    //     required: "Please check the 'Re-Assign' checkbox.",
-                    // },
-                    reassign_to: {
-                        required: "Please select a person to reassign.",
                     }
                 },
                 errorElement: 'div',
-                errorPlacement: function(error, element) {
+                errorPlacement: function (error, element) {
                     var errorDiv = element.siblings('div.text-danger');
                     errorDiv.html(error);
                 },
-                highlight: function(element, errorClass, validClass) {
+                highlight: function (element, errorClass, validClass) {
                     $(element).addClass('is-invalid');
                 },
-                unhighlight: function(element, errorClass, validClass) {
+                unhighlight: function (element, errorClass, validClass) {
                     $(element).removeClass('is-invalid');
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     $('#submit').prop('disabled', true);
                     form.submit();
                 },
-                invalidHandler: function(event, validator) {
+                invalidHandler: function (event, validator) {
                     var errors = validator.numberOfInvalids();
                     console.log(errors + " field(s) are invalid");
-                    validator.errorList.forEach(function(error) {
-                        console.log("Field: " + error.element.name + ", Error: " + error
-                            .message);
-                    });
-                }
-            });
-            $('#reassign_to').select2({
-    ajax: {
-        url: '{{ admin_url('safetypermit/reassignemployeename') }}',
-        dataType: 'json',
-        delay: 250,
-        data: function(params) {
-            return {
-                search: params.term,
-                unitId: $('#unit_id').val()
-            };
-        },
-        processResults: function(data) {
-            return {
-                results: $.map(data, function(item) {
-                    return {
-                        id: item.id,
-                        text: item.text
-                    };
-                })
-            };
-        }
-    },
-    minimumInputLength: 1,
-    dropdownCssClass: 'form-control',
-    selectionCssClass: 'form-control',
-    width: '100%'
-});
-
-
-
-            $('#planthead_approval').validate({
-                rules: {
-                    planthead_approval_remarks: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 600,
-
-                    },
-                },
-                messages: {
-
-                    planthead_approval_remarks: {
-                        required: " Remarks cannot be empty.",
-                        minlength: "Remarks  must contain between 3 and 600 characters.",
-                        maxlength: "Remarks must contain between 3 and 600 characters.",
-
-                    },
-                },
-                errorElement: 'div',
-                errorPlacement: function(error, element) {
-                    var errorDiv = element.siblings('div.text-danger');
-                    errorDiv.html(error);
-                },
-                highlight: function(element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                },
-                submitHandler: function(form) {
-                    $('#submit').prop('disabled', true);
-                    form.submit();
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                    console.log(errors + " field(s) are invalid");
-                    validator.errorList.forEach(function(error) {
-                        console.log("Field: " + error.element.name + ", Error: " + error
-                            .message);
-                    });
-                }
-            });
-            $('#extension_approval').validate({
-                rules: {
-                    extension_aproval_remarks: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 600,
-
-                    },
-                },
-                messages: {
-
-                    extension_aproval_remarks: {
-                        required: " Remarks cannot be empty.",
-                        minlength: "Remarks  must contain between 3 and 600 characters.",
-                        maxlength: "Remarks must contain between 3 and 600 characters.",
-
-                    },
-                },
-                errorElement: 'div',
-                errorPlacement: function(error, element) {
-                    var errorDiv = element.siblings('div.text-danger');
-                    errorDiv.html(error);
-                },
-                highlight: function(element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                },
-                submitHandler: function(form) {
-                    $('#submit').prop('disabled', true);
-                    form.submit();
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                    console.log(errors + " field(s) are invalid");
-                    validator.errorList.forEach(function(error) {
-                        console.log("Field: " + error.element.name + ", Error: " + error
-                            .message);
+                    validator.errorList.forEach(function (error) {
+                        console.log("Field: " + error.element.name + ", Error: " + error.message);
                     });
                 }
             });
         });
-    </script>
+    });
+</script>
 @endpush
+

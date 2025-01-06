@@ -513,7 +513,7 @@ $.validator.addMethod("talpnum", function (value, element) {
 // Add a custom jQuery validation rule for file input with accepted file types
 $.validator.addMethod("validateFileType", function (value, element) {
     // Get the accepted file types from the options
-    params = ".jpeg,.jpg,.png,.doc,.docx,.pdf,.xls,.xlsx,.ppt,.pptx";
+    params = ".jpeg,.jpg,.png";
     var acceptedTypes = params.split(',');
     // Get the file extension of the selected file
     var fileExtension = value.split('.').pop().toLowerCase();
@@ -521,7 +521,7 @@ $.validator.addMethod("validateFileType", function (value, element) {
     return $.inArray('.' + fileExtension, acceptedTypes) !== -1;
 }, function (params, element) {
     // Generate custom error message
-    return "Please select a file with a valid file type.";
+    return "Please select a file with .jpeg,.jpg,.png";
 });
 
 // Add the custom class rule for file input with required validation

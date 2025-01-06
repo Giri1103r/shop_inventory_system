@@ -352,7 +352,6 @@
                                                             <input type="hidden"
                                                                 name="confined_space_entry[confined_attendant]"
                                                                 value="0">
-                                                            <input type="checkbox">
                                                             <input type="checkbox"
                                                                 name="confined_space_entry[confined_attendant]"
                                                                 value="1">
@@ -1074,20 +1073,47 @@
             minuteIncrement: 5,
         });
 
-        flatpickr("#from_PPMTime", {
+        const fromTimePicker = flatpickr("#from_PPMTime", {
             enableTime: true,
             noCalendar: true,
-            time_24hr: true,
-            minuteIncrement: 5,
             dateFormat: "H:i",
+            onChange: function(selectedDates, dateStr, instance) {
+
+                const fromTimeValue = selectedDates[0];
+                if (fromTimeValue) {
+                    endTimePicker.set('disable', [
+                        function(date) {
+                            return date.getHours() === fromTimeValue.getHours() && date.getMinutes() ===
+                                fromTimeValue.getMinutes();
+                        }
+                    ]);
+                }
+            }
         });
 
-        flatpickr("#to_PPMTime", {
+        const endTimePicker = flatpickr("#to_PPMTime", {
             enableTime: true,
             noCalendar: true,
-            time_24hr: true,
-            minuteIncrement: 5,
             dateFormat: "H:i",
+            minTime: "00:00",
+            onChange: function(selectedDates, dateStr, instance) {
+
+                const fromTimeValue = fromTimePicker.selectedDates[0];
+                if (fromTimeValue && selectedDates[0] <= fromTimeValue) {
+
+                    endTimePicker.setDate(fromTimeValue, true);
+                }
+            }
+        });
+
+
+
+        fromTimePicker.config.onChange.push(function(selectedDates, dateStr, instance) {
+            const fromTimeValue = selectedDates[0];
+            if (fromTimeValue) {
+
+                endTimePicker.set("minTime", dateStr);
+            }
         });
 
         const fromPicker = flatpickr("#time_from", {
@@ -1096,10 +1122,14 @@
             time_24hr: true,
             minuteIncrement: 5,
             dateFormat: "H:i",
+            minDate: new Date(),
             onChange: function(selectedDates, dateStr, instance) {
                 if (selectedDates.length > 0) {
                     let fromTime = selectedDates[0];
+
+
                     let toTime = new Date(fromTime.getTime() + 8 * 60 * 60 * 1000);
+
 
                     let hours = String(toTime.getHours()).padStart(2, '0');
                     let minutes = String(toTime.getMinutes()).padStart(2, '0');
