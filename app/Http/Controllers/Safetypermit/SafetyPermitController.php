@@ -125,9 +125,19 @@ class SafetyPermitController extends Controller
                             <i class="fa-solid fa-check-to-slot text-success"></i>
                         </a>';
                             }
-                            if ((($row->permit_status = STATUS_EHS_APPROVE_PENDING && $row->permit_status != STATUS_PLANT_HEAD_APPROVED )  || ($row->permit_status != STATUS_PERMIT_EXPIRED && $row->permit_status != STATUS_PLANT_HEAD_APPROVED && $row->permit_status != STATUS_EHS_DECLINE)  || ($row->permit_status == STATUS_PERMIT_EXTENDED_REJECTED))&& ($row->created_by == Auth::id())) {
-                                $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '" class="permitExtension" title="' . __('Permit Extension') . '"><i class="fa fa-external-link"></i> ';
+                            if (!(
+                                $row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||
+                                $row->permit_status == STATUS_EHS_DECLINE ||
+                                $row->permit_status == STATUS_PLANT_HEAD_APPROVED ||
+                                $row->permit_status == STATUS_PERMIT_EXPIRED ||
+                                $row->permit_status == STATUS_PERMIT_EXTENDED_REJECTED
+                            )) {
+                                $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '" class="permitExtension" title="' . __('Permit Extension') . '"><i class="fa fa-external-link"></i></a>';
                             }
+
+
+
+
 
                             $btn .= '<a href="' . admin_url('safetypermit/view/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="' . __('common.view') . '">
                             <i class="fa-solid fa-eye"></i>
@@ -268,8 +278,12 @@ class SafetyPermitController extends Controller
                 $mailsubject = 'Safety Permit has been submitted';
                 $user_role = ROLE_EHS_OFFICER;
 
-                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $safetypermit->unit_id)->pluck('id')->toArray();
-                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $safetypermit->unit_id)->get();
+                // $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $safetypermit->unit_id)->pluck('id')->toArray();
+                // $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $safetypermit->unit_id)->get();
+
+                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+
 
                 if (count($users) > 0) {
 
@@ -484,8 +498,11 @@ class SafetyPermitController extends Controller
             $mailsubject = 'Safety Permit has been submitted';
             $user_role = ROLE_EHS_OFFICER;
 
-            $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $safetypermit->unit_id)->pluck('id')->toArray();
-            $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $safetypermit->unit_id)->get();
+            // $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $safetypermit->unit_id)->pluck('id')->toArray();
+            // $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $safetypermit->unit_id)->get();
+
+            $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
+            $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
 
             if (count($users) > 0) {
 
@@ -564,6 +581,7 @@ class SafetyPermitController extends Controller
                 $getplantheadapproval =   $this->approvereject->getplantheadapproval($id);
                 $getsafetyPermitExtension =   $this->safetyPermitExtension->permitextensionelectOne($id);
                 $getpermitextensionapproval =   $this->approvereject->getpermitextensionapproval($id);
+
                 $data = array(
                     'safetypermit' => $safetypermit,
                     'stateIsolationLoto' => $stateIsolationLoto,
@@ -574,16 +592,30 @@ class SafetyPermitController extends Controller
                     'getplantheadapproval' => $getplantheadapproval,
                     'getsafetyPermitExtension' => $getsafetyPermitExtension,
                     'getpermitextensionapproval' => $getpermitextensionapproval,
-
                 );
             }
+
+            // $user=$safetypermit->created_by;
+            // $unitID = User::where('id', $user)->pluck('unit_id')->first();
+
+            // if (CheckUserRole(ROLE_EHS_OFFICER)) {
+
+            //     if ($unitID != Auth::user()->unit_id) {
+            //         Session::flash('error', 'This permit belongs to another unit');
+            //         return redirect('safetypermit/list');
+            //     }
+            // }
+
+
             return view('permit.safetypermit.approvereject', $data);
+
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong Please try again after some time');
+            Session::flash('error', 'Something went wrong. Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
         }
     }
+
     public function ehsverification(Request $request)
     {
 
@@ -596,9 +628,12 @@ class SafetyPermitController extends Controller
                 $permit_status = STATUS_EHS_APPROVE_PENDING;
             }
 
+
+
             $approve =   $this->approvereject->ehsverification($permit_status);
             $this->safetypermit->verifiedby($approve->created_by, $id);
             $this->safetypermit->permitstatus($permit_status, $id);
+
 
             $mailsubject = 'EHS Verified';
             $Assignedusers = User::where('id', $approve->created_by)
@@ -690,7 +725,6 @@ class SafetyPermitController extends Controller
                 $permit_status = STATUS_PLANT_HEAD_PENDING;
             }
 
-
             $approve =   $this->approvereject->ehsapproval($permit_status);
             if ($request->has('reassign')) {
                 $this->safetypermit->reassignto($request->reassign_to, $id);
@@ -699,11 +733,10 @@ class SafetyPermitController extends Controller
             }
             $this->safetypermit->permitstatus($permit_status, $id);
 
-
             if ($request->has('hold')) {
 
                 $mailsubject = 'EHS Holded the permit';
-                $Assignedusers = User::whereIn('id', [$safetypermit->resume_hold_by, $safetypermit->created_by])
+                $Assignedusers = User::whereIn('id', [$approve->created_by, $safetypermit->created_by])
                     ->select('name', 'email')
                     ->get()
                     ->unique('email');
@@ -749,7 +782,7 @@ class SafetyPermitController extends Controller
                 notificationSave($notificationData);
             } elseif ($request->has('resume')) {
                 $mailsubject = 'EHS Resumed the permit';
-                $Assignedusers = User::whereIn('id', [$safetypermit->resume_hold_by, $safetypermit->created_by])
+                $Assignedusers = User::whereIn('id', [$approve->created_by, $safetypermit->created_by])
                     ->select('name', 'email')
                     ->get()
                     ->unique('email');
@@ -1241,9 +1274,9 @@ class SafetyPermitController extends Controller
     {
         $name = $request->input('search');
         $unitId = $request->input('unitId');
+
         $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
             ->where('status', 1)
-            ->where('unit', $unitId)
             ->whereRaw("FIND_IN_SET(?, user_role)", [3])
             ->where('login_id', '!=', Auth::id())
             ->limit(10)

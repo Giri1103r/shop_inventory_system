@@ -27,11 +27,12 @@ use App\Models\Permit\SafetyPermit;
 use App\Models\Master\PpeExemption;
 use App\Mail\EmployeeRegisterEmail;
 use App\Mail\PermitExpiryEmail;
-
+use App\Mail\SafetyPermitEmail;
 use App\Models\Permit\Statuslog;
 
 
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
 class CronController extends Controller
 {
@@ -286,12 +287,12 @@ class CronController extends Controller
         }
     }
 
-    public function ExpireExemption(){
-        try{
-            $status=$this->ppeexemption->getExpirestatus();
+    public function ExpireExemption()
+    {
+        try {
+            $status = $this->ppeexemption->getExpirestatus();
             return response()->json(['message' => 'Data saved successfully.']);
-        }catch(Exception $ex)
-        {
+        } catch (Exception $ex) {
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
@@ -422,21 +423,25 @@ class CronController extends Controller
     public function permitExpiry()
     {
         try {
-
             $currentTime = Carbon::now()->format('H:i:s');
             $permits = SafetyPermit::where('trash', 'NO')
-                ->where('permit_status', '!=', STATUS_PLANT_HEAD_APPROVED)
-                ->whereDate('date', Carbon::today())
-                ->where('time_to', '<', $currentTime)
-                ->get();
+            ->where('permit_status', '!=', STATUS_PLANT_HEAD_APPROVED)
+            ->where('permit_status', '!=', STATUS_PERMIT_EXPIRED) // Avoid already updated permits
+            ->whereDate('date', Carbon::today())
+            ->where('time_to', '<', $currentTime)
+            ->get();
+
+            Log::info("Fetched permits for expiry", ['count' => $permits->count(), 'permit_ids' => $permits->pluck('id')]);
 
             if ($permits->isNotEmpty()) {
                 foreach ($permits as $permit) {
+                    // Update permit status
+                    Log::info("Processing permit", ['permit_id' => $permit->id]);
                     $permit->permit_status = STATUS_PERMIT_EXPIRED;
                     $permit->save();
 
-
-                    $insert_array = array(
+                    // Add status log
+                    $insert_array = [
                         'permit_type' => 1,
                         'permit_id' => $permit->id,
                         'from_status' => $permit->permit_status,
@@ -444,8 +449,45 @@ class CronController extends Controller
                         'is_reject' => null,
                         'remarks' => 'Permit Expired',
                         'approved_by' => null,
-                    );
+                    ];
                     $this->statuslog->create($insert_array);
+
+                    // Fetch assigned user
+                    $assignedUser = User::where('id', $permit->created_by)
+                        ->select('name', 'email')
+                        ->first();
+
+                    if ($assignedUser && $assignedUser->email) {
+                        $mailsubject = 'Permit is Expired';
+                        $safetypermitdetails = $this->safetypermit->selectmail($permit->id);
+
+                        $permitrray = $safetypermitdetails->toArray();
+                        $permitrray['name'] = $assignedUser->name;
+                        $permitrray['email_id'] = $assignedUser->email;
+                        $permitrray['mail_subject'] = $mailsubject;
+
+                        Mail::to($permitrray['email_id'])->queue(new SafetyPermitEmail($permitrray));
+                        Log::info("Email queued", ['email' => $assignedUser->email, 'permit_id' => $permit->id]);
+                    }
+
+                    // Send notification
+                    $UserId = User::where('id', $permit->created_by)->pluck('id')->toArray();
+                    $notificationData = [
+                        'notification_type' => 3,
+                        'module_type' => 1,
+                        'notification_message' => $mailsubject,
+                        'mobile_notification' => json_encode([
+                            'title' => $mailsubject,
+                            'message' => 'Safety Permit is expired',
+                            'icon' => admin_url('public/assets/icons/permit_to_work.png'),
+                            'module' => 1,
+                        ]),
+                        'web_link' => admin_url('safetypermit/view/' . encryptId($permit->id)),
+                        'assigned_user' => array_to_string($UserId),
+                        'created_by' => Auth::id(),
+                    ];
+                    notificationSave($notificationData);
+                    Log::info("Notification sent", ['permit_id' => $permit->id]);
                 }
 
                 Log::info('Expired permits updated successfully.', ['count' => $permits->count()]);
@@ -459,6 +501,7 @@ class CronController extends Controller
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
+
 
 
     public function permitClose()
@@ -498,6 +541,24 @@ class CronController extends Controller
                     $permitrray['extension_link'] = $extensionLink;
 
                     Mail::to($permitrray['email_id'])->queue(new PermitExpiryEmail($permitrray));
+
+                    $UserId = User::where('id', $permit->created_by)->pluck('id')->toArray();
+
+                    $notificationData = array(
+                        'notification_type' => 3,
+                        'module_type' => 1,
+                        'notification_message' => $mailsubject,
+                        'mobile_notification' => json_encode(array(
+                            'title' => $mailsubject,
+                            'message' => 'Permit is going to expire in 30 minutes',
+                            'icon' => admin_url('public/assets/icons/permit_to_work.png'),
+                            'module' => 1,
+                        )),
+                        'web_link' =>  admin_url('safetypermit/view/' . encryptId($permit->id)),
+                        'assigned_user' => array_to_string($UserId),
+                        'created_by' => Auth::id(),
+                    );
+                    notificationSave($notificationData);
 
                     Log::info("Permit expiry email sent.", [
                         'email' => $assignedUser->email,

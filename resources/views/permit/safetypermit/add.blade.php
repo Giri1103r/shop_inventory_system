@@ -1074,20 +1074,47 @@
             minuteIncrement: 5,
         });
 
-        flatpickr("#from_PPMTime", {
+        const fromTimePicker = flatpickr("#from_PPMTime", {
             enableTime: true,
             noCalendar: true,
-            time_24hr: true,
-            minuteIncrement: 5,
             dateFormat: "H:i",
+            onChange: function(selectedDates, dateStr, instance) {
+
+                const fromTimeValue = selectedDates[0];
+                if (fromTimeValue) {
+                    endTimePicker.set('disable', [
+                        function(date) {
+                            return date.getHours() === fromTimeValue.getHours() && date.getMinutes() ===
+                                fromTimeValue.getMinutes();
+                        }
+                    ]);
+                }
+            }
         });
 
-        flatpickr("#to_PPMTime", {
+        const endTimePicker = flatpickr("#to_PPMTime", {
             enableTime: true,
             noCalendar: true,
-            time_24hr: true,
-            minuteIncrement: 5,
             dateFormat: "H:i",
+            minTime: "00:00",
+            onChange: function(selectedDates, dateStr, instance) {
+
+                const fromTimeValue = fromTimePicker.selectedDates[0];
+                if (fromTimeValue && selectedDates[0] <= fromTimeValue) {
+
+                    endTimePicker.setDate(fromTimeValue, true);
+                }
+            }
+        });
+
+
+
+        fromTimePicker.config.onChange.push(function(selectedDates, dateStr, instance) {
+            const fromTimeValue = selectedDates[0];
+            if (fromTimeValue) {
+
+                endTimePicker.set("minTime", dateStr);
+            }
         });
 
         const fromPicker = flatpickr("#time_from", {

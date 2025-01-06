@@ -626,40 +626,58 @@
         </tr>
     </table>
 
-    <div style="width:100%;">
-        <table style="width:100%;">
-            <tr>
-                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
-                    List of Workman involved in Job
-                </td>
-            </tr>
-        </table>
-    </div>
 
-    <table width="100%" style="width:100%;">
-        <thead class=" text-white" style="background-color:#5b626b">
-            <tr>
-                <th>Employee Code / Visitor ID</th>
-                <th>Name of Workman</th>
-                <th>Designation</th>
-                <th>Department / Company</th>
-                <th>Nature of Job</th>
-            </tr>
-        </thead>
-        <tbody id="workman-list-entries">
-            @foreach ($workmaninvolved as $workmaninvolved)
+
+
+
+    <div>
+        <div style="width:100%;">
+            <table style="width:100%;">
                 <tr>
-                    <td>{{ $workmaninvolved->employee_id }}</td>
-                    <td>{{ $workmaninvolved->workman_name }}</td>
-                    <td>{{ $workmaninvolved->workman_desig }}</td>
-                    <td>{{ $workmaninvolved->department_name }}</td>
-                    <td>{{ $workmaninvolved->nature_of_job }}</td>
+                    <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                        List of Workman involved in Job
+                    </td>
                 </tr>
-            @endforeach
+            </table>
+        </div>
+        <br>
+        <div class="table-responsive">
+            <div class="col-md-12">
+                <table class="table table-bordered table-hover">
+                    <thead class=" text-white" style="background-color:#5b626b">
+                        <tr>
+                            <th>Employee Code / Visitor ID</th>
+                            <th>Name of Workman</th>
+                            <th>Designation</th>
+                            <th>Department / Company</th>
+                            <th>Nature of Job</th>
+                        </tr>
+                    </thead>
 
-        </tbody>
+                    <tbody>
+                        @if ($workmaninvolved->isEmpty())
+                            <tr>
+                                <td class="text-center" colspan="5">No data is available</td>
+                            </tr>
+                        @else
+                        @foreach ($workmaninvolved as $workmaninvolved)
+                        <tr>
+                            <td>{{ $workmaninvolved->employee_id }}</td>
+                            <td>{{ $workmaninvolved->workman_name }}</td>
+                            <td>{{ $workmaninvolved->workman_desig }}</td>
+                            <td>{{ $workmaninvolved->department_name }}</td>
+                            <td>{{ $workmaninvolved->nature_of_job }}</td>
+                        </tr>
+                    @endforeach
+                        @endif
+                    </tbody>
+                </table>
 
-    </table>
+            </div>
+        </div>
+        <br>
+
+    </div>
 
     <table width="100%" style="width:100%;">
         <tr>

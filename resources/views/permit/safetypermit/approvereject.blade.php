@@ -977,7 +977,8 @@
                                             </div>
                                         @elseif($safetypermit['permit_status'] == STATUS_EHS_RESUME)
                                             <div class="d-flex float-end gap-2 mx-auto">
-
+                                                <button type="submit" name="hold" value="hold"
+                                                class="btn btn-info w-100">Hold</button>
                                                 <button type="submit" name="decline" value="decline"
                                                     class="btn btn-danger w-100">Decline</button>
 
@@ -1175,7 +1176,7 @@
 
 @push('script')
     <script>
-       
+
         $(document).ready(function() {
             $('#ehs_verification').validate({
                 rules: {
@@ -1235,12 +1236,12 @@
             });
 
             $('.reassign-btn').on('click', function(e) {
-            
+
                 if (!$('#reasigned').is(':checked')) {
-                    $('#reasigned-error').show(); 
-                    e.preventDefault(); 
+                    $('#reasigned-error').show();
+                    e.preventDefault();
                 } else {
-                    $('#reasigned-error').hide(); 
+                    $('#reasigned-error').hide();
                 }
             });
 

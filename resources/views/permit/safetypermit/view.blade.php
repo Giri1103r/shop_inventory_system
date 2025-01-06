@@ -268,14 +268,14 @@
 
                         <div class="row">
                             <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">O2%</label>
+                                <label class="form-label view_label">O2% :</label>
                                 <span class="view_data">
                                     {{ $confined_space_entry->o2_percentage ?? 'N/A' }}
                                 </span>
                             </div>
 
                             <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label m-1">System Isolated</label>
+                                <label class="form-label view_label m-1">System Isolated :</label>
                                 <span class="view_data">
                                     @if (isset($confined_space_entry) && $confined_space_entry->system_isolated == 1)
                                         <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
@@ -286,7 +286,7 @@
                             </div>
 
                             <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label m-1">Rescue System Available</label>
+                                <label class="form-label view_label m-1">Rescue System Available :</label>
                                 <span class="view_data">
                                     @if (isset($confined_space_entry) && $confined_space_entry->rescue_system == 1)
                                         <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
@@ -297,7 +297,7 @@
                             </div>
 
                             <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label m-1">Confined Space Attendant</label>
+                                <label class="form-label view_label m-1">Confined Space Attendant :</label>
                                 <span class="view_data">
                                     @if (isset($confined_space_entry) && isset($confined_space_entry->confined_attendant) && $confined_space_entry->confined_attendant == 1)
                                         <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
@@ -308,14 +308,14 @@
                             </div>
 
                             <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">Attendant Name</label>
+                                <label class="form-label view_label">Attendant Name :</label>
                                 <span class="view_data">
                                     {{ $confined_space_entry->attendant_name ?? 'N/A' }}
                                 </span>
                             </div>
 
                             <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label m-1">Register for entry & exits</label>
+                                <label class="form-label view_label m-1">Register for entry & exits :</label>
                                 <span class="view_data">
                                     @if (isset($confined_space_entry) &&
                                             isset($confined_space_entry->register_entry_exits) &&
@@ -329,7 +329,7 @@
                             </div>
 
                             <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">Any Other Gas / PPM</label>
+                                <label class="form-label view_label">Any Other Gas / PPM :</label>
                                 <span class="view_data">
                                     {{ $confined_space_entry->other_gas ?? 'N/A' }}
                                 </span>
@@ -337,14 +337,14 @@
 
                             <div class="mb-3 col-md-4 form-input">
                                 <label class="form-label view_label">PPM and is therefore safe to enter
-                                    from</label>
+                                    from :</label>
                                 <span class="view_data">
                                     {{ $confined_space_entry->ppm_safe_to_enter ?? 'N/A' }}
                                 </span>
                             </div>
 
                             <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">To</label>
+                                <label class="form-label view_label">To :</label>
                                 <span class="view_data">
                                     {{ $confined_space_entry->to ?? 'N/A' }}
                                 </span>
@@ -472,7 +472,7 @@
 
                             <div class="row">
                                 <div class="mb-3 col-md-4 form-input">
-                                    <label class="form-label view_label m-1">Other If any</label>
+                                    <label class="form-label view_label m-1">Other If any :</label>
                                     <div class="view_data">
                                         {{ $safetypermit->equiment_involved_others }}
                                     </div>
