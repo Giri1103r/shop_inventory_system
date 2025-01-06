@@ -125,7 +125,7 @@ class SafetyPermitController extends Controller
                             <i class="fa-solid fa-check-to-slot text-success"></i>
                         </a>';
                             }
-                            if ((($row->permit_status >= STATUS_EHS_APPROVE_PENDING && $row->permit_status != STATUS_PLANT_HEAD_APPROVED )  || ($row->permit_status != STATUS_PERMIT_EXPIRED && $row->permit_status != STATUS_PLANT_HEAD_APPROVED && $row->permit_status != STATUS_EHS_DECLINE)  || ($row->permit_status == STATUS_PERMIT_EXTENDED_REJECTED))&& ($row->created_by == Auth::id())) {
+                            if ((($row->permit_status = STATUS_EHS_APPROVE_PENDING && $row->permit_status != STATUS_PLANT_HEAD_APPROVED )  || ($row->permit_status != STATUS_PERMIT_EXPIRED && $row->permit_status != STATUS_PLANT_HEAD_APPROVED && $row->permit_status != STATUS_EHS_DECLINE)  || ($row->permit_status == STATUS_PERMIT_EXTENDED_REJECTED))&& ($row->created_by == Auth::id())) {
                                 $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '" class="permitExtension" title="' . __('Permit Extension') . '"><i class="fa fa-external-link"></i> ';
                             }
 
@@ -323,7 +323,7 @@ class SafetyPermitController extends Controller
                 );
                 $this->statuslog->create($insert_array);
 
-                Session::flash('success', __('Your data has been creted successfully'));
+                Session::flash('success', __('Your data has been created successfully'));
 
                 return redirect(admin_url('safetypermit/list'));
             } catch (Exception $ex) {

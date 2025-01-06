@@ -87,7 +87,7 @@
                                     <div class="mb-3 col-md-12 form-input">
                                         <label class="form-label view_label">{{ __('Reason') }}</label>
                                         <div class="view_data">
-                                            {{isset($pperequest->employee_reason) ? $pperequest->employee_reason : '' }}
+                                            {{ !empty($pperequest->employee_reason) ? $pperequest->employee_reason : $pperequest->employee_remarks }}
 
                                         </div>
                                     </div>

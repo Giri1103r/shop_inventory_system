@@ -436,6 +436,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/submit', [VenueController::class, 'importSubmit']);
                 Route::post('/status', [VenueController::class, 'statusChange']);
                 Route::post('/unique', [VenueController::class, 'Uniquecheck']);
+                Route::get('/ajax-list/{unit_id}/{id}', [VenueController::class, 'list']);
+                Route::get('/alllist/{unitId}', [VenueController::class, 'alllist']);
             });
 
             /**
@@ -482,6 +484,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/submit', [TrainingScheduleController::class, 'importSubmit']);
                 Route::post('/status', [TrainingScheduleController::class, 'statusChange']);
                 Route::get('/topic/ajax-list', [TrainingScheduleController::class, 'Uniquecheck']);
+                Route::get('/vp_approval/{id}', [TrainingScheduleController::class, 'vpApproval']);
+                Route::post('/vp_approval/submit', [TrainingScheduleController::class, 'vpApprovalStore']);
                 Route::get('/nominationProcess/{id}', [TrainingScheduleController::class, 'nominationProcess']);
                 Route::get('/start/{id}', [TrainingScheduleController::class, 'startTraining']);
                 Route::get('/end/{id}', [TrainingScheduleController::class, 'endTraining']);
@@ -491,6 +495,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/attendance/unique', [TrainingScheduleController::class, 'checkUniqueAttendanceDate']);
                 Route::post('/nomination_process/unique', [TrainingScheduleController::class, 'checkUniqueNomination']);
                 Route::get('/pdf/{id}', [TrainingScheduleController::class, 'exportViewPdf']);
+                // Route::get('/certificate/{id}', [TrainingScheduleController::class, 'certificateView']);
                 Route::get('/filterAttendance', [TrainingScheduleController::class, 'filterAttendance'])->name('training_schedule.filterAttendance');
 
             });
@@ -651,6 +656,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/export/excel', [PpeRequestController::class, 'exportExcel']);
                 Route::get('/export/pdf', [PpeRequestController::class, 'exportPdf']);
                 Route::get('/generalpdf/{id}', [PpeRequestController::class, 'pdf']);
+                Route::get('/checkuserDepartment', [PpeRequestController::class, 'checkDepartmentrequest']);
 
             });
 

@@ -142,7 +142,7 @@ class TypeofWorkUpload extends Model
         $request = request();
         $intendent = $request->file('typeofwork_upload');
         if ($intendent != null) {
-      
+
             $uploadpath = 'public/uploads/ptw/typeofwork/' . $id;
 
             $folderPath = public_path('uploads/ptw/typeofwork/' . $id);
@@ -156,6 +156,7 @@ class TypeofWorkUpload extends Model
             $fileSize = $intendent->getSize();
 
             $fileExt = $intendent->getClientOriginalExtension();
+            
 
             $intendent->move($uploadpath, $filenewname);
 

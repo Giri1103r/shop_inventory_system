@@ -24,6 +24,7 @@ use App\Models\User;
 use App\Models\UploadLog;
 use App\Jobs\ImporNominationProcessJob;
 use App\Models\Master\TrainingAttendance;
+use App\Models\Master\TrainingStatuslog;
 
 class NominationProcessController extends Controller
 {
@@ -36,6 +37,7 @@ class NominationProcessController extends Controller
     private $topic;
     private $training_schedule;
     private $nomination_process;
+    private $training_statuslog;
 
 
     public function __construct()
@@ -47,6 +49,7 @@ class NominationProcessController extends Controller
         $this->nomination_process = new NominationProcess();
         $this->department = new Department();
         $this->user = new User();
+        $this->training_statuslog = new TrainingStatuslog();
         $this->uploadlog = new UploadLog();
     }
 
@@ -117,9 +120,9 @@ class NominationProcessController extends Controller
     public function fetchEmployeeDetails($emp_id)
     {
         $employee = Employee::select('id', 'emp_name', 'email', 'department', 'employee_status')
-            ->where('id', $emp_id)
+            ->where('id', $emp_id)->where('user_role', '!=', 10)
+            ->where('status', 1)
             ->first();
-
         if (!$employee) {
             return response()->json([
                 'error' => 'Employee not found.',
@@ -171,8 +174,9 @@ class NominationProcessController extends Controller
                 $trainingScheduleId = decryptId($request->training_schedule_id);
 
                 if ($trainingScheduleId) {
-                    $training_status = 2;
-                    $this->training_schedule->updateStatus($trainingScheduleId, $training_status);
+                    $training_status = TRAINING_NOMINATION_COMPLETED;
+                  $this->training_schedule->updateStatus($trainingScheduleId, $training_status);
+                  $this->training_statuslog->storestatus($trainingScheduleId, $training_status);
                 }
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
@@ -311,6 +315,10 @@ class NominationProcessController extends Controller
 
                 // dispatch(new ImporNominationProcessJob($details));
                 dispatch((new ImporNominationProcessJob($details))->onQueue('nomination_process'));
+
+                $training_status = TRAINING_NOMINATION_COMPLETED;
+                $this->training_schedule->updateStatus($request->training_schedule_id, $training_status);
+                $this->training_statuslog->storestatus($request->training_schedule_id, $training_status);
             }
 
             $insert_data['log_id'] = $insert_id;

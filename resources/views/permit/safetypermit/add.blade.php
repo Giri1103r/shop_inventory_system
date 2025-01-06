@@ -349,8 +349,9 @@
                                                         <div class="form-group d-flex align-items-center">
                                                             <label class="form-label col-md-5 mb-0 mr-2 pe-2">Confined
                                                                 Space Attendant</label>
-                                                                <input type="hidden"
-                                                                name="confined_space_entry[confined_attendant]" value="0">
+                                                            <input type="hidden"
+                                                                name="confined_space_entry[confined_attendant]"
+                                                                value="0">
                                                             <input type="checkbox">
                                                             <input type="checkbox"
                                                                 name="confined_space_entry[confined_attendant]"
@@ -387,7 +388,8 @@
                                                         <div class="form-group d-flex align-items-center">
                                                             <label class="form-label mb-0">Any Other Gas / PPM</label>
                                                             <input type="text" name="confined_space_entry[other_gas]"
-                                                                class="form-control" placeholder="Any Other Gas / PPM" disabled>
+                                                                class="form-control" placeholder="Any Other Gas / PPM"
+                                                                disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-md-4 mb-3">
@@ -607,9 +609,9 @@
                                                         <span class="text-danger">*</span>
                                                     </label>
 
-                                                        <input type="checkbox" id="equipment_checklist_inspection"
-                                                            class="" name = "equipment_checklist_inspection">
-                                                        <div class="text-danger"></div>
+                                                    <input type="checkbox" id="equipment_checklist_inspection"
+                                                        class="" name = "equipment_checklist_inspection">
+                                                    <div class="text-danger"></div>
 
                                                 </div>
                                             </div>
@@ -692,8 +694,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Employee Code / Visitor ID</label>
                                                     <div class="col-sm-6" style="width: 100%">
-                                                        <select name="employee_code" id="employee_code" style="width: 100%"
-                                                            class="single-select form-control">
+                                                        <select name="employee_code" id="employee_code"
+                                                            style="width: 100%" class="single-select form-control">
                                                             <option value="">Select Employee ID</option>
                                                         </select>
                                                     </div>
@@ -1232,7 +1234,10 @@
                 const workId = $(this).data('id');
                 const container = $('#getprotectivechecklist-container');
                 const checkboxState = $(this).prop('checked');
-
+                if (!checkboxState) {
+                    container.find(`.checkpoint[data-work-id="${workId}"]`).remove();
+                    displayedEquipments.clear();
+                }
                 if (checkboxState) {
                     $.ajax({
                         url: "{{ admin_url('safetypermit/getprotectivechecklist') }}/" + workId,
@@ -1322,6 +1327,11 @@
 
                 const checkboxState = $(this).prop('checked');
 
+                if (!checkboxState) {
+                    container.find(`.checkpoint[data-work-id="${workId}"]`).remove();
+                    displayedEquipments.clear();
+                }
+
                 if (checkboxState) {
                     $.ajax({
                         url: "{{ admin_url('safetypermit/getequipmentinvolved') }}/" + workId,
@@ -1410,6 +1420,11 @@
 
                 const checkboxState = $(this).prop('checked');
 
+                if (!checkboxState) {
+                    container.find(`.checkpoint[data-work-id="${workId}"]`).remove();
+                    displayedEquipments.clear();
+                }
+
 
                 if (checkboxState) {
                     $.ajax({
@@ -1463,6 +1478,11 @@
 
                 const checkboxState = $(this).prop('checked');
 
+                if (!checkboxState) {
+                    container.find(`.checkpoint[data-work-id="${workId}"]`).remove();
+                    displayedEquipments.clear();
+                }
+
 
                 if (checkboxState) {
                     $.ajax({
@@ -1515,6 +1535,11 @@
 
 
                 const checkboxState = $(this).prop('checked');
+
+                if (!checkboxState) {
+                    container.find(`.checkpoint[data-work-id="${workId}"]`).remove();
+                    displayedEquipments.clear();
+                }
 
 
                 if (checkboxState) {

@@ -529,6 +529,7 @@ class PpeExemptionController extends Controller
                 __("Company"),
                 __("From Date"),
                 __("To Date"),
+                __("common.status"),
                 __("From Status"),
                 __("To Status"),
                 __("common.created_by"),
@@ -549,7 +550,7 @@ class PpeExemptionController extends Controller
                 $export[] =  getcompanyname($data->company);
                 $export[] =  Displaydateformat($data->from_date);
                 $export[] =  Displaydateformat($data->to_date);
-
+                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 if ($data->approve_status == STATUS_EHS_APPROVAL_PENDING) {
                     $export[] = 'User Applied';
                 }
@@ -617,6 +618,7 @@ class PpeExemptionController extends Controller
                 __("Company"),
                 __("From Date"),
                 __("To Date"),
+                __("common.status"),
                 __("From Status"),
                 __("To Status"),
                 __("common.created_by"),

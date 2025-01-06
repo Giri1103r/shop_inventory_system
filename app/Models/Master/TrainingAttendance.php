@@ -21,6 +21,7 @@ class TrainingAttendance extends Model
     protected $fillable = [
         'training_schedule_id',
         'nomination_id',
+        'emp_id',
         'emp_name',
         'email',
         'from_date',
@@ -47,6 +48,8 @@ class TrainingAttendance extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+   
     public function storeOrUpdate()
     {
         $request = request();
@@ -55,8 +58,9 @@ class TrainingAttendance extends Model
             $attendanceData[] = [
                 'training_schedule_id' => decryptId($request->training_schedule_id),
                 'nomination_id' => $nominationId,
-                'attendance_date' => $request->attendance_date,
+                'attendance_date' => DBdateformat($request->attendance_date),
                 'attendance_status' => $request->attendance_status[$index], // Always defined now
+                'emp_id' => $request->emp_id[$index],
                 'emp_name' => $request->emp_name[$index],
                 'email' => $request->email[$index],
                 'from_date' => DBdatetimeformat($request->from_date),

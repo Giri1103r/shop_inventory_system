@@ -1348,6 +1348,11 @@
             function handleCheckboxChange(workId, checkboxState) {
                 const container = $('#getprotectivechecklist-container');
 
+                if (!checkboxState) {
+                    container.find(`.checkpoint[data-work-id="${workId}"]`).remove();
+                    displayedProtectiveEquipments.clear();
+                }
+
                 if (checkboxState) {
                     $.ajax({
                         url: "{{ admin_url('safetypermit/getprotectivechecklist') }}/" + workId,
@@ -1449,6 +1454,11 @@
             function handleCheckboxChange(workId, checkboxState) {
                 const container = $('#getequipmentinvolved-container');
 
+                if (!checkboxState) {
+                    container.find(`.checkpoint[data-work-id="${workId}"]`).remove();
+                    displayedEquipmentsInvolved.clear();
+                }
+
                 if (checkboxState) {
                     $.ajax({
                         url: "{{ admin_url('safetypermit/getequipmentinvolved') }}/" + workId,
@@ -1547,6 +1557,11 @@
             function handleCheckboxChange(workId, checkboxState) {
                 const container = $('#getprecaution-container');
 
+                if (!checkboxState) {
+                    container.find(`.checkpoint[data-work-id="${workId}"]`).remove();
+                    displayedPrecautionEquipments.clear();
+                }
+
                 if (checkboxState) {
                     $.ajax({
                         url: "{{ admin_url('safetypermit/getprecaution') }}/" + workId,
@@ -1615,6 +1630,11 @@
             function handleCheckboxChange(workId, checkboxState) {
                 const container = $('#getchecklist-container');
 
+                if (!checkboxState) {
+                    container.find(`.checkpoint[data-work-id="${workId}"]`).remove();
+                    displayedEquipmentsChecklist.clear();
+                }
+
                 if (checkboxState) {
                     $.ajax({
                         url: "{{ admin_url('safetypermit/getchecklist') }}/" + workId,
@@ -1681,6 +1701,11 @@
 
             function handleCheckboxChange(workId, checkboxState) {
                 const container = $('#getinstruction-container');
+
+                if (!checkboxState) {
+                    container.find(`.checkpoint[data-work-id="${workId}"]`).remove();
+                    displayedSafework.clear();
+                }
 
                 if (checkboxState) {
                     $.ajax({

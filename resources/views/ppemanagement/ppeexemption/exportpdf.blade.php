@@ -117,7 +117,7 @@
             <table style="width:100%;">
                 <tr>
                     <td
-                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;"  class="fw-bold">
+                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px; font-weight:bold;"  >
                        PPE Exemption
                     </td>
                 </tr>
@@ -202,7 +202,7 @@
                 <table style="width:100%;">
                     <tr>
                         <td
-                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;"  class="fw-bold">
+                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px; font-weight:bold;">
                             Status Logs
                         </td>
                     </tr>

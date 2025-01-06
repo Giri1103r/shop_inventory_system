@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Shoe  Exemption Edit')
+@section('title', 'PPE Shoe Exemption Edit')
 @section('pageurl', admin_url('ppe_exemption/list'))
 @section('content')
     @push('style')
@@ -36,41 +36,45 @@
                                         <input type="hidden" name="id" value="{{ $encryptid }}">
                                         <input type="hidden" name="unit" id="unit"
                                             value="{{ $userData->unit_id }}">
-                                            <input type="hidden" name="company" id="company"
+                                        <input type="hidden" name="company" id="company"
                                             value="{{ $userData->company_id }}">
                                         <hr>
                                         <div class="row">
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                   <label for="emp_id" class="form-label require">Employee ID</label>
-                                                   <input type="text" name="emp_id" class="form-control form-control-sm "id="emp_id" value="{{ $employee->employee_id }}" readonly>
+                                                    <label for="emp_id" class="form-label require">Employee ID</label>
+                                                    <input type="text" name="emp_id"
+                                                        class="form-control form-control-sm "id="emp_id"
+                                                        value="{{ $employee->employee_id }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                   <label for="emp_name" class="form-label require">Employee Name</label>
-                                                   <input type="text" name="emp_name" class="form-control form-control-sm " id="emp_name"
-                                                       value="{{ $employee->name }}" readonly>
+                                                    <label for="emp_name" class="form-label require">Employee Name</label>
+                                                    <input type="text" name="emp_name"
+                                                        class="form-control form-control-sm " id="emp_name"
+                                                        value="{{ $employee->name }}" readonly>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                   <label for="department" class="form-label require">Department</label>
-                                                   <input type="text" name="department" id="department"  class="form-control form-control-sm"
-                                                       value="{{ getDepartment($employee->department_id) }}" readonly>
+                                                    <label for="department" class="form-label require">Department</label>
+                                                    <input type="text" name="department" id="department"
+                                                        class="form-control form-control-sm"
+                                                        value="{{ getDepartment($employee->department_id) }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <label for="date" class="form-label require">From Date</label>
-                                                    <div class="input-group date form-input">
-                                                        <input type="text" class="form-control form-conrol-sm" name="from_date"
-                                                        value="{{ $ppeexemption->from_date }}" id="from_date" autocomplete="off"
-                                                        placeholder="Enter the From Date">
-                                                        <div class="input-group-addon input-group-text">
-                                                            <span class="fa fa-calendar"></span>
-                                                        </div>
+                                                <div class="input-group date form-input">
+                                                    <input type="text" class="form-control form-conrol-sm"
+                                                        name="from_date" value="{{ $ppeexemption->from_date }}"
+                                                        id="from_date" autocomplete="off" placeholder="Enter the From Date">
+                                                    <div class="input-group-addon input-group-text">
+                                                        <span class="fa fa-calendar"></span>
                                                     </div>
+                                                </div>
                                                 @error('from_date')
                                                     <div class="text-danger">{{ $message }}</div>
                                                 @enderror
@@ -80,8 +84,8 @@
                                                 <label for="date" class="form-label require">To Date</label>
                                                 <div class="input-group date form-input">
                                                     <input type="text" class="form-control form-conrol-sm" name="to_date"
-                                                    value="{{ $ppeexemption->to_date }}" id="to_date" autocomplete="off"
-                                                    placeholder="Enter the To Date">
+                                                        value="{{ $ppeexemption->to_date }}" id="to_date"
+                                                        autocomplete="off" placeholder="Enter the To Date">
                                                     <div class="input-group-addon input-group-text">
                                                         <span class="fa fa-calendar"></span>
                                                     </div>
@@ -103,12 +107,12 @@
                                                 @enderror
                                                 <div class="text-danger" id="reason_error"></div>
                                             </div>
-                                            <div class="col-md-12 mb-2">
+                                            {{-- <div class="col-md-12 mb-2">
                                                 <input type="checkbox" id="checkbox" name="checkbox">
                                                 <label for="checkbox" class="form-label">I agree to the terms and
                                                     conditions</label>
                                                 <div class="text-danger" id="checkbox_error"></div>
-                                            </div>
+                                            </div> --}}
                                         </div>
                                         <hr>
                                         <div class="submit-button float-end">
@@ -145,6 +149,8 @@
                 $('#checkbox').prop('checked', !$('#checkbox').prop('checked'));
             });
         });
+      
+
         $(document).ready(function() {
             var fromDatepicker = flatpickr("#from_date", {
                 dateFormat: "d-m-Y",
@@ -175,7 +181,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 255,
-                        regex:/^[a-zA-Z\s][a-zA-Z\s.]*$/
+                        regex: /^[a-zA-Z\s][a-zA-Z\s.]*$/
 
                     },
                     checkbox: {

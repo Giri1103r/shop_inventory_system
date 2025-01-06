@@ -83,6 +83,8 @@ class TrainingCalendarController extends Controller
 
             if (CheckUserRole(ROLE_SUPERADMIN)) {
                 $query->where('training_schedule.trash', 'NO');
+            } elseif (CheckUserRole(ROLE_ADMIN)) {
+                $query->where('training_schedule.trash', 'NO');
             } elseif (CheckUserRole(ROLE_TRAINER)) {
                 $trainer = DB::table('masters_employee')
                     ->select('id')
@@ -129,10 +131,10 @@ class TrainingCalendarController extends Controller
                         'trainer_name' => $event->emp_name,
                         'venue_name' => $event->name_of_the_conference_hall,
                         'status' => $event->status,
+                        'training_status' => (int) $event->training_status,
                     ],
                 ];
             });
-
             return response()->json($events);
         } catch (Exception $ex) {
             report($ex->getMessage());

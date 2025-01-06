@@ -149,7 +149,7 @@
         <table style="width:100%;">
             <tr>
                 <td
-                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;" class="fw-bold">
+                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;" >
                    PPE Request
                 </td>
             </tr>
@@ -177,7 +177,7 @@
             <td width="50%" style="padding:5px;"><b>Reason</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($pperequest->employee_reason) ? $pperequest->employee_reason : '' }}</td>
+                {{  !empty($pperequest->employee_reason) ? $pperequest->employee_reason : $pperequest->employee_remarks }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Created By</b></td>
@@ -200,7 +200,7 @@
                 <table style="width:100%;">
                     <tr>
                         <td
-                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;"  class="fw-bold">
+                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
                             Status Logs
                         </td>
                     </tr>
@@ -271,7 +271,7 @@
                 <table style="width:100%;">
                     <tr>
                         <td
-                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;" class="fw-bold">
+                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
                            Previous History
                         </td>
                     </tr>

@@ -135,6 +135,7 @@
                                         <th>From Date</th>
                                         <th>To Date</th>
                                         <th>Reason</th>
+                                        <th>Status</th>
                                         <th data-priority="2">Approve Status</th>
                                         <th data-priority="1">Action</th>
                                     </tr>
@@ -325,7 +326,10 @@
                         data: 'reason',
                         name: 'reason'
                     },
-                    
+                    {
+                        data: 'status',
+                        name: 'status'
+                    },
                     {
                         data: 'approve_status',
                         name: 'approve_status'

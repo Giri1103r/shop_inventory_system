@@ -70,6 +70,19 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_STORE_MANAGER') or define('ROLE_STORE_MANAGER', 5);
         defined('ROLE_TRAINER') or define('ROLE_TRAINER', 8);
         defined('ROLE_USER') or define('ROLE_USER', 9);
+        defined('ROLE_VISE_PRESIDENT') or define('ROLE_VISE_PRESIDENT', 10);
+
+        
+        defined('NEW_TRAINING_SCHEDULE') or define('NEW_TRAINING_SCHEDULE', 1);
+        defined('VP_APPROVE') or define('VP_APPROVE',2);
+        defined('VP_REJECTED') or define('VP_REJECTED', 3);
+        defined('TRAINING_RESCHEDULE_APPROVAL') or define('TRAINING_RESCHEDULE_APPROVAL',4);
+        defined('TRAINING_NOMINATION_COMPLETED') or define('TRAINING_NOMINATION_COMPLETED', 5);
+        defined('TRAINING_START') or define('TRAINING_START', 6);
+        defined('TRAINING_FEEDBACK_ADMIN_APPROVE') or define('TRAINING_FEEDBACK_ADMIN_APPROVE', 7);
+        defined('TRAINING_COMPLETED') or define('TRAINING_COMPLETED',8);
+
+
 
 
         defined('STATUS_HOD_APPROVAL_PENDING') or define('STATUS_HOD_APPROVAL_PENDING', 1);

@@ -29,11 +29,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
-                                {{-- <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('training_schedule/list') }}"></x-button-back>
-
-                                </div> --}}
+                              
                             </div>
                             <div class="tab-content">
                                 <div class="card-body" id="training_feedback_details">

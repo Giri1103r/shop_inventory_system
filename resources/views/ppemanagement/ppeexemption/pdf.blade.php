@@ -47,6 +47,12 @@
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ Displaydateformat($value->to_date) }}
                         </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            @php
+                                $status = $value->status == 1 ? 'Active' : 'In-Active';
+                            @endphp
+                            {{ $status }}
+                        </td>
                         <td style='padding: 7px; border: 0.5px solid'>
 
                             @if($value->approve_status == STATUS_EHS_APPROVAL_PENDING)
