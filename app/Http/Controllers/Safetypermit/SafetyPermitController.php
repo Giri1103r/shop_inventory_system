@@ -1312,7 +1312,7 @@ class SafetyPermitController extends Controller
     {
         $url = admin_url('safetypermit/join/' . $id);
 
-
+        $safetypermit = $this->safetypermit->selectOne(decryptId($id));
         $qrSvg = QrCode::size(150)
             ->backgroundColor(255, 255, 255)
             ->color(1, 1, 1)
@@ -1332,7 +1332,7 @@ class SafetyPermitController extends Controller
         $mpdf = new \Mpdf\Mpdf($property);
         $mpdf->setAutoTopMargin = 'stretch';
 
-        $view = view('permit.safetypermit.permitjoin', compact('qrBase64', 'permit_no'));
+        $view = view('permit.safetypermit.permitjoin', compact('qrBase64', 'permit_no','safetypermit'));
         $html = $view->render();
 
         $mpdf->WriteHTML($html);
