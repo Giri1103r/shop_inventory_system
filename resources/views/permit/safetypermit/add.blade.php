@@ -352,7 +352,6 @@
                                                             <input type="hidden"
                                                                 name="confined_space_entry[confined_attendant]"
                                                                 value="0">
-                                                            <input type="checkbox">
                                                             <input type="checkbox"
                                                                 name="confined_space_entry[confined_attendant]"
                                                                 value="1">
