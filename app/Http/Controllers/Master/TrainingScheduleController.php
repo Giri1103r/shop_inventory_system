@@ -119,7 +119,7 @@ class TrainingScheduleController extends Controller
                             $btn = '';
                             // dd($row->training_status);
                             if (($row->training_status == NEW_TRAINING_SCHEDULE || $row->training_status == TRAINING_RESCHEDULE_APPROVAL) && (in_array(ROLE_VISE_PRESIDENT, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
-                                $btn .= '<a href="' . admin_url('training_schedule/vp_approval/' . encryptId($row->id)) . '" title="Vise President Approval">
+                                $btn .= '<a href="' . admin_url('training_schedule/vp_approval/' . encryptId($row->id)) . '" title="Vice President Approval">
                                             <i class="fa fa-external-link" aria-hidden="true" style="color: #000000;"></i>
                                          </a> ';
                             }
@@ -186,11 +186,6 @@ class TrainingScheduleController extends Controller
                                 $btn .= '<a href="' . admin_url('training_schedule/pdf/' . encryptId($row->id)) . '"  class="pdficon" title="Pdf"><i class="fas fa-file-pdf" aria-hidden="true" style="color: #e21e23;"></i> </a> ';
                             }
 
-                            if ($row->training_status == TRAINING_COMPLETED && (Auth::user()->role != ROLE_SUPERADMIN && Auth::user()->role != ROLE_TRAINER && Auth::user()->role != ROLE_ADMIN && Auth::user()->role != ROLE_VISE_PRESIDENT)) {
-                                $btn .= '<a href="' . admin_url('training_schedule/certificate/' . encryptId($row->id)) . '" title="Certificate">
-                                       <i class="fas fa-award"></i>
-                                         </a> ';
-                            }
 
                             if (CheckUserPermission('view')) {
                                 $btn .= '<a href="' . admin_url('training_schedule/view/' . encryptId($row->id)) . '" title="View">
@@ -768,15 +763,15 @@ class TrainingScheduleController extends Controller
                 ];
 
                 if (Auth::user()->role != ROLE_TRAINER  &&  Auth::user()->role != ROLE_SUPERADMIN &&  Auth::user()->role != ROLE_ADMIN) {
-                    $userAttendanceList = $this->training_attendance
-                        ->where('status', 1)
-                        ->where('emp_id', Auth::user()->employee_id)
-                        ->where('training_schedule_id', $training_schedule->id)
-                        ->get();
-
+                  
+                    $trainingAssessmentList = $this->training_assessment_feedback->getAssessmentByEmp($training_schedule->id);
+                    foreach ($trainingAssessmentList as $assessment) {
+                        $feedbackList = $this->training_feedback->getfeedbackList($assessment->id);
+                        $trainingFeedbackList = $trainingFeedbackList->merge($feedbackList);
+                    }
                     $data = [
                         'training_schedule' => $training_schedule,
-                        'userAttendanceList' => $userAttendanceList,
+                        'trainingAssessmentList' => $trainingAssessmentList,
                     ];
                 }
             }
@@ -1389,18 +1384,16 @@ class TrainingScheduleController extends Controller
         }
     }
 
-    public function certificateView(Request $request)
+    public function certificateView($trainingScheduleId, $id)
     {
         try {
-            $id = decryptId($request->id);
-            $training_schedule = $this->training_schedule->selectOne($id);
-            $userAttendPass = $this->training_assessment_feedback
-            ->where('attended_status', 1)
-            ->where('status', 1)
-            ->where('email', Auth::user()->email)
-            ->where('training_schedule_id', $training_schedule->id)
-            ->first();
-            // dd( $training_schedule,$userAttendPass);
+            $trainingId = decryptId($trainingScheduleId);
+            $training_schedule = $this->training_schedule->selectOne($trainingId);
+            $userAttendPass = $this->training_assessment_feedback->where('id', decryptId($id))
+                ->where('attended_status', 1)
+                ->where('status', 1)
+                ->where('training_schedule_id', $training_schedule->id)
+                ->first();
             $data = [
                 'training_details' => $training_schedule,
                 'userAttendPass' => $userAttendPass,

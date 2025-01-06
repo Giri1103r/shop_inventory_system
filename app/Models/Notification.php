@@ -53,55 +53,59 @@ class Notification extends Model
         if (CheckUserRole(ROLE_SUPERADMIN)) {
             $query->where('template_notification.trash', 'NO');
         } elseif (CheckUserRole(ROLE_TRAINER)) {
-            $trainer = DB::table('masters_employee')
+            $trainer = DB::table('users')
                 ->select('id')
-                ->where('emp_id', Auth::user()->employee_id)
+                ->where('employee_id', Auth::user()->employee_id)
                 ->first();
 
             if ($trainer) {
                 $query->where('template_notification.assigned_user', $trainer->id)
                     ->where('template_notification.trash', 'NO');
             }
-        }elseif (Auth::user()->role == ROLE_USER) {
-            $nominationMasters = DB::table('masters_employee')
+        } elseif (Auth::user()->role == ROLE_VISE_PRESIDENT) {
+            $vp = DB::table('users')
                 ->select('id')
-                ->where('emp_id', Auth::user()->employee_id)
+                ->where('employee_id', Auth::user()->employee_id)
                 ->first();
+
+            if ($vp) {
+                $query->where('template_notification.assigned_user', $vp->id)
+                    ->where('template_notification.trash', 'NO');
+            }
+        } elseif (Auth::user()->role == ROLE_USER) {
 
             $nominationUsers = DB::table('users')
                 ->select('id')
                 ->where('employee_id', Auth::user()->employee_id)
                 ->first();
 
-            if ($nominationMasters || $nominationUsers) {
-                $assignedUserIdMasters = $nominationMasters ? $nominationMasters->id : null;
+            if ($nominationUsers) {
                 $assignedUserIdUsers = $nominationUsers ? $nominationUsers->id : null;
 
-                $query->where(function ($query) use ($assignedUserIdMasters, $assignedUserIdUsers) {
-                    if ($assignedUserIdMasters) {
-                        $query->where(function ($query) use ($assignedUserIdMasters) {
-                            $query->whereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserIdMasters])
-                                  ->where('notification_type', 2)
-                                  ->where('template_notification.trash', 'NO');
+                $query->where(function ($query) use ($assignedUserIdUsers) {
+                    if ($assignedUserIdUsers) {
+                        $query->where(function ($query) use ($assignedUserIdUsers) {
+                            $query->whereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserIdUsers])
+                                ->where('notification_type', 2)
+                                ->where('template_notification.trash', 'NO');
                         });
                     }
 
                     if ($assignedUserIdUsers) {
                         $query->orWhere(function ($query) use ($assignedUserIdUsers) {
                             $query->whereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserIdUsers])
-                                  ->where('notification_type', 1)
-                                  ->where('template_notification.trash', 'NO');
+                                ->where('notification_type', 1)
+                                ->where('template_notification.trash', 'NO');
                         })
-                        ->orWhere(function ($query) use ($assignedUserIdUsers) {
-                            $query->whereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserIdUsers])
-                                  ->where('notification_type', 3)
-                                  ->where('template_notification.trash', 'NO');
-                        });
+                            ->orWhere(function ($query) use ($assignedUserIdUsers) {
+                                $query->whereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserIdUsers])
+                                    ->where('notification_type', 3)
+                                    ->where('template_notification.trash', 'NO');
+                            });
                     }
                 });
             }
-        }
-        elseif (Auth::user()->role == ROLE_HOD) {
+        } elseif (Auth::user()->role == ROLE_HOD) {
             $nominations = DB::table('users')
                 ->select('id')
                 ->where('department_id', Auth::user()->department_id)
@@ -115,8 +119,8 @@ class Notification extends Model
                         $query->orWhereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserId]);
                     }
                 })->where('template_notification.trash', 'NO')
-                ->where('notification_message','New PPE Request')
-                  ->where('notification_type', 1);
+                    ->where('notification_message', 'New PPE Request')
+                    ->where('notification_type', 1);
             }
         } elseif (Auth::user()->role == ROLE_EHS_HEAD || Auth::user()->role == ROLE_EHS_OFFICER) {
             $nomination = DB::table('users')
@@ -129,8 +133,8 @@ class Notification extends Model
 
                 $query->where(function ($query) use ($assignedUserId) {
                     $query->whereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserId])
-                          ->whereIn('notification_type', [1, 3])
-                          ->where('template_notification.trash', 'NO');
+                        ->whereIn('notification_type', [1, 3])
+                        ->where('template_notification.trash', 'NO');
                 });
             }
         } elseif (Auth::user()->role == ROLE_PLANT_HEAD) {
@@ -143,8 +147,8 @@ class Notification extends Model
                 $assignedUserId = $nomination->id;
 
                 $query->whereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserId])
-                      ->where('notification_type', 3)
-                      ->where('template_notification.trash', 'NO');
+                    ->where('notification_type', 3)
+                    ->where('template_notification.trash', 'NO');
             }
         }
 

@@ -82,7 +82,7 @@
                                             </li>
                                             <li class="nav-item">
                                                 <a class="nav-link" href="#vise_president_approval"
-                                                    data-bs-toggle="tab">Vise President Approval
+                                                    data-bs-toggle="tab">Vice President Approval
                                                 </a>
                                             </li>
                                             <li class="nav-item">
@@ -191,7 +191,7 @@
                                                         </div> <!-- Orange -->
                                                     @elseif ($training_schedule->training_status == 8)
                                                         <div class="view_data"
-                                                            style="background-color: #008000; width: 40%;padding: 1px 9px; border: 1px solid #008000; color: black;">
+                                                            style="background-color: #008000; width: 40%;padding: 1px 9px; border: 1px solid #008000; color: rgb(246, 244, 244);">
                                                             Training Completed
                                                         </div> <!-- Green -->
                                                     @elseif ($training_schedule->training_status == 6 || $training_schedule->training_status == 7)
@@ -274,7 +274,7 @@
                                             @endif
                                             <div class="row">
                                                 <div class="card-header-inner">
-                                                    <h4 class="text-white">Vise President Approval</h4>
+                                                    <h4 class="text-white">Vice President Approval</h4>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -523,6 +523,7 @@
                                                                     <th class="form-label">Mark</th>
                                                                     <th class="form-label">Assessment</th>
                                                                     <th class="form-label">Feedback</th>
+                                                                    <th class="form-label">Certificate</th>
                                                                 </tr>
                                                             </thead>
 
@@ -552,6 +553,12 @@
 
                                                                         </td>
                                                                         <td>{{ strip_tags($assessment->feedback) ?? '-' }}
+                                                                        </td>
+                                                                        <td><a
+                                                                                href="{{ admin_url('training_schedule/certificate/' . encryptId($training_schedule->id) . '/' . encryptId($assessment->id)) }}">
+                                                                                <i class="fa fa-download"
+                                                                                    style="font-size:20px;color:rgb(12 125 234)"></i>
+                                                                            </a>
                                                                         </td>
                                                                     </tr>
                                                                 @endforeach
@@ -670,34 +677,16 @@
                                                 {{ isset($training_schedule->name_of_the_conference_hall) ? $training_schedule->name_of_the_conference_hall : '' }}
                                             </div>
                                         </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">Training Status</label>
-                                            @if ($training_schedule->training_status == 1 || $training_schedule->training_status == 2)
-                                                <div class="view_data"
-                                                    style="background-color: #FFA500; width: 40%;padding: 1px 9px; border: 1px solid #FFA500; color: black;">
-                                                    Training Pending
-                                                </div> <!-- Orange -->
-                                            @elseif ($training_schedule->training_status == 5)
-                                                <div class="view_data"
-                                                    style="background-color: #008000; width: 40%;padding: 1px 9px; border: 1px solid #008000; color: black;">
-                                                    Training Completed
-                                                </div> <!-- Green -->
-                                            @elseif ($training_schedule->training_status == 3 || $training_schedule->training_status == 4)
-                                                <div class="view_data"
-                                                    style="background-color: #FFFF00; width: 40%;padding: 1px 9px; border: 1px solid #FFFF00; color: black;">
-                                                    Training in Progress
-                                                </div> <!-- Yellow -->
-                                            @endif
-                                        </div>
                                     </div>
 
                                 </div>
-                                @if (isset($userAttendanceList) && $userAttendanceList->isNotEmpty())
+                                @if (isset($trainingAssessmentList) && $trainingAssessmentList->isNotEmpty())
 
                                     <div class="card-body">
+
                                         <div class="row">
                                             <div class="card-header-inner">
-                                                <h4 class="text-white">Training Attendance</h4>
+                                                <h4 class="text-white">Training Assessment</h4>
                                             </div>
                                         </div>
                                         <div class="basic-form">
@@ -706,25 +695,51 @@
                                                 <table class="table_card" style="margin-top: 20px;">
                                                     <thead>
                                                         <tr>
-                                                            <th class="form-label">Attendance Date</th>
-                                                            <th class="form-label required">Attendance(present
-                                                                /absent)
-                                                            </th>
+                                                            <th class="form-label">Employee Name</th>
+                                                            <th class="form-label">Attendee/Non-Attendee</th>
+                                                            <th class="form-label">Mark</th>
+                                                            <th class="form-label">Assessment</th>
+                                                            <th class="form-label">Feedback</th>
+                                                            <th class="form-label">Certificate</th>
                                                         </tr>
                                                     </thead>
 
                                                     <tbody id="lesson_learned_block">
-                                                        @foreach ($userAttendanceList as $training_attendance)
+                                                        @foreach ($trainingAssessmentList as $assessment)
                                                             <tr>
-                                                                <td>{{ Displaydateformat($training_attendance->attendance_date) ?? '' }}
-                                                                </td>
+
+                                                                <td>{{ $assessment->emp_name ?? '-' }}</td>
                                                                 <td>
-                                                                    @if ($training_attendance->attendance_status == 1)
+                                                                    @if ($assessment->attended_status == 1)
                                                                         <i class="fa fa-check"
                                                                             style="font-size:24px;color: green;"></i>
                                                                     @else
                                                                         <i class="fa fa-close"
                                                                             style="font-size:24px;color:red"></i>
+                                                                    @endif
+                                                                </td>
+                                                                <td>{{ $assessment->mark ?? '-' }}</td>
+                                                                <td>
+                                                                    @if ($assessment->assessment == 1)
+                                                                        Pass
+                                                                    @elseif($assessment->assessment == 2)
+                                                                        Fail
+                                                                    @elseif($assessment->assessment == 3)
+                                                                        Not Attended
+                                                                    @endif
+
+                                                                </td>
+                                                                <td>{{ strip_tags($assessment->feedback) ?? '-' }}
+                                                                </td>
+                                                                <td>
+                                                                    @if ($assessment->attended_status == 1)
+                                                                        <a
+                                                                            href="{{ admin_url('training_schedule/certificate/' . encryptId($training_schedule->id) . '/' . encryptId($assessment->id)) }}">
+                                                                            <i class="fa fa-download"
+                                                                                style="font-size:20px;color:rgb(12 125 234)"></i>
+                                                                        </a>
+                                                                    @else
+                                                                        -
                                                                     @endif
                                                                 </td>
                                                             </tr>
@@ -734,6 +749,7 @@
                                                 <hr>
                                             </div>
                                         </div>
+
                                     </div>
                                 @endif
                             @endif

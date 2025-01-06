@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Vise President Approval')
+@section('title', 'Vice President Approval')
 @section('pageurl', admin_url('training_schedule/list'))
 
 
@@ -123,7 +123,7 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Vise President Approval</h4>
+                                        <h4 class="text-white">Vice President Approval</h4>
                                     </div>
                                 </div>
 
