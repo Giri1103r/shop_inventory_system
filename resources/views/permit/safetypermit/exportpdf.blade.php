@@ -729,7 +729,8 @@
                 <td width="50%" style="padding:5px;"><b>Approved Time</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ displaytimeformat(null != $getEhSverification->created_at ? $getEhSverification->created_at : '') }}
+                    {{ displaytimeformat($getEhSverification && $getEhSverification->created_at ? $getEhSverification->created_at : '') }}
+
                 </td>
             </tr>
             <tr>
@@ -741,17 +742,22 @@
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('signature') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                
+
             </tr>
             <tr>
                 <td width="100%" style="padding:5px;">
-                      
-                    @foreach(explode(',', $getEhSverification->file_paths) as $file_path)
-                    <a href="{{ asset($file_path) }}" target="_blank">
-                        <img src="{{ asset($file_path) }}" alt="Signature" style="max-width: 30%;">
-                    </a>
-                @endforeach
+                    @if($getEhSverification && $getEhSverification->file_paths)
+                        @foreach(explode(',', $getEhSverification->file_paths) as $file_path)
+                            <a href="{{ asset($file_path) }}" target="_blank">
+                                <img src="{{ asset($file_path) }}" alt="Signature" style="max-width: 30%;">
+                            </a>
+                        @endforeach
+                    @else
+                        <p>No files available</p>
+                    @endif
+                </td>
             </tr>
+
         </table>
     @endif
 

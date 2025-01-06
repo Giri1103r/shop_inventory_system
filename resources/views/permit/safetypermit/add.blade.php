@@ -1280,6 +1280,8 @@
 
                                 if (!displayedEquipments.has(item.protective_equip)) {
                                     displayedEquipments.add(item.protective_equip);
+
+
                                     const isChecked = item.default_enable == 1 ?
                                         'checked' : '';
                                     checkpointsHtml += `
@@ -1452,7 +1454,7 @@
 
                 if (!checkboxState) {
                     container.find(`.checkpoint[data-work-id="${workId}"]`).remove();
-                    displayedEquipments.clear();
+                    displayedPrecautions.clear();
                 }
 
 
