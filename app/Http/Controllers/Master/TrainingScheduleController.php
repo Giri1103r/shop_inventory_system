@@ -825,7 +825,7 @@ class TrainingScheduleController extends Controller
                             ->orWhere('training_status', 4);
                     })
                     ->first();
-                $vp_detail = $this->user->select('id', 'role', 'name', 'employee_id', 'email')->where('role', 10)->first();
+                $vp_detail = $this->user->select('id', 'role', 'name', 'employee_id', 'email')->whereRaw("FIND_IN_SET(10, role) > 0")->first();
                 if ($approveexists) {
                     $data = array(
                         'training_schedule' => $training_schedule,
