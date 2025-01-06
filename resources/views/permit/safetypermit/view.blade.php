@@ -700,12 +700,25 @@
                                     </div>
                                 </div>
                                 <div class="mb-3 col-md-4 form-input">
-                                    <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                    <label class="form-label view_label">{{ __('Additional suggestion') }}</label>
                                     <div class="view_data">
                                         {{ isset($getEhSverification->remarks) ? $getEhSverification->remarks : '' }}
                                     </div>
                                 </div>
-
+                                <div class="mb-3 col-md-6 form-input">
+                                    <label class="form-label ">{{ __('Signature') }}</label>
+                                    <div>
+                                        <div>
+                                            
+                                            @foreach(explode(',', $getEhSverification->file_paths) as $file_path)
+                                                <a href="{{ asset($file_path) }}" target="_blank">
+                                                    <img src="{{ asset($file_path) }}" alt="Signature" style="max-width: 30%;">
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                                
                             </div>
                         </div>
                     @endif

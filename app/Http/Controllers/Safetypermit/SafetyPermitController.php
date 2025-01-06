@@ -16,6 +16,7 @@ use DataTables;
 use Mail;
 use App\Models\User;
 use App\Models\Permit\SafetyPermit;
+use App\Models\Permit\SafetyPermitEHSfile;
 use App\Models\Permit\WorkmanInvolved;
 use App\Models\Permit\SafetyApproveReject;
 use App\Models\Permit\SafetyPermitExtension;
@@ -39,6 +40,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 class SafetyPermitController extends Controller
 {
     private $safetypermit;
+    private $safetypermitehsfile;
     private $safetyPermitExtension;
     private $workmaninvolved;
     private $unit;
@@ -58,6 +60,7 @@ class SafetyPermitController extends Controller
     public function __construct()
     {
         $this->safetypermit = new SafetyPermit();
+        $this->safetypermitehsfile = new SafetyPermitEHSfile();
         $this->safetyPermitExtension = new SafetyPermitExtension();
         $this->workmaninvolved = new WorkmanInvolved();
         $this->unit = new Unit();
@@ -610,6 +613,8 @@ class SafetyPermitController extends Controller
             return view('permit.safetypermit.approvereject', $data);
 
         } catch (Exception $ex) {
+
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong. Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
@@ -631,6 +636,7 @@ class SafetyPermitController extends Controller
 
 
             $approve =   $this->approvereject->ehsverification($permit_status);
+            $this->safetypermitehsfile->store($approve, $permit_status);
             $this->safetypermit->verifiedby($approve->created_by, $id);
             $this->safetypermit->permitstatus($permit_status, $id);
 
@@ -698,7 +704,7 @@ class SafetyPermitController extends Controller
 
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
-
+dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
@@ -1345,7 +1351,7 @@ class SafetyPermitController extends Controller
     {
         $url = admin_url('safetypermit/join/' . $id);
 
-
+        $safetypermit = $this->safetypermit->selectOne(decryptId($id));
         $qrSvg = QrCode::size(150)
             ->backgroundColor(255, 255, 255)
             ->color(1, 1, 1)
@@ -1365,7 +1371,7 @@ class SafetyPermitController extends Controller
         $mpdf = new \Mpdf\Mpdf($property);
         $mpdf->setAutoTopMargin = 'stretch';
 
-        $view = view('permit.safetypermit.permitjoin', compact('qrBase64', 'permit_no'));
+        $view = view('permit.safetypermit.permitjoin', compact('qrBase64', 'permit_no','safetypermit'));
         $html = $view->render();
 
         $mpdf->WriteHTML($html);
@@ -1422,7 +1428,7 @@ class SafetyPermitController extends Controller
             $html = view('permit.safetypermit.exportpdf', $data)->render();
             $mpdf->WriteHTML($html);
             $filename = "Safety Permit.pdf";
-            return $mpdf->Output($filename, 'D');
+            return $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
             report($ex);
         }

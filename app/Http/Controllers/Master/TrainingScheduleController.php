@@ -186,12 +186,12 @@ class TrainingScheduleController extends Controller
                                 $btn .= '<a href="' . admin_url('training_schedule/pdf/' . encryptId($row->id)) . '"  class="pdficon" title="Pdf"><i class="fas fa-file-pdf" aria-hidden="true" style="color: #e21e23;"></i> </a> ';
                             }
 
-                            // if ($row->training_status == TRAINING_COMPLETED && (in_array(ROLE_VISE_PRESIDENT, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())) || in_array(ROLE_TRAINER, getUserRoleId(Auth::id())) || in_array(ROLE_ADMIN, getUserRoleId(Auth::id())))) {
-                            //     $btn .= '<a href="' . admin_url('training_schedule/certificate/' . encryptId($row->id)) . '" title="Certificate">
-                            //            <i class="fas fa-award"></i>
-                            //              </a> ';
-                            // }
-                            
+                            if ($row->training_status == TRAINING_COMPLETED && (Auth::user()->role != ROLE_SUPERADMIN && Auth::user()->role != ROLE_TRAINER && Auth::user()->role != ROLE_ADMIN && Auth::user()->role != ROLE_VISE_PRESIDENT)) {
+                                $btn .= '<a href="' . admin_url('training_schedule/certificate/' . encryptId($row->id)) . '" title="Certificate">
+                                       <i class="fas fa-award"></i>
+                                         </a> ';
+                            }
+
                             if (CheckUserPermission('view')) {
                                 $btn .= '<a href="' . admin_url('training_schedule/view/' . encryptId($row->id)) . '" title="View">
                                             <i class="fa-solid fa-eye"></i>
@@ -825,7 +825,7 @@ class TrainingScheduleController extends Controller
                             ->orWhere('training_status', 4);
                     })
                     ->first();
-                $vp_detail = $this->user->select('id', 'role', 'name', 'employee_id', 'email')->where('role', 10)->first();
+                $vp_detail = $this->user->select('id', 'role', 'name', 'employee_id', 'email')->whereRaw("FIND_IN_SET(10, role) > 0")->first();
                 if ($approveexists) {
                     $data = array(
                         'training_schedule' => $training_schedule,
@@ -1389,62 +1389,46 @@ class TrainingScheduleController extends Controller
         }
     }
 
-    // public function certificateView(Request $request)
-    // {
-    //     try {
-    //         $id = decryptId($request->id);
-    //         $training_schedule = $this->training_schedule->selectOne($id);
-    //         $nominationProcessList = $this->nomination_process->getNomination($training_schedule->id);
+    public function certificateView(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $training_schedule = $this->training_schedule->selectOne($id);
+            $userAttendPass = $this->training_assessment_feedback
+            ->where('attended_status', 1)
+            ->where('status', 1)
+            ->where('email', Auth::user()->email)
+            ->where('training_schedule_id', $training_schedule->id)
+            ->first();
+            // dd( $training_schedule,$userAttendPass);
+            $data = [
+                'training_details' => $training_schedule,
+                'userAttendPass' => $userAttendPass,
+            ];
 
-    //         $attendanceDate = $request->attendance_date;
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'utf-8',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+                'default_font' => 'arial',
+            ];
 
-    //         $trainingAttendanceList = $this->training_attendance
-    //             ->where('status', 1)
-    //             ->where('training_schedule_id', $training_schedule->id)
-    //             ->when($attendanceDate, function ($query, $attendanceDate) {
-    //                 return $query->whereDate('attendance_date', DBdateformat($attendanceDate));
-    //             })
-    //             ->get();
-    //         $trainingAssessmentList = $this->training_assessment_feedback->getAssessmentList($training_schedule->id);
-    //         // Initialize an empty collection for training feedback
-    //         $trainingFeedbackList = collect();
-    //         foreach ($trainingAssessmentList as $assessment) {
-    //             $feedbackList = $this->training_feedback->getfeedbackList($assessment->id);
-    //             $trainingFeedbackList = $trainingFeedbackList->merge($feedbackList);
-    //         }
-    //         $rejectedlog = $this->training_statuslog->where('training_schedule_id', $training_schedule->id)->where('training_status', 3)->get();
-    //         $data = [
-    //              'training_Details' => $training_schedule,
-    //             'nominationProcessList' => $nominationProcessList,
-    //             'trainingAttendanceList' => $trainingAttendanceList,
-    //             'trainingAssessmentList' => $trainingAssessmentList,
-    //             'trainingFeedbackList' => $trainingFeedbackList,
-    //             'rejectedlog' => $rejectedlog,
-    //         ];
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
 
-    //         $property = [
-    //             'tempDir' => 'public/pdf/temp/',
-    //             'mode' => 'utf-8',
-    //             'margin_left' => 10,
-    //             'margin_right' => 10,
-    //             'margin_top' => 10,
-    //             'default_font' => 'arial',
-    //         ];
+            $view = view('master.training_schedule.certificate', $data);
+            $html = $view->render();
 
-    //         $mpdf = new \Mpdf\Mpdf($property);
-    //         $mpdf->setAutoTopMargin = 'stretch';
-
-    //         $view = view('master.training_schedule.certificate', $data);
-    //         $html = $view->render();
-
-    //         $mpdf->WriteHTML($html);
-    //         $filename = "Certificate.pdf";
-    //         $mpdf->Output($filename, 'D');
-    //     } catch (Exception $ex) {
-    //         report($ex);
-    //         return response()->json(['error' => 'Something went wrong while generating the PDF.']);
-    //     }
-    // }
+            $mpdf->WriteHTML($html);
+            $filename = "Certificate.pdf";
+            $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            dd($ex);
+            return response()->json(['error' => 'Something went wrong while generating the PDF.']);
+        }
+    }
     public function exportViewPdf(Request $request)
     {
         try {
