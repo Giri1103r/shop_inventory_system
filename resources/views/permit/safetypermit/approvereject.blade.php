@@ -731,7 +731,7 @@
                                                     <input type="file" class="form-control validate-file-accept validate-file-required"
                                                            name="site_images[0][]" id="site_image_0" multiple>
                                                     <div class="text-danger"></div>
-                                                    <p style="color:red;">Allowed file types: png, jpeg, jpg</p>
+                                                    <small>Allowed file types: png, jpeg , jpg</small>
                                                 </div>
                                             </div>
 
@@ -1230,7 +1230,7 @@
                         id="site_image_${currentFileUploads}"
                         multiple data-error="Please upload with a valid file type">
                     <div class="text-danger"></div>
-                    <p style="color:red;">Allowed file types: png, jpeg, jpg</p>
+                    <small>Allowed file types: png, jpeg , jpg</small>
                     <button type="button" class="btn btn-danger btn-sm remove-upload-block">
                  <i class="fas fa-trash"></i>
                 </button>
