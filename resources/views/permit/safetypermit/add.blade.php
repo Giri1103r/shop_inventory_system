@@ -1122,10 +1122,14 @@
             time_24hr: true,
             minuteIncrement: 5,
             dateFormat: "H:i",
+            minDate: new Date(),
             onChange: function(selectedDates, dateStr, instance) {
                 if (selectedDates.length > 0) {
                     let fromTime = selectedDates[0];
+
+
                     let toTime = new Date(fromTime.getTime() + 8 * 60 * 60 * 1000);
+
 
                     let hours = String(toTime.getHours()).padStart(2, '0');
                     let minutes = String(toTime.getMinutes()).padStart(2, '0');

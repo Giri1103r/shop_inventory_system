@@ -474,7 +474,7 @@
                                 <div class="mb-3 col-md-4 form-input">
                                     <label class="form-label view_label m-1">Other If any :</label>
                                     <div class="view_data">
-                                        {{ $safetypermit->equiment_involved_others }}
+                                        {{ isset($safetypermit->equiment_involved_others) ? $safetypermit->equiment_involved_others : 'N/A' }}
                                     </div>
                                 </div>
                             </div>
@@ -709,7 +709,7 @@
                                     <label class="form-label ">{{ __('Signature') }}</label>
                                     <div>
                                         <div>
-                                            
+
                                             @foreach(explode(',', $getEhSverification->file_paths) as $file_path)
                                                 <a href="{{ asset($file_path) }}" target="_blank">
                                                     <img src="{{ asset($file_path) }}" alt="Signature" style="max-width: 30%;">
@@ -718,7 +718,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
                     @endif
