@@ -720,6 +720,20 @@
                 <td width="48%" style="padding:5px;">
                     {{ isset($getEhSverification->remarks) ? $getEhSverification->remarks : '' }}</td>
             </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('signature') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                
+            </tr>
+            <tr>
+                <td width="100%" style="padding:5px;">
+                      
+                    @foreach(explode(',', $getEhSverification->file_paths) as $file_path)
+                    <a href="{{ asset($file_path) }}" target="_blank">
+                        <img src="{{ asset($file_path) }}" alt="Signature" style="max-width: 30%;">
+                    </a>
+                @endforeach
+            </tr>
         </table>
     @endif
 

@@ -16,6 +16,7 @@ use DataTables;
 use Mail;
 use App\Models\User;
 use App\Models\Permit\SafetyPermit;
+use App\Models\Permit\SafetyPermitEHSfile;
 use App\Models\Permit\WorkmanInvolved;
 use App\Models\Permit\SafetyApproveReject;
 use App\Models\Permit\SafetyPermitExtension;
@@ -39,6 +40,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 class SafetyPermitController extends Controller
 {
     private $safetypermit;
+    private $safetypermitehsfile;
     private $safetyPermitExtension;
     private $workmaninvolved;
     private $unit;
@@ -58,6 +60,7 @@ class SafetyPermitController extends Controller
     public function __construct()
     {
         $this->safetypermit = new SafetyPermit();
+        $this->safetypermitehsfile = new SafetyPermitEHSfile();
         $this->safetyPermitExtension = new SafetyPermitExtension();
         $this->workmaninvolved = new WorkmanInvolved();
         $this->unit = new Unit();
@@ -126,7 +129,7 @@ class SafetyPermitController extends Controller
                         </a>';
                             }
                             if ((($row->permit_status = STATUS_EHS_APPROVE_PENDING && $row->permit_status != STATUS_PLANT_HEAD_APPROVED )  || ($row->permit_status != STATUS_PERMIT_EXPIRED && $row->permit_status != STATUS_PLANT_HEAD_APPROVED && $row->permit_status != STATUS_EHS_DECLINE)  || ($row->permit_status == STATUS_PERMIT_EXTENDED_REJECTED))&& ($row->created_by == Auth::id())) {
-                                $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '" class="permitExtension" title="' . __('Permit Extension') . '"><i class="fa fa-external-link"></i> ';
+                                $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '" class="permitExtension" title="' . __('Permit Extension') . '"><i class="fa fa-external-link" style="color: #000000;"></i> ';
                             }
 
                             $btn .= '<a href="' . admin_url('safetypermit/view/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="' . __('common.view') . '">
@@ -579,6 +582,8 @@ class SafetyPermitController extends Controller
             }
             return view('permit.safetypermit.approvereject', $data);
         } catch (Exception $ex) {
+
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
@@ -597,6 +602,7 @@ class SafetyPermitController extends Controller
             }
 
             $approve =   $this->approvereject->ehsverification($permit_status);
+            $this->safetypermitehsfile->store($approve, $permit_status);
             $this->safetypermit->verifiedby($approve->created_by, $id);
             $this->safetypermit->permitstatus($permit_status, $id);
 
@@ -663,7 +669,7 @@ class SafetyPermitController extends Controller
 
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
-
+dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
@@ -1389,7 +1395,7 @@ class SafetyPermitController extends Controller
             $html = view('permit.safetypermit.exportpdf', $data)->render();
             $mpdf->WriteHTML($html);
             $filename = "Safety Permit.pdf";
-            return $mpdf->Output($filename, 'D');
+            return $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
             report($ex);
         }

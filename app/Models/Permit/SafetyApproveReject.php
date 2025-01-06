@@ -180,13 +180,39 @@ class SafetyApproveReject extends Model
 
     public function getEhSverification($ptw_id)
     {
-        $data = $this->select('ptw_aprove_reject.*')
+        $data = $this->selectRaw('
+                ptw_aprove_reject.permit_id,
+                ptw_aprove_reject.approve_reject_by,
+                ptw_aprove_reject.date,
+                ptw_aprove_reject.remarks,
+                ptw_aprove_reject.approve_reject_status,
+                ptw_aprove_reject.approve_reject_type,
+                ptw_aprove_reject.trash,
+                GROUP_CONCAT(DISTINCT ptw_aprove_reject_ehs_file.file_path SEPARATOR ",") AS file_paths
+            ')
+            ->leftJoin('ptw_aprove_reject_ehs_file', 'ptw_aprove_reject_ehs_file.permit_id', '=', 'ptw_aprove_reject.permit_id')
+            ->where('ptw_aprove_reject_ehs_file.permit_status', 2)
+            ->where('ptw_aprove_reject_ehs_file.trash', 'NO')
             ->where('ptw_aprove_reject.permit_id', $ptw_id)
-            ->where('ptw_aprove_reject.approve_reject_status', 2)->where('ptw_aprove_reject.approve_reject_type', 1)->where('ptw_aprove_reject.trash', 'NO')
+            ->where('ptw_aprove_reject.approve_reject_status', 2)
+            ->where('ptw_aprove_reject.approve_reject_type', 1)
+            ->where('ptw_aprove_reject.trash', 'NO')
+            ->groupBy(
+                'ptw_aprove_reject.permit_id',
+                'ptw_aprove_reject.approve_reject_by',
+                'ptw_aprove_reject.date',
+                'ptw_aprove_reject.remarks',
+                'ptw_aprove_reject.approve_reject_status',
+                'ptw_aprove_reject.approve_reject_type',
+                'ptw_aprove_reject.trash'
+            )
             ->first();
-
+    // dd($data);
         return $data;
     }
+    
+    
+    
 
     public function getEhsapproval($ptw_id)
     {
