@@ -44,6 +44,15 @@
 </head>
 <body>
     <div class="container">
+        <div class="permit-details">
+            <span><strong>Date:</strong> {{ Displaydateformat($safetypermit->date) }}</span>
+            <span><strong>From Time:</strong> {{ $safetypermit->time_from }}</span>
+            <span><strong>To Time:</strong> {{ $safetypermit->time_to }}</span>
+            <span><strong>Unit:</strong> {{ getUnitname($safetypermit->unit_id) }}</span>
+            <span><strong>Exact location of job</strong> {{$safetypermit->exact_location_job }}</span>
+            <span><strong>Job Location & Area</strong> {{$safetypermit->job_location_area }}</span>
+            <span><strong>Created By</strong> {{getUsername($safetypermit->created_by) }}</span>
+        </div>
         <img src="{{ $qrBase64 }}" alt="QR Code" class="qr-code">
         <div class="text">{{$permit_no}}</div>
     </div>

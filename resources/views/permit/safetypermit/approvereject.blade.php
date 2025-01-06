@@ -710,7 +710,7 @@
                                             </div>
                                             <div class="col-md-12 mb-3">
                                                 <div class="mb-1">
-                                                    <label for="remarks" class="form-label require">Remarks</label>
+                                                    <label for="remarks" class="form-label require">Additional suggestion</label>
                                                     <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="ehs_verification_remarks"
                                                         rows="3"></textarea>
                                                     <div class="text-danger" id="remarks_error"></div>
@@ -752,7 +752,7 @@
                                     </div>
                                 </div>
                                 <div class="mb-3 col-md-4 form-input">
-                                    <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                    <label class="form-label view_label">{{ __('Additional suggestion') }}</label>
                                     <div class="view_data">
                                         {{ isset($getEhSverification->remarks) ? $getEhSverification->remarks : '' }}
                                     </div>
