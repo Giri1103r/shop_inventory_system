@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Log;
 
 class EmployeeTemp extends Model
 {
@@ -73,13 +74,24 @@ class EmployeeTemp extends Model
 
         foreach ($chunks as $chunk) {
             foreach ($chunk as $item) {
-
+                   
+                if (empty($item['Emp_OfficialMail'])) {
+                    Log::info("Skipped record due to empty email", [
+                        'emp_id' => $item['pk_Emp_Code'],
+                        'email' => $item['Emp_OfficialMail'],
+                    ]);
+                    continue; 
+                }
                 $emailExists = $this->where('email', $item['Emp_OfficialMail'])->where('emp_id', '!=', $item['pk_Emp_Code'])->exists();
 
                 if ($emailExists) {
                     $errorMessage = "Email already exists.";
                     $this->updateErrorStatus($item['pk_Emp_Code'], $errorMessage);
-                    continue; // Skip this record
+                    Log::info("Skipped record due to already exists", [
+                        'emp_id' => $item['pk_Emp_Code'],
+                        'email' => $item['Emp_OfficialMail'],
+                    ]);
+                    continue; 
                 }
                 $valuesToInsertOrUpdate = [
                     'emp_id' => isset($item['pk_Emp_Code']) ? $item['pk_Emp_Code'] : null,
@@ -113,6 +125,49 @@ class EmployeeTemp extends Model
         return response()->json(['message' => 'Data processed successfully.']);
     }
 
+    // public function store($data)
+    // {
+    //     try {
+    //         $batchSize = 500;
+
+    //         // Split data into chunks to handle large datasets
+    //         $chunks = array_chunk($data['Result'], $batchSize);
+
+    //         foreach ($chunks as $chunk) {
+    //             $insertArray = [];
+
+    //             foreach ($chunk as $item) {
+    //                 $insertArray[] = [
+    //                     'emp_id' => $item['pk_Emp_Code'] ?? null,
+    //                     'emp_name' => $item['Emp_Name'] ?? null,
+    //                     'gender' => $item['Emp_Gender'] ?? null,
+    //                     'user_role' => $item['Emp_Rolename'] ?? null,
+    //                     'joining_date' => !empty($item['Emp_JoiningDate']) ? DBdatetimeformat($item['Emp_JoiningDate']) : null,
+    //                     'status' => $item['Emp_Active'] ?? null,
+    //                     'employee_status' => $item['Emp_Status'] ?? null,
+    //                     'email' => $item['Emp_OfficialMail'] ?? null,
+    //                     'reporting_manager' => $item['Emp_FirstApprover'] ?? null,
+    //                     'upload_status' => 0,
+    //                     'error_status' => 0,
+    //                     'error_remarks' => null,
+    //                     'created_at' => now(),
+    //                     'updated_at' => now(),
+    //                 ];
+    //             }
+
+    //             // Insert the batch into the database
+    //             $this->insert($insertArray);
+    //         }
+
+    //         return response()->json(['message' => 'Data processed successfully.']);
+    //     } catch (\Exception $ex) {
+    //         // Handle exceptions and return an error response
+    //         return response()->json([
+    //             'message' => 'An error occurred while processing data.',
+    //             'error' => $ex->getMessage(),
+    //         ], 500);
+    //     }
+    // }
 
     public function updates($empid)
     {

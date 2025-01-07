@@ -62,7 +62,10 @@ if (!function_exists('DBdatetimeformat')) {
 if (!function_exists('Displaydateformat')) {
 
     function Displaydateformat($date)
-    {
+    { 
+        if($date == '' || $date == null){
+            return '';
+        }
 
         return date('d-m-Y', strtotime($date));
     }

@@ -85,6 +85,8 @@ class ImportTrainingSchedulejob implements ShouldQueue
                     trim($row['0']) != 'SNo' ||
                     trim($row['1']) != 'From Date' ||
                     trim($row['2']) != 'To Date' ||
+                    trim($row['2']) != 'Start Time' ||
+                    trim($row['2']) != 'End Time' ||
                     trim($row['3']) != 'Topic Name' ||
                     trim($row['4']) != 'Trainer Name' ||
                     trim($row['5']) != 'Unit' ||
@@ -109,12 +111,14 @@ class ImportTrainingSchedulejob implements ShouldQueue
             $sno = trim($row['0']);
             $from_date = trim($row['1']);
             $to_date = trim($row['2']);
-            $topic_name = trim($row['3']);
-            $trainer_name = trim($row['4']);
-            $unit_name = trim($row['5']);
-            $department_name = trim($row['6']);
-            $target_trainee = trim($row['7']);
-            $venue = trim($row['8']);
+            $start_time = trim($row['3']);
+            $end_time = trim($row['4']);
+            $topic_name = trim($row['5']);
+            $trainer_name = trim($row['6']);
+            $unit_name = trim($row['7']);
+            $department_name = trim($row['8']);
+            $target_trainee = trim($row['9']);
+            $venue = trim($row['10']);
 
             $fromDate = DateTime::createFromFormat('Y-m-d H:i:s', $from_date);
             $formattedFromDate = $fromDate->format('Y-m-d');

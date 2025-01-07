@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Cron;
 
+use Illuminate\Http\Request;
+
 use App\Http\Controllers\Controller;
 
 use Illuminate\Support\Facades\Artisan;
@@ -265,14 +267,17 @@ class CronController extends Controller
     {
         try {
 
-            $apiUrl = 'https://hrms.esparsh.in/PunchesAPI/api/Attendance/GetEmployeeDetails?token=KARAroz4HhR1EIx8qaz3C13z/quTXBkQ3Q5hj7Qx3aA*&fromDate=2024-01-01&toDate=2024-11-16';
+            $fromDate = todayDbdate();
+            $toDate = todayDbdate();
+
+            $apiUrl = "https://hrms.esparsh.in/PunchesAPI/api/Attendance/GetEmployeeDetails?token=KARAroz4HhR1EIx8qaz3C13z/quTXBkQ3Q5hj7Qx3aA*&fromDate={$fromDate}&toDate={$toDate}";
 
             $response = Http::get($apiUrl);
 
+
             if ($response->successful()) {
                 $data = $response->json();
-
-                if (!empty($data)) {
+                if (!empty($data['Result'])) {
                     $emp_temp = $this->emp_temp->store($data);
                     return response()->json(['message' => 'Data saved successfully.']);
                 } else {
@@ -283,6 +288,32 @@ class CronController extends Controller
             }
         } catch (Exception $ex) {
             dd($ex);
+            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
+        }
+    }
+    public function employeeMasterTempAllDetails(Request $request)
+    {
+        try {
+            $fromDate = '2001-01-01';
+            $toDate = todayDbdate();
+            $apiUrl = "https://hrms.esparsh.in/PunchesAPI/api/Attendance/GetEmployeeDetails?token=KARAroz4HhR1EIx8qaz3C13z/quTXBkQ3Q5hj7Qx3aA*&fromDate={$fromDate}&toDate={$toDate}";
+
+            $response = Http::get($apiUrl);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                if (!empty($data['Result'])) {
+                    $emp_temp = $this->emp_temp->store($data);
+                    return response()->json(['message' => 'Data saved successfully.']);
+                } else {
+                    return response()->json(['message' => 'No data found in API response.']);
+                }
+            } else {
+                return response()->json(['message' => 'Failed to fetch data from API.', 'status' => $response->status()]);
+            }
+        } catch (Exception $ex) {
+            report($ex);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
@@ -303,15 +334,24 @@ class CronController extends Controller
 
         try {
             $emp_temp = EmployeeTemp::select('*')->where('upload_status', '0')->get();
-
             if (!empty($emp_temp)) {
 
                 $employee = $this->employee->store($emp_temp);
                 $users = $this->user->store($employee);
+                $allowedEmails = [
+                    'keshav.kashyap@karam.in',
+                    'vinay.kumar@karam.in',
+                    'prashant.singh2@karam.in'
+                ];
+                
                 foreach ($users as $user) {
                     // if (!empty($user) && isset($user['email'])) {
                     //     Mail::to($user['email'])->queue(new EmployeeRegisterEmail($user));
                     // }
+
+                    if (!empty($user) && in_array($user['email'], $allowedEmails)) {
+                        Mail::to($user['email'])->queue(new EmployeeRegisterEmail($user));
+                    }
                     if (!empty($user) && isset($user['employee_id'])) {
                         $userID = DB::table('users')
                             ->select('id')
@@ -425,11 +465,11 @@ class CronController extends Controller
         try {
             $currentTime = Carbon::now()->format('H:i:s');
             $permits = SafetyPermit::where('trash', 'NO')
-            ->where('permit_status', '!=', STATUS_PLANT_HEAD_APPROVED)
-            ->where('permit_status', '!=', STATUS_PERMIT_EXPIRED) // Avoid already updated permits
-            ->whereDate('date', Carbon::today())
-            ->where('time_to', '<', $currentTime)
-            ->get();
+                ->where('permit_status', '!=', STATUS_PLANT_HEAD_APPROVED)
+                ->where('permit_status', '!=', STATUS_PERMIT_EXPIRED) // Avoid already updated permits
+                ->whereDate('date', Carbon::today())
+                ->where('time_to', '<', $currentTime)
+                ->get();
 
             Log::info("Fetched permits for expiry", ['count' => $permits->count(), 'permit_ids' => $permits->pluck('id')]);
 

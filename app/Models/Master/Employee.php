@@ -211,7 +211,7 @@ class Employee extends Model
             'id_type'=>$request->id_type  ?? null,
             'id_number'=>$request->id_number  ?? null,
             'email' => $request->email ?? null,
-            'joining_date' => DBdateformat($request->joining_date),
+            'joining_date' => DBdateformat($request->joining_date) ?? '',
             'mobile_no' => $request->mobile_no ?? null,
             'user_role' => $commaSeparatedRoles,
             'company' => decryptId($request->company),

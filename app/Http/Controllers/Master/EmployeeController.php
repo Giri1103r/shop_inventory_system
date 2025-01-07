@@ -18,6 +18,7 @@ use DataTables;
 use Response;
 use App\Jobs\ImportdepartmentJob;
 
+use App\Mail\RestEmployeePasswordEmail;
 
 use App\Models\Master\Company;
 use App\Models\Master\Employee;
@@ -86,9 +87,13 @@ class EmployeeController extends Controller
                             if (CheckUserPermission('edit')) {
                                 $btn .= '<a href="' . admin_url('employee/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
+                            if (CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_SUPERADMIN)) {
+                                $btn .= '<a href="' . admin_url('employee/passwordchange/' . encryptId($row->id)) . '" class="key-icon" title="passwordchange"><i class="fas fa-key"></i> ';
+                            }
+
                             return $btn;
                         })
-                        ->editColumn('unit',function($row){
+                        ->editColumn('unit', function ($row) {
                             return getUnitname($row->unit);
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -198,6 +203,64 @@ class EmployeeController extends Controller
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+        }
+    }
+    public function PasswordUpdate(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            $userrole  = $this->userrole->select('id', 'role_name')->where('status', '1')->get();
+            $employee = $this->employee->selectOne($id);
+
+            $data = array(
+                'employee' => $employee,
+                'userrole' => $userrole,
+            );
+
+            return view('master.employee.passwordupdate', $data);
+        } catch (Exception $error) {
+
+            report($error);
+        }
+    }
+
+    public function PasswordUpdateSubmit(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            $rules = [
+                'password' => 'required|confirmed',
+            ];
+            $messages = [
+                'password.required' => 'Please enter the Password',
+                'password_confirmation.required' => 'Please enter the Confirm Password',
+                'password.confirmed' => 'The password confirmation does not match.',
+            ];
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+            $employee = $this->employee->find($id);
+            $user = $this->user->passwordUpdate($employee->login_id);
+            if ($user) {
+                $updatedUser = $this->user->find($employee->login_id);
+                $newpass =  $request->password;
+                if ($updatedUser && !empty($updatedUser->email)) {
+                    Mail::to($updatedUser->email)->queue(new RestEmployeePasswordEmail($updatedUser,$newpass));
+                }
+                Session::flash('success', 'Employee password updated successfully!');
+                return redirect(admin_url('employee/list'));
+            }
+            Session::flash('success', 'Employee password updated successfully!');
+            return redirect(admin_url('employee/list'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('employee/list'));
         }
     }
 
