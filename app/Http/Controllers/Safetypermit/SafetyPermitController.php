@@ -704,12 +704,13 @@ class SafetyPermitController extends Controller
 
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
-dd($ex);
+        dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
         }
     }
+
     public function ehsapproval(Request $request)
     {
 
@@ -1001,7 +1002,6 @@ dd($ex);
         }
     }
 
-
     public function plantheadapproval(Request $request)
     {
 
@@ -1098,6 +1098,7 @@ dd($ex);
             return redirect(admin_url('safetypermit/list'));
         }
     }
+
     public function delete(Request $request)
     {
         try {
@@ -1220,8 +1221,6 @@ dd($ex);
         }
     }
 
-
-
     public function getprotectivechecklist(Request $request, $workId)
     {
         $id = decryptId($request->input('id'));
@@ -1231,14 +1230,13 @@ dd($ex);
         return response()->json($checkpoints);
     }
 
-
-
     public function getequipmentinvolved($workId)
     {
 
         $getequipmentinvolved = $this->typeofworkchecklist->getequipmentinvolved($workId, 'type2');
         return response()->json($getequipmentinvolved);
     }
+
     public function getprecaution($workId)
     {
         $getprecaution = $this->typeofworkchecklist->getprecaution($workId, 'type3');
@@ -1276,6 +1274,7 @@ dd($ex);
             })
         );
     }
+
     public function reassignemployeename(Request $request)
     {
         $name = $request->input('search');
@@ -1297,8 +1296,6 @@ dd($ex);
             })
         );
     }
-
-
 
     public function employeeid(Request $request)
     {
@@ -1415,16 +1412,37 @@ dd($ex);
 
             $property = [
                 'tempDir' => 'public/pdf/temp/',
-                'mode' => 'c',
+               // 'mode' => 'c',
                 'margin_left' => 10,
                 'margin_right' => 10,
                 'margin_top' => 10,
+                'fontDir' => array_merge((new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], [
+                            public_path('assets/fonts/Noto_Sans_Devanagari'),
+                        ]),
+                        'fontdata' => array_merge((new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'], [
+                                    'NotoSansDevanagari' => [
+                                        'R' => 'NotoSansDevanagari-Regular.ttf',
+                                        'B' => 'NotoSansDevanagari-Bold.ttf',
+                                    ],
+                                ]),
+                                'default_font' => 'NotoSansDevanagari',
 
             ];
 
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
-
+            // $mpdf = new \Mpdf\Mpdf([
+            //     'fontDir' => array_merge((new Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], [
+            //         public_path('assets/fonts/Noto_Sans_Devanagari'),
+            //     ]),
+            //     'fontdata' => array_merge((new Mpdf\Config\FontVariables())->getDefaults()['fontdata'], [
+            //         'NotoSansDevanagari' => [
+            //             'R' => 'NotoSansDevanagari-Regular.ttf',
+            //             'B' => 'NotoSansDevanagari-Bold.ttf',
+            //         ],
+            //     ]),
+            //     'default_font' => 'NotoSansDevanagari',
+            // ]);
             $html = view('permit.safetypermit.exportpdf', $data)->render();
             $mpdf->WriteHTML($html);
             $filename = "Safety Permit.pdf";

@@ -2,6 +2,7 @@
 
 <head>
     <title>Safety Permit | KARAM</title>
+    <meta charset="UTF-8">
     <style>
         .badge {
             padding: 1px 9px 2px;
@@ -115,7 +116,8 @@
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
-                    <td style="width:100%;background-color: #ce0f1f;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
+                    <td
+                        style="width:100%;background-color: #ce0f1f;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
                         Safety Permit
                     </td>
                 </tr>
@@ -187,9 +189,8 @@
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
-                    <td
-                       style="width:100%;background-color: #6c757d;color:#fff;padding: 10px 10px 10px;"  >
-                       Type of Job
+                    <td style="width:100%;background-color: #6c757d;color:#fff;padding: 10px 10px 10px;">
+                        Type of Job
                     </td>
                 </tr>
             </table>
@@ -308,9 +309,8 @@
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
-                    <td
-                       style="width:100%;background-color: #6c757d;color:#fff;padding: 10px 10px 10px;">
-                       State of Isolation & LOTO
+                    <td style="width:100%;background-color: #6c757d;color:#fff;padding: 10px 10px 10px;">
+                        State of Isolation & LOTO
                     </td>
                 </tr>
             </table>
@@ -376,8 +376,7 @@
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
-                <td
-                   style="width:100%;background-color: #6c757d;color:#fff;padding: 10px 10px 10px;">
+                <td style="width:100%;background-color: #6c757d;color:#fff;padding: 10px 10px 10px;">
                     Applicable for Confined Space Entry
                 </td>
             </tr>
@@ -443,7 +442,6 @@
             <td width="48%" style="padding:5px;">
                 @if (optional($confined_space_entry)->register_entry_exits == 'on')
                     <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
-
                 @endif
             </td>
         </tr>
@@ -470,7 +468,8 @@
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
-                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                <td
+                    style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
                     Protective Equipment's to be Worn
                 </td>
             </tr>
@@ -494,7 +493,8 @@
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
-                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                <td
+                    style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
                     Name of Equipment's involved in Job
                 </td>
             </tr>
@@ -525,7 +525,8 @@
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
-                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                <td
+                    style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
                     Precaution To be Taken
                 </td>
             </tr>
@@ -549,7 +550,8 @@
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
-                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                <td
+                    style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
                     Equipment's Check List
                 </td>
             </tr>
@@ -585,7 +587,8 @@
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
-                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                <td
+                    style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
                     Safe Work Instructions
                 </td>
             </tr>
@@ -599,7 +602,7 @@
                     <td width="20%" style="padding:5px;"><b>{{ $checkpoint_name }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                        <span style="color: #267709; width: 15px;">✔</span>
                     </td>
                 </tr>
             @endforeach
@@ -612,7 +615,7 @@
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
                 @if ($safetypermit->toolbox_talk == 1)
-                    <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                <span style="color: #267709; width: 15px;">✔</span>
                 @endif
             </td>
         </tr>
@@ -634,7 +637,8 @@
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
-                    <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                    <td
+                        style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
                         List of Workman involved in Job
                     </td>
                 </tr>
@@ -654,21 +658,28 @@
                         </tr>
                     </thead>
 
-                    <tbody>
-                        @if ($workmaninvolved->isEmpty())
+                    <tbody id="workman-list-entries">
+                        @if (empty($workmaninvolved) ||
+                                $workmaninvolved->every(function ($item) {
+                                    return is_null($item->employee_id) &&
+                                        is_null($item->workman_name) &&
+                                        is_null($item->workman_desig) &&
+                                        is_null($item->department_name) &&
+                                        is_null($item->nature_of_job);
+                                }))
                             <tr>
-                                <td class="text-center" colspan="5">No data is available</td>
+                                <td colspan="5" class="text-center">No data is available</td>
                             </tr>
                         @else
-                        @foreach ($workmaninvolved as $workmaninvolved)
-                        <tr>
-                            <td>{{ $workmaninvolved->employee_id }}</td>
-                            <td>{{ $workmaninvolved->workman_name }}</td>
-                            <td>{{ $workmaninvolved->workman_desig }}</td>
-                            <td>{{ $workmaninvolved->department_name }}</td>
-                            <td>{{ $workmaninvolved->nature_of_job }}</td>
-                        </tr>
-                    @endforeach
+                            @foreach ($workmaninvolved as $workman)
+                                <tr>
+                                    <td>{{ $workman->employee_id }}</td>
+                                    <td>{{ $workman->workman_name }}</td>
+                                    <td>{{ $workman->workman_desig }}</td>
+                                    <td>{{ $workman->department_name }}</td>
+                                    <td>{{ $workman->nature_of_job }}</td>
+                                </tr>
+                            @endforeach
                         @endif
                     </tbody>
                 </table>
@@ -740,16 +751,13 @@
                     {{ isset($getEhSverification->remarks) ? $getEhSverification->remarks : '' }}</td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('signature') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-
-            </tr>
-            <tr>
-                <td width="100%" style="padding:5px;">
-                    @if($getEhSverification && $getEhSverification->file_paths)
-                        @foreach(explode(',', $getEhSverification->file_paths) as $file_path)
+                <td style="padding:5px;"><b>{{ __('signature') }}</b></td>
+                <td style="padding:5px;">:</td>
+                <td style="padding:5px;">
+                    @if ($getEhSverification && $getEhSverification->file_paths)
+                        @foreach (explode(',', $getEhSverification->file_paths) as $file_path)
                             <a href="{{ asset($file_path) }}" target="_blank">
-                                <img src="{{ asset($file_path) }}" alt="Signature" style="max-width: 30%;">
+                                <img src="{{ asset($file_path) }}" alt="Signature" style="max-width: 10%;">
                             </a>
                         @endforeach
                     @else
@@ -841,7 +849,7 @@
                     <td width="50%" style="padding:5px;"><b>Approved Time</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{ displaytimeformat(null != $getpermitextensionapproval->created_at  ? $getpermitextensionapproval->created_at : '') }}
+                        {{ displaytimeformat(null != $getpermitextensionapproval->created_at ? $getpermitextensionapproval->created_at : '') }}
                     </td>
                 </tr>
                 <tr>
