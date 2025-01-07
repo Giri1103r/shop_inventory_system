@@ -442,6 +442,8 @@
             <td width="48%" style="padding:5px;">
                 @if (optional($confined_space_entry)->register_entry_exits == 'on')
                     <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                @else
+                <b><i class="fa-solid fa-times" style="color: #f31008; width: 15px;">✖</i></b>
                 @endif
             </td>
         </tr>
@@ -615,7 +617,7 @@
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
                 @if ($safetypermit->toolbox_talk == 1)
-                <span style="color: #267709; width: 15px;">✔</span>
+                    <span style="color: #267709; width: 15px;">✔</span>
                 @endif
             </td>
         </tr>
