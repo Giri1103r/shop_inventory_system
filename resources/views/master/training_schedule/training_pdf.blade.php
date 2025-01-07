@@ -165,13 +165,26 @@
                 <td width="40%" style="padding:5px;text-transform: uppercase;"><b>From Date</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="58%" style="padding:5px;">
-                    {{ Displaydatetimeformat($training_schedule->from_date) }}</td>
+                    {{ Displaydateformat($training_schedule->from_date) }}</td>
             </tr>
             <tr>
                 <td width="40%" style="padding:5px;text-transform: uppercase;"><b>To Date</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="58%" style="padding:5px;">
-                    {{ Displaydatetimeformat($training_schedule->to_date) }}</td>
+                    {{ Displaydateformat($training_schedule->to_date) }}</td>
+            </tr>
+            <tr>
+                <td width="40%" style="padding:5px;text-transform: uppercase;"><b>Start Time</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="58%" style="padding:5px;">
+                    {{ Displaytimeformat($training_schedule->start_time) }}</td>
+            </tr>
+          
+            <tr>
+                <td width="40%" style="padding:5px;text-transform: uppercase;"><b>End Time</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="58%" style="padding:5px;">
+                    {{ Displaytimeformat($training_schedule->end_time) }}</td>
             </tr>
             <tr>
                 <td width="40%" style="padding:5px;text-transform: uppercase;">

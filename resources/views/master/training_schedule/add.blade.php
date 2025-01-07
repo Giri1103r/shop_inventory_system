@@ -53,6 +53,20 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
+                                                    <label for="start_time" class="form-label require">Start Time</label>
+                                                    <input type="text" name ="start_time" id="start_timepicker"
+                                                        class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label for="end_time" class="form-label require">End Time</label>
+                                                    <input type="text" name ="end_time" id="end_timepicker"
+                                                        class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
                                                     <label for="topic_id" class="form-label require">Training Topic</label>
                                                     <select name="topic_id" id="topic_id"
                                                         class=" form-control single-select" style="width: 100%">
@@ -117,7 +131,7 @@
                                                     <select name="venue_id" id="venue_id"
                                                         class="form-control single-select" style="width: 100%">
                                                         <option value="">Select Venue/Location </option>
-                                                  
+
                                                     </select>
                                                 </div>
                                             </div>
@@ -262,37 +276,57 @@
             });
 
             const toDatePicker = flatpickr("#to_date_datepicker", {
-                dateFormat: "d-m-Y H:i",
+                dateFormat: "d-m-Y",
                 minDate: "today",
-                enableTime: true,
-                time_24hr: true,
-                defaultHour: 9, // Default to 9 AM
-                defaultMinute: 0,
             });
 
             flatpickr("#from_date_datepicker", {
-                dateFormat: "d-m-Y H:i",
+                dateFormat: "d-m-Y",
                 minDate: "today",
-                enableTime: true,
-                time_24hr: true,
-                defaultHour: 9, // Default to 9 AM
-                defaultMinute: 0,
                 onChange: function(selectedDates, dateStr) {
                     if (selectedDates.length > 0) {
-                        const fromDate = selectedDates[0]; 
-
+                        const fromDate = selectedDates[0];
                         const toDate = new Date(fromDate);
-                        toDate.setHours(18, 0, 0); 
 
                         if (toDatePicker) {
-                            toDatePicker.set("minDate", dateStr); 
-                            toDatePicker.setDate(toDate, false); 
+                            toDatePicker.set("minDate", dateStr);
+                            toDatePicker.setDate(toDate, false);
                         }
                     }
                 },
             });
+            const startTimePicker = flatpickr("#start_timepicker", {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true,
+                defaultHour: 9, // Default 9:00 AM
+                defaultMinute: 0,
+                onChange: function(selectedDates, dateStr) {
+                    if (selectedDates.length > 0) {
+                        const startTime = selectedDates[0];
+                        const endTimePicker = flatpickr("#end_timepicker", {
+                            enableTime: true,
+                            noCalendar: true,
+                            dateFormat: "H:i",
+                            time_24hr: true,
+                            defaultHour: 18, // Default 6:00 PM
+                            defaultMinute: 0,
+                            minTime: dateStr, // Set minimum time to the selected start time
+                        });
+                    }
+                },
+            });
 
-
+            // Initialize End Time Picker
+            flatpickr("#end_timepicker", {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true,
+                defaultHour: 18, // Default 6:00 PM
+                defaultMinute: 0,
+            });
 
 
             $('#training_scheduleadd').validate({

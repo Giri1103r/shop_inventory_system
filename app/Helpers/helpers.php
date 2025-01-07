@@ -73,7 +73,7 @@ if (!function_exists('Displaytimeformat')) {
     function Displaytimeformat($date)
     {
 
-        return date('H:i A', strtotime($date));
+        return date('H:i', strtotime($date));
     }
 }
 

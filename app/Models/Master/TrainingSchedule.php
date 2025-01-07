@@ -22,6 +22,9 @@ class TrainingSchedule extends Model
     protected $fillable = [
         'from_date',
         'to_date',
+        'start_time',
+        'end_time',
+        'training_hrs_perday',
         'topic_id',
         'trainer_id',
         'unit_id',
@@ -113,12 +116,12 @@ class TrainingSchedule extends Model
             });
         }
         if ($request->has('from_date') && $request->from_date) {
-            $fromDate = Carbon::createFromFormat('d-m-Y H:i', $request->from_date)->format('Y-m-d H:i:s');
+            $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->format('Y-m-d');
             $query = $query->where('training_schedule.from_date', '>=', $fromDate);
         }
 
         if ($request->has('to_date') && $request->to_date) {
-            $toDate = Carbon::createFromFormat('d-m-Y H:i', $request->to_date)->format('Y-m-d H:i:s');
+            $toDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->format('Y-m-d');
             $query = $query->where('training_schedule.to_date', '<=', $toDate);
         }
 
@@ -275,9 +278,19 @@ class TrainingSchedule extends Model
     {
         $request = request();
 
+        $startTime = new DateTime($request->start_time);
+        $endTime = new DateTime($request->end_time);
+
+        $interval = $startTime->diff($endTime);
+        $trainingHrsPerDay = $interval->h + ($interval->i / 60);
+
         $insert_array = array(
-            'from_date' => DBdatetimeformat($request->from_date),
-            'to_date' => DBdatetimeformat($request->to_date),
+            'from_date' => DBdateformat($request->from_date),
+            'to_date' => DBdateformat($request->to_date),
+            'date' => DBdateformat($request->date) ?? null,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+            'training_hrs_perday' =>  $trainingHrsPerDay,
             'topic_id' => decryptId($request->topic_id),
             'trainer_id' => decryptId($request->trainer_id),
             'venue_id' => decryptId($request->venue_id),
@@ -300,15 +313,34 @@ class TrainingSchedule extends Model
         );
         return $this->where('id', $trainingScheduleId)->update($update_array);
     }
+    
+    public function updateTrainingManHours($trainingScheduleId, $totalManHours)
+    {
+    
+        $update_array = array(
+            'training_man_hours' => $totalManHours,
+            'updated_by' => Auth::id(),
+            'updated_at' => now(),
+        );
+        return $this->where('id', $trainingScheduleId)->update($update_array);
+    }
 
     public function updates($id)
     {
 
         $request = request();
+        $startTime = new DateTime($request->start_time);
+        $endTime = new DateTime($request->end_time);
 
+        $interval = $startTime->diff($endTime);
+        $trainingHrsPerDay = $interval->h + ($interval->i / 60);
         $update_array = array(
-            'from_date' => DBdatetimeformat($request->from_date),
-            'to_date' => DBdatetimeformat($request->to_date),
+            'from_date' => DBdateformat($request->from_date),
+            'to_date' => DBdateformat($request->to_date),
+            'date' => DBdateformat($request->date) ?? null,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+            'training_hrs_perday' =>  $trainingHrsPerDay,
             'topic_id' => decryptId($request->topic_id),
             'trainer_id' => decryptId($request->trainer_id),
             'venue_id' => decryptId($request->venue_id),
@@ -436,12 +468,12 @@ class TrainingSchedule extends Model
             });
         }
         if ($request->has('from_date') && $request->from_date) {
-            $fromDate = Carbon::createFromFormat('d-m-Y H:i', $request->from_date)->format('Y-m-d H:i:s');
+            $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->format('Y-m-d');
             $query = $query->where('training_schedule.from_date', '>=', $fromDate);
         }
 
         if ($request->has('to_date') && $request->to_date) {
-            $toDate = Carbon::createFromFormat('d-m-Y H:i', $request->to_date)->format('Y-m-d H:i:s');
+            $toDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->format('Y-m-d');
             $query = $query->where('training_schedule.to_date', '<=', $toDate);
         }
         if ($request->has('topic_id') && $request->topic_id) {

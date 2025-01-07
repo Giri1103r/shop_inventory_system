@@ -8,7 +8,8 @@
                     Dear {{ $details['name'] }},
                 </p>
                 <p style="font-family: sans-serif; font-size: 14px; margin: 0; margin-bottom: 15px;">
-                    We regret to inform you that the following training session has been rejected by the Vice President.Please find the details below:
+                    We regret to inform you that the following training session has been rejected by the Vice
+                    President.Please find the details below:
 
                 </p>
 
@@ -31,7 +32,7 @@
                             </td>
 
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                {{ Displaydatetimeformat($details['from_date']) }}
+                                {{ Displaydateformat($details['from_date']) }}
                             </td>
                         </tr>
                         <tr>
@@ -40,7 +41,25 @@
                                 To Date:
                             </td>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                {{ Displaydatetimeformat($details['to_date']) }}
+                                {{ Displaydateformat($details['to_date']) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; font-weight: bold; vertical-align: top;"
+                                valign="top">
+                                Start Time:
+                            </td>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                {{ Displaytimeformat($details['start_time']) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; font-weight: bold; vertical-align: top;"
+                                valign="top">
+                                End Time:
+                            </td>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                {{ Displaytimeformat($details['end_time']) }}
                             </td>
                         </tr>
                         <tr>

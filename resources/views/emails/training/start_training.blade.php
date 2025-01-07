@@ -31,7 +31,7 @@
                             </td>
 
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                {{ Displaydatetimeformat($details['from_date']) }}
+                                {{ Displaydateformat($details['from_date']) }}
                             </td>
                         </tr>
                         <tr>
@@ -40,7 +40,25 @@
                                 To Date:
                             </td>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                {{ Displaydatetimeformat($details['to_date']) }}
+                                {{ Displaydateformat($details['to_date']) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; font-weight: bold; vertical-align: top;"
+                                valign="top">
+                                Start Time:
+                            </td>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                {{ Displaytimeformat($details['start_time']) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; font-weight: bold; vertical-align: top;"
+                                valign="top">
+                                End Time:
+                            </td>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                {{ Displaytimeformat($details['end_time']) }}
                             </td>
                         </tr>
                         <tr>
