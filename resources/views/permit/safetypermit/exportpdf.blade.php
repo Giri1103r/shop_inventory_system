@@ -2,6 +2,7 @@
 
 <head>
     <title>Safety Permit | KARAM</title>
+    <meta charset="UTF-8">
     <style>
         .badge {
             padding: 1px 9px 2px;
@@ -96,7 +97,7 @@
 
         <htmlpagefooter name="myFooter1" style="display:none">
             <table width="100%"
-                style="width:100%;border:0;background-color: #FFF;border-top: 4px solid #000;padding-top:10px;padding-bottom:10px;">
+                style="width:100%;border:0;background-color: #FFF;border-top: 4px solid #070707;padding-top:0px;padding-bottom:10px;">
                 <tr>
                     <td width="33%">
                         <span style="font-style: italic;">{DATE d-m-Y}</span>
@@ -115,7 +116,8 @@
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
-                    <td style="width:100%;background-color: #ce0f1f;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
+                    <td
+                        style="width:100%;background-color: #ce0f1f;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
                         Safety Permit
                     </td>
                 </tr>
@@ -187,9 +189,8 @@
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
-                    <td
-                       style="width:100%;background-color: #6c757d;color:#fff;padding: 10px 10px 10px;"  >
-                       Type of Job
+                    <td style="width:100%;background-color: #6c757d;color:#fff;padding: 10px 10px 10px;">
+                        Type of Job
                     </td>
                 </tr>
             </table>
@@ -308,9 +309,8 @@
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
-                    <td
-                       style="width:100%;background-color: #6c757d;color:#fff;padding: 10px 10px 10px;">
-                       State of Isolation & LOTO
+                    <td style="width:100%;background-color: #6c757d;color:#fff;padding: 10px 10px 10px;">
+                        State of Isolation & LOTO
                     </td>
                 </tr>
             </table>
@@ -376,8 +376,7 @@
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
-                <td
-                   style="width:100%;background-color: #6c757d;color:#fff;padding: 10px 10px 10px;">
+                <td style="width:100%;background-color: #6c757d;color:#fff;padding: 10px 10px 10px;">
                     Applicable for Confined Space Entry
                 </td>
             </tr>
@@ -429,21 +428,20 @@
                 @endif
             </td>
         </tr>
-
         <tr>
             <td width="20%" style="padding:5px;"><b>Attendant Name</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
                 {{ $confined_space_entry->attendant_name ?? 'N/A' }}</td>
         </tr>
-
         <tr>
             <td width="20%" style="padding:5px;"><b>Register for entry & exits</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
                 @if (optional($confined_space_entry)->register_entry_exits == 'on')
                     <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
-
+                @else
+                    <b><i class="fa-solid fa-times" style="color: #f31008; width: 15px;">✖</i></b>
                 @endif
             </td>
         </tr>
@@ -470,7 +468,8 @@
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
-                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                <td
+                    style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
                     Protective Equipment's to be Worn
                 </td>
             </tr>
@@ -494,7 +493,8 @@
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
-                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                <td
+                    style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
                     Name of Equipment's involved in Job
                 </td>
             </tr>
@@ -525,7 +525,8 @@
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
-                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                <td
+                    style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
                     Precaution To be Taken
                 </td>
             </tr>
@@ -549,7 +550,8 @@
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
-                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                <td
+                    style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
                     Equipment's Check List
                 </td>
             </tr>
@@ -585,7 +587,8 @@
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
-                <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                <td
+                    style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
                     Safe Work Instructions
                 </td>
             </tr>
@@ -599,7 +602,7 @@
                     <td width="20%" style="padding:5px;"><b>{{ $checkpoint_name }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                        <span style="color: #267709; width: 15px;">✔</span>
                     </td>
                 </tr>
             @endforeach
@@ -612,7 +615,7 @@
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
                 @if ($safetypermit->toolbox_talk == 1)
-                    <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                    <span style="color: #267709; width: 15px;">✔</span>
                 @endif
             </td>
         </tr>
@@ -626,58 +629,59 @@
         </tr>
     </table>
 
-
-
-
-
-    <div>
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
-                        List of Workman involved in Job
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <br>
-        <div class="table-responsive">
-            <div class="col-md-12">
-                <table class="table table-bordered table-hover">
-                    <thead class=" text-white" style="background-color:#5b626b">
-                        <tr>
-                            <th>Employee Code / Visitor ID</th>
-                            <th>Name of Workman</th>
-                            <th>Designation</th>
-                            <th>Department / Company</th>
-                            <th>Nature of Job</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @if ($workmaninvolved->isEmpty())
-                            <tr>
-                                <td class="text-center" colspan="5">No data is available</td>
-                            </tr>
-                        @else
-                        @foreach ($workmaninvolved as $workmaninvolved)
-                        <tr>
-                            <td>{{ $workmaninvolved->employee_id }}</td>
-                            <td>{{ $workmaninvolved->workman_name }}</td>
-                            <td>{{ $workmaninvolved->workman_desig }}</td>
-                            <td>{{ $workmaninvolved->department_name }}</td>
-                            <td>{{ $workmaninvolved->nature_of_job }}</td>
-                        </tr>
-                    @endforeach
-                        @endif
-                    </tbody>
-                </table>
-
-            </div>
-        </div>
-        <br>
-
+    <div style="width:100%;">
+        <table style="width:100%;">
+            <tr>
+                <td
+                    style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                    List of Workman involved in Job
+                </td>
+            </tr>
+        </table>
     </div>
+    <br>
+    <div class="table-responsive">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover">
+                <thead class=" text-white" style="background-color:#5b626b">
+                    <tr>
+                        <th>Employee Code / Visitor ID</th>
+                        <th>Name of Workman</th>
+                        <th>Designation</th>
+                        <th>Department / Company</th>
+                        <th>Nature of Job</th>
+                    </tr>
+                </thead>
+
+                <tbody id="workman-list-entries">
+                    @if (empty($workmaninvolved) ||
+                            $workmaninvolved->every(function ($item) {
+                                return is_null($item->employee_id) &&
+                                    is_null($item->workman_name) &&
+                                    is_null($item->workman_desig) &&
+                                    is_null($item->department_name) &&
+                                    is_null($item->nature_of_job);
+                            }))
+                        <tr>
+                            <td colspan="5" class="text-center">No data is available</td>
+                        </tr>
+                    @else
+                        @foreach ($workmaninvolved as $workman)
+                            <tr>
+                                <td>{{ $workman->employee_id }}</td>
+                                <td>{{ $workman->workman_name }}</td>
+                                <td>{{ $workman->workman_desig }}</td>
+                                <td>{{ $workman->department_name }}</td>
+                                <td>{{ $workman->nature_of_job }}</td>
+                            </tr>
+                        @endforeach
+                    @endif
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <br>
 
     <table width="100%" style="width:100%;">
         <tr>
@@ -729,7 +733,8 @@
                 <td width="50%" style="padding:5px;"><b>Approved Time</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ displaytimeformat(null != $getEhSverification->created_at ? $getEhSverification->created_at : '') }}
+                    {{ displaytimeformat($getEhSverification && $getEhSverification->created_at ? $getEhSverification->created_at : '') }}
+
                 </td>
             </tr>
             <tr>
@@ -739,19 +744,21 @@
                     {{ isset($getEhSverification->remarks) ? $getEhSverification->remarks : '' }}</td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('signature') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                
+                <td style="padding:5px;"><b>{{ __('Site Images') }}</b></td>
+                <td style="padding:5px;">:</td>
+                <td style="padding:5px;">
+                    @if ($getEhSverification && $getEhSverification->file_paths)
+                        @foreach (explode(',', $getEhSverification->file_paths) as $file_path)
+                            <a href="{{ asset($file_path) }}" target="_blank">
+                                <img src="{{ asset($file_path) }}" alt="Signature" style="max-width: 10%;">
+                            </a>
+                        @endforeach
+                    @else
+                        <p>No files available</p>
+                    @endif
+                </td>
             </tr>
-            <tr>
-                <td width="100%" style="padding:5px;">
-                      
-                    @foreach(explode(',', $getEhSverification->file_paths) as $file_path)
-                    <a href="{{ asset($file_path) }}" target="_blank">
-                        <img src="{{ asset($file_path) }}" alt="Signature" style="max-width: 30%;">
-                    </a>
-                @endforeach
-            </tr>
+
         </table>
     @endif
 
@@ -835,7 +842,7 @@
                     <td width="50%" style="padding:5px;"><b>Approved Time</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{ displaytimeformat(null != $getpermitextensionapproval->created_at  ? $getpermitextensionapproval->created_at : '') }}
+                        {{ displaytimeformat(null != $getpermitextensionapproval->created_at ? $getpermitextensionapproval->created_at : '') }}
                     </td>
                 </tr>
                 <tr>
