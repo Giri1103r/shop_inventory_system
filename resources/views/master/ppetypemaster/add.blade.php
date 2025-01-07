@@ -95,17 +95,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">PPE Standard</label>
-                                                    <input type="text" name="ppe_standard" id="ppe_standard"
-                                                        class="form-control " placeholder="Enter the ppe standard">
-                                                    <div class="text-danger" id="ppe_standard_error"></div>
-                                                    @error('ppe_standard')
-                                                        <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                            </div>
+
 
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
@@ -117,6 +107,17 @@
                                                     <small>Allowed file types: png, jpeg , jpg</small>
                                                     <div id="ppe_file_error" class="text-danger"></div>
                                                     @error('ppe_file')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">PPE Standard</label>
+                                                    <textarea name="ppe_standard"    id="ppe_standard" cols="3" rows="4" class="form-control form-control-sm" placeholder="Enter the ppe standard"></textarea>
+
+                                                    <div class="text-danger" id="ppe_standard_error"></div>
+                                                    @error('ppe_standard')
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
                                                 </div>
@@ -203,7 +204,7 @@
                     ppe_standard: {
                         required: true,
                         minlength: 3,
-                        maxlength: 30,
+                        maxlength: 200,
                         regex: /^[a-zA-Z0-9\-_'"()\s.:;]*$/
                     },
                     ppe_file: {
@@ -236,8 +237,8 @@
                     },
                     ppe_standard: {
                         required: "PPE Standard cannot be empty.",
-                        minlength: "PPE  Standard must be between 3 and 30 characters.",
-                        maxlength: "PPE  Standard must be between 3 and 30 characters.",
+                        minlength: "PPE  Standard must be between 3 and 200 characters.",
+                        maxlength: "PPE  Standard must be between 3 and 200 characters.",
                         regex: "PPE Standard should be alphanumeric and can include -, _, ', \", (, ),:,;,."
                     },
                     ppe_file: {
