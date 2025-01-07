@@ -160,7 +160,7 @@ class User extends Authenticatable
                 'department_id' => null,
                 'designation_id' => $item['designation'],
                 'mobile' => $item['mobile_no'],
-                'created_by' => Auth::id(),
+                'created_by' => 1
             ];
             $exists = $this->where('employee_id', $item['emp_id'])->exists();
 

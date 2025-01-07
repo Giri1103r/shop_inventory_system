@@ -156,7 +156,7 @@ class Employee extends Model
                 'status' => 1,
                 'error_status' => 0,
                 'error_remarks' => null,
-                'created_by' => Auth::id(),
+                'created_by' =>1,
             ];
 
             $exists = $this->where('emp_id', $item->emp_id)->exists();
