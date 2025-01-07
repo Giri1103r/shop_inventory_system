@@ -90,13 +90,25 @@
                                                 <div class="mb-3 col-md-4 form-input">
                                                     <label class="form-label view_label">From Date</label>
                                                     <div class="view_data">
-                                                        {{ Displaydatetimeformat($training_schedule->from_date) }}
+                                                        {{ Displaydateformat($training_schedule->from_date) }}
                                                     </div>
                                                 </div>
                                                 <div class="mb-3 col-md-4 form-input">
                                                     <label class="form-label view_label">To Date</label>
                                                     <div class="view_data">
-                                                        {{ Displaydatetimeformat($training_schedule->to_date) }}
+                                                        {{ Displaydateformat($training_schedule->to_date) }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">Start Time</label>
+                                                    <div class="view_data">
+                                                        {{ Displaytimeformat($training_schedule->start_time) }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">End Time</label>
+                                                    <div class="view_data">
+                                                        {{ Displaytimeformat($training_schedule->end_time) }}
                                                     </div>
                                                 </div>
                                                 <div class="mb-3 col-md-4 form-input">
@@ -200,7 +212,6 @@
 
                                                                 <td>
                                                                     @if (!$isAttended)
-                                                                   
                                                                         <input type="hidden"
                                                                             name="assessment[{{ $index }}]"
                                                                             value="2">
@@ -230,7 +241,6 @@
                                                                             </option>
                                                                             <option value="1">Pass</option>
                                                                             <option value="2">Fail</option>
-                                                                            <option value="3">Not Attended</option>
                                                                         </select>
                                                                     @endif
                                                                 </td>

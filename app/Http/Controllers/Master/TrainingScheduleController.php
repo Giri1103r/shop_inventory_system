@@ -104,10 +104,10 @@ class TrainingScheduleController extends Controller
                             }
                         })
                         ->addColumn('from_date', function ($row) {
-                            return Displaydatetimeformat($row->from_date);
+                            return Displaydateformat($row->from_date);
                         })
                         ->addColumn('to_date', function ($row) {
-                            return Displaydatetimeformat($row->to_date);
+                            return Displaydateformat($row->to_date);
                         })
                         ->addColumn('created_at', function ($row) {
                             return Displaydatetimeformat($row->created_at);
@@ -314,8 +314,10 @@ class TrainingScheduleController extends Controller
                         if (!empty($vp_detail->email)) {
                             $trainingArray = [
                                 'name' => $vp_detail->name,
-                                'from_date' => Displaydatetimeformat($trainingSchedule->from_date),
-                                'to_date' => Displaydatetimeformat($trainingSchedule->to_date),
+                                'from_date' => Displaydateformat($trainingSchedule->from_date),
+                                'to_date' => Displaydateformat($trainingSchedule->to_date),
+                                'start_time' => Displaytimeformat($trainingSchedule->start_time),
+                                'end_time' => Displaytimeformat($trainingSchedule->end_time),
                                 'topic_name' => $trainingSchedule->topic_name,
                                 'unit' => $trainingSchedule->unit_name,
                                 'department' => $trainingSchedule->department_name,
@@ -352,14 +354,14 @@ class TrainingScheduleController extends Controller
                 }
                 Session::flash('success', 'Your data has been created successfully');
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('training_schedule/list'));
         }
@@ -386,8 +388,10 @@ class TrainingScheduleController extends Controller
                         if (!empty($nominee->email)) {
                             $nomineeArray = [
                                 'emp_name' => $nominee->emp_name,
-                                'from_date' => Displaydatetimeformat($nominee->from_date),
-                                'to_date' => Displaydatetimeformat($nominee->to_date),
+                                'from_date' => Displaydateformat($nominee->from_date),
+                                'to_date' => Displaydateformat($nominee->to_date),
+                                'start_time' => Displaytimeformat($nominee->start_time),
+                                'end_time' => Displaytimeformat($nominee->end_time),
                                 'topic_name' => $nominee->topic_name,
                                 'venue' => $nominee->name_of_the_conference_hall,
                                 'mail_subject' => $mailsubject,
@@ -470,9 +474,38 @@ class TrainingScheduleController extends Controller
 
                 $this->training_attendance->storeOrUpdate();
 
+                $attendanceDate = DBdateformat($request->attendance_date);
+
+                $trainingScheduleId = decryptId($request->training_schedule_id);
+
+                $trainingHrsPerDay = $this->training_schedule
+                    ->where('id', $trainingScheduleId)
+                    ->value('training_hrs_perday');
+
+                $presentCount = $this->training_attendance
+                    ->where('training_schedule_id', $trainingScheduleId)
+                    ->where('attendance_date', $attendanceDate)
+                    ->where('attendance_status', 1)
+                    ->count();
+
+                $totalManHoursForDay = $presentCount * $trainingHrsPerDay;
+
+                $existingTrainingSchedule = $this->training_schedule
+                    ->select('training_man_hours')
+                    ->where('id', $trainingScheduleId)
+                    ->first();
+
+                if ($existingTrainingSchedule->training_man_hours) {
+                    $currentTotalManHours = $existingTrainingSchedule->training_man_hours;
+                    $newTotalManHours = $currentTotalManHours + $totalManHoursForDay;
+                } else {
+                    $newTotalManHours = $totalManHoursForDay;
+                }
+                $this->training_schedule->updateTrainingManHours($trainingScheduleId, $newTotalManHours);
+
                 Session::flash('success', 'Attendance has been saved successfully!');
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
@@ -745,25 +778,17 @@ class TrainingScheduleController extends Controller
                     })
                     ->get();
 
-
-                $training_hours = $training_schedule ? $training_schedule->calculateTrainingHours() : 0;
-                $presentTraineesCount = $trainingAttendanceList->where('attendance_status', 1)->count();
-
-                // Calculate Total Training Hours
-                $totalTrainingHours = $training_hours * $presentTraineesCount;
-
                 $data = [
                     'training_schedule' => $training_schedule,
                     'nominationProcessList' => $nominationProcessList,
                     'trainingAttendanceList' => $trainingAttendanceList,
-                    'totalTrainingHours' => $totalTrainingHours,
                     'trainingAssessmentList' => $trainingAssessmentList,
                     'trainingFeedbackList' => $trainingFeedbackList,
                     'rejectedlog' => $rejectedlog,
                 ];
 
                 if (Auth::user()->role != ROLE_TRAINER  &&  Auth::user()->role != ROLE_SUPERADMIN &&  Auth::user()->role != ROLE_ADMIN) {
-                  
+
                     $trainingAssessmentList = $this->training_assessment_feedback->getAssessmentByEmp($training_schedule->id);
                     foreach ($trainingAssessmentList as $assessment) {
                         $feedbackList = $this->training_feedback->getfeedbackList($assessment->id);
@@ -879,8 +904,10 @@ class TrainingScheduleController extends Controller
                             if (!empty($trainingSchedule->email)) {
                                 $trainingArray = [
                                     'emp_name' => $trainingSchedule->emp_name,
-                                    'from_date' => Displaydatetimeformat($trainingSchedule->from_date),
-                                    'to_date' => Displaydatetimeformat($trainingSchedule->to_date),
+                                    'from_date' => Displaydateformat($trainingSchedule->from_date),
+                                    'to_date' => Displaydateformat($trainingSchedule->to_date),
+                                    'start_time' => Displaytimeformat($trainingSchedule->start_time),
+                                    'end_time' => Displaytimeformat($trainingSchedule->end_time),
                                     'topic_name' => $trainingSchedule->topic_name,
                                     'unit' => $trainingSchedule->unit_name,
                                     'department' => $trainingSchedule->department_name,
@@ -930,8 +957,10 @@ class TrainingScheduleController extends Controller
                             if (!empty($adminEmail->email)) {
                                 $trainingArray = [
                                     'name' => $adminEmail->name,
-                                    'from_date' => Displaydatetimeformat($trainingSchedule->from_date),
-                                    'to_date' => Displaydatetimeformat($trainingSchedule->to_date),
+                                    'from_date' => Displaydateformat($trainingSchedule->from_date),
+                                    'to_date' => Displaydateformat($trainingSchedule->to_date),
+                                    'start_time' => Displaytimeformat($trainingSchedule->start_time),
+                                    'end_time' => Displaytimeformat($trainingSchedule->end_time),
                                     'topic_name' => $trainingSchedule->topic_name,
                                     'unit' => $trainingSchedule->unit_name,
                                     'department' => $trainingSchedule->department_name,
@@ -997,22 +1026,12 @@ class TrainingScheduleController extends Controller
                     ->get();
                 $nominationProcessList = $this->nomination_process->getNomination($training_schedule->id);
 
-                $training_hours = $training_schedule ? $training_schedule->calculateTrainingHours() : 0;
-
-                $presentTraineesCount = $this->training_attendance->where('training_schedule_id', $training_schedule->id)
-                    ->where('attendance_status', 1)
-                    ->where('status', 1)
-                    ->count();
-
-                $totalTrainingHours = $training_hours * $presentTraineesCount;
                 $data = array(
                     'departmentList' => $departmentList,
                     'topicList' => $topicList,
                     'employeeList' => $employeeList,
                     'training_schedule' => $training_schedule,
-                    'training_hours' => $training_hours,
                     'nominationProcessList' => $nominationProcessList,
-                    'totalTrainingHours' => $totalTrainingHours,
                 );
             }
             return view('master.training_schedule.nomination', $data);
@@ -1082,8 +1101,10 @@ class TrainingScheduleController extends Controller
                     if (!empty($vp_detail->email)) {
                         $trainingArray = [
                             'name' => $vp_detail->name,
-                            'from_date' => Displaydatetimeformat($trainingSchedule->from_date),
-                            'to_date' => Displaydatetimeformat($trainingSchedule->to_date),
+                            'from_date' => Displaydateformat($trainingSchedule->from_date),
+                            'to_date' => Displaydateformat($trainingSchedule->to_date),
+                            'start_time' => Displaytimeformat($trainingSchedule->start_time),
+                            'end_time' => Displaytimeformat($trainingSchedule->end_time),
                             'topic_name' => $trainingSchedule->topic_name,
                             'unit' => $trainingSchedule->unit_name,
                             'department' => $trainingSchedule->department_name,
@@ -1266,7 +1287,7 @@ class TrainingScheduleController extends Controller
                 'Department',
                 'Target Trainees',
                 'Venue/Location',
-                // 'Training Man Hours',
+                'Training Man Hours',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -1276,25 +1297,19 @@ class TrainingScheduleController extends Controller
 
             foreach ($allData as $data) {
 
-                // $training_hours = $data ? $this->training_schedule->calculateTrainingHours() : 0;
-                // $presentTraineesCount = $this->training_attendance->where('training_schedule_id', $data->id)
-                //     ->where('attendance_status', 1)
-                //     ->where('status', 1)
-                //     ->count();
-
-                // $totalTrainingHours = $training_hours * $presentTraineesCount;
-                // dd( $totalTrainingHours,$data->id);
                 $export = [];
                 $export[] =  $i;
-                $export[] =  Displaydatetimeformat($data->from_date);
-                $export[] =  Displaydatetimeformat($data->to_date);
+                $export[] =  Displaydateformat($data->from_date);
+                $export[] =  Displaydateformat($data->to_date);
+                $export[] =  Displaytimeformat($data->start_time);
+                $export[] =  Displaytimeformat($data->end_time);
                 $export[] =  $data->topic_name;
                 $export[] =  $data->emp_name;
                 $export[] =  $data->unit_name;
                 $export[] =  $data->department_name;
                 $export[] =  $data->target_trainees;
                 $export[] =  $data->name_of_the_conference_hall;
-                // $export[] =  $data->totalTrainingHours ?? '-';
+                $export[] =  $data->training_man_hours ?? '-';
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -1331,26 +1346,20 @@ class TrainingScheduleController extends Controller
                 __("common.sno"),
                 'From Date',
                 'To Date',
+                'Start Time',
+                'End Time',
                 'Training Topic',
                 'Trainer',
                 'Unit',
                 'Department',
                 'Target Trainees',
                 'Venue/Location',
-                // 'Training Man Hours',
+                'Training Man Hours',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];
-            // foreach ($allData as $data) {
-            //     $training_hours = $data ? $this->training_schedule->calculateTrainingHours() : 0;
-            //     $presentTraineesCount = $this->training_attendance->where('training_schedule_id', $data->id)
-            //         ->where('attendance_status', 1)
-            //         ->where('status', 1)
-            //         ->count();
-            //         $totalTrainingHours = $training_hours * $presentTraineesCount;
-            // }
-
+         
             $data = array(
                 'header' => $header,
                 'content' => $allData,

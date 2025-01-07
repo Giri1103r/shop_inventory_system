@@ -44,7 +44,7 @@
                                                     <label for="from_date" class="form-label require">From Date</label>
                                                     <input type="text" name ="from_date" id="from_date_datepicker"
                                                         class="form-control" placeholder="From Date"
-                                                        value="{{ Displaydatetimeformat($training_schedule->from_date) }}">
+                                                        value="{{ Displaydateformat($training_schedule->from_date) }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
@@ -52,10 +52,23 @@
                                                     <label for="to_date" class="form-label require">To Date</label>
                                                     <input type="text" name ="to_date" id="to_date_datepicker"
                                                         class="form-control" placeholder="To Date"
-                                                        value="{{ Displaydatetimeformat($training_schedule->to_date) }}">
+                                                        value="{{ Displaydateformat($training_schedule->to_date) }}">
                                                 </div>
                                             </div>
-
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label for="start_time" class="form-label require">Start Time</label>
+                                                    <input type="text" name ="start_time" id="start_timepicker"
+                                                        class="form-control" value="{{ Displaytimeformat($training_schedule->start_time) }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label for="end_time" class="form-label require">End Time</label>
+                                                    <input type="text" name ="end_time" id="end_timepicker"
+                                                        class="form-control" value="{{ Displaytimeformat($training_schedule->end_time) }}">
+                                                </div>
+                                            </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label for="topic_id" class="form-label require">Training Topic</label>
@@ -129,7 +142,7 @@
                                                     <select name="venue_id" id="venue_id"
                                                         class="form-control single-select" style="width: 100%">
                                                         <option value="">Select Venue/Location </option>
-                                                       
+
                                                     </select>
                                                 </div>
                                             </div>
@@ -277,7 +290,7 @@
                 if (unit_id) {
                     $.ajax({
                         url: "{{ admin_url('venue/ajax-list/') }}" + unit_id + '/' +
-                        preselectedVenueId,
+                            preselectedVenueId,
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
@@ -308,27 +321,17 @@
             });
 
             const toDatePicker = flatpickr("#to_date_datepicker", {
-                dateFormat: "d-m-Y H:i",
+                dateFormat: "d-m-Y",
                 minDate: "today",
-                enableTime: true,
-                time_24hr: true,
-                defaultHour: 9, // Default to 9 AM
-                defaultMinute: 0,
             });
 
             flatpickr("#from_date_datepicker", {
-                dateFormat: "d-m-Y H:i",
+                dateFormat: "d-m-Y",
                 minDate: "today",
-                enableTime: true,
-                time_24hr: true,
-                defaultHour: 9, // Default to 9 AM
-                defaultMinute: 0,
                 onChange: function(selectedDates, dateStr) {
                     if (selectedDates.length > 0) {
                         const fromDate = selectedDates[0];
-
                         const toDate = new Date(fromDate);
-                        toDate.setHours(18, 0, 0);
 
                         if (toDatePicker) {
                             toDatePicker.set("minDate", dateStr);
@@ -336,6 +339,38 @@
                         }
                     }
                 },
+            });
+            const startTimePicker = flatpickr("#start_timepicker", {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true,
+                defaultHour: 9, // Default 9:00 AM
+                defaultMinute: 0,
+                onChange: function(selectedDates, dateStr) {
+                    if (selectedDates.length > 0) {
+                        const startTime = selectedDates[0];
+                        const endTimePicker = flatpickr("#end_timepicker", {
+                            enableTime: true,
+                            noCalendar: true,
+                            dateFormat: "H:i",
+                            time_24hr: true,
+                            defaultHour: 18, // Default 6:00 PM
+                            defaultMinute: 0,
+                            minTime: dateStr, // Set minimum time to the selected start time
+                        });
+                    }
+                },
+            });
+
+            // Initialize End Time Picker
+            flatpickr("#end_timepicker", {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true,
+                defaultHour: 18, // Default 6:00 PM
+                defaultMinute: 0,
             });
 
             $('#training_scheduleedit').validate({

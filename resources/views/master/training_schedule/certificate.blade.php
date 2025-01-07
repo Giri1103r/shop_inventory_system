@@ -78,9 +78,9 @@
             <h3 style="font-size: 20px; font-weight: bold;">{{ $training_details->topic_name ?? '---' }}</h3>
             <p>
                 conducted from
-                <strong>{{ Displaydatetimeformat($training_details->from_date) ?? '---' }}</strong>
+                <strong>{{ Displaydateformat($training_details->from_date) ?? '---' }}</strong>
                 to
-                <strong>{{ Displaydatetimeformat($training_details->to_date) ?? '---' }}</strong>
+                <strong>{{ Displaydateformat($training_details->to_date) ?? '---' }}</strong>
             </p>
             <p>at <strong>{{ $training_details->name_of_the_conference_hall ?? '---' }}</strong></p>
 

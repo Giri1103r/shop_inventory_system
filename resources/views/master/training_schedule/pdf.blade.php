@@ -25,10 +25,16 @@
                             {{ $i }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydatetimeformat($value->from_date) }}
+                            {{ Displaydateformat($value->from_date) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydatetimeformat($value->to_date) }}
+                            {{ Displaydateformat($value->to_date) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ Displaytimeformat($value->start_time) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ Displaytimeformat($value->end_time) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->topic_name }}
@@ -50,9 +56,9 @@
                             {{ $value->name_of_the_conference_hall }}
                         </td>
 
-                        {{-- <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $totalTrainingHours ?? '-'}}
-                        </td> --}}
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{  $value->training_man_hours  ?? '-'}}
+                        </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php

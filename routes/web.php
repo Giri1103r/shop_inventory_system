@@ -84,7 +84,8 @@ Route::get('expireexemptionstatus',[CronController::class,'ExpireExemption']);
 Route::get('updateStockitem', [CronController::class, 'updateItem']);
 Route::get('workmastertemp', [CronController::class, 'workMasterTemp']);
 Route::get('worksave', [CronController::class, 'workSave']);
-Route::get('employee_master_temp', [CronController::class, 'employeeMasterTemp']);
+Route::get('cron/master/employee/all-details-temp', [CronController::class, 'employeeMasterTempAllDetails']);
+Route::get('cron/master/employee/temp-details', [CronController::class, 'employeeMasterTemp']);
 Route::get('employee_save', [CronController::class, 'EmployeeSave']);
 Route::get('permit_expiry', [CronController::class, 'permitExpiry']);
 Route::get('permit_close', [CronController::class, 'permitClose']);
@@ -239,8 +240,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/submit', [CompanyController::class, 'importSubmit']);
                 Route::post('/status', [CompanyController::class, 'statusChange']);
                 Route::post('/unique', [CompanyController::class, 'Uniquecheck']);
-                Route::post('/passwordchange/{id}', [CompanyController::class, 'PasswordUpdate']);
-                Route::post('/passwordchange/submit', [CompanyController::class, 'PasswordUpdateSubmit']);
             });
 
             /**
@@ -335,6 +334,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/export/pdf', [EmployeeController::class, 'exportPdf']);
                 Route::post('/status', [EmployeeController::class, 'statusChange']);
                 Route::post('/unique', [EmployeeController::class, 'Uniquecheck']);
+                Route::get('/passwordchange/{id}', [EmployeeController::class, 'PasswordUpdate']);
+                Route::post('/passwordchange/submit', [EmployeeController::class, 'PasswordUpdateSubmit']);
             });
 
             Route::group(['prefix' => 'ptw/protectiveequipmentmaster'], function () {

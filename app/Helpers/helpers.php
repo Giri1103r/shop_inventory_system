@@ -62,7 +62,10 @@ if (!function_exists('DBdatetimeformat')) {
 if (!function_exists('Displaydateformat')) {
 
     function Displaydateformat($date)
-    {
+    { 
+        if($date == '' || $date == null){
+            return '';
+        }
 
         return date('d-m-Y', strtotime($date));
     }
@@ -73,7 +76,7 @@ if (!function_exists('Displaytimeformat')) {
     function Displaytimeformat($date)
     {
 
-        return date('H:i A', strtotime($date));
+        return date('H:i', strtotime($date));
     }
 }
 

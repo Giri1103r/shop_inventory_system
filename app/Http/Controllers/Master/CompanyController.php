@@ -84,12 +84,7 @@ class CompanyController extends Controller
                             if (CheckUserPermission('edit')) {
                                 $btn .= '<a href="' . admin_url('company/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
-                            // if (CheckUserRole(ROLE_ADMIN)) {
-                            //     $btn .= '<a href="' . admin_url('company/passwordchange/' . encryptId($row->id)) . '" class="key-icon" title="passwordchange"><i class="fas fa-key"></i> ';
-                            // }
-                            // if (CheckUserPermission('delete')) {
-                            //     $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
-                            // }
+                          
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -244,59 +239,7 @@ class CompanyController extends Controller
         }
     }
 
-    public function PasswordUpdate(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-
-            $company = $this->company->find($id);
-
-            $data = array(
-                'company' => $company,
-            );
-
-            return view('master.company.passwordupdate', $data);
-        } catch (Exception $error) {
-
-            report($error);
-        }
-    }
-
-    // public function PasswordUpdateSubmit(Request $request)
-    // {
-    //     try {
-    //         $id = decryptId($request->id);
-
-    //         $rules = [
-    //             'emp_id' => 'required',
-    //             'emp_name' => 'required',
-    //             'password' => 'required|confirmed',
-    //         ];
-    //         $messages = [
-    //             'emp_id.required' => 'Please enter Employee No',
-    //             'emp_name.required' => 'Please enter Employee Name',
-    //             'password.required' => 'Please enter the Password',
-    //             'password_confirmation.required' => 'Please enter the Confirm Password',
-    //             'password.confirmed' => 'The password confirmation does not match.',
-    //         ];
-
-    //         $validator = Validator::make($request->all(), $rules, $messages);
-
-    //         if ($validator->fails()) {
-
-    //             return redirect()->back()->withErrors($validator)->withInput();
-    //         }
-    //         $company = $this->company->find($id);
-    //         $this->user->passwordUpdate($company->login_id);
-    //         Session::flash('success', 'Company password updated successfully!');
-    //         return redirect(admin_url('company/list'));
-    //     } catch (Exception $ex) {
-    //         report($ex);
-    //         Session::flash('error', 'Something went wrong, Please try after sometimes!');
-    //         return redirect(admin_url('company/list'));
-    //     }
-    // }
-
+ 
     public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {
@@ -418,8 +361,8 @@ class CompanyController extends Controller
                     "path" => $path,
                 ];
 
-                // dispatch(new ImportCompanyJob($details));
-                   dispatch((new ImportCompanyJob($details))->onQueue('company'));
+                dispatch(new ImportCompanyJob($details));
+                //    dispatch((new ImportCompanyJob($details))->onQueue('company'));
             }
 
             $insert_data['log_id'] = $insert_id;

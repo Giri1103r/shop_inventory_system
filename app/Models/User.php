@@ -156,13 +156,12 @@ class User extends Authenticatable
                 'user_type' => 1,
                 'employee_id' => $item['emp_id'],
                 'username' => $item['emp_id'],
-                'password' => Hash::make($item['emp_name'] . "@12345"),
+                'password' => Hash::make("User@" . trim($item['emp_id'])),
                 'department_id' => null,
                 'designation_id' => $item['designation'],
                 'mobile' => $item['mobile_no'],
-                'created_by' => Auth::id(),
+                'created_by' => 1
             ];
-
             $exists = $this->where('employee_id', $item['emp_id'])->exists();
 
             if ($exists) {
@@ -243,9 +242,10 @@ class User extends Authenticatable
         return $data;
     }
 
-    public function getEmployeedata(){
+    public function getEmployeedata()
+    {
         $user = Auth::user()->employee_id;
-        return User::select('employee_id','name','department_id')->where('employee_id',$user)->first();
+        return User::select('employee_id', 'name', 'department_id')->where('employee_id', $user)->first();
     }
 
     public function findEhsofficer()
@@ -277,7 +277,8 @@ class User extends Authenticatable
             ->pluck('email')
             ->first();
     }
-    public function requestorId(){
+    public function requestorId()
+    {
         return $this->pluck('id')->toArray();
     }
     public function findStoremanager()
@@ -293,8 +294,20 @@ class User extends Authenticatable
             ->pluck('id')
             ->toArray();
     }
+    public function passwordUpdate($id)
+    {
 
-    public function getStoreManagerId(){
+        $request = request();
+
+        $data = array(
+            'password' => Hash::make($request->password),
+            'updated_by' => Auth::id()
+        );
+        return $this->where('id', $id)->update($data);
+    }
+
+    public function getStoreManagerId()
+    {
         return $this->whereRaw('FIND_IN_SET(?, role)', [5])->pluck('id')->toArray();
     }
 

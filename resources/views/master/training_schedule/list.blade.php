@@ -132,9 +132,7 @@
                 firstTh.removeClass('sorting_asc');
             });
             flatpickr("#from_date_datepicker", {
-                dateFormat: "d-m-Y H:i",
-                enableTime: true,
-                time_24hr: true,
+                dateFormat: "d-m-Y",
                 onChange: function(selectedDates, dateStr, instance) {
                     const toDatePicker = document.getElementById("to_date_datepicker")._flatpickr;
                     toDatePicker.set("minDate",
@@ -145,10 +143,9 @@
             });
 
             flatpickr("#to_date_datepicker", {
-                dateFormat: "d-m-Y H:i",
+                dateFormat: "d-m-Y",
                 minDate: "today",
-                enableTime: true,
-                time_24hr: true,
+              
             });
             $(function() {
                 /* Datatable */

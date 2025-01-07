@@ -127,13 +127,25 @@
                                                 <div class="mb-3 col-md-4 form-input">
                                                     <label class="form-label view_label">From Date</label>
                                                     <div class="view_data">
-                                                        {{ Displaydatetimeformat($training_schedule->from_date) }}
+                                                        {{ Displaydateformat($training_schedule->from_date) }}
                                                     </div>
                                                 </div>
                                                 <div class="mb-3 col-md-4 form-input">
                                                     <label class="form-label view_label">To Date</label>
                                                     <div class="view_data">
-                                                        {{ Displaydatetimeformat($training_schedule->to_date) }}
+                                                        {{ Displaydateformat($training_schedule->to_date) }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">Start Time</label>
+                                                    <div class="view_data">
+                                                        {{ Displaytimeformat($training_schedule->start_time) }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">End Time</label>
+                                                    <div class="view_data">
+                                                        {{ Displaytimeformat($training_schedule->end_time) }}
                                                     </div>
                                                 </div>
                                                 <div class="mb-3 col-md-4 form-input">
@@ -175,7 +187,7 @@
                                                 <div class="mb-3 col-md-4 form-input">
                                                     <label class="form-label view_label">Training Man Hours</label>
                                                     <div class="view_data">
-                                                        {{ $totalTrainingHours ?? 'N/A' }}
+                                                        {{ $training_schedule->training_man_hours ?? '-' }}
                                                     </div>
                                                 </div>
                                                 <div class="mb-3 col-md-4 form-input">
@@ -277,28 +289,32 @@
                                                     <h4 class="text-white">Vice President Approval</h4>
                                                 </div>
                                             </div>
-                                            <div class="row">
+                                            @if (isset($training_schedule->approver_name))
+                                                <div class="row">
 
-                                                <div class="mb-3 col-md-4 form-input">
-                                                    <label class="form-label view_label">Approver Name</label>
-                                                    <div class="view_data">
-                                                        {{ $training_schedule->approver_name }}
+                                                    <div class="mb-3 col-md-4 form-input">
+                                                        <label class="form-label view_label">Approver Name</label>
+                                                        <div class="view_data">
+                                                            {{ $training_schedule->approver_name }}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="mb-3 col-md-4 form-input">
-                                                    <label class="form-label view_label">Date</label>
-                                                    <div class="view_data">
-                                                        {{ Displaydateformat($training_schedule->date) }}
+                                                    <div class="mb-3 col-md-4 form-input">
+                                                        <label class="form-label view_label">Date</label>
+                                                        <div class="view_data">
+                                                            {{ Displaydateformat($training_schedule->date) }}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="mb-3 col-md-4 form-input">
-                                                    <label class="form-label view_label">Remark</label>
-                                                    <div class="view_data">
-                                                        {{ isset($training_schedule->remark) ? $training_schedule->remark : '' }}
+                                                    <div class="mb-3 col-md-4 form-input">
+                                                        <label class="form-label view_label">Remark</label>
+                                                        <div class="view_data">
+                                                            {{ isset($training_schedule->remark) ? $training_schedule->remark : '' }}
+                                                        </div>
                                                     </div>
-                                                </div>
 
-                                            </div>
+                                                </div>
+                                            @else
+                                                <p>No data available.</p>
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="tab-pane fade" id="nomination_process">
@@ -396,13 +412,25 @@
                                                         <div class="mb-3 col-md-4 form-input">
                                                             <label class="form-label view_label">From Date</label>
                                                             <div class="view_data">
-                                                                {{ Displaydatetimeformat($training_schedule->from_date) }}
+                                                                {{ Displaydateformat($training_schedule->from_date) }}
                                                             </div>
                                                         </div>
                                                         <div class="mb-3 col-md-4 form-input">
                                                             <label class="form-label view_label">To Date</label>
                                                             <div class="view_data">
-                                                                {{ Displaydatetimeformat($training_schedule->to_date) }}
+                                                                {{ Displaydateformat($training_schedule->to_date) }}
+                                                            </div>
+                                                        </div>
+                                                        <div class="mb-3 col-md-4 form-input">
+                                                            <label class="form-label view_label">Start Time</label>
+                                                            <div class="view_data">
+                                                                {{ Displaytimeformat($training_schedule->start_time) }}
+                                                            </div>
+                                                        </div>
+                                                        <div class="mb-3 col-md-4 form-input">
+                                                            <label class="form-label view_label">End Time</label>
+                                                            <div class="view_data">
+                                                                {{ Displaytimeformat($training_schedule->end_time) }}
                                                             </div>
                                                         </div>
                                                         <div class="mb-3 col-md-4 form-input">
@@ -554,11 +582,16 @@
                                                                         </td>
                                                                         <td>{{ strip_tags($assessment->feedback) ?? '-' }}
                                                                         </td>
-                                                                        <td><a
-                                                                                href="{{ admin_url('training_schedule/certificate/' . encryptId($training_schedule->id) . '/' . encryptId($assessment->id)) }}">
-                                                                                <i class="fa fa-download"
-                                                                                    style="font-size:20px;color:rgb(12 125 234)"></i>
-                                                                            </a>
+                                                                        <td>
+                                                                            @if ($assessment->assessment == 1)
+                                                                                <a
+                                                                                    href="{{ admin_url('training_schedule/certificate/' . encryptId($training_schedule->id) . '/' . encryptId($assessment->id)) }}">
+                                                                                    <i class="fa fa-download"
+                                                                                        style="font-size:20px;color:rgb(12 125 234)"></i>
+                                                                                </a>
+                                                                            @else
+                                                                                -
+                                                                            @endif
                                                                         </td>
                                                                     </tr>
                                                                 @endforeach
@@ -637,13 +670,25 @@
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">From Date</label>
                                             <div class="view_data">
-                                                {{ Displaydatetimeformat($training_schedule->from_date) }}
+                                                {{ Displaydateformat($training_schedule->from_date) }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">To Date</label>
                                             <div class="view_data">
-                                                {{ Displaydatetimeformat($training_schedule->to_date) }}
+                                                {{ Displaydateformat($training_schedule->to_date) }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Start Time</label>
+                                            <div class="view_data">
+                                                {{ Displaytimeformat($training_schedule->start_time) }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">End Time</label>
+                                            <div class="view_data">
+                                                {{ Displaytimeformat($training_schedule->end_time) }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
@@ -732,7 +777,7 @@
                                                                 <td>{{ strip_tags($assessment->feedback) ?? '-' }}
                                                                 </td>
                                                                 <td>
-                                                                    @if ($assessment->attended_status == 1)
+                                                                    @if ($assessment->assessment == 1)
                                                                         <a
                                                                             href="{{ admin_url('training_schedule/certificate/' . encryptId($training_schedule->id) . '/' . encryptId($assessment->id)) }}">
                                                                             <i class="fa fa-download"
