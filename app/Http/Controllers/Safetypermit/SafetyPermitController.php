@@ -491,7 +491,7 @@ class SafetyPermitController extends Controller
             $validator = Validator::make($request->all(), $rules, $messages);
 
             if ($validator->fails()) {
-                // dd($validator->errors());
+
                 return redirect()->back()->withErrors($validator)->withInput();
             }
             $permit_status =  1;
@@ -1135,7 +1135,9 @@ class SafetyPermitController extends Controller
         try {
 
             $allData = $this->safetypermit->exportdata();
-
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
 
             $header = [
                 __("common.sno"),
@@ -1189,7 +1191,9 @@ class SafetyPermitController extends Controller
 
             $allData = $this->safetypermit->exportdata();
 
-
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
 
             $header = [
                 __("common.sno"),
