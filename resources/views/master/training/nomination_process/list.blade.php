@@ -163,6 +163,12 @@
                             d.last_training_attended_on = $('#last_training_attended_on_datepicker').val();
                             d.topic_id = $('#topic_id').val();
                             d.status = $('#status').val();
+                        },
+                        error: function(xhr, error, code) {
+                            if (xhr.status === 419) {
+                                alert('Session has expired. You will be redirected to the login page.');
+                                window.location.href = "{{ url('') }}"; // Redirect to login page
+                            }
                         }
 
                     },
