@@ -4,552 +4,572 @@
 
 
 @section('content')
-    <div class="clearfix"></div>
-    <div class="page-titles">
-        <div class="d-flex align-items-center">
-
-        </div>
+<div class="clearfix"></div>
+<div class="page-titles">
+    <div class="d-flex align-items-center">
 
     </div>
 
-    <div class="content-body  default-height">
-        <div class="container-fluid main-content">
-            <!-- row -->
-            <div class="row">
+</div>
 
+<div class="content-body  default-height">
+    <div class="container-fluid main-content">
+        <!-- row -->
+        <div class="row">
+
+            <div class="col-12">
                 <div class="col-12">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('safetypermit/list') }}"></x-button-back>
-                                </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="align-back-btc">
+                                <x-button-back href="{{ admin_url('safetypermit/list') }}"></x-button-back>
                             </div>
+                        </div>
 
-                            <div class="card-body">
+                        <div class="card-body">
 
-                                <div class="basic-form">
-                                    <form method="POST" id="safetyPermitadd"
-                                        action="{{ admin_url('safetypermit/add/submit') }}">
-                                        @csrf
-                                        <div class="row ">
-                                            <div class="col-md-3 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Date</label>
-                                                    <input type="text" name="date" id="date" class="form-control"
-                                                        value = "{{ todayDate() }}">
-                                                    <div class="text-danger"></div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-3 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Time(From)</label>
-                                                    <input type="text" name="time_from" id="time_from"
-                                                        class="form-control" placeholder="Time(From)">
-                                                    <div class="text-danger"></div>
-                                                </div>
-                                            </div>
-
-
-                                            <div class="col-md-3 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Time(To)</label>
-                                                    <input type="text" name="time_to" id="time_to" class="form-control"
-                                                        placeholder="Time(To)">
-                                                    <div class="text-danger"></div>
-                                                </div>
-                                            </div>
-
-
-                                            <div class="col-md-3 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Unit</label>
-                                                    <select name="unit_id" id="unit_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Unit</option>
-                                                        @foreach ($unitList as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}">
-                                                                {{ $unit->unit_name }}</option>
-                                                        @endforeach
-
-                                                    </select>
-                                                    <div class="text-danger"></div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-3 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Exact location of job</label>
-                                                    <input type="text" name="exact_location_job" id="exact_location_job"
-                                                        class="form-control" placeholder="Exact location of job">
-                                                    <div class="text-danger"></div>
-                                                </div>
-                                            </div>
-
-
-                                            <div class="col-md-3 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Job Location & Area</label>
-                                                    <input type="text" name="job_location_area" id="job_location_area"
-                                                        class="form-control" placeholder="Job Location & Area">
-                                                    <div class="text-danger"></div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-3 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Work Permit No</label>
-                                                    <input type="text" name="permit_id" id="permit_id"
-                                                        class="form-control" value = "{{ getsequence('safetypermit') }}"
-                                                        readonly>
-                                                    <div class="text-danger"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <p class="fw-bold fs-5 ">Type of Job: Please Tick Mark (<i
-                                                class="fas fa-check text-primary"></i>)
-                                            <span class="text-danger">*</span>
-                                        </p>
-                                        <div class="row" style="background: #d6f5e0b0;">
-                                            <div class="col-12">
-                                                <div class="card p-3 rounded m-3 work-type">
-                                                    <div class="row g-3">
-                                                        @foreach ($typeofwork as $work)
-                                                            <div class="col-12 col-md-4 d-flex align-items-center gap-2">
-                                                                <input type="hidden" name=""
-                                                                    value="{{ $work->id }}">
-                                                                <input type="checkbox" class="work-type-checkbox"
-                                                                    data-id="{{ $work->id }}" name="sub_permit[]"
-                                                                    value="{{ $work->id }}">
-                                                                <a href="{{ asset($work->file_path) }}" target="_blank">
-                                                                    <img src="{{ asset($work->file_path) }}"
-                                                                        alt="Image" class="img-fluid"
-                                                                        style="max-width: 50px; object-fit: cover;">
-                                                                </a>
-                                                                <span>{{ $work->work_name }}</span>
-
-                                                            </div>
-                                                        @endforeach
-
-                                                        <div class="text-danger "></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3 mt-2">
-                                            <div class="col-12">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Job Description</label>
-                                                    <textarea name="job_description" class="form-control" placeholder="Job Description"></textarea>
-                                                    <div class="text-danger"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row border p-3 mx-1">
-                                            <div class="col-12 col-md-6 mb-3">
-                                                <div class="form-group d-flex align-items-center gap-3">
-                                                    <img src="{{ url('public/assets/images/safetypermit/power-off.png') }}"
-                                                        class="img-fluid"
-                                                        style="width: 50px; height: 50px; margin-right: 30px;">
-                                                    <label class="form-label mb-0" style="margin-right: 58px;">Shut Down
-                                                        Required (Yes/No)</label>
-                                                    <input type="checkbox" id="shutdown-checkbox"
-                                                        class="shutdown-checkbox" name="shutdown_req" value="1">
-                                                    <div class="text-danger"></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-6 mb-3">
-                                                <div class="form-group d-flex align-items-center gap-3">
-                                                    <img src="{{ url('public/assets/images/safetypermit/profile.png') }}"
-                                                        class="img-fluid" style="width: 50px; height: 50px;">
-                                                    <label class="form-label mb-0">Taken By (Name & Department)</label>
-                                                    <select name="shut_down_takenby" id="employeenameshutdown"
-                                                        class="form-control shutdowncheckbox" disabled>
-                                                        <option value="">Select Person</option>
-                                                    </select>
-                                                    <div class="text-danger"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row border p-3 mx-1">
-                                            <div class="col-12 col-md-6 mb-3">
-                                                <div class="form-group d-flex align-items-center gap-3">
-                                                    <img src="{{ url('public/assets/images/safetypermit/process.png') }}"
-                                                        class="img-fluid"
-                                                        style="width: 50px; height: 50px; margin-right: 30px;">
-                                                    <label class="form-label mb-0"
-                                                        style="margin-right: 34px;">Isolation/LOTO Required
-                                                        (Yes/No)</label>
-                                                    <input type="checkbox" id="loto-checkbox" class="loto-checkbox"
-                                                        name="loto_req">
-                                                    <div class="text-danger"></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-6 mb-3">
-                                                <div class="form-group d-flex align-items-center gap-3">
-                                                    <img src="{{ url('public/assets/images/safetypermit/profile.png') }}"
-                                                        class="img-fluid" style="width: 50px; height: 50px;">
-                                                    <label class="form-label mb-0">Taken By (Name & Department)</label>
-                                                    <select name="loto_takenby" id="employeenameloto"
-                                                        class="form-control lotocheckbox" disabled>
-                                                        <option value="">Select Person</option>
-                                                    </select>
-                                                    <div class="text-danger"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row border p-3 mx-1">
-                                            <div class="col-md-6 mb-3">
-                                                <div class="form-group d-flex align-items-center">
-                                                    <label class="form-label mb-0" style="margin-right: 50px">Loto
-                                                        No</label>
-                                                    <div class="col-sm-6 p-0">
-                                                        <input type="text" name="loto_no"
-                                                            class="form-control lotocheckbox" placeholder="Loto No"
-                                                            disabled>
-
-
-                                                    </div>
-                                                    <div class="text-danger"></div>
-                                                </div>
-
-                                            </div>
-                                            <div class="col-md-4 mb-3 "style="margin-right: 50px">
-                                                <div class="form-group d-flex align-items-center ps-5 ">
-                                                    <label class="form-label mb-0" style="margin-right:30px;">Tag Field
-                                                        properly (Yes/No)</label>
-                                                    <input type="checkbox" class=" shutdowncheckbox" name="tagfield"
-                                                        disabled>
-
-                                                </div>
+                            <div class="basic-form">
+                                <form method="POST" id="safetyPermitadd"
+                                    action="{{ admin_url('safetypermit/add/submit') }}">
+                                    @csrf
+                                    <div class="row ">
+                                        <div class="col-md-3 mb-3">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Date</label>
+                                                <input type="text" name="date" id="date" class="form-control"
+                                                    value="{{ todayDate() }}">
                                                 <div class="text-danger"></div>
                                             </div>
                                         </div>
 
-                                        <div class="row col-md-12 d-flex mt-3">
-                                            <!-- Left Side: Scrollable on X-Axis -->
-
-                                            <div class="col-md-4">
-                                                <p class="fw-bold fs-5 mt-3">State of Isolation & LOTO</p>
-                                                <div class="scroll-container border p-3"
-                                                    style="overflow-x: auto; white-space: nowrap; width: 100%;">
-                                                    <!-- First Row -->
-                                                    <div class="row mb-3 d-flex flex-nowrap align-items-center">
-                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
-                                                            style="min-width: 200px;">
-                                                            <img src="{{ url('public/assets/images/safetypermit/person.png') }}"
-                                                                class="img-fluid"
-                                                                style="width: 50px; height: 50px; margin-right: 20px">
-                                                            <label class="form-label mb-0 "
-                                                                style="margin-right: 100px;">Air</label>
-                                                            <input type="checkbox" class=" shutdowncheckbox"
-                                                                id="air_checkbox" name="state_isolation_loto[]"
-                                                                value="Air" disabled>
-                                                        </div>
-                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
-                                                            style="min-width: 200px;">
-                                                            <img src="{{ url('public/assets/images/safetypermit/natural-gas.png') }}"
-                                                                class="img-fluid"
-                                                                style="width: 50px; height: 50px; margin-right: 20px">
-                                                            <label class="form-label mb-0"
-                                                                style="margin-right: 115px;">Gas</label>
-                                                            <input type="checkbox" class=" shutdowncheckbox"
-                                                                id="gas_checkbox" name="state_isolation_loto[]"
-                                                                value="Gas" disabled>
-                                                        </div>
-                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
-                                                            style="min-width: 200px;">
-                                                            <label class="form-label mb-0">Others if any please
-                                                                specify</label>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Second Row -->
-                                                    <div class="row mb-3 d-flex flex-nowrap align-items-center">
-                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
-                                                            style="min-width: 200px;">
-                                                            <img src="{{ url('public/assets/images/safetypermit/electrician.png') }}"
-                                                                class="img-fluid"
-                                                                style="width: 50px; height: 50px; margin-right: 20px;">
-                                                            <label class="form-label mb-0"
-                                                                style="margin-right: 58px;">Electrical</label>
-                                                            <input type="checkbox" class=" shutdowncheckbox"
-                                                                id="electrical_checkbox" name="state_isolation_loto[]"
-                                                                value="Electrical" disabled>
-                                                        </div>
-                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
-                                                            style="min-width: 200px;">
-                                                            <img src="{{ url('public/assets/images/safetypermit/leak.png') }}"
-                                                                class="img-fluid"
-                                                                style="width: 50px; height: 50px; margin-right: 20px">
-                                                            <label class="form-label mb-0"
-                                                                style="margin-right: 58px;">Water/Liquid</label>
-                                                            <input type="checkbox" class=" shutdowncheckbox"
-                                                                id="water_checkbox" name="state_isolation_loto[]"
-                                                                value="Water/Liquid" disabled>
-                                                        </div>
-                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
-                                                            style="min-width: 200px;">
-                                                            <textarea class="form-control shutdowncheckbox" name="state_isolation_loto[]" placeholder="Specify others" disabled></textarea>
-                                                            <div class="text-danger" id="shutdowncheckbox_description">
-                                                            </div>
-
-                                                        </div>
-                                                        <div class="text-danger"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div id="section-1" class="col-md-8">
-                                                <p class="fw-bold fs-5 mt-3">Applicable for Confined Space Entry</p>
-
-                                                <div class="row border rounded p-2 mx-1">
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group d-flex align-items-center">
-                                                            <label class="form-label mb-0"
-                                                                style="margin-right: 20px">O2%</label>
-                                                            <input type="text"
-                                                                name="confined_space_entry[o2_percentage]"
-                                                                class="form-control" disabled>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group d-flex align-items-center">
-                                                            <label class="form-label mb-0"
-                                                                style="margin-right: 20px">System Isolated</label>
-                                                            <input type="hidden"
-                                                                name="confined_space_entry[system_isolated]"
-                                                                value="0">
-                                                            <input type="checkbox"
-                                                                name="confined_space_entry[system_isolated]"
-                                                                value="1">
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div
-                                                            class="form-group d-flex align-items-center justify-content-between">
-                                                            <label class="form-label mb-0">Rescue System Available</label>
-                                                            <input type="hidden"
-                                                                name="confined_space_entry[rescue_system]" value="0">
-                                                            <input type="checkbox"
-                                                                name="confined_space_entry[rescue_system]" value="1">
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row border rounded p-2 mx-1">
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group d-flex align-items-center">
-                                                            <label class="form-label col-md-5 mb-0 mr-2 pe-2">Confined
-                                                                Space Attendant</label>
-                                                            <input type="hidden"
-                                                                name="confined_space_entry[confined_attendant]"
-                                                                value="0">
-                                                            <input type="checkbox"
-                                                                name="confined_space_entry[confined_attendant]"
-                                                                value="1">
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div
-                                                            class="form-group d-flex align-items-center justify-content-between">
-                                                            <label class="form-label col-md-6 mb-0 "
-                                                                style="margin-right: 10px;">Attendant Name</label>
-                                                            <input type="text"
-                                                                name="confined_space_entry[attendant_name]"
-                                                                class="form-control" placeholder="Search by Employee Name"
-                                                                disabled>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div
-                                                            class="form-group d-flex align-items-center justify-content-between">
-                                                            <label class="form-label mb-0"
-                                                                style="margin-right: 20px">Register for entry &
-                                                                exits</label>
-                                                            <input type="checkbox"
-                                                                name="confined_space_entry[register_entry_exits]" disabled>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row border rounded p-2 mx-1 mb-3">
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group d-flex align-items-center">
-                                                            <label class="form-label mb-0">Any Other Gas / PPM</label>
-                                                            <input type="text" name="confined_space_entry[other_gas]"
-                                                                class="form-control" placeholder="Any Other Gas / PPM"
-                                                                disabled>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group d-flex align-items-center">
-                                                            <label class="form-label mb-0">PPM and is therefore safe to
-                                                                enter from</label>
-                                                            <input type="text"
-                                                                name="confined_space_entry[ppm_entry_date]"
-                                                                class="form-control" id="from_PPMTime" disabled>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group d-flex align-items-center">
-                                                            <label class="form-label mb-0">PPM and is therefore safe to
-                                                                enter to</label>
-                                                            <input type="text"
-                                                                name="confined_space_entry[ppm_entry_to]"
-                                                                class="form-control" id="to_PPMTime" disabled>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </div>
-
-                                        <p class="fw-bold fs-5 mt-3">Protective Equipment's to be Worn (<i
-                                                class="fas fa-check text-primary"></i>)
-                                            <span class="text-danger">*</span>
-                                        </p>
-                                        <div class="row" style="background: #d6f5e0b0;">
-                                            <div class="col-12 col-lg-8 mt-2 p-2">
-                                                <div class="card p-3 rounded m-2">
-                                                    <div class="row g-2 mb-3">
-                                                        <div class="d-flex flex-wrap justify-content-start">
-                                                            <img src="{{ url('public/assets/images/safetypermit/gloves.png') }}"
-                                                                class="img-fluid m-1"
-                                                                style="width:70px; border:1px solid gray; padding: 11px;">
-                                                            <img src="{{ url('public/assets/images/safetypermit/helmet.png') }}"
-                                                                class="img-fluid m-1"
-                                                                style="width:70px; border:1px solid gray; padding: 11px;">
-                                                            <img src="{{ url('public/assets/images/safetypermit/shoes.png') }}"
-                                                                class="img-fluid m-1"
-                                                                style="width:70px; border:1px solid gray; padding: 11px;">
-                                                            <img src="{{ url('public/assets/images/safetypermit/gloves (1).png') }}"
-                                                                class="img-fluid m-1"
-                                                                style="width:70px; border:1px solid gray; padding: 11px;">
-                                                            <img src="{{ url('public/assets/images/safetypermit/boots (1).png') }}"
-                                                                class="img-fluid m-1"
-                                                                style="width:70px; border:1px solid gray; padding: 11px;">
-                                                            <img src="{{ url('public/assets/images/safetypermit/boots.png') }}"
-                                                                class="img-fluid m-1"
-                                                                style="width:70px; border:1px solid gray; padding: 11px;">
-                                                            <img src="{{ url('public/assets/images/safetypermit/safety-goggles.png') }}"
-                                                                class="img-fluid m-1"
-                                                                style="width:70px; border:1px solid gray; padding: 11px;">
-                                                            <img src="{{ url('public/assets/images/safetypermit/shoes.png') }}"
-                                                                class="img-fluid m-1"
-                                                                style="width:70px; border:1px solid gray; padding: 11px;">
-                                                            <img src="{{ url('public/assets/images/safetypermit/icons8-cap-64.png') }}"
-                                                                class="img-fluid m-1"
-                                                                style="width:70px; border:1px solid gray; padding: 11px;">
-                                                            <img src="{{ url('public/assets/images/safetypermit/icons8-headphone-48.png') }}"
-                                                                class="img-fluid m-1"
-                                                                style="width:70px; border:1px solid gray; padding: 11px;">
-                                                            <img src="{{ url('public/assets/images/safetypermit/icons8-mask-64.png') }}"
-                                                                class="img-fluid m-1"
-                                                                style="width:70px; border:1px solid gray; padding: 11px;">
-                                                        </div>
-                                                    </div>
-
-                                                    <div id="getprotectivechecklist-container" class="row g-3 mt-3">
-                                                        {{-- @foreach ($getprotectiveequipment as $getprotectiveequipment)
-                                                            <div
-                                                                class="col-12 col-md-6 col-lg-4 d-flex align-items-center gap-2">
-                                                                <input type="checkbox" id="select-all"
-                                                                    class="validate-radio-required">
-                                                                <label>{{ $getprotectiveequipment->protective_equip }}</label>
-                                                            </div>
-                                                        @endforeach --}}
-
-
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
-                                            <div class="col-12 col-lg-4">
-                                                <div class="card p-3 rounded mt-4">
-                                                    <div class="row g-3">
-                                                        <div class="col-12">
-                                                            <p class="fw-bold">Mandatory Notes for PPEs</p>
-                                                            <ol class="mb-0" style="line-height: 1.8;">
-                                                                <li>PPEs must be of national/international standard.</li>
-                                                                <li>Damaged/defective PPEs shall not be used.</li>
-                                                                <li>Non-standard PPEs shall not be used.</li>
-                                                                <li>PPEs must be inspected before use.</li>
-                                                            </ol>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                        <div class="col-md-3 mb-3">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Time(From)</label>
+                                                <input type="text" name="time_from" id="time_from" class="form-control"
+                                                    placeholder="Time(From)">
+                                                <div class="text-danger"></div>
                                             </div>
                                         </div>
 
 
+                                        <div class="col-md-3 mb-3">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Time(To)</label>
+                                                <input type="text" name="time_to" id="time_to" class="form-control"
+                                                    placeholder="Time(To)">
+                                                <div class="text-danger"></div>
+                                            </div>
+                                        </div>
 
-                                        <p class="fw-bold fs-5 mt-3">Name of Equipment's involved in Job
-                                            <span class="text-danger">*</span>
-                                        </p>
-                                        <div class="row" style="background: #d6f5e0b0;">
-                                            <div class="col-12 p-2">
-                                                <div class="card p-4 rounded m-2">
-                                                    <div class="row g-4">
 
-                                                        <div class="col-md-4">
-                                                            <div
-                                                                class="d-flex flex-wrap justify-content-center align-items-center gap-3">
+                                        <div class="col-md-3 mb-3">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Unit</label>
+                                                <select name="unit_id" id="unit_id" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Unit</option>
+                                                    @foreach ($unitList as $unit)
+                                                    <option value="{{ encryptId($unit->id) }}">
+                                                        {{ $unit->unit_name }}</option>
+                                                    @endforeach
 
-                                                                <div style="width: 80px; height: 80px;"
-                                                                    class="d-flex justify-content-center align-items-center border rounded bg-white shadow-sm">
-                                                                    <img src="{{ url('public/assets/images/safetypermit/flash.png') }}"
-                                                                        class="img-fluid"
-                                                                        style="max-width: 70%; max-height: 70%;">
-                                                                </div>
-                                                                <div style="width: 80px; height: 80px;"
-                                                                    class="d-flex justify-content-center align-items-center border rounded bg-white shadow-sm">
-                                                                    <img src="{{ url('public/assets/images/safetypermit/gloves.png') }}"
-                                                                        class="img-fluid"
-                                                                        style="max-width: 70%; max-height: 70%;">
-                                                                </div>
-                                                                <div style="width: 80px; height: 80px;"
-                                                                    class="d-flex justify-content-center align-items-center border rounded bg-white shadow-sm">
-                                                                    <img src="{{ url('public/assets/images/safetypermit/shoes.png') }}"
-                                                                        class="img-fluid"
-                                                                        style="max-width: 70%; max-height: 70%;">
-                                                                </div>
-                                                                <div style="width: 80px; height: 80px;"
-                                                                    class="d-flex justify-content-center align-items-center border rounded bg-white shadow-sm">
-                                                                    <img src="{{ url('public/assets/images/safetypermit/gloves (1).png') }}"
-                                                                        class="img-fluid"
-                                                                        style="max-width: 70%; max-height: 70%;">
-                                                                </div>
-                                                            </div>
+                                                </select>
+                                                <div class="text-danger"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3 mb-3">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Exact location of job</label>
+                                                <input type="text" name="exact_location_job" id="exact_location_job"
+                                                    class="form-control" placeholder="Exact location of job">
+                                                <div class="text-danger"></div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-3 mb-3">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Job Location & Area</label>
+                                                <input type="text" name="job_location_area" id="job_location_area"
+                                                    class="form-control" placeholder="Job Location & Area">
+                                                <div class="text-danger"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3 mb-3">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Work Permit No</label>
+                                                <input type="text" name="permit_id" id="permit_id" class="form-control"
+                                                    value="{{ getsequence('safetypermit') }}" readonly>
+                                                <div class="text-danger"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="fw-bold fs-5 ">Type of Job: Please Tick Mark (<i
+                                            class="fas fa-check text-primary"></i>)
+                                        <span class="text-danger">*</span>
+                                    </p>
+                                    <div class="row" style="background: #d6f5e0b0;">
+                                        <div class="col-12">
+                                            <div class="card p-3 rounded m-3 work-type">
+                                                <div class="row g-3">
+                                                    @foreach ($typeofwork as $work)
+                                                    <div class="col-12 col-md-4 d-flex align-items-center gap-2">
+                                                        <input type="hidden" name="" value="{{ $work->id }}">
+                                                        <input type="checkbox" class="work-type-checkbox"
+                                                            data-id="{{ $work->id }}" name="sub_permit[]"
+                                                            value="{{ $work->id }}">
+                                                        <a href="{{ asset($work->file_path) }}" target="_blank">
+                                                            <img src="{{ asset($work->file_path) }}" alt="Image"
+                                                                class="img-fluid"
+                                                                style="max-width: 50px; object-fit: cover;">
+                                                        </a>
+                                                        <span>{{ $work->work_name }}</span>
+
+                                                    </div>
+                                                    @endforeach
+
+                                                    <div class="text-danger "></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3 mt-2">
+                                        <div class="col-12">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Job Description</label>
+                                                <textarea name="job_description" class="form-control"
+                                                    placeholder="Job Description"></textarea>
+                                                <div class="text-danger"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row border p-3 mx-1">
+                                        <div class="col-12 col-md-6 mb-3">
+                                            <div class="form-group d-flex align-items-center gap-3">
+                                                <img src="{{ url('public/assets/images/safetypermit/power-off.png') }}"
+                                                    class="img-fluid"
+                                                    style="width: 50px; height: 50px; margin-right: 30px;">
+                                                <label for = "shutdown-checkbox" class="form-label mb-0" style="margin-right: 58px;">Shut Down
+                                                    Required (Yes/No)</label>
+                                                <input type="checkbox" id="shutdown-checkbox" class="shutdown-checkbox"
+                                                    name="shutdown_req" value="1">
+                                                <div class="text-danger"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6 mb-3">
+                                            <div class="form-group d-flex align-items-center gap-3">
+                                                <img src="{{ url('public/assets/images/safetypermit/profile.png') }}"
+                                                    class="img-fluid" style="width: 50px; height: 50px;">
+                                                <label class="form-label mb-0">Taken By (Name & Department)</label>
+                                                <select name="shut_down_takenby" id="employeenameshutdown"
+                                                    class="form-control shutdowncheckbox" disabled>
+                                                    <option value="">Select Person</option>
+                                                </select>
+                                                <div class="text-danger"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row border p-3 mx-1">
+                                        <div class="col-12 col-md-6 mb-3">
+                                            <div class="form-group d-flex align-items-center gap-3">
+                                                <img src="{{ url('public/assets/images/safetypermit/process.png') }}"
+                                                    class="img-fluid"
+                                                    style="width: 50px; height: 50px; margin-right: 30px;">
+                                                <label for = "loto-checkbox" class="form-label mb-0"
+                                                    style="margin-right: 34px;">Isolation/LOTO Required
+                                                    (Yes/No)</label>
+                                                <input type="checkbox" id="loto-checkbox" class="loto-checkbox"
+                                                    name="loto_req">
+                                                <div class="text-danger"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6 mb-3">
+                                            <div class="form-group d-flex align-items-center gap-3">
+                                                <img src="{{ url('public/assets/images/safetypermit/profile.png') }}"
+                                                    class="img-fluid" style="width: 50px; height: 50px;">
+                                                <label class="form-label mb-0">Taken By (Name & Department)</label>
+                                                <select name="loto_takenby" id="employeenameloto"
+                                                    class="form-control lotocheckbox" disabled>
+                                                    <option value="">Select Person</option>
+                                                </select>
+                                                <div class="text-danger"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row border p-3 mx-1">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-group d-flex align-items-center">
+                                                <label class="form-label mb-0" style="margin-right: 50px">Loto
+                                                    No</label>
+                                                <div class="col-sm-6 p-0">
+                                                    <input type="text" name="loto_no" class="form-control lotocheckbox"
+                                                        placeholder="Loto No" disabled>
+
+
+                                                </div>
+                                                <div class="text-danger"></div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-4 mb-3 " style="margin-right: 50px">
+                                            <div class="form-group d-flex align-items-center ps-5 ">
+                                                <label for = "shutdowncheckbox" class="form-label mb-0" style="margin-right:30px;">Tag Field
+                                                    properly (Yes/No)</label>
+                                                <input type="checkbox" id = "shutdowncheckbox" class=" shutdowncheckbox" name="tagfield"
+                                                    disabled>
+
+                                            </div>
+                                            <div class="text-danger"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row col-md-12 d-flex mt-3">
+                                        <!-- Left Side: Scrollable on X-Axis -->
+
+                                        <div class="col-md-4">
+                                            <p class="fw-bold fs-5 mt-3">State of Isolation & LOTO</p>
+                                            <div class="scroll-container border p-3"
+                                                style="overflow-x: auto; white-space: nowrap; width: 100%;">
+                                                <!-- First Row -->
+                                                <div class="row mb-3 d-flex flex-nowrap align-items-center">
+                                                    <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                        style="min-width: 200px;">
+                                                        <img src="{{ url('public/assets/images/safetypermit/person.png') }}"
+                                                            class="img-fluid"
+                                                            style="width: 50px; height: 50px; margin-right: 20px">
+                                                        <label for= "air_checkbox" class="form-label mb-0 "
+                                                            style="margin-right: 100px;">Air</label>
+                                                        <input type="checkbox" class=" shutdowncheckbox"
+                                                            id="air_checkbox" name="state_isolation_loto[]" value="Air"
+                                                            disabled>
+                                                    </div>
+                                                    <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                        style="min-width: 200px;">
+                                                        <img src="{{ url('public/assets/images/safetypermit/natural-gas.png') }}"
+                                                            class="img-fluid"
+                                                            style="width: 50px; height: 50px; margin-right: 20px">
+                                                        <label for= "gas_checkbox" class="form-label mb-0"
+                                                            style="margin-right: 115px;">Gas</label>
+                                                        <input type="checkbox" class=" shutdowncheckbox"
+                                                            id="gas_checkbox" name="state_isolation_loto[]" value="Gas"
+                                                            disabled>
+                                                    </div>
+                                                    <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                        style="min-width: 200px;">
+                                                        <label class="form-label mb-0">Others if any please
+                                                            specify</label>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Second Row -->
+                                                <div class="row mb-3 d-flex flex-nowrap align-items-center">
+                                                    <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                        style="min-width: 200px;">
+                                                        <img src="{{ url('public/assets/images/safetypermit/electrician.png') }}"
+                                                            class="img-fluid"
+                                                            style="width: 50px; height: 50px; margin-right: 20px;">
+                                                        <label  for= "electrical_checkbox" class="form-label mb-0"
+                                                            style="margin-right: 58px;">Electrical</label>
+                                                        <input type="checkbox" class=" shutdowncheckbox"
+                                                            id="electrical_checkbox" name="state_isolation_loto[]"
+                                                            value="Electrical" disabled>
+                                                    </div>
+                                                    <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                        style="min-width: 200px;">
+                                                        <img src="{{ url('public/assets/images/safetypermit/leak.png') }}"
+                                                            class="img-fluid"
+                                                            style="width: 50px; height: 50px; margin-right: 20px">
+                                                        <label for= "water_checkbox" class="form-label mb-0"
+                                                            style="margin-right: 58px;">Water/Liquid</label>
+                                                        <input type="checkbox" class=" shutdowncheckbox"
+                                                            id="water_checkbox" name="state_isolation_loto[]"
+                                                            value="Water/Liquid" disabled>
+                                                    </div>
+                                                    <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                        style="min-width: 200px;">
+                                                        <textarea class="form-control shutdowncheckbox"
+                                                            name="state_isolation_loto[]" placeholder="Specify others"
+                                                            disabled></textarea>
+                                                        <div class="text-danger" id="shutdowncheckbox_description">
                                                         </div>
 
-                                                        <div class="col-md-5">
-                                                            {{-- <div class="row row-cols-2 g-3"> --}}
-                                                            <div id="getequipmentinvolved-container" class="row g-3 mt-3">
-                                                                {{-- @foreach ($getequipmentinvolved as $getequipmentinvolved)
-                                                                    <div  class="col-12 col-md-6 col-lg-4 d-flex align-items-center gap-2">
-                                                                        <input type="checkbox" id="select-all"
-                                                                            class="form-check-input">
-                                                                        <label for="select-all"
-                                                                            class="form-check-label">{{ $getequipmentinvolved->equip_involve }}</label>
-                                                                    </div>
+                                                    </div>
+                                                    <div class="text-danger"></div>
+                                                </div>
+
+                                                <div class="row mb-3 d-flex flex-nowrap align-items-center">
+                                                    <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                        style="min-width: 200px;">
+                                                        <img src="{{ url('public/assets/images/safetypermit/fire.png') }}"
+                                                            class="img-fluid"
+                                                            style="width: 50px; height: 50px; margin-right: 20px;">
+                                                        <label for= "isolationpanel_checkbox" class="form-label mb-0"
+                                                            style="margin-right: 58px;">Isolation fire panel</label>
+                                                        <input type="hidden" name="isolationpanel_checkbox" value="0">
+                                                        <input type="checkbox" class="shutdowncheckbox"
+                                                            id="isolationpanel_checkbox" name="isolationpanel_checkbox"
+                                                            value="1" disabled>
+                                                    </div>
+
+                                                    <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                        style="min-width: 200px;">
+                                                        <input type="text"
+                                                            class="form-control isolationpanel_description"
+                                                            name="isolationpanel_description"
+                                                            placeholder="Isolation fire panel" disabled>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="section-1" class="col-md-8">
+                                            <p class="fw-bold fs-5 mt-3">Applicable for Confined Space Entry</p>
+
+                                            <div class="row border rounded p-2 mx-1">
+                                                <div class="col-12 col-md-4 mb-3">
+                                                    <div class="form-group d-flex align-items-center">
+                                                        <label class="form-label mb-0"
+                                                            style="margin-right: 20px">O2%</label>
+                                                        <input type="text" name="confined_space_entry[o2_percentage]"
+                                                            class="form-control" disabled>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12 col-md-4 mb-3">
+                                                    <div class="form-group d-flex align-items-center">
+                                                        <label for= "system_isolated" class="form-label mb-0" style="margin-right: 20px">System
+                                                            Isolated</label>
+                                                        <input type="hidden"
+                                                            name="confined_space_entry[system_isolated]" value="0">
+                                                        <input type="checkbox" id = "system_isolated"
+                                                            name="confined_space_entry[system_isolated]" value="1">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12 col-md-4 mb-3">
+                                                    <div
+                                                        class="form-group d-flex align-items-center justify-content-between">
+                                                        <label for= "rescue_system" class="form-label mb-0">Rescue System Available</label>
+                                                        <input type="hidden" name="confined_space_entry[rescue_system]"
+                                                            value="0">
+                                                        <input type="checkbox" id= "rescue_system"
+                                                            name="confined_space_entry[rescue_system]" value="1">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row border rounded p-2 mx-1">
+                                                <div class="col-12 col-md-4 mb-3">
+                                                    <div class="form-group d-flex align-items-center">
+                                                        <label for= "confined_attendant" class="form-label col-md-5 mb-0 mr-2 pe-2">Confined
+                                                            Space Attendant</label>
+                                                        <input type="hidden"
+                                                            name="confined_space_entry[confined_attendant]" value="0">
+                                                        <input type="checkbox"
+                                                            name="confined_space_entry[confined_attendant]" id= "confined_attendant" value="1">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12 col-md-4 mb-3">
+                                                    <div
+                                                        class="form-group d-flex align-items-center justify-content-between">
+                                                        <label class="form-label col-md-6 mb-0 "
+                                                            style="margin-right: 10px;">Attendant Name</label>
+                                                        <input type="text" name="confined_space_entry[attendant_name]"
+                                                            class="form-control" placeholder="Search by Employee Name"
+                                                            disabled>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12 col-md-4 mb-3">
+                                                    <div
+                                                        class="form-group d-flex align-items-center justify-content-between">
+                                                        <label for= "register_entry_exits" class="form-label mb-0"
+                                                            style="margin-right: 20px">Register for entry &
+                                                            exits</label>
+                                                        <input type="checkbox" id= "register_entry_exits"
+                                                            name="confined_space_entry[register_entry_exits]" disabled>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row border rounded p-2 mx-1 mb-3">
+                                                <div class="col-12 col-md-4 mb-3">
+                                                    <div class="form-group d-flex align-items-center">
+                                                        <label class="form-label mb-0">Any Other Gas / PPM</label>
+                                                        <input type="text" name="confined_space_entry[other_gas]"
+                                                            class="form-control" placeholder="Any Other Gas / PPM"
+                                                            disabled>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-4 mb-3">
+                                                    <div class="form-group d-flex align-items-center">
+                                                        <label class="form-label mb-0">PPM and is therefore safe to
+                                                            enter from</label>
+                                                        <input type="text" name="confined_space_entry[ppm_entry_date]"
+                                                            class="form-control" id="from_PPMTime" disabled>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-4 mb-3">
+                                                    <div class="form-group d-flex align-items-center">
+                                                        <label class="form-label mb-0">PPM and is therefore safe to
+                                                            enter to</label>
+                                                        <input type="text" name="confined_space_entry[ppm_entry_to]"
+                                                            class="form-control" id="to_PPMTime" disabled>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <p class="fw-bold fs-5 mt-3">Protective Equipment's to be Worn (<i
+                                            class="fas fa-check text-primary"></i>)
+                                        <span class="text-danger">*</span>
+                                    </p>
+                                    <div class="row" style="background: #d6f5e0b0;">
+                                        <div class="col-12 col-lg-8 mt-2 p-2">
+                                            <div class="card p-3 rounded m-2">
+                                                <div class="row g-2 mb-3">
+                                                    <div class="d-flex flex-wrap justify-content-start">
+                                                        <img src="{{ url('public/assets/images/safetypermit/gloves.png') }}"
+                                                            class="img-fluid m-1"
+                                                            style="width:70px; border:1px solid gray; padding: 11px;">
+                                                        <img src="{{ url('public/assets/images/safetypermit/helmet.png') }}"
+                                                            class="img-fluid m-1"
+                                                            style="width:70px; border:1px solid gray; padding: 11px;">
+                                                        <img src="{{ url('public/assets/images/safetypermit/shoes.png') }}"
+                                                            class="img-fluid m-1"
+                                                            style="width:70px; border:1px solid gray; padding: 11px;">
+                                                        <img src="{{ url('public/assets/images/safetypermit/gloves (1).png') }}"
+                                                            class="img-fluid m-1"
+                                                            style="width:70px; border:1px solid gray; padding: 11px;">
+                                                        <img src="{{ url('public/assets/images/safetypermit/boots (1).png') }}"
+                                                            class="img-fluid m-1"
+                                                            style="width:70px; border:1px solid gray; padding: 11px;">
+                                                        <img src="{{ url('public/assets/images/safetypermit/boots.png') }}"
+                                                            class="img-fluid m-1"
+                                                            style="width:70px; border:1px solid gray; padding: 11px;">
+                                                        <img src="{{ url('public/assets/images/safetypermit/safety-goggles.png') }}"
+                                                            class="img-fluid m-1"
+                                                            style="width:70px; border:1px solid gray; padding: 11px;">
+                                                        <img src="{{ url('public/assets/images/safetypermit/shoes.png') }}"
+                                                            class="img-fluid m-1"
+                                                            style="width:70px; border:1px solid gray; padding: 11px;">
+                                                        <img src="{{ url('public/assets/images/safetypermit/icons8-cap-64.png') }}"
+                                                            class="img-fluid m-1"
+                                                            style="width:70px; border:1px solid gray; padding: 11px;">
+                                                        <img src="{{ url('public/assets/images/safetypermit/icons8-headphone-48.png') }}"
+                                                            class="img-fluid m-1"
+                                                            style="width:70px; border:1px solid gray; padding: 11px;">
+                                                        <img src="{{ url('public/assets/images/safetypermit/icons8-mask-64.png') }}"
+                                                            class="img-fluid m-1"
+                                                            style="width:70px; border:1px solid gray; padding: 11px;">
+                                                    </div>
+                                                </div>
+
+                                                <div id="getprotectivechecklist-container" class="row g-3 mt-3">
+                                                    {{-- @foreach ($getprotectiveequipment as $getprotectiveequipment)
+                                                    <div
+                                                        class="col-12 col-md-6 col-lg-4 d-flex align-items-center gap-2">
+                                                        <input type="checkbox" id="select-all"
+                                                            class="validate-radio-required">
+                                                        <label>{{ $getprotectiveequipment->protective_equip }}</label>
+                                                    </div>
+                                                    @endforeach --}}
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-12 col-lg-4">
+                                            <div class="card p-3 rounded mt-4">
+                                                <div class="row g-3">
+                                                    <div class="col-12">
+                                                        <p class="fw-bold">Mandatory Notes for PPEs</p>
+                                                        <ol class="mb-0" style="line-height: 1.8;">
+                                                            <li>PPEs must be of national/international standard.</li>
+                                                            <li>Damaged/defective PPEs shall not be used.</li>
+                                                            <li>Non-standard PPEs shall not be used.</li>
+                                                            <li>PPEs must be inspected before use.</li>
+                                                        </ol>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <p class="fw-bold fs-5 mt-3">Name of Equipment's involved in Job
+                                        <span class="text-danger">*</span>
+                                    </p>
+                                    <div class="row" style="background: #d6f5e0b0;">
+                                        <div class="col-12 p-2">
+                                            <div class="card p-4 rounded m-2">
+                                                <div class="row g-4">
+
+                                                    <div class="col-md-4">
+                                                        <div
+                                                            class="d-flex flex-wrap justify-content-center align-items-center gap-3">
+
+                                                            <div style="width: 80px; height: 80px;"
+                                                                class="d-flex justify-content-center align-items-center border rounded bg-white shadow-sm">
+                                                                <img src="{{ url('public/assets/images/safetypermit/flash.png') }}"
+                                                                    class="img-fluid"
+                                                                    style="max-width: 70%; max-height: 70%;">
+                                                            </div>
+                                                            <div style="width: 80px; height: 80px;"
+                                                                class="d-flex justify-content-center align-items-center border rounded bg-white shadow-sm">
+                                                                <img src="{{ url('public/assets/images/safetypermit/gloves.png') }}"
+                                                                    class="img-fluid"
+                                                                    style="max-width: 70%; max-height: 70%;">
+                                                            </div>
+                                                            <div style="width: 80px; height: 80px;"
+                                                                class="d-flex justify-content-center align-items-center border rounded bg-white shadow-sm">
+                                                                <img src="{{ url('public/assets/images/safetypermit/shoes.png') }}"
+                                                                    class="img-fluid"
+                                                                    style="max-width: 70%; max-height: 70%;">
+                                                            </div>
+                                                            <div style="width: 80px; height: 80px;"
+                                                                class="d-flex justify-content-center align-items-center border rounded bg-white shadow-sm">
+                                                                <img src="{{ url('public/assets/images/safetypermit/gloves (1).png') }}"
+                                                                    class="img-fluid"
+                                                                    style="max-width: 70%; max-height: 70%;">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-5">
+                                                        {{-- <div class="row row-cols-2 g-3"> --}}
+                                                            <div id="getequipmentinvolved-container"
+                                                                class="row g-3 mt-3">
+                                                                {{-- @foreach ($getequipmentinvolved as
+                                                                $getequipmentinvolved)
+                                                                <div
+                                                                    class="col-12 col-md-6 col-lg-4 d-flex align-items-center gap-2">
+                                                                    <input type="checkbox" id="select-all"
+                                                                        class="form-check-input">
+                                                                    <label for="select-all" class="form-check-label">{{
+                                                                        $getequipmentinvolved->equip_involve }}</label>
+                                                                </div>
                                                                 @endforeach --}}
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3">
                                                             <label for="description" class="form-label fw-bold">Other If
                                                                 any</label>
-                                                            <textarea id="description" name="equiment_involved_others" class="form-control shadow-sm" placeholder=""></textarea>
+                                                            <textarea id="description" name="equiment_involved_others"
+                                                                class="form-control shadow-sm"
+                                                                placeholder=""></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -566,12 +586,12 @@
                                                 <div class="card p-3  rounded m-2">
                                                     <div id="getprecaution-container" class="row g-3 mt-3">
                                                         {{-- @foreach ($getprecaution as $getprecaution)
-                                                            <div class="col-12 col-md-12 d-flex align-items-center gap-2">
-                                                                <input type="checkbox" id="select-all"
-                                                                    class="validate-radio-required">
+                                                        <div class="col-12 col-md-12 d-flex align-items-center gap-2">
+                                                            <input type="checkbox" id="select-all"
+                                                                class="validate-radio-required">
 
-                                                                <label>{{ $getprecaution->precaution }}</label>
-                                                            </div>
+                                                            <label>{{ $getprecaution->precaution }}</label>
+                                                        </div>
                                                         @endforeach --}}
                                                     </div>
                                                 </div>
@@ -587,12 +607,12 @@
                                                 <div class="card p-3 rounded m-2">
                                                     <div id="getchecklist-container" class="row g-3 mt-3">
                                                         {{-- @foreach ($getchecklist as $getchecklist)
-                                                            <div class="col-12 col-md-12 d-flex align-items-center gap-2">
-                                                                <input type="checkbox" id="select-all"
-                                                                    class="validate-radio-required">
+                                                        <div class="col-12 col-md-12 d-flex align-items-center gap-2">
+                                                            <input type="checkbox" id="select-all"
+                                                                class="validate-radio-required">
 
-                                                                <label>{{ $getchecklist->checklist }}</label>
-                                                            </div>
+                                                            <label>{{ $getchecklist->checklist }}</label>
+                                                        </div>
                                                         @endforeach --}}
                                                     </div>
                                                 </div>
@@ -602,14 +622,16 @@
                                         <div class="row mt-2">
                                             <div class="col-12">
                                                 <div class=" p-3  mb-1">
-                                                    <label class="fw-bold fs-5 mt-3" for="equipment_checklist_inspection">
-                                                        All Involved Equipment's have been inspected as per the inspection
+                                                    <label class="fw-bold fs-5 mt-3"
+                                                        for="equipment_checklist_inspection">
+                                                        All Involved Equipment's have been inspected as per the
+                                                        inspection
                                                         checklist prior to start work (Yes/No)
                                                         <span class="text-danger">*</span>
                                                     </label>
 
-                                                    <input type="checkbox" id="equipment_checklist_inspection"
-                                                        class="" name = "equipment_checklist_inspection">
+                                                    <input type="checkbox" id="equipment_checklist_inspection" class=""
+                                                        name="equipment_checklist_inspection">
                                                     <div class="text-danger"></div>
 
                                                 </div>
@@ -622,12 +644,12 @@
                                                 <div class="card p-3  rounded m-2">
                                                     <div id="getinstruction-container" class="row g-3 mt-3">
                                                         {{-- @foreach ($getinstruction as $getinstruction)
-                                                            <div class="col-12 col-md-12 d-flex align-items-center gap-2">
-                                                                <input type="checkbox" id="select-all"
-                                                                    class="validate-radio-required">
+                                                        <div class="col-12 col-md-12 d-flex align-items-center gap-2">
+                                                            <input type="checkbox" id="select-all"
+                                                                class="validate-radio-required">
 
-                                                                <label>{{ $getinstruction->safe_work }}</label>
-                                                            </div>
+                                                            <label>{{ $getinstruction->safe_work }}</label>
+                                                        </div>
                                                         @endforeach --}}
                                                     </div>
                                                 </div>
@@ -637,12 +659,13 @@
                                             <div class="col-12 col-md-6">
                                                 <div class="p-3 mb-1">
                                                     <label class="fw-bold fs-5 mt-1" for="toolbox_talk">
-                                                        Safe Work Procedure discussed in tool box talk before start the work
+                                                        Safe Work Procedure discussed in tool box talk before start the
+                                                        work
                                                         (Yes/No)
                                                         <span class="text-danger">*</span>
                                                     </label>
                                                     <input type="checkbox" id="toolbox_talk" class=""
-                                                        name = "toolbox_talk">
+                                                        name="toolbox_talk">
                                                     <div class="text-danger"></div>
 
                                                 </div>
@@ -658,7 +681,8 @@
                                                             Tool box Talk Given By (Name)
                                                         </label>
                                                         <input type="text" name="talk_givenby" id="talk_givenby"
-                                                            class="form-control" style="flex-grow: 1; max-width: 300px;">
+                                                            class="form-control"
+                                                            style="flex-grow: 1; max-width: 300px;">
                                                         <div class="text-danger"></div>
                                                     </div>
                                                 </div>
@@ -674,7 +698,8 @@
                                                         <div class="col-12">
 
                                                             <ol class="mb-0" style="line-height: 1.8;">
-                                                                <li>Equipemnt must be of national/international standard.
+                                                                <li>Equipemnt must be of national/international
+                                                                    standard.
                                                                 </li>
                                                                 <li>Damaged/Defective equipment shall not be used.</li>
                                                                 <li> Equipment should be in good working condition.</li>
@@ -726,8 +751,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Department / Company</label>
                                                     <div class="col-sm-6" style="width: 100%">
-                                                        <select name="workman_dept" id="workman_dept" style="width: 100%"
-                                                            class="single-select form-control">
+                                                        <select name="workman_dept" id="workman_dept"
+                                                            style="width: 100%" class="single-select form-control">
                                                             <option value="">Select Department</option>
                                                         </select>
                                                     </div>
@@ -770,11 +795,12 @@
                                             <div class="col-12 col-md-6">
                                                 <div class="p-3 mb-1">
                                                     <label class="fw-bold fs-5 mt-1" for="assigned_job">
-                                                        Are all above employee competent for assigned job & physically fit
+                                                        Are all above employee competent for assigned job & physically
+                                                        fit
                                                         for duty (Yes/No)
                                                         <span class="text-danger">*</span>
                                                     </label>
-                                                    <input type="checkbox" id="assigned_job" name = "assigned_job"
+                                                    <input type="checkbox" id="assigned_job" name="assigned_job"
                                                         class="">
                                                     <div class="text-danger"></div>
 
@@ -816,16 +842,21 @@
                                                                 </li>
                                                                 <li>Work Permit is valid for 8 hours / Renewal may be
                                                                     extended as per unit head approval.</li>
-                                                                <li>SWP to be discussed in tool box talk before start job.
+                                                                <li>SWP to be discussed in tool box talk before start
+                                                                    job.
                                                                 </li>
-                                                                <li>Work Permit will be canceled in case of emergency i.e
+                                                                <li>Work Permit will be canceled in case of emergency
+                                                                    i.e
                                                                     Fire, weather condition, disaster etc.</li>
-                                                                <li>Work permit is not valid without signature of Requestor,
+                                                                <li>Work permit is not valid without signature of
+                                                                    Requestor,
                                                                     Verifier & Approver.</li>
                                                                 <li> Safe Work procedure & method of statement must be
                                                                     discussed in the tool box talk.</li>
-                                                                <li>Permit to be signed by (Requestor, Verifier & Approver)
-                                                                    people not less than Site Engineer / Floor Manager</li>
+                                                                <li>Permit to be signed by (Requestor, Verifier &
+                                                                    Approver)
+                                                                    people not less than Site Engineer / Floor Manager
+                                                                </li>
                                                                 <li>Permit Safety compliance shall be discussed to all
                                                                     involved person in local language.</li>
                                                             </ol>
@@ -841,155 +872,155 @@
                                             <x-button-cancel
                                                 href="{{ admin_url('safetypermit/list') }}"></x-button-cancel>
                                         </div>
-                                    </form>
-                                </div>
-
+                                </form>
                             </div>
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        </form>
     </div>
+    </form>
+</div>
 
 @stop
 
 @push('script')
-    <script>
-        $(document).ready(function() {
+<script>
+    $(document).ready(function () {
 
-            $('#employee_code').select2({
-                ajax: {
-                    url: '{{ admin_url('safetypermit/employeeid') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
+        $('#employee_code').select2({
+            ajax: {
+                url: '{{ admin_url('safetypermit/ employeeid') }}',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    search: params.term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: $.map(data, function (item) {
                         return {
-                            search: params.term
+                            id: item.id,
+                            text: item.text
                         };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            })
-                        };
+                    })
+                };
+            }
+        },
+            minimumInputLength: 1,
+            dropdownCssClass: 'form-control',
+            selectionCssClass: 'form-control'
+            });
+
+
+    $(document).on("change", "#employee_code", function () {
+        var emp_id = $(this).val();
+        var currentRow = $(this).closest(".row");
+        var departmentDropdown = currentRow.find(
+            'select[name="workman_dept"]');
+
+        if (emp_id) {
+            $.ajax({
+                url: "{{ url('safetypermit/fetchEmployeeDetails') }}/" + emp_id,
+                type: "GET",
+                success: function (data) {
+
+                    if (data.employee) {
+
+                        currentRow.find('input[name="workman_name"]').val(data.employee
+                            .emp_name);
+                        currentRow.find('input[name="workman_desig"]').val(data.employee
+                            .designation);
+
+                        departmentDropdown.empty();
+                        departmentDropdown.append(
+                            '<option value="">Select Department</option>'
+                        );
+
+                        if (data.departments && data.departments.length > 0) {
+                            data.departments.forEach(function (department) {
+                                var selected = data.employee.department ==
+                                    department.id ? "selected" : "";
+                                departmentDropdown.append(
+                                    `<option value="${department.id}" ${selected}>${department.department_name}</option>`
+                                );
+                            });
+                        } else {
+                            departmentDropdown.append(
+                                '<option value="">No departments available</option>'
+                            );
+                        }
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "Employee data could not be fetched.",
+                        });
                     }
                 },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
-            });
-
-
-            $(document).on("change", "#employee_code", function() {
-                var emp_id = $(this).val();
-                var currentRow = $(this).closest(".row");
-                var departmentDropdown = currentRow.find(
-                    'select[name="workman_dept"]');
-
-                if (emp_id) {
-                    $.ajax({
-                        url: "{{ url('safetypermit/fetchEmployeeDetails') }}/" + emp_id,
-                        type: "GET",
-                        success: function(data) {
-
-                            if (data.employee) {
-
-                                currentRow.find('input[name="workman_name"]').val(data.employee
-                                    .emp_name);
-                                currentRow.find('input[name="workman_desig"]').val(data.employee
-                                    .designation);
-
-                                departmentDropdown.empty();
-                                departmentDropdown.append(
-                                    '<option value="">Select Department</option>'
-                                );
-
-                                if (data.departments && data.departments.length > 0) {
-                                    data.departments.forEach(function(department) {
-                                        var selected = data.employee.department ==
-                                            department.id ? "selected" : "";
-                                        departmentDropdown.append(
-                                            `<option value="${department.id}" ${selected}>${department.department_name}</option>`
-                                        );
-                                    });
-                                } else {
-                                    departmentDropdown.append(
-                                        '<option value="">No departments available</option>'
-                                    );
-                                }
-                            } else {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Error",
-                                    text: "Employee data could not be fetched.",
-                                });
-                            }
-                        },
-                        error: function() {
-                            Swal.fire({
-                                icon: "error",
-                                title: "Error",
-                                text: "An error occurred while fetching employee details.",
-                            });
-                        },
+                error: function () {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "An error occurred while fetching employee details.",
                     });
-                } else {
-
-                    currentRow.find('input[name="workman_name"]').val("");
-                    currentRow.find('input[name="workman_desig"]').val("");
-                    departmentDropdown.empty();
-                    departmentDropdown.append('<option value="">Select Department</option>');
-                }
+                },
             });
+        } else {
+
+            currentRow.find('input[name="workman_name"]').val("");
+            currentRow.find('input[name="workman_desig"]').val("");
+            departmentDropdown.empty();
+            departmentDropdown.append('<option value="">Select Department</option>');
+        }
+    });
 
 
-            $(document).on("click", ".add", function(e) {
-                e.preventDefault();
+    $(document).on("click", ".add", function (e) {
+        e.preventDefault();
 
-                var parentRow = $(this).closest(".row");
+        var parentRow = $(this).closest(".row");
 
-                var employeeCode = parentRow.find('select[name="employee_code"] option:selected').val();
-                var employeeName = parentRow.find('select[name="employee_code"] option:selected').text();
-                var workmanName = parentRow.find('input[name="workman_name"]').val();
-                var designation = parentRow.find('input[name="workman_desig"]').val();
-                var department = parentRow.find('select[name="workman_dept"] option:selected').val();
-                var departmentName = parentRow.find('select[name="workman_dept"] option:selected').text();
-                var natureOfJob = parentRow.find('input[name="nature_of_job"]').val();
+        var employeeCode = parentRow.find('select[name="employee_code"] option:selected').val();
+        var employeeName = parentRow.find('select[name="employee_code"] option:selected').text();
+        var workmanName = parentRow.find('input[name="workman_name"]').val();
+        var designation = parentRow.find('input[name="workman_desig"]').val();
+        var department = parentRow.find('select[name="workman_dept"] option:selected').val();
+        var departmentName = parentRow.find('select[name="workman_dept"] option:selected').text();
+        var natureOfJob = parentRow.find('input[name="nature_of_job"]').val();
 
-                var isValid = true;
+        var isValid = true;
 
-                parentRow.find('.text-danger').text("");
+        parentRow.find('.text-danger').text("");
 
-                if (!employeeCode) {
-                    parentRow.find('select[name="employee_code"]').closest('.form-group').find(
-                        '.text-danger').text("Employee Code is required.");
-                    isValid = false;
-                }
-                if (!workmanName) {
-                    parentRow.find('input[name="workman_name"]').closest('.form-group').find('.text-danger')
-                        .text("Workman Name is required.");
-                    isValid = false;
-                }
-                if (!department) {
-                    parentRow.find('select[name="workman_dept"]').closest('.form-group').find(
-                        '.text-danger').text("Department is required.");
-                    isValid = false;
-                }
-                if (!natureOfJob || !/^[a-zA-Z\s]{3,30}$/.test(natureOfJob)) {
-                    parentRow.find('input[name="nature_of_job"]').closest('.form-group').find(
-                        '.text-danger').text(
-                        "Nature of Job should only contain letters and spaces (3 to 30 characters).");
-                    isValid = false;
-                }
+        if (!employeeCode) {
+            parentRow.find('select[name="employee_code"]').closest('.form-group').find(
+                '.text-danger').text("Employee Code is required.");
+            isValid = false;
+        }
+        if (!workmanName) {
+            parentRow.find('input[name="workman_name"]').closest('.form-group').find('.text-danger')
+                .text("Workman Name is required.");
+            isValid = false;
+        }
+        if (!department) {
+            parentRow.find('select[name="workman_dept"]').closest('.form-group').find(
+                '.text-danger').text("Department is required.");
+            isValid = false;
+        }
+        if (!natureOfJob || !/^[a-zA-Z\s]{3,30}$/.test(natureOfJob)) {
+            parentRow.find('input[name="nature_of_job"]').closest('.form-group').find(
+                '.text-danger').text(
+                    "Nature of Job should only contain letters and spaces (3 to 30 characters).");
+            isValid = false;
+        }
 
-                if (isValid) {
-                    var newRow = `
+        if (isValid) {
+            var newRow = `
                         <tr>
                             <td><input type="hidden" name="emp_id[]" value="${employeeCode}">${employeeName}</td>
                             <td><input type="hidden" name="workman_name[]" value="${workmanName}">${workmanName}</td>
@@ -1002,324 +1033,324 @@
                         </tr>
                     `;
 
-                    $("#workman-list-entries").append(newRow);
+            $("#workman-list-entries").append(newRow);
 
-                    parentRow.find('select[name="employee_code"]').val("").trigger("change");
-                    parentRow.find('input[name="workman_name"]').val("");
-                    parentRow.find('input[name="workman_desig"]').val("");
-                    parentRow.find('select[name="workman_dept"]').val("").trigger("change");
-                    parentRow.find('input[name="nature_of_job"]').val("");
+            parentRow.find('select[name="employee_code"]').val("").trigger("change");
+            parentRow.find('input[name="workman_name"]').val("");
+            parentRow.find('input[name="workman_desig"]').val("");
+            parentRow.find('select[name="workman_dept"]').val("").trigger("change");
+            parentRow.find('input[name="nature_of_job"]').val("");
 
-                    Swal.fire({
-                        icon: "success",
-                        title: "Success",
-                        text: "Workman has been added to the table.",
-                    });
-                }
+            Swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "Workman has been added to the table.",
+            });
+        }
+    });
+
+
+
+    $(document).on("click", ".remove-entry", function () {
+        $(this).closest("tr").remove();
+    });
+
+    $('#employeenameshutdown,#employeenameloto').select2({
+        ajax: {
+            url: '{{ admin_url('safetypermit/ employeename') }}',
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+            return {
+                search: params.term
+            };
+        },
+        processResults: function (data) {
+            return {
+                results: $.map(data, function (item) {
+                    return {
+                        id: item.id,
+                        text: item.text
+                    };
+                })
+            };
+        }
+    },
+        minimumInputLength: 1,
+        dropdownCssClass: 'form-control',
+        selectionCssClass: 'form-control'
             });
 
 
-
-            $(document).on("click", ".remove-entry", function() {
-                $(this).closest("tr").remove();
-            });
-
-            $('#employeenameshutdown,#employeenameloto').select2({
-                ajax: {
-                    url: '{{ admin_url('safetypermit/employeename') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            })
-                        };
-                    }
-                },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
-            });
-
-
-            $('#shutdown-checkbox').on('change', function() {
-                if ($(this).is(':checked')) {
-                    $('#employeenameshutdown').prop('disabled', false);
-                } else {
-                    $('#employeenameshutdown').prop('disabled', true);
-                }
-            });
-            $('#lotocheckbox').on('change', function() {
-                if ($(this).is(':checked')) {
-                    $('#employeenameloto').prop('disabled', false);
-                } else {
-                    $('#employeenameloto').prop('disabled', true);
-                }
-            });
+    $('#shutdown-checkbox').on('change', function () {
+        if ($(this).is(':checked')) {
+            $('#employeenameshutdown').prop('disabled', false);
+        } else {
+            $('#employeenameshutdown').prop('disabled', true);
+        }
+    });
+    $('#lotocheckbox').on('change', function () {
+        if ($(this).is(':checked')) {
+            $('#employeenameloto').prop('disabled', false);
+        } else {
+            $('#employeenameloto').prop('disabled', true);
+        }
+    });
         });
 
-        flatpickr("#date", {
-            minDate: new Date(),
-            dateFormat: "d-m-Y",
-            minuteIncrement: 5,
-        });
+    flatpickr("#date", {
+        minDate: new Date(),
+        dateFormat: "d-m-Y",
+        minuteIncrement: 5,
+    });
 
-        const fromTimePicker = flatpickr("#from_PPMTime", {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i",
-            onChange: function(selectedDates, dateStr, instance) {
+    const fromTimePicker = flatpickr("#from_PPMTime", {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        onChange: function (selectedDates, dateStr, instance) {
 
-                const fromTimeValue = selectedDates[0];
-                if (fromTimeValue) {
-                    endTimePicker.set('disable', [
-                        function(date) {
-                            return date.getHours() === fromTimeValue.getHours() && date.getMinutes() ===
-                                fromTimeValue.getMinutes();
-                        }
-                    ]);
-                }
-            }
-        });
-
-        const endTimePicker = flatpickr("#to_PPMTime", {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i",
-            minTime: "00:00",
-            onChange: function(selectedDates, dateStr, instance) {
-
-                const fromTimeValue = fromTimePicker.selectedDates[0];
-                if (fromTimeValue && selectedDates[0] <= fromTimeValue) {
-
-                    endTimePicker.setDate(fromTimeValue, true);
-                }
-            }
-        });
-
-
-
-        fromTimePicker.config.onChange.push(function(selectedDates, dateStr, instance) {
             const fromTimeValue = selectedDates[0];
             if (fromTimeValue) {
-
-                endTimePicker.set("minTime", dateStr);
-            }
-        });
-
-        const fromPicker = flatpickr("#time_from", {
-            enableTime: true,
-            noCalendar: true,
-            time_24hr: true,
-            minuteIncrement: 5,
-            dateFormat: "H:i",
-            minDate: new Date(),
-            onChange: function(selectedDates, dateStr, instance) {
-                if (selectedDates.length > 0) {
-                    let fromTime = selectedDates[0];
-
-
-                    let toTime = new Date(fromTime.getTime() + 8 * 60 * 60 * 1000);
-
-
-                    let hours = String(toTime.getHours()).padStart(2, '0');
-                    let minutes = String(toTime.getMinutes()).padStart(2, '0');
-                    let formattedTime = `${hours}:${minutes}`;
-
-
-                    document.getElementById("time_to").value = formattedTime;
-                }
-            }
-        });
-
-
-        document.getElementById("time_to").readOnly = true;
-    </script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-
-            var firstTh = $('.datatable-list thead th:first');
-            firstTh.removeClass('sorting_asc');
-        });
-
-        $(function() {
-            /* Datatable */
-            var table = $('.datatable-list').DataTable({
-                autoWidth: false,
-                responsive: true,
-                processing: false,
-                serverSide: true,
-                searching: false,
-                ordering: false,
-                lengthChange: false, // Disables "Show entries"
-                // dom: 'Bfrtip',
-                layout: {
-                    top2Start: '',
-                    top2End: {
-                        search: {
-                            placeholder: ''
-                        }
-                    },
-                    topStart: '',
-                    topEnd: '',
-                    bottomStart: '',
-                    bottomEnd: '',
-                    bottom2Start: 'info',
-                    bottom2End: 'paging'
-                },
-
-                ajax: {
-                    url: "{{ admin_url('uploadlog/list') }}",
-                    type: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    data: function(d) {}
-                },
-                columns: [{
-                        data: 'DT_RowIndex',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'line_no',
-                        name: 'line_no'
-                    },
-                    {
-                        data: 'error',
-                        name: 'error'
-                    },
-                ],
-
-                language: {
-                    paginate: {
-                        first: '<i title="{{ __('common.first') }}" class="fa fa-angle-double-left" aria-hidden="true"></i>',
-                        last: '<i title="{{ __('common.last') }}" title="Next" class="fa fa-angle-double-right" aria-hidden="true"></i>',
-                        next: '<i title="{{ __('common.next') }}" class="fa fa-angle-right" aria-hidden="true"></i>',
-                        previous: '<i title="{{ __('common.previous') }}" class="fa fa-angle-left" aria-hidden="true"></i>',
-                    },
-                    "info": "{{ __('common.dt_info') }}",
-                    "infoEmpty": "{{ __('common.dt_infoEmpty') }}",
-                    "infoFiltered": "{{ __('common.dt_infoFiltered') }}",
-                },
-                aLengthMenu: [
-                    [10, 25, 50, 100],
-                    [10, 25, 50, 100]
-                ],
-                buttons: [{
-                        extend: 'collection',
-                        text: '{{ __('common.export') }}',
-                        buttons: [{
-                            extend: 'excel',
-                            text: '{{ __('common.excel') }}',
-                            action: function(e, dt, button, config) {
-                                var searchValue = $('#datatable-list_filter input').val();
-                                $(".dt-button").removeClass('processing');
-                                $('body').click();
-                                window.location.href =
-                                    "{{ admin_url('uploadlog/export/excel/' . request()->logid) }}" +
-                                    '?search=' + searchValue;
-                            }
-                        }, ]
-                    },
-
-                    {
-                        "extend": 'pageLength',
-                        "text": '{{ __('common.show') }} 10 {{ __('common.records') }}'
+                endTimePicker.set('disable', [
+                    function (date) {
+                        return date.getHours() === fromTimeValue.getHours() && date.getMinutes() ===
+                            fromTimeValue.getMinutes();
                     }
-                ],
+                ]);
+            }
+        }
+    });
 
-            });
+    const endTimePicker = flatpickr("#to_PPMTime", {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        minTime: "00:00",
+        onChange: function (selectedDates, dateStr, instance) {
 
-            table.on('length.dt', function(e, settings, len) {
-                var text = '{{ __('common.show') }} ' + len + ' {{ __('common.records') }}';
-                $('.buttons-page-length').find('span').text(text);
-            });
+            const fromTimeValue = fromTimePicker.selectedDates[0];
+            if (fromTimeValue && selectedDates[0] <= fromTimeValue) {
 
-            $(document).on('click', '#searchform', function() {
-                table.draw();
-            });
+                endTimePicker.setDate(fromTimeValue, true);
+            }
+        }
+    });
 
-            $(document).on('click', '#resetform', function() {
-                setTimeout(function() {
-                    table.draw();
-                }, 150);
-            });
+
+
+    fromTimePicker.config.onChange.push(function (selectedDates, dateStr, instance) {
+        const fromTimeValue = selectedDates[0];
+        if (fromTimeValue) {
+
+            endTimePicker.set("minTime", dateStr);
+        }
+    });
+
+    const fromPicker = flatpickr("#time_from", {
+        enableTime: true,
+        noCalendar: true,
+        time_24hr: true,
+        minuteIncrement: 5,
+        dateFormat: "H:i",
+        minDate: new Date(),
+        onChange: function (selectedDates, dateStr, instance) {
+            if (selectedDates.length > 0) {
+                let fromTime = selectedDates[0];
+
+
+                let toTime = new Date(fromTime.getTime() + 8 * 60 * 60 * 1000);
+
+
+                let hours = String(toTime.getHours()).padStart(2, '0');
+                let minutes = String(toTime.getMinutes()).padStart(2, '0');
+                let formattedTime = `${hours}:${minutes}`;
+
+
+                document.getElementById("time_to").value = formattedTime;
+            }
+        }
+    });
+
+
+    document.getElementById("time_to").readOnly = true;
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var firstTh = $('.datatable-list thead th:first');
+        firstTh.removeClass('sorting_asc');
+    });
+
+    $(function () {
+        /* Datatable */
+        var table = $('.datatable-list').DataTable({
+            autoWidth: false,
+            responsive: true,
+            processing: false,
+            serverSide: true,
+            searching: false,
+            ordering: false,
+            lengthChange: false, // Disables "Show entries"
+            // dom: 'Bfrtip',
+            layout: {
+                top2Start: '',
+                top2End: {
+                    search: {
+                        placeholder: ''
+                    }
+                },
+                topStart: '',
+                topEnd: '',
+                bottomStart: '',
+                bottomEnd: '',
+                bottom2Start: 'info',
+                bottom2End: 'paging'
+            },
+
+            ajax: {
+                url: "{{ admin_url('uploadlog/list') }}",
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: function (d) { }
+            },
+            columns: [{
+                data: 'DT_RowIndex',
+                orderable: false,
+                searchable: false
+            },
+            {
+                data: 'line_no',
+                name: 'line_no'
+            },
+            {
+                data: 'error',
+                name: 'error'
+            },
+            ],
+
+            language: {
+                paginate: {
+                    first: '<i title="{{ __('common.first') }}" class="fa fa-angle-double-left" aria-hidden="true"></i>',
+                    last: '<i title="{{ __('common.last') }}" title="Next" class="fa fa-angle-double-right" aria-hidden="true"></i>',
+                    next: '<i title="{{ __('common.next') }}" class="fa fa-angle-right" aria-hidden="true"></i>',
+                    previous: '<i title="{{ __('common.previous') }}" class="fa fa-angle-left" aria-hidden="true"></i>',
+                },
+                "info": "{{ __('common.dt_info') }}",
+                "infoEmpty": "{{ __('common.dt_infoEmpty') }}",
+                "infoFiltered": "{{ __('common.dt_infoFiltered') }}",
+            },
+            aLengthMenu: [
+                [10, 25, 50, 100],
+                [10, 25, 50, 100]
+            ],
+            buttons: [{
+                extend: 'collection',
+                text: '{{ __('common.export') }}',
+                buttons: [{
+                    extend: 'excel',
+                    text: '{{ __('common.excel') }}',
+                    action: function (e, dt, button, config) {
+                        var searchValue = $('#datatable-list_filter input').val();
+                        $(".dt-button").removeClass('processing');
+                        $('body').click();
+                        window.location.href =
+                            "{{ admin_url('uploadlog/export/excel/' . request()->logid) }}" +
+                            '?search=' + searchValue;
+                    }
+                },]
+            },
+
+            {
+                "extend": 'pageLength',
+                "text": '{{ __('common.show') }} 10 {{ __('common.records') }}'
+                    }
+            ],
 
         });
 
-        $(document).ready(function() {
-            const protectiveEquipmentMap = new Map(); // Map to store equipment and their associated work names
+        table.on('length.dt', function (e, settings, len) {
+            var text = '{{ __('common.show') }} ' + len + ' {{ __('common.records') }}';
+            $('.buttons-page-length').find('span').text(text);
+        });
 
-            // Prevent multiple AJAX calls by checking if workId is already handled
-            $('.work-type-checkbox').on('change', function() {
-                const workId = $(this).data('id');
-                const container = $('#getprotectivechecklist-container');
-                const checkboxState = $(this).prop('checked');
+        $(document).on('click', '#searchform', function () {
+            table.draw();
+        });
 
-                if (!checkboxState) {
-                    // Unchecking a work name: Remove associated equipment
-                    container.find(`.checkpoint[data-work-id="${workId}"]`).each(function() {
-                        const equipmentName = $(this).data('name');
-                        if (protectiveEquipmentMap.has(equipmentName)) {
-                            const associatedWorkIds = protectiveEquipmentMap.get(equipmentName);
-                            const updatedWorkIds = associatedWorkIds.filter(id => id !== workId);
+        $(document).on('click', '#resetform', function () {
+            setTimeout(function () {
+                table.draw();
+            }, 150);
+        });
 
-                            if (updatedWorkIds.length > 0) {
-                                protectiveEquipmentMap.set(equipmentName, updatedWorkIds);
-                            } else {
-                                protectiveEquipmentMap.delete(equipmentName);
-                                $(this).remove(); // Remove from DOM if no workId is associated
-                            }
+    });
+
+    $(document).ready(function () {
+        const protectiveEquipmentMap = new Map();
+
+
+        $('.work-type-checkbox').on('change', function () {
+            const workId = $(this).data('id');
+            const container = $('#getprotectivechecklist-container');
+            const checkboxState = $(this).prop('checked');
+
+            if (!checkboxState) {
+                // Unchecking a work name: Remove associated equipment
+                container.find(`.checkpoint[data-work-id="${workId}"]`).each(function () {
+                    const equipmentName = $(this).data('name');
+                    if (protectiveEquipmentMap.has(equipmentName)) {
+                        const associatedWorkIds = protectiveEquipmentMap.get(equipmentName);
+                        const updatedWorkIds = associatedWorkIds.filter(id => id !== workId);
+
+                        if (updatedWorkIds.length > 0) {
+                            protectiveEquipmentMap.set(equipmentName, updatedWorkIds);
+                        } else {
+                            protectiveEquipmentMap.delete(equipmentName);
+                            $(this).remove(); // Remove from DOM if no workId is associated
                         }
-                    });
-                } else {
-                    // Checking a work name: Fetch protective equipment only if not already loaded
-                    if (!protectiveEquipmentMap.has(workId)) {
-                        $.ajax({
-                            url: "{{ admin_url('safetypermit/getprotectivechecklist') }}/" +
-                                workId,
-                            type: 'GET',
-                            dataType: 'json',
-                            success: function(data) {
-                                data.forEach(function(item) {
-                                    const equipmentName = item.protective_equip;
+                    }
+                });
+            } else {
+                // Checking a work name: Fetch protective equipment only if not already loaded
+                if (!protectiveEquipmentMap.has(workId)) {
+                    $.ajax({
+                        url: "{{ admin_url('safetypermit/getprotectivechecklist') }}/" +
+                            workId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (data) {
+                            data.forEach(function (item) {
+                                const equipmentName = item.protective_equip;
 
-                                    // Check if equipment is already displayed
-                                    if (protectiveEquipmentMap.has(equipmentName)) {
-                                        // Add the current workId to its association
-                                        const associatedWorkIds = protectiveEquipmentMap
-                                            .get(equipmentName);
-                                        if (!associatedWorkIds.includes(workId)) {
-                                            associatedWorkIds.push(workId);
-                                            protectiveEquipmentMap.set(equipmentName,
-                                                associatedWorkIds);
-                                        }
+                                // Check if equipment is already displayed
+                                if (protectiveEquipmentMap.has(equipmentName)) {
+                                    // Add the current workId to its association
+                                    const associatedWorkIds = protectiveEquipmentMap
+                                        .get(equipmentName);
+                                    if (!associatedWorkIds.includes(workId)) {
+                                        associatedWorkIds.push(workId);
+                                        protectiveEquipmentMap.set(equipmentName,
+                                            associatedWorkIds);
+                                    }
 
-                                        // Mark checkbox as checked if `default_enable` is 1
-                                        const checkbox = container.find(
-                                            `.checkpoint[data-name="${equipmentName}"] .protective-checkbox`
-                                            );
-                                        checkbox.prop('checked', item.default_enable ==
-                                            1);
-                                    } else {
-                                        // New equipment: Add to DOM and Map
-                                        protectiveEquipmentMap.set(equipmentName, [
-                                            workId
-                                        ]);
+                                    // Mark checkbox as checked if `default_enable` is 1
+                                    const checkbox = container.find(
+                                        `.checkpoint[data-name="${equipmentName}"] .protective-checkbox`
+                                    );
+                                    checkbox.prop('checked', item.default_enable ==
+                                        1);
+                                } else {
+                                    // New equipment: Add to DOM and Map
+                                    protectiveEquipmentMap.set(equipmentName, [
+                                        workId
+                                    ]);
 
-                                        const isChecked = item.default_enable == 1 ?
-                                            'checked' : '';
-                                        const checkpointHtml = `
+                                    const isChecked = item.default_enable == 1 ?
+                                        'checked' : '';
+                                    const checkpointHtml = `
                                     <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint"
                                          data-work-id="${workId}"
                                          data-name="${equipmentName}">
@@ -1331,125 +1362,124 @@
                                                ${isChecked}>
                                         <label for="checkpoint-${workId}-${item.id}">${equipmentName}</label>
                                     </div>`;
-                                        container.append(checkpointHtml);
-                                    }
-                                });
-                            },
-                            error: function(xhr, status, error) {
-                                console.error('Error:', error);
-                            },
-                        });
-                    }
+                                    container.append(checkpointHtml);
+                                }
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error:', error);
+                        },
+                    });
                 }
+            }
 
-                // Clear container if no checkboxes are selected
-                const allUnchecked = $('.work-type-checkbox').filter(':checked').length === 0;
-                if (allUnchecked) {
-                    container.empty();
-                }
-            });
-
-            // Validation on submit
-            $('#safetyPermitadd').on('submit', function(e) {
-                const container = $('#getprotectivechecklist-container');
-                const errorDiv = $(
-                    '<div class="text-danger">Please select at least one Protective Equipment.</div>');
-
-                container.find('.text-danger').remove();
-
-                let hasSelection = false;
-
-                $('.protective-checkbox').each(function() {
-                    if ($(this).is(':checked')) {
-                        hasSelection = true;
-                    }
-                });
-
-                if (!hasSelection) {
-                    container.append(errorDiv);
-                    e.preventDefault();
-                }
-            });
-
-            // Remove error message when equipment is checked
-            $('#getprotectivechecklist-container').on('change', '.protective-checkbox', function() {
-                const container = $('#getprotectivechecklist-container');
-                const hasSelection = container.find('.protective-checkbox:checked').length > 0;
-
-                if (hasSelection) {
-                    container.find('.text-danger').remove();
-                }
-            });
+            // Clear container if no checkboxes are selected
+            const allUnchecked = $('.work-type-checkbox').filter(':checked').length === 0;
+            if (allUnchecked) {
+                container.empty();
+            }
         });
 
+        // Validation on submit
+        $('#safetyPermitadd').on('submit', function (e) {
+            const container = $('#getprotectivechecklist-container');
+            const errorDiv = $(
+                '<div class="text-danger">Please select at least one Protective Equipment.</div>');
+
+            container.find('.text-danger').remove();
+
+            let hasSelection = false;
+
+            $('.protective-checkbox').each(function () {
+                if ($(this).is(':checked')) {
+                    hasSelection = true;
+                }
+            });
+
+            if (!hasSelection) {
+                container.append(errorDiv);
+                e.preventDefault();
+            }
+        });
+
+        // Remove error message when equipment is checked
+        $('#getprotectivechecklist-container').on('change', '.protective-checkbox', function () {
+            const container = $('#getprotectivechecklist-container');
+            const hasSelection = container.find('.protective-checkbox:checked').length > 0;
+
+            if (hasSelection) {
+                container.find('.text-danger').remove();
+            }
+        });
+    });
 
 
-        // equipement involved
 
-        $(document).ready(function() {
-            const EquipmentInvolveMap = new Map();
+    // equipement involved
 
-            $('.work-type-checkbox').on('change', function() {
-                const workId = $(this).data('id');
-                const container = $('#getequipmentinvolved-container');
+    $(document).ready(function () {
+        const EquipmentInvolveMap = new Map();
 
-                const checkboxState = $(this).prop('checked');
+        $('.work-type-checkbox').on('change', function () {
+            const workId = $(this).data('id');
+            const container = $('#getequipmentinvolved-container');
 
-                if (!checkboxState) {
-                    // Unchecking a work name
-                    // Remove equipment related to this workId
-                    container.find(`.checkpoint[data-work-id="${workId}"]`).each(function() {
-                        const equipmentName = $(this).data('name');
+            const checkboxState = $(this).prop('checked');
 
-                        // Remove the association of this equipment with the unchecked workId
-                        if (EquipmentInvolveMap.has(equipmentName)) {
-                            const associatedWorkIds = EquipmentInvolveMap.get(equipmentName);
-                            const updatedWorkIds = associatedWorkIds.filter(id => id !== workId);
+            if (!checkboxState) {
 
-                            if (updatedWorkIds.length > 0) {
-                                EquipmentInvolveMap.set(equipmentName, updatedWorkIds);
-                            } else {
-                                EquipmentInvolveMap.delete(equipmentName);
-                                $(this)
-                                    .remove(); // Remove the equipment from DOM if no workId is associated
-                            }
+                container.find(`.checkpoint[data-work-id="${workId}"]`).each(function () {
+                    const equipmentName = $(this).data('name');
+
+                    // Remove the association of this equipment with the unchecked workId
+                    if (EquipmentInvolveMap.has(equipmentName)) {
+                        const associatedWorkIds = EquipmentInvolveMap.get(equipmentName);
+                        const updatedWorkIds = associatedWorkIds.filter(id => id !== workId);
+
+                        if (updatedWorkIds.length > 0) {
+                            EquipmentInvolveMap.set(equipmentName, updatedWorkIds);
+                        } else {
+                            EquipmentInvolveMap.delete(equipmentName);
+                            $(this)
+                                .remove(); // Remove the equipment from DOM if no workId is associated
                         }
-                    });
-                } else {
-                    // Checking a work name
-                    $.ajax({
-                        url: "{{ admin_url('safetypermit/getequipmentinvolved') }}/" + workId,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            data.forEach(function(item) {
-                                const equipmentName = item.equip_involve;
+                    }
+                });
+            } else {
 
-                                // Check if equipment is already displayed
-                                if (EquipmentInvolveMap.has(equipmentName)) {
-                                    // Add the current workId to its association
-                                    const associatedWorkIds = EquipmentInvolveMap.get(
-                                        equipmentName);
-                                    if (!associatedWorkIds.includes(workId)) {
-                                        associatedWorkIds.push(workId);
-                                        EquipmentInvolveMap.set(equipmentName,
-                                            associatedWorkIds);
-                                    }
+                $.ajax({
+                    url: "{{ admin_url('safetypermit/getequipmentinvolved') }}/" + workId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        data.forEach(function (item) {
+                            const equipmentName = item.equip_involve;
 
-                                    // Only mark checkbox as checked if `default_enable` is 1
-                                    const isChecked = item.default_enable == 1 ?
-                                        'checked' : '';
-                                    container.find(
-                                            `.checkpoint[data-name="${equipmentName}"] .equipment-checkbox`
-                                        )
-                                        .prop('checked', isChecked);
-                                } else {
-                                    // New equipment: Add to DOM and Map
-                                    EquipmentInvolveMap.set(equipmentName, [workId]);
+                            // Check if equipment is already displayed
+                            if (EquipmentInvolveMap.has(equipmentName)) {
+                                // Add the current workId to its association
+                                const associatedWorkIds = EquipmentInvolveMap.get(
+                                    equipmentName);
+                                if (!associatedWorkIds.includes(workId)) {
+                                    associatedWorkIds.push(workId);
+                                    EquipmentInvolveMap.set(equipmentName,
+                                        associatedWorkIds);
+                                }
 
-                                    const isChecked = item.default_enable == 1 ?
-                                        'checked' : '';
-                                    const checkpointHtml = `
+                                // Only mark checkbox as checked if `default_enable` is 1
+                                const isChecked = item.default_enable == 1 ?
+                                    'checked' : '';
+                                container.find(
+                                    `.checkpoint[data-name="${equipmentName}"] .equipment-checkbox`
+                                )
+                                    .prop('checked', isChecked);
+                            } else {
+                                // New equipment: Add to DOM and Map
+                                EquipmentInvolveMap.set(equipmentName, [workId]);
+
+                                const isChecked = item.default_enable == 1 ?
+                                    'checked' : '';
+                                const checkpointHtml = `
                                 <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint"
                                      data-work-id="${workId}"
                                      data-name="${equipmentName}">
@@ -1461,130 +1491,129 @@
                                            ${isChecked}>
                                     <label for="checkpoint-${workId}-${item.id}">${equipmentName}</label>
                                 </div>`;
-                                    container.append(checkpointHtml);
-                                }
-                            });
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        },
-                    });
-                }
-
-
-                const allUnchecked = $('.work-type-checkbox').filter(':checked').length === 0;
-                if (allUnchecked) {
-                    container.empty(); // Empty the container
-                }
-            });
-
-            $('#safetyPermitadd').on('submit', function(e) {
-                const container = $('#getequipmentinvolved-container');
-                const errorDiv = $(
-                    '<div class="text-danger">Please select at least one Equipment Involved.</div>');
-
-                container.find('.text-danger').remove();
-
-                let hasError = false;
-                let hasSelection = false;
-
-                $('.equiment_involved').each(function() {
-                    if ($(this).is(':checked')) {
-                        hasSelection = true;
-                    }
+                                container.append(checkpointHtml);
+                            }
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                    },
                 });
+            }
 
-                if (!hasSelection) {
-                    hasError = true;
-                    container.append(errorDiv);
-                    e.preventDefault();
-                }
 
-                if (hasError) {
-                    e.preventDefault();
-                }
-            });
-
-            $('#getequipmentinvolved-container').on('change', '.equipment-checkbox', function() {
-                const container = $('#getequipmentinvolved-container');
-                const hasSelection = container.find('.equipment-checkbox:checked').length > 0;
-
-                if (hasSelection) {
-                    container.find('.text-danger').remove();
-                }
-            });
+            const allUnchecked = $('.work-type-checkbox').filter(':checked').length === 0;
+            if (allUnchecked) {
+                container.empty(); // Empty the container
+            }
         });
 
-        // Precaution
-        $(document).ready(function() {
-            const displayedPrecautions = new Map();
+        $('#safetyPermitadd').on('submit', function (e) {
+            const container = $('#getequipmentinvolved-container');
+            const errorDiv = $(
+                '<div class="text-danger">Please select at least one Equipment Involved.</div>');
 
-            $('.work-type-checkbox').on('change', function() {
-                const workId = $(this).data('id');
-                const container = $('#getprecaution-container');
-                const checkboxState = $(this).prop('checked');
+            container.find('.text-danger').remove();
 
-                if (!checkboxState) {
-                    // Unchecking a work name
-                    // Remove equipment related to this workId
-                    container.find(`.checkpoint[data-work-id="${workId}"]`).each(function() {
-                        const equipmentName = $(this).data('name');
+            let hasError = false;
+            let hasSelection = false;
 
-                        // Remove the association of this equipment with the unchecked workId
-                        if (displayedPrecautions.has(equipmentName)) {
-                            const associatedWorkIds = displayedPrecautions.get(equipmentName);
-                            const updatedWorkIds = associatedWorkIds.filter(id => id !== workId);
+            $('.equiment_involved').each(function () {
+                if ($(this).is(':checked')) {
+                    hasSelection = true;
+                }
+            });
 
-                            if (updatedWorkIds.length > 0) {
-                                displayedPrecautions.set(equipmentName, updatedWorkIds);
-                            } else {
-                                displayedPrecautions.delete(equipmentName);
-                                $(this)
-                                    .remove(); // Remove the equipment from DOM if no workId is associated
-                            }
+            if (!hasSelection) {
+                hasError = true;
+                container.append(errorDiv);
+                e.preventDefault();
+            }
+
+            if (hasError) {
+                e.preventDefault();
+            }
+        });
+
+        $('#getequipmentinvolved-container').on('change', '.equipment-checkbox', function () {
+            const container = $('#getequipmentinvolved-container');
+            const hasSelection = container.find('.equipment-checkbox:checked').length > 0;
+
+            if (hasSelection) {
+                container.find('.text-danger').remove();
+            }
+        });
+    });
+
+    // Precaution
+    $(document).ready(function () {
+        const displayedPrecautions = new Map();
+
+        $('.work-type-checkbox').on('change', function () {
+            const workId = $(this).data('id');
+            const container = $('#getprecaution-container');
+            const checkboxState = $(this).prop('checked');
+
+            if (!checkboxState) {
+                // Unchecking a work name
+                // Remove equipment related to this workId
+                container.find(`.checkpoint[data-work-id="${workId}"]`).each(function () {
+                    const equipmentName = $(this).data('name');
+
+                    // Remove the association of this equipment with the unchecked workId
+                    if (displayedPrecautions.has(equipmentName)) {
+                        const associatedWorkIds = displayedPrecautions.get(equipmentName);
+                        const updatedWorkIds = associatedWorkIds.filter(id => id !== workId);
+
+                        if (updatedWorkIds.length > 0) {
+                            displayedPrecautions.set(equipmentName, updatedWorkIds);
+                        } else {
+                            displayedPrecautions.delete(equipmentName);
+                            $(this)
+                                .remove(); // Remove the equipment from DOM if no workId is associated
                         }
-                    });
-                } else {
-                    $.ajax({
-                        url: "{{ admin_url('safetypermit/getprecaution') }}/" + workId,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            data.forEach(function(item) {
-                                const equipmentName = item.precaution;
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: "{{ admin_url('safetypermit/getprecaution') }}/" + workId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        data.forEach(function (item) {
+                            const equipmentName = item.precaution;
 
-                                // Check if equipment is already displayed
-                                if (displayedPrecautions.has(equipmentName)) {
-                                    // Add the current workId to its association
-                                    const associatedWorkIds = displayedPrecautions.get(
-                                        equipmentName);
-                                    if (!associatedWorkIds.includes(workId)) {
-                                        associatedWorkIds.push(workId);
-                                        displayedPrecautions.set(equipmentName,
-                                            associatedWorkIds);
-                                    }
+                            if (displayedPrecautions.has(equipmentName)) {
 
-                                    // Only mark checkbox as checked if `default_enable` is 1
-                                    if (item.default_enable == 1) {
-                                        container.find(
-                                                `.checkpoint[data-name="${equipmentName}"] .protective-checkbox`
-                                            )
-                                            .prop('checked', true);
-                                    } else {
-                                        container.find(
-                                                `.checkpoint[data-name="${equipmentName}"] .protective-checkbox`
-                                            )
-                                            .prop('checked',
-                                                false
-                                            ); // Ensure unchecked if not default-enabled
-                                    }
+                                const associatedWorkIds = displayedPrecautions.get(
+                                    equipmentName);
+                                if (!associatedWorkIds.includes(workId)) {
+                                    associatedWorkIds.push(workId);
+                                    displayedPrecautions.set(equipmentName,
+                                        associatedWorkIds);
+                                }
+
+                                // Only mark checkbox as checked if `default_enable` is 1
+                                if (item.default_enable == 1) {
+                                    container.find(
+                                        `.checkpoint[data-name="${equipmentName}"] .precaution_taken`
+                                    )
+                                        .prop('checked', true);
                                 } else {
-                                    // New equipment: Add to DOM and Map
-                                    displayedPrecautions.set(equipmentName, [workId]);
+                                    container.find(
+                                        `.checkpoint[data-name="${equipmentName}"] .precaution_taken`
+                                    )
+                                        .prop('checked',
+                                            false
+                                        ); // Ensure unchecked if not default-enabled
+                                }
+                            } else {
 
-                                    const isChecked = item.default_enable == 1 ?
-                                        'checked' : '';
-                                    const checkpointHtml = `
+                                displayedPrecautions.set(equipmentName, [workId]);
+
+                                const isChecked = item.default_enable == 1 ?
+                                    'checked' : '';
+                                const checkpointHtml = `
                                 <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint"
                                      data-work-id="${workId}"
                                      data-name="${equipmentName}">
@@ -1596,199 +1625,198 @@
                                            ${isChecked}>
                                     <label for="checkpoint-${workId}-${item.id}">${equipmentName}</label>
                                 </div>`;
-                                    container.append(checkpointHtml);
-                                }
-                            });
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        }
-                    });
-                }
-
-                // Check if all work checkboxes are unchecked and clear the container if true
-                const allUnchecked = $('.work-type-checkbox').filter(':checked').length === 0;
-                if (allUnchecked) {
-                    container.empty(); // Empty the container
-                }
-            });
-        });
-
-
-
-        // Equipment Check list
-
-        $(document).ready(function() {
-            const displayedEquipments = new Map();
-
-            $('.work-type-checkbox').on('change', function() {
-                const workId = $(this).data('id');
-                const container = $('#getchecklist-container');
-                const checkboxState = $(this).prop('checked');
-
-                if (!checkboxState) {
-                    // Unchecking a work name
-                    // Remove equipment related to this workId
-                    container.find(`.checkpoint[data-work-id="${workId}"]`).each(function() {
-                        const equipmentName = $(this).data('name');
-
-                        // Remove the association of this equipment with the unchecked workId
-                        if (displayedEquipments.has(equipmentName)) {
-                            const associatedWorkIds = displayedEquipments.get(equipmentName);
-                            const updatedWorkIds = associatedWorkIds.filter(id => id !== workId);
-
-                            if (updatedWorkIds.length > 0) {
-                                displayedEquipments.set(equipmentName, updatedWorkIds);
-                            } else {
-                                displayedEquipments.delete(equipmentName);
-                                $(this)
-                                    .remove(); // Remove the equipment from DOM if no workId is associated
+                                container.append(checkpointHtml);
                             }
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            }
+
+            // Check if all work checkboxes are unchecked and clear the container if true
+            const allUnchecked = $('.work-type-checkbox').filter(':checked').length === 0;
+            if (allUnchecked) {
+                container.empty(); // Empty the container
+            }
+        });
+    });
+
+
+
+    // Equipment Check list
+
+    $(document).ready(function () {
+        const displayedEquipments = new Map();
+
+        $('.work-type-checkbox').on('change', function () {
+            const workId = $(this).data('id');
+            const container = $('#getchecklist-container');
+            const checkboxState = $(this).prop('checked');
+
+            if (!checkboxState) {
+
+                container.find(`.checkpoint[data-work-id="${workId}"]`).each(function () {
+                    const equipmentName = $(this).data('name');
+
+                    // Remove the association of this equipment with the unchecked workId
+                    if (displayedEquipments.has(equipmentName)) {
+                        const associatedWorkIds = displayedEquipments.get(equipmentName);
+                        const updatedWorkIds = associatedWorkIds.filter(id => id !== workId);
+
+                        if (updatedWorkIds.length > 0) {
+                            displayedEquipments.set(equipmentName, updatedWorkIds);
+                        } else {
+                            displayedEquipments.delete(equipmentName);
+                            $(this)
+                                .remove(); // Remove the equipment from DOM if no workId is associated
                         }
-                    });
-                } else {
-                    $.ajax({
-                        url: "{{ admin_url('safetypermit/getchecklist') }}/" + workId,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            data.forEach(function(item) {
-                                const equipmentName = item.checklist;
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: "{{ admin_url('safetypermit/getchecklist') }}/" + workId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        data.forEach(function (item) {
+                            const equipmentName = item.checklist;
 
-                                // Check if equipment is already displayed
-                                if (displayedEquipments.has(equipmentName)) {
-                                    // Add the current workId to its association
-                                    const associatedWorkIds = displayedEquipments.get(
-                                        equipmentName);
-                                    if (!associatedWorkIds.includes(workId)) {
-                                        associatedWorkIds.push(workId);
-                                        displayedEquipments.set(equipmentName,
-                                            associatedWorkIds);
-                                    }
+                            // Check if equipment is already displayed
+                            if (displayedEquipments.has(equipmentName)) {
+                                // Add the current workId to its association
+                                const associatedWorkIds = displayedEquipments.get(
+                                    equipmentName);
+                                if (!associatedWorkIds.includes(workId)) {
+                                    associatedWorkIds.push(workId);
+                                    displayedEquipments.set(equipmentName,
+                                        associatedWorkIds);
+                                }
 
-                                    // Only mark checkbox as checked if `default_enable` is 1
-                                    if (item.default_enable == 1) {
-                                        container.find(
-                                                `.checkpoint[data-name="${equipmentName}"] .protective-checkbox`
-                                            )
-                                            .prop('checked', true);
-                                    } else {
-                                        container.find(
-                                                `.checkpoint[data-name="${equipmentName}"] .protective-checkbox`
-                                            )
-                                            .prop('checked',
-                                                false
-                                                ); // Ensure unchecked if not default-enabled
-                                    }
+                                // Only mark checkbox as checked if `default_enable` is 1
+                                if (item.default_enable == 1) {
+                                    container.find(
+                                        `.checkpoint[data-name="${equipmentName}"] .protective-checkbox`
+                                    )
+                                        .prop('checked', true);
                                 } else {
-                                    // New equipment: Add to DOM and Map
-                                    displayedEquipments.set(equipmentName, [workId]);
+                                    container.find(
+                                        `.checkpoint[data-name="${equipmentName}"] .protective-checkbox`
+                                    )
+                                        .prop('checked',
+                                            false
+                                        ); // Ensure unchecked if not default-enabled
+                                }
+                            } else {
+                                // New equipment: Add to DOM and Map
+                                displayedEquipments.set(equipmentName, [workId]);
 
-                                    const isChecked = item.default_enable == 1 ?
-                                        'checked' : '';
-                                    const checkpointHtml = `
+                                const isChecked = item.default_enable == 1 ?
+                                    'checked' : '';
+                                const checkpointHtml = `
                                 <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint"
                                      data-work-id="${workId}"
                                      data-name="${equipmentName}">
                                     <input type="checkbox"
-                                           class="equiment_involved"
+                                           class="equipment_checklist"
                                            name="equipment_checklist[${workId}][]"
                                            value="${item.id}"
                                            id="checkpoint-${workId}-${item.id}"
                                            ${isChecked}>
                                     <label for="checkpoint-${workId}-${item.id}">${equipmentName}</label>
                                 </div>`;
-                                    container.append(checkpointHtml);
-                                }
-                            });
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        }
-                    });
-                }
-
-                // Check if all work checkboxes are unchecked and clear the container if true
-                const allUnchecked = $('.work-type-checkbox').filter(':checked').length === 0;
-                if (allUnchecked) {
-                    container.empty(); // Empty the container
-                }
-            });
-        });
-
-
-
-        // safe work instruction
-        $(document).ready(function() {
-            const displayedEquipments = new Map();
-
-            $('.work-type-checkbox').on('change', function() {
-                const workId = $(this).data('id');
-                const container = $('#getinstruction-container');
-                const checkboxState = $(this).prop('checked');
-
-                if (!checkboxState) {
-                    // Unchecking a work name
-                    // Remove equipment related to this workId
-                    container.find(`.checkpoint[data-work-id="${workId}"]`).each(function() {
-                        const equipmentName = $(this).data('name');
-
-                        // Remove the association of this equipment with the unchecked workId
-                        if (displayedEquipments.has(equipmentName)) {
-                            const associatedWorkIds = displayedEquipments.get(equipmentName);
-                            const updatedWorkIds = associatedWorkIds.filter(id => id !== workId);
-
-                            if (updatedWorkIds.length > 0) {
-                                displayedEquipments.set(equipmentName, updatedWorkIds);
-                            } else {
-                                displayedEquipments.delete(equipmentName);
-                                $(this)
-                                    .remove(); // Remove the equipment from DOM if no workId is associated
+                                container.append(checkpointHtml);
                             }
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            }
+
+            // Check if all work checkboxes are unchecked and clear the container if true
+            const allUnchecked = $('.work-type-checkbox').filter(':checked').length === 0;
+            if (allUnchecked) {
+                container.empty(); // Empty the container
+            }
+        });
+    });
+
+
+
+    // safe work instruction
+    $(document).ready(function () {
+        const displayedEquipments = new Map();
+
+        $('.work-type-checkbox').on('change', function () {
+            const workId = $(this).data('id');
+            const container = $('#getinstruction-container');
+            const checkboxState = $(this).prop('checked');
+
+            if (!checkboxState) {
+                // Unchecking a work name
+                // Remove equipment related to this workId
+                container.find(`.checkpoint[data-work-id="${workId}"]`).each(function () {
+                    const equipmentName = $(this).data('name');
+
+                    // Remove the association of this equipment with the unchecked workId
+                    if (displayedEquipments.has(equipmentName)) {
+                        const associatedWorkIds = displayedEquipments.get(equipmentName);
+                        const updatedWorkIds = associatedWorkIds.filter(id => id !== workId);
+
+                        if (updatedWorkIds.length > 0) {
+                            displayedEquipments.set(equipmentName, updatedWorkIds);
+                        } else {
+                            displayedEquipments.delete(equipmentName);
+                            $(this)
+                                .remove(); // Remove the equipment from DOM if no workId is associated
                         }
-                    });
-                } else {
-                    // Execute AJAX only if the checkbox is checked
-                    $.ajax({
-                        url: "{{ admin_url('safetypermit/getinstruction') }}/" + workId,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            data.forEach(function(item) {
-                                const equipmentName = item.safe_work;
+                    }
+                });
+            } else {
+                // Execute AJAX only if the checkbox is checked
+                $.ajax({
+                    url: "{{ admin_url('safetypermit/getinstruction') }}/" + workId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        data.forEach(function (item) {
+                            const equipmentName = item.safe_work;
 
-                                // Check if equipment is already displayed
-                                if (displayedEquipments.has(equipmentName)) {
-                                    // Add the current workId to its association
-                                    const associatedWorkIds = displayedEquipments.get(
-                                        equipmentName);
-                                    if (!associatedWorkIds.includes(workId)) {
-                                        associatedWorkIds.push(workId);
-                                        displayedEquipments.set(equipmentName,
-                                            associatedWorkIds);
-                                    }
+                            // Check if equipment is already displayed
+                            if (displayedEquipments.has(equipmentName)) {
+                                // Add the current workId to its association
+                                const associatedWorkIds = displayedEquipments.get(
+                                    equipmentName);
+                                if (!associatedWorkIds.includes(workId)) {
+                                    associatedWorkIds.push(workId);
+                                    displayedEquipments.set(equipmentName,
+                                        associatedWorkIds);
+                                }
 
-                                    // Only mark checkbox as checked if `default_enable` is 1
-                                    if (item.default_enable == 1) {
-                                        container.find(
-                                                `.checkpoint[data-name="${equipmentName}"] .safework-checkbox`
-                                            )
-                                            .prop('checked', true);
-                                    } else {
-                                        container.find(
-                                                `.checkpoint[data-name="${equipmentName}"] .safework-checkbox`
-                                            )
-                                            .prop('checked',
-                                                false
-                                            ); // Ensure unchecked if not default-enabled
-                                    }
+                                // Only mark checkbox as checked if `default_enable` is 1
+                                if (item.default_enable == 1) {
+                                    container.find(
+                                        `.checkpoint[data-name="${equipmentName}"] .safework-checkbox`
+                                    )
+                                        .prop('checked', true);
                                 } else {
-                                    // New equipment: Add to DOM and Map
-                                    displayedEquipments.set(equipmentName, [workId]);
+                                    container.find(
+                                        `.checkpoint[data-name="${equipmentName}"] .safework-checkbox`
+                                    )
+                                        .prop('checked',
+                                            false
+                                        ); // Ensure unchecked if not default-enabled
+                                }
+                            } else {
+                                // New equipment: Add to DOM and Map
+                                displayedEquipments.set(equipmentName, [workId]);
 
-                                    const isChecked = item.default_enable == 1 ?
-                                        'checked' : '';
-                                    const checkpointHtml = `
+                                const isChecked = item.default_enable == 1 ?
+                                    'checked' : '';
+                                const checkpointHtml = `
                                 <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint"
                                      data-work-id="${workId}"
                                      data-name="${equipmentName}">
@@ -1800,259 +1828,272 @@
                                            ${isChecked}>
                                     <label for="checkpoint-${workId}-${item.id}">${equipmentName}</label>
                                 </div>`;
-                                    container.append(checkpointHtml);
-                                }
-                            });
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        }
-                    });
-                }
+                                container.append(checkpointHtml);
+                            }
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            }
 
-                // Check if all work checkboxes are unchecked and clear the container if true
-                const allUnchecked = $('.work-type-checkbox').filter(':checked').length === 0;
-                if (allUnchecked) {
-                    container.empty(); // Empty the container
-                }
-            });
+            // Check if all work checkboxes are unchecked and clear the container if true
+            const allUnchecked = $('.work-type-checkbox').filter(':checked').length === 0;
+            if (allUnchecked) {
+                container.empty(); // Empty the container
+            }
+        });
+    });
+
+
+
+    $(document).ready(function () {
+        const section1Inputs = $('#section-1 input');
+        const checkboxWithValue8 = $('.work-type-checkbox[data-id="8"]');
+
+        section1Inputs.prop('disabled', true);
+
+        checkboxWithValue8.on('change', function () {
+            if ($(this).is(':checked')) {
+
+                section1Inputs.prop('disabled', false);
+            } else {
+
+                section1Inputs.prop('disabled', true);
+            }
         });
 
+    });
+
+    $(document).ready(function () {
+        const shutdownCheckbox = $('#shutdown-checkbox');
+        const targetInputs = $('.shutdowncheckbox').not('#shutdown-checkbox');
 
 
-        $(document).ready(function() {
-            const section1Inputs = $('#section-1 input');
-            const checkboxWithValue8 = $('.work-type-checkbox[data-id="8"]');
+        targetInputs.prop('disabled', true);
 
-            section1Inputs.prop('disabled', true);
 
-            checkboxWithValue8.on('change', function() {
-                if ($(this).is(':checked')) {
+        shutdownCheckbox.on('change', function () {
+            if ($(this).is(':checked')) {
+                targetInputs.prop('disabled', false);
+            } else {
 
-                    section1Inputs.prop('disabled', false);
+                targetInputs.prop('disabled', true);
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        // On checkbox change
+        $('#isolationpanel_checkbox').change(function () {
+            // Enable/disable the textarea based on checkbox state
+            if ($(this).prop('checked')) {
+                $('.isolationpanel_description').prop('disabled', false);
+            } else {
+                $('.isolationpanel_description').prop('disabled', true);
+            }
+        });
+    });
+
+
+    $(document).ready(function () {
+        const lotoCheckbox = $('#loto-checkbox');
+        const targetInputs = $('.lotocheckbox').not('#loto-checkbox');
+
+
+        targetInputs.prop('disabled', true);
+
+
+        lotoCheckbox.on('change', function () {
+            if ($(this).is(':checked')) {
+                targetInputs.prop('disabled', false);
+            } else {
+
+                targetInputs.prop('disabled', true);
+            }
+        });
+    });
+
+    // validation
+
+    $(document).ready(function () {
+        $.validator.addMethod("regex", function (value, element, regexp) {
+            return this.optional(element) || regexp.test(value);
+        }, "Please check your input.");
+
+        $('#safetyPermitadd').validate({
+            rules: {
+                date: {
+                    required: true,
+                },
+                time_from: {
+                    required: true,
+                },
+                time_to: {
+                    required: true,
+                },
+                unit_id: {
+                    required: true,
+                },
+                exact_location_job: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 30,
+                    regex: /^[a-zA-Z, ]{3,30}$/
+                },
+                job_location_area: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 30,
+                    regex: /^[a-zA-Z, ]{3,50}$/
+                },
+
+                'sub_permit[]': {
+                    required: true,
+                    minlength: 1
+                },
+
+                job_description: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 600,
+                },
+
+
+                equipment_checklist_inspection: {
+                    required: true,
+                },
+                toolbox_talk: {
+                    required: true,
+                },
+                talk_givenby: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 30,
+
+                },
+
+
+                assigned_job: {
+                    required: true,
+                },
+                attendance_toolbox_talk: {
+                    required: true,
+                    digits: true,
+                }
+
+            },
+            messages: {
+
+                date: {
+                    required: "Date cannot be empty.",
+                },
+                time_from: {
+                    required: "From Time cannot be empty.",
+                },
+                time_to: {
+                    required: "To Time cannot be empty.",
+                },
+                unit_id: {
+                    required: "Please Select the unit.",
+                },
+                exact_location_job: {
+                    required: "Exact Job Location cannot be empty.",
+                    minlength: "Exact Job Location between 3 and 30 characters.",
+                    maxlength: "Exact Job Location between 3 and 30 characters.",
+                    regex: "Exact Job Location contains only the letters",
+                },
+                job_location_area: {
+                    required: "Job Location Area cannot be empty.",
+                    minlength: "Job Location Area between 3 and 30 characters.",
+                    maxlength: "Job Location Area between 3 and 30 characters.",
+                    regex: "Job Location Area contains only the letters",
+                },
+                'sub_permit[]': {
+                    required: "At least one work type should be selected."
+                },
+                job_description: {
+                    required: "Job Description cannot be empty.",
+                    minlength: "Job Description between 3 and 600 characters.",
+                    maxlength: "Job Description between 3 and 600 characters.",
+                },
+
+
+
+
+                equipment_checklist_inspection: {
+                    required: "Equipment Checklist Inspection is required.",
+                },
+                toolbox_talk: {
+                    required: "Toolbox Talk is required.",
+                },
+                talk_givenby: {
+                    required: "Talk Given By is required",
+                    minlength: "Name is between 3 to 30 characters",
+                    maxlength: "Name is between 3 to 30 characters",
+
+                },
+
+                assigned_job: {
+                    required: "Please check the Assigned job",
+                },
+                attendance_toolbox_talk: {
+                    required: "Attendance Tool box talk is required ",
+                    regex: "Attendance Tool box talk Numeric only Accepted ",
+
+                }
+
+            },
+            errorElement: 'div',
+            errorPlacement: function (error, element) {
+                if (element.hasClass('work-type-checkbox')) {
+
+                    var errorDiv = element.closest('.work-type').find('.text-danger');
+                    errorDiv.html(error);
+                } else if (element.is(':checkbox')) {
+
+                    var errorDiv = element.siblings('.text-danger');
+                    errorDiv.html(error);
                 } else {
 
-                    section1Inputs.prop('disabled', true);
-                }
-            });
-
-        });
-
-        $(document).ready(function() {
-            const shutdownCheckbox = $('#shutdown-checkbox');
-            const targetInputs = $('.shutdowncheckbox').not('#shutdown-checkbox');
-
-
-            targetInputs.prop('disabled', true);
-
-
-            shutdownCheckbox.on('change', function() {
-                if ($(this).is(':checked')) {
-                    targetInputs.prop('disabled', false);
-                } else {
-
-                    targetInputs.prop('disabled', true);
-                }
-            });
-        });
-
-        $(document).ready(function() {
-            const lotoCheckbox = $('#loto-checkbox');
-            const targetInputs = $('.lotocheckbox').not('#loto-checkbox');
-
-
-            targetInputs.prop('disabled', true);
-
-
-            lotoCheckbox.on('change', function() {
-                if ($(this).is(':checked')) {
-                    targetInputs.prop('disabled', false);
-                } else {
-
-                    targetInputs.prop('disabled', true);
-                }
-            });
-        });
-
-        // validation
-
-        $(document).ready(function() {
-            $.validator.addMethod("regex", function(value, element, regexp) {
-                return this.optional(element) || regexp.test(value);
-            }, "Please check your input.");
-
-            $('#safetyPermitadd').validate({
-                rules: {
-                    date: {
-                        required: true,
-                    },
-                    time_from: {
-                        required: true,
-                    },
-                    time_to: {
-                        required: true,
-                    },
-                    unit_id: {
-                        required: true,
-                    },
-                    exact_location_job: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 30,
-                        regex: /^[a-zA-Z, ]{3,30}$/
-                    },
-                    job_location_area: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 30,
-                        regex: /^[a-zA-Z, ]{3,50}$/
-                    },
-
-                    'sub_permit[]': {
-                        required: true,
-                        minlength: 1
-                    },
-
-                    job_description: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 600,
-                    },
-
-
-                    equipment_checklist_inspection: {
-                        required: true,
-                    },
-                    toolbox_talk: {
-                        required: true,
-                    },
-                    talk_givenby: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 30,
-
-                    },
-
-
-                    assigned_job: {
-                        required: true,
-                    },
-                    attendance_toolbox_talk: {
-                        required: true,
-                        digits: true,
+                    var errorDiv = element.closest('.form-group').find('.text-danger');
+                    if (errorDiv.length === 0) {
+                        errorDiv = element.siblings('.text-danger');
                     }
-
-                },
-                messages: {
-
-                    date: {
-                        required: "Date cannot be empty.",
-                    },
-                    time_from: {
-                        required: "From Time cannot be empty.",
-                    },
-                    time_to: {
-                        required: "To Time cannot be empty.",
-                    },
-                    unit_id: {
-                        required: "Please Select the unit.",
-                    },
-                    exact_location_job: {
-                        required: "Exact Job Location cannot be empty.",
-                        minlength: "Exact Job Location between 3 and 30 characters.",
-                        maxlength: "Exact Job Location between 3 and 30 characters.",
-                        regex: "Exact Job Location contains only the letters",
-                    },
-                    job_location_area: {
-                        required: "Job Location Area cannot be empty.",
-                        minlength: "Job Location Area between 3 and 30 characters.",
-                        maxlength: "Job Location Area between 3 and 30 characters.",
-                        regex: "Job Location Area contains only the letters",
-                    },
-                    'sub_permit[]': {
-                        required: "At least one work type should be selected."
-                    },
-                    job_description: {
-                        required: "Job Description cannot be empty.",
-                        minlength: "Job Description between 3 and 600 characters.",
-                        maxlength: "Job Description between 3 and 600 characters.",
-                    },
-
-
-
-
-                    equipment_checklist_inspection: {
-                        required: "Equipment Checklist Inspection is required.",
-                    },
-                    toolbox_talk: {
-                        required: "Toolbox Talk is required.",
-                    },
-                    talk_givenby: {
-                        required: "Talk Given By is required",
-                        minlength: "Name is between 3 to 30 characters",
-                        maxlength: "Name is between 3 to 30 characters",
-
-                    },
-
-                    assigned_job: {
-                        required: "Please check the Assigned job",
-                    },
-                    attendance_toolbox_talk: {
-                        required: "Attendance Tool box talk is required ",
-                        regex: "Attendance Tool box talk Numeric only Accepted ",
-
-                    }
-
-                },
-                errorElement: 'div',
-                errorPlacement: function(error, element) {
-                    if (element.hasClass('work-type-checkbox')) {
-
-                        var errorDiv = element.closest('.work-type').find('.text-danger');
-                        errorDiv.html(error);
-                    } else if (element.is(':checkbox')) {
-
-                        var errorDiv = element.siblings('.text-danger');
-                        errorDiv.html(error);
-                    } else {
-
-                        var errorDiv = element.closest('.form-group').find('.text-danger');
-                        if (errorDiv.length === 0) {
-                            errorDiv = element.siblings('.text-danger');
-                        }
-                        errorDiv.html(error);
-                    }
-                },
-                highlight: function(element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                },
-                submitHandler: function(form) {
-                    form.submit();
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                    console.log(errors + " field(s) are invalid");
-                    validator.errorList.forEach(function(error) {
-                        console.log("Field: " + error.element.name + ", Error: " + error
-                            .message);
-                    });
+                    errorDiv.html(error);
                 }
-            });
-
-            $('#shutdown-checkbox').change(function() {
-                $(this).valid();
-            });
-
-            $('#loto-checkbox').change(function() {
-                $(this).valid();
-            });
-
-            $.validator.addMethod("regex", function(value, element, regexp) {
-                return this.optional(element) || regexp.test(value);
-            }, "Please check your input.");
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            },
+            submitHandler: function (form) {
+                form.submit();
+            },
+            invalidHandler: function (event, validator) {
+                var errors = validator.numberOfInvalids();
+                console.log(errors + " field(s) are invalid");
+                validator.errorList.forEach(function (error) {
+                    console.log("Field: " + error.element.name + ", Error: " + error
+                        .message);
+                });
+            }
         });
-    </script>
+
+        $('#shutdown-checkbox').change(function () {
+            $(this).valid();
+        });
+
+        $('#loto-checkbox').change(function () {
+            $(this).valid();
+        });
+
+        $.validator.addMethod("regex", function (value, element, regexp) {
+            return this.optional(element) || regexp.test(value);
+        }, "Please check your input.");
+    });
+</script>
 @endpush

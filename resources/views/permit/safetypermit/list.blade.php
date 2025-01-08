@@ -174,6 +174,12 @@
                         d.to_date = $('#to_date').val();
                         d.status = $('#status').val();
 
+                    },
+                    error: function(xhr, error, code) {
+                        if (xhr.status === 419) {
+                            alert('Session has expired. You will be redirected to the login page.');
+                            window.location.href = "{{ url('') }}"; // Redirect to login page
+                        }
                     }
                 },
                 columns: [{
@@ -222,7 +228,7 @@
                         data: 'created_date',
                         name: 'created_date'
                     },
-                   
+
                     {
                         data: 'action',
                         name: 'action',
@@ -328,8 +334,8 @@
             });
 
 
-              /* Status Change */
-              $(document).on('click', '.statusChange', function() {
+            /* Status Change */
+            $(document).on('click', '.statusChange', function() {
                 var id = $(this).data('id');
                 var types = $(this).data('type');
                 var title, text, btncolor;

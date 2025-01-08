@@ -169,7 +169,7 @@
                                                     <img src="{{ url('public/assets/images/safetypermit/power-off.png') }}"
                                                         class="img-fluid"
                                                         style="width: 50px; height: 50px; margin-right:30px">
-                                                    <label class="form-label mb-0"style="margin-right: 58px;">Shut Down
+                                                    <label for = "shutdown-checkbox" class="form-label mb-0"style="margin-right: 58px;">Shut Down
                                                         Required (Yes/No)</label>
                                                     <input type="checkbox" id="shutdown-checkbox"
                                                         class="shutdown-checkbox" name="shutdown_req" value="1"
@@ -198,7 +198,7 @@
                                                     <img src="{{ url('public/assets/images/safetypermit/process.png') }}"
                                                         class="img-fluid"
                                                         style="width: 50px; height: 50px; margin-right:30px">
-                                                    <label class="form-label mb-0 "
+                                                    <label for = "loto-checkbox" class="form-label mb-0 "
                                                         style="margin-right: 34px;">Isolation/LOTO Required
                                                         (Yes/No)</label>
                                                     <input type="checkbox" id="loto-checkbox" class="loto-checkbox"
@@ -240,19 +240,14 @@
                                             </div>
                                             <div class="col-md-4 mb-3 "style="margin-right: 50px">
                                                 <div class="form-group d-flex align-items-center ps-5 ">
-                                                    <label class="form-label mb-0" style="margin-right:30px;">Tag Field
+                                                    <label for = "shutdowncheckbox" class="form-label mb-0" style="margin-right:30px;">Tag Field
                                                         properly (Yes/No)</label>
-                                                    <input type="checkbox" class="shutdowncheckbox" name="tagfield"
+                                                    <input type="checkbox" class="shutdowncheckbox" id = "shutdowncheckbox" name="tagfield"
                                                         value="1"
                                                         {{ $safetypermit->tagfield == 1 ? 'checked' : '' }}>
                                                 </div>
                                             </div>
                                         </div>
-
-
-
-
-
 
                                         <div class="row col-md-12 d-flex mt-3">
                                             <!-- Left Side: Scrollable on X-Axis -->
@@ -267,9 +262,9 @@
                                                             <img src="{{ url('public/assets/images/safetypermit/person.png') }}"
                                                                 class="img-fluid"
                                                                 style="width: 50px; height: 50px; margin-right: 20px">
-                                                            <label class="form-label mb-0 "
+                                                            <label for= "air_checkbox" class="form-label mb-0 "
                                                                 style="margin-right: 100px;">Air</label>
-                                                            <input type="checkbox" class="shutdowncheckbox"
+                                                            <input type="checkbox" class="shutdowncheckbox" id="air_checkbox"
                                                                 name="state_isolation_loto[]" value="Air"
                                                                 {{ in_array('Air', $stateIsolationLoto ?? []) ? 'checked' : '' }}
                                                                 disabled>
@@ -279,9 +274,9 @@
                                                             <img src="{{ url('public/assets/images/safetypermit/natural-gas.png') }}"
                                                                 class="img-fluid"
                                                                 style="width: 50px; height: 50px; margin-right: 20px">
-                                                            <label class="form-label mb-0"
+                                                            <label for= "gas_checkbox" class="form-label mb-0"
                                                                 style="margin-right: 115px;">Gas</label>
-                                                            <input type="checkbox" class="shutdowncheckbox"
+                                                            <input type="checkbox" class="shutdowncheckbox" id="gas_checkbox"
                                                                 name="state_isolation_loto[]" value="Gas"
                                                                 {{ in_array('Gas', $stateIsolationLoto ?? []) ? 'checked' : '' }}
                                                                 disabled>
@@ -300,9 +295,9 @@
                                                             <img src="{{ url('public/assets/images/safetypermit/electrician.png') }}"
                                                                 class="img-fluid"
                                                                 style="width: 50px; height: 50px; margin-right: 20px;">
-                                                            <label class="form-label mb-0"
+                                                            <label for= "electrical_checkbox" class="form-label mb-0"
                                                                 style="margin-right: 58px;">Electrical</label>
-                                                            <input type="checkbox" class="shutdowncheckbox"
+                                                            <input type="checkbox" class="shutdowncheckbox" id="electrical_checkbox"
                                                                 name="state_isolation_loto[]" value="Electrical"
                                                                 {{ in_array('Electrical', $stateIsolationLoto ?? []) ? 'checked' : '' }}
                                                                 disabled>
@@ -312,9 +307,9 @@
                                                             <img src="{{ url('public/assets/images/safetypermit/leak.png') }}"
                                                                 class="img-fluid"
                                                                 style="width: 50px; height: 50px; margin-right: 20px">
-                                                            <label class="form-label mb-0"
+                                                            <label for= "water_checkbox" class="form-label mb-0"
                                                                 style="margin-right: 58px;">Water/Liquid</label>
-                                                            <input type="checkbox" class="shutdowncheckbox"
+                                                            <input type="checkbox" class="shutdowncheckbox" id="water_checkbox"
                                                                 name="state_isolation_loto[]" value="Water/Liquid"
                                                                 {{ in_array('Water/Liquid', $stateIsolationLoto ?? []) ? 'checked' : '' }}
                                                                 disabled>
@@ -322,14 +317,37 @@
                                                         <div class="d-flex flex-shrink-0 align-items-center gap-1"
                                                             style="min-width: 200px;">
                                                             <textarea class="form-control shutdowncheckbox" name="state_isolation_loto[]" placeholder="Specify others" disabled>
-@if ($stateIsolationLoto)
-@foreach ($stateIsolationLoto as $item)
+                                                                    @if ($stateIsolationLoto)
+                                                                    @foreach ($stateIsolationLoto as $item)
 @if (!in_array($item, ['Air', 'Gas', 'Electrical', 'Water/Liquid']))
 {{ $item }}
 @endif
 @endforeach
-@endif
-</textarea>
+                                                                    @endif
+                                                            </textarea>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row mb-3 d-flex flex-nowrap align-items-center">
+                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                            style="min-width: 200px;">
+                                                            <img src="{{ url('public/assets/images/safetypermit/fire.png') }}"
+                                                                class="img-fluid"
+                                                                style="width: 50px; height: 50px; margin-right: 20px;">
+                                                            <label for= "isolationpanel_checkbox" class="form-label mb-0"
+                                                                style="margin-right: 58px;">Isolation fire panel</label>
+                                                            <input type="hidden" name="isolationpanel_checkbox"
+                                                                value="0">
+                                                            
+                                                            <input type="checkbox" class="shutdowncheckbox"  id="isolationpanel_checkbox"
+                                                                name="isolationpanel_checkbox" value="1"
+                                                                {{ $safetypermit->isolationpanel_checkbox == 1 ? 'checked' : '' }}>
+                                                        </div>
+
+                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                            style="min-width: 200px;">
+                                                            <input type = "text" class="form-control isolationpanel_description" name="isolationpanel_description"
+                                                                placeholder="Isolation fire panel" value = "{{ $safetypermit->isolationpanel_description }}" disabled >
                                                         </div>
                                                     </div>
                                                 </div>
@@ -353,12 +371,12 @@
 
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group d-flex align-items-center">
-                                                            <label class="form-label mb-0"
+                                                            <label for= "system_isolated" class="form-label mb-0"
                                                                 style="margin-right: 20px">System Isolated</label>
                                                             <input type="hidden"
                                                                 name="confined_space_entry[system_isolated]"
                                                                 value="0">
-                                                            <input type="checkbox"
+                                                            <input type="checkbox" id = "system_isolated"
                                                                 name="confined_space_entry[system_isolated]"
                                                                 value="1"
                                                                 {{ $confinedSpaceEntry['system_isolated'] ?? '' == 1 ? 'checked' : '' }}>
@@ -368,10 +386,10 @@
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div
                                                             class="form-group d-flex align-items-center justify-content-between">
-                                                            <label class="form-label mb-0">Rescue System Available</label>
+                                                            <label for= "rescue_system" class="form-label mb-0">Rescue System Available</label>
                                                             <input type="hidden"
                                                                 name="confined_space_entry[rescue_system]" value="0">
-                                                            <input type="checkbox"
+                                                            <input type="checkbox" id= "rescue_system"
                                                                 name="confined_space_entry[rescue_system]" value="1"
                                                                 {{ $confinedSpaceEntry['rescue_system'] ?? '' == 1 ? 'checked' : '' }}>
                                                         </div>
@@ -381,9 +399,9 @@
                                                 <div class="row border rounded p-2 mx-1">
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div class="form-group d-flex align-items-center">
-                                                            <label class="form-label col-md-5 mb-0 mr-2 pe-2">Confined
+                                                            <label for= "confined_attendant" class="form-label col-md-5 mb-0 mr-2 pe-2">Confined
                                                                 Space Attendant</label>
-                                                            <input type="checkbox"
+                                                            <input type="checkbox" id= "confined_attendant"
                                                                 name="confined_space_entry[confined_attendant]"
                                                                 value="1"
                                                                 {{ $confinedSpaceEntry['confined_attendant'] ?? '' == 1 ? 'checked' : '' }}>
@@ -406,10 +424,10 @@
                                                     <div class="col-12 col-md-4 mb-3">
                                                         <div
                                                             class="form-group d-flex align-items-center justify-content-between">
-                                                            <label class="form-label mb-0"
+                                                            <label for= "register_entry_exits" class="form-label mb-0"
                                                                 style="margin-right: 20px">Register for entry &
                                                                 exits</label>
-                                                            <input type="checkbox"
+                                                            <input type="checkbox" id= "register_entry_exits"
                                                                 name="confined_space_entry[register_entry_exits]"
                                                                 {{ $confinedSpaceEntry['register_entry_exits'] ?? '' == 1 ? 'checked' : '' }}
                                                                 disabled>
@@ -694,8 +712,8 @@
                                                         <span class="text-danger">*</span>
                                                     </label>
                                                     <input type="checkbox" id="checklist_inspection" class=""
-                                                    name="equipment_checklist_inspection" value="1"
-                                                    {{ isset($safetypermit['equipment_checklist_inspection']) && $safetypermit['equipment_checklist_inspection'] == 1 ? 'checked' : '' }}>
+                                                        name="equipment_checklist_inspection" value="1"
+                                                        {{ isset($safetypermit['equipment_checklist_inspection']) && $safetypermit['equipment_checklist_inspection'] == 1 ? 'checked' : '' }}>
 
                                                     <div class="text-danger"></div>
                                                 </div>
@@ -736,10 +754,12 @@
                                             <div class="col-12 col-md-6">
                                                 <div class="p-3 mb-1">
                                                     <label class="fw-bold fs-5 mt-1" for="tool-box">
-                                                        Safe Work Procedure discussed in tool box talk before start the work (Yes/No)
+                                                        Safe Work Procedure discussed in tool box talk before start the work
+                                                        (Yes/No)
                                                         <span class="text-danger">*</span>
                                                     </label>
-                                                    <input type="checkbox" id="tool-box" name="toolbox_talk" value="1"
+                                                    <input type="checkbox" id="tool-box" name="toolbox_talk"
+                                                        value="1"
                                                         {{ isset($safetypermit['toolbox_talk']) && $safetypermit['toolbox_talk'] == 1 ? 'checked' : '' }}>
                                                     <div class="text-danger"></div>
                                                 </div>
@@ -792,8 +812,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Employee Code / Visitor ID</label>
                                                     <div class="col-sm-6" style="width: 100%">
-                                                        <select name="employee_code" id="employee_code" style="width: 100%"
-                                                            class="single-select form-control">
+                                                        <select name="employee_code" id="employee_code"
+                                                            style="width: 100%" class="single-select form-control">
                                                             <option value="">Select Employee ID</option>
                                                         </select>
                                                     </div>
@@ -888,8 +908,9 @@
                                                         for duty (Yes/No)
                                                         <span class="text-danger">*</span>
                                                     </label>
-                                                    <input type="checkbox" id="assigned_job" name="assigned_job" value="1"
-                                                    {{ isset($safetypermit['assigned_job']) && $safetypermit['assigned_job'] == 1 ? 'checked' : '' }}>
+                                                    <input type="checkbox" id="assigned_job" name="assigned_job"
+                                                        value="1"
+                                                        {{ isset($safetypermit['assigned_job']) && $safetypermit['assigned_job'] == 1 ? 'checked' : '' }}>
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
@@ -1175,6 +1196,14 @@
                     $('#employeenameloto').prop('disabled', false);
                 } else {
                     $('#employeenameloto').prop('disabled', true);
+                }
+            });
+
+            $('#isolationpanel_checkbox').change(function() {
+                if ($(this).prop('checked')) {
+                    $('.isolationpanel_description').prop('disabled', false);
+                } else {
+                    $('.isolationpanel_description').prop('disabled', true);
                 }
             });
         });
