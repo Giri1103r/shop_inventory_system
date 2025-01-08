@@ -179,6 +179,15 @@ class Topic extends Model
                     ->orWhereRaw('topic_name LIKE "%' . $search . '%"');
             });
         }
+        if ($request->has('from_date') && $request->from_date) {
+            $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay();
+            $query = $query->where('training_masters_topic.created_at', '>=', $fromDate);
+        }
+        
+        if ($request->has('to_date') && $request->to_date) {
+            $toDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay();
+            $query = $query->where('training_masters_topic.created_at', '<=', $toDate);
+        }
         if ($request->has('topic_id') && $request->topic_id) {
             $query = $query->where('topic_id', 'LIKE', '%' . $request->topic_id . '%');
         }

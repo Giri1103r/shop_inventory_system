@@ -199,9 +199,9 @@ class TrainingScheduleController extends Controller
                                             <i class="fa-solid fa-pen-to-square"></i>
                                          </a> ';
                             }
-                            if (CheckUserPermission('delete') && $row->training_status == NEW_TRAINING_SCHEDULE && (in_array(ROLE_TRAINER, getUserRoleId(Auth::id()))  || in_array(ROLE_ADMIN, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
-                                $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
-                            }
+                            // if (CheckUserPermission('delete') && $row->training_status == NEW_TRAINING_SCHEDULE && (in_array(ROLE_TRAINER, getUserRoleId(Auth::id()))  || in_array(ROLE_ADMIN, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
+                            //     $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
+                            // }
                             return $btn;
                         })
                         ->rawColumns(['to_date', 'from_date', 'action', 'created_date', 'created_by', 'status']);
@@ -341,22 +341,22 @@ class TrainingScheduleController extends Controller
                         /**
                          * Send Web Notifications
                          */
-                        $vpids = $vp_details->pluck('id')->toArray(); // Extract user IDs from details
+                        $vpids = $vp_details->pluck('id')->toArray();
                         if (!empty($vpids)) {
                             $img = admin_url('public/assets/icons/training.png');
                             $notificationData = [
-                                'notification_type' => 2, // Type of notification
-                                'module_type' => 2, // Module type
-                                'notification_message' => $mailsubject, // Message content
+                                'notification_type' => 2,
+                                'module_type' => 2,
+                                'notification_message' => $mailsubject,
                                 'mobile_notification' => json_encode([
                                     'title' => $mailsubject,
-                                    'message' => 'A new training schedule has been created by ' . getUsername(Auth::id()),
+                                    'message' => 'A new training schedule has been created by ' . getUsername($trainingSchedule->created_by),
                                     'icon' => $img,
                                     'module' => 2,
                                 ]),
-                                'web_link' => 'training_schedule/vp_approval/' . encryptId($trainingSchedule->id), // Approval link
-                                'assigned_user' => array_to_string($vpids), // Assigned users
-                                'created_by' => Auth::id(), // Creator
+                                'web_link' => 'training_schedule/vp_approval/' . encryptId($trainingSchedule->id),
+                                'assigned_user' => array_to_string($vpids),
+                                'created_by' => Auth::id(),
                             ];
 
                             // Save notification
@@ -842,8 +842,6 @@ class TrainingScheduleController extends Controller
         }
     }
 
-
-
     public function vpApproval(Request $request)
     {
         try {
@@ -885,7 +883,6 @@ class TrainingScheduleController extends Controller
             dd($ex);
         }
     }
-
 
     public function vpApprovalStore(Request $request)
     {
@@ -950,7 +947,7 @@ class TrainingScheduleController extends Controller
                                 'notification_message' => $mailsubject,
                                 'mobile_notification' => json_encode([
                                     'title' => $mailsubject,
-                                    'message' => 'A new training schedule has been created by ' . getUsername(Auth::id()),
+                                    'message' => 'A new training schedule has been created by ' . getUsername($trainingSchedule->created_by),
                                     'icon' =>  $img,
                                     'module' => 2,
                                 ]),
@@ -968,58 +965,66 @@ class TrainingScheduleController extends Controller
                     $statuslog =  $this->training_statuslog->storestatus($id, $training_status);
                     if ($training) {
                         $trainingSchedule = $this->training_schedule->selectOne($id);
-                      
-                        $admin_role = ROLE_ADMIN;
 
-                        $adminEmail = User::select('email', 'name', 'id')
-                            ->whereRaw('FIND_IN_SET(' . $admin_role . ', role)')
-                            ->get();
-    
-                        if (!empty($adminEmail)) {
-                            $mailsubject = 'Training Rejected by Vice President';
-                            /**
-                             * Send email notification
-                             */
-                            if (!empty($adminEmail->email)) {
-                                $trainingArray = [
-                                    'name' => $adminEmail->name,
-                                    'from_date' => Displaydateformat($trainingSchedule->from_date),
-                                    'to_date' => Displaydateformat($trainingSchedule->to_date),
-                                    'start_time' => Displaytimeformat($trainingSchedule->start_time),
-                                    'end_time' => Displaytimeformat($trainingSchedule->end_time),
-                                    'topic_name' => $trainingSchedule->topic_name,
-                                    'unit' => $trainingSchedule->unit_name,
-                                    'department' => $trainingSchedule->department_name,
-                                    'venue' => $trainingSchedule->name_of_the_conference_hall,
-                                    'remark' => $trainingSchedule->remark,
-                                    'mail_subject' => $mailsubject,
-                                ];
+                        if (!empty($trainingSchedule)) {
+                            $admin_role = ROLE_ADMIN;
 
-                                Mail::to($adminEmail->email)->queue(new TrainingRejectedEmail($trainingArray));
+                            $adminDetails = User::select('email', 'name', 'id')
+                                ->whereRaw('FIND_IN_SET(' . $admin_role . ', role)')
+                                ->get();
+
+                            if ($adminDetails->isNotEmpty()) {
+                                $mailsubject = 'Training Rejected by Vice President';
+
+                                /**
+                                 * Send Email Notification
+                                 */
+                                foreach ($adminDetails as $admin) {
+                                    if (!empty($admin->email)) {
+                                        $trainingArray = [
+                                            'name' => $admin->name,
+                                            'from_date' => Displaydateformat($trainingSchedule->from_date),
+                                            'to_date' => Displaydateformat($trainingSchedule->to_date),
+                                            'start_time' => Displaytimeformat($trainingSchedule->start_time),
+                                            'end_time' => Displaytimeformat($trainingSchedule->end_time),
+                                            'topic_name' => $trainingSchedule->topic_name,
+                                            'unit' => $trainingSchedule->unit_name,
+                                            'department' => $trainingSchedule->department_name,
+                                            'venue' => $trainingSchedule->name_of_the_conference_hall,
+                                            'remark' => $trainingSchedule->remark,
+                                            'mail_subject' => $mailsubject,
+                                        ];
+
+                                        Mail::to($admin->email)->queue(new TrainingRejectedEmail($trainingArray));
+                                    }
+                                }
+
+                                /**
+                                 * Send Web Notification
+                                 */
+                                $adminIds = $adminDetails->pluck('id')->toArray();
+
+                                if (!empty($adminIds)) {
+                                    $img = admin_url('public/assets/icons/training.png');
+                                    $notificationData = [
+                                        'notification_type' => 2,
+                                        'module_type' => 2,
+                                        'notification_message' => $mailsubject,
+                                        'mobile_notification' => json_encode([
+                                            'title' => $mailsubject,
+                                            'message' => 'Training rejected by Vice President ' . getUsername(Auth::id()),
+                                            'icon' => $img,
+                                            'module' => 2,
+                                        ]),
+                                        'web_link' => 'training_schedule/view/' . encryptId($trainingSchedule->id),
+                                        'assigned_user' => array_to_string($adminIds),
+                                        'created_by' => Auth::id(),
+                                    ];
+
+                                    // Save the notification
+                                    notificationSave($notificationData);
+                                }
                             }
-
-
-                            /**
-                             * Send Web notification
-                             */
-                            $assigned_users = $adminEmail->id;
-                            $img = admin_url('public/assets/icons/traning.png');
-                            $notificationData = [
-                                'notification_type' => 2,
-                                'module_type' => 2,
-                                'notification_message' => $mailsubject,
-                                'mobile_notification' => json_encode([
-                                    'title' => $mailsubject,
-                                    'message' => 'Training Rejected by Vice President ' . getUsername(Auth::id()),
-                                    'icon' =>  $img,
-                                    'module' => 2,
-                                ]),
-                                'web_link' => 'training_schedule/view/' . encryptId($trainingSchedule->id),
-                                'assigned_user' => $assigned_users,
-                                'created_by' => Auth::id(),
-                            ];
-
-                            notificationSave($notificationData);
                         }
                     }
                 }
@@ -1117,36 +1122,45 @@ class TrainingScheduleController extends Controller
             $statuslog =  $this->training_statuslog->storestatus($id, $training_status);
             if ($training) {
                 $trainingSchedule = $this->training_schedule->selectOne($id);
-                $vp_detail = $this->user->select('id', 'role', 'name', 'employee_id', 'email')->where('role', 10)->first();
+                $vp_role = ROLE_VISE_PRESIDENT;
+
+                $vp_details = User::select('id', 'role', 'name', 'employee_id', 'email')
+                    ->whereRaw('FIND_IN_SET(' . $vp_role . ', role)')
+                    ->get();
 
                 if (!empty($trainingSchedule)) {
                     $mailsubject = 'Training Rescheduled';
+
                     /**
                      * Send email notification
                      */
-                    if (!empty($vp_detail->email)) {
-                        $trainingArray = [
-                            'name' => $vp_detail->name,
-                            'from_date' => Displaydateformat($trainingSchedule->from_date),
-                            'to_date' => Displaydateformat($trainingSchedule->to_date),
-                            'start_time' => Displaytimeformat($trainingSchedule->start_time),
-                            'end_time' => Displaytimeformat($trainingSchedule->end_time),
-                            'topic_name' => $trainingSchedule->topic_name,
-                            'unit' => $trainingSchedule->unit_name,
-                            'department' => $trainingSchedule->department_name,
-                            'venue' => $trainingSchedule->name_of_the_conference_hall,
-                            'mail_subject' => $mailsubject,
-                        ];
+                    if ($vp_details->isNotEmpty()) {
+                        foreach ($vp_details as $vp_detail) {
+                            if (!empty($vp_detail->email)) {
+                                $trainingArray = [
+                                    'name' => $vp_detail->name,
+                                    'from_date' => Displaydateformat($trainingSchedule->from_date),
+                                    'to_date' => Displaydateformat($trainingSchedule->to_date),
+                                    'start_time' => Displaytimeformat($trainingSchedule->start_time),
+                                    'end_time' => Displaytimeformat($trainingSchedule->end_time),
+                                    'topic_name' => $trainingSchedule->topic_name,
+                                    'unit' => $trainingSchedule->unit_name,
+                                    'department' => $trainingSchedule->department_name,
+                                    'venue' => $trainingSchedule->name_of_the_conference_hall,
+                                    'mail_subject' => $mailsubject,
+                                ];
 
-                        Mail::to($vp_detail->email)->queue(new TrainingApprovalEmail($trainingArray));
+                                Mail::to($vp_detail->email)->queue(new TrainingApprovalEmail($trainingArray));
+                            }
+                        }
                     }
 
 
                     /**
                      * Send Web notification
                      */
-                    if (!empty($vp_detail)) {
-                        $assigned_users = $vp_detail->id;
+                    $vpids = $vp_details->pluck('id')->toArray();
+                    if (!empty($vpids)) {
                         $img = admin_url('public/assets/icons/traning.png');
                         $notificationData = [
                             'notification_type' => 2,
@@ -1154,12 +1168,12 @@ class TrainingScheduleController extends Controller
                             'notification_message' => $mailsubject,
                             'mobile_notification' => json_encode([
                                 'title' => $mailsubject,
-                                'message' => 'A training reschedule has been created by ' . getUsername(Auth::id()),
+                                'message' => 'A training reschedule has been created by ' . getUsername($trainingSchedule->created_by),
                                 'icon' =>  $img,
                                 'module' => 2,
                             ]),
                             'web_link' => 'training_schedule/vp_approval/' . encryptId($trainingSchedule->id),
-                            'assigned_user' => $assigned_users,
+                            'assigned_user' =>array_to_string($vpids),
                             'created_by' => Auth::id(),
                         ];
                         notificationSave($notificationData);
