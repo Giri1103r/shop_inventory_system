@@ -38,6 +38,8 @@ class SafetyPermit extends Model
         'loto_no',
         'tagfield',
         'state_isolation_loto',
+        'isolationpanel_checkbox',
+        'isolationpanel_description',
         'confined_space_entry',
         'protective_equip',
         'equiment_involved',
@@ -200,6 +202,8 @@ class SafetyPermit extends Model
             'loto_no' => $request->loto_no,
             'tagfield' => $tagfield,
             'state_isolation_loto' => $state_isolation_loto,
+            'isolationpanel_checkbox' => $request->isolationpanel_checkbox,
+            'isolationpanel_description' => $request->isolationpanel_description,
             'confined_space_entry' => $confined_space_entry,
             'protective_equip' => $protective_equip,
             'equiment_involved' => $equiment_involved,
@@ -234,6 +238,8 @@ class SafetyPermit extends Model
         $update_array['unit_id'] = decryptId($request->unit_id) ?? $safetypermit->unit_id;
         $update_array['exact_location_job'] = $request->exact_location_job ?? $safetypermit->exact_location_job;
         $update_array['job_location_area'] = $request->job_location_area ?? $safetypermit->job_location_area;
+        $update_array['isolationpanel_checkbox'] = $request->isolationpanel_checkbox ?? $safetypermit->isolationpanel_checkbox;
+        $update_array['isolationpanel_description'] = $request->isolationpanel_description ?? $safetypermit->isolationpanel_description;
 
         $update_array['sub_permit'] = is_array($request->sub_permit)
             ? implode(',', $request->sub_permit)

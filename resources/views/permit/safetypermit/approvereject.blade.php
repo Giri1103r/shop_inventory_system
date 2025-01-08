@@ -259,6 +259,27 @@
                                 @endforeach
                             </div>
                         @endif
+                        <div class="row">
+                            <div class="mb-3 col-md-4 form-input">
+                                <img src="{{ url('public/assets/images/safetypermit/fire.png') }}" class="img-fluid"
+                                    style="width: 50px; height: 50px;">
+                                <label class="form-label view_label m-1">Isolation fire panel</label>
+                                <span class="view_data">
+                                    @if ($safetypermit->isolationpanel_checkbox == 1)
+                                        <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
+                                    @else
+                                        <span>No</span>
+                                    @endif
+                                </span>
+                            </div>
+                            <div class="mb-3 col-md-4 form-input">
+                               
+                                <label class="form-label view_label m-1">Isolation fire panel Description:</label>
+                                <span class="view_data">
+                                    {{ $safetypermit->isolationpanel_description }}</span>
+                                </span>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="card-body">
