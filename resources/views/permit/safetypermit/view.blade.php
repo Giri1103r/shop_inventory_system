@@ -257,6 +257,28 @@
                                 @endforeach
                             </div>
                         @endif
+
+                        <div class="row">
+                            <div class="mb-3 col-md-4 form-input">
+                                <img src="{{ url('public/assets/images/safetypermit/fire.png') }}" class="img-fluid"
+                                    style="width: 50px; height: 50px;">
+                                <label class="form-label view_label m-1">Isolation fire panel</label>
+                                <span class="view_data">
+                                    @if ($safetypermit->isolationpanel_checkbox == 1)
+                                        <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
+                                    @else
+                                        <span>No</span>
+                                    @endif
+                                </span>
+                            </div>
+                            <div class="mb-3 col-md-4 form-input">
+                               
+                                <label class="form-label view_label m-1">Isolation fire panel Description:</label>
+                                <span class="view_data">
+                                    {{ $safetypermit->isolationpanel_description }}</span>
+                                </span>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="card-body">
@@ -299,7 +321,9 @@
                             <div class="mb-3 col-md-4 form-input">
                                 <label class="form-label view_label m-1">Confined Space Attendant :</label>
                                 <span class="view_data">
-                                    @if (isset($confined_space_entry) && isset($confined_space_entry->confined_attendant) && $confined_space_entry->confined_attendant == 1)
+                                    @if (isset($confined_space_entry) &&
+                                            isset($confined_space_entry->confined_attendant) &&
+                                            $confined_space_entry->confined_attendant == 1)
                                         <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
                                     @else
                                         <span>No</span>
@@ -638,9 +662,14 @@
                                         </tr>
                                     </thead>
                                     <tbody id="workman-list-entries">
-                                        @if (empty($workmaninvolved) || $workmaninvolved->every(function ($item) {
-                                            return is_null($item->employee_id) && is_null($item->workman_name) && is_null($item->workman_desig) && is_null($item->department_name) && is_null($item->nature_of_job);
-                                        }))
+                                        @if (empty($workmaninvolved) ||
+                                                $workmaninvolved->every(function ($item) {
+                                                    return is_null($item->employee_id) &&
+                                                        is_null($item->workman_name) &&
+                                                        is_null($item->workman_desig) &&
+                                                        is_null($item->department_name) &&
+                                                        is_null($item->nature_of_job);
+                                                }))
                                             <tr>
                                                 <td colspan="5" class="text-center">No data is available</td>
                                             </tr>
@@ -661,7 +690,8 @@
 
 
                             <div class="mb-3 col-md-12 form-input">
-                                <label class="form-label view_label m-1">Are all above employees competent for the assigned job & physically fit for duty (Yes/No)</label>
+                                <label class="form-label view_label m-1">Are all above employees competent for the
+                                    assigned job & physically fit for duty (Yes/No)</label>
 
                                 @if ($safetypermit->assigned_job == 1)
                                     <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
@@ -669,7 +699,8 @@
                             </div>
 
                             <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">Total number of attendance in Tool box Talk</label>
+                                <label class="form-label view_label">Total number of attendance in Tool box
+                                    Talk</label>
                                 <span class="view_data">
                                     {{ $safetypermit->attendance_toolbox_talk }}
                                 </span>
@@ -710,9 +741,10 @@
                                     <div>
                                         <div>
 
-                                            @foreach(explode(',', $getEhSverification->file_paths) as $file_path)
+                                            @foreach (explode(',', $getEhSverification->file_paths) as $file_path)
                                                 <a href="{{ asset($file_path) }}" target="_blank">
-                                                    <img src="{{ asset($file_path) }}" alt="Signature" style="max-width: 30%;">
+                                                    <img src="{{ asset($file_path) }}" alt="Signature"
+                                                        style="max-width: 30%;">
                                                 </a>
                                             @endforeach
                                         </div>

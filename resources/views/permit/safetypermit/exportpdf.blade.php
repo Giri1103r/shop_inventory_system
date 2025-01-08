@@ -371,6 +371,26 @@
                 @endforeach
             </tr>
         @endif
+
+        <tr>
+            <td width="20%" style="padding:5px;"><b>Isolation fire panel</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                @if ($safetypermit->isolationpanel_checkbox == 1)
+                    <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                @else
+                    <b><i class="fa-solid fa-times" style="color: #f31008; width: 15px;">✖</i></b>
+                @endif
+            </td>
+        </tr>
+
+        <tr>
+            <td width="20%" style="padding:5px;"><b>Isolation fire panel Description</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ $safetypermit->isolationpanel_description ?? 'N/A' }}
+            </td>
+        </tr>
     </table>
 
     <div style="width:100%;">

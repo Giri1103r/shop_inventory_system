@@ -48,6 +48,40 @@
             padding: 5px 10px;
             font-size: 14px;
         }
+
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+        }
+
+        button,
+        x-button-import {
+            font-size: 16px;
+            padding: 8px 16px;
+        }
+
+        @media (max-width: 768px) {
+
+            button,
+            x-button-import {
+                font-size: 14px;
+                padding: 6px 12px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .button-container {
+                flex-direction: column;
+                align-items: flex-end;
+            }
+
+            button,
+            x-button-import {
+                width: auto;
+            }
+        }
     </style>
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -185,12 +219,17 @@
                                     </div>
                                 </div>
 
-                                {{-- <div style="cursor: pointer  !important;padding-left: 88% !important"> --}}
-                                <div class="d-flex justify-content-end p-2">
-                                    <x-button-import
-                                        href="{{ admin_url('nomination_process/import/' . encryptId($training_schedule->id) . '/' . encryptId($training_schedule->trainer_id)) }}">
-                                        </x-button-import>
+                                <div class="d-flex justify-content-end align-items-center mb-3 button-container">
+                                  
+                                    <button class="btn btn-primary addmorebutton" data-block='lesson_learned_block'
+                                        data-row='lesson_learned_row' type="button" id="dynamic-add-more"
+                                        style="margin-left: 10px; width: 84px;">
+                                        Add
+                                    </button>
 
+                                    <x-button-import
+                                    href="{{ admin_url('nomination_process/import/' . encryptId($training_schedule->id) . '/' . encryptId($training_schedule->trainer_id)) }}">
+                                </x-button-import>
                                 </div>
 
                                 <div class="basic-form">
@@ -198,13 +237,7 @@
                                         action="{{ admin_url('nomination_process/add/submit') }}"
                                         enctype="multipart/form-data">
                                         @csrf
-                                        <div clase="nominationaddmorebutton"
-                                            style="padding-left: 82% !important; margin-top: -59px;">
-                                            <button class="btn btn-primary addmorebutton" data-block='lesson_learned_block'
-                                                data-row='lesson_learned_row' type="button" id="dynamic-add-more"
-                                                style="margin:10px;width: 84px;">Add</button>
-
-                                        </div>
+                                    
                                         <div class="row">
 
                                             <div class="table-responsive">
@@ -247,13 +280,11 @@
                                                                         @endforeach
                                                                     </select>
                                                                 </td>
-                                                                <td><input type="text"
-                                                                        class="form-control validate-input-required"
+                                                                <td><input type="text" class="form-control"
                                                                         name="employee[1][emp_name]" id="emp_name_1"
                                                                         readonly>
                                                                 </td>
-                                                                <td><input type="email"
-                                                                        class="form-control validate-input-required"
+                                                                <td><input type="email" class="form-control"
                                                                         name="employee[1][email]" id="email_1" readonly>
                                                                 </td>
                                                                 <td style="width: 15%;">
@@ -263,8 +294,7 @@
                                                                         style="width: 100%">
                                                                     </select>
                                                                 </td>
-                                                                <td><input type="text"
-                                                                        class="form-control validate-input-required"
+                                                                <td><input type="text" class="form-control"
                                                                         name="employee[1][employee_type]"
                                                                         id="employee_type_1" readonly></td>
                                                                 <td><input type="text" class="form-control"
@@ -306,14 +336,14 @@
                                                                     </td>
                                                                     <td><input type="text"
                                                                             name="employee[{{ $i }}][emp_name]"
-                                                                            class="form-control validate-input-required"
+                                                                            class="form-control"
                                                                             id="emp_id_{{ $i }}"
                                                                             value="{{ $nominationProcess->emp_name }}"
                                                                             readonly>
                                                                     </td>
                                                                     <td><input type="email"
                                                                             name="employee[{{ $i }}][email]"
-                                                                            class="form-control validate-input-required"
+                                                                            class="form-control"
                                                                             id="emp_id_{{ $i }}"
                                                                             value="{{ $nominationProcess->email }}"
                                                                             readonly>
@@ -336,20 +366,20 @@
                                                                     </td>
                                                                     <td><input type="text"
                                                                             name="employee[{{ $i }}][employee_type]"
-                                                                            class="form-control validate-input-required"
+                                                                            class="form-control"
                                                                             id="employee_type_{{ $i }}"
                                                                             value="{{ $nominationProcess->employee_type }}"
                                                                             readonly></td>
                                                                     <td><input type="text"
                                                                             name="employee[{{ $i }}][last_training_attended_on]"
-                                                                            class="form-control validate-input-required"
+                                                                            class="form-control"
                                                                             id="last_training_attended_on_{{ $i }}"
                                                                             value="{{ $nominationProcess->last_training_attended_on }}">
                                                                     </td>
                                                                     <td>
                                                                         <select
                                                                             name="employee[{{ $i }}][topic_id]"
-                                                                            class="form-control single-select validate-select-required"
+                                                                            class="form-control single-select"
                                                                             style="width: 100%"
                                                                             id="topic_id_{{ $i }}">
                                                                             <option value="">Select Topic</option>
@@ -428,7 +458,10 @@
                         title: "Duplicate Employee ID!",
                         text: "Each Employee ID must be unique.",
                     });
-                    $(this).val("");
+                    // Clear inputs in the current row
+                    currentRow.find('input, select').not('[type="hidden"]').val("");
+                    currentRow.find('select[name*="[department_id]"]').empty().append(
+                        '<option value="">Select Department</option>');
                     return;
                 }
 
@@ -487,7 +520,6 @@
                     currentRow.find('input[name*="[last_training_topic]"]').val("");
                 }
             });
-
             $("#dynamic-add-more").on("click", function() {
                 var rowCount = $("#lesson_learned_block .lesson_learned_row").length;
 
@@ -515,17 +547,32 @@
                         var newId = oldId.replace(/\d+$/, rowCount + 1);
                         $(this).attr("id", newId);
                     }
+
+                    $(this).val("");
                 });
 
-                newRow.find("input").val("");
-                newRow.find("select").val("");
+                newRow.find(".invalid-feedback").remove();
+                newRow.find(".is-invalid").removeClass("is-invalid");
 
                 newRow.find(".select2-container").remove();
+                newRow.find(".single-select").select2();
 
                 $("#lesson_learned_block").append(newRow);
+                newRow.find("select[name*='[emp_id]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Select an Employee ID.",
+                    },
+                });
 
-                $(".single-select").select2();
+                newRow.find("select[name*='[department_id]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Department is required.",
+                    },
+                });
             });
+
             // edit delete function
             $(document).on('click', '.removerow', function() {
                 var row = $(this).closest(
@@ -579,14 +626,13 @@
                 });
             });
 
-       
             $(document).on('click', '.removerowdata', function() {
                 var rowCount = $("#lesson_learned_block .lesson_learned_row").length;
                 if (rowCount > 1) {
                     $(this).closest(".lesson_learned_row").remove();
 
                     $("#lesson_learned_block .lesson_learned_row").each(function(index) {
-                        var newIndex = index + 1; 
+                        var newIndex = index + 1;
 
                         $(this).find("input, select").each(function() {
                             var oldName = $(this).attr("name");
@@ -607,7 +653,7 @@
                         $(this).find("select").select2("destroy");
 
                         $(this).find("select").select2({
-                            width: '100%' 
+                            width: '100%'
                         });
                     });
 
@@ -620,44 +666,22 @@
                     });
                 }
             });
-
-
             $('#nomination_processadd').validate({
 
                 rules: {
                     'employee[1][emp_id]': {
                         required: true,
                     },
-                    'employee[1][emp_name]': {
-                        required: true
-                    },
-                    'employee[1][email]': {
-                        required: true,
-                        email: true
-                    },
                     'employee[1][department_id]': {
                         required: true
-                    },
-                    'employee[1][employee_type]': {
-                        required: true
-                    },
+                    }
                 },
                 messages: {
                     'employee[1][emp_id]': {
                         required: "Select an Employee ID."
                     },
-                    'employee[1][emp_name]': {
-                        required: "Employee Name is required."
-                    },
-                    'employee[1][email]': {
-                        required: "Email ID is required.",
-                        email: "Enter a valid Email ID."
-                    },
                     'employee[1][department_id]': {
                         required: "Department is required."
-                    },
-                    'employee[1][employee_type]': {
-                        required: "Employee Type is required."
                     },
                 },
                 errorElement: 'span',
@@ -677,7 +701,6 @@
                     $(element).removeClass('is-invalid');
                 }
             });
-
 
             $('#lesson_learned_block').on('change', 'input, select', function() {
                 $(this).valid();

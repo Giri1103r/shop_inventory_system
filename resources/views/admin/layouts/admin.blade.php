@@ -179,8 +179,6 @@
             white-space: nowrap;
             z-index: 1000;
         }
-
-      
     </style>
     @stack('style')
 
@@ -310,6 +308,11 @@
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            statusCode: {
+                419: function() {
+                    window.location.href = '{{ url("") }}';
+                }
             }
         });
 

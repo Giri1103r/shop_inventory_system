@@ -164,7 +164,7 @@ class SafetyPermitController extends Controller
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
 
-                            $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';;
+                            // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';;
 
                             return $btn;
                         })
@@ -570,6 +570,21 @@ class SafetyPermitController extends Controller
         }
     }
 
+
+    public function StatusChange(Request $request)
+    {
+
+        try {
+            $id = decryptId($request->id);
+
+            $this->safetypermit->statuschange($id);
+
+            return response()->json(['status' => 'success', 'msg' => __('Safety Permit status changed sucessfully')], 200);
+        } catch (Exception $ex) {
+
+            return response()->json(['status' => 'error', 'msg' => __('Please try after some time')], 406);
+        }
+    }
     public function approvereject(Request $request)
     {
         try {

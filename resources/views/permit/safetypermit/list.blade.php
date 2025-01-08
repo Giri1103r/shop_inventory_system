@@ -93,6 +93,7 @@
                                         <th>Date</th>
                                         <th>Exact Job Location</th>
                                         <th>Status</th>
+                                        <th>Approve Status</th>
                                         <th>Verified By</th>
                                         <th>Approved By</th>
                                         <th>{{ __('common.created_by') }}</th>
@@ -173,6 +174,12 @@
                         d.to_date = $('#to_date').val();
                         d.status = $('#status').val();
 
+                    },
+                    error: function(xhr, error, code) {
+                        if (xhr.status === 419) {
+                            alert('Session has expired. You will be redirected to the login page.');
+                            window.location.href = "{{ url('') }}"; // Redirect to login page
+                        }
                     }
                 },
                 columns: [{
@@ -197,6 +204,10 @@
                         name: 'exact_location_job'
                     },
                     {
+                        data: 'status',
+                        name: 'status'
+                    },
+                    {
                         data: 'status_batch',
                         name: 'status_batch'
                     },
@@ -217,6 +228,7 @@
                         data: 'created_date',
                         name: 'created_date'
                     },
+
                     {
                         data: 'action',
                         name: 'action',
@@ -321,41 +333,41 @@
                 }, 150);
             });
 
-            /* Delete Record */
-            $(document).on('click', '.recordDelete', function() {
 
+            /* Status Change */
+            $(document).on('click', '.statusChange', function() {
                 var id = $(this).data('id');
-                var login_id = $(this).data('login_id');
+                var types = $(this).data('type');
+                var title, text, btncolor;
 
-                var title = '{{ __('Do You want to Delete Safety Permit') }}';
-                var text = '{{ __('common.delete') }}';
-                var btncolor = '#dc3545'
+                if (types == 1) {
+                    title = '{{ __('Do You want to In-Activate  Safety Permit ') }}';
+                    text = '{{ __('common.inactive') }}';
+                    btncolor = '#dc3545';
+                } else {
+                    title = '{{ __('Do You want to Activate Safety Permit') }}';
+                    text = '{{ __('common.active') }}';
+                    btncolor = '#7ddc35';
+                }
 
                 Swal.fire({
                     title: title,
                     icon: 'warning',
-                    showDenyButton: false,
                     showCancelButton: true,
                     confirmButtonText: text,
                     confirmButtonColor: btncolor,
-                    denyButtonColor: '#28a745',
                     customClass: {
                         confirmButton: 'btn-skew',
                         cancelButton: 'btn-skew'
                     },
                 }).then((result) => {
-
                     if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('safetypermit/delete') }}",
+                            url: "{{ admin_url('safetypermit/status') }}",
                             type: 'post',
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                                    .attr('content')
-                            },
                             data: {
                                 id: id,
-                                login_id: login_id
+                                types: types
                             },
                             success: function(response) {
                                 const Toast = Swal.mixin({
@@ -365,13 +377,10 @@
                                     timer: 3000,
                                     timerProgressBar: true,
                                     didOpen: (toast) => {
-                                        toast.addEventListener(
-                                            'mouseenter',
-                                            Swal.stopTimer)
-                                        toast.addEventListener(
-                                            'mouseleave',
-                                            Swal.resumeTimer
-                                        )
+                                        toast.addEventListener('mouseenter',
+                                            Swal.stopTimer);
+                                        toast.addEventListener('mouseleave',
+                                            Swal.resumeTimer);
                                     }
                                 });
                                 Toast.fire({
@@ -381,25 +390,94 @@
                                 table.draw();
                             },
                             error: function(data) {
-                                if (data.status === 406 && data.responseJSON.msg ===
-                                    'module_exits') {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error',
-                                        text: 'Location Deletion Failed: Module Dependencies Exist.',
-                                    });
-                                } else {
-                                    $.notify(data.responseJSON.msg, "error");
-                                }
+                                $.notify(data.responseJSON.msg, "error");
                             }
                         });
                     } else if (result.isDenied) {
                         Swal.fire('Something went wrong', '', 'info');
                     }
-                })
-
-
+                });
             });
+
+            /* Delete Record */
+            // $(document).on('click', '.recordDelete', function() {
+
+            //     var id = $(this).data('id');
+            //     var login_id = $(this).data('login_id');
+
+            //     var title = '{{ __('Do You want to Delete Safety Permit') }}';
+            //     var text = '{{ __('common.delete') }}';
+            //     var btncolor = '#dc3545'
+
+            //     Swal.fire({
+            //         title: title,
+            //         icon: 'warning',
+            //         showDenyButton: false,
+            //         showCancelButton: true,
+            //         confirmButtonText: text,
+            //         confirmButtonColor: btncolor,
+            //         denyButtonColor: '#28a745',
+            //         customClass: {
+            //             confirmButton: 'btn-skew',
+            //             cancelButton: 'btn-skew'
+            //         },
+            //     }).then((result) => {
+
+            //         if (result.value) {
+            //             $.ajax({
+            //                 url: "{{ admin_url('safetypermit/delete') }}",
+            //                 type: 'post',
+            //                 headers: {
+            //                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
+            //                         .attr('content')
+            //                 },
+            //                 data: {
+            //                     id: id,
+            //                     login_id: login_id
+            //                 },
+            //                 success: function(response) {
+            //                     const Toast = Swal.mixin({
+            //                         toast: true,
+            //                         position: 'top-right',
+            //                         showConfirmButton: false,
+            //                         timer: 3000,
+            //                         timerProgressBar: true,
+            //                         didOpen: (toast) => {
+            //                             toast.addEventListener(
+            //                                 'mouseenter',
+            //                                 Swal.stopTimer)
+            //                             toast.addEventListener(
+            //                                 'mouseleave',
+            //                                 Swal.resumeTimer
+            //                             )
+            //                         }
+            //                     });
+            //                     Toast.fire({
+            //                         icon: 'success',
+            //                         title: response.msg
+            //                     });
+            //                     table.draw();
+            //                 },
+            //                 error: function(data) {
+            //                     if (data.status === 406 && data.responseJSON.msg ===
+            //                         'module_exits') {
+            //                         Swal.fire({
+            //                             icon: 'error',
+            //                             title: 'Error',
+            //                             text: 'Location Deletion Failed: Module Dependencies Exist.',
+            //                         });
+            //                     } else {
+            //                         $.notify(data.responseJSON.msg, "error");
+            //                     }
+            //                 }
+            //             });
+            //         } else if (result.isDenied) {
+            //             Swal.fire('Something went wrong', '', 'info');
+            //         }
+            //     })
+
+
+            // });
 
         });
     </script>
