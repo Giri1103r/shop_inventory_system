@@ -73,7 +73,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Nationality</label>
                                                     <input type="text" name="nationality" id="nationality"
-                                                        class="form-control form-control-sm" placeholder=" Enter the Nationality"
+                                                        class="form-control form-control-sm"
+                                                        placeholder=" Enter the Nationality"
                                                         value="{{ $employee->nationality }}">
                                                 </div>
                                             </div>
@@ -81,8 +82,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">ID Type</label>
                                                     <input type="text" name="id_type" id="id_type"
-                                                        class="form-control form-control-sm"  placeholder=" Enter the ID Type"
-                                                        value="{{ $employee->id_type }}">
+                                                        class="form-control form-control-sm"
+                                                        placeholder=" Enter the ID Type" value="{{ $employee->id_type }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -131,10 +132,9 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Phone Number</label>
-                                                    <input type="text" name ="mobile_no"
-                                                        id="mobile_no" class="form-control"
-                                                        placeholder="Mobile No"
-                                                        value="{{$employee->mobile_no}}">
+                                                    <input type="text" name ="mobile_no" id="mobile_no"
+                                                        class="form-control" placeholder="Mobile No"
+                                                        value="{{ $employee->mobile_no }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -244,16 +244,18 @@
                 e.preventDefault();
                 location.reload();
             });
+
+            flatpickr("#joining_date_datetime_datepicker", {
+                dateFormat: "d-m-Y",
+                minuteIncrement: 5,
+                minDate: "01-01-1995",
+                clickOpens: true,
+                disableMobile: true,
+                allowInput: false,
+            });
         });
 
-        flatpickr("#joining_date_datetime_datepicker", {
-            dateFormat: "d-m-Y ",
-            minuteIncrement: 5,
-            minDate: "1995-01-01",
-            clickOpens: true,
-            disableMobile: true,
-            allowInput: false,
-        });
+
 
         $(document).ready(function() {
 
@@ -459,11 +461,11 @@
                         maxlength: 50,
                         pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
                     },
-                    mobile_no:{
-                        required:true,
+                    mobile_no: {
+                        required: true,
                         minlength: 10,
                         maxlength: 10,
-                        digits:true,
+                        digits: true,
                     }
                 },
                 messages: {
@@ -489,7 +491,7 @@
                     joining_date: {
                         required: "{{ __('Joining Date is Required') }}",
                     },
-                    mobile_no:{
+                    mobile_no: {
                         required: "{{ __('Mobile Number is Required') }}",
                         minlength: "{{ __('Mobile number minimum length should be 10') }}",
                         maxlength: "{{ __('Mobile number maximum length should be 10') }}",
@@ -511,7 +513,7 @@
                         minlength: "{{ __('common.validate_min_length') }}",
                         maxlength: "Maximum Characters should not exceed 30",
                         pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
-                      },
+                    },
                     id_number: {
                         required: "{{ __('ID Number is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
