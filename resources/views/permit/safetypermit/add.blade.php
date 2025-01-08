@@ -1057,7 +1057,7 @@
 
     $('#employeenameshutdown,#employeenameloto').select2({
         ajax: {
-            url: '{{ admin_url('safetypermit/ employeename') }}',
+            url: '{{ admin_url('safetypermit/employeename') }}',
         dataType: 'json',
         delay: 250,
         data: function (params) {
