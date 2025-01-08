@@ -140,7 +140,8 @@
                                 </div>
 
                                 <div class="basic-form">
-                                    <form method="POST" id="vp_approval" action="{{ admin_url('training_schedule/vp_approval/submit') }}"
+                                    <form method="POST" id="vp_approval"
+                                        action="{{ admin_url('training_schedule/vp_approval/submit') }}"
                                         enctype="multipart/form-data">
                                         @csrf
                                         <div class="row">
@@ -201,15 +202,26 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+        document.addEventListener("DOMContentLoaded", function() {
+            const fromDate =
+                "{{ $training_schedule->from_date }}"; 
+            const formattedFromDate = flatpickr.formatDate(new Date(fromDate),
+                "d-m-Y"); 
+            flatpickr("#date_datepicker", {
+                dateFormat: "d-m-Y",
+                minDate: formattedFromDate // Use the formatted from_date as the minimum date
+            });
+        });
+
         $(document).ready(function() {
             $('#resetform').on('click', function(e) {
                 e.preventDefault();
                 location.reload();
             });
-            flatpickr("#date_datepicker", {
-                dateFormat: "d-m-Y",
-                minDate: "today",
-            });
+            // flatpickr("#date_datepicker", {
+            //     dateFormat: "d-m-Y",
+            //     minDate: "today",
+            // });
 
             $('#vp_approval').validate({
                 rules: {

@@ -120,7 +120,7 @@ class TrainingScheduleController extends Controller
                             // dd($row->training_status);
                             if (($row->training_status == NEW_TRAINING_SCHEDULE || $row->training_status == TRAINING_RESCHEDULE_APPROVAL) && (in_array(ROLE_VISE_PRESIDENT, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
                                 $btn .= '<a href="' . admin_url('training_schedule/vp_approval/' . encryptId($row->id)) . '" title="Vice President Approval">
-                                            <i class="fa fa-external-link" aria-hidden="true" style="color: #000000;"></i>
+                                            <i class="fa-solid fa-check-to-slot" aria-hidden="true" style="color: #000000;"></i>
                                          </a> ';
                             }
 
@@ -332,24 +332,26 @@ class TrainingScheduleController extends Controller
                         /**
                          * Send Web notification
                          */
-                        $assigned_users = $vp_detail->id;
-                        $img = admin_url('public/assets/icons/traning.png');
-                        $notificationData = [
-                            'notification_type' => 2,
-                            'module_type' => 2,
-                            'notification_message' => $mailsubject,
-                            'mobile_notification' => json_encode([
-                                'title' => $mailsubject,
-                                'message' => 'A new training schedule has been created by ' . getUsername(Auth::id()),
-                                'icon' =>  $img,
-                                'module' => 2,
-                            ]),
-                            'web_link' => 'training_schedule/vp_approval/' . encryptId($trainingSchedule->id),
-                            'assigned_user' => $assigned_users,
-                            'created_by' => Auth::id(),
-                        ];
+                        if (!empty($vp_detail)) {
+                            $assigned_users = $vp_detail->id;
+                            $img = admin_url('public/assets/icons/traning.png');
+                            $notificationData = [
+                                'notification_type' => 2,
+                                'module_type' => 2,
+                                'notification_message' => $mailsubject,
+                                'mobile_notification' => json_encode([
+                                    'title' => $mailsubject,
+                                    'message' => 'A new training schedule has been created by ' . getUsername(Auth::id()),
+                                    'icon' =>  $img,
+                                    'module' => 2,
+                                ]),
+                                'web_link' => 'training_schedule/vp_approval/' . encryptId($trainingSchedule->id),
+                                'assigned_user' => $assigned_users,
+                                'created_by' => Auth::id(),
+                            ];
 
-                        notificationSave($notificationData);
+                            notificationSave($notificationData);
+                        }
                     }
                 }
                 Session::flash('success', 'Your data has been created successfully');
@@ -846,6 +848,13 @@ class TrainingScheduleController extends Controller
                     })
                     ->first();
                 $vp_detail = $this->user->select('id', 'role', 'name', 'employee_id', 'email')->whereRaw("FIND_IN_SET(10, role) > 0")->first();
+                if (empty($vp_detail) || empty($vp_detail->name)) {
+                    $vp_detail = $this->user
+                        ->select('id', 'role', 'name', 'employee_id', 'email')
+                        ->where('role', 1)
+                        ->first();
+                }
+
                 if ($approveexists) {
                     $data = array(
                         'training_schedule' => $training_schedule,
@@ -1119,24 +1128,25 @@ class TrainingScheduleController extends Controller
                     /**
                      * Send Web notification
                      */
-                    $assigned_users = $vp_detail->id;
-                    $img = admin_url('public/assets/icons/traning.png');
-                    $notificationData = [
-                        'notification_type' => 2,
-                        'module_type' => 2,
-                        'notification_message' => $mailsubject,
-                        'mobile_notification' => json_encode([
-                            'title' => $mailsubject,
-                            'message' => 'A training reschedule has been created by ' . getUsername(Auth::id()),
-                            'icon' =>  $img,
-                            'module' => 2,
-                        ]),
-                        'web_link' => 'training_schedule/vp_approval/' . encryptId($trainingSchedule->id),
-                        'assigned_user' => $assigned_users,
-                        'created_by' => Auth::id(),
-                    ];
-
-                    notificationSave($notificationData);
+                    if (!empty($vp_detail)) {
+                        $assigned_users = $vp_detail->id;
+                        $img = admin_url('public/assets/icons/traning.png');
+                        $notificationData = [
+                            'notification_type' => 2,
+                            'module_type' => 2,
+                            'notification_message' => $mailsubject,
+                            'mobile_notification' => json_encode([
+                                'title' => $mailsubject,
+                                'message' => 'A training reschedule has been created by ' . getUsername(Auth::id()),
+                                'icon' =>  $img,
+                                'module' => 2,
+                            ]),
+                            'web_link' => 'training_schedule/vp_approval/' . encryptId($trainingSchedule->id),
+                            'assigned_user' => $assigned_users,
+                            'created_by' => Auth::id(),
+                        ];
+                        notificationSave($notificationData);
+                    }
                 }
             }
             Session::flash('success', 'Your data has been updated successfully');
@@ -1281,6 +1291,8 @@ class TrainingScheduleController extends Controller
                 __("common.sno"),
                 'From Date',
                 'To Date',
+                'Start Time',
+                'End Time',
                 'Training Topic',
                 'Trainer',
                 'Unit',
@@ -1359,7 +1371,7 @@ class TrainingScheduleController extends Controller
                 __("common.created_by"),
                 __("common.created_date"),
             ];
-         
+
             $data = array(
                 'header' => $header,
                 'content' => $allData,

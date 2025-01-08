@@ -448,7 +448,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 50,
-                        regex: /^[a-zA-Z]{2,}$/
+                        regex: /^[a-zA-Z ]{2,}$/,
                     },
                     unit: {
                         required: true,
