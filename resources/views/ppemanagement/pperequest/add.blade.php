@@ -312,7 +312,7 @@
                         maxlength: "Reason must contain between 3 and 600 characters.",
                     },
                     ppe_file: {
-                        extension: "Please enter a value with a valid mimetype."
+                        extension: "Please select the valid image file."
                     },
                     remarks: {
                         required: "Reason cannot be empty.",

@@ -528,11 +528,11 @@
                             required: "{{ __('Description is Required') }}",
                             minlength: "{{ __('common.validate_min_length') }}",
                             maxlength: "Maximum Characters should not exceed 100",
-                            regex: "PPE Name should be alphanumeric and can include -, _, ', \", (, ).,:,;",
+                            regex: "description should be alphanumeric and can include -, _, ', \", (, ).,:,;",
                         },
                         typeofwork_upload: {
                             required: "{{ __('Image is Required') }}",
-                             extension: "Please enter a value with a valid mimetype."
+                             extension: "Please select the value with image file."
                         },
                     },
                     errorElement: 'span',

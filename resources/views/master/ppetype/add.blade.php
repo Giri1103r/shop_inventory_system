@@ -77,7 +77,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 100,
-                        regex: /^[a-zA-Z\s-]*$/,
+                        regex: /^[a-zA-Z0-9\s-]*$/,
                         remote: {
                             url: '{{ admin_url('ppe_type/unique') }}',
                             type: 'post',

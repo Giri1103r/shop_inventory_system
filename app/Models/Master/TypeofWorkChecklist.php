@@ -304,6 +304,10 @@ class TypeofWorkChecklist extends Model
                         if ($existingRecord) {
                             $existingRecord->update($data);
                         }
+                        else {
+                            $data['created_by'] = Auth::id();
+                            $this->create($data);
+                        }
                     }
                 }
             }
@@ -347,6 +351,10 @@ class TypeofWorkChecklist extends Model
                         ];
                         if ($existingRecord) {
                             $existingRecord->update($data);
+                        }
+                        else {
+                            $data['created_by'] = Auth::id();
+                            $this->create($data);
                         }
                     }
                 }
@@ -392,6 +400,10 @@ class TypeofWorkChecklist extends Model
                         if ($existingRecord) {
                             $existingRecord->update($data);
                         }
+                        else {
+                            $data['created_by'] = Auth::id();
+                            $this->create($data);
+                        }
                     }
                 }
             }
@@ -436,6 +448,10 @@ class TypeofWorkChecklist extends Model
                         if ($existingRecord) {
                             $existingRecord->update($data);
                         }
+                        else {
+                            $data['created_by'] = Auth::id();
+                            $this->create($data);
+                        }
                     }
                 }
             }
@@ -479,6 +495,10 @@ class TypeofWorkChecklist extends Model
                         ];
                         if ($existingRecord) {
                             $existingRecord->update($data);
+                        }
+                        else {
+                            $data['created_by'] = Auth::id();
+                            $this->create($data);
                         }
                     }
                 }

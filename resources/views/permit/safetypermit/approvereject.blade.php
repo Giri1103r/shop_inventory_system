@@ -270,14 +270,14 @@
 
                         <div class="row">
                             <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">O2%</label>
+                                <label class="form-label view_label">O2% :</label>
                                 <span class="view_data">
                                     {{ $confined_space_entry->o2_percentage ?? 'N/A' }}
                                 </span>
                             </div>
 
                             <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label m-1">System Isolated</label>
+                                <label class="form-label view_label m-1">System Isolated :</label>
                                 <span class="view_data">
                                     @if (isset($confined_space_entry) && isset($confined_space_entry->system_isolated) && $confined_space_entry->system_isolated == 1)
                                     <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
@@ -289,7 +289,7 @@
                             </div>
 
                             <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label m-1">Rescue System Available</label>
+                                <label class="form-label view_label m-1">Rescue System Available :</label>
                                 <span class="view_data">
                                     @if ( isset($confined_space_entry) && isset($confined_space_entry->rescue_system) && $confined_space_entry->rescue_system == 1)
                                         <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
@@ -300,7 +300,7 @@
                             </div>
 
                             <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label m-1">Confined Space Attendant</label>
+                                <label class="form-label view_label m-1">Confined Space Attendant :</label>
                                 <span class="view_data">
                                     @if (isset($confined_space_entry) && isset($confined_space_entry->confined_attendant) && $confined_space_entry->confined_attendant == 1)
                                         <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
@@ -312,14 +312,14 @@
 
 
                             <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">Attendant Name</label>
+                                <label class="form-label view_label">Attendant Name :</label>
                                 <span class="view_data">
                                     {{ $confined_space_entry->attendant_name ?? 'N/A' }}
                                 </span>
                             </div>
 
                             <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label m-1">Register for entry & exits</label>
+                                <label class="form-label view_label m-1">Register for entry & exits :</label>
                                 <span class="view_data">
                                     @if (optional($confined_space_entry)->register_entry_exits == 'on')
                                         <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i></b>
@@ -331,7 +331,7 @@
                             </div>
 
                             <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">Any Other Gas / PPM</label>
+                                <label class="form-label view_label">Any Other Gas / PPM :</label>
                                 <span class="view_data">
                                     {{ $confined_space_entry->other_gas ?? 'N/A' }}
                                 </span>
@@ -339,14 +339,14 @@
 
                             <div class="mb-3 col-md-4 form-input">
                                 <label class="form-label view_label">PPM and is therefore safe to enter
-                                    from</label>
+                                    from :</label>
                                 <span class="view_data">
                                     {{ $confined_space_entry->ppm_safe_to_enter ?? 'N/A' }}
                                 </span>
                             </div>
 
                             <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">To</label>
+                                <label class="form-label view_label">To :</label>
                                 <span class="view_data">
                                     {{ $confined_space_entry->to ?? 'N/A' }}
                                 </span>
@@ -1210,41 +1210,45 @@
 
         // Add more file upload blocks dynamically
         $('#dynamic-add-more').on('click', function () {
-            let currentFileUploads = $('.file-upload-block').length;
+    let currentFileUploads = $('.file-upload-block').length;
 
-            if (currentFileUploads >= maxUploads) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Sorry!',
-                    text: 'Maximum 5 records only.',
-                });
-                return;
-            }
-
-            // Create new file upload block HTML
-            let newFileUploadBlock = `
-                <div class="col-md-4 mb-3 file-upload-block">
-                    <label for="site_image_${currentFileUploads}" class="form-label require">Site Image</label>
-                    <input type="file" class="form-control validate-file-accept validate-file-required"
-                        name="site_images[${currentFileUploads}][]"
-                        id="site_image_${currentFileUploads}"
-                        multiple data-error="Please upload with a valid file type">
-                    <div class="text-danger"></div>
-                    <small>Allowed file types: png, jpeg , jpg</small>
-                    <button type="button" class="btn btn-danger btn-sm remove-upload-block">
-                 <i class="fas fa-trash"></i>
-                </button>
-                        </div>
-                    `;
-
-            // Append the new file upload block to the container
-            $('#file-upload-container').append(newFileUploadBlock);
-            $(document).on('click', '.remove-upload-block', function() {
-                 $(this).closest('.file-upload-block').remove();
-            });
-            // Revalidate the newly added file input
-            $('#ehs_verification').validate().element(`#site_image_${currentFileUploads}`);
+    if (currentFileUploads >= maxUploads) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Sorry!',
+            text: 'Maximum 5 records only.',
         });
+        return;
+    }
+
+    // Create new file upload block HTML
+    let newFileUploadBlock = `
+        <div class="col-md-4 mb-3 file-upload-block">
+            <label for="site_image_${currentFileUploads}" class="form-label require">Site Image</label>
+            <input type="file" class="form-control validate-file-accept validate-file-required"
+                name="site_images[${currentFileUploads}][]"
+                id="site_image_${currentFileUploads}"
+                multiple data-error="Please upload with a valid file type">
+            <div class="text-danger"></div>
+            <small>Allowed file types: png, jpeg , jpg</small>
+            <button type="button" class="btn btn-danger btn-sm remove-upload-block">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    `;
+
+
+    $('#file-upload-container').append(newFileUploadBlock);
+
+
+    $(document).on('click', '.remove-upload-block', function() {
+        $(this).closest('.file-upload-block').remove();
+    });
+
+
+    $('#ehs_verification').validate().resetForm(); 
+});
+
 
         // Initialize form validation
         $('#ehs_verification').validate({
@@ -1254,6 +1258,7 @@
                     minlength: 3,
                     maxlength: 600,
                 },
+
 
             },
             messages: {
