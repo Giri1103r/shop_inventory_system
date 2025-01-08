@@ -79,7 +79,7 @@
                                         <th>Reporting Manager</th>
                                         <th data-priority="2">{{ __('common.status') }} </th>
                                         <th>{{ __('common.created_date') }}</th>
-                                        <th data-priority="1" >{{ __('common.action') }}</th>
+                                        <th data-priority="1">{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -140,6 +140,12 @@
                             d.employee_status = $('#employee_status').val();
                             d.status = $('#status').val();
 
+                        },
+                        error: function(xhr, error, code) {
+                            if (xhr.status === 419) {
+                                alert('Session has expired. You will be redirected to the login page.');
+                                window.location.href = "{{ url('') }}"; // Redirect to login page
+                            }
                         }
                     },
                     columns: [{
