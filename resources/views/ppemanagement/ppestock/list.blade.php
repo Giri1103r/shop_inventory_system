@@ -160,6 +160,12 @@
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
 
+                    },
+                    error: function(xhr, error, code) {
+                        if (xhr.status === 419) {
+                            alert('Session has expired. You will be redirected to the login page.');
+                            window.location.href = "{{ url('') }}"; 
+                        }
                     }
                 },
                 columns: [{
