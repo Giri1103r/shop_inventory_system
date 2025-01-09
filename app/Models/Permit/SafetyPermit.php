@@ -426,17 +426,16 @@ class SafetyPermit extends Model
     public function deleterecord($id)
     {
         $update_data = [
-            'status' => 0,
-            'trash' => 'YES',
+            'permit_status' => 14,
         ];
 
-        $main_result = $this->where('id', $id)->update($update_data);
+        return $this->where('id', $id)->update($update_data);
 
-        $WorkmanInvolved = WorkmanInvolved::where('permit_id', $id)->update($update_data);
-        return [
-            'main_result' => $main_result,
-            'WorkmanInvolved' => $WorkmanInvolved,
-        ];
+        // $WorkmanInvolved = WorkmanInvolved::where('permit_id', $id)->update($update_data);
+        // return [
+        //     'main_result' => $main_result,
+        //     'WorkmanInvolved' => $WorkmanInvolved,
+        // ];
     }
 
 

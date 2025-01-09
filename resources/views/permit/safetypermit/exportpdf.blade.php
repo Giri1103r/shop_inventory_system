@@ -723,7 +723,7 @@
             </td>
         </tr>
     </table>
-    @if ($safetypermit['permit_status'] >= 2)
+    @if (isset($getEhSverification) && $safetypermit['permit_status'] >= 2)
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -783,8 +783,11 @@
     @endif
 
     @if (
-        $safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED ||
-            ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING && $safetypermit['permit_extension_status'] == 1))
+        $getsafetyPermitExtension->isNotEmpty() &&
+            ($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED ||
+                ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&
+                    $safetypermit['permit_extension_status'] == 1 &&
+                    $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED)))
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -830,8 +833,10 @@
     @endif
 
     @if (
-        $safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED_APPROVAL ||
-            ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING && $safetypermit['permit_extension_status'] == 1))
+        $getsafetyPermitExtension->isNotEmpty() &&
+            ($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED_APPROVAL ||
+                ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&
+                    $safetypermit['permit_extension_status'] == 1)))
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -875,10 +880,12 @@
             @endforeach
         </table>
     @endif
-    @if (
-        $safetypermit['permit_status'] != 8 &&
-            $safetypermit['permit_status'] != 5 &&
-            ($safetypermit['permit_status'] > 3 || $safetypermit['permit_status'] > 4))
+    @if (isset($getEhsapproval) &&
+            ($safetypermit['permit_status'] != 8 &&
+                $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED &&
+                $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED &&
+                $safetypermit['permit_status'] != 5 &&
+                ($safetypermit['permit_status'] > 3 || $safetypermit['permit_status'] > 4)))
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -920,7 +927,11 @@
         </table>
     @endif
 
-    @if ($safetypermit['permit_status'] >= 7 && $safetypermit['permit_status'] != 8)
+    @if (isset($getplantheadapproval) &&
+            ($safetypermit['permit_status'] >= STATUS_PLANT_HEAD_APPROVED &&
+                $safetypermit['permit_status'] != STATUS_EHS_RESUME &&
+                $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED &&
+                $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED_APPROVAL))
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
