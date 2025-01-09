@@ -210,9 +210,9 @@ class SafetyApproveReject extends Model
     // dd($data);
         return $data;
     }
-    
-    
-    
+
+
+
 
     public function getEhsapproval($ptw_id)
     {
@@ -227,11 +227,11 @@ class SafetyApproveReject extends Model
 
 
 
-    public function getplantheadapproval($ptw_id)
+    public function getplantheadapproval($id)
     {
         $data = $this->select('ptw_aprove_reject.*')
-            ->where('ptw_aprove_reject.permit_id', $ptw_id)
-            ->where('ptw_aprove_reject.approve_reject_status', 7)->where('ptw_aprove_reject.approve_reject_type', 3)->where('ptw_aprove_reject.trash', 'NO')
+            ->where('ptw_aprove_reject.permit_id', $id)
+           ->where('ptw_aprove_reject.approve_reject_type', 3)->where('ptw_aprove_reject.trash', 'NO')
             ->first();
 
         return $data;
