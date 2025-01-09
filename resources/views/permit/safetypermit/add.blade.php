@@ -967,7 +967,7 @@
 
             $('#employee_code').select2({
                 ajax: {
-                    url: '{{ admin_url('safetypermit/ employeeid') }}',
+                    url: '{{ admin_url('safetypermit/employeeid') }}',
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
