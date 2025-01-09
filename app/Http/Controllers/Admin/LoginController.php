@@ -185,7 +185,7 @@ class LoginController extends Controller
             Session::flash('success', 'OTP sent to registered email Address');
             return redirect(admin_url('password/otp'))->with(['token' => $token, 'email' => $user->email]);
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', 'Please try after sometime!');
             return redirect()->back();
         }
@@ -353,7 +353,7 @@ class LoginController extends Controller
 
             return view('auth.passwords.reset', ['token' => $token]);
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', 'Please try after sometimes!');
             return redirect(admin_url('password/forgot'));
         }
@@ -407,7 +407,7 @@ class LoginController extends Controller
                 return redirect(admin_url('login'));
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Please try after sometimes!');
             return redirect()->back();
         }

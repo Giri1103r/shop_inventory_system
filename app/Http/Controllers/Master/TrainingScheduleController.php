@@ -212,7 +212,7 @@ class TrainingScheduleController extends Controller
 
                     return $datatables->skipPaging()->make(true);
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -366,14 +366,14 @@ class TrainingScheduleController extends Controller
                 }
                 Session::flash('success', 'Your data has been created successfully');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('training_schedule/list'));
         }
@@ -517,7 +517,7 @@ class TrainingScheduleController extends Controller
 
                 Session::flash('success', 'Attendance has been saved successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
@@ -698,7 +698,7 @@ class TrainingScheduleController extends Controller
 
             return redirect(admin_url('training_schedule/list'));
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong. Please try again later!');
             return redirect()->back();
         }
@@ -757,7 +757,7 @@ class TrainingScheduleController extends Controller
             Session::flash('success', 'Training has ended successfully!');
             return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong. Please try again later!');
             return redirect()->back();
         }
@@ -814,7 +814,7 @@ class TrainingScheduleController extends Controller
             }
             return view('master.training_schedule.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong. Please try again later!');
             return redirect()->back();
         }
@@ -837,7 +837,7 @@ class TrainingScheduleController extends Controller
 
             return response()->json(['html' => $html]);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return response()->json(['error' => 'Something went wrong.'], 500);
         }
     }
@@ -880,7 +880,7 @@ class TrainingScheduleController extends Controller
                 }
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -1032,12 +1032,12 @@ class TrainingScheduleController extends Controller
                     ? 'Your data has been Approved successfully'
                     : 'Your data has been Rejected');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
             return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('training_schedule/list'));
         }
@@ -1067,7 +1067,7 @@ class TrainingScheduleController extends Controller
             }
             return view('master.training_schedule.nomination', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -1183,7 +1183,7 @@ class TrainingScheduleController extends Controller
             Session::flash('success', 'Your data has been updated successfully');
             return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('training_schedule/list'));
         }
@@ -1200,7 +1200,7 @@ class TrainingScheduleController extends Controller
 
             return response()->json(['status' => 'success', 'msg' => 'Training Schedule status changed'], 200);
         } catch (Exception $ex) {
-
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -1301,7 +1301,7 @@ class TrainingScheduleController extends Controller
             Session::flash('success', __('Your data has been uploaded sucessfully'));
             return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', __('Training Schedule upload failed'));
             return redirect(admin_url('training_schedule/list'));
         }
@@ -1432,7 +1432,7 @@ class TrainingScheduleController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -1470,7 +1470,7 @@ class TrainingScheduleController extends Controller
             $filename = "Certificate.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return response()->json(['error' => 'Something went wrong while generating the PDF.']);
         }
     }

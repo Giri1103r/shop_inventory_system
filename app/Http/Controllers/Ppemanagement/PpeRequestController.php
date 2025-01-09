@@ -143,7 +143,7 @@ class PpeRequestController extends Controller
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
                 }
             }
@@ -309,12 +309,12 @@ class PpeRequestController extends Controller
                 Session::flash('success', __('Your data has been created successfully!'));
                 return redirect(admin_url('ppe_request/list'));
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
                 return redirect(admin_url('ppe_request/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }

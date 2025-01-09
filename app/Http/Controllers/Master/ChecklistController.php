@@ -74,6 +74,7 @@ class ChecklistController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
                 }
             }
@@ -121,6 +122,7 @@ class ChecklistController extends Controller
             }
             return redirect(admin_url('ptw/checklistmaster/list'));
         } catch (Exception $ex) {
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ptw/checklistmaster/list'));
         }
@@ -182,7 +184,7 @@ class ChecklistController extends Controller
             Session::flash('success', __('Your data has beeb updated successfully'));
             return redirect(admin_url('ptw/checklistmaster/list'));
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', __('Something went wrong try again'));
             return redirect(admin_url('ptw/checklistmaster/list'));
         }
@@ -216,7 +218,7 @@ class ChecklistController extends Controller
 
             return response()->json(['status' => 'success', 'msg' => __('Equipment checklist status changed')], 200);
         } catch (Exception $ex) {
-
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
         }
     }
@@ -230,7 +232,7 @@ class ChecklistController extends Controller
 
             return response()->json(['status' => 'success', 'msg' => __('Equipment Checklist deleted successfully')], 200);
         } catch (Exception $ex) {
-
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
         }
     }
@@ -327,6 +329,7 @@ class ChecklistController extends Controller
             Session::flash('success', __('Equipment Checklist uploaded sucessfully'));
             return redirect(admin_url('ptw/checklistmaster/list'));
         } catch (Exception $ex) {
+            report($ex);
             Session::flash('error', __('Equipment Checklist upload failed'));
             return redirect(admin_url('ptw/checklistmaster/list'));
         }

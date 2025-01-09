@@ -118,7 +118,7 @@ class AdminController extends Controller
             Session::flash('success', 'User profile is updated successfully!');
             return redirect(admin_url('profile'));
         } catch (Exception $ex) {
-
+            report($ex);
             return "Error";
         }
     }
@@ -144,7 +144,7 @@ class AdminController extends Controller
             Session::flash('success', 'User profile is updated successfully!');
             return redirect(admin_url('profile'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return "Error";
         }
     }
@@ -175,7 +175,7 @@ class AdminController extends Controller
 
             return redirect(admin_url('profile'));
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', 'Please try after sometimes!');
             return redirect()->back();
         }

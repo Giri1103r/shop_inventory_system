@@ -94,7 +94,7 @@ class CompanyController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -162,7 +162,7 @@ class CompanyController extends Controller
             return redirect(admin_url('company/list'));
         } catch (Exception $ex) {
 
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('company/list'));
         }
@@ -270,7 +270,7 @@ class CompanyController extends Controller
 
             return response()->json(['status' => 'success', 'msg' => 'Company status changed'], 200);
         } catch (Exception $ex) {
-
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -289,7 +289,7 @@ class CompanyController extends Controller
             $this->company->deleterecord($id);
             return response()->json(['status' => 'success', 'msg' => 'Company deleted successfully'], 200);
         } catch (Exception $ex) {
-
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -371,7 +371,7 @@ class CompanyController extends Controller
             Session::flash('success', __('Company uploaded sucessfully'));
             return redirect(admin_url('company/list'));
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', __('Company upload failed'));
             return redirect(admin_url('company/list'));
         }

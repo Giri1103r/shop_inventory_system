@@ -114,6 +114,7 @@ class UserPermissionController extends Controller
 
             return response()->json(['status' => 'success', 'userpermission' => $menu_permission_list], 200);
         } catch (Exception $ex) {
+            report($ex);
             Log::error('Error fetching user permissions: ' . $ex->getMessage());
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time. Error: ' . $ex->getMessage()], 406);
         }

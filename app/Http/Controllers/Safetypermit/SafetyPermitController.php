@@ -629,7 +629,7 @@ class SafetyPermitController extends Controller
 
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong. Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
@@ -719,7 +719,6 @@ class SafetyPermitController extends Controller
 
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
-        dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
