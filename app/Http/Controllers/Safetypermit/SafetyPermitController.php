@@ -147,7 +147,7 @@ class SafetyPermitController extends Controller
                             }
 
                             if (CheckUserPermission('edit')) {
-                            if (($row->created_by == Auth::id() && $row->permit_status == STATUS_EHS_VERIFICATION_PENDING)) {
+                            if (($row->created_by == Auth::id() && ($row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||  $row->permit_status == STATUS_EHS_DECLINE))) {
                                 $btn .= '<a href="' . admin_url('safetypermit/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             }
 
@@ -849,7 +849,7 @@ class SafetyPermitController extends Controller
                 );
                 notificationSave($notificationData);
             } elseif ($request->has('decline')) {
-                $mailsubject = 'EHS declined the permit';
+                $mailsubject = 'EHS declined the permit Rework the permit';
                 $notifywhere = array(
                     'id' => $safetypermit->created_by,
                 );
@@ -891,7 +891,7 @@ class SafetyPermitController extends Controller
                         'id' => $safetypermit->id,
                         'module' => 1,
                     )),
-                    'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
+                    'web_link' =>  admin_url('safetypermit/edit/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($userids),
                     'created_by' => Auth::id(),
                 );

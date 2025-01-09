@@ -287,8 +287,9 @@ class SafetyPermit extends Model
         $update_array['equiment_involved_others'] = $request->equiment_involved_others ?? $safetypermit->equiment_involved_others;
         $update_array['talk_givenby'] = $request->talk_givenby ?? $safetypermit->talk_givenby;
         $update_array['attendance_toolbox_talk'] = $request->attendance_toolbox_talk ?? $safetypermit->attendance_toolbox_talk;
-
+        $update_array['permit_status'] = STATUS_EHS_VERIFICATION_PENDING;
         $update_array['updated_by'] = Auth::id();
+
 
         return  $this->where('id', $id)->update($update_array);
     }
