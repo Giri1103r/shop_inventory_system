@@ -62,8 +62,8 @@ if (!function_exists('DBdatetimeformat')) {
 if (!function_exists('Displaydateformat')) {
 
     function Displaydateformat($date)
-    { 
-        if($date == '' || $date == null){
+    {
+        if ($date == '' || $date == null) {
             return '';
         }
 
@@ -222,10 +222,20 @@ if (!function_exists('insertUserLog')) {
     }
 }
 
-if (!function_exists('string_to_array')) {
+// if (!function_exists('string_to_array')) {
 
+//     function string_to_array($string, $separate = ',')
+//     {
+//         return array_map('trim', explode($separate, $string));
+//     }
+// }
+if (!function_exists('string_to_array')) {
     function string_to_array($string, $separate = ',')
     {
+        if (is_null($string) || $string === '') {
+            return []; 
+        }
+
         return array_map('trim', explode($separate, $string));
     }
 }
@@ -1394,13 +1404,12 @@ if (!function_exists('getMonth')) {
         return Str::replace('_', " ", $string);
     }
 
-    if(!function_exists('get_permit_no'))
-{
-    function get_permit_no($id)
-    {
+    if (!function_exists('get_permit_no')) {
+        function get_permit_no($id)
+        {
 
-        $data = SafetyPermit::where('id',$id)->select('permit_id')->first();
-        return $data->permit_id;
+            $data = SafetyPermit::where('id', $id)->select('permit_id')->first();
+            return $data->permit_id;
+        }
     }
-}
 }

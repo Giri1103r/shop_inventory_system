@@ -170,7 +170,7 @@ class Venue extends Model
 
         return $this->where('id', $id)->update($update_data);
     }
-    public function ajaxList($unitId = '', $venue_id)
+    public function ajaxList($venue_id , $unitId = '')
     {
         $query = $this->select('id', 'name_of_the_conference_hall')->where('status', 1);
 

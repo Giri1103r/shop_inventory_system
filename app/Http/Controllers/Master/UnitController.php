@@ -468,7 +468,7 @@ class UnitController extends Controller
     {
         $locationId = decryptId($locationId);
         $id = decryptId($request->id);
-        $unit = $this->unit->ajaxList($locationId, $id);
+        $unit = $this->unit->ajaxList($id ,$locationId);
 
         return response()->json($unit);
     }

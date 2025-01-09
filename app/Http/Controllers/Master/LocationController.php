@@ -369,7 +369,7 @@ class LocationController extends Controller
 
         $companyId = decryptId($companyId);
         $id = decryptId($request->id);
-        $locations = $this->location->ajaxList($companyId, $id);
+        $locations = $this->location->ajaxList( $id , $companyId);
 
         return response()->json($locations);
     }
