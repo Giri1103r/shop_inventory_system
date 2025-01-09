@@ -140,9 +140,8 @@ class SafetyPermit extends Model
         if ($request->has('status') && $request->status) {
 
             $status = decryptId($request->status);
-            $query = $query->where('ptw_safety.permit_status', 'LIKE', '%' . $status . '%');
+            $query = $query->where('ptw_safety.permit_status',  $status);
         }
-
 
         $data_count = $query;
         $total_records = $data_count->count();
@@ -810,7 +809,7 @@ class SafetyPermit extends Model
         if ($request->has('status') && $request->status) {
 
             $status = decryptId($request->status);
-            $query = $query->where('ptw_safety.permit_status', 'LIKE', '%' . $status . '%');
+            $query = $query->where('ptw_safety.permit_status',  $status);
         }
 
         return  $query->orderBy('ptw_safety.id','DESC')->get();
