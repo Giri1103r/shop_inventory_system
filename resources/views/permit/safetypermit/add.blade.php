@@ -221,10 +221,10 @@
                                             </div>
                                             <div class="col-md-4 mb-3 " style="margin-right: 50px">
                                                 <div class="form-group d-flex align-items-center ps-5 ">
-                                                    <label for = "shutdowncheckbox" class="form-label mb-0"
+                                                    <label for = "tagfield" class="form-label mb-0"
                                                         style="margin-right:30px;">Tag Field
                                                         properly (Yes/No)</label>
-                                                    <input type="checkbox" id = "shutdowncheckbox"
+                                                    <input type="checkbox" id = "tagfield"
                                                         class=" shutdowncheckbox" name="tagfield" disabled>
 
                                                 </div>

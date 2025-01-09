@@ -272,7 +272,7 @@
                                 </span>
                             </div>
                             <div class="mb-3 col-md-4 form-input">
-                               
+
                                 <label class="form-label view_label m-1">Isolation fire panel Description:</label>
                                 <span class="view_data">
                                     {{ $safetypermit->isolationpanel_description }}</span>
@@ -709,7 +709,7 @@
                     </div>
 
 
-                    @if ($safetypermit['permit_status'] >= 2)
+                    @if (isset($getEhSverification) && $safetypermit['permit_status'] >= 2)
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">
@@ -754,11 +754,13 @@
                             </div>
                         </div>
                     @endif
+                    {{-- @dd($getsafetyPermitExtension) --}}
                     @if (
-                        $safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED ||
-                            ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&
-                                $safetypermit['permit_extension_status'] == 1 &&
-                                $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED))
+                        $getsafetyPermitExtension->isNotEmpty() &&
+                            ($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED ||
+                                ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&
+                                    $safetypermit['permit_extension_status'] == 1 &&
+                                    $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED)))
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">
@@ -797,8 +799,10 @@
                         </div>
                     @endif
                     @if (
-                        $safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED_APPROVAL ||
-                            ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING && $safetypermit['permit_extension_status'] == 1))
+                        $getsafetyPermitExtension->isNotEmpty() &&
+                            ($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED_APPROVAL ||
+                                ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&
+                                    $safetypermit['permit_extension_status'] == 1)))
 
                         <div class="card-body ">
                             <div class="row">
@@ -831,12 +835,12 @@
                             @endforeach
                         </div>
                     @endif
-                    @if (
-                        $safetypermit['permit_status'] != 8 &&
-                            $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED &&
-                            $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED &&
-                            $safetypermit['permit_status'] != 5 &&
-                            ($safetypermit['permit_status'] > 3 || $safetypermit['permit_status'] > 4))
+                    @if (isset($getEhsapproval) &&
+                            ($safetypermit['permit_status'] != 8 &&
+                                $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED &&
+                                $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED &&
+                                $safetypermit['permit_status'] != 5 &&
+                                ($safetypermit['permit_status'] > 3 || $safetypermit['permit_status'] > 4)))
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">
@@ -868,11 +872,11 @@
                         </div>
                     @endif
 
-                    @if (
-                        $safetypermit['permit_status'] >= STATUS_PLANT_HEAD_APPROVED &&
-                            $safetypermit['permit_status'] != STATUS_EHS_RESUME &&
-                            $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED &&
-                            $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED_APPROVAL)
+                    @if (isset($getplantheadapproval) &&
+                            ($safetypermit['permit_status'] >= STATUS_PLANT_HEAD_APPROVED &&
+                                $safetypermit['permit_status'] != STATUS_EHS_RESUME &&
+                                $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED &&
+                                $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED_APPROVAL))
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">
@@ -933,7 +937,7 @@
                                         @else
                                             @foreach ($status_log as $status_log)
                                                 <tr>
-                                                    <td>{{ isset($status_log['status_name']) ? $status_log['status_name'] : '-' }}
+                                                    <td>{{ isset($status_log['to_status']) ? $status_log['to_status'] : '-' }}
                                                     </td>
                                                     <td>{{ isset($status_log['approved_by']) ? getUsername($status_log['approved_by']) : '-' }}
                                                     </td>

@@ -140,9 +140,8 @@ class SafetyPermit extends Model
         if ($request->has('status') && $request->status) {
 
             $status = decryptId($request->status);
-            $query = $query->where('ptw_safety.permit_status', 'LIKE', '%' . $status . '%');
+            $query = $query->where('ptw_safety.permit_status',  $status);
         }
-
 
         $data_count = $query;
         $total_records = $data_count->count();
@@ -287,8 +286,9 @@ class SafetyPermit extends Model
         $update_array['equiment_involved_others'] = $request->equiment_involved_others ?? $safetypermit->equiment_involved_others;
         $update_array['talk_givenby'] = $request->talk_givenby ?? $safetypermit->talk_givenby;
         $update_array['attendance_toolbox_talk'] = $request->attendance_toolbox_talk ?? $safetypermit->attendance_toolbox_talk;
-
+        $update_array['permit_status'] = STATUS_EHS_VERIFICATION_PENDING;
         $update_array['updated_by'] = Auth::id();
+
 
         return  $this->where('id', $id)->update($update_array);
     }
@@ -426,17 +426,16 @@ class SafetyPermit extends Model
     public function deleterecord($id)
     {
         $update_data = [
-            'status' => 0,
-            'trash' => 'YES',
+            'permit_status' => 14,
         ];
 
-        $main_result = $this->where('id', $id)->update($update_data);
+        return $this->where('id', $id)->update($update_data);
 
-        $WorkmanInvolved = WorkmanInvolved::where('permit_id', $id)->update($update_data);
-        return [
-            'main_result' => $main_result,
-            'WorkmanInvolved' => $WorkmanInvolved,
-        ];
+        // $WorkmanInvolved = WorkmanInvolved::where('permit_id', $id)->update($update_data);
+        // return [
+        //     'main_result' => $main_result,
+        //     'WorkmanInvolved' => $WorkmanInvolved,
+        // ];
     }
 
 
@@ -810,7 +809,7 @@ class SafetyPermit extends Model
         if ($request->has('status') && $request->status) {
 
             $status = decryptId($request->status);
-            $query = $query->where('ptw_safety.permit_status', 'LIKE', '%' . $status . '%');
+            $query = $query->where('ptw_safety.permit_status',  $status);
         }
 
         return  $query->orderBy('ptw_safety.id','DESC')->get();

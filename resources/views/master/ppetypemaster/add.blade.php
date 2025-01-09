@@ -162,7 +162,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex: /^[a-zA-Z0-9-\s]*$/,
+                        regex: /^[a-zA-Z0-9-\s.+]*$/,
                         remote: {
                             url: '{{ admin_url('ppe_ppetype_master/unique') }}',
                             type: 'get',
@@ -239,7 +239,7 @@
                         required: "PPE Standard cannot be empty.",
                         minlength: "PPE  Standard must be between 3 and 200 characters.",
                         maxlength: "PPE  Standard must be between 3 and 200 characters.",
-                      
+
                     },
                     ppe_file: {
                         extension: "Please select a file with .jpeg,.jpg,.png"
