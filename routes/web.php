@@ -166,20 +166,8 @@ Route::middleware(['securityheader'])->group(function () {
 
             Route::get('administration/users/list', [UserController::class, 'index']);
             Route::post('administration/users/list', [UserController::class, 'index']);
-            Route::get('administration/users/add', [UserController::class, 'add']);
-            Route::post('administration/users/add/submit',  [UserController::class, 'store']);
-            Route::get('administration/users/view/{id}', [UserController::class, 'view']);
-            Route::get('administration/users/edit/{id}',  [UserController::class, 'edit']);
-            Route::post('administration/users/edit/submit', [UserController::class, 'update']);
-            Route::post('administration/users/unique', [UserController::class, 'uniqueCheck']);
-            Route::post('administration/users/status', [UserController::class, 'statusChange']);
-            Route::post('administration/users/delete',  [UserController::class, 'delete']);
             Route::get('administration/users/export/excel', [UserController::class, 'exportExcel']);
             Route::get('administration/users/export/pdf', [UserController::class, 'exportPdf']);
-            Route::get('administration/users/import', [UserController::class, 'import']);
-            Route::post('administration/users/import/submit', [UserController::class, 'importSubmit']);
-            Route::get('administration/users/list/{companyId}', [UserController::class, 'list']);
-            Route::get('administration/users/sampledownload', [UserController::class, 'DownloadSample']);
             /**
              * User Permission
              */
