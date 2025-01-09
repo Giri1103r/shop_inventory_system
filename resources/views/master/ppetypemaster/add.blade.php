@@ -205,7 +205,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 200,
-                        regex: /^[a-zA-Z0-9\-_'"()\s.:;]*$/
+
                     },
                     ppe_file: {
                         extension: "png|jpeg|jpg"
@@ -239,10 +239,10 @@
                         required: "PPE Standard cannot be empty.",
                         minlength: "PPE  Standard must be between 3 and 200 characters.",
                         maxlength: "PPE  Standard must be between 3 and 200 characters.",
-                        regex: "PPE Standard should be alphanumeric and can include -, _, ', \", (, ),:,;,."
+                      
                     },
                     ppe_file: {
-                        extension: "Please select the valid image file."
+                        extension: "Please select a file with .jpeg,.jpg,.png"
                     }
                 },
                 errorElement: 'div',

@@ -72,7 +72,7 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_USER') or define('ROLE_USER', 9);
         defined('ROLE_VISE_PRESIDENT') or define('ROLE_VISE_PRESIDENT', 10);
 
-        
+
         defined('NEW_TRAINING_SCHEDULE') or define('NEW_TRAINING_SCHEDULE', 1);
         defined('VP_APPROVE') or define('VP_APPROVE',2);
         defined('VP_REJECTED') or define('VP_REJECTED', 3);
@@ -92,6 +92,8 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_EHS_APPROVED') or define('STATUS_EHS_APPROVED', 5);
         defined('STATUS_EHS_REJECTED') or define('STATUS_EHS_REJECTED', 6);
         defined('STATUS_USER_APPLIED') or define('STATUS_USER_APPLIED', 7);
+        defined('STATUS_USER_APPLIED') or define('STATUS_Issued', 8);
+
 
 
         defined('TYPE_PPE_REQUEST') or define('TYPE_PPE_REQUEST', 1);

@@ -42,7 +42,7 @@
                                                     <input type="text" name="emp_id"
                                                         class="form-control form-control-sm" id="emp_id"
                                                         value="{{ $employee->employee_id }}"
-                                                        @if (Auth::user()->role != ROLE_SUPERADMIN) readonly @endif>
+                                                        readonly>
                                                     <div class="text-danger"></div>
 
                                                 </div>
@@ -54,7 +54,7 @@
                                                     <input type="text" name="emp_name"
                                                         class="form-control form-control-sm" id="emp_name"
                                                         value="{{ $employee->name }}"
-                                                        @if (Auth::user()->role != ROLE_SUPERADMIN) readonly @endif>
+                                                        readonly >
                                                     <div class="text-danger"></div>
 
                                                 </div>
@@ -65,8 +65,8 @@
                                                     <label for="department" class="form-label require">Department</label>
                                                     <input type="text" name="department" id="department"
                                                         class="form-control form-control-sm"
-                                                        value="{{ getDepartment($employee->department_id) }}"
-                                                        @if (Auth::user()->role != ROLE_SUPERADMIN) readonly @endif>
+                                                        value="{{ getDepartment($employee->department_id) }}" readonly>
+
                                                     <div class="text-danger"></div>
 
                                                 </div>

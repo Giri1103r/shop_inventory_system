@@ -100,20 +100,6 @@
                                                     <div class="text-danger" id="protection_error"></div>
                                                 </div>
                                             </div>
-
-                                            <div class="col-md-4 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">PPE Standard</label>
-                                                    <input type="text" name="ppe_standard" id="ppe_standard"
-                                                        class="form-control " value="{{ $ppetypemaster->ppe_standard }}"
-                                                        placeholder="Enter the ppe standard">
-                                                    @error('ppe_standard')
-                                                        <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
-                                                    <div class="text-danger" id="ppe_standard_error"></div>
-                                                </div>
-                                            </div>
-
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Image</label>
@@ -137,6 +123,17 @@
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
                                                     <div id="ppe_file_error" class="text-danger"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">PPE Standard</label>
+                                                    <textarea name="ppe_standard"    id="ppe_standard" cols="3" rows="4" class="form-control form-control-sm" placeholder="Enter the ppe standard">{{ $ppetypemaster->ppe_standard }}</textarea>
+
+                                                    @error('ppe_standard')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                    <div class="text-danger" id="ppe_standard_error"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -222,8 +219,8 @@
                     ppe_standard: {
                         required: true,
                         minlength: 3,
-                        maxlength: 30,
-                        regex: /^[a-zA-Z0-9\-_'"()\s.:;]*$/
+                        maxlength: 200,
+
                     },
                     ppe_file: {
                         extension: "png|jpeg|jpg"
@@ -255,12 +252,12 @@
                     },
                     ppe_standard: {
                         required: "PPE Standard cannot be empty.",
-                        minlength: "PPE  Standard must be between 3 and 30 characters.",
-                        maxlength: "PPE  Standard must be between 3 and 30 characters.",
-                        regex: "PPE Standard should be alphanumeric and can include -, _, ', \", (, )."
+                        minlength: "PPE  Standard must be between 3 and 200 characters.",
+                        maxlength: "PPE  Standard must be between 3 and 200 characters.",
+
                     },
                     ppe_file: {
-                        extension: "Please select the valid image file."
+                        extension: "Please select a file with .jpeg,.jpg,.png"
                     }
                 },
                 errorElement: 'div',

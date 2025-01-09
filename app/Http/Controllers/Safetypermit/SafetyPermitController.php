@@ -141,15 +141,18 @@ class SafetyPermitController extends Controller
 
 
 
-
+                            if (CheckUserPermission('view')) {
                             $btn .= '<a href="' . admin_url('safetypermit/view/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="' . __('common.view') . '">
                             <i class="fa-solid fa-eye"></i>
                         </a>';
+                            }
+
+                            if (CheckUserPermission('edit')) {
                             if (($row->created_by == Auth::id() && $row->permit_status == STATUS_EHS_VERIFICATION_PENDING)) {
                                 $btn .= '<a href="' . admin_url('safetypermit/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             }
 
-
+                        }
                             if (($row->permit_status >= STATUS_EHS_APPROVE_PENDING)) {
                                 $permitDateTime = Carbon::parse($row->date . ' ' . $row->time_to);
                                 if ($permitDateTime->isFuture()) {
@@ -230,8 +233,8 @@ class SafetyPermitController extends Controller
                     'time_from' => 'required',
                     'time_to' => 'required',
                     'unit_id' => 'required',
-                    'exact_location_job' => 'required|regex:/^[a-zA-Z, ]{3,30}$/',
-                    'job_location_area' => 'required|regex:/^[a-zA-Z, ]{3,50}$/',
+                    'exact_location_job' => 'required',
+                    'job_location_area' => 'required',
                     'sub_permit' => 'required|array|min:1',
                     'job_description' => 'required|min:3|max:600',
                     'equipment_checklist_inspection' => 'required',
@@ -247,9 +250,7 @@ class SafetyPermitController extends Controller
                     'time_to.required' => 'To Time cannot be empty.',
                     'unit_id.required' => 'Please Select the unit.',
                     'exact_location_job.required' => 'Exact Job Location cannot be empty.',
-                    'exact_location_job.regex' => 'Exact Job Location contains only the letters and must be between 3 and 30 characters.',
                     'job_location_area.required' => 'Job Location Area cannot be empty.',
-                    'job_location_area.regex' => 'Job Location Area contains only the letters and must be between 3 and 50 characters.',
                     'sub_permit.required' => 'At least one work type should be selected.',
                     'job_description.required' => 'Job Description cannot be empty.',
                     'job_description.min' => 'Job Description must be between 3 and 600 characters.',
@@ -455,8 +456,8 @@ class SafetyPermitController extends Controller
                 'time_from' => 'required',
                 'time_to' => 'required',
                 'unit_id' => 'required',
-                'exact_location_job' => 'required|regex:/^[a-zA-Z, ]{3,30}$/',
-                'job_location_area' => 'required|regex:/^[a-zA-Z, ]{3,50}$/',
+                'exact_location_job' => 'required',
+                'job_location_area' => 'required',
                 'sub_permit' => 'required|array|min:1',
                 'job_description' => 'required|min:3|max:600',
                 'equipment_checklist_inspection' => 'required',
@@ -472,9 +473,7 @@ class SafetyPermitController extends Controller
                 'time_to.required' => 'To Time cannot be empty.',
                 'unit_id.required' => 'Please Select the unit.',
                 'exact_location_job.required' => 'Exact Job Location cannot be empty.',
-                'exact_location_job.regex' => 'Exact Job Location contains only the letters and must be between 3 and 30 characters.',
                 'job_location_area.required' => 'Job Location Area cannot be empty.',
-                'job_location_area.regex' => 'Job Location Area contains only the letters and must be between 3 and 50 characters.',
                 'sub_permit.required' => 'At least one work type should be selected.',
                 'job_description.required' => 'Job Description cannot be empty.',
                 'job_description.min' => 'Job Description must be between 3 and 600 characters.',
