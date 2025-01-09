@@ -40,7 +40,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Date</label>
                                                     <input type="text" name="date" id="date_picker"
-                                                        class="form-control" value="{{ $safetypermit->date }}">
+                                                        class="form-control" value="{{ displaydateformat($safetypermit->date) }}">
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
@@ -1017,7 +1017,7 @@
                 flatpickr("#date_picker", {
                     minDate: today,
                     dateFormat: "d-m-Y",
-                    defaultDate: "{{ $safetypermit->date }}",
+                    defaultDate: "{{ displaydateformat($safetypermit->date) }}",
                     onChange: function(selectedDates) {
                         const selectedDate = selectedDates[0];
 
