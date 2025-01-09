@@ -59,12 +59,12 @@ class ProtectiveEquipController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            // /if (CheckUserPermission('view')) {
+                            if (CheckUserPermission('view')) {
                             $btn = '<a href="' . admin_url('ptw/protectiveequipmentmaster/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            // }
-                            // if (CheckUserPermission('edit')) {
+                            }
+                            if (CheckUserPermission('edit')) {
                             $btn .= '<a href="' . admin_url('ptw/protectiveequipmentmaster/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            // }
+                            }
                             // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             return $btn;
                         })
