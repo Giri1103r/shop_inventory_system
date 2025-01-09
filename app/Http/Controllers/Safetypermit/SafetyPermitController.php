@@ -141,15 +141,18 @@ class SafetyPermitController extends Controller
 
 
 
-
+                            if (CheckUserPermission('view')) {
                             $btn .= '<a href="' . admin_url('safetypermit/view/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="' . __('common.view') . '">
                             <i class="fa-solid fa-eye"></i>
                         </a>';
+                            }
+
+                            if (CheckUserPermission('edit')) {
                             if (($row->created_by == Auth::id() && $row->permit_status == STATUS_EHS_VERIFICATION_PENDING)) {
                                 $btn .= '<a href="' . admin_url('safetypermit/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             }
 
-
+                        }
                             if (($row->permit_status >= STATUS_EHS_APPROVE_PENDING)) {
                                 $permitDateTime = Carbon::parse($row->date . ' ' . $row->time_to);
                                 if ($permitDateTime->isFuture()) {
