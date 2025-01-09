@@ -289,7 +289,9 @@ if (!function_exists('getRoleMenu')) {
             foreach ($menu_array[0] as $key => $value) {
                 $class = $value['parent_id'];
                 if ($value['is_parent'] != 0) {
-                    $html .= '<tr> <td>' . $value['name'] . '<span style="padding: 41px;"> <input type="checkbox" name="menu_' . $value['id'] . '_all" class="parent " data-id="' . encryptId($value['id']) . '" data-parentid="" id ="checkbox_' . encryptId($value['id']) . '"> <label for="checkbox_' . encryptId($value['id']) . '"> Select All </label> </span></td><td colspan="5"></td> </tr>';
+                    // $html .= '<tr> <td>' . $value['name'] . '<span style="padding: 41px;"> <input type="checkbox" name="menu_' . $value['id'] . '_all" class="parent " data-id="' . encryptId($value['id']) . '" data-parentid="" id ="checkbox_' . encryptId($value['id']) . '"> <label for="checkbox_' . encryptId($value['id']) . '"> Select All </label> </span></td><td colspan="5"></td> </tr>';
+
+                    $html .= '<tr> <td>' . $value['name'] . '  <span style="padding: 41px;"> <input type="checkbox" name="menu_' . $value['id'] . '_all" class="parent" data-id="' . encryptId($value['id']) . '" data-parentid="' . encryptId($value['parent_id']) . '" id ="checkbox_' . encryptId($value['id']) . '"> <label for="checkbox_' . encryptId($value['id']) . '"> Select All </label></span> </td><td colspan="5"></td> </tr>';
                     if ($value['is_parent'] == '1' && isset($menu_array[$value['id']])) {
                         $html .= getRoleMenuChild($menu_array[$value['id']], $menu_array, 0);
                     }
