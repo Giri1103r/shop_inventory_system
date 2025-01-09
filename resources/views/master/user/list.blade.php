@@ -68,6 +68,7 @@
                                         <th>User ID</th>
                                         <th>User Name</th>
                                         <th>User Role</th>
+                                        <th>Email ID</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -153,6 +154,10 @@
                         {
                             data: 'user_role',
                             name: 'user_role'
+                        },
+                        {
+                            data: 'email',
+                            name: 'email'
                         },
                         {
                             data: 'status',

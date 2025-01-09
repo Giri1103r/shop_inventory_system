@@ -232,24 +232,26 @@
 
             $.validator.addMethod("strongPassword", function(value, element) {
                     return this.optional(element) ||
-                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/.test(value);
+                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_\-])[A-Za-z\d@$!%*?&_\-]{8,16}$/.test(
+                            value);
                 },
                 "{{ __('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character') }}"
-                );
+            );
+
 
             // Validate the form
             $('#employeeepass').validate({
                 rules: {
                     password: {
                         required: true,
-                        minlength: 8, 
-                        maxlength: 16, 
+                        minlength: 8,
+                        maxlength: 16,
                         strongPassword: true
                     },
                     password_confirmation: {
                         required: true,
-                        minlength: 8, 
-                        maxlength: 16, 
+                        minlength: 8,
+                        maxlength: 16,
                         passwordMatch: true
                     },
                 },

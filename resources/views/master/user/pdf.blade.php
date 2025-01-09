@@ -33,6 +33,9 @@
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->role_name }}
                         </td>        
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->email }}
+                        </td>        
                       
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php
@@ -44,7 +47,6 @@
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
                         </td>
-
 
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ Displaydateformat($value->created_at) }}
