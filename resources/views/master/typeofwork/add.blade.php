@@ -532,7 +532,7 @@
                         },
                         typeofwork_upload: {
                             required: "{{ __('Image is Required') }}",
-                             extension: "Please select the value with image file."
+                             extension: "Please select a file with .jpeg,.jpg,.png"
                         },
                     },
                     errorElement: 'span',

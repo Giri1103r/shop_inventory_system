@@ -559,7 +559,7 @@
                         },
                         typeofwork_upload: {
                             required: "{{ __('Image is Required') }}",
-                            extension: "Please enter a value with a valid mimetype."
+                            extension: "Please select a file with .jpeg,.jpg,.png"
                         },
                     },
                     errorElement: 'span',

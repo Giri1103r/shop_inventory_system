@@ -338,7 +338,7 @@
                                                                 style="margin-right: 58px;">Isolation fire panel</label>
                                                             <input type="hidden" name="isolationpanel_checkbox"
                                                                 value="0">
-                                                            
+
                                                             <input type="checkbox" class="shutdowncheckbox"  id="isolationpanel_checkbox"
                                                                 name="isolationpanel_checkbox" value="1"
                                                                 {{ $safetypermit->isolationpanel_checkbox == 1 ? 'checked' : '' }}>
@@ -604,10 +604,9 @@
                                                         <div class="col-md-5">
                                                             <div id="getequipmentinvolved-container" class="row g-3 mt-3">
                                                                 @if ($safetypermit->mapped_equiment_involved)
-                                                                    <div class="mb-3 col-md-4 form-input">
-                                                                        <div class="view_data">
+
                                                                             @foreach ($safetypermit->mapped_equiment_involved as $job => $details)
-                                                                                <div style="flex-wrap: wrap; gap: 10px;">
+
                                                                                     @foreach ($details['checkpoint_names'] as $index => $checkpoint_name)
                                                                                         <div
                                                                                             style="flex: 1 1 calc(33% - 10px); display: flex; align-items: center; gap: 5px;">
@@ -623,10 +622,9 @@
                                                                                             </label>
                                                                                         </div>
                                                                                     @endforeach
-                                                                                </div>
+
                                                                             @endforeach
-                                                                        </div>
-                                                                    </div>
+
                                                                 @endif
                                                             </div>
                                                         </div>
@@ -2039,7 +2037,7 @@
                     if (!isAlreadyInvolved && !displayedEquipment.has(equipmentName)) {
                         const isChecked = isDefaultChecked ? 'checked' : '';
                         const checkpointHtml = `
-                <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint"
+                <div class="col-12 col-md-12  d-flex align-items-center gap-2 checkpoint"
                     data-work-id="${workId}"
                     data-name="${equipmentName}">
                     <input type="checkbox"
