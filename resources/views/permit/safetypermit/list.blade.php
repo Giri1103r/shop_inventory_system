@@ -94,7 +94,6 @@
                                         <th>Unit</th>
                                         <th>Date</th>
                                         <th>Exact Job Location</th>
-                                        <th>Status</th>
                                         <th>Approve Status</th>
                                         <th>Verified By</th>
                                         <th>Approved By</th>
@@ -204,10 +203,6 @@
                     {
                         data: 'exact_location_job',
                         name: 'exact_location_job'
-                    },
-                    {
-                        data: 'status',
-                        name: 'status'
                     },
                     {
                         data: 'status_batch',

@@ -132,8 +132,9 @@ class SafetyPermitController extends Controller
                                 $row->permit_status == STATUS_PLANT_HEAD_APPROVED ||
                                 $row->permit_status == STATUS_PERMIT_EXPIRED ||
                                 $row->permit_status == STATUS_PLANTHEAD_REJECTED ||
-                                $row->permit_status == STATUS_CANCELLED
-                            )) {
+                                $row->permit_status == STATUS_CANCELLED ||
+                                $row->permit_status == STATUS_EHS_HOLD
+                            ) && ($row->created_by == Auth::id() || isAdmin())) {
                                 $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '" class="permitExtension" title="' . __('Permit Extension') . '"><i class="fa fa-external-link"></i></a>';
                             }
 
@@ -152,7 +153,7 @@ class SafetyPermitController extends Controller
                             }
 
                         }
-                            if (($row->permit_status >= STATUS_EHS_APPROVE_PENDING)) {
+                            if (($row->permit_status >= STATUS_EHS_APPROVE_PENDING  &&  $row->permit_status != STATUS_CANCELLED)) {
                                 $permitDateTime = Carbon::parse($row->date . ' ' . $row->time_to);
                                 if ($permitDateTime->isFuture()) {
                                     $btn .= '<a href="' . admin_url('safetypermit/qr/pdf/' . encryptId($row->id)) . '" target="__blank" style="margin-right: 5px;" title="QR PDF">
