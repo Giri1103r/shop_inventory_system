@@ -457,7 +457,7 @@ class VenueController extends Controller
     {
         $unit_id = decryptId($unit_id);
         $id = decryptId($request->id);
-        $venues = $this->venue->ajaxList($unit_id, $id);
+        $venues = $this->venue->ajaxList($id , $unit_id);
 
         return response()->json($venues);
     }

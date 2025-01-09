@@ -496,7 +496,7 @@ class DepartmentController extends Controller
     {
         $unit_id = decryptId($unit_id);
         $id = decryptId($request->id);
-        $departments = $this->department->ajaxList($unit_id, $id);
+        $departments = $this->department->ajaxList($id , $unit_id);
 
         return response()->json($departments);
     }

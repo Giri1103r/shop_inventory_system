@@ -157,8 +157,6 @@ class User extends Authenticatable
                 'employee_id' => $item['emp_id'],
                 'username' => $item['emp_id'],
                 'password' => Hash::make("User@" . trim($item['emp_id'])),
-                'department_id' => null,
-                'designation_id' => $item['designation'],
                 'mobile' => $item['mobile_no'],
                 'created_by' => 1
             ];
@@ -222,7 +220,7 @@ class User extends Authenticatable
             'email' => $employee->email,
             'role' => $commaSeparatedRoles,
             'employee_id' => $employee->emp_id,
-            'company_id' =>$employee->company,
+            'company_id' => $employee->company,
             'unit_id' => $employee->unit,
             'location_id' => $employee->location,
             'department_id' => $employee->department,

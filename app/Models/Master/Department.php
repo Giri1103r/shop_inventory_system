@@ -144,7 +144,7 @@ class Department extends Model
         return $this->where('id', $id)->update($update_array);
     }
 
-    public function ajaxList($unitId = '', $department_id)
+    public function ajaxList($department_id , $unitId = '')
     {
         $query = $this->select('id', 'department_name')->where('status', 1);
 

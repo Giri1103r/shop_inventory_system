@@ -131,39 +131,42 @@ class Employee extends Model
         foreach ($emptemp as $item) {
 
             $emailExists = $this->where('email', $item->email)->where('emp_id', '!=', $item->emp_id)->exists();
-
+            
             if ($emailExists) {
                 $errorMessage = "Email already exists.";
                 $this->updateErrorStatus($item->emp_id, $errorMessage);
                 continue;
             }
             $role = DB::table('template_user_role')
-                ->where('role_name', $item->user_role)
-                ->first();
-
+            ->where('role_name', $item->user_role)
+            ->first();
+         
             $data = [
                 'emp_id' => $item->emp_id ?? null,
                 'emp_name' => $item->emp_name ?? null,
                 'gender' => $item->gender ?? null,
-                'nationality' => $item->nationality ?? null,
                 'email' => $item->email ?? null,
                 'joining_date' => $item->joining_date ? DBdatetimeformat($item->joining_date) : null,
-                'mobile_no' => $item->mobile_no ?? null,
                 'user_role' => $role->id ?? null,
-                'designation' => $item->designation ?? null,
                 'employee_status' => $item->employee_status ?? null,
                 'reporting_manager' => $item->reporting_manager ?? null,
                 'status' => 1,
                 'error_status' => 0,
                 'error_remarks' => null,
-                'created_by' =>1,
+                'created_by' => 1,
             ];
 
-            $exists = $this->where('emp_id', $item->emp_id)->exists();
+            $exists = $this->where('emp_id', $item->emp_id)->first();
 
             if ($exists) {
+                if (!empty($item->mobile_no) || $item->mobile_no != null) {
+                    $data['mobile_no'] = $item->mobile_no;
+                }else{
+                    $data['mobile_no'] = $exists->mobile_no;
+                }
                 $data['updated_at'] = now();
             } else {
+                $data['mobile_no'] = $item->mobile_no ?? null;
                 $data['created_at'] = now();
             }
             $insertArray[] = $data;
@@ -208,8 +211,8 @@ class Employee extends Model
             'emp_name' => $request->emp_name ?? null,
             'gender' => $request->gender ?? null,
             'nationality' => $request->nationality ?? null,
-            'id_type'=>$request->id_type  ?? null,
-            'id_number'=>$request->id_number  ?? null,
+            'id_type' => $request->id_type  ?? null,
+            'id_number' => $request->id_number  ?? null,
             'email' => $request->email ?? null,
             'joining_date' => DBdateformat($request->joining_date) ?? '',
             'mobile_no' => $request->mobile_no ?? null,
@@ -219,7 +222,7 @@ class Employee extends Model
             'unit' => decryptId($request->unit),
             'department' => decryptId($request->department),
             'designation' => $request->designation ?? null,
-            'reporting_manager'=>$request->reporting_manager ?? null,
+            'reporting_manager' => $request->reporting_manager ?? null,
             'employee_status' => $request->employee_status ?? null,
             'status' => 1,
             'updated_by' => Auth::id(),
