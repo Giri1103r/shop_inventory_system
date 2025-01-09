@@ -23,8 +23,8 @@
 
 
 
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('ppe_ppetype_master/add') }}">Add</x-button-add>
+                        <x-button-add dataId="" class="add btn btn-primary ms-1"
+                            href="{{ admin_url('ppe_ppetype_master/add') }}">Add</x-button-add>
 
 
 
@@ -198,6 +198,12 @@
                         d.ppe_type = $('#ppe_type').val();
                         d.ppe_status = $('#ppe_status').val();
 
+                    },
+                    error: function(xhr, error, code) {
+                        if (xhr.status === 419) {
+                            alert('Session has expired. You will be redirected to the login page.');
+                            window.location.href = "{{ url('') }}"; // Redirect to login page
+                        }
                     }
                 },
                 columns: [{

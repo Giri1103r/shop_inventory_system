@@ -48,6 +48,40 @@
             padding: 5px 10px;
             font-size: 14px;
         }
+
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+        }
+
+        button,
+        x-button-import {
+            font-size: 16px;
+            padding: 8px 16px;
+        }
+
+        @media (max-width: 768px) {
+
+            button,
+            x-button-import {
+                font-size: 14px;
+                padding: 6px 12px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .button-container {
+                flex-direction: column;
+                align-items: flex-end;
+            }
+
+            button,
+            x-button-import {
+                width: auto;
+            }
+        }
     </style>
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -185,11 +219,17 @@
                                     </div>
                                 </div>
 
-                                <div class="d-flex justify-content-end p-2">
-                                    <x-button-import
-                                        href="{{ admin_url('nomination_process/import/' . encryptId($training_schedule->id) . '/' . encryptId($training_schedule->trainer_id)) }}">
-                                    </x-button-import>
+                                <div class="d-flex justify-content-end align-items-center mb-3 button-container">
+                                  
+                                    <button class="btn btn-primary addmorebutton" data-block='lesson_learned_block'
+                                        data-row='lesson_learned_row' type="button" id="dynamic-add-more"
+                                        style="margin-left: 10px; width: 84px;">
+                                        Add
+                                    </button>
 
+                                    <x-button-import
+                                    href="{{ admin_url('nomination_process/import/' . encryptId($training_schedule->id) . '/' . encryptId($training_schedule->trainer_id)) }}">
+                                </x-button-import>
                                 </div>
 
                                 <div class="basic-form">
@@ -197,13 +237,7 @@
                                         action="{{ admin_url('nomination_process/add/submit') }}"
                                         enctype="multipart/form-data">
                                         @csrf
-                                        <div clase="nominationaddmorebutton"
-                                            style="padding-left: 82% !important; margin-top: -59px;">
-                                            <button class="btn btn-primary addmorebutton" data-block='lesson_learned_block'
-                                                data-row='lesson_learned_row' type="button" id="dynamic-add-more"
-                                                style="margin:10px;width: 84px;">Add</button>
-
-                                        </div>
+                                    
                                         <div class="row">
 
                                             <div class="table-responsive">
@@ -538,7 +572,7 @@
                     },
                 });
             });
-           
+
             // edit delete function
             $(document).on('click', '.removerow', function() {
                 var row = $(this).closest(

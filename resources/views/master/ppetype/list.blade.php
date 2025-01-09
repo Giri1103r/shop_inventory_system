@@ -174,7 +174,13 @@
                         d.to_date = $('#to_date').val();
                         d.ppe_status = $('#ppe_status').val();
 
-                    }
+                    },
+                    error: function(xhr, error, code) {
+                            if (xhr.status === 419) {
+                                alert('Session has expired. You will be redirected to the login page.');
+                                window.location.href = "{{ url('') }}"; 
+                            }
+                        }
                 },
                 columns: [{
                         data: 'DT_RowIndex',
