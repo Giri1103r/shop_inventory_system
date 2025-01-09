@@ -90,7 +90,7 @@ class WorkController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -168,7 +168,6 @@ class WorkController extends Controller
             return redirect(admin_url('work/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('work/list'));
@@ -185,7 +184,7 @@ class WorkController extends Controller
 
             return response()->json(['status' => 'success', 'msg' => 'Work status changed'], 200);
         } catch (Exception $ex) {
-
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }

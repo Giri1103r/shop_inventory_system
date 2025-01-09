@@ -94,7 +94,7 @@ class TopicController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -139,13 +139,13 @@ class TopicController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('topic/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('topic/list'));
         }
@@ -166,7 +166,7 @@ class TopicController extends Controller
             }
             return view('master.topic.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -187,7 +187,7 @@ class TopicController extends Controller
 
             return view('master.topic.edit', $data);
         } catch (Exception $error) {
-            dd($error->getMessage());
+            report($error->getMessage());
         }
     }
 
@@ -212,7 +212,7 @@ class TopicController extends Controller
             Session::flash('success', 'Your data has been updated successfully');
             return redirect(admin_url('topic/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('topic/list'));
         }
@@ -229,7 +229,7 @@ class TopicController extends Controller
 
             return response()->json(['status' => 'success', 'msg' => 'Topic status changed'], 200);
         } catch (Exception $ex) {
-
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -329,7 +329,7 @@ class TopicController extends Controller
             Session::flash('success', __('Topic uploaded sucessfully'));
             return redirect(admin_url('topic/list'));
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', __('Topic upload failed'));
             return redirect(admin_url('topic/list'));
         }

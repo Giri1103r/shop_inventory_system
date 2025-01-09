@@ -100,7 +100,7 @@ class DepartmentController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -166,7 +166,7 @@ class DepartmentController extends Controller
             return redirect(admin_url('department/list'));
         } catch (Exception $ex) {
 
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('department/list'));
         }
@@ -257,7 +257,7 @@ class DepartmentController extends Controller
 
             return response()->json(['status' => 'success', 'msg' => 'Department status changed'], 200);
         } catch (Exception $ex) {
-
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -276,7 +276,7 @@ class DepartmentController extends Controller
 
             return response()->json(['status' => 'success', 'msg' => 'Department deleted successfully'], 200);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -466,7 +466,7 @@ class DepartmentController extends Controller
             Session::flash('success', __('Department uploaded sucessfully'));
             return redirect(admin_url('department/list'));
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', __('Department upload failed'));
             return redirect(admin_url('department/list'));
         }

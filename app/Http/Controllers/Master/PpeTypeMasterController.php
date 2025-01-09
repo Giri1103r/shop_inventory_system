@@ -260,7 +260,7 @@ class PpeTypeMasterController extends Controller
 
                 Session::flash('success', __('Your data has been updated successfully!'));
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
             return redirect(admin_url('ppe_ppetype_master/list'));

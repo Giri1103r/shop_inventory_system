@@ -101,7 +101,7 @@ class UnitController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -161,7 +161,7 @@ class UnitController extends Controller
             return redirect(admin_url('unit/list'));
         } catch (Exception $ex) {
 
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('unit/list'));
         }
@@ -457,7 +457,7 @@ class UnitController extends Controller
             Session::flash('success', __('Unit uploaded sucessfully'));
             return redirect(admin_url('unit/list'));
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', __('Unit upload failed'));
             return redirect(admin_url('unit/list'));
         }

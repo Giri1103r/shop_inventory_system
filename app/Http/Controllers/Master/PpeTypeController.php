@@ -78,6 +78,7 @@ class PpeTypeController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
                 }
             }
@@ -190,7 +191,7 @@ class PpeTypeController extends Controller
             }
             return redirect(admin_url('ppe_type/list'));
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ppe_type/list'));
         }

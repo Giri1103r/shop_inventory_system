@@ -208,7 +208,7 @@ class CronController extends Controller
                 return response()->json(['message' => 'Failed to fetch data from API.', 'status' => $response->status()]);
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
@@ -259,7 +259,7 @@ class CronController extends Controller
                 return response()->json(['message' => 'No data found in API response.']);
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
@@ -287,7 +287,7 @@ class CronController extends Controller
                 return response()->json(['message' => 'Failed to fetch data from API.', 'status' => $response->status()]);
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
@@ -324,6 +324,7 @@ class CronController extends Controller
             $status = $this->ppeexemption->getExpirestatus();
             return response()->json(['message' => 'Data saved successfully.']);
         } catch (Exception $ex) {
+            report($ex);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
@@ -400,7 +401,7 @@ class CronController extends Controller
                 return response()->json(['message' => 'No data found in API response.']);
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
@@ -537,6 +538,7 @@ class CronController extends Controller
                 return response()->json(['message' => 'No expired permits found.']);
             }
         } catch (Exception $ex) {
+            report($ex);
             Log::error('Error in permitExpiry cron job.', ['error' => $ex->getMessage()]);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
@@ -610,7 +612,7 @@ class CronController extends Controller
             }
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Log::error('Error in permitClose cron job.', ['error' => $ex->getMessage()]);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }

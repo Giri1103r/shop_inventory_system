@@ -65,7 +65,7 @@ class UserController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -167,6 +167,7 @@ class UserController extends Controller
                 return redirect(admin_url('user_management'));
             }
         } catch (Exception $ex) {
+            report($ex);
             Log::channel('user-info')->alert($ex);
             return redirect(admin_url('user_management'));
         }
@@ -298,7 +299,7 @@ class UserController extends Controller
             Session::flash('success', 'User updated successfully!');
             return redirect(admin_url('user_management'));
         } catch (Exception $ex) {
-
+            report($ex);
             Log::channel('user-info')->alert($ex);
             return "Error";
         }
@@ -357,6 +358,7 @@ class UserController extends Controller
             }
             return response()->json(['status' => 'success', 'msg' => $successMsg], 200);
         } catch (Exception $ex) {
+            report($ex);
             return response()->json(['error' => '2', 'status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -390,6 +392,7 @@ class UserController extends Controller
             Log::channel('user-info')->info("User deleted successfully", $update_data);
             return response()->json(['status' => 'success', 'msg' => 'User deleted successfully'], 200);
         } catch (Exception $ex) {
+            report($ex);
             Log::channel('user-info')->alert($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }

@@ -95,7 +95,7 @@ class LocationController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -152,7 +152,7 @@ class LocationController extends Controller
             return redirect(admin_url('location/list'));
         } catch (Exception $ex) {
 
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('location/list'));
         }
@@ -235,7 +235,7 @@ class LocationController extends Controller
 
             return response()->json(['status' => 'success', 'msg' => 'Location status changed'], 200);
         } catch (Exception $ex) {
-
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -469,7 +469,7 @@ class LocationController extends Controller
             Session::flash('success', __('Location uploaded sucessfully'));
             return redirect(admin_url('location/list'));
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', __('Location upload failed'));
             return redirect(admin_url('location/list'));
         }

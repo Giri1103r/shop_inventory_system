@@ -108,7 +108,7 @@ class TypeofWorkController extends Controller
                     return $datatables;
                 } catch (Exception $ex) {
 
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => __('Please try after sometime')], 406);
                 }
             }
@@ -168,14 +168,14 @@ class TypeofWorkController extends Controller
 
                 Session::flash('success', __('Type of work added successfully'));
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
 
                 Session::flash('error', __('common.message_error'));
             }
             return redirect(admin_url('ptw/typeofworkmaster/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ptw/typeofworkmaster/list'));
         }
@@ -233,7 +233,6 @@ class TypeofWorkController extends Controller
             return view('master.typeofwork.view', $data);
         } catch (Exception $ex) {
 
-            dd($ex);
             report($ex);
         }
     }
@@ -279,7 +278,7 @@ class TypeofWorkController extends Controller
             return view('master.typeofwork.edit', $data);
         } catch (Exception $error) {
 
-            dd($error);
+            report($error);
             report($error->getMessage());
         }
     }
@@ -317,7 +316,7 @@ class TypeofWorkController extends Controller
             return redirect(admin_url('ptw/typeofworkmaster/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', __('Something went wrong try again'));
             return redirect(admin_url('ptw/typeofworkmaster/list'));
         }
@@ -509,7 +508,7 @@ class TypeofWorkController extends Controller
                     $exportData
                 );
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
         }
     }
@@ -565,7 +564,7 @@ class TypeofWorkController extends Controller
             $filename = "Type of work Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+         
             report($ex);
         }
     }
