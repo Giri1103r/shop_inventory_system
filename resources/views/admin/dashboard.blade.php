@@ -26,7 +26,6 @@
                     </div>
                 </div>
             </div>
-            @if (Auth::user()->role == ROLE_SUPERADMIN || Auth::user()->role == ROLE_ADMIN)
                 <div class="card view_card">
 
                     <div class="card-body">
@@ -251,7 +250,6 @@
                         </div>
                     </div>
                 </div>
-            @endif
             {{-- <div class="row">
 
             <div class="col-xl-3 col-md-6">

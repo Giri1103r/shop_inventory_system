@@ -81,7 +81,11 @@ class AdminController extends Controller
                     'masterLink' => $masterLink,
                 ];
             }
-            return view('admin.dashboard', $data);
+            if (Auth::user()->role == ROLE_SUPERADMIN || Auth::user()->role == ROLE_ADMIN) {
+                return view('admin.dashboard', $data);
+            } else {
+                return view('admin.userdashboard', $data);
+            }
         }
     }
 
