@@ -255,7 +255,7 @@ class PpeRequestController extends Controller
             $lastStatus = $this->pperequest->laststatus();
             $lastPPERequest = $this->pperequest->lastPpeRequest();
             $chemicaldepartment = $this->pperequest->lastsixmonthrequest();
-         
+
 
             switch (true) {
                 case $lastStatus && $lastStatus->status == 1:
@@ -331,12 +331,12 @@ class PpeRequestController extends Controller
                 Session::flash('success', __('Your data has been created successfully!'));
                 return redirect(admin_url('ppe_request/list'));
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
                 return redirect(admin_url('ppe_request/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }
@@ -843,7 +843,7 @@ class PpeRequestController extends Controller
                 throw new Exception('Failed to fetch API response.');
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try again later.');
             return redirect()->to(admin_url('ppe_request/list'));
         }
