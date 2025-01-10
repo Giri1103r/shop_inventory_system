@@ -908,7 +908,70 @@
                         </div>
                     @endif
 
+                    @if ($safetypermit['permit_status'] == STATUS_CLOSED )
+                    <div class="card-body ">
+                        <div class="row">
+                            <div class="card-header-inner">
+                                <h4 class="text-white">Permit Closed</h4>
+                            </div>
+                        </div>
 
+                        <div class="row">
+                            <div class="mb-3 col-md-4 form-input">
+                                <label class="form-label view_label">{{ __('Closed By') }}</label>
+                                <div class="view_data">
+                                    {{ getUsername(isset($safetypermit->closed_by) ? $safetypermit->closed_by : '') }}
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-4 form-input">
+                                <label class="form-label view_label">{{ __('Closed Date') }}</label>
+                                <div class="view_data">
+                                    {{ isset($safetypermit->closed_date) ? Displaydateformat($safetypermit->closed_date) : '' }}
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-4 form-input">
+                                <label class="form-label view_label">{{ __('Closed Remarks') }}</label>
+                                <div class="view_data">
+                                    {{ isset($safetypermit->close_remarks) ? $safetypermit->close_remarks : '' }}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                @endif
+                    @if ($safetypermit['permit_status'] == STATUS_CANCELLED )
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="card-header-inner">
+                                    <h4 class="text-white">Permit Cancelled</h4>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Cancelled By') }}</label>
+                                    <div class="view_data">
+                                        {{ getUsername(isset($safetypermit->cancelled_by) ? $safetypermit->cancelled_by : '') }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Cancelled Date') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($safetypermit->cancelled_date) ? Displaydateformat($safetypermit->cancelled_date) : '' }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Cancelled Remarks') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($safetypermit->cancel_remarks) ? $safetypermit->cancel_remarks : '' }}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    @endif
+
+        
                     <div class="card-body ">
                         <div class="row">
                             <div class="card-header-inner">

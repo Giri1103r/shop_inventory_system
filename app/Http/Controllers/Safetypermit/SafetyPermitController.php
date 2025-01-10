@@ -1121,8 +1121,9 @@ class SafetyPermitController extends Controller
     {
         try {
             $id = decryptId($request->id);
+            $remarks = $request->remarks;
             $safetypermit = $this->safetypermit->find($id);
-            $this->safetypermit->deleterecord($id);
+            $this->safetypermit->deleterecord($id, $remarks);
 
             $mailsubject = 'Safety Permit has been Cancelled';
             $user_roles = [ROLE_EHS_OFFICER, ROLE_PLANT_HEAD]; // Define roles to notify
@@ -1203,8 +1204,9 @@ class SafetyPermitController extends Controller
     {
         try {
             $id = decryptId($request->id);
+            $remarks = $request->remarks;
             $safetypermit = $this->safetypermit->find($id);
-            $this->safetypermit->closePermit($id);
+            $this->safetypermit->closePermit($id,$remarks);
 
             $mailsubject = 'Safety Permit has been Closed';
             $user_roles = [ROLE_EHS_OFFICER, ROLE_EHS_HEAD];
