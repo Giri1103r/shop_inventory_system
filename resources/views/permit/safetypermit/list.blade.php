@@ -410,7 +410,7 @@
                     title: title,
                     icon: 'warning',
                     showDenyButton: false,
-                    showCancelButton: true,
+                     showCloseButton: true,
                     confirmButtonText: text,
                     confirmButtonColor: btncolor,
                     denyButtonColor: '#28a745',
