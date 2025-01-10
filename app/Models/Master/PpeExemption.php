@@ -185,10 +185,12 @@ class PpeExemption extends Model
         if ($type == 1) {
             $update_data = array(
                 'status' => 0,
+                'updated_by'=>Auth::id(),
             );
         } else {
             $update_data = array(
                 'status' => 1,
+                'updated_by'=>Auth::id(),
             );
         }
 
