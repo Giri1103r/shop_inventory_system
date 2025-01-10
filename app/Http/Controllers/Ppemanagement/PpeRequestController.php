@@ -255,6 +255,7 @@ class PpeRequestController extends Controller
             $lastStatus = $this->pperequest->laststatus();
             $lastPPERequest = $this->pperequest->lastPpeRequest();
             $chemicaldepartment = $this->pperequest->lastsixmonthrequest();
+         
 
             switch (true) {
                 case $lastStatus && $lastStatus->status == 1:
@@ -639,6 +640,9 @@ class PpeRequestController extends Controller
                 'approve_status' =>  $approveStatus,
             ];
 
+            if($action != 'approve'){
+                $updateEhsData['status']=0;
+            }
 
             $statuslog = $this->ppestatus->storeEhsStatus($updateEhsData, $empDetails);
             $empDetails->updateehsapproval($updateEhsData, $id);
@@ -650,6 +654,8 @@ class PpeRequestController extends Controller
                 'department' => $empDetails->department,
                 'approved_by' => $empDetails->approved_by,
             ];
+
+
 
             $requestor = $this->user->getrequestEmail($empId);
             $recipients = array_filter([$requestor, $hod]);
