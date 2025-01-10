@@ -130,7 +130,7 @@ class PpeRequestController extends Controller
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
 
                             if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_HOD)) && $row->approve_status == STATUS_HOD_APPROVAL_PENDING) {
-                                $btn .= '<a href="' . admin_url('ppe_request/hodapproval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ppe_request/hodapproval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
                             if (
@@ -148,7 +148,7 @@ class PpeRequestController extends Controller
                                     $row->approve_status != STATUS_ISSUED
                                 )
                             ) {
-                                $btn .= '<a href="' . admin_url('ppe_request/ehsapproval/view/' . encryptId($row->id)) . '" class="" title="EhsApproval"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ppe_request/ehsapproval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
                             $btn .= '<a href="' . admin_url('ppe_request/generalpdf/' . encryptId($row->id)) . '" class="" title="Pdf"> <i class="fa-solid fa-file-pdf" style="color: #e67265;"></i></a> ';
@@ -256,6 +256,7 @@ class PpeRequestController extends Controller
             $lastPPERequest = $this->pperequest->lastPpeRequest();
             $chemicaldepartment = $this->pperequest->lastsixmonthrequest();
 
+
             switch (true) {
                 case $lastStatus && $lastStatus->status == 1:
                     Session::flash('error', __('Invalid request. Last PPE request is still active.'));
@@ -330,12 +331,12 @@ class PpeRequestController extends Controller
                 Session::flash('success', __('Your data has been created successfully!'));
                 return redirect(admin_url('ppe_request/list'));
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
                 return redirect(admin_url('ppe_request/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }
@@ -639,6 +640,9 @@ class PpeRequestController extends Controller
                 'approve_status' =>  $approveStatus,
             ];
 
+            if($action != 'approve'){
+                $updateEhsData['status']=0;
+            }
 
             $statuslog = $this->ppestatus->storeEhsStatus($updateEhsData, $empDetails);
             $empDetails->updateehsapproval($updateEhsData, $id);
@@ -650,6 +654,8 @@ class PpeRequestController extends Controller
                 'department' => $empDetails->department,
                 'approved_by' => $empDetails->approved_by,
             ];
+
+
 
             $requestor = $this->user->getrequestEmail($empId);
             $recipients = array_filter([$requestor, $hod]);
@@ -837,7 +843,7 @@ class PpeRequestController extends Controller
                 throw new Exception('Failed to fetch API response.');
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try again later.');
             return redirect()->to(admin_url('ppe_request/list'));
         }

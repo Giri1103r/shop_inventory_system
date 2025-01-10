@@ -194,6 +194,53 @@
 
     <br>
 
+
+    @if ($pperequest->approve_status != STATUS_HOD_APPROVAL_PENDING)
+        <div>
+            <div style="width:100%;">
+                <table style="width:100%;">
+                    <tr>
+                        <td
+                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                           Previous History
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <br>
+            <table class="table table-bordered table-hover tblborder ">
+                <thead>
+                    <tr>
+                        <th>Employee Name</th>
+                        <th>Employee Id</th>
+                        <th>Previous applied Date</th>
+                        <th>Approval Status</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if ($userdata->isEmpty())
+                        <tr>
+                            <td class="text-center" colspan="6">No data is available</td>
+                        </tr>
+                    @else
+                        @foreach ($userdata as $data)
+                            <tr class="hover-row">
+                                <td>{{ $data['emp_name'] }}</td>
+                                <td>{{ $data['emp_id'] }}</td>
+                                <td>{{ displaydateformat($data['created_at']) }}</td>
+                                <td>{{ removeUnderScore(getStatus($data['approve_status'])) }}</td>
+                                <td>{{ $data['remarks'] }}</td>
+                            </tr>
+                        @endforeach
+                    @endif
+                </tbody>
+            </table>
+        </div>
+    @endif
+    <br>
+
+
     @if ($pperequest->approve_status != STATUS_HOD_APPROVAL_PENDING)
         <div>
             <div style="width:100%;">
@@ -263,51 +310,6 @@
                 </div>
             </div>
             <br>
-        </div>
-    @endif
-    <br>
-
-    @if ($pperequest->approve_status != STATUS_HOD_APPROVAL_PENDING)
-        <div>
-            <div style="width:100%;">
-                <table style="width:100%;">
-                    <tr>
-                        <td
-                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                           Previous History
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <br>
-            <table class="table table-bordered table-hover tblborder ">
-                <thead>
-                    <tr>
-                        <th>Employee Name</th>
-                        <th>Employee Id</th>
-                        <th>Previous applied Date</th>
-                        <th>Approval Status</th>
-                        <th>Remarks</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if ($userdata->isEmpty())
-                        <tr>
-                            <td class="text-center" colspan="6">No data is available</td>
-                        </tr>
-                    @else
-                        @foreach ($userdata as $data)
-                            <tr class="hover-row">
-                                <td>{{ $data['emp_name'] }}</td>
-                                <td>{{ $data['emp_id'] }}</td>
-                                <td>{{ displaydateformat($data['created_at']) }}</td>
-                                <td>{{ removeUnderScore(getStatus($data['approve_status'])) }}</td>
-                                <td>{{ $data['remarks'] }}</td>
-                            </tr>
-                        @endforeach
-                    @endif
-                </tbody>
-            </table>
         </div>
     @endif
     <br>
