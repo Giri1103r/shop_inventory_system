@@ -224,8 +224,8 @@
                                                     <label for = "tagfield" class="form-label mb-0"
                                                         style="margin-right:30px;">Tag Field
                                                         properly (Yes/No)</label>
-                                                    <input type="checkbox" id = "tagfield"
-                                                        class=" shutdowncheckbox" name="tagfield" disabled>
+                                                    <input type="checkbox" id = "tagfield" class=" shutdowncheckbox"
+                                                        name="tagfield" disabled>
 
                                                 </div>
                                                 <div class="text-danger"></div>
@@ -488,16 +488,9 @@
                                                     </div>
 
                                                     <div id="getprotectivechecklist-container" class="row g-3 mt-3">
-                                                        {{-- @foreach ($getprotectiveequipment as $getprotectiveequipment)
-                                                    <div
-                                                        class="col-12 col-md-6 col-lg-4 d-flex align-items-center gap-2">
-                                                        <input type="checkbox" id="select-all"
-                                                            class="validate-radio-required">
-                                                        <label>{{ $getprotectiveequipment->protective_equip }}</label>
-                                                    </div>
-                                                    @endforeach --}}
-
-
+                                                        <div class="col-12" id="noDataMessage">
+                                                            <p>No data available</p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -564,6 +557,9 @@
                                                         <div class="col-md-5">
                                                             {{-- <div class="row row-cols-2 g-3"> --}}
                                                             <div id="getequipmentinvolved-container" class="row g-3 mt-3">
+                                                                <div class="col-12" id="equipmentinvolvedMessage">
+                                                                    <p>No data available</p>
+                                                                </div>
                                                                 {{-- @foreach ($getequipmentinvolved as $getequipmentinvolved)
                                                                 <div
                                                                     class="col-12 col-md-6 col-lg-4 d-flex align-items-center gap-2">
@@ -594,6 +590,9 @@
 
                                                 <div class="card p-3  rounded m-2">
                                                     <div id="getprecaution-container" class="row g-3 mt-3">
+                                                        <div class="col-12" id="precautionMessage">
+                                                            <p>No data available</p>
+                                                        </div>
                                                         {{-- @foreach ($getprecaution as $getprecaution)
                                                         <div class="col-12 col-md-12 d-flex align-items-center gap-2">
                                                             <input type="checkbox" id="select-all"
@@ -615,6 +614,9 @@
 
                                                 <div class="card p-3 rounded m-2">
                                                     <div id="getchecklist-container" class="row g-3 mt-3">
+                                                        <div class="col-12" id="checklistMessage">
+                                                            <p>No data available</p>
+                                                        </div>
                                                         {{-- @foreach ($getchecklist as $getchecklist)
                                                         <div class="col-12 col-md-12 d-flex align-items-center gap-2">
                                                             <input type="checkbox" id="select-all"
@@ -651,6 +653,9 @@
                                             <div class="col-12 p-2">
                                                 <div class="card p-3  rounded m-2">
                                                     <div id="getinstruction-container" class="row g-3 mt-3">
+                                                        <div class="col-12" id="instructionMessage">
+                                                            <p>No data available</p>
+                                                        </div>
                                                         {{-- @foreach ($getinstruction as $getinstruction)
                                                         <div class="col-12 col-md-12 d-flex align-items-center gap-2">
                                                             <input type="checkbox" id="select-all"
@@ -942,7 +947,7 @@
                 onChange: function(selectedDates, dateStr) {
                     if (selectedDates.length > 0) {
                         endTimePicker.set("minTime",
-                        dateStr); // Set "To Time" minimum to selected "From Time"
+                            dateStr); // Set "To Time" minimum to selected "From Time"
                     }
                 },
             });
@@ -1330,11 +1335,9 @@
             });
 
         });
-
         $(document).ready(function() {
             const protectiveEquipmentMap = new Map();
-
-
+            $('#noDataMessage').show();
             $('.work-type-checkbox').on('change', function() {
                 const workId = $(this).data('id');
                 const container = $('#getprotectivechecklist-container');
@@ -1346,7 +1349,7 @@
                         const equipmentName = $(this).data('name');
                         if (protectiveEquipmentMap.has(equipmentName)) {
                             const associatedWorkIds = protectiveEquipmentMap.get(equipmentName);
-                            const updatedWorkIds = associatedWorkIds.filter(id => id !== workId);
+                            const updatedWorkIds = associatedWorkIds.filter((id) => id !== workId);
 
                             if (updatedWorkIds.length > 0) {
                                 protectiveEquipmentMap.set(equipmentName, updatedWorkIds);
@@ -1369,22 +1372,26 @@
                                     const equipmentName = item.protective_equip;
 
                                     // Check if equipment is already displayed
-                                    if (protectiveEquipmentMap.has(equipmentName)) {
+                                    const existingCheckpoint = container.find(
+                                        `.checkpoint[data-name="${equipmentName}"]`
+                                    );
+
+                                    if (existingCheckpoint.length > 0) {
                                         // Add the current workId to its association
                                         const associatedWorkIds = protectiveEquipmentMap
-                                            .get(equipmentName);
+                                            .get(equipmentName) || [];
                                         if (!associatedWorkIds.includes(workId)) {
                                             associatedWorkIds.push(workId);
                                             protectiveEquipmentMap.set(equipmentName,
                                                 associatedWorkIds);
                                         }
 
-                                        // Mark checkbox as checked if `default_enable` is 1
-                                        const checkbox = container.find(
-                                            `.checkpoint[data-name="${equipmentName}"] .protective-checkbox`
-                                        );
-                                        checkbox.prop('checked', item.default_enable ==
-                                            1);
+                                        // Preserve the checked state only if it is default_enable
+                                        if (item.default_enable == 1) {
+                                            existingCheckpoint
+                                                .find('.protective-checkbox')
+                                                .prop('checked', true);
+                                        }
                                     } else {
                                         // New equipment: Add to DOM and Map
                                         protectiveEquipmentMap.set(equipmentName, [
@@ -1414,6 +1421,12 @@
                             },
                         });
                     }
+                }
+                const anyChecked = $('.work-type-checkbox:checked').length > 0;
+                if (anyChecked) {
+                    $('#noDataMessage').hide(); // Hide "No data available" message
+                } else {
+                    $('#noDataMessage').show(); // Show "No data available" message
                 }
 
                 // Clear container if no checkboxes are selected
@@ -1462,95 +1475,107 @@
 
         $(document).ready(function() {
             const EquipmentInvolveMap = new Map();
-
+            $('#equipmentinvolvedMessage').show();
             $('.work-type-checkbox').on('change', function() {
                 const workId = $(this).data('id');
                 const container = $('#getequipmentinvolved-container');
-
                 const checkboxState = $(this).prop('checked');
 
                 if (!checkboxState) {
-
+                    // Unchecking a work name: Remove associated equipment
                     container.find(`.checkpoint[data-work-id="${workId}"]`).each(function() {
                         const equipmentName = $(this).data('name');
-
-                        // Remove the association of this equipment with the unchecked workId
                         if (EquipmentInvolveMap.has(equipmentName)) {
                             const associatedWorkIds = EquipmentInvolveMap.get(equipmentName);
-                            const updatedWorkIds = associatedWorkIds.filter(id => id !== workId);
+                            const updatedWorkIds = associatedWorkIds.filter((id) => id !== workId);
 
                             if (updatedWorkIds.length > 0) {
                                 EquipmentInvolveMap.set(equipmentName, updatedWorkIds);
                             } else {
                                 EquipmentInvolveMap.delete(equipmentName);
-                                $(this)
-                                    .remove(); // Remove the equipment from DOM if no workId is associated
+                                $(this).remove(); // Remove from DOM if no workId is associated
                             }
                         }
                     });
                 } else {
+                    // Checking a work name: Fetch protective equipment only if not already loaded
+                    if (!EquipmentInvolveMap.has(workId)) {
+                        $.ajax({
+                            url: "{{ admin_url('safetypermit/getequipmentinvolved') }}/" + workId,
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function(data) {
+                                data.forEach(function(item) {
+                                    const equipmentName = item.equip_involve;
 
-                    $.ajax({
-                        url: "{{ admin_url('safetypermit/getequipmentinvolved') }}/" + workId,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            data.forEach(function(item) {
-                                const equipmentName = item.equip_involve;
+                                    // Check if equipment is already displayed
+                                    const existingCheckpoint = container.find(
+                                        `.checkpoint[data-name="${equipmentName}"]`
+                                    );
 
-                                // Check if equipment is already displayed
-                                if (EquipmentInvolveMap.has(equipmentName)) {
-                                    // Add the current workId to its association
-                                    const associatedWorkIds = EquipmentInvolveMap.get(
-                                        equipmentName);
-                                    if (!associatedWorkIds.includes(workId)) {
-                                        associatedWorkIds.push(workId);
-                                        EquipmentInvolveMap.set(equipmentName,
-                                            associatedWorkIds);
+                                    if (existingCheckpoint.length > 0) {
+                                        // Add the current workId to its association
+                                        const associatedWorkIds = EquipmentInvolveMap
+                                            .get(equipmentName) || [];
+                                        if (!associatedWorkIds.includes(workId)) {
+                                            associatedWorkIds.push(workId);
+                                            EquipmentInvolveMap.set(equipmentName,
+                                                associatedWorkIds);
+                                        }
+
+                                        // Preserve the checked state only if it is default_enable
+                                        if (item.default_enable == 1) {
+                                            existingCheckpoint
+                                                .find('.equipment-checkbox')
+                                                .prop('checked', true);
+                                        }
+                                    } else {
+                                        // New equipment: Add to DOM and Map
+                                        EquipmentInvolveMap.set(equipmentName, [
+                                            workId
+                                        ]);
+
+                                        const isChecked = item.default_enable == 1 ?
+                                            'checked' : '';
+                                        const checkpointHtml = `
+                                    <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint"
+                                         data-work-id="${workId}"
+                                         data-name="${equipmentName}">
+                                        <input type="checkbox"
+                                               class="equiment_involved"
+                                               name="equiment_involved[${workId}][]"
+                                               value="${item.id}"
+                                               id="checkpoint-${workId}-${item.id}"
+                                               ${isChecked}>
+                                        <label for="checkpoint-${workId}-${item.id}">${equipmentName}</label>
+                                    </div>`;
+                                        container.append(checkpointHtml);
                                     }
+                                });
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error:', error);
+                            },
+                        });
+                    }
+                }
 
-                                    // Only mark checkbox as checked if `default_enable` is 1
-                                    const isChecked = item.default_enable == 1 ?
-                                        'checked' : '';
-                                    container.find(
-                                            `.checkpoint[data-name="${equipmentName}"] .equipment-checkbox`
-                                        )
-                                        .prop('checked', isChecked);
-                                } else {
-                                    // New equipment: Add to DOM and Map
-                                    EquipmentInvolveMap.set(equipmentName, [workId]);
-
-                                    const isChecked = item.default_enable == 1 ?
-                                        'checked' : '';
-                                    const checkpointHtml = `
-                                <div class="col-12 col-md-4 col-lg-4 d-flex align-items-center gap-2 checkpoint"
-                                     data-work-id="${workId}"
-                                     data-name="${equipmentName}">
-                                    <input type="checkbox"
-                                           class="equiment_involved"
-                                           name="equiment_involved[${workId}][]"
-                                           value="${item.id}"
-                                           id="checkpoint-${workId}-${item.id}"
-                                           ${isChecked}>
-                                    <label for="checkpoint-${workId}-${item.id}">${equipmentName}</label>
-                                </div>`;
-                                    container.append(checkpointHtml);
-                                }
-                            });
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        },
-                    });
+                const anyChecked = $('.work-type-checkbox:checked').length > 0;
+                if (anyChecked) {
+                    $('#equipmentinvolvedMessage').hide();
+                } else {
+                    $('#equipmentinvolvedMessage').show();
                 }
 
 
+                // Clear container if no checkboxes are selected
                 const allUnchecked = $('.work-type-checkbox').filter(':checked').length === 0;
                 if (allUnchecked) {
-                    container.empty(); // Empty the container
+                    container.empty();
                 }
             });
 
+            // Validation on submit
             $('#safetyPermitadd').on('submit', function(e) {
                 const container = $('#getequipmentinvolved-container');
                 const errorDiv = $(
@@ -1558,7 +1583,6 @@
 
                 container.find('.text-danger').remove();
 
-                let hasError = false;
                 let hasSelection = false;
 
                 $('.equiment_involved').each(function() {
@@ -1568,16 +1592,12 @@
                 });
 
                 if (!hasSelection) {
-                    hasError = true;
                     container.append(errorDiv);
-                    e.preventDefault();
-                }
-
-                if (hasError) {
                     e.preventDefault();
                 }
             });
 
+            // Remove error message when equipment is checked
             $('#getequipmentinvolved-container').on('change', '.equipment-checkbox', function() {
                 const container = $('#getequipmentinvolved-container');
                 const hasSelection = container.find('.equipment-checkbox:checked').length > 0;
@@ -1588,100 +1608,105 @@
             });
         });
 
+
         // Precaution
         $(document).ready(function() {
             const displayedPrecautions = new Map();
-
+            $('#precautionMessage').show();
             $('.work-type-checkbox').on('change', function() {
                 const workId = $(this).data('id');
                 const container = $('#getprecaution-container');
                 const checkboxState = $(this).prop('checked');
 
                 if (!checkboxState) {
-                    // Unchecking a work name
-                    // Remove equipment related to this workId
+                    // Unchecking a work name: Remove associated equipment
                     container.find(`.checkpoint[data-work-id="${workId}"]`).each(function() {
                         const equipmentName = $(this).data('name');
-
-                        // Remove the association of this equipment with the unchecked workId
                         if (displayedPrecautions.has(equipmentName)) {
                             const associatedWorkIds = displayedPrecautions.get(equipmentName);
-                            const updatedWorkIds = associatedWorkIds.filter(id => id !== workId);
+                            const updatedWorkIds = associatedWorkIds.filter((id) => id !== workId);
 
                             if (updatedWorkIds.length > 0) {
                                 displayedPrecautions.set(equipmentName, updatedWorkIds);
                             } else {
                                 displayedPrecautions.delete(equipmentName);
-                                $(this)
-                                    .remove(); // Remove the equipment from DOM if no workId is associated
+                                $(this).remove(); // Remove from DOM if no workId is associated
                             }
                         }
                     });
                 } else {
-                    $.ajax({
-                        url: "{{ admin_url('safetypermit/getprecaution') }}/" + workId,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            data.forEach(function(item) {
-                                const equipmentName = item.precaution;
+                    // Checking a work name: Fetch protective equipment only if not already loaded
+                    if (!displayedPrecautions.has(workId)) {
+                        $.ajax({
+                            url: "{{ admin_url('safetypermit/getprecaution') }}/" + workId,
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function(data) {
+                                data.forEach(function(item) {
+                                    const equipmentName = item.precaution;
 
-                                if (displayedPrecautions.has(equipmentName)) {
+                                    // Check if equipment is already displayed
+                                    const existingCheckpoint = container.find(
+                                        `.checkpoint[data-name="${equipmentName}"]`
+                                    );
 
-                                    const associatedWorkIds = displayedPrecautions.get(
-                                        equipmentName);
-                                    if (!associatedWorkIds.includes(workId)) {
-                                        associatedWorkIds.push(workId);
-                                        displayedPrecautions.set(equipmentName,
-                                            associatedWorkIds);
-                                    }
+                                    if (existingCheckpoint.length > 0) {
+                                        // Add the current workId to its association
+                                        const associatedWorkIds = displayedPrecautions
+                                            .get(equipmentName) || [];
+                                        if (!associatedWorkIds.includes(workId)) {
+                                            associatedWorkIds.push(workId);
+                                            displayedPrecautions.set(equipmentName,
+                                                associatedWorkIds);
+                                        }
 
-                                    // Only mark checkbox as checked if `default_enable` is 1
-                                    if (item.default_enable == 1) {
-                                        container.find(
-                                                `.checkpoint[data-name="${equipmentName}"] .precaution_taken`
-                                            )
-                                            .prop('checked', true);
+                                        // Preserve the checked state only if it is default_enable
+                                        if (item.default_enable == 1) {
+                                            existingCheckpoint
+                                                .find('.precaution_taken')
+                                                .prop('checked', true);
+                                        }
                                     } else {
-                                        container.find(
-                                                `.checkpoint[data-name="${equipmentName}"] .precaution_taken`
-                                            )
-                                            .prop('checked',
-                                                false
-                                            ); // Ensure unchecked if not default-enabled
+                                        // New equipment: Add to DOM and Map
+                                        displayedPrecautions.set(equipmentName, [
+                                            workId
+                                        ]);
+
+                                        const isChecked = item.default_enable == 1 ?
+                                            'checked' : '';
+                                        const checkpointHtml = `
+                                            <div class="col-12 col-md-12 col-lg-12 d-flex align-items-center gap-2 checkpoint"
+                                                 data-work-id="${workId}"
+                                                 data-name="${equipmentName}">
+                                                <input type="checkbox"
+                                                       class="precaution_taken"
+                                                       name="precaution_taken[${workId}][]"
+                                                       value="${item.id}"
+                                                       id="checkpoint-${workId}-${item.id}"
+                                                       ${isChecked}>
+                                                <label for="checkpoint-${workId}-${item.id}">${equipmentName}</label>
+                                            </div>`;
+                                        container.append(checkpointHtml);
                                     }
-                                } else {
-
-                                    displayedPrecautions.set(equipmentName, [workId]);
-
-                                    const isChecked = item.default_enable == 1 ?
-                                        'checked' : '';
-                                    const checkpointHtml = `
-                                <div class="col-12 col-md-12 col-lg-12 d-flex align-items-center gap-2 checkpoint"
-                                     data-work-id="${workId}"
-                                     data-name="${equipmentName}">
-                                    <input type="checkbox"
-                                           class="precaution_taken"
-                                           name="precaution_taken[${workId}][]"
-                                           value="${item.id}"
-                                           id="checkpoint-${workId}-${item.id}"
-                                           ${isChecked}>
-                                    <label for="checkpoint-${workId}-${item.id}">${equipmentName}</label>
-                                </div>`;
-                                    container.append(checkpointHtml);
-                                }
-                            });
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        }
-                    });
+                                });
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error:', error);
+                            },
+                        });
+                    }
+                }
+                const anyChecked = $('.work-type-checkbox:checked').length > 0;
+                if (anyChecked) {
+                    $('#precautionMessage').hide(); // Hide "No data available" message
+                } else {
+                    $('#precautionMessage').show(); // Show "No data available" message
                 }
 
-                // Check if all work checkboxes are unchecked and clear the container if true
+                // Clear container if no checkboxes are selected
                 const allUnchecked = $('.work-type-checkbox').filter(':checked').length === 0;
                 if (allUnchecked) {
-                    container.empty(); // Empty the container
+                    container.empty();
                 }
             });
         });
@@ -1692,97 +1717,101 @@
 
         $(document).ready(function() {
             const displayedEquipments = new Map();
-
+            $('#checklistMessage').show();
             $('.work-type-checkbox').on('change', function() {
                 const workId = $(this).data('id');
                 const container = $('#getchecklist-container');
                 const checkboxState = $(this).prop('checked');
 
                 if (!checkboxState) {
-
+                    // Unchecking a work name: Remove associated equipment
                     container.find(`.checkpoint[data-work-id="${workId}"]`).each(function() {
                         const equipmentName = $(this).data('name');
-
-                        // Remove the association of this equipment with the unchecked workId
                         if (displayedEquipments.has(equipmentName)) {
                             const associatedWorkIds = displayedEquipments.get(equipmentName);
-                            const updatedWorkIds = associatedWorkIds.filter(id => id !== workId);
+                            const updatedWorkIds = associatedWorkIds.filter((id) => id !== workId);
 
                             if (updatedWorkIds.length > 0) {
                                 displayedEquipments.set(equipmentName, updatedWorkIds);
                             } else {
                                 displayedEquipments.delete(equipmentName);
-                                $(this)
-                                    .remove(); // Remove the equipment from DOM if no workId is associated
+                                $(this).remove(); // Remove from DOM if no workId is associated
                             }
                         }
                     });
                 } else {
-                    $.ajax({
-                        url: "{{ admin_url('safetypermit/getchecklist') }}/" + workId,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            data.forEach(function(item) {
-                                const equipmentName = item.checklist;
+                    // Checking a work name: Fetch protective equipment only if not already loaded
+                    if (!displayedEquipments.has(workId)) {
+                        $.ajax({
+                            url: "{{ admin_url('safetypermit/getchecklist') }}/" + workId,
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function(data) {
+                                data.forEach(function(item) {
+                                    const equipmentName = item.checklist;
 
-                                // Check if equipment is already displayed
-                                if (displayedEquipments.has(equipmentName)) {
-                                    // Add the current workId to its association
-                                    const associatedWorkIds = displayedEquipments.get(
-                                        equipmentName);
-                                    if (!associatedWorkIds.includes(workId)) {
-                                        associatedWorkIds.push(workId);
-                                        displayedEquipments.set(equipmentName,
-                                            associatedWorkIds);
-                                    }
+                                    // Check if equipment is already displayed
+                                    const existingCheckpoint = container.find(
+                                        `.checkpoint[data-name="${equipmentName}"]`
+                                    );
 
-                                    // Only mark checkbox as checked if `default_enable` is 1
-                                    if (item.default_enable == 1) {
-                                        container.find(
-                                                `.checkpoint[data-name="${equipmentName}"] .protective-checkbox`
-                                            )
-                                            .prop('checked', true);
+                                    if (existingCheckpoint.length > 0) {
+                                        // Add the current workId to its association
+                                        const associatedWorkIds = displayedEquipments
+                                            .get(equipmentName) || [];
+                                        if (!associatedWorkIds.includes(workId)) {
+                                            associatedWorkIds.push(workId);
+                                            displayedEquipments.set(equipmentName,
+                                                associatedWorkIds);
+                                        }
+
+                                        // Preserve the checked state only if it is default_enable
+                                        if (item.default_enable == 1) {
+                                            existingCheckpoint
+                                                .find('.equipment_checklist')
+                                                .prop('checked', true);
+                                        }
                                     } else {
-                                        container.find(
-                                                `.checkpoint[data-name="${equipmentName}"] .protective-checkbox`
-                                            )
-                                            .prop('checked',
-                                                false
-                                            ); // Ensure unchecked if not default-enabled
-                                    }
-                                } else {
-                                    // New equipment: Add to DOM and Map
-                                    displayedEquipments.set(equipmentName, [workId]);
+                                        // New equipment: Add to DOM and Map
+                                        displayedEquipments.set(equipmentName, [
+                                            workId
+                                        ]);
 
-                                    const isChecked = item.default_enable == 1 ?
-                                        'checked' : '';
-                                    const checkpointHtml = `
-                                <div class="col-12 col-md-12 col-lg-12 d-flex align-items-center gap-2 checkpoint"
-                                     data-work-id="${workId}"
-                                     data-name="${equipmentName}">
-                                    <input type="checkbox"
-                                           class="equipment_checklist"
-                                           name="equipment_checklist[${workId}][]"
-                                           value="${item.id}"
-                                           id="checkpoint-${workId}-${item.id}"
-                                           ${isChecked}>
-                                    <label for="checkpoint-${workId}-${item.id}">${equipmentName}</label>
-                                </div>`;
-                                    container.append(checkpointHtml);
-                                }
-                            });
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        }
-                    });
+                                        const isChecked = item.default_enable == 1 ?
+                                            'checked' : '';
+                                        const checkpointHtml = `
+                                    <div class="col-12 col-md-12 col-lg-12 d-flex align-items-center gap-2 checkpoint"
+                                         data-work-id="${workId}"
+                                         data-name="${equipmentName}">
+                                        <input type="checkbox"
+                                               class="equipment_checklist"
+                                               name="equipment_checklist[${workId}][]"
+                                               value="${item.id}"
+                                               id="checkpoint-${workId}-${item.id}"
+                                               ${isChecked}>
+                                        <label for="checkpoint-${workId}-${item.id}">${equipmentName}</label>
+                                    </div>`;
+                                        container.append(checkpointHtml);
+                                    }
+                                });
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error:', error);
+                            },
+                        });
+                    }
+                }
+                const anyChecked = $('.work-type-checkbox:checked').length > 0;
+                if (anyChecked) {
+                    $('#checklistMessage').hide(); // Hide "No data available" message
+                } else {
+                    $('#checklistMessage').show(); // Show "No data available" message
                 }
 
-                // Check if all work checkboxes are unchecked and clear the container if true
+                // Clear container if no checkboxes are selected
                 const allUnchecked = $('.work-type-checkbox').filter(':checked').length === 0;
                 if (allUnchecked) {
-                    container.empty(); // Empty the container
+                    container.empty();
                 }
             });
         });
@@ -1792,6 +1821,7 @@
         // safe work instruction
         $(document).ready(function() {
             const displayedEquipments = new Map();
+            $('#instructionMessage').show();
 
             $('.work-type-checkbox').on('change', function() {
                 const workId = $(this).data('id');
@@ -1799,96 +1829,96 @@
                 const checkboxState = $(this).prop('checked');
 
                 if (!checkboxState) {
-                    // Unchecking a work name
-                    // Remove equipment related to this workId
+                    // Unchecking a work name: Remove associated equipment
                     container.find(`.checkpoint[data-work-id="${workId}"]`).each(function() {
                         const equipmentName = $(this).data('name');
-
-                        // Remove the association of this equipment with the unchecked workId
                         if (displayedEquipments.has(equipmentName)) {
                             const associatedWorkIds = displayedEquipments.get(equipmentName);
-                            const updatedWorkIds = associatedWorkIds.filter(id => id !== workId);
+                            const updatedWorkIds = associatedWorkIds.filter((id) => id !== workId);
 
                             if (updatedWorkIds.length > 0) {
                                 displayedEquipments.set(equipmentName, updatedWorkIds);
                             } else {
                                 displayedEquipments.delete(equipmentName);
-                                $(this)
-                                    .remove(); // Remove the equipment from DOM if no workId is associated
+                                $(this).remove(); // Remove from DOM if no workId is associated
                             }
                         }
                     });
                 } else {
-                    // Execute AJAX only if the checkbox is checked
-                    $.ajax({
-                        url: "{{ admin_url('safetypermit/getinstruction') }}/" + workId,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            data.forEach(function(item) {
-                                const equipmentName = item.safe_work;
+                    // Checking a work name: Fetch protective equipment only if not already loaded
+                    if (!displayedEquipments.has(workId)) {
+                        $.ajax({
+                            url: "{{ admin_url('safetypermit/getinstruction') }}/" + workId,
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function(data) {
+                                data.forEach(function(item) {
+                                    const equipmentName = item.safe_work;
 
-                                // Check if equipment is already displayed
-                                if (displayedEquipments.has(equipmentName)) {
-                                    // Add the current workId to its association
-                                    const associatedWorkIds = displayedEquipments.get(
-                                        equipmentName);
-                                    if (!associatedWorkIds.includes(workId)) {
-                                        associatedWorkIds.push(workId);
-                                        displayedEquipments.set(equipmentName,
-                                            associatedWorkIds);
-                                    }
+                                    // Check if equipment is already displayed
+                                    const existingCheckpoint = container.find(
+                                        `.checkpoint[data-name="${equipmentName}"]`
+                                    );
 
-                                    // Only mark checkbox as checked if `default_enable` is 1
-                                    if (item.default_enable == 1) {
-                                        container.find(
-                                                `.checkpoint[data-name="${equipmentName}"] .safework-checkbox`
-                                            )
-                                            .prop('checked', true);
+                                    if (existingCheckpoint.length > 0) {
+                                        // Add the current workId to its association
+                                        const associatedWorkIds = displayedEquipments
+                                            .get(equipmentName) || [];
+                                        if (!associatedWorkIds.includes(workId)) {
+                                            associatedWorkIds.push(workId);
+                                            displayedEquipments.set(equipmentName,
+                                                associatedWorkIds);
+                                        }
+
+                                        // Preserve the checked state only if it is default_enable
+                                        if (item.default_enable == 1) {
+                                            existingCheckpoint
+                                                .find('.safework_instruction')
+                                                .prop('checked', true);
+                                        }
                                     } else {
-                                        container.find(
-                                                `.checkpoint[data-name="${equipmentName}"] .safework-checkbox`
-                                            )
-                                            .prop('checked',
-                                                false
-                                            ); // Ensure unchecked if not default-enabled
+                                        // New equipment: Add to DOM and Map
+                                        displayedEquipments.set(equipmentName, [
+                                            workId
+                                        ]);
+
+                                        const isChecked = item.default_enable == 1 ?
+                                            'checked' : '';
+                                        const checkpointHtml = `
+                                    <div class="col-12 col-md-12 col-lg-12 d-flex align-items-center gap-2 checkpoint"
+                                         data-work-id="${workId}"
+                                         data-name="${equipmentName}">
+                                        <input type="checkbox"
+                                               class="safework_instruction"
+                                               name="safework_instruction[${workId}][]"
+                                               value="${item.id}"
+                                               id="checkpoint-${workId}-${item.id}"
+                                               ${isChecked}>
+                                        <label for="checkpoint-${workId}-${item.id}">${equipmentName}</label>
+                                    </div>`;
+                                        container.append(checkpointHtml);
                                     }
-                                } else {
-                                    // New equipment: Add to DOM and Map
-                                    displayedEquipments.set(equipmentName, [workId]);
-
-                                    const isChecked = item.default_enable == 1 ?
-                                        'checked' : '';
-                                    const checkpointHtml = `
-                                <div class="col-12 col-md-12 col-lg-12 d-flex align-items-center gap-2 checkpoint"
-                                     data-work-id="${workId}"
-                                     data-name="${equipmentName}">
-                                    <input type="checkbox"
-                                           class="safework-checkbox"
-                                           name="safework_instruction[${workId}][]"
-                                           value="${item.id}"
-                                           id="checkpoint-${workId}-${item.id}"
-                                           ${isChecked}>
-                                    <label for="checkpoint-${workId}-${item.id}">${equipmentName}</label>
-                                </div>`;
-                                    container.append(checkpointHtml);
-                                }
-                            });
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        }
-                    });
+                                });
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error:', error);
+                            },
+                        });
+                    }
                 }
-
-                // Check if all work checkboxes are unchecked and clear the container if true
+                const anyChecked = $('.work-type-checkbox:checked').length > 0;
+                if (anyChecked) {
+                    $('#instructionMessage').hide(); // Hide "No data available" message
+                } else {
+                    $('#instructionMessage').show(); // Show "No data available" message
+                }
+                // Clear container if no checkboxes are selected
                 const allUnchecked = $('.work-type-checkbox').filter(':checked').length === 0;
                 if (allUnchecked) {
-                    container.empty(); // Empty the container
+                    container.empty();
                 }
             });
         });
-
 
 
         $(document).ready(function() {

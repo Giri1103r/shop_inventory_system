@@ -217,8 +217,7 @@ class SafetyApproveReject extends Model
     public function getEhsapproval($ptw_id)
     {
         $data = $this->select('ptw_aprove_reject.*')
-            ->where('ptw_aprove_reject.permit_id', $ptw_id)
-            ->where('ptw_aprove_reject.approve_reject_status', 6)->orwhere('ptw_aprove_reject.approve_reject_status', 4)->where('ptw_aprove_reject.approve_reject_type', 2)->where('ptw_aprove_reject.trash', 'NO')
+            ->where('ptw_aprove_reject.permit_id', $ptw_id)->where('ptw_aprove_reject.approve_reject_type', 2)->where('ptw_aprove_reject.trash', 'NO')
             ->orderBy('id', 'desc')
             ->first();
 
@@ -241,8 +240,7 @@ class SafetyApproveReject extends Model
     public function getpermitextensionapproval($ptw_id)
     {
         $data = $this->select('ptw_aprove_reject.*')
-            ->where('ptw_aprove_reject.permit_id', $ptw_id)
-            ->where('ptw_aprove_reject.approve_reject_status', 11)->where('ptw_aprove_reject.approve_reject_type', 4)->where('ptw_aprove_reject.trash', 'NO')
+            ->where('ptw_aprove_reject.permit_id', $ptw_id)->where('ptw_aprove_reject.approve_reject_type', 4)->where('ptw_aprove_reject.trash', 'NO')
             ->get();
 
         return $data;
