@@ -775,12 +775,9 @@ class PpeRequestController extends Controller
         $rules = [
             'store_remarks' => 'required',
 
-
         ];
         $messages = [
             'store_remarks.required' => 'Remarks Field is Mandatory',
-
-
 
         ];
 

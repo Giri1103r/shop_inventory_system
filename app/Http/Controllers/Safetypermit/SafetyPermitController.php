@@ -1622,7 +1622,7 @@ class SafetyPermitController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             report($ex);
         }
     }
