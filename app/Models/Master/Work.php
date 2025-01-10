@@ -228,7 +228,6 @@ class Work extends Model
     
                 // Validate existence
                 if ($companyExists) {
-                    dd(67);
                     $this->updateErrorStatus($item['emp_id'], "Company does not exist.");
                     continue;
                 } elseif ($unitExists) {
