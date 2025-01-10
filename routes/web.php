@@ -82,6 +82,7 @@ Route::get('cron/safetypermit/checklistmaster/import', [CronController::class, '
 Route::get('stockitem', [CronController::class, 'storeItem']);
 Route::get('expireexemptionstatus',[CronController::class,'ExpireExemption']);
 Route::get('updateStockitem', [CronController::class, 'updateItem']);
+Route::get('cron/master/work/all-details-temp', [CronController::class, 'workMasterAllDetailsTemp']);
 Route::get('cron/master/workmastertemp', [CronController::class, 'workMasterTemp']);
 Route::get('cron/master/worksave', [CronController::class, 'workSave']);
 Route::get('cron/master/employee/all-details-temp', [CronController::class, 'employeeMasterTempAllDetails']);

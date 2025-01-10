@@ -187,11 +187,43 @@ class CronController extends Controller
     }
 
 
+    public function workMasterAllDetailsTemp()
+    {
+        try {
+            $fromDate = '2001-01-01';
+            $toDate = todayDbdate();
+
+            $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetWorkerDetails?TokenId=123&OfficeId=PNI&fromDate={$fromDate}&toDate={$toDate}";
+
+
+            $response = Http::get($apiUrl);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                if (!empty($data)) {
+                    $work = $this->worktemp->store($data);
+                    return response()->json(['message' => 'Data saved successfully.']);
+                } else {
+                    return response()->json(['message' => 'No data found in API response.']);
+                }
+            } else {
+                return response()->json(['message' => 'Failed to fetch data from API.', 'status' => $response->status()]);
+            }
+        } catch (Exception $ex) {
+            report($ex);
+            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
+        }
+    }
+
     public function workMasterTemp()
     {
         try {
+            $fromDate = todayDbdate();
+            $toDate = todayDbdate();
 
-            $apiUrl = 'https://vmsapi.karam.in/emp.asmx/GetWorkerDetails?TokenId=123&OfficeId=PNI';
+            $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetWorkerDetails?TokenId=123&OfficeId=PNI&fromDate={$fromDate}&toDate={$toDate}";
+
 
             $response = Http::get($apiUrl);
 
@@ -344,12 +376,12 @@ class CronController extends Controller
                 //     'vinay.kumar@karam.in',
                 //     'prashant.singh2@karam.in'
                 // ];
-                
+
                 foreach ($users as $user) {
-                    
-                    if (!empty($user['created_at']) && !empty($user) && isset($user['email'])) {
-                        Mail::to($user['email'])->queue(new EmployeeRegisterEmail($user));
-                    }
+
+                    // if (!empty($user['created_at']) && !empty($user) && isset($user['email'])) {
+                    //     Mail::to($user['email'])->queue(new EmployeeRegisterEmail($user));
+                    // }
 
                     // if (!empty($user['created_at']) && !empty($user) && in_array($user['email'], $allowedEmails)) {
                     //     Mail::to($user['email'])->queue(new EmployeeRegisterEmail($user));
