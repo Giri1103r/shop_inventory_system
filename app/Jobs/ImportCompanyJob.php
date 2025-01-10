@@ -22,9 +22,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use App\Models\Master\Company;
 use Illuminate\Support\Facades\Session;
 
- class ImportCompanyJob
+//  class ImportCompanyJob
 
-// class ImportCompanyJob implements ShouldQueue
+class ImportCompanyJob implements ShouldQueue
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

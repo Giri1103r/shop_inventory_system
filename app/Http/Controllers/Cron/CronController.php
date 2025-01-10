@@ -347,9 +347,9 @@ class CronController extends Controller
                 
                 foreach ($users as $user) {
                     
-                    if (!empty($user['created_at']) && !empty($user) && isset($user['email'])) {
-                        Mail::to($user['email'])->queue(new EmployeeRegisterEmail($user));
-                    }
+                    // if (!empty($user['created_at']) && !empty($user) && isset($user['email'])) {
+                    //     Mail::to($user['email'])->queue(new EmployeeRegisterEmail($user));
+                    // }
 
                     // if (!empty($user['created_at']) && !empty($user) && in_array($user['email'], $allowedEmails)) {
                     //     Mail::to($user['email'])->queue(new EmployeeRegisterEmail($user));
