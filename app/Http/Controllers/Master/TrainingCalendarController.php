@@ -120,13 +120,14 @@ class TrainingCalendarController extends Controller
             if ($request->filled('trainer_id')) {
                 $query->where('training_schedule.trainer_id', decryptId($request->trainer_id));
             }
+        
 
             $events = $query->get()->map(function ($event) {
                 return [
                     'id' => encryptId($event->id),
                     'title' => 'Topic: ' . $event->topic_name,
                     'start' => $event->from_date,
-                    'end' => $event->to_date,
+                    'end' => \Carbon\Carbon::parse($event->to_date)->addDay()->toDateString(), 
                     'extendedProps' => [
                         'trainer_name' => $event->emp_name,
                         'venue_name' => $event->name_of_the_conference_hall,
@@ -135,6 +136,8 @@ class TrainingCalendarController extends Controller
                     ],
                 ];
             });
+            // dd($events->from_date,$events->to_date,$events);
+
             return response()->json($events);
         } catch (Exception $ex) {
             report($ex->getMessage());
