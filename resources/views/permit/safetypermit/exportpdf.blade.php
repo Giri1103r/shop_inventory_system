@@ -996,7 +996,7 @@
                 </td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
+                <td width="50%" style="padding:5px;"><b>Cancelled Date</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ isset($safetypermit->closed_date) ? Displaydateformat($safetypermit->closed_date) : '' }}
@@ -1031,7 +1031,7 @@
                 </td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
+                <td width="50%" style="padding:5px;"><b>Cancelled Date</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ isset($safetypermit->cancelled_date) ? Displaydateformat($safetypermit->cancelled_date) : '' }}
