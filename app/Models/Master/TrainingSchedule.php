@@ -287,7 +287,6 @@ class TrainingSchedule extends Model
         $insert_array = array(
             'from_date' => DBdateformat($request->from_date),
             'to_date' => DBdateformat($request->to_date),
-            'date' => DBdateformat($request->date) ?? null,
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
             'training_hrs_perday' =>  $trainingHrsPerDay,
@@ -337,7 +336,6 @@ class TrainingSchedule extends Model
         $update_array = array(
             'from_date' => DBdateformat($request->from_date),
             'to_date' => DBdateformat($request->to_date),
-            'date' => DBdateformat($request->date) ?? null,
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
             'training_hrs_perday' =>  $trainingHrsPerDay,
