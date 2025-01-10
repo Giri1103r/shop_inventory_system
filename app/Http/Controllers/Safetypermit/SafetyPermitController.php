@@ -121,17 +121,17 @@ class SafetyPermitController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
 
-                            if ( (CheckUserRole(ROLE_SUPERADMIN) &&  $row->permit_status != STATUS_CANCELLED && $row->permit_status != STATUS_PLANT_HEAD_APPROVED && $row->permit_status != STATUS_EHS_DECLINE && $row->permit_status != STATUS_PERMIT_EXPIRED) || (!in_array(ROLE_USER, getUserRoleId(Auth::id()))) && ((in_array(ROLE_EHS_OFFICER, getUserRoleId(Auth::id())) && $row->permit_status == STATUS_EHS_VERIFICATION_PENDING) || ($row->verified_by == Auth::id() && $row->permit_status == STATUS_EHS_APPROVE_PENDING) || (in_array(ROLE_PLANT_HEAD, getUserRoleId(Auth::id())) && $row->permit_status == STATUS_PLANT_HEAD_PENDING) || (($row->verified_by == Auth::id() && $row->reassign_to == null ) && $row->permit_status == STATUS_EHS_HOLD) || ($row->reassign_to == Auth::id() && $row->permit_status == STATUS_EHS_HOLD) || (($row->verified_by == Auth::id() && $row->reassign_to == null ) && $row->permit_status == STATUS_EHS_RESUME) || ($row->reassign_to == Auth::id() && $row->permit_status == STATUS_EHS_RESUME)|| ($row->reassign_to == Auth::id() && $row->permit_status == STATUS_EHS_REASSIGN) || ($row->verified_by == Auth::id() &&  $row->permit_status == STATUS_PERMIT_EXTENDED) || ($row->verified_by == Auth::id() && $row->permit_status == STATUS_PERMIT_EXTENDED_APPROVAL) || ($row->verified_by == Auth::id() && $row->permit_status == STATUS_PLANTHEAD_REJECTED))) {
+                            if ((CheckUserRole(ROLE_SUPERADMIN) &&  $row->permit_status != STATUS_CANCELLED &&  $row->permit_status != STATUS_CLOSED && $row->permit_status != STATUS_PLANT_HEAD_APPROVED && $row->permit_status != STATUS_EHS_DECLINE && $row->permit_status != STATUS_PERMIT_EXPIRED) || (!in_array(ROLE_USER, getUserRoleId(Auth::id()))) && ((in_array(ROLE_EHS_OFFICER, getUserRoleId(Auth::id())) && $row->permit_status == STATUS_EHS_VERIFICATION_PENDING) || ($row->verified_by == Auth::id() && $row->permit_status == STATUS_EHS_APPROVE_PENDING) || (in_array(ROLE_PLANT_HEAD, getUserRoleId(Auth::id())) && $row->permit_status == STATUS_PLANT_HEAD_PENDING) || (($row->verified_by == Auth::id() && $row->reassign_to == null) && $row->permit_status == STATUS_EHS_HOLD) || ($row->reassign_to == Auth::id() && $row->permit_status == STATUS_EHS_HOLD) || (($row->verified_by == Auth::id() && $row->reassign_to == null) && $row->permit_status == STATUS_EHS_RESUME) || ($row->reassign_to == Auth::id() && $row->permit_status == STATUS_EHS_RESUME) || ($row->reassign_to == Auth::id() && $row->permit_status == STATUS_EHS_REASSIGN) || ($row->verified_by == Auth::id() &&  $row->permit_status == STATUS_PERMIT_EXTENDED) || ($row->verified_by == Auth::id() && $row->permit_status == STATUS_PERMIT_EXTENDED_APPROVAL) || ($row->verified_by == Auth::id() && $row->permit_status == STATUS_PLANTHEAD_REJECTED))) {
                                 $btn = '<a href="' . admin_url('safetypermit/approvereject/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="Approval">
                             <i class="fa-solid fa-check-to-slot text-success"></i>
                         </a>';
                             }
 
-                            if ($row->date == date('Y-m-d')) { 
+                            if ($row->date == date('Y-m-d')) {
                                 if (!(
                                     $row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||
                                     $row->permit_status == STATUS_EHS_DECLINE ||
-                                    $row->permit_status == STATUS_PLANT_HEAD_APPROVED ||
+                                    $row->permit_status == STATUS_CLOSED ||
                                     $row->permit_status == STATUS_PERMIT_EXPIRED ||
                                     $row->permit_status == STATUS_PLANTHEAD_REJECTED ||
                                     $row->permit_status == STATUS_CANCELLED ||
@@ -140,20 +140,19 @@ class SafetyPermitController extends Controller
                                     $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '" class="permitExtension" title="' . __('Permit Extension') . '"><i class="fa fa-external-link"></i></a>';
                                 }
                             }
-                            
+
                             if (CheckUserPermission('view')) {
-                            $btn .= '<a href="' . admin_url('safetypermit/view/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="' . __('common.view') . '">
+                                $btn .= '<a href="' . admin_url('safetypermit/view/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="' . __('common.view') . '">
                             <i class="fa-solid fa-eye"></i>
                         </a>';
                             }
 
                             if (CheckUserPermission('edit')) {
-                            if (($row->created_by == Auth::id() && ($row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||  $row->permit_status == STATUS_EHS_DECLINE))) {
-                                $btn .= '<a href="' . admin_url('safetypermit/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
+                                if (($row->created_by == Auth::id() && ($row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||  $row->permit_status == STATUS_EHS_DECLINE))) {
+                                    $btn .= '<a href="' . admin_url('safetypermit/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
+                                }
                             }
-
-                        }
-                            if (($row->permit_status >= STATUS_EHS_APPROVE_PENDING  &&  $row->permit_status != STATUS_CANCELLED)) {
+                            if (($row->permit_status >= STATUS_EHS_APPROVE_PENDING  &&  $row->permit_status != STATUS_CANCELLED &&  $row->permit_status != STATUS_CLOSED)) {
                                 $permitDateTime = Carbon::parse($row->date . ' ' . $row->time_to);
                                 if ($permitDateTime->isFuture()) {
                                     $btn .= '<a href="' . admin_url('safetypermit/qr/pdf/' . encryptId($row->id)) . '" target="__blank" style="margin-right: 5px;" title="QR PDF">
@@ -166,9 +165,13 @@ class SafetyPermitController extends Controller
                             $btn .= '<a href="' . admin_url('safetypermit/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
-                        if (($row->created_by == Auth::id() || isAdmin()) && ($row->permit_status != STATUS_CANCELLED)) {
-                        $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Cancel" style="color: #e21e23;margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
-                        }
+                            if (($row->created_by == Auth::id() || isAdmin()) && ($row->permit_status != STATUS_CANCELLED)) {
+                                $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Cancel" style="color: #e21e23;margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
+                            }
+
+                            if (($row->created_by == Auth::id() || isAdmin()) && ($row->permit_status == STATUS_PLANT_HEAD_APPROVED)) {
+                                $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="permitClose" title="Close" style="color: green;margin-right: 5px;"><i class="fa fa-window-close" aria-hidden="true"></i></a> ';
+                            }
 
 
                             return $btn;
@@ -628,7 +631,6 @@ class SafetyPermitController extends Controller
 
 
             return view('permit.safetypermit.approvereject', $data);
-
         } catch (Exception $ex) {
 
             report($ex);
@@ -1196,6 +1198,88 @@ class SafetyPermitController extends Controller
         }
     }
 
+
+    public function close(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $safetypermit = $this->safetypermit->find($id);
+            $this->safetypermit->closePermit($id);
+
+            $mailsubject = 'Safety Permit has been Closed';
+            $user_roles = [ROLE_EHS_OFFICER, ROLE_EHS_HEAD];
+            $userids = [];
+            $users = collect();
+
+            foreach ($user_roles as $user_role) {
+                $roleUsers = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')
+                    ->get();
+
+                $userids = array_merge($userids, $roleUsers->pluck('id')->toArray());
+                $users = $users->merge($roleUsers);
+            }
+
+            // Remove duplicate user IDs (if any)
+            $userids = array_unique($userids);
+
+            if ($users->count() > 0) {
+                foreach ($users as $user) {
+                    $email_id = $user->email;
+
+                    if (!empty($email_id)) {
+                        $safetypermitdetails = $this->safetypermit->selectmail($safetypermit->id);
+                        $permitrray = $safetypermitdetails->toArray();
+
+                        $permitrray['name'] = $user->name;
+                        $permitrray['email_id'] = $email_id;
+                        $permitrray['mail_subject'] = $mailsubject;
+
+                        // Send email
+                        Mail::to($permitrray['email_id'])->queue(new SafetyPermitEmail($permitrray));
+                    }
+                }
+            }
+
+            /**
+             * Send Web Notification
+             */
+            $notificationData = array(
+                'notification_type' => 3,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => 'Safety Permit ' . $safetypermit->permit_id . ' Closed by ' . getUsername($safetypermit->created_by),
+                    'icon' => admin_url('public/assets/icons/permit_to_work.png'),
+                    'id' => $safetypermit->id,
+                    'module' => 1,
+                )),
+                'web_link' => admin_url('safetypermit/view/' . encryptId($safetypermit->id)),
+                'assigned_user' => implode(',', $userids), // Assign all user IDs
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+
+
+            $insert_array = array(
+                'permit_type' => 0,
+                'permit_id' => $safetypermit->id,
+                'from_status' => $safetypermit->permit_status,
+                'to_status' => 15,
+                'is_reject' => null,
+                'remarks' => null,
+                'approved_by' => Auth::id(),
+            );
+            $this->statuslog->create($insert_array);
+
+            return response()->json(['status' => 'success', 'msg' => __('Work Permit Closed Successfully')], 200);
+        } catch (Exception $ex) {
+
+            return response()->json(['status' => 'error', 'msg' => __('ptw.please_try_after_some_time')], 406);
+        }
+    }
+
+
     public function ExportExcel(Request $request)
     {
 
@@ -1455,7 +1539,7 @@ class SafetyPermitController extends Controller
         $mpdf = new \Mpdf\Mpdf($property);
         $mpdf->setAutoTopMargin = 'stretch';
 
-        $view = view('permit.safetypermit.permitjoin', compact('qrBase64', 'permit_no','safetypermit'));
+        $view = view('permit.safetypermit.permitjoin', compact('qrBase64', 'permit_no', 'safetypermit'));
         $html = $view->render();
 
         $mpdf->WriteHTML($html);
@@ -1499,20 +1583,20 @@ class SafetyPermitController extends Controller
 
             $property = [
                 'tempDir' => 'public/pdf/temp/',
-               // 'mode' => 'c',
+                // 'mode' => 'c',
                 'margin_left' => 10,
                 'margin_right' => 10,
                 'margin_top' => 10,
                 'fontDir' => array_merge((new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], [
-                            public_path('assets/fonts/Noto_Sans_Devanagari'),
-                        ]),
-                        'fontdata' => array_merge((new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'], [
-                                    'NotoSansDevanagari' => [
-                                        'R' => 'NotoSansDevanagari-Regular.ttf',
-                                        'B' => 'NotoSansDevanagari-Bold.ttf',
-                                    ],
-                                ]),
-                                'default_font' => 'NotoSansDevanagari',
+                    public_path('assets/fonts/Noto_Sans_Devanagari'),
+                ]),
+                'fontdata' => array_merge((new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'], [
+                    'NotoSansDevanagari' => [
+                        'R' => 'NotoSansDevanagari-Regular.ttf',
+                        'B' => 'NotoSansDevanagari-Bold.ttf',
+                    ],
+                ]),
+                'default_font' => 'NotoSansDevanagari',
 
             ];
 
