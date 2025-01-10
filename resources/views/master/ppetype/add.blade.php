@@ -95,7 +95,7 @@
                         minlength: "{{ __('common.validate_min_length') }}",
                         maxlength: "Maximum Characters should not exceed 100",
                         remote: "{{ __('PPE Type should be unique') }}",
-                        regex: "{{ __('PPE Type is alphanumeric') }}"
+                        regex: "{{ __('PPE Type  must be alphanumeric') }}"
                     }
                 },
                 errorElement: 'div',

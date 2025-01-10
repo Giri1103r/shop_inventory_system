@@ -114,7 +114,8 @@
                                             <div class="col-md-12 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Standard</label>
-                                                    <textarea name="ppe_standard"    id="ppe_standard" cols="3" rows="4" class="form-control form-control-sm" placeholder="Enter the ppe standard"></textarea>
+                                                    <textarea name="ppe_standard" id="ppe_standard" cols="3" rows="4" class="form-control form-control-sm"
+                                                        placeholder="Enter the ppe standard"></textarea>
 
                                                     <div class="text-danger" id="ppe_standard_error"></div>
                                                     @error('ppe_standard')
@@ -179,7 +180,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 200,
-                        regex: /^[a-zA-Z0-9\-_'"()\s]{3,100}$/,
+                        regex: /^[a-zA-Z0-9\-_'"()\s.:;]$/
                         //     remote: {
                         //     url: '{{ admin_url('ppe_ppetype_master/ppename/unique') }}',
                         //     type: 'get',
@@ -199,7 +200,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 200,
-                        regex: /^[a-zA-Z0-9\-_'"():;\s]{3,30}$/
+                        regex: /^[a-zA-Z0-9\-_'"()\s.:;]$/
                     },
                     ppe_standard: {
                         required: true,
@@ -216,14 +217,14 @@
                         required: "Item Code cannot be empty.",
                         minlength: "Item code must contain between 3 and 30 characters.",
                         maxlength: "Item code must contain between 3 and 30 characters.",
-                        regex: "Item code should be alphanumeric.",
+                        regex: "Item code can only contain letters, numbers, spaces, hyphens, periods, or plus signs",
                         remote: "Item code already exists."
                     },
                     ppe_name: {
                         required: "PPE Name cannot be empty.",
                         minlength: "PPE Name must be between 3 and 200 characters.",
                         maxlength: "PPE Name must be between 3 and 200 characters.",
-                        regex: "PPE Name should be alphanumeric and can include -, _, ', \", (, ).,:,;",
+                        regex: "PPE Name should be alphanumeric and can include -, _, ', \", (, ), ., :, ;, or spaces.",
                         //  remote: "PPE Name already exists."
                     },
                     ppe_type: {
@@ -233,7 +234,7 @@
                         required: "Protection Category cannot be empty.",
                         minlength: "Protection Category must be between 3 and 200 characters.",
                         maxlength: "Protection Category must be between 3 and 200 characters.",
-                        regex: "Protection Category should be alphanumeric and can include -, _, ', \", (, )."
+                        regex: "Protection Category should be alphanumeric and can include -, _, ', \", (, ), ., :, ;, or spaces."
                     },
                     ppe_standard: {
                         required: "PPE Standard cannot be empty.",

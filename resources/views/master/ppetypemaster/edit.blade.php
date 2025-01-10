@@ -174,7 +174,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex:/^[a-zA-Z0-9-\s]*$/,
+                        regex:/^[a-zA-Z0-9-\s.+]*$/,
                         remote: {
                             url: '{{ admin_url('ppe_ppetype_master/unique') }}',
                             type: 'get',
@@ -192,8 +192,8 @@
                     ppe_name: {
                         required: true,
                         minlength: 3,
-                        maxlength: 30,
-                        regex: /^[a-zA-Z0-9\-_'"()\s]{3,30}$/,
+                        maxlength: 200,
+                        regex: /^[a-zA-Z0-9\-_'"()\s.:;]$/
                         // remote: {
                         //     url: '{{ admin_url('ppe_ppetype_master/ppename/unique') }}',
                         //     type: 'get',
@@ -214,7 +214,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex: /^[a-zA-Z0-9\-_'"()\s]{3,30}$/
+                        regex: /^[a-zA-Z0-9\-_'"()\s.:;]$/
                     },
                     ppe_standard: {
                         required: true,
@@ -231,14 +231,14 @@
                         required: "Item Code cannot be empty.",
                         minlength: "Item code must contain between 3 and 30 characters.",
                         maxlength: "Item code must contain between 3 and 30 characters.",
-                        regex: "Item code should be alphanumeric.",
+                        regex: "Item code can only contain letters, numbers, spaces, hyphens, periods, or plus signs",
                         remote: "Item code already exists."
                     },
                     ppe_name: {
                         required: "PPE Name cannot be empty.",
-                        minlength: "PPE Name must be between 3 and 30 characters.",
-                        maxlength: "PPE Name must be between 3 and 30 characters.",
-                        regex: "PPE Name should be alphanumeric and can include -, _, ', \", (, ).",
+                        minlength: "PPE Name must be between 3 and 200 characters.",
+                        maxlength: "PPE Name must be between 3 and 200 characters.",
+                        regex: "PPE Name should be alphanumeric and can include -, _, ', \", (, ), ., :, ;, or spaces.",
                         // remote: "PPE Name already exists."
                     },
                     ppe_type: {
@@ -246,9 +246,9 @@
                     },
                     protection_category: {
                         required: "Protection Category cannot be empty.",
-                        minlength: "Protection Category must be between 3 and 30 characters.",
-                        maxlength: "Protection Category must be between 3 and 30 characters.",
-                        regex: "Protection Category should be alphanumeric and can include -, _, ', \", (, )."
+                        minlength: "Protection Category must be between 3 and 200 characters.",
+                        maxlength: "Protection Category must be between 3 and 200 characters.",
+                        regex: "Protection Category should be alphanumeric and can include -, _, ', \", (, ), ., :, ;, or spaces."
                     },
                     ppe_standard: {
                         required: "PPE Standard cannot be empty.",
