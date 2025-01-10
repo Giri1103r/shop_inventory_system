@@ -799,7 +799,7 @@ class TrainingScheduleController extends Controller
                     'rejectedlog' => $rejectedlog,
                 ];
 
-                if (Auth::user()->role != ROLE_TRAINER  &&  Auth::user()->role != ROLE_SUPERADMIN &&  Auth::user()->role != ROLE_ADMIN) {
+                if (Auth::user()->role != ROLE_TRAINER  &&  Auth::user()->role != ROLE_SUPERADMIN &&  Auth::user()->role != ROLE_ADMIN &&  Auth::user()->role != ROLE_VISE_PRESIDENT) {
 
                     $trainingAssessmentList = $this->training_assessment_feedback->getAssessmentByEmp($training_schedule->id);
                     foreach ($trainingAssessmentList as $assessment) {
@@ -876,7 +876,7 @@ class TrainingScheduleController extends Controller
                         'rejectedlog' => $rejectedlog,
                     ];
 
-                    return view('master.training_schedule.view', $data);
+                    return view('master.training_schedule.vpapprovalview', $data);
                 }
             }
         } catch (Exception $ex) {

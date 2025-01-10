@@ -398,39 +398,45 @@
 
             /* Delete Record */
             $(document).on('click', '.recordDelete', function() {
-
                 var id = $(this).data('id');
                 var login_id = $(this).data('login_id');
 
-                var title = '{{ __('Do You want to Cancel Safety Permit') }}';
+                var title = '{{ __('Do You want to Cancel Safety Permit?') }}';
                 var text = '{{ __('Cancel') }}';
-                var btncolor = '#dc3545'
+                var btncolor = '#28a745';
 
                 Swal.fire({
                     title: title,
                     icon: 'warning',
-                    showDenyButton: false,
-                    showCloseButton: true,
+                    input: 'textarea', // Add a textarea for remarks
+                    inputPlaceholder: '{{ __('Enter your remarks here...') }}',
+                    showCloseButton: true, 
                     confirmButtonText: text,
                     confirmButtonColor: btncolor,
-                    denyButtonColor: '#28a745',
                     customClass: {
-                        confirmButton: 'btn-skew',
-                        cancelButton: 'btn-skew'
+                        confirmButton: 'btn-skew'
                     },
+                    preConfirm: (remarks) => {
+                        if (!remarks) {
+                            Swal.showValidationMessage('{{ __('Remarks are required!') }}');
+                        }
+                        return remarks; // Return the input value
+                    }
                 }).then((result) => {
+                    if (result.isConfirmed) {
+                        var remarks = result.value;
 
-                    if (result.value) {
+                        // Proceed with AJAX request
                         $.ajax({
                             url: "{{ admin_url('safetypermit/delete') }}",
                             type: 'post',
                             headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                                    .attr('content')
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             },
                             data: {
                                 id: id,
-                                login_id: login_id
+                                login_id: login_id,
+                                remarks: remarks // Pass remarks to the server
                             },
                             success: function(response) {
                                 const Toast = Swal.mixin({
@@ -440,13 +446,10 @@
                                     timer: 3000,
                                     timerProgressBar: true,
                                     didOpen: (toast) => {
-                                        toast.addEventListener(
-                                            'mouseenter',
-                                            Swal.stopTimer)
-                                        toast.addEventListener(
-                                            'mouseleave',
-                                            Swal.resumeTimer
-                                        )
+                                        toast.addEventListener('mouseenter',
+                                            Swal.stopTimer);
+                                        toast.addEventListener('mouseleave',
+                                            Swal.resumeTimer);
                                     }
                                 });
                                 Toast.fire({
@@ -468,49 +471,53 @@
                                 }
                             }
                         });
-                    } else if (result.isDenied) {
-                        Swal.fire('Something went wrong', '', 'info');
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        Swal.fire('{{ __('Action Cancelled') }}', '', 'info');
                     }
-                })
-
-
+                });
             });
 
 
             $(document).on('click', '.permitClose', function() {
-
                 var id = $(this).data('id');
                 var login_id = $(this).data('login_id');
 
                 var title = '{{ __('Do You want to Close Safety Permit') }}';
                 var text = '{{ __('Close') }}';
-                var btncolor = '#dc3545'
+                var btncolor = '#28a745';
 
                 Swal.fire({
                     title: title,
                     icon: 'warning',
-                    showDenyButton: false,
-                    showCloseButton: true,
+                    input: 'textarea', // Add a textarea for remarks
+                    inputPlaceholder: '{{ __('Enter your remarks here...') }}',
+                    showCloseButton: true, 
                     confirmButtonText: text,
                     confirmButtonColor: btncolor,
-                    denyButtonColor: '#28a745',
                     customClass: {
-                        confirmButton: 'btn-skew',
-                        cancelButton: 'btn-skew'
+                        confirmButton: 'btn-skew'
                     },
+                    preConfirm: (remarks) => {
+                        if (!remarks) {
+                            Swal.showValidationMessage('{{ __('Remarks are required!') }}');
+                        }
+                        return remarks; // Return the input value
+                    }
                 }).then((result) => {
+                    if (result.isConfirmed) {
+                        var remarks = result.value;
 
-                    if (result.value) {
+                        // Proceed with AJAX request
                         $.ajax({
                             url: "{{ admin_url('safetypermit/close') }}",
                             type: 'post',
                             headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                                    .attr('content')
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             },
                             data: {
                                 id: id,
-                                login_id: login_id
+                                login_id: login_id,
+                                remarks: remarks // Pass remarks to the server
                             },
                             success: function(response) {
                                 const Toast = Swal.mixin({
@@ -520,13 +527,10 @@
                                     timer: 3000,
                                     timerProgressBar: true,
                                     didOpen: (toast) => {
-                                        toast.addEventListener(
-                                            'mouseenter',
-                                            Swal.stopTimer)
-                                        toast.addEventListener(
-                                            'mouseleave',
-                                            Swal.resumeTimer
-                                        )
+                                        toast.addEventListener('mouseenter',
+                                            Swal.stopTimer);
+                                        toast.addEventListener('mouseleave',
+                                            Swal.resumeTimer);
                                     }
                                 });
                                 Toast.fire({
@@ -548,13 +552,12 @@
                                 }
                             }
                         });
-                    } else if (result.isDenied) {
-                        Swal.fire('Something went wrong', '', 'info');
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        Swal.fire('{{ __('Action Closed') }}', '', 'info');
                     }
-                })
-
-
+                });
             });
+        
         });
     </script>
 @endpush

@@ -56,6 +56,12 @@ class SafetyPermit extends Model
         'resume_hold_by',
         'reassign_to',
         'approved_by',
+        'cancel_remarks',
+        'cancelled_date',
+        'cancelled_by',
+        'close_remarks',
+        'closed_date',
+        'closed_by',
         'permit_status',
         'permit_extension_status',
         'status',
@@ -424,10 +430,13 @@ class SafetyPermit extends Model
         return $this->where('id', $id)->update($update_data);
     }
 
-    public function deleterecord($id)
+    public function deleterecord($id, $remarks)
     {
         $update_data = [
             'permit_status' => 14,
+            'cancel_remarks' =>  $remarks,
+            'cancelled_date' =>  todayDbdate(),
+            'cancelled_by' =>  Auth::id(),
         ];
 
         return $this->where('id', $id)->update($update_data);
@@ -438,10 +447,13 @@ class SafetyPermit extends Model
         //     'WorkmanInvolved' => $WorkmanInvolved,
         // ];
     }
-    public function closePermit($id)
+    public function closePermit($id,$remarks)
     {
         $update_data = [
             'permit_status' => 15,
+            'close_remarks' =>  $remarks,
+            'closed_date' =>  todayDbdate(),
+            'closed_by' =>  Auth::id(),
         ];
 
         return $this->where('id', $id)->update($update_data);

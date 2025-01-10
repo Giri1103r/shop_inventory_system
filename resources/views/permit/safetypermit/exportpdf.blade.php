@@ -783,7 +783,8 @@
     @endif
 
     @if (
-        !is_null($getsafetyPermitExtension) &&
+        isset($getsafetyPermitExtension) &&
+        count($getsafetyPermitExtension) > 0 &&
             ($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED ||
                 ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&
                     $safetypermit['permit_extension_status'] == 1 &&
@@ -833,7 +834,8 @@
     @endif
 
     @if (
-       !is_null($getpermitextensionapproval) &&
+        isset($getpermitextensionapproval) &&
+        count($getpermitextensionapproval) > 0 &&
             ($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED_APPROVAL ||
                 ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&
                     $safetypermit['permit_extension_status'] == 1)))
@@ -972,6 +974,79 @@
             </tr>
         </table>
     @endif
+
+    
+    @if ($safetypermit['permit_status'] == STATUS_CLOSED)
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td
+                        style="width:100%;background-color: #ce0f1f;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                        Permit Closed
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <table>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Closed By</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getUsername(isset($safetypermit->closed_by) ? $safetypermit->closed_by : '') }}
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ isset($safetypermit->closed_date) ? Displaydateformat($safetypermit->closed_date) : '' }}
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Reason</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ isset($safetypermit->close_remarks) ? $safetypermit->close_remarks : '' }}
+                </td>
+            </tr>
+        </table>
+    @endif
+    @if ($safetypermit['permit_status'] == STATUS_CANCELLED)
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td
+                        style="width:100%;background-color: #ce0f1f;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                        Permit Cancelled
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <table>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Cancelled By</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getUsername(isset($safetypermit->cancelled_by) ? $safetypermit->cancelled_by : '') }}
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ isset($safetypermit->cancelled_date) ? Displaydateformat($safetypermit->cancelled_date) : '' }}
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Reason</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ isset($safetypermit->cancel_remarks) ? $safetypermit->cancel_remarks : '' }}
+                </td>
+            </tr>
+        </table>
+    @endif
+
 </body>
 
 </html>
