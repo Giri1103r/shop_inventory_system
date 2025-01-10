@@ -133,7 +133,7 @@ class PpeRequestController extends Controller
                                 $btn .= '<a href="' . admin_url('ppe_request/hodapproval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
-                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) && $row->approve_status == STATUS_EHS_APPROVAL_PENDING || (checkUserRole(ROLE_STORE_MANAGER) && $row->approve_status = STATUS_EHS_APPROVED && $row->approve_status != STATUS_EHS_REJECTED  && $row->approve_status != STATUS_EHS_APPROVAL_PENDING  && $row->approve_status != STATUS_ISSUED)) {
+                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) && $row->approve_status == STATUS_EHS_APPROVAL_PENDING || ( checkUserRole(ROLE_SUPERADMIN) &&  $row->approve_status != STATUS_ISSUED ||checkUserRole(ROLE_STORE_MANAGER) && $row->approve_status = STATUS_EHS_APPROVED && $row->approve_status !=  STATUS_HOD_APPROVED &&  $row->approve_status != STATUS_EHS_APPROVAL_PENDING && $row->approve_status != STATUS_HOD_REJECTED && $row->approve_status != STATUS_HOD_APPROVAL_PENDING && $row->approve_status != STATUS_ISSUED)) {
                                 $btn .= '<a href="' . admin_url('ppe_request/ehsapproval/view/' . encryptId($row->id)) . '" class="" title="EhsApproval"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             $btn .= '<a href="' . admin_url('ppe_request/generalpdf/' . encryptId($row->id)) . '" class="" title="Pdf"> <i class="fa-solid fa-file-pdf" style="color: #e67265;"></i></a> ';
@@ -661,6 +661,30 @@ class PpeRequestController extends Controller
 
                 if ($action == 'approve') {
                     Mail::to($storemanager)->queue(new PpeRequestStoremanagerEmail($Storedetails));
+                    $id = $empDetails->id;
+                    $message = 'New PPE Request';
+                    $storemanagerId = $this->user->getStoreManagerId();
+                    $img = admin_url('public/assets/images/ppe-management.jpg');
+                    $requestorId = $this->user->getrequestId($empId);
+                    $assignedUsers =  $storemanagerId;
+                   
+                    $notificationData = [
+                        'notification_type' => 1,
+                        'module_type' => 1,
+                        'notification_message' => $message,
+                        'mobile_notification' => json_encode([
+                            'title' => $message,
+                            'message' => getUsername($updateEhsData['approved_by']) . " has " . removeUnderScore(getStatus($updateEhsData['approve_status']))  . " a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
+                            'icon' => $img,
+                            'style' => 'font-size: 1rem;',
+                            'module' => 1,
+                        ]),
+                        'web_link' => admin_url('ppe_request/ehsapproval/view/' . encryptId($id)),
+                        'assigned_user' =>array_to_string($assignedUsers) ,
+                        'created_by' => Auth::id(),
+                    ];
+
+                    notificationSave($notificationData);
                 }
 
                 $id = $empDetails->id;
@@ -669,7 +693,7 @@ class PpeRequestController extends Controller
                 $storemanagerId = $this->user->getStoreManagerId();
                 $img = admin_url('public/assets/images/ppe-management.jpg');
                 $requestorId = $this->user->getrequestId($empId);
-                $assignedUsers = array_filter(array_merge($hodId, $storemanagerId, $requestorId));
+                $assignedUsers = array_filter(array_merge($hodId, $requestorId));
                 $assignedUserString = implode(',', $assignedUsers);
 
                 $notificationData = [

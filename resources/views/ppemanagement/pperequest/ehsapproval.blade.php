@@ -169,7 +169,7 @@
 
 
 
-                                @if ($pperequest->approve_status != STATUS_EHS_APPROVED)
+                                @if ($pperequest->approve_status != STATUS_EHS_APPROVED && $pperequest->approve_status != STATUS_ISSUED)
                                     <div class="row mt-2">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">EHS Approval </h4>
@@ -218,7 +218,7 @@
                                     </div>
                                 @endif
                                 {{-- list for hod approval  --}}
-                                @if ($pperequest->approve_status = STATUS_EHS_APPROVED && checkUserRole(ROLE_STORE_MANAGER))
+                                @if ($pperequest->approve_status = STATUS_EHS_APPROVED && checkUserRole(ROLE_STORE_MANAGER) || $pperequest->approve_status != STATUS_ISSUED && checkUserRole(ROLE_SUPERADMIN))
                                     <div class="row">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">HOD Approval</h4>
@@ -257,7 +257,7 @@
 
                                 {{-- list for ehs approval --}}
 
-                                @if ($pperequest->approve_status = STATUS_EHS_APPROVED && checkUserRole(ROLE_STORE_MANAGER))
+                                @if ($pperequest->approve_status = STATUS_EHS_APPROVED && checkUserRole(ROLE_STORE_MANAGER) || $pperequest->approve_status != STATUS_ISSUED && checkUserRole(ROLE_SUPERADMIN))
                                     <div class="row">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">EHS Approval</h4>
@@ -294,7 +294,7 @@
                                     </div>
                                 @endif
 
-                                @if ($pperequest->approve_status = STATUS_EHS_APPROVED && checkUserRole(ROLE_STORE_MANAGER))
+                                @if ($pperequest->approve_status = STATUS_EHS_APPROVED && $pperequest->approve_status != STATUS_EHS_APPROVED  && checkUserRole(ROLE_STORE_MANAGER) || $pperequest->approve_status != STATUS_ISSUED && checkUserRole(ROLE_SUPERADMIN))
                                     <div class="row mt-2">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">Store manager</h4>
