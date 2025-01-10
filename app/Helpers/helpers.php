@@ -45,7 +45,9 @@ if (!function_exists('DBdateformat')) {
 
     function DBdateformat($date)
     {
-
+        if ($date == '' || $date == null) {
+            return '';
+        }
         return date('Y-m-d', strtotime($date));
     }
 }
@@ -54,7 +56,9 @@ if (!function_exists('DBdatetimeformat')) {
 
     function DBdatetimeformat($date)
     {
-
+        if ($date == '' || $date == null) {
+            return '';
+        }
         return date('Y-m-d H:i:s', strtotime($date));
     }
 }
@@ -75,7 +79,9 @@ if (!function_exists('Displaytimeformat')) {
 
     function Displaytimeformat($date)
     {
-
+        if ($date == '' || $date == null) {
+            return '';
+        }
         return date('H:i', strtotime($date));
     }
 }
@@ -233,7 +239,7 @@ if (!function_exists('string_to_array')) {
     function string_to_array($string, $separate = ',')
     {
         if (is_null($string) || $string === '') {
-            return []; 
+            return [];
         }
 
         return array_map('trim', explode($separate, $string));
