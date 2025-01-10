@@ -225,18 +225,18 @@ class Work extends Model
                 $companyExists = DB::table('company_management')->where('company_name', $item['company'])->first();
                 $unitExists = DB::table('masters_unit')->where('unit_name', $item['unit'])->first();
                 $departmentExists = DB::table('masters_department')->where('department_name', $item['department'])->first();
-    
+               // dd($companyExists,$unitExists,$departmentExists,$item);
                 // Validate existence
-                if ($companyExists) {
-                    $this->updateErrorStatus($item['emp_id'], "Company does not exist.");
-                    continue;
-                } elseif ($unitExists) {
-                    $this->updateErrorStatus($item['emp_id'], "Unit does not exist.");
-                    continue;
-                } elseif ($departmentExists) {
-                    $this->updateErrorStatus($item['emp_id'], "Department does not exist.");
-                    continue;
-                }
+                // if (!$companyExists) {
+                //     $this->updateErrorStatus($item['emp_id'], "Company does not exist.");
+                //     continue;
+                // } elseif (!$unitExists) {
+                //     $this->updateErrorStatus($item['emp_id'], "Unit does not exist.");
+                //     continue;
+                // } elseif (!$departmentExists) {
+                //     $this->updateErrorStatus($item['emp_id'], "Department does not exist.");
+                //     continue;
+                // }
     
                 // Prepare data for insertion or update
                 $valuesToInsertOrUpdate = [
