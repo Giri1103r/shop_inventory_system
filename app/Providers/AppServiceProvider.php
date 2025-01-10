@@ -117,6 +117,7 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_PERMIT_EXTENDED_REJECTED') or define('STATUS_PERMIT_EXTENDED_REJECTED', 12);
         defined('STATUS_PLANTHEAD_REJECTED') or define('STATUS_PLANTHEAD_REJECTED', 13);
         defined('STATUS_CANCELLED') or define('STATUS_CANCELLED', 14);
+        defined('STATUS_CLOSED') or define('STATUS_CLOSED', 15);
 
 
 

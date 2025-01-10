@@ -410,7 +410,7 @@
                     title: title,
                     icon: 'warning',
                     showDenyButton: false,
-                     showCloseButton: true,
+                    showCloseButton: true,
                     confirmButtonText: text,
                     confirmButtonColor: btncolor,
                     denyButtonColor: '#28a745',
@@ -476,6 +476,85 @@
 
             });
 
+
+            $(document).on('click', '.permitClose', function() {
+
+                var id = $(this).data('id');
+                var login_id = $(this).data('login_id');
+
+                var title = '{{ __('Do You want to Close Safety Permit') }}';
+                var text = '{{ __('Close') }}';
+                var btncolor = '#dc3545'
+
+                Swal.fire({
+                    title: title,
+                    icon: 'warning',
+                    showDenyButton: false,
+                    showCloseButton: true,
+                    confirmButtonText: text,
+                    confirmButtonColor: btncolor,
+                    denyButtonColor: '#28a745',
+                    customClass: {
+                        confirmButton: 'btn-skew',
+                        cancelButton: 'btn-skew'
+                    },
+                }).then((result) => {
+
+                    if (result.value) {
+                        $.ajax({
+                            url: "{{ admin_url('safetypermit/close') }}",
+                            type: 'post',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
+                                    .attr('content')
+                            },
+                            data: {
+                                id: id,
+                                login_id: login_id
+                            },
+                            success: function(response) {
+                                const Toast = Swal.mixin({
+                                    toast: true,
+                                    position: 'top-right',
+                                    showConfirmButton: false,
+                                    timer: 3000,
+                                    timerProgressBar: true,
+                                    didOpen: (toast) => {
+                                        toast.addEventListener(
+                                            'mouseenter',
+                                            Swal.stopTimer)
+                                        toast.addEventListener(
+                                            'mouseleave',
+                                            Swal.resumeTimer
+                                        )
+                                    }
+                                });
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: response.msg
+                                });
+                                table.draw();
+                            },
+                            error: function(data) {
+                                if (data.status === 406 && data.responseJSON.msg ===
+                                    'module_exits') {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Location Deletion Failed: Module Dependencies Exist.',
+                                    });
+                                } else {
+                                    $.notify(data.responseJSON.msg, "error");
+                                }
+                            }
+                        });
+                    } else if (result.isDenied) {
+                        Swal.fire('Something went wrong', '', 'info');
+                    }
+                })
+
+
+            });
         });
     </script>
 @endpush

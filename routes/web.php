@@ -672,6 +672,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/add/submit', [SafetyPermitController::class, 'store']);
                 Route::post('/status', [SafetyPermitController::class, 'statusChange']);
                 Route::post('/delete', [SafetyPermitController::class, 'delete']);
+                Route::post('/close', [SafetyPermitController::class, 'close']);
                 Route::get('/view/{id}', [SafetyPermitController::class, 'view']);
                 Route::get('/approvereject/{id}', [SafetyPermitController::class, 'approvereject']);
                 Route::post('/ehsverification/submit', [SafetyPermitController::class, 'ehsverification']);

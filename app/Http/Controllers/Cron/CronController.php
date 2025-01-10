@@ -466,7 +466,7 @@ class CronController extends Controller
         try {
             $currentTime = Carbon::now()->format('H:i:s');
             $permits = SafetyPermit::where('trash', 'NO')
-                ->where('permit_status', '!=', STATUS_PLANT_HEAD_APPROVED)
+                ->where('permit_status', '!=', STATUS_CLOSED)
                 ->where('permit_status', '!=', STATUS_PERMIT_EXPIRED) // Avoid already updated permits
                 ->whereDate('date', Carbon::today())
                 ->where('time_to', '<', $currentTime)
@@ -555,7 +555,7 @@ class CronController extends Controller
             $timeThirtyMinutesAhead = Carbon::now()->addMinutes(30);
 
             $permits = SafetyPermit::where('trash', 'NO')
-                ->where('permit_status', '!=', STATUS_PLANT_HEAD_APPROVED)
+                ->where('permit_status', '!=', STATUS_CLOSED)
                 ->where('permit_status', '!=', STATUS_EHS_APPROVE_PENDING)
                 ->whereDate('date', Carbon::today())
                 ->whereTime('time_to', '>=', $currentTime->toTimeString())
