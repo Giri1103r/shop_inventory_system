@@ -218,7 +218,7 @@ class Unit extends Model
     }
 
 
-    public function ajaxList($locationId = '', $unit_id)
+    public function ajaxList($unit_id , $locationId = '')
     {
         $query = $this->select('id', 'unit_name')->where('status', 1);
 

@@ -202,7 +202,7 @@ class Location extends Model
         return $data;
     }
 
-    public function ajaxList($companyId = '', $locationId)
+    public function ajaxList($locationId , $companyId = '')
     {
         $query = $this->select('id', 'location_name')->where('status', 1);
 

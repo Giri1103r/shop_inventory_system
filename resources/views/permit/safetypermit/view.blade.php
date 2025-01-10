@@ -937,7 +937,7 @@
                                         @else
                                             @foreach ($status_log as $status_log)
                                                 <tr>
-                                                    <td>{{ isset($status_log['status_name']) ? $status_log['status_name'] : '-' }}
+                                                    <td>{{ isset($status_log['to_status']) ? $status_log['to_status'] : '-' }}
                                                     </td>
                                                     <td>{{ isset($status_log['approved_by']) ? getUsername($status_log['approved_by']) : '-' }}
                                                     </td>

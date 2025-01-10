@@ -98,6 +98,7 @@ class EmployeeTemp extends Model
                     'emp_name' => isset($item['Emp_Name']) ? $item['Emp_Name'] : null,
                     'gender' => isset($item['Emp_Gender']) ? $item['Emp_Gender'] : null,
                     'user_role' => isset($item['Emp_Rolename']) ? $item['Emp_Rolename'] : null,
+                    'mobile_no' => isset($item['Emp_PersonalPhoneNo']) ? $item['Emp_PersonalPhoneNo'] : null,
                     'joining_date' => !empty($item['Emp_JoiningDate']) ? DBdatetimeformat($item['Emp_JoiningDate']) : null,
                     'status' => isset($item['Emp_Active']) ? $item['Emp_Active'] : null,
                     'employee_status' => isset($item['Emp_Status']) ? $item['Emp_Status'] : null,
@@ -124,50 +125,6 @@ class EmployeeTemp extends Model
         }
         return response()->json(['message' => 'Data processed successfully.']);
     }
-
-    // public function store($data)
-    // {
-    //     try {
-    //         $batchSize = 500;
-
-    //         // Split data into chunks to handle large datasets
-    //         $chunks = array_chunk($data['Result'], $batchSize);
-
-    //         foreach ($chunks as $chunk) {
-    //             $insertArray = [];
-
-    //             foreach ($chunk as $item) {
-    //                 $insertArray[] = [
-    //                     'emp_id' => $item['pk_Emp_Code'] ?? null,
-    //                     'emp_name' => $item['Emp_Name'] ?? null,
-    //                     'gender' => $item['Emp_Gender'] ?? null,
-    //                     'user_role' => $item['Emp_Rolename'] ?? null,
-    //                     'joining_date' => !empty($item['Emp_JoiningDate']) ? DBdatetimeformat($item['Emp_JoiningDate']) : null,
-    //                     'status' => $item['Emp_Active'] ?? null,
-    //                     'employee_status' => $item['Emp_Status'] ?? null,
-    //                     'email' => $item['Emp_OfficialMail'] ?? null,
-    //                     'reporting_manager' => $item['Emp_FirstApprover'] ?? null,
-    //                     'upload_status' => 0,
-    //                     'error_status' => 0,
-    //                     'error_remarks' => null,
-    //                     'created_at' => now(),
-    //                     'updated_at' => now(),
-    //                 ];
-    //             }
-
-    //             // Insert the batch into the database
-    //             $this->insert($insertArray);
-    //         }
-
-    //         return response()->json(['message' => 'Data processed successfully.']);
-    //     } catch (\Exception $ex) {
-    //         // Handle exceptions and return an error response
-    //         return response()->json([
-    //             'message' => 'An error occurred while processing data.',
-    //             'error' => $ex->getMessage(),
-    //         ], 500);
-    //     }
-    // }
 
     public function updates($empid)
     {

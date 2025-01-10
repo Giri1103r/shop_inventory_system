@@ -230,19 +230,18 @@
                                                     <div class="col-sm-6 p-0">
                                                         <input type="text" name="loto_no" class="form-control"
                                                             placeholder="Loto No"
-                                                            value="{{ $safetypermit->tagfield == 1 ? $safetypermit->loto_no : '' }}"
-                                                            {{ $safetypermit->tagfield == 1 ? '' : 'disabled' }}>
+                                                            value="{{$safetypermit->loto_no}}">
                                                     </div>
                                                 </div>
 
                                             </div>
                                             <div class="col-md-4 mb-3 "style="margin-right: 50px">
                                                 <div class="form-group d-flex align-items-center ps-5 ">
-                                                    <label for = "shutdowncheckbox" class="form-label mb-0"
+                                                    <label for = "tagfield" class="form-label mb-0"
                                                         style="margin-right:30px;">Tag Field
                                                         properly (Yes/No)</label>
                                                     <input type="checkbox" class="shutdowncheckbox"
-                                                        id = "shutdowncheckbox" name="tagfield" value="1"
+                                                        id = "tagfield" name="tagfield" value="1"
                                                         {{ $safetypermit->tagfield == 1 ? 'checked' : '' }}>
                                                 </div>
                                             </div>
@@ -2214,7 +2213,7 @@
             const targetInputs = $('.shutdowncheckbox').not('#shutdown-checkbox');
 
 
-            targetInputs.prop('disabled', true);
+            targetInputs.prop('disabled', false);
 
 
             shutdownCheckbox.on('change', function() {
