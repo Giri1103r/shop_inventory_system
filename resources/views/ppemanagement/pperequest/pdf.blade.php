@@ -56,6 +56,8 @@
                                 <p>{{ 'EHS Officer Approval Pending' }}</p>
                             @elseif($value->approve_status == STATUS_EHS_REJECTED)
                                 <p>{{ 'EHS Officer Approval Pending' }}</p>
+                                @elseif($value->approve_status == STATUS_ISSUED)
+                                <p>{{ 'EHS Officer Approved' }}</p>
                             @endif
                         </td>
 

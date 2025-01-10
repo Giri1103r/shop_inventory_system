@@ -78,7 +78,7 @@
                                                 <option value="4">EHS Officer Approval Pending</option>
                                                 <option value="5">EHS Officer Approved</option>
                                                 <option value="6">EHS Officer Rejected</option>
-
+                                                <option value="8">Issued</option>
 
                                             </select>
                                         </div>

@@ -783,7 +783,7 @@
     @endif
 
     @if (
-        $getsafetyPermitExtension->isNotEmpty() &&
+        !is_null($getsafetyPermitExtension) &&
             ($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED ||
                 ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&
                     $safetypermit['permit_extension_status'] == 1 &&
@@ -833,7 +833,7 @@
     @endif
 
     @if (
-        $getsafetyPermitExtension->isNotEmpty() &&
+       !is_null($getpermitextensionapproval) &&
             ($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED_APPROVAL ||
                 ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&
                     $safetypermit['permit_extension_status'] == 1)))

@@ -126,21 +126,21 @@ class SafetyPermitController extends Controller
                             <i class="fa-solid fa-check-to-slot text-success"></i>
                         </a>';
                             }
-                            if (!(
-                                $row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||
-                                $row->permit_status == STATUS_EHS_DECLINE ||
-                                $row->permit_status == STATUS_PLANT_HEAD_APPROVED ||
-                                $row->permit_status == STATUS_PERMIT_EXPIRED ||
-                                $row->permit_status == STATUS_PLANTHEAD_REJECTED ||
-                                $row->permit_status == STATUS_CANCELLED ||
-                                $row->permit_status == STATUS_EHS_HOLD
-                            ) && ($row->created_by == Auth::id() || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '" class="permitExtension" title="' . __('Permit Extension') . '"><i class="fa fa-external-link"></i></a>';
+
+                            if ($row->date == date('Y-m-d')) { 
+                                if (!(
+                                    $row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||
+                                    $row->permit_status == STATUS_EHS_DECLINE ||
+                                    $row->permit_status == STATUS_PLANT_HEAD_APPROVED ||
+                                    $row->permit_status == STATUS_PERMIT_EXPIRED ||
+                                    $row->permit_status == STATUS_PLANTHEAD_REJECTED ||
+                                    $row->permit_status == STATUS_CANCELLED ||
+                                    $row->permit_status == STATUS_EHS_HOLD
+                                ) && ($row->created_by == Auth::id() || isAdmin())) {
+                                    $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '" class="permitExtension" title="' . __('Permit Extension') . '"><i class="fa fa-external-link"></i></a>';
+                                }
                             }
-
-
-
-
+                            
                             if (CheckUserPermission('view')) {
                             $btn .= '<a href="' . admin_url('safetypermit/view/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="' . __('common.view') . '">
                             <i class="fa-solid fa-eye"></i>
@@ -167,7 +167,7 @@ class SafetyPermitController extends Controller
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
                         if (($row->created_by == Auth::id() || isAdmin()) && ($row->permit_status != STATUS_CANCELLED)) {
-                        $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete" style="color: red;">Cancel</a> ';
+                        $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Cancel" style="color: #e21e23;margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
                         }
 
 

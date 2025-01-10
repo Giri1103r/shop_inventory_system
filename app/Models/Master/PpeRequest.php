@@ -203,6 +203,10 @@ class PpeRequest extends Model
         return $this->where('id', $id)->update($updateEhsData);
     }
 
+    public function updatestoremanager($storeStatus, $id){
+        return $this->where('id', $id)->update($storeStatus);
+    }
+
     public function findDepartment($id)
     {
         return $this->where('id', $id)->select('department')->first();
@@ -285,7 +289,7 @@ class PpeRequest extends Model
 
     public function getuserdata($empId)
     {
-        return PpeRequest::where('emp_id', $empId)->where('approve_status', '!=', STATUS_HOD_APPROVAL_PENDING)->where('approve_status', '!=', STATUS_EHS_APPROVAL_PENDING)->get();
+        return PpeRequest::where('emp_id', $empId)->where('approve_status', '!=', STATUS_HOD_APPROVAL_PENDING)->where('approve_status', '!=', STATUS_EHS_APPROVAL_PENDING)->where('approve_status', '!=', STATUS_EHS_APPROVED)->get();
     }
 
     public function exportdata()

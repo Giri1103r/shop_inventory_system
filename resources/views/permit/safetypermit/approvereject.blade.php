@@ -273,7 +273,7 @@
                                 </span>
                             </div>
                             <div class="mb-3 col-md-4 form-input">
-                               
+
                                 <label class="form-label view_label m-1">Isolation fire panel Description:</label>
                                 <span class="view_data">
                                     {{ $safetypermit->isolationpanel_description }}</span>
@@ -749,7 +749,7 @@
                                                 </div>
                                                 <div class="col-md-4 mb-3 file-upload-block" id="file-upload-0">
                                                     <label for="site_image_0" class="form-label require">Site Image</label>
-                                                    <input type="file" class="form-control validate-file-accept validate-file-required"
+                                                    <input type="file" class="form-control validate-file-accept validate-file-required"  accept="image/png, image/jpeg, image/jpg"
                                                            name="site_images[0][]" id="site_image_0" multiple>
                                                     <div class="text-danger"></div>
                                                     <small>Allowed file types: png, jpeg , jpg</small>
@@ -1246,7 +1246,7 @@
     let newFileUploadBlock = `
         <div class="col-md-4 mb-3 file-upload-block">
             <label for="site_image_${currentFileUploads}" class="form-label require">Site Image</label>
-            <input type="file" class="form-control validate-file-accept validate-file-required"
+            <input type="file" class="form-control validate-file-accept validate-file-required"  accept="image/png, image/jpeg, image/jpg"
                 name="site_images[${currentFileUploads}][]"
                 id="site_image_${currentFileUploads}"
                 multiple data-error="Please upload with a valid file type">
@@ -1267,7 +1267,7 @@
     });
 
 
-    $('#ehs_verification').validate().resetForm(); 
+    $('#ehs_verification').validate().resetForm();
 });
 
 

@@ -106,6 +106,21 @@ class Statuslog extends Model
         return $this->create($insert_data);
     }
 
+    // PPE Request Storemanager
+
+    public function storemangerstatus($updateStatus, $empDetails){
+        $insert_data = [
+            'type' => TYPE_PPE_REQUEST,
+            'reference_id' => $empDetails->id,
+            'from_status' => STATUS_EHS_APPROVED,
+            'to_status' => $updateStatus['approve_status'],
+            'remarks' => $updateStatus['remarks'],
+            'created_by' => Auth::id(),
+
+        ];
+        return $this->create($insert_data);
+    }
+
     public function getstatusdetails($id)
     {
         $data = Statuslog::where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)->latest('id')->first();
@@ -113,9 +128,28 @@ class Statuslog extends Model
     }
 
     public function statuslog($id){
-        $data = Statuslog::where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)->get();
+        $data = Statuslog::where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)->where('trash','NO')->where('status',1)->get();
         return $data;
     }
+
+    public function getstatuslogdata($id){
+        $data = Statuslog::where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)
+        ->where('to_status','=' ,STATUS_HOD_APPROVED)
+        ->orderBy('id', 'DESC')
+        ->first();
+        return $data;
+    }
+
+    public function getehsstatuslogdetails($id) {
+        $data = Statuslog::where('reference_id', $id)
+            ->where('type', TYPE_PPE_REQUEST)
+            ->where('to_status', '=', STATUS_EHS_APPROVED)
+            ->orderBy('id', 'DESC')
+            ->first();
+
+        return $data;
+    }
+
 
     public function statuslogdetails( $id){
         $data = Statuslog::where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)->latest('id')->first();

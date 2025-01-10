@@ -756,7 +756,7 @@
                     @endif
                     {{-- @dd($getsafetyPermitExtension) --}}
                     @if (
-                        $getsafetyPermitExtension->isNotEmpty() &&
+                        !is_null($getsafetyPermitExtension) &&
                             ($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED ||
                                 ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&
                                     $safetypermit['permit_extension_status'] == 1 &&
@@ -799,7 +799,7 @@
                         </div>
                     @endif
                     @if (
-                        $getsafetyPermitExtension->isNotEmpty() &&
+                        !is_null($getpermitextensionapproval) &&
                             ($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED_APPROVAL ||
                                 ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&
                                     $safetypermit['permit_extension_status'] == 1)))
@@ -921,7 +921,8 @@
                                 <table class="table table-bordered table-hover">
                                     <thead>
                                         <tr>
-                                            <th>Status</th>
+                                            <th>From Status</th>
+                                            <th>To Status</th>
                                             <th>Approved By</th>
                                             <th>Remarks</th>
                                             <th>Date</th>
@@ -938,6 +939,8 @@
                                             @foreach ($status_log as $status_log)
                                                 <tr>
                                                     <td>{{ isset($status_log['to_status']) ? $status_log['to_status'] : '-' }}
+                                                    </td>
+                                                    <td>{{ isset($status_log['status_name']) ? $status_log['status_name'] : '-' }}
                                                     </td>
                                                     <td>{{ isset($status_log['approved_by']) ? getUsername($status_log['approved_by']) : '-' }}
                                                     </td>

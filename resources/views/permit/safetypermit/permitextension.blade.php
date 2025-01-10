@@ -31,13 +31,13 @@
                                     <div class="">
                                         <input type="hidden" id= "permit_id" name="permit_id"
                                             value="{{ $safetypermit->id }}">
-                                            <input type="hidden" id= "permit_status" name="permit_status"
+                                        <input type="hidden" id= "permit_status" name="permit_status"
                                             value="{{ $safetypermit->permit_status }}">
                                         <div class="mb-3 row">
                                             <div class="col-md-4 mb-3">
                                                 <label for="date" class="form-label require">Date</label>
-                                                <input type="text" class="form-control form-control-sm"
-                                                    id="date" name="date" readonly
+                                                <input type="text" class="form-control form-control-sm" id="date"
+                                                    name="date" readonly
                                                     value="{{ Displaydateformat($safetypermit->date) }}">
                                             </div>
 
@@ -55,8 +55,7 @@
                                                         rows="3"></textarea>
                                                     <div class="text-danger" id="remarks_error"></div>
                                                     @error('remarks')
-                                                        <span id="remark_error"
-                                                            class="text-danger">{{ $message }}</span>
+                                                        <span id="remark_error" class="text-danger">{{ $message }}</span>
                                                     @enderror
                                                 </div>
                                             </div>
@@ -80,15 +79,27 @@
 
 @push('script')
     <script>
-
-        flatpickr("#time_to", {
-            enableTime: true,
-            noCalendar: true,
-            time_24hr: true,
-            minuteIncrement: 5,
-            dateFormat: "H:i"
-        });
         $(document).ready(function() {
+
+            flatpickr("#time_to", {
+                enableTime: true,
+                noCalendar: true,
+                time_24hr: true,
+                minuteIncrement: 5,
+                dateFormat: "H:i",
+                maxTime: "18:00",
+                onOpen: function(selectedDates, dateStr, instance) {
+                    const now = new Date();
+                    const currentHours = now.getHours();
+                    const currentMinutes = now.getMinutes();
+
+
+                    instance.set('minTime',
+                        `${currentHours.toString().padStart(2, '0')}:${currentMinutes.toString().padStart(2, '0')}`
+                        );
+                }
+            });
+
             $('#permitextension').validate({
                 rules: {
                     time_to: {

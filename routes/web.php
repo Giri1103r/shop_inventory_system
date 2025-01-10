@@ -646,6 +646,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/export/pdf', [PpeRequestController::class, 'exportPdf']);
                 Route::get('/generalpdf/{id}', [PpeRequestController::class, 'pdf']);
                 Route::get('/checkuserDepartment', [PpeRequestController::class, 'checkDepartmentrequest']);
+                Route::post('/storemanger/issued', [PpeRequestController::class, 'storemanagerapproval']);
+
 
             });
 

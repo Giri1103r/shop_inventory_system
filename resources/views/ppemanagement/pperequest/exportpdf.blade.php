@@ -245,6 +245,8 @@
                                                 EHS Officer Approved
                                             @elseif ($log['to_status'] == STATUS_EHS_REJECTED)
                                                 EHS Officer Rejected
+                                                @elseif ($log['to_status'] == STATUS_ISSUED)
+                                               Issued
                                             @endif
                                         </td>
 

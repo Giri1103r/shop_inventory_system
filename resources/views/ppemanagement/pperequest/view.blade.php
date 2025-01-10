@@ -86,7 +86,7 @@
                                     <div class="mb-3 col-md-12 form-input">
                                         <label class="form-label view_label">{{ __('Reason') }}</label>
                                         <div class="view_data">
-                                            {{  !empty($pperequest->employee_reason) ? $pperequest->employee_reason : $pperequest->employee_remarks }}
+                                            {{ !empty($pperequest->employee_reason) ? $pperequest->employee_reason : $pperequest->employee_remarks }}
 
 
                                         </div>
@@ -128,7 +128,7 @@
                                                                         style='font-size: 1.0em;'>HOD Approval
                                                                         Pending</span>
                                                                 @elseif ($data->approve_status == STATUS_HOD_APPROVED)
-                                                                    <span class='badge bg-success'
+                                                                    <span class='badge bg-info'
                                                                         style='font-size: 1.0em;'>HOD Approved</span>
                                                                 @elseif ($data->approve_status == STATUS_USER_APPLIED)
                                                                     <span class='badge bg-primary'
@@ -141,11 +141,16 @@
                                                                         style='font-size: 1.0em;'>EHS Officer Approval
                                                                         Pending</span>
                                                                 @elseif ($data->approve_status == STATUS_EHS_APPROVED)
-                                                                    <span class='badge bg-success'
-                                                                        style='font-size: 1.0em;'>EHS Officer Approved</span>
+                                                                    <span class='badge bg-info'
+                                                                        style='font-size: 1.0em;'>EHS Officer
+                                                                        Approved</span>
                                                                 @elseif ($data->approve_status == STATUS_EHS_REJECTED)
                                                                     <span class='badge bg-danger'
-                                                                        style='font-size: 1.0em;'>EHS Officer Rejected</span>
+                                                                        style='font-size: 1.0em;'>EHS Officer
+                                                                        Rejected</span>
+                                                                @elseif ($data->approve_status == STATUS_ISSUED)
+                                                                    <span class='badge bg-success'
+                                                                        style='font-size: 1.0em;'>Issued</span>
                                                                 @endif
                                                             </td>
 
@@ -197,7 +202,7 @@
                                                                         style='font-size: 1.0em;'>HOD Approval
                                                                         Pending</span>
                                                                 @elseif ($log['to_status'] == STATUS_HOD_APPROVED)
-                                                                    <span class='badge bg-success'
+                                                                    <span class='badge bg-info'
                                                                         style='font-size: 1.0em;'>HOD Approved</span>
                                                                 @elseif ($log['to_status'] == STATUS_USER_APPLIED)
                                                                     <span class='badge bg-primary'
@@ -210,11 +215,16 @@
                                                                         style='font-size: 1.0em;'>EHS Officer Approval
                                                                         Pending</span>
                                                                 @elseif ($log['to_status'] == STATUS_EHS_APPROVED)
-                                                                    <span class='badge bg-success'
-                                                                        style='font-size: 1.0em;'>EHS Officer Approved</span>
+                                                                    <span class='badge bg-info'
+                                                                        style='font-size: 1.0em;'>EHS Officer
+                                                                        Approved</span>
                                                                 @elseif ($log['to_status'] == STATUS_EHS_REJECTED)
                                                                     <span class='badge bg-danger'
-                                                                        style='font-size: 1.0em;'>EHS Officer Rejected</span>
+                                                                        style='font-size: 1.0em;'>EHS Officer
+                                                                        Rejected</span>
+                                                                        @elseif ($log['to_status']  == STATUS_ISSUED)
+                                                                        <span class='badge bg-success'
+                                                                            style='font-size: 1.0em;'>Issued</span>
                                                                 @endif
                                                             </td>
                                                             <td>{{ getUsername($log['created_by']) }}</td>
