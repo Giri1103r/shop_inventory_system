@@ -25,8 +25,6 @@ use App\Models\Master\UserRole;
 use App\Models\User;
 use App\Models\UploadLog;
 
-use App\Jobs\ImportEmployeeJob;
-use App\Mail\EmployeeRegisterEmail;
 
 class UserController extends Controller
 {

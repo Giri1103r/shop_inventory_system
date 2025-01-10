@@ -339,20 +339,21 @@ class CronController extends Controller
 
                 $employee = $this->employee->store($emp_temp);
                 $users = $this->user->store($employee);
-                $allowedEmails = [
-                    'keshav.kashyap@karam.in',
-                    'vinay.kumar@karam.in',
-                    'prashant.singh2@karam.in'
-                ];
+                // $allowedEmails = [
+                //     'keshav.kashyap@karam.in',
+                //     'vinay.kumar@karam.in',
+                //     'prashant.singh2@karam.in'
+                // ];
                 
                 foreach ($users as $user) {
-                    // if (!empty($user) && isset($user['email'])) {
-                    //     Mail::to($user['email'])->queue(new EmployeeRegisterEmail($user));
-                    // }
-
-                    if (!empty($user) && in_array($user['email'], $allowedEmails)) {
+                    
+                    if (!empty($user['created_at']) && !empty($user) && isset($user['email'])) {
                         Mail::to($user['email'])->queue(new EmployeeRegisterEmail($user));
                     }
+
+                    // if (!empty($user['created_at']) && !empty($user) && in_array($user['email'], $allowedEmails)) {
+                    //     Mail::to($user['email'])->queue(new EmployeeRegisterEmail($user));
+                    // }
                     if (!empty($user) && isset($user['employee_id'])) {
                         $userID = DB::table('users')
                             ->select('id')
