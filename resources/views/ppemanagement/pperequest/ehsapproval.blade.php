@@ -169,13 +169,13 @@
 
 
 
-                                @if ($pperequest->approve_status != STATUS_EHS_APPROVED && $pperequest->approve_status != STATUS_ISSUED)
+                                @if ($pperequest->approve_status != STATUS_EHS_APPROVED && $pperequest->approve_status != STATUS_ISSUED )
                                     <div class="row mt-2">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">EHS Approval </h4>
                                         </div>
                                     </div>
-                                    <div class="basic-form">
+                                    <div class="basic-form mb-3">
                                         <form method="POST" id="requestApprovalForm"
                                             action="{{ admin_url('ppe_request/ehsapprovereject/submit') }}">
                                             @csrf
@@ -218,7 +218,9 @@
                                     </div>
                                 @endif
                                 {{-- list for hod approval  --}}
-                                @if ($pperequest->approve_status = STATUS_EHS_APPROVED && checkUserRole(ROLE_STORE_MANAGER) || $pperequest->approve_status != STATUS_ISSUED && checkUserRole(ROLE_SUPERADMIN))
+
+                                @if ( $pperequest->approve_status == STATUS_EHS_APPROVED  )
+
                                     <div class="row">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">HOD Approval</h4>
@@ -257,7 +259,7 @@
 
                                 {{-- list for ehs approval --}}
 
-                                @if ($pperequest->approve_status = STATUS_EHS_APPROVED && checkUserRole(ROLE_STORE_MANAGER) || $pperequest->approve_status != STATUS_ISSUED && checkUserRole(ROLE_SUPERADMIN))
+                                @if ($pperequest->approve_status == STATUS_EHS_APPROVED )
                                     <div class="row">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">EHS Approval</h4>
@@ -294,7 +296,9 @@
                                     </div>
                                 @endif
 
-                                @if ($pperequest->approve_status = STATUS_EHS_APPROVED && $pperequest->approve_status != STATUS_EHS_APPROVED  && checkUserRole(ROLE_STORE_MANAGER) || $pperequest->approve_status != STATUS_ISSUED && checkUserRole(ROLE_SUPERADMIN))
+                                {{-- @dd($pperequest) --}}
+                                {{-- @if ($pperequest->approve_status == STATUS_EHS_APPROVED && checkUserRole(ROLE_STORE_MANAGER)) --}}
+                                @if (checkUserRole(ROLE_STORE_MANAGER)  || checkUserRole(ROLE_SUPERADMIN) && $pperequest->approve_status == STATUS_EHS_APPROVED )
                                     <div class="row mt-2">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">Store manager</h4>

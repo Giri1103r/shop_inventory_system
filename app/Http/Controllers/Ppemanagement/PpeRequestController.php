@@ -133,9 +133,24 @@ class PpeRequestController extends Controller
                                 $btn .= '<a href="' . admin_url('ppe_request/hodapproval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
-                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) && $row->approve_status == STATUS_EHS_APPROVAL_PENDING || ( checkUserRole(ROLE_SUPERADMIN) &&  $row->approve_status != STATUS_ISSUED ||checkUserRole(ROLE_STORE_MANAGER) && $row->approve_status = STATUS_EHS_APPROVED && $row->approve_status !=  STATUS_HOD_APPROVED &&  $row->approve_status != STATUS_EHS_APPROVAL_PENDING && $row->approve_status != STATUS_HOD_REJECTED && $row->approve_status != STATUS_HOD_APPROVAL_PENDING && $row->approve_status != STATUS_ISSUED)) {
+                            if (
+                                (
+                                    (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) && $row->approve_status == STATUS_EHS_APPROVAL_PENDING  || $row->approve_status == STATUS_EHS_APPROVED
+                                ) ||
+
+                                (
+                                    CheckUserRole(ROLE_STORE_MANAGER) &&
+                                    $row->approve_status == STATUS_EHS_APPROVED &&
+                                    $row->approve_status != STATUS_HOD_APPROVED &&
+                                    $row->approve_status != STATUS_EHS_APPROVAL_PENDING &&
+                                    $row->approve_status != STATUS_HOD_REJECTED &&
+                                    $row->approve_status != STATUS_HOD_APPROVAL_PENDING &&
+                                    $row->approve_status != STATUS_ISSUED
+                                )
+                            ) {
                                 $btn .= '<a href="' . admin_url('ppe_request/ehsapproval/view/' . encryptId($row->id)) . '" class="" title="EhsApproval"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
+
                             $btn .= '<a href="' . admin_url('ppe_request/generalpdf/' . encryptId($row->id)) . '" class="" title="Pdf"> <i class="fa-solid fa-file-pdf" style="color: #e67265;"></i></a> ';
 
                             return $btn;
@@ -565,20 +580,14 @@ class PpeRequestController extends Controller
             if (Auth::check()) {
                 $pperequest = $this->pperequest->selectOne($id);
             }
-
+            // dd( $pperequest);
             $empId = $pperequest->emp_id;
             $userdata = $this->pperequest->getuserdata($empId);
             $statuslog = $this->ppestatus->getstatuslogdata( $id);
             $ehslogdata = $this->ppestatus->getehsstatuslogdetails($id);
-            // // if (CheckUserRole(ROLE_EHS_OFFICER) && $pperequest->approve_status != STATUS_EHS_APPROVAL_PENDING) {
-            // //     return redirect('ppe_request/view/' . encryptId($id));
-            // // }
-
-            // if (CheckUserRole(ROLE_STORE_MANAGER) && $pperequest->approve_status != STATUS_ISSUED) {
-
-            // }else{
-            //     return redirect('ppe_request/view/' . encryptId($id));
-            // }
+            if($pperequest->approve_status == STATUS_ISSUED){
+                return redirect('ppe_request/view/' . encryptId($id));
+            }
 
 
             $data = [
@@ -667,7 +676,7 @@ class PpeRequestController extends Controller
                     $img = admin_url('public/assets/images/ppe-management.jpg');
                     $requestorId = $this->user->getrequestId($empId);
                     $assignedUsers =  $storemanagerId;
-                   
+
                     $notificationData = [
                         'notification_type' => 1,
                         'module_type' => 1,
