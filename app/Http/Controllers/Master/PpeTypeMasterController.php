@@ -109,29 +109,23 @@ class PpeTypeMasterController extends Controller
     {
         try {
             $rules = [
-                'item_code' => ['required', 'regex:/^[a-zA-Z0-9-\s]*$/'],
-                'ppe_name' => ['required', 'string', 'regex:/^[a-zA-Z0-9\-_\'"()\s]{3,30}$/'],
-                'ppe_type' => 'required|string',
-                'ppe_standard' => ['required', 'regex:/^[a-zA-Z0-9\-_\'"()\s.:;]*$/'],
-                'protection_category' => ['required', 'string', 'regex:/^[a-zA-Z0-9\-_\'"()\s]{3,30}$/'],
-                'ppe_file' => 'nullable|mimes:png,jpeg,jpg',
+                'item_code' => 'required',
+                'ppe_name' => 'required',
+                'ppe_type' => 'required',
+                'ppe_standard' => 'required',
+                'protection_category' => 'required',
 
             ];
 
             $messages = [
                 'item_code.required' => __('Item Code is required'),
-                'item_code.regex' => __('Item code should be alphanumeric.'),
                 'ppe_name.required' => __('PPE Name is required'),
-                'ppe_name.regex' => __('PPE Name should be alphanumeric and can include -, _, \', ", (, ).'),
-                'ppe_name.min' => __('PPE Name must be at least 3 characters.'),
-                'ppe_name.max' => __('PPE Name may not be greater than 30 characters.'),
                 'ppe_type.required' => __('PPE Type is required'),
                 'ppe_standard.required' => __('PPE Standard is required'),
-                'ppe_standard.regex' => __('PPE Standard should be alphanumeric and can include -, _, \', ", (, ).'),
                 'protection_category.required' => __('Protection Category is required'),
-                'protection_category.regex' => __('Protection Category should be alphanumeric and can include -, _, \', ", (, ).'),
-                'ppe_file.mimes' => __('Allowed file types: png, jpeg, jpg.'),
+
             ];
+
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
@@ -226,28 +220,21 @@ class PpeTypeMasterController extends Controller
         try {
             $id = decryptId($request->id);
             $rules = [
-                'item_code' => ['required', 'regex:/^[a-zA-Z0-9-\s]*$/'],
-                'ppe_name' => ['required', 'string', 'regex:/^[a-zA-Z0-9\-_\'"()\s]{3,100}$/'],
-                'ppe_type' => 'required|string',
-               'ppe_standard' => ['required', 'regex:/^[a-zA-Z0-9\-_\'"()\s.:;]*$/'],
-                'protection_category' => ['required', 'string', 'regex:/^[a-zA-Z0-9\-_\'"()\s]{3,30}$/'],
-                 'ppe_file' => 'nullable|mimes:png,jpeg,jpg',
+                'item_code' => 'required',
+                'ppe_name' => 'required',
+                'ppe_type' => 'required',
+                'ppe_standard' => 'required',
+                'protection_category' => 'required',
 
             ];
 
             $messages = [
                 'item_code.required' => __('Item Code is required'),
-                'item_code.regex' => __('Item code should be alphanumeric.'),
                 'ppe_name.required' => __('PPE Name is required'),
-                'ppe_name.regex' => __('PPE Name should be alphanumeric and can include -, _, \', ", (, ).'),
-                'ppe_name.min' => __('PPE Name must be at least 3 characters.'),
-                'ppe_name.max' => __('PPE Name may not be greater than 100 characters.'),
                 'ppe_type.required' => __('PPE Type is required'),
                 'ppe_standard.required' => __('PPE Standard is required'),
-                'ppe_standard.regex' => __('PPE Standard should be alphanumeric and can include -, _, \', ", (, ).'),
                 'protection_category.required' => __('Protection Category is required'),
-                'protection_category.regex' => __('Protection Category should be alphanumeric and can include -, _, \', ", (, ).'),
-                'ppe_file.mimes' => __('Allowed file types: png, jpeg, jpg.'),
+
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {

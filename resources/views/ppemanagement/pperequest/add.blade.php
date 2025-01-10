@@ -312,7 +312,7 @@
                         maxlength: "Reason must contain between 3 and 600 characters.",
                     },
                     ppe_file: {
-                        extension: "Please select the valid image file."
+                        extension: "Please select a file with .jpeg,.jpg,.png."
                     },
                     remarks: {
                         required: "Reason cannot be empty.",

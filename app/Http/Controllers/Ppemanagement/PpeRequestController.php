@@ -16,12 +16,14 @@ use App\Models\Master\PpeRequest;
 use App\Models\Master\PpeStockinventory;
 use App\Models\Master\PpeType;
 use App\Models\Master\PpeTypeMaster;
+use App\Models\Master\Worktemp;
 use App\Models\Statuslog;
 
 use App\Models\UploadLog;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,6 +36,7 @@ use Yajra\DataTables\Facades\DataTables;
 class PpeRequestController extends Controller
 {
     private $ppetypemaster;
+    private $worktemp;
     private $ppetype;
     private $pperequest;
     private $employee;
@@ -51,6 +54,7 @@ class PpeRequestController extends Controller
         $this->pperequest = new PpeRequest();
         $this->employee = new Employee();
         $this->user = new User();
+        $this->worktemp = new Worktemp();
         $this->ppestock = new PpeStockinventory();
         $this->ppestatus = new Statuslog();
         $this->approvestatus = new ApproveStatus();
@@ -92,7 +96,7 @@ class PpeRequestController extends Controller
                             if ($row->approve_status == STATUS_HOD_APPROVAL_PENDING) {
                                 $text = "<span class='badge bg-info' style='font-size: 1.0em;'>HOD Approval Pending</span>";
                             } else if ($row->approve_status == STATUS_HOD_APPROVED) {
-                                $text = "<span class='badge bg-success' style='font-size: 1.0em;'>HOD Approved</span>";
+                                $text = "<span class='badge bg-info' style='font-size: 1.0em;'>HOD Approved</span>";
                             } else if ($row->approve_status == STATUS_HOD_REJECTED) {
                                 $text = "<span class='badge bg-danger' style='font-size: 1.0em;'>HOD Rejected</span>";
                             } else if ($row->approve_status == STATUS_EHS_APPROVAL_PENDING) {
@@ -105,9 +109,11 @@ class PpeRequestController extends Controller
                                     $text = "<span class='badge bg-info' style='font-size: 1.0em;'>EHS Officer Approval Pending</span>";
                                 }
                             } else if ($row->approve_status == STATUS_EHS_APPROVED) {
-                                $text = "<span class='badge bg-success' style='font-size: 1.0em;'>EHS Officer Approved</span>";
+                                $text = "<span class='badge bg-info' style='font-size: 1.0em;'>EHS Officer Approved</span>";
                             } else if ($row->approve_status == STATUS_EHS_REJECTED) {
                                 $text = "<span class='badge bg-danger' style='font-size: 1.0em;'>EHS Officer Rejected</span>";
+                            } else if ($row->approve_status == STATUS_ISSUED) {
+                                $text = "<span class='badge bg-success' style='font-size: 1.0em;'>Issued</span>";
                             }
 
                             return $text;
@@ -127,7 +133,7 @@ class PpeRequestController extends Controller
                                 $btn .= '<a href="' . admin_url('ppe_request/hodapproval/view/' . encryptId($row->id)) . '" class="" title="Approval"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
-                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) && $row->approve_status == STATUS_EHS_APPROVAL_PENDING) {
+                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) && $row->approve_status == STATUS_EHS_APPROVAL_PENDING || (checkUserRole(ROLE_STORE_MANAGER) && $row->approve_status = STATUS_EHS_APPROVED && $row->approve_status != STATUS_EHS_REJECTED  && $row->approve_status != STATUS_EHS_APPROVAL_PENDING  && $row->approve_status != STATUS_ISSUED)) {
                                 $btn .= '<a href="' . admin_url('ppe_request/ehsapproval/view/' . encryptId($row->id)) . '" class="" title="EhsApproval"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             $btn .= '<a href="' . admin_url('ppe_request/generalpdf/' . encryptId($row->id)) . '" class="" title="Pdf"> <i class="fa-solid fa-file-pdf" style="color: #e67265;"></i></a> ';
@@ -309,12 +315,12 @@ class PpeRequestController extends Controller
                 Session::flash('success', __('Your data has been created successfully!'));
                 return redirect(admin_url('ppe_request/list'));
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
                 return redirect(admin_url('ppe_request/list'));
             }
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }
@@ -559,18 +565,30 @@ class PpeRequestController extends Controller
             if (Auth::check()) {
                 $pperequest = $this->pperequest->selectOne($id);
             }
+
             $empId = $pperequest->emp_id;
             $userdata = $this->pperequest->getuserdata($empId);
+            $statuslog = $this->ppestatus->getstatuslogdata( $id);
+            $ehslogdata = $this->ppestatus->getehsstatuslogdetails($id);
+            // // if (CheckUserRole(ROLE_EHS_OFFICER) && $pperequest->approve_status != STATUS_EHS_APPROVAL_PENDING) {
+            // //     return redirect('ppe_request/view/' . encryptId($id));
+            // // }
 
-            if ($pperequest->approve_status != STATUS_EHS_APPROVAL_PENDING) {
-                return redirect('ppe_request/view/' . encryptId($id));
-            }
+            // if (CheckUserRole(ROLE_STORE_MANAGER) && $pperequest->approve_status != STATUS_ISSUED) {
+
+            // }else{
+            //     return redirect('ppe_request/view/' . encryptId($id));
+            // }
+
 
             $data = [
                 'pperequest' =>  $pperequest,
                 'encryptid' => $request->id,
                 'userdata' => $userdata,
+                'statuslog'=>$statuslog,
+                'ehslogdata'=> $ehslogdata
             ];
+
             return view('ppemanagement.pperequest.ehsapproval', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -613,10 +631,6 @@ class PpeRequestController extends Controller
             ];
 
 
-
-            if ($action == 'approve' || $action == 'reject') {
-                $updateEhsData['status'] = 0;
-            }
             $statuslog = $this->ppestatus->storeEhsStatus($updateEhsData, $empDetails);
             $empDetails->updateehsapproval($updateEhsData, $id);
             $details = [
@@ -629,7 +643,7 @@ class PpeRequestController extends Controller
             ];
 
             $requestor = $this->user->getrequestEmail($empId);
-            $recipients = array_filter([$requestor, $hod, $storemanager]);
+            $recipients = array_filter([$requestor, $hod]);
 
             if ($action == 'approve') {
                 Mail::to($recipients)->queue(new PpeEhsRequestEmail($details));
@@ -642,7 +656,7 @@ class PpeRequestController extends Controller
                     'status' => $updateEhsData['approve_status'],
                     'department' => $empDetails->department,
                     'approved_by' => $empDetails->approved_by,
-                    'approve_link' => url('updateStockitem'),
+                    'approve_link' =>admin_url('ppe_request/ehsapproval/view/' . encryptId($id)),
                 ];
 
                 if ($action == 'approve') {
@@ -717,6 +731,84 @@ class PpeRequestController extends Controller
     }
 
 
+    public function storemanagerapproval(Request $request)
+    {
+        $rules = [
+            'store_remarks' => 'required',
+
+
+        ];
+        $messages = [
+            'store_remarks.required' => 'Remarks Field is Mandatory',
+
+
+
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+        if ($validator->fails()) {
+            dd($validator->errors());
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        try {
+            $id = decryptId($request->id);
+            $remarks = $request->input('store_remarks');
+            $approved_at = $request->input('store_date');
+            $action = $request->input('action');
+
+
+
+            $empDetails = $this->pperequest->find($id);
+            if (!$empDetails) {
+                throw new Exception('Employee details not found.');
+            }
+
+            $departmentId = $empDetails->department;
+
+
+            $updateStatus = [
+                'remarks' => $remarks,
+                'approved_at' => $approved_at,
+                'approved_by' => Auth::id(),
+                'approve_status' => STATUS_ISSUED,
+
+            ];
+            $storeStatus =[
+                'remarks' => $remarks,
+                'approved_at' => $approved_at,
+                'approved_by' => Auth::id(),
+                'approve_status' => STATUS_ISSUED,
+                'status'=>0,
+            ];
+
+
+            $apiUrl = 'https://vmsapi.karam.in/emp.asmx/GetPPEInventory?TokenId=123&Orgid=86&Item=71160-H';
+            $response = Http::get($apiUrl);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                if (!empty($data)) {
+
+                    $this->ppestock->store($data);
+                    $this->ppestatus->storemangerstatus($updateStatus, $empDetails);
+                    $this->pperequest->updatestoremanager($storeStatus, $id);
+                    $this->ppestock->store($data);
+                    Session::flash('success', 'PPE Request has successfully responded');
+                    return redirect()->to(admin_url('ppe_request/list'));
+                } else {
+                    throw new Exception('API response is empty.');
+                }
+            } else {
+                throw new Exception('Failed to fetch API response.');
+            }
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try again later.');
+            return redirect()->to(admin_url('ppe_request/list'));
+        }
+    }
 
 
 
@@ -918,6 +1010,9 @@ class PpeRequestController extends Controller
                 }
                 elseif ($data->approve_status == STATUS_EHS_REJECTED) {
                     $export[] = 'EHS Officer Approval Pending';
+                }
+                elseif ($data->approve_status == STATUS_ISSUED) {
+                    $export[] = 'EHS Officer Approved';
                 }
                 else {
                     $export[] = removeUnderScore(getStatus($data->approve_status));

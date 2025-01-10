@@ -78,7 +78,7 @@
                 required: true,
                 minlength: 3,
                 maxlength: 100,
-                regex: /^[a-zA-Z\s-]*$/,  
+                regex: /^[a-zA-Z0-9\s-]*$/,
                 remote: {
                     url: '{{ admin_url('ppe_type/unique') }}',
                     type: 'post',
@@ -99,7 +99,7 @@
                 minlength: "{{ __('common.validate_min_length') }}",
                 maxlength: "Maximum Characters should not exceed 100",
                 remote: "{{ __('PPE Type should be unique') }}",
-                regex: "{{ __('PPE Type should allow the alphabets, hyphens, and spaces') }}"
+                regex: "{{ __('PPE Type is alphanumeric') }}"
             }
         },
         errorElement: 'div',

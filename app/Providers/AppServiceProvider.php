@@ -92,7 +92,7 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_EHS_APPROVED') or define('STATUS_EHS_APPROVED', 5);
         defined('STATUS_EHS_REJECTED') or define('STATUS_EHS_REJECTED', 6);
         defined('STATUS_USER_APPLIED') or define('STATUS_USER_APPLIED', 7);
-        defined('STATUS_USER_APPLIED') or define('STATUS_Issued', 8);
+        defined('STATUS_ISSUED') or define('STATUS_ISSUED', 8);
 
 
 
