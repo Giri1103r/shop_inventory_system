@@ -141,7 +141,7 @@ class PpeTypeMasterController extends Controller
             }
             return redirect(admin_url('ppe_ppetype_master/list'));
         } catch (Exception $ex) {
-
+            
             Session::flash('error',  'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_ppetype_master/list'));
         }

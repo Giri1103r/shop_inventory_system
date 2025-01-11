@@ -180,18 +180,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 200,
-                        regex: /^[a-zA-Z0-9\-_'"()\s.:;]$/
-                        //     remote: {
-                        //     url: '{{ admin_url('ppe_ppetype_master/ppename/unique') }}',
-                        //     type: 'get',
-                        //     data: {
-                        //         item_code: function() {
-                        //             var ppeName = $('#ppe_name').val();
-                        //             console.log('PPE Name:', ppeName);
-                        //             return ppeName;
-                        //         },
-                        //     }
-                        // },
+
                     },
                     ppe_type: {
                         required: true
@@ -200,7 +189,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 200,
-                        regex: /^[a-zA-Z0-9\-_'"()\s.:;]$/
+
                     },
                     ppe_standard: {
                         required: true,
@@ -224,8 +213,7 @@
                         required: "PPE Name cannot be empty.",
                         minlength: "PPE Name must be between 3 and 200 characters.",
                         maxlength: "PPE Name must be between 3 and 200 characters.",
-                        regex: "PPE Name should be alphanumeric and can include -, _, ', \", (, ), ., :, ;, or spaces.",
-                        //  remote: "PPE Name already exists."
+
                     },
                     ppe_type: {
                         required: "Please select the PPE Type."
@@ -234,7 +222,7 @@
                         required: "Protection Category cannot be empty.",
                         minlength: "Protection Category must be between 3 and 200 characters.",
                         maxlength: "Protection Category must be between 3 and 200 characters.",
-                        regex: "Protection Category should be alphanumeric and can include -, _, ', \", (, ), ., :, ;, or spaces."
+                       
                     },
                     ppe_standard: {
                         required: "PPE Standard cannot be empty.",
