@@ -137,7 +137,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex: /^[a-zA-Z0-9-\s]*$/,
+                        regex:/^[a-zA-Z0-9-\s.+]*$/,,
                     },
                     item_inventory_id: {
                         required: true,
@@ -180,7 +180,7 @@
                         required: "Item code cannot be empty.",
                         minlength: "Item code must contain between 3 and 30 characters.",
                         maxlength: "Item code must contain between 3 and 30 characters.",
-                        regex: "Item code can contain alphabets, numbers, and hyphens."
+                        regex: "Item code can only contain letters, numbers, spaces, hyphens, periods, or plus signs."
                     },
                     item_inventory_id: {
                         required: "Item Inventory Id cannot be empty.",
