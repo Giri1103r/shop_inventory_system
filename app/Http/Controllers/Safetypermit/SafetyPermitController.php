@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Str;
+use DB;
 use Response;
 use Exception;
 use DataTables;
@@ -1206,7 +1207,7 @@ class SafetyPermitController extends Controller
             $id = decryptId($request->id);
             $remarks = $request->remarks;
             $safetypermit = $this->safetypermit->find($id);
-            $this->safetypermit->closePermit($id,$remarks);
+            $this->safetypermit->closePermit($id, $remarks);
 
             $mailsubject = 'Safety Permit has been Closed';
             $user_roles = [ROLE_EHS_OFFICER, ROLE_EHS_HEAD];
@@ -1823,5 +1824,72 @@ class SafetyPermitController extends Controller
             Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
         }
+    }
+
+
+    public function dashboard(Request $request)
+    {
+        try {
+            $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
+            $typeofwork = $this->typeofwork->gettypework();
+
+            $employeeList = Employee::select('id', 'emp_id', 'emp_name', 'email', 'department', 'employee_status')->where('user_role', ROLE_USER)->where('status', 1)->get();
+
+            $getprotectiveequipment = $this->protective->selectchecklist();
+            $getequipmentinvolved = $this->equipinvalve->selectchecklist();
+            $getinstruction = $this->safework->selectchecklist();
+            $getprecaution = $this->precaution->selectchecklist();
+            $getchecklist = $this->checklist->selectchecklist();
+            $data = array(
+                'unitList' => $unitList,
+                'typeofwork' => $typeofwork,
+                'getprotectiveequipment' => $getprotectiveequipment,
+                'getequipmentinvolved' => $getequipmentinvolved,
+                'getprecaution' => $getprecaution,
+                'getchecklist' => $getchecklist,
+                'getinstruction' => $getinstruction,
+            );
+            return view('permit.safetypermit.dashboard', $data);
+        } catch (Exception $ex) {
+            report($ex);
+        }
+    }
+
+
+    public function unitwiseptw(Request $request)
+    {
+        $user = Auth::user();
+        $id = Auth::id();
+
+        // Fetch all active units
+        $unit = $this->unit
+            ->select('id', 'unit_name')
+            ->where('status', 1)
+            ->where('trash', 'NO')
+            ->get();
+
+        // Fetch unit-wise count of safety permits
+        $permitCounts = $this->safetypermit
+            ->selectRaw('unit_id, COUNT(*) as permit_count')
+            ->where('status', 1)
+            ->where('trash', 'NO')
+            ->groupBy('unit_id')
+            ->pluck('permit_count', 'unit_id');
+
+        // Prepare the final result combining units and their permit counts
+        $result = $unit->map(function ($unit) use ($permitCounts) {
+            return [
+                'unit_id' => $unit->id,
+                'unit_name' => $unit->unit_name,
+                'permit_count' => $permitCounts[$unit->id] ?? 0, // Default to 0 if no permits
+            ];
+        });
+
+        // dd($result);
+
+        return view('permit.safetypermit.unitwisecount', [
+            'unit' => $unit,
+            'unitData' => $result, // Pass the processed result
+        ]);
     }
 }

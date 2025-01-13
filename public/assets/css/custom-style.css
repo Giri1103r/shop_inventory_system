@@ -6,7 +6,7 @@
     overflow: hidden;
 }
 .view_card .card-header {
-    background-color: #7a6fbe;
+    background-color: #5b626b;
  color: #FFFFFF;
 }
 .view_card{
@@ -14,12 +14,12 @@
     border-radius:5px;
 }
 .view_card .card-header {
-    background-color: #7a6fbe;
+    background-color: #5b626b;
  color: #FFFFFF;
 }
 
 .view_card th {
-    background-color: #7a6fbe !important;
+    background-color: #5b626b !important;
     color: #FFFFFF;
 }
 
