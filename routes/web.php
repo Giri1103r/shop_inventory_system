@@ -703,6 +703,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/fetchEmployeeDetails/{emp_id}', [SafetyPermitController::class, 'fetchEmployeeDetails']);
                 Route::get('/qr/pdf/{id}',[SafetyPermitController::class,'permitQRPDF']);
                 Route::get('/join/{id}',[SafetyPermitController::class,'permit_join']);
+                Route::get('/dashboard',[SafetyPermitController::class,'dashboard']);
+                Route::get('/dashboard/unitwiseptw',[SafetyPermitController::class,'unitwiseptw']);
 
             });
             Route::group(['prefix' => 'ppe_exemption'], function () {
