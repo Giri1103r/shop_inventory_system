@@ -32,6 +32,7 @@ use App\Http\Controllers\Master\TypeofWorkController;
 use App\Http\Controllers\Ppemanagement\PpeExemptionController;
 use App\Http\Controllers\Master\WorkerLogController;
 use App\Http\Controllers\Master\EmployeeLogController;
+use App\Http\Controllers\Ppemanagement\DashboardController;
 use App\Http\Controllers\Ppemanagement\PpeRequestController;
 use App\Http\Controllers\Ppemanagement\PpeStockInventoryController;
 use App\Http\Controllers\Safetypermit\SafetyPermitController;
@@ -719,6 +720,13 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/ajax-list', [PpeExemptionController::class, 'list']);
 
             });
+
+
+                Route::get('ppe-dashboard', [DashboardController::class, 'login']);
+                Route::get('ppe-dashboard/ppeExemption', [DashboardController::class, 'ppeexemptiondata']);
+                Route::get('ppe-dashboard/ppeExemptionList', [DashboardController::class, 'ppeexemptionList']);
+
+
         });
     });
 });

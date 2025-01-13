@@ -314,4 +314,38 @@ class PpeExemption extends Model
     {
         static::addGlobalScope(new TrashScope('ppe_ppeexemption'));
     }
+    public function getExemptionUnit($unitIds)
+    {
+        $unitData = $this->whereIn('unit', $unitIds->pluck('id'))
+            ->join('masters_unit', 'masters_unit.id', '=', 'ppe_ppeexemption.unit')
+            ->selectRaw('masters_unit.unit_name, ppe_ppeexemption.unit, COUNT(ppe_ppeexemption.id) as total')
+            ->groupBy('ppe_ppeexemption.unit', 'masters_unit.unit_name')
+            ->get();
+
+        return $unitData;
+    }
+
+
+    public function getExemptionChartData($unitIds)
+    {
+        $data = [];
+
+        foreach ($unitIds as $unit) {
+            $unitData = $this->where('unit', $unit->id)
+                ->groupBy('approve_status')
+                ->selectRaw('approve_status, COUNT(*) as count')
+                ->get()
+                ->keyBy('approve_status');
+
+            $data[] = [
+                'unit_name' => $unit->unit_name,
+                'total' => $unitData->sum('count'),
+                'approved' => $unitData->get('STATUS_EHS_APPROVED')->count ?? 0,
+                'rejected' => $unitData->get('STATUS_EHS_REJECTED')->count ?? 0,
+            ];
+        }
+
+        return $data;
+    }
+
 }
