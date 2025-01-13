@@ -300,6 +300,7 @@
 
     <script src="{{ public_plugins('select2/js/select2.full.min.js') }}"></script>
     <script src="{{ public_plugins('jasny-bootstrap/js/jasny-bootstrap.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts.js"></script>
 
 
     @stack('scripts')
