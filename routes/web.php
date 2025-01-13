@@ -35,6 +35,7 @@ use App\Http\Controllers\Master\EmployeeLogController;
 use App\Http\Controllers\Ppemanagement\PpeRequestController;
 use App\Http\Controllers\Ppemanagement\PpeStockInventoryController;
 use App\Http\Controllers\Safetypermit\SafetyPermitController;
+use App\Http\Controllers\Training\TrainingController;
 
 Route::get('cache', function () {
     Artisan::call('optimize:clear');
@@ -136,6 +137,10 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('profile/image/update', [AdminController::class, 'profileUpdate']);
             Route::post('profile/update', [AdminController::class, 'Update']);
             Route::post('profile/password/update', [AdminController::class, 'changeProfilePassword']);
+
+            Route::get('training/dashboard', [TrainingController::class, 'index']);
+            Route::get('training/trainingStatus', [TrainingController::class, 'getTrainingStatus']);
+            Route::get('training/dashboard/department', [TrainingController::class, 'getDepartment']);
 
             /**
              * User Access Log

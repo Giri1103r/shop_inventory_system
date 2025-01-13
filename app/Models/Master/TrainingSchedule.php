@@ -83,7 +83,7 @@ class TrainingSchedule extends Model
                 $query->where('training_schedule.trainer_id', $trainer->id)
                     ->where('training_schedule.trash', 'NO');
             }
-        } elseif (Auth::user()->role != ROLE_TRAINER || Auth::user()->role != ROLE_SUPERADMIN) {
+        } elseif (Auth::user()->role != ROLE_TRAINER || Auth::user()->role != ROLE_VISE_PRESIDENT || Auth::user()->role != ROLE_SUPERADMIN || Auth::user()->role != ROLE_ADMIN) {
             $nomination = DB::table('masters_employee')
                 ->select('id', 'emp_id')
                 ->where('emp_id', Auth::user()->employee_id)
@@ -312,10 +312,10 @@ class TrainingSchedule extends Model
         );
         return $this->where('id', $trainingScheduleId)->update($update_array);
     }
-    
+
     public function updateTrainingManHours($trainingScheduleId, $totalManHours)
     {
-    
+
         $update_array = array(
             'training_man_hours' => $totalManHours,
             'updated_by' => Auth::id(),
@@ -352,6 +352,84 @@ class TrainingSchedule extends Model
         );
 
         return $this->where('id', $id)->update($update_array);
+    }
+
+    public function getDepartmentData()
+    {
+        $request = request();
+
+        $query = $this->leftJoin('masters_department', 'training_schedule.department_id', '=', 'masters_department.id');
+
+
+        // Apply factory filter if provided
+        // if ($request->Factory && isset($request->Factory)) {
+        //     $factoryIds = arrayDecrypt($request->Factory);
+        //     $query = $query->whereIn('uauc_main_uaucnotification.factory_id', $factoryIds);
+        // }
+
+        // Apply date filters if provided
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('training_schedule.created_at', [DBdateformat($request->Fromdate), DBdateformat($request->Todate)]);
+        } elseif ($request->Fromdate) {
+            $query->where('training_schedule.created_at', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+
+
+        $query = $query->selectRaw('masters_department.department_name, COUNT(*) as count')
+            ->groupBy('training_schedule.department_id', 'masters_department.department_name')->orderBy('count', 'desc');
+
+        return $query->get();
+    }
+
+    public function statusCount($type = '', $params = [])
+    {
+        $query = $this->where('training_schedule.trash', 'NO');
+
+        if (isset($params['from_date']) && isset($params['to_date'])) {
+            $query->whereBetween('created_at', [DBdateformat($params['from_date']), DBdateformat($params['to_date'])]);
+        } elseif (isset($params['from_date'])) {
+            $query->where('created_at', '>=', DBdateformat($params['from_date']));
+        } elseif (isset($params['to_date'])) {
+            $query->where('created_at', '<=', DBdateformat($params['to_date']));
+        }
+
+        if (CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_VISE_PRESIDENT)) {
+            // No additional restrictions for these roles
+        } elseif (CheckUserRole(ROLE_TRAINER)) {
+            $trainer = DB::table('masters_employee')
+                ->select('id', 'emp_id')
+                ->where('emp_id', Auth::user()->employee_id)
+                ->first();
+            if ($trainer) {
+                $query->where('trainer_id', $trainer->id);
+            }
+        } else {
+            $nomination = DB::table('masters_employee')
+                ->select('id', 'emp_id')
+                ->where('emp_id', Auth::user()->employee_id)
+                ->first();
+            if ($nomination) {
+                $query->whereExists(function ($subQuery) use ($nomination) {
+                    $subQuery->select(DB::raw(1))
+                        ->from('training_nomination_process')
+                        ->whereColumn('training_nomination_process.training_schedule_id', 'training_schedule.id')
+                        ->where('training_nomination_process.employee_id', $nomination->id);
+                });
+            }
+        }
+
+        if (!empty($type)) {
+            if (is_array($type)) {
+                $query->whereIn('training_status', $type);
+            } else {
+                $query->where('training_status', $type);
+            }
+        }
+
+        return $query->count();
     }
 
     public function statuschange($id)
