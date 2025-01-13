@@ -114,23 +114,52 @@ class TrainingController extends Controller
             return json_encode($data);
         }
     }
+
+    public function gettrainingStatusCount(Request $request)
+    {
+        try {
+            $chartData = $this->training_schedule->getTrainingCount();
+    
+            // Prepare data for the pie chart
+            $chartDataArray = [
+                'Pending' => $chartData->pending_count ?? 0,
+                'Rejected' => $chartData->rejected_count ?? 0,
+                'In Progress' => $chartData->inprogress_count ?? 0,
+                'Completed' => $chartData->completed_count ?? 0,
+            ];
+            $data = [
+                'getdashdata' => $request,
+                'chartDataArray' => $chartDataArray
+            ];
+            return view('training_dashboard.trainingstatusCount', $data);
+        } catch (\Exception $ex) {
+            dd($ex); // Debug any errors during execution
+        }
+    }
+    
+
     public function getDepartment(Request $request)
     {
         try {
             $chartData = $this->training_schedule->getDepartmentData();
             $departmentDetails = $this->department->select('department_name', 'id')->get();
 
-            $chartDataArray = [];
+            // Initialize chartDataArray with all departments having count 0
+            $chartDataArray = $departmentDetails->pluck('id', 'department_name')->mapWithKeys(function ($value, $key) {
+                return [$key => 0];
+            });
 
-            // Initialize the chart data array with 0 counts
-            foreach ($departmentDetails as $category) {
-                $chartDataArray[$category->safety_category] = 0;
-            }
-
-            // Fill the chart data array with actual counts
+            // Fill chartDataArray with actual counts from the query
             foreach ($chartData as $data) {
-                $chartDataArray[$data->safety_category] = $data->count;
+                if (isset($chartDataArray[$data->department_name])) {
+                    $chartDataArray[$data->department_name] = $data->count;
+                }
             }
+
+            // Use Laravel's filter() to remove departments with count 0
+            $chartDataArray = $chartDataArray->filter(function ($count) {
+                return $count > 0;
+            });
 
             $data = [
                 'getdashdata' => $request,
@@ -140,7 +169,65 @@ class TrainingController extends Controller
 
             return view('training_dashboard.departmentData', $data);
         } catch (\Exception $ex) {
-            dd($ex);
+            dd($ex); // Debug any errors during execution
+        }
+    }
+
+    public function getmonthwiseTraining(Request $request)
+    {
+        try {
+            // Fetch chart data
+            $chartData = $this->training_schedule->monthwiseTrainingCountData();
+
+            // Initialize count arrays for each month
+            $overallCounts = array_fill(1, 12, 0);
+            $pendingCounts = array_fill(1, 12, 0);
+            $rejectedCounts = array_fill(1, 12, 0);
+            $inProgressCounts = array_fill(1, 12, 0);
+            $completedCounts = array_fill(1, 12, 0);
+
+            // Populate counts based on fetched data
+            foreach ($chartData as $data) {
+                $overallCounts[$data->month] = $data->total_count;
+                $pendingCounts[$data->month] = $data->pending_count;
+                $rejectedCounts[$data->month] = $data->rejected_count;
+                $inProgressCounts[$data->month] = $data->inprogress_count;
+                $completedCounts[$data->month] = $data->completed_count;
+            }
+
+            // Prepare chart data array
+            $chartDataArray = [];
+            $months = [
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December'
+            ];
+
+            foreach ($months as $monthIndex => $monthName) {
+                $chartDataArray[$monthName] = [
+                    'pending' => $pendingCounts[$monthIndex + 1],
+                    'rejected' => $rejectedCounts[$monthIndex + 1],
+                    'in_progress' => $inProgressCounts[$monthIndex + 1],
+                    'completed' => $completedCounts[$monthIndex + 1]
+                ];
+            }
+
+            return view('training_dashboard.monthwisetraining', [
+                'getdashdata' => $request,
+                'chartDataArray' => $chartDataArray
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+            return back()->with('error', 'Failed to load month-wise Training data.');
         }
     }
 }

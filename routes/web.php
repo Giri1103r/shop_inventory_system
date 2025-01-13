@@ -141,6 +141,8 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('training/dashboard', [TrainingController::class, 'index']);
             Route::get('training/trainingStatus', [TrainingController::class, 'getTrainingStatus']);
             Route::get('training/dashboard/department', [TrainingController::class, 'getDepartment']);
+            Route::get('training/dashboard/monthwisetraining', [TrainingController::class, 'getmonthwiseTraining']);
+            Route::get('training/dashboard/trainingStatusCount', [TrainingController::class, 'gettrainingStatusCount']);
 
             /**
              * User Access Log
