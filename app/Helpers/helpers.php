@@ -207,6 +207,15 @@ if (!function_exists('trainingStatusCount')) {
         return $training->statusCount($type, $params);
     }
 }
+
+if (!function_exists('permitStatusCount')) {
+    function permitStatusCount($type = '', $params = [])
+    {
+        $Safetypermit = new SafetyPermit();
+        return $Safetypermit->statusCount($type, $params);
+    }
+}
+
 if (!function_exists('insertUserLog')) {
 
     function insertUserLog($event = '', $custom_msg = '')

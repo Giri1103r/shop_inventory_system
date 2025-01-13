@@ -1831,23 +1831,8 @@ class SafetyPermitController extends Controller
     {
         try {
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
-            $typeofwork = $this->typeofwork->gettypework();
-
-            $employeeList = Employee::select('id', 'emp_id', 'emp_name', 'email', 'department', 'employee_status')->where('user_role', ROLE_USER)->where('status', 1)->get();
-
-            $getprotectiveequipment = $this->protective->selectchecklist();
-            $getequipmentinvolved = $this->equipinvalve->selectchecklist();
-            $getinstruction = $this->safework->selectchecklist();
-            $getprecaution = $this->precaution->selectchecklist();
-            $getchecklist = $this->checklist->selectchecklist();
             $data = array(
                 'unitList' => $unitList,
-                'typeofwork' => $typeofwork,
-                'getprotectiveequipment' => $getprotectiveequipment,
-                'getequipmentinvolved' => $getequipmentinvolved,
-                'getprecaution' => $getprecaution,
-                'getchecklist' => $getchecklist,
-                'getinstruction' => $getinstruction,
             );
             return view('permit.safetypermit.dashboard', $data);
         } catch (Exception $ex) {
@@ -1861,35 +1846,197 @@ class SafetyPermitController extends Controller
         $user = Auth::user();
         $id = Auth::id();
 
-        // Fetch all active units
         $unit = $this->unit
             ->select('id', 'unit_name')
             ->where('status', 1)
             ->where('trash', 'NO')
             ->get();
-
-        // Fetch unit-wise count of safety permits
         $permitCounts = $this->safetypermit
             ->selectRaw('unit_id, COUNT(*) as permit_count')
             ->where('status', 1)
             ->where('trash', 'NO')
             ->groupBy('unit_id')
             ->pluck('permit_count', 'unit_id');
-
-        // Prepare the final result combining units and their permit counts
         $result = $unit->map(function ($unit) use ($permitCounts) {
             return [
                 'unit_id' => $unit->id,
                 'unit_name' => $unit->unit_name,
-                'permit_count' => $permitCounts[$unit->id] ?? 0, // Default to 0 if no permits
+                'permit_count' => $permitCounts[$unit->id] ?? 0,
             ];
         });
 
-        // dd($result);
-
         return view('permit.safetypermit.unitwisecount', [
             'unit' => $unit,
-            'unitData' => $result, // Pass the processed result
+            'unitData' => $result,
         ]);
+    }
+
+    public function monthwiseptw(Request $request)
+    {
+        // Fetch month-wise permit counts grouped by month and year
+        $permitCounts = $this->safetypermit
+            ->selectRaw('MONTH(created_at) as month, YEAR(created_at) as year, COUNT(*) as permit_count')
+            ->where('status', 1) // Only include permits with status 1
+            ->where('trash', 'NO') // Exclude permits marked as trash
+            ->groupBy('year', 'month') // Group by year and month
+            ->orderBy('year')
+            ->orderBy('month')
+            ->get();
+
+        // Process the data to ensure all months are included, even if no data exists
+        $result = [];
+        $currentYear = date('Y');
+
+        // Initialize all months with 0 for the current year
+        for ($month = 1; $month <= 12; $month++) {
+            $result[$month] = 0;
+        }
+
+        // Overwrite the permit counts with actual data
+        foreach ($permitCounts as $count) {
+            if ($count->year == $currentYear) {
+                $result[$count->month] = $count->permit_count;
+            }
+        }
+
+        return view('permit.safetypermit.monthwisecount', [
+            'monthlyCounts' => $result, // Pass processed data to the view
+        ]);
+    }
+
+
+
+    public function getPermitStatus()
+    {
+
+        $request = request();
+
+        $params = [
+            // 'factory_ids' => $request->Factory ? arrayDecrypt($request->Factory) : [],
+            'from_date' => $request->Fromdate ?? null,
+            'to_date' => $request->Todate ?? null,
+        ];
+        $permitStatus = [
+            [
+                'name' => 'Total Training',
+                'count' => permitStatusCount('', $params),
+                'icon' => 'bx bx-message-square-detail',
+                'icon_color' => 'text-primary',
+                'url' => admin_url('training_schedule/list/'),
+            ],
+            [
+                'name' => 'EHS Verification  Pending',
+                'count' => permitStatusCount(1, $params),
+                'icon' => 'bx bx-file-find',
+                'icon_color' => 'text-primary',
+                'url' => admin_url('training_schedule/list/' . encryptId(1)),
+            ],
+            [
+                'name' => 'EHS Approval Pending',
+                'count' => permitStatusCount(2, $params),
+                'icon' => 'bx bx-file-find',
+                'icon_color' => 'text-primary',
+                'url' => admin_url('training_schedule/list/' . encryptId(1)),
+            ],
+            [
+                'name' => 'EHS Hold the Permit',
+                'count' => permitStatusCount(3, $params),
+                'icon' => 'bx bx-file-find',
+                'icon_color' => 'text-primary',
+                'url' => admin_url('training_schedule/list/' . encryptId(1)),
+            ],
+            [
+                'name' => 'EHS Declined the Permit-Rework the permit',
+                'count' => permitStatusCount(4, $params),
+                'icon' => 'bx bx-file-find',
+                'icon_color' => 'text-primary',
+                'url' => admin_url('training_schedule/list/' . encryptId(1)),
+            ],
+            [
+                'name' => 'EHS Re-assigned the Permit',
+                'count' => permitStatusCount(5, $params),
+                'icon' => 'bx bx-file-find',
+                'icon_color' => 'text-primary',
+                'url' => admin_url('training_schedule/list/' . encryptId(1)),
+            ],
+            [
+                'name' => 'Plant Head Approval Pending',
+                'count' => permitStatusCount(6, $params),
+                'icon' => 'bx bx-file-find',
+                'icon_color' => 'text-primary',
+                'url' => admin_url('training_schedule/list/' . encryptId(1)),
+            ],
+            [
+                'name' => 'Plant Head Approved',
+                'count' => permitStatusCount(7, $params),
+                'icon' => 'bx bx-file-find',
+                'icon_color' => 'text-primary',
+                'url' => admin_url('training_schedule/list/' . encryptId(1)),
+            ],
+            [
+                'name' => 'EHS Resumed the permit',
+                'count' => permitStatusCount(8, $params),
+                'icon' => 'bx bx-file-find',
+                'icon_color' => 'text-primary',
+                'url' => admin_url('training_schedule/list/' . encryptId(1)),
+            ],
+            [
+                'name' => 'Permit Expired',
+                'count' => permitStatusCount(9, $params),
+                'icon' => 'bx bx-file-find',
+                'icon_color' => 'text-primary',
+                'url' => admin_url('training_schedule/list/' . encryptId(1)),
+            ],
+            [
+                'name' => 'Permit Extended - EHS extension approval pending',
+                'count' => permitStatusCount(10, $params),
+                'icon' => 'bx bx-message-square-edit',
+                'icon_color' => 'text-info',
+                'url' => admin_url('training_schedule/list/' . encryptId(2)),
+            ],
+            [
+                'name' => 'Permit extension approved - EHS approval pending',
+                'count' => permitStatusCount(11, $params),
+                'icon' => 'bx bx-x-circle',
+                'icon_color' => 'text-info',
+                'url' => admin_url('training_schedule/list/' . encryptId(3)),
+            ],
+            [
+                'name' => 'Permit extension rejected - Resubmit extension',
+                'count' => permitStatusCount(12, $params),
+                'icon' => 'bx bx-x-circle',
+                'icon_color' => 'text-danger',
+                'url' => admin_url('training_schedule/list/' . encryptId(3)),
+            ],
+            [
+                'name' => 'Plant Head Rejected - EHS Verification resubmit',
+                'count' => permitStatusCount(13, $params),
+                'icon' => 'bx bx-x-circle',
+                'icon_color' => 'text-danger',
+                'url' => admin_url('training_schedule/list/' . encryptId(3)),
+            ],
+            [
+                'name' => 'Permit Cancelled',
+                'count' => permitStatusCount(14, $params),
+                'icon' => 'bx bx-x-circle',
+                'icon_color' => 'text-danger',
+                'url' => admin_url('training_schedule/list/' . encryptId(3)),
+            ],
+            [
+                'name' => 'Closed',
+                'count' => permitStatusCount(15, $params),
+                'icon' => 'bx bx-message-square-check',
+                'icon_color' => 'text-success',
+                'url' => admin_url('training_schedule/list/' . encryptId(4)),
+            ],
+        ];
+
+        //    dd($permitStatus);
+        $data = [
+            'permit_status' => $permitStatus,
+        ];
+        // return view('permit.safetypermit.dashboard', $data);
+
+        return json_encode($data);
     }
 }
