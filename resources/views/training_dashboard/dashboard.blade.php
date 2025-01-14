@@ -28,7 +28,7 @@
             </div>
 
             <div class="row">
-                <div class="col-xl-3 col-xxl-4 col-sm-6 my-order-ile">
+                <div class="col-xl-3 col-xxl-5 col-sm-6 my-order-ile">
                     <div class="card view_card">
                         <div class="card-header">
                             <h4 class="text-white">TRAINING STATUS</h4>
@@ -168,18 +168,43 @@
 
                     </div>
                 </div>
-                <div class="col-xl-9 col-xxl-8">
+                <div class="col-xl-9 col-xxl-6">
+                        <div class="card view_card">
+                            <div class="card-header">
+                                <h4 class="text-white">TRAINING STATUS COUNT</h4>
+                                <a class="fas fa-arrow-alt-circle-down chartdownload" id="training_count_download"></a>
+                            </div>
+                            <div id="trainingStatusPieChart"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">
                         <div class="card-header">
-                            <h4 class="text-white">Department WISE TRAINING COUNT</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload"
-                                id="LoadDepartmentCount_download"></a>
+                            <h4 class="text-white">MONTH WISE TRAINING COUNT</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="monthwisetraining_download"></a>
+                        </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="Loadmonthwisetraining"> </div>
+
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card view_card">
+                        <div class="card-header">
+                            <h4 class="text-white">DEPARTMENT WISE TRAINING COUNT</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadDepartmentCount_download"></a>
                         </div>
                         <div class="card-body px-0 pt-0 dlab-scroll height450" id="LoadDepartmentCount"> </div>
 
                     </div>
                 </div>
             </div>
+            
+
 
         </div>
     </div>
@@ -189,7 +214,7 @@
 
 @push('script')
     <script>
-        function redirectToTraininglist(status) {
+        function redirectToTraininglist(status, department) {
             Fromdate = $("#fromDate").val();
             Todate = $("#toDate").val();
             // Create a form element
@@ -210,6 +235,12 @@
             inputStatus.setAttribute('name', 'training_status');
             inputStatus.setAttribute('value', status);
             form.appendChild(inputStatus);
+
+            var inputDepartment = document.createElement('input');
+            inputDepartment.setAttribute('type', 'hidden');
+            inputDepartment.setAttribute('name', 'department_id');
+            inputDepartment.setAttribute('value', department);
+            form.appendChild(inputDepartment);
 
             var inputFromdate = document.createElement('input');
             inputFromdate.setAttribute('type', 'hidden');
@@ -233,15 +264,15 @@
             Factory = $("#factory").val()
             Fromdate = $("#fromDate").val();
             Todate = $("#toDate").val();
-            getalldashmetric(Factory, Fromdate, Todate);
+            getalldashmetric(Fromdate, Todate);
             LoadDepartmentCount(Fromdate, Todate);
-            loadthreemonth(Factory, Fromdate, Todate);
+            loadfmonthwisetraining(Fromdate, Todate);
+            loadtraining_count_status(Fromdate, Todate);
         }
 
         function getalldashmetric(Fromdate = '', Todate = '') {
             var url = "{{ admin_url('training/trainingStatus') }}"
             var data = {
-                Factory: Factory,
                 Fromdate: Fromdate,
                 Todate: Todate,
             };
@@ -272,7 +303,6 @@
         function LoadDepartmentCount(Fromdate = '', Todate = '') {
             var url = "{{ admin_url('training/dashboard/department') }}"
             var data = {
-                Factory: Factory,
                 Fromdate: Fromdate,
                 Todate: Todate,
             };
@@ -290,14 +320,13 @@
         }
 
 
-        function loadfmonthwiseuauc(Factory = '', Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/monthwiseuauc') }}"
+        function loadfmonthwisetraining(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('training/dashboard/monthwisetraining') }}"
             var data = {
-                Factory: Factory,
                 Fromdate: Fromdate,
                 Todate: Todate,
             };
-            $('#Loadmonthwiseuauc').html('');
+            $('#Loadmonthwisetraining').html('');
             $.ajax({
                 type: 'get',
                 url: url,
@@ -305,7 +334,26 @@
                 cache: false,
                 success: function(dataAjx) {
 
-                    $('#Loadmonthwiseuauc').html(dataAjx);
+                    $('#Loadmonthwisetraining').html(dataAjx);
+                }
+            });
+        }
+
+        function loadtraining_count_status(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('training/dashboard/trainingStatusCount') }}"
+            var data = {
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#trainingStatusPieChart').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+
+                    $('#trainingStatusPieChart').html(dataAjx);
                 }
             });
         }

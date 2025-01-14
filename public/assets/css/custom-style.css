@@ -9,8 +9,13 @@
     background-color: #e21e23;
     color: #FFFFFF;
     padding: 10px;
+    display: flex;
+    justify-content: space-between;
 }
-
+.chartdownload{
+    color: white;
+    font-size: 20px;
+}
 .view_card {
     border-radius: 5px;
 }

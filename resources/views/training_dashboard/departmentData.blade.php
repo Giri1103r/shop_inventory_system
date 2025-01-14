@@ -3,7 +3,7 @@
 @php
     $departments = $departmentDetails->pluck('department_name')->toArray();
     $departmentsID = $departmentDetails->pluck('id')->toArray();
-    dd($departments,$departmentsID);
+ 
 @endphp
 
 <script>
@@ -16,7 +16,7 @@
     var sortedCounts = sortedData.map(item => item[1]);
     // Prepare series data
     var seriesData = [{
-        name: 'Safety Category Count',
+        name: 'Department Count',
         data: sortedCounts
         // data: departments.map(category => chartData[category] || 0) 
     }];
@@ -30,14 +30,11 @@
             toolbar: {
                 show: false
             },
-            zoom: {
-                enabled: true
-            },
             events: {
                 dataPointSelection: function(event, chartContext, config) {
-                    var categoryIndex = config.seriesIndex;
-                    var category_id = departmentsID[categoryIndex];
-                    redirectToUAUClist('', '', category_id)
+                    var departmentIndex = config.seriesIndex;
+                    var department_id = departmentsID[departmentIndex];
+                    redirectToTraininglist('', '', department_id)
                 },
             },
         },
@@ -67,14 +64,16 @@
                 distributed: true
             },
         },
+        
         xaxis: {
-            departments: sorteddepartments,
+            categories: sorteddepartments,
             labels: {
                 formatter: function(value) {
                     return value.length > 25 ? value.substring(0, 25) + '...' : value;
                 }
             }
         },
+        
         fill: {
             opacity: 1
         }
@@ -100,27 +99,27 @@
                 ctx.fillRect(0, 0, newCanvas.width, 250);
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                var headerText = 'Department WISE TRAINING COUNT';
+                var headerText = 'DEPARTMENT WISE TRAINING COUNT';
                 ctx.fillText(headerText, 10, 30);
 
-                var factoryNames = '';
-                @if ($getdashdata->Factory && is_array($getdashdata->Factory) && isset($getdashdata->Factory))
-                    factoryNames = @json(getFactoryNames(arrayDecrypt($getdashdata->Factory)));
-                @endif
+                // var factoryNames = '';
+                // @if ($getdashdata->Factory && is_array($getdashdata->Factory) && isset($getdashdata->Factory))
+                //     factoryNames = @json(getFactoryNames(arrayDecrypt($getdashdata->Factory)));
+                // @endif
 
                 var Fromdate = @json($getdashdata->Fromdate ?? null);
                 var Todate = @json($getdashdata->Todate ?? null);
 
                 var yPos = 60;
 
-                if (factoryNames || Fromdate || Todate) {
+                if (Fromdate || Todate) {
                     var subHeaderText = 'Filtered By:';
                     ctx.fillText(subHeaderText, 10, yPos);
 
-                    if (factoryNames) {
-                        yPos += 50;
-                        ctx.fillText('Factory: ' + factoryNames, 10, yPos);
-                    }
+                    // if (factoryNames) {
+                    //     yPos += 50;
+                    //     ctx.fillText('Factory: ' + factoryNames, 10, yPos);
+                    // }
 
                     if (Fromdate) {
                         yPos += 30;
@@ -137,7 +136,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'SAFETY ESSENTIAL CATEGORY WISE COUNT.png';
+                    link.download = 'DEPARTMENT WISE TRAINING COUNT.png';
                     link.click();
                 });
             };

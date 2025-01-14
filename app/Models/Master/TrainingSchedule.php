@@ -353,6 +353,38 @@ class TrainingSchedule extends Model
 
         return $this->where('id', $id)->update($update_array);
     }
+    public function monthwiseTrainingCountData()
+    {
+        $request = request();
+
+        // Start query
+        $query = self::query();
+
+        // Apply date filters if provided
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('training_schedule.from_date', [DBdateformat($request->Fromdate), DBdateformat($request->Todate)]);
+        } elseif ($request->Fromdate) {
+            $query->where('training_schedule.from_date', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('training_schedule.from_date', '<=', DBdateformat($request->Todate));
+        }
+
+        // Select and group data by year and month
+        $results = $query->selectRaw(
+            'YEAR(from_date) as year, 
+             MONTH(from_date) as month, 
+             COUNT(*) as total_count, 
+             SUM(CASE WHEN training_status IN (1, 2, 4, 5) THEN 1 ELSE 0 END) as pending_count, 
+             SUM(CASE WHEN training_status = 3 THEN 1 ELSE 0 END) as rejected_count, 
+             SUM(CASE WHEN training_status IN (6, 7) THEN 1 ELSE 0 END) as inprogress_count, 
+             SUM(CASE WHEN training_status = 8 THEN 1 ELSE 0 END) as completed_count'
+        )
+            ->groupBy('year', 'month')
+            ->orderByRaw('year ASC, month ASC') // Ensure chronological order
+            ->get();
+
+        return $results;
+    }
 
     public function getDepartmentData()
     {
@@ -382,6 +414,55 @@ class TrainingSchedule extends Model
             ->groupBy('training_schedule.department_id', 'masters_department.department_name')->orderBy('count', 'desc');
 
         return $query->get();
+    }
+    public function getTrainingCount()
+    {
+        $request = request();
+        $query = $this->where('training_schedule.status', '1');
+
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('training_schedule.from_date', [DBdateformat($request->Fromdate), DBdateformat($request->Todate)]);
+        } elseif ($request->Fromdate) {
+            $query->where('training_schedule.from_date', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('training_schedule.from_date', '<=', DBdateformat($request->Todate));
+        }
+
+        if (CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_VISE_PRESIDENT)) {
+            // No additional restrictions for these roles
+        } elseif (CheckUserRole(ROLE_TRAINER)) {
+            $trainer = DB::table('masters_employee')
+                ->select('id', 'emp_id')
+                ->where('emp_id', Auth::user()->employee_id)
+                ->first();
+            if ($trainer) {
+                $query->where('trainer_id', $trainer->id);
+            }
+        } else {
+            $nomination = DB::table('masters_employee')
+                ->select('id', 'emp_id')
+                ->where('emp_id', Auth::user()->employee_id)
+                ->first();
+            if ($nomination) {
+                $query->whereExists(function ($subQuery) use ($nomination) {
+                    $subQuery->select(DB::raw(1))
+                        ->from('training_nomination_process')
+                        ->whereColumn('training_nomination_process.training_schedule_id', 'training_schedule.id')
+                        ->where('training_nomination_process.employee_id', $nomination->id);
+                });
+            }
+        }
+
+        // Select and aggregate the counts
+        $results = $query->selectRaw(
+            'COUNT(*) as total_count, 
+             SUM(CASE WHEN training_status IN (1, 2, 4, 5) THEN 1 ELSE 0 END) as pending_count, 
+             SUM(CASE WHEN training_status = 3 THEN 1 ELSE 0 END) as rejected_count, 
+             SUM(CASE WHEN training_status IN (6, 7) THEN 1 ELSE 0 END) as inprogress_count, 
+             SUM(CASE WHEN training_status = 8 THEN 1 ELSE 0 END) as completed_count'
+        )->first();
+
+        return $results;
     }
 
     public function statusCount($type = '', $params = [])
