@@ -1857,6 +1857,11 @@ class SafetyPermitController extends Controller
             ->where('trash', 'NO')
             ->groupBy('unit_id')
             ->pluck('permit_count', 'unit_id');
+
+        if ($request->has('Unit') && !empty($request->Unit)) {
+            $unitid = is_array($request->Unit) ? $request->Unit : [$request->Unit];
+            $permitCounts->whereIn('unit_id', $unitid);
+        }
         $result = $unit->map(function ($unit) use ($permitCounts) {
             return [
                 'unit_id' => $unit->id,
@@ -1876,23 +1881,23 @@ class SafetyPermitController extends Controller
         // Fetch month-wise permit counts grouped by month and year
         $permitCounts = $this->safetypermit
             ->selectRaw('MONTH(created_at) as month, YEAR(created_at) as year, COUNT(*) as permit_count')
-            ->where('status', 1) // Only include permits with status 1
-            ->where('trash', 'NO') // Exclude permits marked as trash
-            ->groupBy('year', 'month') // Group by year and month
+            ->where('status', 1)
+            ->where('trash', 'NO')
+            ->groupBy('year', 'month')
             ->orderBy('year')
             ->orderBy('month')
             ->get();
 
-        // Process the data to ensure all months are included, even if no data exists
+
         $result = [];
         $currentYear = date('Y');
 
-        // Initialize all months with 0 for the current year
+
         for ($month = 1; $month <= 12; $month++) {
             $result[$month] = 0;
         }
 
-        // Overwrite the permit counts with actual data
+
         foreach ($permitCounts as $count) {
             if ($count->year == $currentYear) {
                 $result[$count->month] = $count->permit_count;
@@ -1900,7 +1905,7 @@ class SafetyPermitController extends Controller
         }
 
         return view('permit.safetypermit.monthwisecount', [
-            'monthlyCounts' => $result, // Pass processed data to the view
+            'monthlyCounts' => $result,
         ]);
     }
 
@@ -1912,10 +1917,11 @@ class SafetyPermitController extends Controller
         $request = request();
 
         $params = [
-            // 'factory_ids' => $request->Factory ? arrayDecrypt($request->Factory) : [],
+            'unit_id' => $request->Unit ? (array)$request->Unit : [],
             'from_date' => $request->Fromdate ?? null,
             'to_date' => $request->Todate ?? null,
         ];
+
         $permitStatus = [
             [
                 'name' => 'Total Training',
