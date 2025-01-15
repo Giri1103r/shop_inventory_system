@@ -38,13 +38,13 @@
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="col-md-3 form-input">
-                                    <label for="status" class="form-label ">{{ __('Location') }}</label>
-                                    <select name="location" id="location" style="width: 100%" class="form-control select2">
-                                        <option value="">Select Location</option>
-                                        {{-- @foreach ($locationlist as $location)
-                                            <option value="{{ $location->id }}">
-                                                {{ $location->location_type_name }}</option>
-                                        @endforeach --}}
+                                    <label for="status" class="form-label ">{{ __('Unit') }}</label>
+                                    <select name="unit_id" id="unit_id" style="width: 100%" class="form-control select2">
+                                        <option value="">Select Unit</option>
+                                        @foreach ($unitList as $unit)
+                                            <option value="{{ $unit->id }}">
+                                                {{ $unit->unit_name }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-3 form-input">
@@ -562,7 +562,7 @@
         }
 
         function filterDashboard() {
-            Location = $("#location").val()
+            Unit = $("#unit_id").val()
             Fromdate = $("#fromDate").val();
             Todate = $("#toDate").val();
             loadunitwisecount();
@@ -574,7 +574,7 @@
         function loadunitwisecount() {
             var url = "{{ admin_url('safetypermit/dashboard/unitwiseptw') }}"
             var data = {
-                // Location: Location,
+                Unit: Unit,
                 Fromdate: Fromdate,
                 Todate: Todate,
             };
@@ -594,7 +594,7 @@
         function loadmonthewisecount() {
             var url = "{{ admin_url('safetypermit/dashboard/monthwiseptw') }}"
             var data = {
-                // Location: Location,
+                Unit: Unit,
                 Fromdate: Fromdate,
                 Todate: Todate,
             };
@@ -616,7 +616,7 @@
         function getalldashmetric(Fromdate = '', Todate = '') {
             var url = "{{ admin_url('safetypermit/dashboard/getpermitstatus') }}"
             var data = {
-                // Factory: Factory,
+                Unit: Unit,
                 Fromdate: Fromdate,
                 Todate: Todate,
             };
