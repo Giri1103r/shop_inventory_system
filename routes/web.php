@@ -36,6 +36,7 @@ use App\Http\Controllers\Ppemanagement\DashboardController;
 use App\Http\Controllers\Ppemanagement\PpeRequestController;
 use App\Http\Controllers\Ppemanagement\PpeStockInventoryController;
 use App\Http\Controllers\Safetypermit\SafetyPermitController;
+use App\Http\Controllers\Training\TrainingController;
 
 Route::get('cache', function () {
     Artisan::call('optimize:clear');
@@ -137,6 +138,12 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('profile/image/update', [AdminController::class, 'profileUpdate']);
             Route::post('profile/update', [AdminController::class, 'Update']);
             Route::post('profile/password/update', [AdminController::class, 'changeProfilePassword']);
+
+            Route::get('training/dashboard', [TrainingController::class, 'index']);
+            Route::get('training/trainingStatus', [TrainingController::class, 'getTrainingStatus']);
+            Route::get('training/dashboard/department', [TrainingController::class, 'getDepartment']);
+            Route::get('training/dashboard/monthwisetraining', [TrainingController::class, 'getmonthwiseTraining']);
+            Route::get('training/dashboard/trainingStatusCount', [TrainingController::class, 'gettrainingStatusCount']);
 
             /**
              * User Access Log
@@ -701,6 +708,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/join/{id}',[SafetyPermitController::class,'permit_join']);
                 Route::get('/dashboard',[SafetyPermitController::class,'dashboard']);
                 Route::get('/dashboard/unitwiseptw',[SafetyPermitController::class,'unitwiseptw']);
+                Route::get('/dashboard/monthwiseptw',[SafetyPermitController::class,'monthwiseptw']);
+                Route::get('/dashboard/getpermitstatus',[SafetyPermitController::class,'getPermitStatus']);
 
             });
             Route::group(['prefix' => 'ppe_exemption'], function () {

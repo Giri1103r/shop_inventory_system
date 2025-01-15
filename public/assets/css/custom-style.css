@@ -1,25 +1,48 @@
 .view_card {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    /* border-collapse: collapse; */
     margin-top: 15px;
     border-radius: 10px;
     overflow: hidden;
 }
+
 .view_card .card-header {
-    background-color: #5b626b;
- color: #FFFFFF;
+    background-color: #e21e23;
+    color: #FFFFFF;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
 }
-.view_card{
-    /* border: 1px solid black !important; */
-    border-radius:5px;
+.chartdownload{
+    color: white;
+    font-size: 20px;
 }
-.view_card .card-header {
-    background-color: #5b626b;
- color: #FFFFFF;
+.view_card {
+    border-radius: 5px;
+}
+
+.market-preview {
+    border-bottom: 0.0625rem solid var(--border);
+    padding: 0.5625rem 1.875rem;
+}
+
+@media only screen and (max-width: 35.9375rem) {
+    .market-preview {
+        padding: 0.5625rem 1.175rem;
+    }
+}
+
+.market-preview:hover {
+    background: var(--light);
+}
+
+@media only screen and (max-width: 47.9375rem) {
+    .market-preview span svg {
+        width: 1.875rem;
+    }
 }
 
 .view_card th {
-    background-color: #5b626b !important;
+    background-color: #e21e23 !important;
     color: #FFFFFF;
 }
 
@@ -35,11 +58,13 @@
 .table-container {
     flex: 1;
     min-width: 300px;
-    width: 45%; /* Adjust width for responsive layout */
+    width: 45%;
+    /* Adjust width for responsive layout */
     max-height: 500px;
     padding-top: 10px;
     /* border: 1px solid #ccc;  */
-    border-radius: 5px; /* Optional: Rounded corners */
+    border-radius: 5px;
+    /* Optional: Rounded corners */
 }
 
 /* Header style for each table */
@@ -50,9 +75,11 @@ h3 {
     padding: 10px;
     margin: 0;
     text-align: left;
-    font-size: 18px; /* Adjust the font size for consistency */
+    font-size: 18px;
+    /* Adjust the font size for consistency */
     font-weight: bold;
-    border-bottom: 2px solid #ddd; /* Optional: Adds a border below the header */
+    border-bottom: 2px solid #ddd;
+    /* Optional: Adds a border below the header */
 }
 
 /* Table style */
@@ -63,22 +90,27 @@ h3 {
 }
 
 /* Table header and cell style */
-.table th, .table td {
+.table th,
+.table td {
     padding: 15px;
-    text-align: left; /* Align text to the left */
-    border-bottom: 1px solid #ddd; /* Adds a border between rows */
+    text-align: left;
+    /* Align text to the left */
+    border-bottom: 1px solid #ddd;
+    /* Adds a border between rows */
 }
 
 /* Checkbox styling (optional) */
 .table input[type="checkbox"] {
     margin: 0;
     padding: 0;
-    vertical-align: middle; /* Ensures checkbox is aligned with text */
+    vertical-align: middle;
+    /* Ensures checkbox is aligned with text */
 }
 
 /* Table row striping (optional for better readability) */
 .table tbody tr:nth-child(even) {
-    background-color: #f9f9f9; /* Alternate row background */
+    background-color: #f9f9f9;
+    /* Alternate row background */
 }
 
 /* Optional: Scrollable table container */
@@ -86,4 +118,3 @@ h3 {
     overflow-y: auto;
     max-height: 400px;
 }
-

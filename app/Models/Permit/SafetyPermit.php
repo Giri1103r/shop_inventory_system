@@ -447,7 +447,7 @@ class SafetyPermit extends Model
         //     'WorkmanInvolved' => $WorkmanInvolved,
         // ];
     }
-    public function closePermit($id,$remarks)
+    public function closePermit($id, $remarks)
     {
         $update_data = [
             'permit_status' => 15,
@@ -715,27 +715,10 @@ class SafetyPermit extends Model
         $id = Auth::id();
 
         $employeelocation = Employee::where('login_id', $id)->value('location');
-        $contractor = ContractorCompanyUser::where('login_id', $id)->first(['login_id', 'id']);
+        // $contractor = ContractorCompanyUser::where('login_id', $id)->first(['login_id', 'id']);
 
-        if ($id == 1) {
-            $query = $this->select('ptw_safety.*', 'ptw_hot_cold_status.status_name', 'ptw_hot_cold_status.bg_color', 'master_operation_location_type.location_type_name');
-            $query = $query->leftJoin('ptw_hot_cold_status', 'ptw_hot_cold_status.id', '=', 'ptw_safety.permit_status');
 
-            $query = $query->leftJoin('master_operation_location_type', 'master_operation_location_type.id', '=', 'ptw_safety.location');
-        } elseif (isset($contractor) && ($id == $contractor->login_id)) {
-            $query = $this->select('ptw_safety.*', 'ptw_hot_cold_status.status_name', 'ptw_hot_cold_status.bg_color', 'master_operation_location_type.location_type_name');
-            $query = $query->leftJoin('ptw_hot_cold_status', 'ptw_hot_cold_status.id', '=', 'ptw_safety.permit_status');
-
-            $query = $query->leftJoin('master_operation_location_type', 'master_operation_location_type.id', '=', 'ptw_safety.location');
-            $query = $query->where('ptw_safety.created_by', $contractor->login_id);
-        } else {
-            $query = $this->select('ptw_safety.*', 'ptw_hot_cold_status.status_name', 'ptw_hot_cold_status.bg_color', 'master_operation_location_type.location_type_name');
-            $query = $query->leftJoin('ptw_hot_cold_status', 'ptw_hot_cold_status.id', '=', 'ptw_safety.permit_status');
-
-            $query = $query->leftJoin('master_operation_location_type', 'master_operation_location_type.id', '=', 'ptw_safety.location');
-            $query = $query->where('ptw_safety.location', $employeelocation);
-        }
-
+        $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
 
         if (isset($params['location_ids']) && $params['location_ids']) {
             $query = $query->whereIn('location', $params['location_ids']);
@@ -754,17 +737,17 @@ class SafetyPermit extends Model
             case 3:
             case 4:
             case 5:
-            case 13:
             case 6:
             case 7:
-            case 11:
-            case 14:
-            case 16:
-            case 15:
-            case 17:
             case 8:
-            case 12:
             case 9:
+            case 10:
+            case 11:
+            case 12:
+            case 13:
+            case 14:
+            case 15:
+
                 $query = $query->where('permit_status', $type);
 
                 break;

@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
+use App\Models\Master\TrainingSchedule;
 
 
 if (!function_exists('get_encryptVal')) {
@@ -197,6 +198,21 @@ if (!function_exists('userDetails')) {
         $input['useragent'] = $request->server('HTTP_USER_AGENT');
         $input['ip'] = $request->ip();
         return ($input);
+    }
+}
+if (!function_exists('trainingStatusCount')) {
+    function trainingStatusCount($type = '', $params = [])
+    {
+        $training = new TrainingSchedule();
+        return $training->statusCount($type, $params);
+    }
+}
+
+if (!function_exists('permitStatusCount')) {
+    function permitStatusCount($type = '', $params = [])
+    {
+        $Safetypermit = new SafetyPermit();
+        return $Safetypermit->statusCount($type, $params);
     }
 }
 
