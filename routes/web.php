@@ -726,7 +726,8 @@ Route::middleware(['securityheader'])->group(function () {
 
                 Route::get('ppe-dashboard', [DashboardController::class, 'login']);
                 Route::get('ppe-dashboard/ppeExemption', [DashboardController::class, 'ppeexemptiondata']);
-                Route::get('ppe-dashboard/ppeExemptionList', [DashboardController::class, 'ppeexemptionList']);
+                Route::get('ppe-dashboard/ppeRequestList', [DashboardController::class, 'ppeRequestList']);
+
 
 
         });

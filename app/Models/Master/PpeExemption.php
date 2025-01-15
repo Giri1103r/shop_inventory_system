@@ -326,12 +326,48 @@ class PpeExemption extends Model
     }
 
 
-    public function getExemptionChartData($unitIds)
+    public function getExemptionChartData($unitIds, $fromDate, $toDate, $unitName)
     {
+        // Ensure date format conversion and handling
+        if (!empty($fromDate)) {
+            $fromDate = DBdateformat($fromDate);
+        } else {
+            $fromDate = null;
+        }
+
+        if (!empty($toDate)) {
+            $toDate = DBdateformat($toDate);
+        } else {
+            $toDate = null;
+        }
+
+
+
+
         $data = [];
 
         foreach ($unitIds as $unit) {
-            $unitData = $this->where('unit', $unit->id)
+            $query = $this->newQuery();
+
+
+            if ($fromDate) {
+                $query = $query->where('ppe_ppeexemption.created_at', '>=', $fromDate);
+            }
+
+            if ($toDate) {
+                $query = $query->where('ppe_ppeexemption.created_at', '<=', $toDate);
+            }
+
+
+            if ($unitName) {
+                $query = $query->where('ppe_ppeexemption.unit', $unitName);
+            } else {
+                $query = $query->where('ppe_ppeexemption.unit', $unit->id);
+            }
+
+
+            // Group by approve_status and get the count
+            $unitData = $query->where('unit', $unit->id)
                 ->groupBy('approve_status')
                 ->selectRaw('approve_status, COUNT(*) as count')
                 ->get()
@@ -340,12 +376,14 @@ class PpeExemption extends Model
             $data[] = [
                 'unit_name' => $unit->unit_name,
                 'total' => $unitData->sum('count'),
-                'approved' => $unitData->get('STATUS_EHS_APPROVED')->count ?? 0,
-                'rejected' => $unitData->get('STATUS_EHS_REJECTED')->count ?? 0,
+                'approved' => $unitData->get('5')->count ?? 0,
+                'rejected' => $unitData->get('6')->count ?? 0,
             ];
         }
 
         return $data;
     }
+
+
 
 }

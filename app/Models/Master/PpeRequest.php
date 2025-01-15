@@ -20,6 +20,7 @@ class PpeRequest extends Model
         'emp_name',
         'ppe_name',
         'department',
+        'unit_id',
         'item_code',
         'ppe_type',
         'approve_status',
@@ -132,6 +133,7 @@ class PpeRequest extends Model
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
             'department' => Auth::user()->department_id,
+            'unit_id' => Auth::user()->unit_id,
             'item_code' => $request->item_code,
             'ppe_type' => $request->ppe_type_id,
             'ppe_name' => $request->ppe_name_id,
@@ -358,4 +360,77 @@ class PpeRequest extends Model
     {
         static::addGlobalScope(new TrashScope('ppe_pperequest'));
     }
+
+    public function getPperequestUnit($unitIds)
+    {
+        $unitData = $this->whereIn('ppe_pperequest.unit_id', $unitIds->pluck('id'))
+            ->join('masters_unit', 'masters_unit.id', '=', 'ppe_pperequest.unit_id')
+            ->selectRaw('masters_unit.unit_name, ppe_pperequest.unit_id, COUNT(ppe_pperequest.id) as total')
+            ->groupBy('ppe_pperequest.unit_id', 'masters_unit.unit_name')
+            ->get();
+
+        return $unitData;
+    }
+    public function getRequestChartData($units, $fromDate, $toDate, $unitName)
+    {
+
+        if (!empty($fromDate)) {
+            $fromDate = DBdateformat($fromDate);
+        } else {
+            $fromDate = null;
+        }
+
+        if (!empty($toDate)) {
+            $toDate = DBdateformat($toDate);
+        } else {
+            $toDate = null;
+        }
+
+        $data = [];
+
+
+        foreach ($units as $unit) {
+
+            $query = $this->newQuery();
+
+
+            if ($fromDate) {
+                $query = $query->where('ppe_pperequest.created_at', '>=', $fromDate);
+            }
+
+            if ($toDate) {
+                $query = $query->where('ppe_pperequest.created_at', '<=', $toDate);
+            }
+
+
+            if ($unitName) {
+                $query = $query->where('ppe_pperequest.unit_id', $unitName);
+            } else {
+                $query = $query->where('ppe_pperequest.unit_id', $unit->id);
+            }
+
+
+            $unitData = $query->where('ppe_pperequest.unit_id', $unit->id)
+                ->groupBy('approve_status')
+                ->selectRaw('approve_status, COUNT(*) as count')
+                ->get()
+                ->keyBy('approve_status');
+
+           
+            $approvedCount = $unitData->get('8')->count ?? 0;
+            $rejectedCount = ($unitData->get('3')->count ?? 0) + ($unitData->get('6')->count ?? 0);
+
+
+            $data[] = [
+                'unit_name' => $unit->unit_name,
+                'total' => $unitData->sum('count'),
+                'approved' => $approvedCount,
+                'rejected' => $rejectedCount,
+            ];
+        }
+
+        return $data;
+    }
+
+
 }
