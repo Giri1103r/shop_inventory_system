@@ -368,7 +368,30 @@ class TrainingSchedule extends Model
         } elseif ($request->Todate) {
             $query->where('training_schedule.from_date', '<=', DBdateformat($request->Todate));
         }
-
+        if (CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_VISE_PRESIDENT)) {
+            // No additional restrictions for these roles
+        } elseif (CheckUserRole(ROLE_TRAINER)) {
+            $trainer = DB::table('masters_employee')
+                ->select('id', 'emp_id')
+                ->where('emp_id', Auth::user()->employee_id)
+                ->first();
+            if ($trainer) {
+                $query->where('trainer_id', $trainer->id);
+            }
+        } else {
+            $nomination = DB::table('masters_employee')
+                ->select('id', 'emp_id')
+                ->where('emp_id', Auth::user()->employee_id)
+                ->first();
+            if ($nomination) {
+                $query->whereExists(function ($subQuery) use ($nomination) {
+                    $subQuery->select(DB::raw(1))
+                        ->from('training_nomination_process')
+                        ->whereColumn('training_nomination_process.training_schedule_id', 'training_schedule.id')
+                        ->where('training_nomination_process.employee_id', $nomination->id);
+                });
+            }
+        }
         // Select and group data by year and month
         $results = $query->selectRaw(
             'YEAR(from_date) as year, 
@@ -409,7 +432,30 @@ class TrainingSchedule extends Model
         }
 
 
-
+        if (CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_VISE_PRESIDENT)) {
+            // No additional restrictions for these roles
+        } elseif (CheckUserRole(ROLE_TRAINER)) {
+            $trainer = DB::table('masters_employee')
+                ->select('id', 'emp_id')
+                ->where('emp_id', Auth::user()->employee_id)
+                ->first();
+            if ($trainer) {
+                $query->where('trainer_id', $trainer->id);
+            }
+        } else {
+            $nomination = DB::table('masters_employee')
+                ->select('id', 'emp_id')
+                ->where('emp_id', Auth::user()->employee_id)
+                ->first();
+            if ($nomination) {
+                $query->whereExists(function ($subQuery) use ($nomination) {
+                    $subQuery->select(DB::raw(1))
+                        ->from('training_nomination_process')
+                        ->whereColumn('training_nomination_process.training_schedule_id', 'training_schedule.id')
+                        ->where('training_nomination_process.employee_id', $nomination->id);
+                });
+            }
+        }
         $query = $query->selectRaw('masters_department.department_name, COUNT(*) as count')
             ->groupBy('training_schedule.department_id', 'masters_department.department_name')->orderBy('count', 'desc');
 

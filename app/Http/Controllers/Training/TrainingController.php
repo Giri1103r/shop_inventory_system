@@ -50,11 +50,7 @@ class TrainingController extends Controller
             $user = Auth::user();
             $data = [];
 
-            if (Auth::user()->role == ROLE_SUPERADMIN || Auth::user()->role == ROLE_ADMIN) {
-                return view('training_dashboard.dashboard', $data);
-            } else {
-                return view('admin.userdashboard', $data);
-            }
+            return view('training_dashboard.dashboard', $data);
         }
     }
     public function getTrainingStatus()
@@ -119,7 +115,7 @@ class TrainingController extends Controller
     {
         try {
             $chartData = $this->training_schedule->getTrainingCount();
-    
+
             // Prepare data for the pie chart
             $chartDataArray = [
                 'Pending' => $chartData->pending_count ?? 0,
@@ -136,7 +132,7 @@ class TrainingController extends Controller
             dd($ex); // Debug any errors during execution
         }
     }
-    
+
 
     public function getDepartment(Request $request)
     {

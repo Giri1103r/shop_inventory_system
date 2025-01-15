@@ -220,7 +220,7 @@ class TrainingScheduleController extends Controller
         $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
         $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
         $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
-        $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_TRAINER)->where('status', '1')->get();
+        $employeeList  = $this->employee->select('id', 'emp_name')->whereRaw('FIND_IN_SET(' . ROLE_TRAINER . ', user_role)')->where('status', '1')->get();
 
         $data = array(
             'departmentList' => $departmentList,
@@ -235,12 +235,11 @@ class TrainingScheduleController extends Controller
     public function Add(Request $request)
     {
 
-        try {
-
+        try { 
             $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
-            $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_TRAINER)->where('status', '1')->get();
+            $employeeList  = $this->employee->select('id', 'emp_name')->whereRaw('FIND_IN_SET(' . ROLE_TRAINER . ', user_role)')->where('status', '1')->get();
 
             $data = array(
                 'departmentList' => $departmentList,
@@ -250,7 +249,7 @@ class TrainingScheduleController extends Controller
             );
             return view('master.training_schedule.add', $data);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
         }
     }
 
@@ -1078,7 +1077,7 @@ class TrainingScheduleController extends Controller
             $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
-            $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_TRAINER)->where('status', '1')->get();
+            $employeeList  = $this->employee->select('id', 'emp_name')->whereRaw('FIND_IN_SET(' . ROLE_TRAINER . ', user_role)')->where('status', '1')->get();
             $training_schedule = $this->training_schedule->find($id);
             $data = array(
                 'departmentList' => $departmentList,
