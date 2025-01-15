@@ -249,7 +249,7 @@ class TrainingScheduleController extends Controller
             );
             return view('master.training_schedule.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
