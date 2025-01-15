@@ -717,19 +717,19 @@ class SafetyPermit extends Model
         $employeelocation = Employee::where('login_id', $id)->value('location');
         // $contractor = ContractorCompanyUser::where('login_id', $id)->first(['login_id', 'id']);
 
-
         $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
 
-        if (isset($params['location_ids']) && $params['location_ids']) {
-            $query = $query->whereIn('location', $params['location_ids']);
+        if (isset($params['unit_id']) && $params['unit_id']) {
+            $query = $query->whereIn('ptw_safety.unit_id', $params['unit_id']);
         }
         if (isset($params['from_date']) && isset($params['to_date'])) {
-            $query = $query->whereBetween('work_from_date', [DBdateformat($params['from_date']), DBdateformat($params['to_date'])]);
+            $query = $query->whereBetween('date', [DBdateformat($params['from_date']), DBdateformat($params['to_date'])]);
         } elseif (isset($params['from_date'])) {
-            $query = $query->where('work_from_date', '>=', DBdateformat($params['from_date']));
+            $query = $query->where('date', '>=', DBdateformat($params['from_date']));
         } elseif (isset($params['to_date'])) {
             $query = $query->where('work_to_date', '<=', DBdateformat($params['to_date']));
         }
+
 
         switch ($type) {
             case 1:
