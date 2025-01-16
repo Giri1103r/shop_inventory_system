@@ -360,14 +360,14 @@ class TrainingSchedule extends Model
         // Start query
         $query = self::query();
 
-        // Apply date filters if provided
         if ($request->Fromdate && $request->Todate) {
-            $query->whereBetween('training_schedule.from_date', [DBdateformat($request->Fromdate), DBdateformat($request->Todate)]);
+            $query->whereBetween('training_schedule.created_at', [DBdateformat($request->Fromdate), DBdateformat($request->Todate)]);
         } elseif ($request->Fromdate) {
-            $query->where('training_schedule.from_date', '>=', DBdateformat($request->Fromdate));
+            $query->where('training_schedule.created_at', '>=', DBdateformat($request->Fromdate));
         } elseif ($request->Todate) {
-            $query->where('training_schedule.from_date', '<=', DBdateformat($request->Todate));
+            $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate));
         }
+
         if (CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_VISE_PRESIDENT)) {
             // No additional restrictions for these roles
         } elseif (CheckUserRole(ROLE_TRAINER)) {
@@ -467,11 +467,11 @@ class TrainingSchedule extends Model
         $query = $this->where('training_schedule.status', '1');
 
         if ($request->Fromdate && $request->Todate) {
-            $query->whereBetween('training_schedule.from_date', [DBdateformat($request->Fromdate), DBdateformat($request->Todate)]);
+            $query->whereBetween('training_schedule.created_at', [DBdateformat($request->Fromdate), DBdateformat($request->Todate)]);
         } elseif ($request->Fromdate) {
-            $query->where('training_schedule.from_date', '>=', DBdateformat($request->Fromdate));
+            $query->where('training_schedule.created_at', '>=', DBdateformat($request->Fromdate));
         } elseif ($request->Todate) {
-            $query->where('training_schedule.from_date', '<=', DBdateformat($request->Todate));
+            $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate));
         }
 
         if (CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_VISE_PRESIDENT)) {
