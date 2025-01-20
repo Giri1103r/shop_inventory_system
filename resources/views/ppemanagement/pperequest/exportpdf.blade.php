@@ -221,7 +221,7 @@
                 <tbody>
                     @if ($userdata->isEmpty())
                         <tr>
-                            <td class="text-center" colspan="6">No data is available</td>
+                            <td class="text-center" colspan="5">No data is available</td>
                         </tr>
                     @else
                         @foreach ($userdata as $data)
@@ -271,7 +271,7 @@
                         <tbody>
                             @if ($ppestatuslog->isEmpty())
                                 <tr>
-                                    <td class="text-center" colspan="5">No data is available</td>
+                                    <td class="text-center" colspan="4">No data is available</td>
                                 </tr>
                             @else
                                 @foreach ($ppestatuslog as $log)

@@ -656,6 +656,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/generalpdf/{id}', [PpeRequestController::class, 'pdf']);
                 Route::get('/checkuserDepartment', [PpeRequestController::class, 'checkDepartmentrequest']);
                 Route::post('/storemanger/issued', [PpeRequestController::class, 'storemanagerapproval']);
+                Route::get('/fetchEmployeeDetails/{emp_id}',[PpeRequestController::class, 'fetchEmployeeDetails']);
 
 
             });
@@ -736,7 +737,10 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('ppe-dashboard', [DashboardController::class, 'login']);
                 Route::get('ppe-dashboard/ppeExemption', [DashboardController::class, 'ppeexemptiondata']);
                 Route::get('ppe-dashboard/ppeRequestList', [DashboardController::class, 'ppeRequestList']);
-
+                Route::get('ppe-dashboard/getshoerequeststatus', [DashboardController::class, 'getshoerequeststatus']);
+                Route::get('ppe-dashboard/getExemptionstatus', [DashboardController::class, 'getExemptionstatus']);
+                Route::get('ppe-dashboard/getmonthwiseRequest', [DashboardController::class, 'getmonthwiseRequest']);
+                Route::get('ppe-dashboard/getmonthwiseExemption', [DashboardController::class, 'getmonthwiseExemption']);
 
 
         });

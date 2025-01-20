@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use App\Models\FcmToken;
+use App\Models\Master\PpeExemption;
+use App\Models\Master\PpeRequest;
 use App\Models\Permit\SafetyPermit;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\AndroidConfig;
@@ -1407,6 +1409,21 @@ if (!function_exists('getMonth')) {
             }
         }
     }
+
+    if (!function_exists('getBloodGroupname')) {
+
+        function getBloodGroupname($userid)
+        {
+
+            $blood_group_name = DB::table('masters_blood_group')->select('blood_group_name')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($blood_group_name == null) {
+                return '';
+            } else {
+                return $blood_group_name->blood_group_name;
+            }
+        }
+    }
     if (!function_exists('getStatus')) {
 
         function getStatus($userid)
@@ -1432,6 +1449,22 @@ if (!function_exists('getMonth')) {
 
             $data = SafetyPermit::where('id', $id)->select('permit_id')->first();
             return $data->permit_id;
+        }
+    }
+
+    if (!function_exists('ShoerequestStatusCount')) {
+        function ShoerequestStatusCount($type = '', $params = [])
+        {
+            $request = new PpeRequest();
+            return $request->statusCount($type, $params);
+        }
+    }
+
+    if (!function_exists('ShoeExemptionStatusCount')) {
+        function ShoeExemptionStatusCount($type = '', $params = [])
+        {
+            $exemption = new PpeExemption();
+            return $exemption->statusCount($type, $params);
         }
     }
 }

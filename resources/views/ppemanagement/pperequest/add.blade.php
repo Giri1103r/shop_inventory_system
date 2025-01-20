@@ -29,45 +29,83 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="pperequestadd"
+                                    <form method="POST" id="pperequestadd" enctype="multipart/form-data"
                                         action="{{ admin_url('ppe_request/add/submit') }}">
                                         @csrf
 
                                         <div class="row">
-                                            <div class="col-md-4 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label for="emp_id" class="form-label require">Employee ID</label>
-                                                    <input type="text" name="emp_id"
-                                                        class="form-control form-control-sm "id="emp_id"
-                                                        value="{{ $employee->employee_id }}" readonly
-                                                      >
-                                                <div class="text-danger" ></div>
 
+                                            @if (checkUserrole(ROLE_SUPERADMIN) || checkUserRole(ROLE_STORE_MANAGER))
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="emp_id" class="form-label require">Employee ID</label>
+                                                        <select name="emp_id" id="emp_id"
+                                                            class="form-select form-select-sm single-select"
+                                                            style="width: 100%">
+                                                            <option value="">Select the employee</option>
+                                                            @foreach ($employeelist as $list)
+                                                                <option value="{{ $list->employee_id }}">
+                                                                    {{ $list->employee_id }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="text-danger"></div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-4 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label for="emp_name" class="form-label require">Employee Name</label>
-                                                    <input type="text" name="emp_name"
-                                                        class="form-control form-control-sm " id="emp_name"
-                                                        value="{{ $employee->name }}" readonly
-                                                       >
-                                                <div class="text-danger"></div>
 
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="emp_name" class="form-label require">Employee
+                                                            Name</label>
+                                                        <input type="text" name="emp_name"
+                                                            class="form-control form-control-sm" id="emp_name" readonly>
+                                                        <div class="text-danger"></div>
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <div class="col-md-4 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label for="department" class="form-label require">Department</label>
-                                                    <input type="text" name="department" id="department"
-                                                        class="form-control form-control-sm"
-                                                        value="{{ getDepartment($employee->department_id) }}" readonly
-                                                      >
-                                                <div class="text-danger" ></div>
-
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="department"
+                                                            class="form-label require">Department</label>
+                                                        <input type="text" name="department" id="department"
+                                                            class="form-control form-control-sm" readonly>
+                                                        <div class="text-danger"></div>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            @else
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="emp_id" class="form-label require">Employee ID</label>
+                                                        <input type="text" name="emp_id"
+                                                            class="form-control form-control-sm "id="emp_id"
+                                                            value="{{ $employee->employee_id }}" readonly>
+                                                        <div class="text-danger"></div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="emp_name" class="form-label require">Employee
+                                                            Name</label>
+                                                        <input type="text" name="emp_name"
+                                                            class="form-control form-control-sm " id="emp_name"
+                                                            value="{{ $employee->name }}" readonly>
+                                                        <div class="text-danger"></div>
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="department"
+                                                            class="form-label require">Department</label>
+                                                        <input type="text" name="department" id="department"
+                                                            class="form-control form-control-sm"
+                                                            value="{{ getDepartment($employee->department_id) }}" readonly>
+                                                        <div class="text-danger"></div>
+
+                                                    </div>
+                                                </div>
+                                            @endif
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Item Code</label>
@@ -89,7 +127,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Type</label>
                                                     <input type="text" name="ppe_type" id="ppe_type"
-                                                        class="form-control form-control-sm">
+                                                        class="form-control form-control-sm" readonly>
                                                     <input type="hidden" name="ppe_type_id" id="ppe_type_id">
                                                     @error('ppe_type')
                                                         <div class="text-danger">{{ $message }}</div>
@@ -101,7 +139,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Name</label>
                                                     <input type="text" name="ppe_name" id="ppe_name"
-                                                        class="form-control form-control-sm">
+                                                        class="form-control form-control-sm" readonly>
                                                     <input type="hidden" name="ppe_name_id" id="ppe_name_id">
                                                     @error('ppe_name')
                                                         <div class="text-danger">{{ $message }}</div>
@@ -171,6 +209,58 @@
                 location.reload();
             });
         });
+
+        $(document).on("change", "#emp_id", function() {
+            var emp_id = $(this).val();
+            var currentRow = $(this).closest(".row");
+            var departmentInput = currentRow.find('input[name="department"]');
+
+
+            if (emp_id) {
+                $.ajax({
+                    url: "{{ url('ppe_request/fetchEmployeeDetails') }}/" +
+                        emp_id,
+                    type: "GET",
+                    success: function(data) {
+
+                        if (data && data.employee) {
+                            currentRow.find('input[name="emp_name"]').val(data.employee.emp_name);
+                            
+                            if (data.employee.department && data.departments) {
+                                departmentInput.val(data.departments
+                                    .department_name);
+                                console.log("Department Name: ", data.departments
+                                    .department_name);
+                            } else {
+                                departmentInput.val(
+                                    "No department available");
+                                console.log("No department found");
+                            }
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: "Employee data could not be fetched.",
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log("Error during AJAX request: ", status,
+                            error);
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "An error occurred while fetching employee details.",
+                        });
+                    },
+                });
+            } else {
+
+                currentRow.find('input[name="emp_name"]').val("");
+                departmentInput.val("");
+            }
+        });
+
         $(document).ready(function() {
             var empId = $('#emp_id').val();
             var department = $('#department').val();
@@ -245,24 +335,18 @@
         });
 
 
-
-
-
-
-
-
         $(document).ready(function() {
             $('#pperequestadd').validate({
                 rules: {
-                   emp_id:{
-                      required: true,
-                   },
-                   emp_name:{
-                    required:true,
-                   },
-                   department:{
-                    required:true,
-                   },
+                    emp_id: {
+                        required: true,
+                    },
+                    emp_name: {
+                        required: true,
+                    },
+                    department: {
+                        required: true,
+                    },
                     item_code: {
                         required: true,
                     },
@@ -280,7 +364,7 @@
                     ppe_file: {
                         extension: "png|jpeg|jpg"
                     },
-                    remarks:{
+                    remarks: {
                         required: true,
                         minlength: 3,
                         maxlength: 600,

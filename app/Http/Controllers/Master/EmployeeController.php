@@ -19,7 +19,7 @@ use Response;
 use App\Jobs\ImportdepartmentJob;
 
 use App\Mail\RestEmployeePasswordEmail;
-
+use App\Models\Master\Bloodgroup;
 use App\Models\Master\Company;
 use App\Models\Master\Employee;
 use App\Models\Master\Location;
@@ -42,6 +42,8 @@ class EmployeeController extends Controller
     private $uploadlog;
     private $employee;
     private $userrole;
+    private $bloodgroup;
+
 
     public function __construct()
     {
@@ -54,6 +56,8 @@ class EmployeeController extends Controller
         $this->uploadlog = new UploadLog();
         $this->employee = new Employee();
         $this->userrole = new UserRole();
+        $this->bloodgroup = new Bloodgroup();
+
     }
 
 
@@ -95,6 +99,9 @@ class EmployeeController extends Controller
                         })
                         ->editColumn('unit', function ($row) {
                             return getUnitname($row->unit);
+                        })
+                        ->editColumn('department', function ($row) {
+                            return getDepartment($row->department);
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
@@ -145,10 +152,12 @@ class EmployeeController extends Controller
 
             $companyList  = $this->company->select('id', 'company_name')->where('status', '1')->get();
             $userrole  = $this->userrole->select('id', 'role_name')->where('status', '1')->get();
+            $bloodgroup=$this->bloodgroup->getBloodgroup();
             $data = array(
                 'companyList' => $companyList,
                 'employee' => $employee,
                 'userrole' => $userrole,
+                'bloodgroup'=>$bloodgroup,
             );
 
 

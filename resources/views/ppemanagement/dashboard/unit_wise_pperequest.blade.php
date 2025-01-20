@@ -43,6 +43,14 @@
         },
         xaxis: {
             categories: unitNames,
+            title: {
+                text: 'Unit Name'
+            }
+        },
+        yaxis: {
+            title: {
+                text: ' Shoe Request Count'
+            }
         },
         plotOptions: {
             bar: {

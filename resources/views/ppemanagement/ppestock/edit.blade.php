@@ -64,6 +64,28 @@
 
                                                 </div>
                                             </div>
+                                            {{-- <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="item_name" class="form-label require">Item Name
+                                                        </label>
+                                                    <input type="text" name="item_name" id="item_name"
+                                                        class="form-control form-control-sm"
+                                                        value="{{ $ppestock->item_name }}">
+                                                    <div class="text-danger" id="item_name"></div>
+
+                                                </div>
+                                            </div> --}}
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="ppe_name" class="form-label require">PPE Name
+                                                        </label>
+                                                    <input type="text" name="ppe_name" id="ppe_name"
+                                                        class="form-control form-control-sm"
+                                                        value="{{ $ppestock->ppe_name }}">
+                                                    <div class="text-danger" id="ppe_name"></div>
+
+                                                </div>
+                                            </div>
                                             <div class="col-md-4 mb-2">
                                                 <label for="sub" class="form-label require">SUB</label>
 
@@ -114,8 +136,7 @@
 @stop
 
 @push('script')
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
         $(document).ready(function() {
             $('#resetform').on('click', function(e) {
@@ -137,7 +158,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex:/^[a-zA-Z0-9-\s.+]*$/,,
+                        regex:/^[a-zA-Z0-9-\s.+]*$/,
                     },
                     item_inventory_id: {
                         required: true,
@@ -145,11 +166,22 @@
                         maxlength: 30,
                         regex: /^[0-9]*$/
                     },
+                    ppe_name:{
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+
+                    },
+                    item_name:{
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
+                    },
                     sub: {
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex: /^[a-zA-Z0-9]*$/
+
                     },
                     uom: {
                         required: true,
@@ -181,6 +213,18 @@
                         minlength: "Item code must contain between 3 and 30 characters.",
                         maxlength: "Item code must contain between 3 and 30 characters.",
                         regex: "Item code can only contain letters, numbers, spaces, hyphens, periods, or plus signs."
+                    },
+                    item_name: {
+                        required: "Item name cannot be empty.",
+                        minlength: "Item Name must contain between 3 and 30 characters.",
+                        maxlength: "Item Name must contain between 3 and 30 characters.",
+
+                    },
+                    ppe_name: {
+                        required: "PPE name cannot be empty.",
+                        minlength: "PPE Name must contain between 3 and 100 characters.",
+                        maxlength: "PPE Name must contain between 3 and 100 characters.",
+
                     },
                     item_inventory_id: {
                         required: "Item Inventory Id cannot be empty.",

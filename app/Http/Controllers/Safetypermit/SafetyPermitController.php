@@ -129,15 +129,9 @@ class SafetyPermitController extends Controller
                             }
 
                             if ($row->date == date('Y-m-d')) {
-                                if (!(
-                                    $row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||
-                                    $row->permit_status == STATUS_EHS_DECLINE ||
-                                    $row->permit_status == STATUS_CLOSED ||
-                                    $row->permit_status == STATUS_PERMIT_EXPIRED ||
-                                    $row->permit_status == STATUS_PLANTHEAD_REJECTED ||
-                                    $row->permit_status == STATUS_CANCELLED ||
-                                    $row->permit_status == STATUS_EHS_HOLD
-                                ) && ($row->created_by == Auth::id() || isAdmin())) {
+                                if (($row->permit_status == STATUS_PERMIT_EXPIRED)
+                                    && ($row->created_by == Auth::id() || isAdmin())
+                                ) {
                                     $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '" class="permitExtension" title="' . __('Permit Extension') . '"><i class="fa fa-external-link"></i></a>';
                                 }
                             }
@@ -166,9 +160,13 @@ class SafetyPermitController extends Controller
                             $btn .= '<a href="' . admin_url('safetypermit/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
-                            if (($row->created_by == Auth::id() || isAdmin()) && ($row->permit_status != STATUS_CANCELLED)) {
+
+                            if (($row->created_by == Auth::id() || isAdmin()) &&
+                                ($row->permit_status == STATUS_EHS_APPROVE_PENDING || $row->permit_status == STATUS_EHS_VERIFICATION_PENDING)
+                            ) {
                                 $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Cancel" style="color: #e21e23;margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
                             }
+
 
                             if (($row->created_by == Auth::id() || isAdmin()) && ($row->permit_status == STATUS_PLANT_HEAD_APPROVED)) {
                                 $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="permitClose" title="Close" style="color: green;margin-right: 5px;"><i class="fa fa-window-close" aria-hidden="true"></i></a> ';
@@ -1846,22 +1844,40 @@ class SafetyPermitController extends Controller
         $user = Auth::user();
         $id = Auth::id();
 
+
         $unit = $this->unit
             ->select('id', 'unit_name')
             ->where('status', 1)
             ->where('trash', 'NO')
             ->get();
-        $permitCounts = $this->safetypermit
+
+
+        $permitCountsQuery = $this->safetypermit
             ->selectRaw('unit_id, COUNT(*) as permit_count')
             ->where('status', 1)
             ->where('trash', 'NO')
-            ->groupBy('unit_id')
-            ->pluck('permit_count', 'unit_id');
+            ->groupBy('unit_id');
 
-        if ($request->has('Unit') && !empty($request->Unit)) {
-            $unitid = is_array($request->Unit) ? $request->Unit : [$request->Unit];
-            $permitCounts->whereIn('unit_id', $unitid);
+
+        if ($request->has('Unit') && $request->Unit) {
+            $permitCountsQuery->where('unit_id', 'LIKE', '%' . $request->Unit . '%');
         }
+        if ($request->has('Fromdate') && !empty($request->Fromdate)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->Fromdate)->startOfDay()->format('Y-m-d H:i:s');
+            $permitCountsQuery->where('created_at', '>=', $startDate);
+        }
+        if ($request->has('Todate') && !empty($request->Todate)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->Todate)->endOfDay()->format('Y-m-d H:i:s');
+            $permitCountsQuery->where('created_at', '<=', $endDate);
+        }
+        if ($request->has('Fromdate') && !empty($request->Fromdate) && $request->has('Todate') && !empty($request->Todate)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->Fromdate)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->Todate)->endOfDay()->format('Y-m-d H:i:s');
+            $permitCountsQuery->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        $permitCounts = $permitCountsQuery->get()->pluck('permit_count', 'unit_id');
+
         $result = $unit->map(function ($unit) use ($permitCounts) {
             return [
                 'unit_id' => $unit->id,
@@ -1875,6 +1891,7 @@ class SafetyPermitController extends Controller
             'unitData' => $result,
         ]);
     }
+
 
     public function monthwiseptw(Request $request)
     {

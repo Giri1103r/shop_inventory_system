@@ -74,6 +74,7 @@
                                         <th>Employee Name</th>
                                         <th>Employee Email</th>
                                         <th>Phone Number</th>
+                                        <th>Department Name</th>
                                         <th>Unit Name</th>
                                         <th>Employee Status</th>
                                         <th>Reporting Manager</th>
@@ -168,6 +169,11 @@
                         {
                             data: 'mobile_no',
                             name: 'mobile_no'
+                        },
+
+                        {
+                            data: 'department',
+                            name: 'department'
                         },
                         {
                             data: 'unit',

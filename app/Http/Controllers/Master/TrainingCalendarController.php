@@ -56,7 +56,7 @@ class TrainingCalendarController extends Controller
     {
         if (Auth::check()) {
             $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
-            $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_TRAINER)->where('status', '1')->get();
+            $employeeList  = $this->employee->select('id', 'emp_name')->whereRaw('FIND_IN_SET(' . ROLE_TRAINER . ', user_role)')->where('status', '1')->get();
             $data = array(
                 'topicList' => $topicList,
                 'employeeList' => $employeeList,

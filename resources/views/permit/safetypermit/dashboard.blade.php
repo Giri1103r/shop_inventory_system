@@ -29,17 +29,18 @@
 
     <div class="content-body default-height">
         <div class="container-fluid" style="padding: 30px 20px;">
-            <div>
+            <div class="float-end">
                 <x-button-filter dataId="" class="search" href=""></x-button-filter>
             </div>
-            <div id="search" class="collapse card">
+            <div id="search" class="collapse card mt-5">
                 <form action="" id="formsearch">
                     <div class="card-body">
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="col-md-3 form-input">
                                     <label for="status" class="form-label ">{{ __('Unit') }}</label>
-                                    <select name="unit_id" id="unit_id" style="width: 100%" class="form-control select2">
+                                    <select name="unit_id" id="unit_id" style="width: 100%"
+                                        class="form-control single-select">
                                         <option value="">Select Unit</option>
                                         @foreach ($unitList as $unit)
                                             <option value="{{ $unit->id }}">
@@ -69,11 +70,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <button type="button" id="searchform" onclick="filterDashboard();"
-                                        class="btn btn-primary mt-4">Search</button>
-                                    <button type="reset" id="resetform" onclick="resetForm()"
-                                        class="btn btn-danger mt-4">Reset</button>
+                                <div class="col-md-3 mt-3">
+                                    <x-button-search></x-button-search>
+                                    <x-button-reset></x-button-reset>
 
                                 </div>
 
@@ -83,10 +82,10 @@
                 </form>
             </div>
 
-            <div class="row">
+            <div class="row mt-5">
                 <div class="col-xl-3 col-xxl-4 col-sm-6 my-order-ile">
                     <div class="card view_card">
-                        <div class="card-header">
+                        <div class="card-header bg-dark">
                             <h4 class="text-white">SAFETY PERMIT STATUS</h4>
                         </div>
                         <div class="card-body px-0 pt-0 dlab-scroll height370">
@@ -516,8 +515,8 @@
                 </div>
                 <div class="col-xl-9 col-xxl-8">
                     <div class="card view_card">
-                        <div class="card-header">
-                            <h4 class="text-white">Month Wise PTW</h4>
+                        <div class="card-header bg-dark">
+                            <h4 class="text-white ">Month Wise PTW</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="monthwiseptw_download"></a>
                         </div>
                         <div class="card-body px-0 pt-0 dlab-scroll height450" id="monthwiseptw"> </div>
@@ -528,8 +527,8 @@
             <div class="row">
                 <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">
-                        <div class="card-header border-0 pb-3">
-                            <h4 class="card-title">Unit Wise PTW </h4>
+                        <div class="card-header bg-dark border-0 pb-3">
+                            <h4 class="card-title text-white">Unit Wise PTW </h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="unitwiseptw_download"></a>
                         </div>
                         <div class="card-body px-0 pt-0 dlab-scroll height450" id="unitwiseptw"> </div>
@@ -565,19 +564,28 @@
             Unit = $("#unit_id").val()
             Fromdate = $("#fromDate").val();
             Todate = $("#toDate").val();
-            loadunitwisecount();
-            loadmonthewisecount();
-            getalldashmetric(Fromdate, Todate);
+            loadunitwisecount(Unit,Fromdate,Todate);
+            loadmonthewisecount(Unit,Fromdate,Todate);
+            getalldashmetric(Unit,Fromdate,Todate);
 
         }
 
-        function loadunitwisecount() {
+        $('#searchform').click(function() {
+            filterDashboard();
+        });
+
+        $('#resetform').click(function() {
+            window.location.reload();
+        });
+
+        function loadunitwisecount(Unit,Fromdate,Todate) {
             var url = "{{ admin_url('safetypermit/dashboard/unitwiseptw') }}"
             var data = {
                 Unit: Unit,
                 Fromdate: Fromdate,
                 Todate: Todate,
             };
+            console.log(data);
             $('#unitwiseptw').html('');
             $.ajax({
                 type: 'get',
@@ -591,7 +599,7 @@
             });
         }
 
-        function loadmonthewisecount() {
+        function loadmonthewisecount(Unit,Fromdate,Todate) {
             var url = "{{ admin_url('safetypermit/dashboard/monthwiseptw') }}"
             var data = {
                 Unit: Unit,
@@ -613,7 +621,7 @@
 
 
 
-        function getalldashmetric(Fromdate = '', Todate = '') {
+        function getalldashmetric(Unit,Fromdate,Todate) {
             var url = "{{ admin_url('safetypermit/dashboard/getpermitstatus') }}"
             var data = {
                 Unit: Unit,

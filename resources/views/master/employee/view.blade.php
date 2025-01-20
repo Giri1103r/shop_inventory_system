@@ -70,6 +70,12 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Blood Group') }}</label>
+                                        <div class="view_data">
+                                            {{ getBloodGroupname(isset($employee->blood_group) ? $employee->blood_group : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Employee Email') }}</label>
                                         <div class="view_data">
                                             {{ isset($employee->email) ? $employee->email : '' }}

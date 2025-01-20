@@ -11,6 +11,7 @@ use App\Mail\PpeRequestHodApprovalEmail;
 use App\Mail\PpeRequestRequestorEmail;
 use App\Mail\PpeRequestStoremanagerEmail;
 use App\Models\ApproveStatus;
+use App\Models\Master\Department;
 use App\Models\Master\Employee;
 use App\Models\Master\PpeRequest;
 use App\Models\Master\PpeStockinventory;
@@ -45,6 +46,7 @@ class PpeRequestController extends Controller
     private $ppestock;
     private $ppestatus;
     private $approvestatus;
+    private $department;
 
     public function __construct()
     {
@@ -58,6 +60,8 @@ class PpeRequestController extends Controller
         $this->ppestock = new PpeStockinventory();
         $this->ppestatus = new Statuslog();
         $this->approvestatus = new ApproveStatus();
+        $this->department = new Department();
+
     }
     public function index(Request $request)
     {
@@ -189,16 +193,33 @@ class PpeRequestController extends Controller
         $ppetypedata = $this->ppetype->getPpetypedata();
         $ppetypemaster = $this->ppetypemaster->getppetypemaster();
         $userdata = $this->pperequest->userdata();
-
+        $employeelist = $this->user->getEmployeeID();
         $data = [
             'employee' => $employee,
             'ppetypedata' => $ppetypedata,
             'ppetypemaster' => $ppetypemaster,
             'userdata' => $userdata,
+            'employeelist' => $employeelist,
+
 
 
         ];
         return view('ppemanagement.pperequest.add', $data);
+    }
+
+    public function fetchEmployeeDetails($emp_id)
+    {
+
+        $employee =$this->employee->select('emp_name', 'email', 'department')
+            ->where('emp_id', $emp_id)
+            ->first();
+
+        $departments = $this->department->select('id', 'department_name')->where('status', '1')->first();
+
+        return response()->json([
+            'employee' => $employee,
+            'departments' => $departments
+        ]);
     }
 
     public function checkDepartmentrequest(Request $request)

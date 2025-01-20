@@ -45,6 +45,14 @@
         },
         xaxis: {
             categories: unitNames,
+            title: {
+                text: 'Unit Name'
+            }
+        },
+        yaxis: {
+            title: {
+                text: 'Shoe Exemption Count'
+            }
         },
         plotOptions: {
             bar: {

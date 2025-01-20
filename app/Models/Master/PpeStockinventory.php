@@ -15,6 +15,8 @@ class PpeStockinventory extends Model
         'org',
         'item_code',
         'inventory_item_id',
+        // 'item_name',
+        'ppe_name',
         'uom',
         'sub',
         'quantity',
@@ -163,6 +165,8 @@ class PpeStockinventory extends Model
             'sub'=>$request->sub,
             'quantity'=>$request->quantity,
             'item_description'=>$request->item_description,
+            // 'item_name'=>$request->item_name,
+            'ppe_name'=>$request->ppe_name,
             'created_by'=>Auth::id(),
             'updated_by'=>Auth::id(),
          ];
@@ -205,7 +209,7 @@ class PpeStockinventory extends Model
             $query->where('inventory_item_id', 'LIKE', '%' . $request->inventory_item_id . '%');
         }
 
-      
+
 
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');

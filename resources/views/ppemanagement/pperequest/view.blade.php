@@ -179,7 +179,8 @@
                                             <thead>
                                                 <tr>
 
-                                                    <th>Status</th>
+                                                    <th>From Status</th>
+                                                    <th>To Status</th>
                                                     <th>Approved By</th>
                                                     <th>Remarks</th>
                                                     <th>Date</th>
@@ -197,36 +198,49 @@
                                                         <tr class="hover-row">
 
                                                             <td>
-                                                                @if ($log['to_status'] == STATUS_HOD_APPROVAL_PENDING)
-                                                                    <span class='badge bg-info'
-                                                                        style='font-size: 1.0em;'>HOD Approval
-                                                                        Pending</span>
+                                                                @if ($log['to_status'] == STATUS_USER_APPLIED)
+                                                                <span class='badge bg-info'
+                                                                style='font-size: 1.0em;'>User Applied</span>
                                                                 @elseif ($log['to_status'] == STATUS_HOD_APPROVED)
-                                                                    <span class='badge bg-info'
-                                                                        style='font-size: 1.0em;'>HOD Approved</span>
-                                                                @elseif ($log['to_status'] == STATUS_USER_APPLIED)
-                                                                    <span class='badge bg-primary'
-                                                                        style='font-size: 1.0em;'>User Applied</span>
+                                                                <span class='badge bg-info'
+                                                                style='font-size: 1.0em;'>HOD Approval Pending</span>
                                                                 @elseif ($log['to_status'] == STATUS_HOD_REJECTED)
-                                                                    <span class='badge bg-danger'
-                                                                        style='font-size: 1.0em;'>HOD Rejected</span>
-                                                                @elseif ($log['to_status'] == STATUS_EHS_APPROVAL_PENDING)
-                                                                    <span class='badge bg-info'
-                                                                        style='font-size: 1.0em;'>EHS Officer Approval
-                                                                        Pending</span>
+                                                                <span class='badge bg-info'
+                                                                style='font-size: 1.0em;'>HOD Approval Pending</span>
                                                                 @elseif ($log['to_status'] == STATUS_EHS_APPROVED)
-                                                                    <span class='badge bg-info'
-                                                                        style='font-size: 1.0em;'>EHS Officer
-                                                                        Approved</span>
+                                                                <span class='badge bg-info'
+                                                                style='font-size: 1.0em;'>EHS Officer Approval Pending</span>
                                                                 @elseif ($log['to_status'] == STATUS_EHS_REJECTED)
-                                                                    <span class='badge bg-danger'
-                                                                        style='font-size: 1.0em;'>EHS Officer
-                                                                        Rejected</span>
-                                                                        @elseif ($log['to_status']  == STATUS_ISSUED)
-                                                                        <span class='badge bg-success'
-                                                                            style='font-size: 1.0em;'>Issued</span>
+                                                                <span class='badge bg-info'
+                                                                style='font-size: 1.0em;'>EHS Officer Approval Pending</span>
+                                                                @elseif ($log['to_status'] == STATUS_ISSUED)
+                                                                <span class='badge bg-info'
+                                                                style='font-size: 1.0em;'>EHS Officer Approved</span>
                                                                 @endif
                                                             </td>
+                                                            <td>
+                                                                @if ($log['to_status'] == STATUS_USER_APPLIED)
+                                                                <span class='badge bg-info'
+                                                                style='font-size: 1.0em;'>HOD Approval Pending</span>
+                                                                @elseif ($log['to_status'] == STATUS_HOD_APPROVED)
+                                                                <span class='badge bg-info'
+                                                                style='font-size: 1.0em;'>HOD Approved</span>
+                                                                @elseif ($log['to_status'] == STATUS_HOD_REJECTED)
+                                                                <span class='badge bg-danger'
+                                                                style='font-size: 1.0em;'>HOD Rejected</span>
+                                                                @elseif ($log['to_status'] == STATUS_EHS_APPROVED)
+                                                                <span class='badge bg-info'
+                                                                style='font-size: 1.0em;'>EHS Officer Approved</span>
+                                                                @elseif ($log['to_status'] == STATUS_EHS_REJECTED)
+                                                                <span class='badge bg-danger'
+                                                                style='font-size: 1.0em;'>EHS Officer Rejected</span>
+                                                                @elseif ($log['to_status'] == STATUS_ISSUED)
+                                                                <span class='badge bg-success'
+                                                                style='font-size: 1.0em;'>Issued</span>
+                                                                @endif
+                                                            </td>
+
+
                                                             <td>{{ getUsername($log['created_by']) }}</td>
                                                             <td>{{ $log['remarks'] }}</td>
                                                             <td>{{ displaydateformat($log['created_at']) }}</td>

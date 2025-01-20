@@ -94,6 +94,22 @@
                                                         value="{{ $employee->id_number }}">
                                                 </div>
                                             </div>
+
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Blood Group</label>
+                                                    <select name="blood_group" id="blood_group" style="width: 100%"
+                                                        class="single-select form-control">
+                                                        <option value="">Select Blood group</option>
+                                                        @foreach ($bloodgroup as $list)
+                                                            <option value="{{ $list->id }}"
+                                                                @if ($list->id == $employee->blood_group) selected @endif>
+                                                                {{ $list->blood_group_name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">User Role</label>
@@ -425,6 +441,10 @@
                         maxlength: 50,
                         regex: /^[a-zA-Z]{2,}$/,
                     },
+                    blood_group: {
+                        required: true,
+
+                    },
                     id_type: {
                         required: true,
                         minlength: 3,
@@ -484,6 +504,9 @@
                     },
                     'user_role[]': {
                         required: "{{ __('User Role is Required') }}"
+                    },
+                    blood_group: {
+                        required: "{{ __('Blood Group  is Required') }}",
                     },
                     gender: {
                         required: "{{ __('Gender is Required') }}",

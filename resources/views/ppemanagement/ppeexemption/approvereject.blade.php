@@ -91,6 +91,38 @@
                                         </div>
                                     </div>
 
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Files</label>
+                                        @if (isset($ppefiles) && $ppefiles->count() > 0)
+                                        <div class="d-flex flex-wrap gap-2">
+                                            @foreach ($ppefiles as $file)
+                                            <p>
+                                                @php
+                                                    $fileExtension = strtolower(pathinfo($file->file_path, PATHINFO_EXTENSION));
+                                                @endphp
+
+                                                @if (in_array($fileExtension, ['docx', 'pdf', 'doc']))
+                                                    <a href="{{ asset('' . $file->file_path) }}" target="_blank">
+                                                        <i class="fa-solid fa-eye text-danger"></i> View
+                                                    </a>
+                                                @elseif (in_array($fileExtension, ['png', 'jpg', 'jpeg']))
+
+                                                    <a href="{{ asset('' . $file->file_path) }}" target="_blank">
+                                                        <img src="{{ asset('' . $file->file_path) }}" alt="image" style="max-width: 100px; max-height: 100px;">
+                                                    </a>
+                                                @else
+
+                                                    <span>{{ $file->file_path }}</span>
+                                                @endif
+                                            </p>
+                                        @endforeach
+                                        </div>
+
+                                        @else
+                                            <p>No files are uploaded</p>
+                                        @endif
+                                    </div>
+
                                     <div class="mb-3 col-md-12 form-input">
                                         <label class="form-label view_label">{{ __('Reason') }}</label>
                                         <div class="view_data">

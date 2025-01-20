@@ -240,6 +240,10 @@ class User extends Authenticatable
         return $data;
     }
 
+    public function getEmployeeID(){
+        return $this->where('status',1)->where('trash','NO')->get();
+    }
+
     public function getEmployeedata()
     {
         $user = Auth::user()->employee_id;

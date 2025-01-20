@@ -29,6 +29,7 @@ class Employee extends Model
         'user_role',
         'id_type',
         'id_number',
+        'blood_group',
         'joining_date',
         'mobile_no',
         'company',
@@ -131,7 +132,7 @@ class Employee extends Model
         foreach ($emptemp as $item) {
 
             $emailExists = $this->where('email', $item->email)->where('emp_id', '!=', $item->emp_id)->exists();
-            
+
             if ($emailExists) {
                 $errorMessage = "Email already exists.";
                 $this->updateErrorStatus($item->emp_id, $errorMessage);
@@ -140,7 +141,7 @@ class Employee extends Model
             $role = DB::table('template_user_role')
             ->where('role_name', $item->user_role)
             ->first();
-         
+
             $data = [
                 'emp_id' => $item->emp_id ?? null,
                 'emp_name' => $item->emp_name ?? null,
@@ -213,6 +214,7 @@ class Employee extends Model
             'nationality' => $request->nationality ?? null,
             'id_type' => $request->id_type  ?? null,
             'id_number' => $request->id_number  ?? null,
+            'blood_group' => $request->blood_group  ?? null,
             'email' => $request->email ?? null,
             'joining_date' => DBdateformat($request->joining_date) ?? '',
             'mobile_no' => $request->mobile_no ?? null,

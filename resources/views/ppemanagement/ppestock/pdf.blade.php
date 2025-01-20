@@ -34,6 +34,12 @@
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->item_code }}
                         </td>
+                        {{-- <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->item_name }}
+                        </td> --}}
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->ppe_name }}
+                        </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->sub}}
                         </td>
@@ -47,7 +53,7 @@
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{  $value->item_description}}
                         </td>
-                       
+
 
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}

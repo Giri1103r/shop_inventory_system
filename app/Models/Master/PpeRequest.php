@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 
 class PpeRequest extends Model
 {
@@ -129,6 +130,22 @@ class PpeRequest extends Model
     public function store()
     {
         $request = request();
+        $destinationPath = 'uploads/ppe_files';
+
+        if (!File::exists(public_path($destinationPath))) {
+            File::makeDirectory(public_path($destinationPath), 0777, true, true);
+        }
+
+        $ppe_file_path = null;
+
+        if ($request->hasFile('ppe_file')) {
+            $ppe_file = $request->file('ppe_file');
+
+            $ppe_file_name = time() . '_' . $ppe_file->getClientOriginalName();
+            $ppe_file->move(public_path($destinationPath), $ppe_file_name);
+
+            $ppe_file_path = $destinationPath . '/' . $ppe_file_name;
+        }
         $insert_array = array(
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
@@ -138,7 +155,7 @@ class PpeRequest extends Model
             'ppe_type' => $request->ppe_type_id,
             'ppe_name' => $request->ppe_name_id,
             'employee_reason' => $request->reason,
-            'ppe_image'=>$request->image,
+            'ppe_image'=> $ppe_file_path,
              'employee_remarks'=>$request->remarks,
             'approve_status' => STATUS_HOD_APPROVAL_PENDING,
             'created_by' => Auth::id()
@@ -294,7 +311,7 @@ class PpeRequest extends Model
 
     public function getuserdata($empId)
     {
-        return PpeRequest::where('emp_id', $empId)->where('approve_status', '!=', STATUS_HOD_APPROVAL_PENDING)->where('approve_status', '!=', STATUS_EHS_APPROVAL_PENDING)->where('approve_status', '!=', STATUS_EHS_APPROVED)->orderBy('id','DESC')->get();
+        return PpeRequest::where('emp_id', $empId)->orderBy('id','DESC')->get();
     }
 
     public function exportdata()
@@ -416,7 +433,7 @@ class PpeRequest extends Model
                 ->get()
                 ->keyBy('approve_status');
 
-           
+
             $approvedCount = $unitData->get('8')->count ?? 0;
             $rejectedCount = ($unitData->get('3')->count ?? 0) + ($unitData->get('6')->count ?? 0);
 
@@ -430,6 +447,63 @@ class PpeRequest extends Model
         }
 
         return $data;
+    }
+
+    public function statusCount($type = '', $params = [])
+    {
+        $query = $this->where('ppe_pperequest.trash', 'NO');
+
+        if (isset($params['ppe_pperequest.from_date']) && isset($params['ppe_pperequest.to_date'])) {
+            $query->whereBetween('ppe_pperequest.created_at', [DBdateformat($params['ppe_pperequest.from_date']), DBdateformat($params['ppe_pperequest.to_date'])]);
+        } elseif (isset($params['from_date'])) {
+            $query->where('ppe_pperequest.created_at', '>=', DBdateformat($params['ppe_pperequest.from_date']));
+        } elseif (isset($params['to_date'])) {
+            $query->where('ppe_pperequest.created_at', '<=', DBdateformat($params['ppe_pperequest.to_date']));
+        } else if (isset($params['unit'])) { // Changed to check for 'unit' directly
+            $query->where('ppe_pperequest.unit_id', $params['unit']); // Corrected key
+        }
+
+        if (!empty($type)) {
+            if (is_array($type)) {
+                $query->whereIn('ppe_pperequest.approve_status', $type);
+            } else {
+                $query->where('ppe_pperequest.approve_status', $type);
+            }
+        }
+
+        return $query->count();
+    }
+
+
+    public function monthwiserequest(){
+        $request = request();
+
+
+        $query = self::query();
+
+
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('ppe_pperequest.from_date', [DBdateformat($request->Fromdate), DBdateformat($request->Todate)]);
+        } elseif ($request->Fromdate) {
+            $query->where('ppe_pperequest.from_date', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('ppe_pperequest.from_date', '<=', DBdateformat($request->Todate));
+        }
+
+
+        $results = $query->selectRaw(
+            'YEAR(from_date) as year,
+             MONTH(from_date) as month,
+             COUNT(*) as total_count,
+             SUM(CASE WHEN approve_status IN (1,4) THEN 1 ELSE 0 END) as pending_count,
+             SUM(CASE WHEN approve_status =IN (3,6)THEN 1 ELSE 0 END) as rejected_count,
+             SUM(CASE WHEN approve_status = 8 THEN 1 ELSE 0 END) as completed_count'
+        )
+            ->groupBy('year', 'month')
+            ->orderByRaw('year ASC, month ASC') // Ensure chronological order
+            ->get();
+
+        return $results;
     }
 
 
