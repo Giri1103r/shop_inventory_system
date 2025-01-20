@@ -157,9 +157,22 @@ class Statuslog extends Model
     }
 
 
-    public function getexemptionstatusdetails($id)
+
+    public function getehsheadstatuslog($id){
+      return $this->where('reference_id',$id)->where('type',TYPE_PPE_EXEMPTION)->where('to_status',STATUS_EHS_APPROVED)->first();
+    }
+
+    public function gethodstatuslog($id)
     {
-        $data = Statuslog::where('reference_id', $id)->where('type', TYPE_PPE_EXEMPTION)->get();
-        return $data;
+        return $this->where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)->where('from_status', STATUS_HOD_APPROVED)->first();
+    }
+    public function getehsstatuslog($id)
+    {
+        return $this->where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)->where('from_status', STATUS_EHS_APPROVAL_PENDING)->first();
+    }
+
+    public function getsmstatuslog($id)
+    {
+        return $this->where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)->where('from_status', STATUS_EHS_APPROVED)->first();
     }
 }

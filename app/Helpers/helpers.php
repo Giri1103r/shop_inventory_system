@@ -1370,7 +1370,7 @@ if (!function_exists('getMonth')) {
         function getItemCode($userid)
         {
 
-            $item_code = DB::table('ppe_master_ppetypemaster')->select('item_code')->where('id', $userid)->where('trash', 'NO')->first();
+            $item_code = DB::table('ppe_stock_inventory')->select('item_code')->where('id', $userid)->where('trash', 'NO')->first();
 
             if ($item_code == null) {
                 return '';

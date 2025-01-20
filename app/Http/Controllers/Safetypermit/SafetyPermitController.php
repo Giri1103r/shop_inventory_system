@@ -161,7 +161,7 @@ class SafetyPermitController extends Controller
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
 
-                            if (($row->created_by == Auth::id() || isAdmin()) &&
+                            if ((checkUserRole(ROLE_EHS_OFFICER) || isAdmin()) &&
                                 ($row->permit_status == STATUS_EHS_APPROVE_PENDING || $row->permit_status == STATUS_EHS_VERIFICATION_PENDING)
                             ) {
                                 $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Cancel" style="color: #e21e23;margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';

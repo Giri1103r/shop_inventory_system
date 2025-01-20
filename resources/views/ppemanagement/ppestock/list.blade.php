@@ -76,6 +76,7 @@
                                         <th>Org ID</th>
                                         <th>Inventory Item ID</th>
                                         <th>Item Code</th>
+                                        <th>PPE Name</th>
                                         <th>SUB</th>
                                         <th>UOM</th>
                                         <th>Quantity</th>
@@ -164,7 +165,7 @@
                     error: function(xhr, error, code) {
                         if (xhr.status === 419) {
                             alert('Session has expired. You will be redirected to the login page.');
-                            window.location.href = "{{ url('') }}"; 
+                            window.location.href = "{{ url('') }}";
                         }
                     }
                 },
@@ -184,6 +185,10 @@
                     {
                         data: 'item_code',
                         name: 'item_code'
+                    },
+                    {
+                        data: 'ppe_name',
+                        name: 'ppe_name'
                     },
                     {
                         data: 'sub',

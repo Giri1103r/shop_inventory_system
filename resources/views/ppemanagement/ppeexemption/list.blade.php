@@ -295,7 +295,7 @@
                     error: function(xhr, error, code) {
                             if (xhr.status === 419) {
                                 alert('Session has expired. You will be redirected to the login page.');
-                                window.location.href = "{{ url('') }}"; // Redirect to login page
+                                window.location.href = "{{ url('') }}"; 
                             }
                         }
                 },

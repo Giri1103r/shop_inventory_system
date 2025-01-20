@@ -34,7 +34,7 @@
                         </td>
 
                         <td style='padding: 7px; border: 0.5px solid'>
-                            {{ getPpeType($value->ppe_type) }}
+                            {{ getItemCode($value->item_code) }}
                         </td>
                         <td style='padding: 7px; border: 0.5px solid'>
                             {{ getPpename($value->ppe_name) }}

@@ -16,6 +16,7 @@ class PpeExemption extends Model
     protected $fillable = [
         'emp_id',
         'emp_name',
+        'request_for',
         'department',
         'unit',
         'from_date',
@@ -140,6 +141,7 @@ class PpeExemption extends Model
             'department' => Auth::user()->department_id,
             'unit' => $request->unit,
             'company' => $request->company,
+            'request_for'=>$request->request_for,
             'from_date' => $request->from_date,
             'to_date' => $request->to_date,
             'approve_status' => STATUS_EHS_APPROVAL_PENDING,

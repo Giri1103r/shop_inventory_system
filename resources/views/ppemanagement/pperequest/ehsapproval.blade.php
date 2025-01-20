@@ -63,12 +63,12 @@
                                             {{ getPpename(isset($pperequest->ppe_name) ? $pperequest->ppe_name : '') }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
+                                    {{-- <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('PPE Type') }}</label>
                                         <div class="view_data">
                                             {{ getPpeType(isset($pperequest->ppe_type) ? $pperequest->ppe_type : '') }}
                                         </div>
-                                    </div>
+                                    </div> --}}
 
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Created By') }}</label>
@@ -91,6 +91,34 @@
 
                                         </div>
                                     </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Stock Inventory Details</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Item Code') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($stockdata->item_code) ? $stockdata->item_code : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('PPE Name') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($stockdata->ppe_name) ? $stockdata->ppe_name : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Quantity') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($stockdata->quantity) ? $stockdata->quantity : '' }}
+                                        </div>
+                                    </div>
+
 
                                 </div>
 

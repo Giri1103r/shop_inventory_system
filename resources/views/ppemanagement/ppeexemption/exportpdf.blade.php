@@ -214,8 +214,10 @@
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th>Status</th>
-                                <th>Approved By</th>
+                                <th> From Status</th>
+                                <th> To Status</th>
+
+                                <th> Approved By</th>
                                 <th>Remarks</th>
                                 <th>Date</th>
 
@@ -223,31 +225,41 @@
                         </thead>
 
                         <tbody>
-                            @if ($ppestatuslog->isEmpty())
-                                <tr>
-                                    <td class="text-center" colspan="4">No data is available</td>
-                                </tr>
-                            @else
-                                @foreach ($ppestatuslog as $log)
-                                    <tr class="hover-row">
-                                        <td>
-                                            @if ($log['to_status'] == STATUS_EHS_APPROVAL_PENDING)
-                                                EHS Approval Pending
-                                            @elseif ($log['to_status'] == STATUS_USER_APPLIED)
-                                                User Applied
-                                            @elseif ($log['to_status'] == STATUS_EHS_APPROVED)
-                                                EHS Head Approved
-                                            @elseif ($log['to_status'] == STATUS_EHS_REJECTED)
-                                                EHS Head Rejected
-                                            @endif
-                                        </td>
-                                        <td>{{ getUsername($log['created_by']) }}</td>
-                                        <td>{{ $log['remarks'] }}</td>
-                                        <td>{{ displaydateformat($log['created_at']) }}</td>
+                            <tr>
+                                <td> User
+                                        Applied</td>
+                                <td>EHS Head
+                                        Approval
+                                        Pending</td>
+                                <td> {{ getUsername(isset($ppeexemption->created_by) ? $ppeexemption->created_by : '') }}
+                                </td>
+                                <td> {{ isset($ppeexemption->reason) ? $ppeexemption->reason : '' }}
+                                </td>
+                                <td> {{ displaydateformat(isset($ppeexemption->created_at) ? $ppeexemption->created_at : '') }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td> EHS Head Approval
+                                    Pending</td>
+                                    <td>
+                                        @if (isset($ehsheadstatus['to_status']) && $ehsheadstatus['to_status'] == STATUS_EHS_APPROVED)
+                                           EHS Head Approved
+                                        @elseif (isset($ehsheadstatus['to_status']) && $ehsheadstatus['to_status'] == STATUS_EHS_REJECTED)
+                                           EHS Head Rejected
+                                        @else
+                                            <p>-</p>
+                                        @endif
+                                    </td>
 
-                                    </tr>
-                                @endforeach
-                            @endif
+
+                            <td> {{ isset($ehsheadstatus->created_by) && $ehsheadstatus->created_by != '' ? getUsername($ehsheadstatus->created_by) : '-' }}
+                            </td>
+                            <td> {{ isset($ehsheadstatus->remarks) ? $ehsheadstatus->remarks : '-' }}
+                            </td>
+                            <td>  {{ isset($ehsheadstatus->created_at) && $ehsheadstatus->created_at != '' ? displaydateformat($ehsheadstatus->created_at) : '-' }}
+                            </td>
+                            </tr>
+
                         </tbody>
                     </table>
 

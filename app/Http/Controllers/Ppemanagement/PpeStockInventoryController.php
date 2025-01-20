@@ -306,4 +306,11 @@ class PpeStockInventoryController extends Controller
             report($ex);
         }
     }
+    public function list(Request $request)
+    {
+        if ($request->ajax()) {
+            $PPEtypeId = $request->input('id');
+            return $this->ppestock->ajaxlist($PPEtypeId);
+        }
+    }
 }

@@ -82,7 +82,7 @@ Route::get('cron/safetypermit/checklistmaster/import', [CronController::class, '
 
 
 Route::get('stockitem', [CronController::class, 'storeItem']);
-Route::get('expireexemptionstatus',[CronController::class,'ExpireExemption']);
+Route::get('expireexemptionstatus', [CronController::class, 'ExpireExemption']);
 Route::get('updateStockitem', [CronController::class, 'updateItem']);
 Route::get('cron/master/work/all-details-temp', [CronController::class, 'workMasterAllDetailsTemp']);
 Route::get('cron/master/workmastertemp', [CronController::class, 'workMasterTemp']);
@@ -412,7 +412,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/status', [TopicController::class, 'statusChange']);
                 Route::post('/unique', [TopicController::class, 'Uniquecheck']);
                 Route::get('/sampledownload', [TopicController::class, 'DownloadSample']);
-
             });
 
             /**
@@ -458,9 +457,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/status', [TrainingMatrixController::class, 'statusChange']);
                 Route::get('/topic/ajax-list/{topicId}/{trainerId}', [TrainingMatrixController::class, 'Uniquecheck']);
                 Route::get('/topic/ajax-list', [TrainingMatrixController::class, 'uniquecheckTrainingMatrix']);
-
-
-
             });
 
             /**
@@ -495,7 +491,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/pdf/{id}', [TrainingScheduleController::class, 'exportViewPdf']);
                 Route::get('/certificate/{training_schedule_id}/{id}', [TrainingScheduleController::class, 'certificateView']);
                 Route::get('/filterAttendance', [TrainingScheduleController::class, 'filterAttendance'])->name('training_schedule.filterAttendance');
-
             });
             Route::get('training/feedback_approve/{id}', [TrainingScheduleController::class, 'adminApprove']);
             Route::post('training/feedback_approve/submit', [TrainingScheduleController::class, 'adminfeedbackApprove']);
@@ -656,9 +651,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/generalpdf/{id}', [PpeRequestController::class, 'pdf']);
                 Route::get('/checkuserDepartment', [PpeRequestController::class, 'checkDepartmentrequest']);
                 Route::post('/storemanger/issued', [PpeRequestController::class, 'storemanagerapproval']);
-                Route::get('/fetchEmployeeDetails/{emp_id}',[PpeRequestController::class, 'fetchEmployeeDetails']);
-
-
+                Route::get('/fetchEmployeeDetails/{emp_id}', [PpeRequestController::class, 'fetchEmployeeDetails']);
             });
 
             Route::group(['prefix' => 'ppe_stock_inventory'], function () {
@@ -672,6 +665,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/edit/submit', [PpeStockInventoryController::class, 'update']);
                 Route::get('/export/excel', [PpeStockInventoryController::class, 'exportExcel']);
                 Route::get('/export/pdf', [PpeStockInventoryController::class, 'exportPdf']);
+                Route::get('/ajax-list', [PpeStockInventoryController::class, 'list']);
             });
 
             Route::group(['prefix' => 'safetypermit'], function () {
@@ -705,13 +699,12 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/reassignemployeename', [SafetyPermitController::class, 'reassignemployeename']);
                 Route::get('/employeeid', [SafetyPermitController::class, 'employeeid']);
                 Route::get('/fetchEmployeeDetails/{emp_id}', [SafetyPermitController::class, 'fetchEmployeeDetails']);
-                Route::get('/qr/pdf/{id}',[SafetyPermitController::class,'permitQRPDF']);
-                Route::get('/join/{id}',[SafetyPermitController::class,'permit_join']);
-                Route::get('/dashboard',[SafetyPermitController::class,'dashboard']);
-                Route::get('/dashboard/unitwiseptw',[SafetyPermitController::class,'unitwiseptw']);
-                Route::get('/dashboard/monthwiseptw',[SafetyPermitController::class,'monthwiseptw']);
-                Route::get('/dashboard/getpermitstatus',[SafetyPermitController::class,'getPermitStatus']);
-
+                Route::get('/qr/pdf/{id}', [SafetyPermitController::class, 'permitQRPDF']);
+                Route::get('/join/{id}', [SafetyPermitController::class, 'permit_join']);
+                Route::get('/dashboard', [SafetyPermitController::class, 'dashboard']);
+                Route::get('/dashboard/unitwiseptw', [SafetyPermitController::class, 'unitwiseptw']);
+                Route::get('/dashboard/monthwiseptw', [SafetyPermitController::class, 'monthwiseptw']);
+                Route::get('/dashboard/getpermitstatus', [SafetyPermitController::class, 'getPermitStatus']);
             });
             Route::group(['prefix' => 'ppe_exemption'], function () {
 
@@ -730,19 +723,16 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/export/pdf', [PpeExemptionController::class, 'exportPdf']);
                 Route::get('/generalpdf/{id}', [PpeExemptionController::class, 'pdf']);
                 Route::get('/ajax-list', [PpeExemptionController::class, 'list']);
-
             });
 
 
-                Route::get('ppe-dashboard', [DashboardController::class, 'login']);
-                Route::get('ppe-dashboard/ppeExemption', [DashboardController::class, 'ppeexemptiondata']);
-                Route::get('ppe-dashboard/ppeRequestList', [DashboardController::class, 'ppeRequestList']);
-                Route::get('ppe-dashboard/getshoerequeststatus', [DashboardController::class, 'getshoerequeststatus']);
-                Route::get('ppe-dashboard/getExemptionstatus', [DashboardController::class, 'getExemptionstatus']);
-                Route::get('ppe-dashboard/getmonthwiseRequest', [DashboardController::class, 'getmonthwiseRequest']);
-                Route::get('ppe-dashboard/getmonthwiseExemption', [DashboardController::class, 'getmonthwiseExemption']);
-
-
+            Route::get('ppe-dashboard', [DashboardController::class, 'login']);
+            Route::get('ppe-dashboard/ppeExemption', [DashboardController::class, 'ppeexemptiondata']);
+            Route::get('ppe-dashboard/ppeRequestList', [DashboardController::class, 'ppeRequestList']);
+            Route::get('ppe-dashboard/getshoerequeststatus', [DashboardController::class, 'getshoerequeststatus']);
+            Route::get('ppe-dashboard/getExemptionstatus', [DashboardController::class, 'getExemptionstatus']);
+            Route::get('ppe-dashboard/getmonthwiseRequest', [DashboardController::class, 'getmonthwiseRequest']);
+            Route::get('ppe-dashboard/getmonthwiseExemption', [DashboardController::class, 'getmonthwiseExemption']);
         });
     });
 });

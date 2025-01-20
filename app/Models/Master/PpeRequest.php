@@ -21,6 +21,7 @@ class PpeRequest extends Model
         'emp_name',
         'ppe_name',
         'department',
+        'request_for',
         'unit_id',
         'item_code',
         'ppe_type',
@@ -44,14 +45,15 @@ class PpeRequest extends Model
         $user = Auth::user();
         $userRole = string_to_array($user->role);
         $empId = $user->employee_id;
-
-        $query = $this->select('ppe_pperequest.*', 'masters_department.department_name', 'masters_ppetype.ppe_type', 'ppe_master_ppetypemaster.ppe_name')
+        $query = $this->select('ppe_pperequest.*', 'masters_department.department_name', 'inventory1.*', 'inventory2.*')
             ->join('masters_department', 'ppe_pperequest.department', '=', 'masters_department.id')
-            ->join('masters_ppetype', 'ppe_pperequest.ppe_type', '=', 'masters_ppetype.id')
-            ->join('ppe_master_ppetypemaster', 'ppe_pperequest.ppe_name', '=', 'ppe_master_ppetypemaster.id')
-            ->where('ppe_master_ppetypemaster.trash', 'NO')
+            ->join('ppe_stock_inventory as inventory1', 'ppe_pperequest.ppe_name', '=', 'inventory1.id')
+            ->join('ppe_stock_inventory as inventory2', 'ppe_pperequest.item_code', '=', 'inventory2.id')
+            ->where('inventory1.trash', 'NO')
+            ->where('inventory2.trash', 'NO')
             ->where('masters_department.trash', 'NO')
-            ->where('masters_ppetype.trash', 'NO');
+            ->where('ppe_pperequest.trash', 'NO');
+
 
         if (in_array(ROLE_EHS_OFFICER, $userRole)) {
             $query->orderBy('ppe_pperequest.id', 'DESC');
@@ -59,11 +61,9 @@ class PpeRequest extends Model
             $departmentId = $user->department_id;
             $query->where('ppe_pperequest.department', $departmentId)
                 ->orderBy('ppe_pperequest.id', 'DESC');
-
-        } elseif(in_array(ROLE_STORE_MANAGER, $userRole)){
+        } elseif (in_array(ROLE_STORE_MANAGER, $userRole)) {
             $query->orderBy('ppe_pperequest.id', 'DESC');
-        }
-        elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+        } elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
         } else {
             $query->where('ppe_pperequest.emp_id', $empId);
         }
@@ -112,7 +112,7 @@ class PpeRequest extends Model
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
         }
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('ppe_pperequest.id', 'DESC');
         $data = $query->get();
         $total_records = $data->count();
 
@@ -151,12 +151,13 @@ class PpeRequest extends Model
             'emp_name' => $request->emp_name,
             'department' => Auth::user()->department_id,
             'unit_id' => Auth::user()->unit_id,
+            'request_for'=>$request->request_for,
             'item_code' => $request->item_code,
             'ppe_type' => $request->ppe_type_id,
             'ppe_name' => $request->ppe_name_id,
             'employee_reason' => $request->reason,
-            'ppe_image'=> $ppe_file_path,
-             'employee_remarks'=>$request->remarks,
+            'ppe_image' => $ppe_file_path,
+            'employee_remarks' => $request->remarks,
             'approve_status' => STATUS_HOD_APPROVAL_PENDING,
             'created_by' => Auth::id()
         );
@@ -172,12 +173,12 @@ class PpeRequest extends Model
         if ($type == 1) {
             $update_data = array(
                 'status' => 0,
-                'updated_by'=>Auth::id(),
+                'updated_by' => Auth::id(),
             );
         } else {
             $update_data = array(
                 'status' => 1,
-                'updated_by'=>Auth::id(),
+                'updated_by' => Auth::id(),
             );
         }
 
@@ -225,7 +226,8 @@ class PpeRequest extends Model
         return $this->where('id', $id)->update($updateEhsData);
     }
 
-    public function updatestoremanager($storeStatus, $id){
+    public function updatestoremanager($storeStatus, $id)
+    {
         return $this->where('id', $id)->update($storeStatus);
     }
 
@@ -311,7 +313,7 @@ class PpeRequest extends Model
 
     public function getuserdata($empId)
     {
-        return PpeRequest::where('emp_id', $empId)->orderBy('id','DESC')->get();
+        return PpeRequest::where('emp_id', $empId)->orderBy('id', 'DESC')->get();
     }
 
     public function exportdata()
@@ -475,7 +477,8 @@ class PpeRequest extends Model
     }
 
 
-    public function monthwiserequest(){
+    public function monthwiserequest()
+    {
         $request = request();
 
 
@@ -505,6 +508,4 @@ class PpeRequest extends Model
 
         return $results;
     }
-
-
 }

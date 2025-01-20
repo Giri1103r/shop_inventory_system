@@ -115,44 +115,39 @@ class PpeStockinventory extends Model
         $updatedItemCodes = [];
 
 
+        $itemCodesWithPpeNames = PpeTypeMaster::
+            pluck('ppe_name', 'item_code')
+            ->toArray();
+
         $groupedData = collect($data)->groupBy('ITEM_CODE');
 
-
         foreach ($groupedData as $itemCode => $items) {
-
-
             foreach ($items as $item) {
                 $insert_array = [
-                    'org' => isset($item['ORG']) ? $item['ORG'] : null,
-                    'inventory_item_id' => isset($item['INVENTORY_ITEM_ID']) ? $item['INVENTORY_ITEM_ID'] : null,
-                    'item_code' => isset($item['ITEM_CODE']) ? $item['ITEM_CODE'] : null,
-                    'sub' => isset($item['SUB']) ? $item['SUB'] : null,
-                    'uom' => isset($item['UOM']) ? $item['UOM'] : null,
-                    'quantity' => isset($item['QTY']) ? $item['QTY'] : null,
-                    'item_description' => isset($item['ITEM_DESCRIPTION']) ? $item['ITEM_DESCRIPTION'] : null,
+                    'org' => $item['ORG'] ?? null,
+                    'inventory_item_id' => $item['INVENTORY_ITEM_ID'] ?? null,
+                    'item_code' => $item['ITEM_CODE'] ?? null,
+
+                    'ppe_name' => $item['PPE_NAME'] ?? $itemCodesWithPpeNames[$itemCode] ?? null,
+                    'sub' => $item['SUB'] ?? null,
+                    'uom' => $item['UOM'] ?? null,
+                    'quantity' => $item['QTY'] ?? null,
+                    'item_description' => $item['ITEM_DESCRIPTION'] ?? null,
                     'created_by' => Auth::id(),
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
 
-
                 $this->updateOrInsert(
-                    ['item_code' => $itemCode, 'sub' => $item['SUB']],
+                    ['item_code' => $itemCode],
                     $insert_array
                 );
             }
-
-
             $updatedItemCodes[] = $itemCode;
         }
 
-
         return $updatedItemCodes;
     }
-
-
-
-
 
     public function updates($id)
     {
@@ -185,6 +180,25 @@ class PpeStockinventory extends Model
 
     //     return $currentQuantity;
     // }
+
+    public function getItemCode(){
+        return $this->where('status',1)->where('trash','NO')->where('quantity','!=',0)->get();
+    }
+
+    public function ajaxlist($PPEtypeId)
+    {
+        $data =$this->where('id',$PPEtypeId)->select( 'id','item_code','ppe_name')
+            ->get();
+
+        return response()->json($data)
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Fri, 01 Jan 1990 00:00:00 GMT');
+    }
+
+    public function getStockInventorydata($itemId){
+        return  $this->where('id',$itemId)->where('status',1)->where('quantity','!=',0)->first();
+    }
 
 
     public function exportdata()

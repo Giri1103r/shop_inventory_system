@@ -242,76 +242,87 @@
 
 
     @if ($pperequest->approve_status != STATUS_HOD_APPROVAL_PENDING)
-        <div>
-            <div style="width:100%;">
-                <table style="width:100%;">
-                    <tr>
-                        <td
-                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                            Status Logs
-                        </td>
-                    </tr>
+    <div>
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
+                        Status Logs
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="table-responsive">
+            <div class="col-md-12">
+                <table class="table table-bordered table-hover tblborder">
+                    <thead>
+                        <tr>
+                            <th>From Status</th>
+                            <th>To Status</th>
+                            <th>Approved By</th>
+                            <th>Remarks</th>
+                            <th>Created Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>User Applied</td>
+                            <td>HOD Approval Pending</td>
+                            <td>{{ getUsername(isset($pperequest->created_by) ? $pperequest->created_by : '') }}</td>
+                            <td>{{ isset($pperequest->employee_reason) ? $pperequest->employee_reason : '' }}</td>
+                            <td>{{ displaydateformat(isset($pperequest->created_at) ? $pperequest->created_at : '') }}</td>
+                        </tr>
+                        <tr>
+                            <td>HOD Approval Pending</td>
+                            <td>
+                                @if (isset($hodstatuslog['to_status']) && $hodstatuslog['to_status'] == STATUS_HOD_APPROVED)
+                                    HOD Approved
+                                @elseif (isset($hodstatuslog['to_status']) && $hodstatuslog['to_status'] == STATUS_HOD_REJECTED)
+                                    HOD Rejected
+                                @else
+                                    <p>-</p>
+                                @endif
+                            </td>
+                            <td>{{ isset($hodstatuslog->created_by) && $hodstatuslog->created_by != '' ? getUsername($hodstatuslog->created_by) : '-' }}</td>
+                            <td>{{ isset($hodstatuslog->remarks) ? $hodstatuslog->remarks : '-' }}</td>
+                            <td>{{ isset($hodstatuslog->created_at) && $hodstatuslog->created_at != '' ? displaydateformat($hodstatuslog->created_at) : '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td>EHS Officer Approval Pending</td>
+                            <td>
+                                @if (isset($ehsstatuslog['to_status']) && $ehsstatuslog['to_status'] == STATUS_EHS_APPROVED)
+                                    EHS Officer Approved
+                                @elseif (isset($ehsstatuslog['to_status']) && $ehsstatuslog['to_status'] == STATUS_EHS_REJECTED)
+                                    EHS Officer Rejected
+                                @else
+                                    <p>-</p>
+                                @endif
+                            </td>
+                            <td>{{ isset($ehsstatuslog->created_by) && $ehsstatuslog->created_by != '' ? getUsername($ehsstatuslog->created_by) : '-' }}</td>
+                            <td>{{ isset($ehsstatuslog->remarks) ? $ehsstatuslog->remarks : '-' }}</td>
+                            <td>{{ isset($ehsstatuslog->created_at) && $ehsstatuslog->created_at != '' ? displaydateformat($ehsstatuslog->created_at) : '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td>Store Manager Issue Pending</td>
+                            <td>
+                                @if (isset($smStatuslog['to_status']) && $smStatuslog['to_status'] == STATUS_ISSUED)
+                                    Issued
+                                @else
+                                    <p>-</p>
+                                @endif
+                            </td>
+                            <td>{{ isset($smStatuslog->created_by) && $smStatuslog->created_by != '' ? getUsername($smStatuslog->created_by) : '-' }}</td>
+                            <td>{{ isset($smStatuslog->remarks) ? $smStatuslog->remarks : '-' }}</td>
+                            <td>{{ isset($smStatuslog->created_at) && $smStatuslog->created_at != '' ? displaydateformat($smStatuslog->created_at) : '-' }}</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
-            <br>
-            <div class="table-responsive">
-                <div class="col-md-12">
-                    <table class="table table-bordered table-hover">
-                        <thead>
-                            <tr>
-
-                                <th>Status</th>
-                                <th>Approved By</th>
-                                <th>Remarks</th>
-                                <th>Date</th>
-
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            @if ($ppestatuslog->isEmpty())
-                                <tr>
-                                    <td class="text-center" colspan="4">No data is available</td>
-                                </tr>
-                            @else
-                                @foreach ($ppestatuslog as $log)
-                                    <tr class="hover-row">
-
-                                        <td>
-                                            @if ($log['to_status'] == STATUS_HOD_APPROVAL_PENDING)
-                                                HOD Approval Pending
-                                            @elseif ($log['to_status'] == STATUS_HOD_APPROVED)
-                                                HOD Approved
-                                            @elseif ($log['to_status'] == STATUS_USER_APPLIED)
-                                                User Applied
-                                            @elseif ($log['to_status'] == STATUS_HOD_REJECTED)
-                                                HOD Rejected
-                                            @elseif ($log['to_status'] == STATUS_EHS_APPROVAL_PENDING)
-                                                EHS Officer Approval Pending
-                                            @elseif ($log['to_status'] == STATUS_EHS_APPROVED)
-                                                EHS Officer Approved
-                                            @elseif ($log['to_status'] == STATUS_EHS_REJECTED)
-                                                EHS Officer Rejected
-                                                @elseif ($log['to_status'] == STATUS_ISSUED)
-                                               Issued
-                                            @endif
-                                        </td>
-
-                                        <td>{{ getUsername($log['created_by']) }}</td>
-                                        <td>{{ $log['remarks'] }}</td>
-                                        <td>{{ displaydateformat($log['created_at']) }}</td>
-
-                                    </tr>
-                                @endforeach
-                            @endif
-                        </tbody>
-                    </table>
-
-                </div>
-            </div>
-            <br>
         </div>
-    @endif
+        <br>
+    </div>
+@endif
+
     <br>
 
 </body>

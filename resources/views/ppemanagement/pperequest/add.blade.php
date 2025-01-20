@@ -35,8 +35,29 @@
 
                                         <div class="row">
 
-                                            @if (checkUserrole(ROLE_SUPERADMIN) || checkUserRole(ROLE_STORE_MANAGER))
+                                            @if (checkUserrole(ROLE_SUPERADMIN) || checkUserRole(ROLE_WORKER_REQUEST))
                                                 <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Request For</label>
+                                                        <div class="gap-2">
+                                                            <label class="form-check form-check-inline">
+                                                                <input type="radio" name="request_for"
+                                                                    id="request_for_myself" class="form-check-input"
+                                                                    value="1">
+                                                                <span class="form-check-label">Myself</span>
+                                                            </label>
+                                                            <label class="form-check form-check-inline">
+                                                                <input type="radio" name="request_for"
+                                                                    id="request_for_worker" class="form-check-input"
+                                                                    value="2">
+                                                                <span class="form-check-label">Worker</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="text-danger"></div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-3" id="emp_id_container">
                                                     <div class="form-group form-input">
                                                         <label for="emp_id" class="form-label require">Employee ID</label>
                                                         <select name="emp_id" id="emp_id"
@@ -112,8 +133,8 @@
                                                     <select name="item_code" id="item_code" style="width: 100%"
                                                         class="form-select form-select-sm single-select">
                                                         <option value="">Select the Item Code</option>
-                                                        @foreach ($ppetypemaster as $itemcode)
-                                                            <option value="{{ $itemcode->id }}">{{ $itemcode->item_code }}
+                                                        @foreach ($itemCode as $list)
+                                                            <option value="{{ $list->id }}">{{ $list->item_code }}
                                                             </option>
                                                         @endforeach
                                                     </select>
@@ -123,7 +144,7 @@
                                                     <div class="text-danger" id="ppe_type_error"></div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-3">
+                                            {{-- <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Type</label>
                                                     <input type="text" name="ppe_type" id="ppe_type"
@@ -134,7 +155,7 @@
                                                     @enderror
                                                     <div class="text-danger" id="ppe_type_error"></div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Name</label>
@@ -210,56 +231,87 @@
             });
         });
 
-        $(document).on("change", "#emp_id", function() {
-            var emp_id = $(this).val();
-            var currentRow = $(this).closest(".row");
-            var departmentInput = currentRow.find('input[name="department"]');
+        $(document).ready(function() {
+            $('input[name="request_for"]').on("change", function() {
+                var requestFor = $(this).val();
+                var empIdContainer = $("#emp_id_container");
+                var authEmployeeId =
+                    "{{ auth()->user()->employee_id }}"; // Authenticated user's employee ID
 
+                if (requestFor === "1") {
+                    // If "Myself" is selected
+                    empIdContainer.html(`
+                <label for="emp_id" class="form-label require">Employee ID</label>
+                <input type="text" name="emp_id" id="emp_id" class="form-control form-control-sm" value="${authEmployeeId}" readonly>
+                <div class="text-danger"></div>
+            `);
 
-            if (emp_id) {
-                $.ajax({
-                    url: "{{ url('ppe_request/fetchEmployeeDetails') }}/" +
-                        emp_id,
-                    type: "GET",
-                    success: function(data) {
+                    // Populate employee name and department using helper function
+                    $("#emp_name").val("{{ auth()->user()->name }}");
+                    $("#department").val("{{ getDepartment(auth()->user()->department_id) ?? 'N/A' }}");
+                } else if (requestFor === "2") {
+                    // If "Worker" is selected
+                    empIdContainer.html(`
+                <label for="emp_id" class="form-label require">Employee ID</label>
+                <select name="emp_id" id="emp_id" class="form-select form-select-sm single-select" style="width: 100%">
+                    <option value="">Select the employee</option>
+                    @foreach ($employeelist as $list)
+                        <option value="{{ $list->employee_id }}">{{ $list->employee_id }}</option>
+                    @endforeach
+                </select>
+                <div class="text-danger"></div>
+            `);
 
-                        if (data && data.employee) {
-                            currentRow.find('input[name="emp_name"]').val(data.employee.emp_name);
-                            
-                            if (data.employee.department && data.departments) {
-                                departmentInput.val(data.departments
-                                    .department_name);
-                                console.log("Department Name: ", data.departments
-                                    .department_name);
-                            } else {
-                                departmentInput.val(
+                    // Reinitialize Select2 for the new dropdown
+                    $("#emp_id").select2();
+
+                    // Clear employee name and department
+                    $("#emp_name").val("");
+                    $("#department").val("");
+                }
+            });
+
+            // Handle Employee ID change for Worker
+            $(document).on("change", "#emp_id", function() {
+                var emp_id = $(this).val();
+
+                if (emp_id) {
+                    $.ajax({
+                        url: "{{ url('ppe_request/fetchEmployeeDetails') }}/" + emp_id,
+                        type: "GET",
+                        success: function(data) {
+                            if (data && data.employee) {
+                                $("#emp_name").val(data.employee.emp_name);
+                                $("#department").val(data.departments?.department_name ||
                                     "No department available");
-                                console.log("No department found");
+                            } else {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Error",
+                                    text: "Employee data could not be fetched.",
+                                });
                             }
-                        } else {
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error during AJAX request:", error);
                             Swal.fire({
                                 icon: "error",
                                 title: "Error",
-                                text: "Employee data could not be fetched.",
+                                text: "An error occurred while fetching employee details.",
                             });
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.log("Error during AJAX request: ", status,
-                            error);
-                        Swal.fire({
-                            icon: "error",
-                            title: "Error",
-                            text: "An error occurred while fetching employee details.",
-                        });
-                    },
-                });
-            } else {
-
-                currentRow.find('input[name="emp_name"]').val("");
-                departmentInput.val("");
-            }
+                        },
+                    });
+                } else {
+                    $("#emp_name").val("");
+                    $("#department").val("");
+                }
+            });
         });
+
+
+
+
+
 
         $(document).ready(function() {
             var empId = $('#emp_id').val();
@@ -296,7 +348,7 @@
 
             if (PPEtypeId) {
                 $.ajax({
-                    url: "{{ admin_url('ppe_ppetype_master/ajax-list') }}",
+                    url: "{{ admin_url('ppe_stock_inventory/ajax-list') }}",
                     type: 'GET',
                     data: {
                         id: PPEtypeId,
@@ -305,20 +357,20 @@
                     success: function(data) {
                         console.log(data);
                         if (data.length > 0) {
-                            let ppeType = data[0].ppe_type;
+                            // let ppeType = data[0].ppe_type;
                             let ppeName = data[0].ppe_name;
-                            let ppeTypeId = data[0].ppe_type_id;
-                            let ppeMasterId = data[0].ppe_master_id;
+                            // let ppeTypeId = data[0].ppe_type_id;
+                            let PPENameId = data[0].id;
 
-                            $('#ppe_type').val(ppeType);
+                            // $('#ppe_type').val(ppeType);
                             $('#ppe_name').val(ppeName);
 
-                            $('#ppe_type_id').val(ppeTypeId);
-                            $('#ppe_name_id').val(ppeMasterId);
+                            // $('#ppe_type_id').val(ppeTypeId);
+                            $('#ppe_name_id').val(PPENameId);
                         } else {
-                            $('#ppe_type').val('');
+                            // $('#ppe_type').val('');
                             $('#ppe_name').val('');
-                            $('#ppe_type_id').val('');
+                            // $('#ppe_type_id').val('');
                             $('#ppe_name_id').val('');
                         }
                     },
@@ -327,9 +379,9 @@
                     }
                 });
             } else {
-                $('#ppe_type').val('');
+                // $('#ppe_type').val('');
                 $('#ppe_name').val('');
-                $('#ppe_type_id').val('');
+                // $('#ppe_type_id').val('');
                 $('#ppe_name_id').val('');
             }
         });
@@ -341,6 +393,9 @@
                     emp_id: {
                         required: true,
                     },
+                    request_for: {
+                        required: true, // Ensures the request_for radio group is validated
+                    },
                     emp_name: {
                         required: true,
                     },
@@ -353,26 +408,26 @@
                     ppe_name: {
                         required: true,
                     },
-                    ppe_type: {
-                        required: true,
-                    },
                     reason: {
                         required: true,
                         minlength: 3,
                         maxlength: 600,
                     },
                     ppe_file: {
-                        extension: "png|jpeg|jpg"
+                        extension: "png|jpeg|jpg",
                     },
                     remarks: {
                         required: true,
                         minlength: 3,
                         maxlength: 600,
-                    }
+                    },
                 },
                 messages: {
                     emp_id: {
                         required: "Employee Id cannot be empty.",
+                    },
+                    request_for: {
+                        required: "Please select the Request For option.",
                     },
                     emp_name: {
                         required: "Employee name cannot be empty.",
@@ -381,14 +436,10 @@
                         required: "Department cannot be empty.",
                     },
                     item_code: {
-                        required: "Please Select the Item Code.",
+                        required: "Please select the Item Code.",
                     },
-
                     ppe_name: {
-                        required: "Please Select the PPE Name.",
-                    },
-                    ppe_type: {
-                        required: "Please Select the PPE Type.",
+                        required: "Please select the PPE Name.",
                     },
                     reason: {
                         required: "Reason cannot be empty.",
@@ -396,19 +447,24 @@
                         maxlength: "Reason must contain between 3 and 600 characters.",
                     },
                     ppe_file: {
-                        extension: "Please select a file with .jpeg,.jpg,.png."
+                        extension: "Please select a file with .jpeg, .jpg, or .png.",
                     },
                     remarks: {
-                        required: "Reason cannot be empty.",
-                        minlength: "Reason must contain between 3 and 600 characters.",
-                        maxlength: "Reason must contain between 3 and 600 characters.",
+                        required: "Remarks cannot be empty.",
+                        minlength: "Remarks must contain between 3 and 600 characters.",
+                        maxlength: "Remarks must contain between 3 and 600 characters.",
                     },
-
                 },
                 errorElement: 'div',
                 errorPlacement: function(error, element) {
-                    var errorDiv = element.siblings('div.text-danger');
-                    errorDiv.html(error);
+                    if (element.attr("name") === "request_for") {
+
+                        error.appendTo(element.closest(".form-group").find(".text-danger"));
+                    } else {
+
+                        var errorDiv = element.siblings('div.text-danger');
+                        errorDiv.html(error);
+                    }
                 },
                 highlight: function(element, errorClass, validClass) {
                     $(element).addClass('is-invalid');
@@ -427,7 +483,7 @@
                         console.log("Field: " + error.element.name + ", Error: " + error
                             .message);
                     });
-                }
+                },
             });
 
             $.validator.addMethod("regex", function(value, element, regexp) {
