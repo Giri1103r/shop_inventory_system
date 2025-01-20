@@ -22,11 +22,54 @@
                             <h4 class="m-0 " style="padding-left: 10px;">Welcome Back {{ Auth::user()->name }}!
                             </h4>
                         </div>
+                        <div>
+                            <x-button-filter dataId="" class="search" href=""></x-button-filter>
 
+                        </div>
                     </div>
                 </div>
             </div>
+            <!--Filter -->
+            <div id="search" class="collapse card">
+                <form action="" id="formsearch">
+                    <div class="card-body">
+                        <div class="col-md-12">
+                            <div class="row">
 
+                                <div class="col-md-3 form-input">
+                                    <label for="fromDate" class="form-label">{{ __('From Date') }}</label>
+                                    <div class="input-group date form-input">
+                                        <input type="text" required class="form-control todaymaxdatepicker"
+                                            id="fromDate" name="fromDate" value="">
+                                        <div class="input-group-addon input-group-text">
+                                            <span class="fa fa-calendar"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 form-input">
+                                    <label for="toDate" class="form-label">{{ __('To Date') }}</label>
+                                    <div class="input-group date form-input">
+                                        <input type="text" required class="form-control todaymaxdatepicker"
+                                            id="toDate" name="toDate" value="">
+                                        <div class="input-group-addon input-group-text">
+                                            <span class="fa fa-calendar"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <button type="button" id="searchform" onclick="filterDashboard();"
+                                        class="btn btn-primary mt-4">Search</button>
+                                    <button type="reset" id="resetform" 
+                                        class="btn btn-danger mt-4">Reset</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
             <div class="row">
                 <div class="col-xl-3 col-xxl-5 col-sm-6 my-order-ile">
                     <div class="card view_card">
@@ -169,12 +212,12 @@
                     </div>
                 </div>
                 <div class="col-xl-9 col-xxl-6">
-                        <div class="card view_card">
-                            <div class="card-header">
-                                <h4 class="text-white">TRAINING STATUS COUNT</h4>
-                                <a class="fas fa-arrow-alt-circle-down chartdownload" id="training_count_download"></a>
-                            </div>
-                            <div id="trainingStatusPieChart"></div>
+                    <div class="card view_card">
+                        <div class="card-header">
+                            <h4 class="text-white">TRAINING STATUS COUNT</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="training_count_download"></a>
+                        </div>
+                        <div id="trainingStatusPieChart"></div>
                     </div>
                 </div>
             </div>
@@ -190,7 +233,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="row">
                 <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">
@@ -203,7 +246,7 @@
                     </div>
                 </div>
             </div>
-            
+
 
 
         </div>
@@ -359,36 +402,28 @@
         }
 
         $(document).ready(function() {
-
-            $('#fromDate').datepicker({
-                format: 'dd-mm-yyyy',
-                autoclose: true,
-                endDate: new Date()
-            }).on('changeDate', function(selected) {
-                var startDate = new Date(selected.date.valueOf());
-                $('#toDate').datepicker('setStartDate', startDate);
-                if ($('#toDate').val() !== '') {
-                    var endDate = new Date($('#toDate').val());
-                    if (startDate > endDate) {
-                        $('#toDate').datepicker('setDate', startDate);
-                    }
-                }
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+            const toDatePicker = flatpickr("#toDate", {
+                dateFormat: "d-m-Y", 
+                minDate: "today", 
             });
 
-            $('#toDate').datepicker({
-                format: 'dd-mm-yyyy',
-                autoclose: true,
-                endDate: new Date()
-            }).on('changeDate', function(selected) {
-                var endDate = new Date(selected.date.valueOf());
-                $('#fromDate').datepicker('setEndDate', endDate);
-                if ($('#fromDate').val() !== '') {
-                    var startDate = new Date($('#fromDate').val());
-                    if (startDate > endDate) {
-                        $('#fromDate').datepicker('setDate', endDate);
+            flatpickr("#fromDate", {
+                dateFormat: "d-m-Y",
+                onChange: function(selectedDates, dateStr) {
+                    if (selectedDates.length > 0) {
+                        const fromDate = selectedDates[0];
+                        if (toDatePicker) {
+                            toDatePicker.set("minDate",
+                                dateStr); 
+                        }
                     }
-                }
+                },
             });
+
 
             filterDashboard();
         });
