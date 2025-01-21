@@ -130,7 +130,7 @@ class SafetyPermitController extends Controller
 
                             if ($row->date == date('Y-m-d')) {
                                 if (($row->permit_status == STATUS_PERMIT_EXPIRED)
-                                    && ($row->created_by == Auth::id() || isAdmin())
+                                    && ($row->created_by == Auth::id() || CheckUserRole(ROLE_SUPERADMIN))
                                 ) {
                                     $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '" class="permitExtension" title="' . __('Permit Extension') . '"><i class="fa fa-external-link"></i></a>';
                                 }
