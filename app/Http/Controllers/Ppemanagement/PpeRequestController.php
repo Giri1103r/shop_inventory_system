@@ -167,7 +167,7 @@ class PpeRequestController extends Controller
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
                 }
             }
@@ -211,6 +211,7 @@ class PpeRequestController extends Controller
 
         $employee = $this->employee->select('emp_name', 'email', 'department')
             ->where('emp_id', $emp_id)
+            // ->where('emp_id','!=',Auth::user()->employee_id)
             ->first();
 
         $departments = $this->department->select('id', 'department_name')->where('status', '1')->first();
@@ -611,7 +612,6 @@ class PpeRequestController extends Controller
             if (Auth::check()) {
                 $pperequest = $this->pperequest->selectOne($id);
             }
-            // dd( $pperequest);
             $empId = $pperequest->emp_id;
             $itemId = $pperequest->item_code;
             $userdata = $this->pperequest->getuserdata($empId);
@@ -824,8 +824,17 @@ class PpeRequestController extends Controller
             $approved_at = $request->input('store_date');
             $action = $request->input('action');
 
-            // Fetch Employee Details
+
             $empDetails = $this->pperequest->find($id);
+            $itemId = $empDetails->item_code;
+
+
+            $ItemCode = $this->ppestock->Quantitydata($itemId);
+            $Oldquantity = $ItemCode->quantity;
+
+
+            $newQuantity = $Oldquantity - 1;
+
             if (!$empDetails) {
                 throw new Exception('Employee details not found.');
             }
@@ -871,6 +880,7 @@ class PpeRequestController extends Controller
             }
 
             // Update Status
+            $this->ppestock->updateQuantity($itemId, $newQuantity);
             $this->ppestatus->storemangerstatus($updateStatus, $empDetails);
             $this->pperequest->updatestoremanager($storeStatus, $id);
 

@@ -168,6 +168,12 @@ class PpeStockinventory extends Model
        $this->where('id',$id)->update( $update_array);
     }
 
+
+    public function updateQuantity($itemId, $newQuantity)
+    {
+        return $this->where('id', $itemId)->update(['quantity' => $newQuantity]);
+    }
+
     // public function getquantity($itemCode, $action)
     // {
     //     $request = request();
@@ -197,6 +203,10 @@ class PpeStockinventory extends Model
     }
 
     public function getStockInventorydata($itemId){
+        return  $this->where('id',$itemId)->where('status',1)->where('quantity','!=',0)->first();
+    }
+
+    public function Quantitydata($itemId){
         return  $this->where('id',$itemId)->where('status',1)->where('quantity','!=',0)->first();
     }
 

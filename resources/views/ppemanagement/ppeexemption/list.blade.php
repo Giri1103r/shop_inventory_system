@@ -13,10 +13,10 @@
                     <div class="d-flex justify-content-end p-2 me-2">
                         <x-button-filter dataId="" class="search me-2" href=""></x-button-filter>
 
-
-                        <x-button-add dataId="" class="add btn btn-primary"
-                            href="{{ admin_url('ppe_exemption/add') }}">Add</x-button-add>
-
+                        @if (CheckUserPermission('add'))
+                            <x-button-add dataId="" class="add btn btn-primary"
+                                href="{{ admin_url('ppe_exemption/add') }}">Add</x-button-add>
+                        @endif
 
                     </div>
 
@@ -293,11 +293,11 @@
                         d.approve_status = $('#approve_status').val();
                     },
                     error: function(xhr, error, code) {
-                            if (xhr.status === 419) {
-                                alert('Session has expired. You will be redirected to the login page.');
-                                window.location.href = "{{ url('') }}"; 
-                            }
+                        if (xhr.status === 419) {
+                            alert('Session has expired. You will be redirected to the login page.');
+                            window.location.href = "{{ url('') }}";
                         }
+                    }
                 },
                 columns: [{
                         data: 'DT_RowIndex',
@@ -391,7 +391,7 @@
                                         '&company=' + company +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
-                                        '&status=' + status+
+                                        '&status=' + status +
                                         '&approve_status=' + approve_status;
                                 }
                             },
@@ -422,7 +422,7 @@
                                         '&company=' + company +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
-                                        '&status=' + status+
+                                        '&status=' + status +
                                         '&approve_status=' + approve_status;
                                 }
                             }
