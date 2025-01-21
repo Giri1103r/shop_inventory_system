@@ -101,6 +101,18 @@
                                 </div>
                                 <div class="row">
                                     <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('ORG') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($stockdata->org) ? $stockdata->org : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Inventory Item ID') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($stockdata->inventory_item_id) ? $stockdata->inventory_item_id : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Item Code') }}</label>
                                         <div class="view_data">
                                             {{ isset($stockdata->item_code) ? $stockdata->item_code : '' }}
@@ -110,6 +122,12 @@
                                         <label class="form-label view_label">{{ __('PPE Name') }}</label>
                                         <div class="view_data">
                                             {{ isset($stockdata->ppe_name) ? $stockdata->ppe_name : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('UOM') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($stockdata->uom) ? $stockdata->uom : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">

@@ -45,7 +45,7 @@ class PpeRequest extends Model
         $user = Auth::user();
         $userRole = string_to_array($user->role);
         $empId = $user->employee_id;
-        $query = $this->select('ppe_pperequest.*', 'masters_department.department_name', 'inventory1.*', 'inventory2.*')
+        $query = $this->select('ppe_pperequest.*', 'masters_department.department_name', 'inventory1.*', 'inventory2.*','ppe_pperequest.id As ppe_request_id')
             ->join('masters_department', 'ppe_pperequest.department', '=', 'masters_department.id')
             ->join('ppe_stock_inventory as inventory1', 'ppe_pperequest.ppe_name', '=', 'inventory1.id')
             ->join('ppe_stock_inventory as inventory2', 'ppe_pperequest.item_code', '=', 'inventory2.id')
