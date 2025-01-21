@@ -46,6 +46,7 @@
                                                     <label class="form-label require">Time(To)</label>
                                                     <input type="text" name="time_to" id="time_to" class="form-control"
                                                         placeholder="Time(To)">
+                                                    <div class="text-danger"></div>
                                                 </div>
                                             </div>
                                             <div class="col-md-12 mb-3">
@@ -80,7 +81,7 @@
 @push('script')
     <script>
         $(document).ready(function() {
-
+            // Initialize flatpickr
             flatpickr("#time_to", {
                 enableTime: true,
                 noCalendar: true,
@@ -93,53 +94,62 @@
                     const currentHours = now.getHours();
                     const currentMinutes = now.getMinutes();
 
-
-                    instance.set('minTime',
-                        `${currentHours.toString().padStart(2, '0')}:${currentMinutes.toString().padStart(2, '0')}`
-                        );
-                }
+                    instance.set(
+                        "minTime",
+                        `${currentHours.toString().padStart(2, "0")}:${currentMinutes
+          .toString()
+          .padStart(2, "0")}`
+                    );
+                },
             });
 
-            $('#permitextension').validate({
+
+            $.validator.addMethod(
+                "validTimeTo",
+                function(value, element) {
+                    const maxTime = "18:00";
+                    return value <= maxTime;
+                },
+                "Time cannot exceed 18:00."
+            );
+
+
+            $("#permitextension").validate({
                 rules: {
                     time_to: {
                         required: true,
+                        validTimeTo: true, // Use custom rule
                     },
                     extension_remarks: {
                         required: true,
                         minlength: 3,
                         maxlength: 600,
-
                     },
-
-
                 },
                 messages: {
                     time_to: {
-                        required: " Time is empty.",
-
+                        required: "Time is empty.",
+                        validTimeTo: "To Time should not exceed 18:00 PM.",
                     },
                     extension_remarks: {
-                        required: " Remarks cannot be empty.",
-                        minlength: "Remarks  must contain between 3 and 600 characters.",
+                        required: "Remarks cannot be empty.",
+                        minlength: "Remarks must contain between 3 and 600 characters.",
                         maxlength: "Remarks must contain between 3 and 600 characters.",
-
                     },
-
                 },
-                errorElement: 'div',
+                errorElement: "div",
                 errorPlacement: function(error, element) {
-                    var errorDiv = element.siblings('div.text-danger');
+                    var errorDiv = element.siblings("div.text-danger");
                     errorDiv.html(error);
                 },
                 highlight: function(element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
+                    $(element).addClass("is-invalid");
                 },
                 unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
+                    $(element).removeClass("is-invalid");
                 },
                 submitHandler: function(form) {
-                    $('#submit').prop('disabled', true);
+                    $("#submit").prop("disabled", true);
                     form.submit();
                 },
                 invalidHandler: function(event, validator) {
@@ -149,14 +159,8 @@
                         console.log("Field: " + error.element.name + ", Error: " + error
                             .message);
                     });
-                }
+                },
             });
-
-            $.validator.addMethod("regex", function(value, element, regexp) {
-                return this.optional(element) || regexp.test(value);
-            }, "Please check your input.");
-
-
         });
     </script>
 @endpush
