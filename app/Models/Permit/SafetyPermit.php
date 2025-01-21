@@ -64,6 +64,7 @@ class SafetyPermit extends Model
         'closed_by',
         'permit_status',
         'permit_extension_status',
+        'reference_id',
         'status',
         'trash',
         'created_by',
@@ -429,6 +430,56 @@ class SafetyPermit extends Model
 
         return $this->where('id', $id)->update($update_data);
     }
+
+    public function CreateData($safetypermit)
+    {
+$request = request();
+        $permitId = SafetyPermit::orderBy('id', 'DESC')->pluck('permit_id')->first();
+        preg_match('/(\d+)$/', $permitId, $matches);
+
+        $newPermitNumeric = str_pad((int)$matches[0] + 1, 5, '0', STR_PAD_LEFT);
+
+        $newPermitID = 'ORD/' . $newPermitNumeric;
+// dd($safetypermit->shut_down_takenby);
+        $insert_array = array(
+            'permit_id' => $newPermitID,
+            'date' => DBdateformat(now()),
+            'time_from' => $safetypermit->time_from,
+            'time_to' => $request->time_to,
+            'unit_id' => $safetypermit->unit_id,
+            'exact_location_job' => $safetypermit->exact_location_job,
+            'job_location_area' => $safetypermit->job_location_area,
+            'sub_permit' => $safetypermit->sub_permit,
+            'job_description' => $safetypermit->job_description,
+            'shutdown_req' => $safetypermit->shutdown_req,
+            'shut_down_takenby' => $safetypermit->shut_down_takenby,
+            'loto_req' => $safetypermit->loto_req,
+            'loto_takenby' => $safetypermit->loto_takenby,
+            'loto_no' => $safetypermit->loto_no,
+            'tagfield' => $safetypermit->tagfield,
+            'state_isolation_loto' => $safetypermit->state_isolation_loto,
+            'isolationpanel_checkbox' => $safetypermit->isolationpanel_checkbox,
+            'isolationpanel_description' => $safetypermit->isolationpanel_description,
+            'confined_space_entry' => $safetypermit->confined_space_entry,
+            'protective_equip' => $safetypermit->protective_equip,
+            'equiment_involved' => $safetypermit->equiment_involved,
+            'equiment_involved_others' => $safetypermit->equiment_involved_others,
+            'precaution_taken' => $safetypermit->precaution_taken,
+            'equipment_checklist' => $safetypermit->equipment_checklist,
+            'equipment_checklist_inspection' => $safetypermit->equipment_checklist_inspection,
+            'safework_instruction' => $safetypermit->safework_instruction,
+            'toolbox_talk' => $safetypermit->toolbox_talk,
+            'talk_givenby' => $safetypermit->talk_givenby,
+            'assigned_job' => $safetypermit->assigned_job,
+            'attendance_toolbox_talk' => $safetypermit->attendance_toolbox_talk,
+            'permit_status' => STATUS_EHS_VERIFICATION_PENDING,
+            'reference_id'=> $safetypermit->id,
+            'created_by' => Auth::id(),
+        );
+
+        return $this->create($insert_array);
+    }
+
 
     public function deleterecord($id, $remarks)
     {
@@ -863,4 +914,13 @@ class SafetyPermit extends Model
             $model->update(['uauc_notification_id' => $uniqueId]);
         });
     }
+
+    public function permitData($id){
+       return SafetyPermit::where('id',$id)->first();
+    }
+
+    public function DuplicatepermitData($id){
+        return SafetyPermit::where('reference_id', $id)->exists();
+     }
+
 }

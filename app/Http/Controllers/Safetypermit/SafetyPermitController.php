@@ -128,7 +128,7 @@ class SafetyPermitController extends Controller
                         </a>';
                             }
 
-                            if ($row->date == date('Y-m-d')) {
+                            if (in_array($row->date, [date('Y-m-d'), date('Y-m-d', strtotime('+1 day'))])) {
                                 if (($row->permit_status == STATUS_PERMIT_EXPIRED)
                                     && ($row->created_by == Auth::id() || CheckUserRole(ROLE_SUPERADMIN))
                                 ) {
@@ -1193,7 +1193,7 @@ class SafetyPermitController extends Controller
 
             return response()->json(['status' => 'success', 'msg' => __('Work Permit Cancelled Successfully')], 200);
         } catch (Exception $ex) {
-
+            dd($ex);
             return response()->json(['status' => 'error', 'msg' => __('ptw.please_try_after_some_time')], 406);
         }
     }
@@ -1654,27 +1654,38 @@ class SafetyPermitController extends Controller
         try {
 
             $id = $request->permit_id;
-            $safetypermit = $this->safetypermit->find($id);
+            $safetypermit = $this->safetypermit->permitData($id);
+            $workmanInvolved = $this->workmaninvolved->getworkmanData($id);
+            $duplicateData = $this->safetypermit->Duplicatepermitdata($id);
+
+                if ($duplicateData) {
+                   Session::flash('error','You have already created the Permit for this ID');
+                   return redirect('safetypermit/list');
+                }
+
+
+            $newSafetypermit = $this->safetypermit->CreateData($safetypermit,$id);
+            $this->workmaninvolved->CreateExpireData($newSafetypermit, $workmanInvolved);
             $permit_status = STATUS_PERMIT_EXTENDED;
             $approve =   $this->safetyPermitExtension->store($permit_status, $id);
-            $this->safetypermit->permitstatus($permit_status, $id);
-            $this->safetypermit->permit_extended_status($id, $permit_status);
+
             $this->safetypermit->permit_extended_time($id, $request->time_to);
 
-            $mailsubject = 'Permit Extended';
-            $Assignedusers = User::where('id', $safetypermit->verified_by)
-                ->select('name', 'email')
-                ->get()
-                ->unique('email');
+            $permit_status =  1;
+            $mailsubject = 'Safety Permit has been submitted';
+            $user_role = ROLE_EHS_OFFICER;
+            $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
+            $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
 
-            if ($Assignedusers != null) {
 
-                foreach ($Assignedusers as $user) {
+            if (count($users) > 0) {
+
+                foreach ($users as $user) {
 
                     $email_id = $user->email;
 
                     if ($email_id != '' || $email_id != null) {
-                        $safetypermitdetails =  $this->safetypermit->selectmail($id);
+                        $safetypermitdetails =  $this->safetypermit->selectmail($safetypermit->id);
                         $permitrray  = $safetypermitdetails->toArray();
 
                         $permitrray['name'] = $user->name;
@@ -1686,7 +1697,7 @@ class SafetyPermitController extends Controller
                 }
             }
 
-            $userids = User::where('id', $safetypermit->verified_by)->pluck('id')->toArray();
+
             /**
              * Send Web notification
              */
@@ -1697,7 +1708,7 @@ class SafetyPermitController extends Controller
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => 'Safety Permit ' . $safetypermit->permit_id . 'submitted for permit extension by ' . getUsername($approve->created_by),
+                    'message' => 'Safety Permit ' . $safetypermit->permit_id . ' submitted by ' . getUsername($safetypermit->created_by),
                     'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                     'id' => $safetypermit->id,
                     'module' => 1,
@@ -1709,24 +1720,26 @@ class SafetyPermitController extends Controller
             notificationSave($notificationData);
 
             $insert_array = array(
-                'permit_type' => 1,
-                'permit_id' => $id,
-                'from_status' => $request->permit_status,
+                'permit_type' => 0,
+                'permit_id' => $safetypermit->id,
+                'from_status' => 0,
                 'to_status' => $permit_status,
                 'is_reject' => null,
-                'remarks' => $request->extension_remarks,
+                'remarks' => null,
                 'approved_by' => Auth::id(),
             );
             $this->statuslog->create($insert_array);
 
-
+            Session::flash('success','Safety permit Is created Successfully');
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error','Something went wrong plese try again after some time');
             return redirect(admin_url('safetypermit/list'));
         }
     }
+
 
     public function permitextensionapproval(Request $request)
     {

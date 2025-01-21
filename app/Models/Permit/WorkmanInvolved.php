@@ -121,6 +121,31 @@ class WorkmanInvolved extends Model
         }
     }
 
+
+    public function CreateExpireData($newSafetypermit, $workmanInvolved)
+    {
+        if ($workmanInvolved->isNotEmpty()) {
+            foreach ($workmanInvolved as $workman) {
+                $insert_array = [
+                    'permit_id' => $newSafetypermit->id,
+                    'emp_id' => $workman->emp_id,
+                    'workman_name' => $workman->workman_name,
+                    'workman_desig' => $workman->workman_desig,
+                    'workman_dept' => $workman->workman_dept,
+                    'nature_of_job' => $workman->nature_of_jobs,
+                    'created_by' => Auth::id(),
+                ];
+
+                $this->insert($insert_array);
+            }
+        }
+    }
+
+    public function getworkmanData($id){
+
+         return WorkmanInvolved::where('permit_id',$id)->get();
+    }
+
     // public function updates($id)
     // {
 
