@@ -78,32 +78,33 @@
                                                         @php
                                                             $index = 1;
                                                         @endphp
-
-                                                        @foreach ($getprotectivedetails as $getprotectivedetails)
-                                                        {{-- @dd($detail); --}}
-
+                                                        @foreach ($protectivequip_checklist as $detail)
                                                             <tr>
+                                                                <input type="hidden"
+                                                                    name="protective[record_id][{{ isset($protective[$detail->id]) ? $protective[$detail->id]->id : '' }}]"
+                                                                    value="{{ isset($protective[$detail->id]) ? $protective[$detail->id]->id : '' }}">
 
                                                                 <td>{{ $index }}</td>
-
                                                                 <td>
-                                                                    @if ($getprotectivedetails->checked == 1)
-                                                                        <i class="fa-solid fa-check" style="color: #267709;"></i>
-                                                                    @elseif ($getprotectivedetails->checked == 0)
-                                                                        <i class="fa-solid fa-x" style="color: #f72626;"></i>
+                                                                    @if (isset($protective[$detail->id]) && $protective[$detail->id]->checked == '1')
+                                                                    <i class="fa-solid fa-check" style="color: #267709;"></i>
+                                                                    @else
+                                                                    <i class="fa-solid fa-x" style="color: #f72626;"></i>
                                                                     @endif
                                                                 </td>
-                                                                {{-- <td>
-                                                                    <input type="checkbox" name="protective[protective_check][type1][{{ $detail->id }}]" class="row-checkbox validate-radio-required" value="1"{{ getCheckedVal($protective[$detail->id]['checked'], '1') }}>
-
-                                                                </td> --}}
-                                                                <td> {{ $getprotectivedetails->protective_equip }}</td>
 
                                                                 <td>
-                                                                    @if ($getprotectivedetails->default_enable == 1)
-                                                                        <i class="fa-solid fa-check" style="color: #267709;"></i>
-                                                                    @elseif ($getprotectivedetails->default_enable == 0)
-                                                                        <i class="fa-solid fa-x" style="color: #f72626;"></i>
+                                                                    <input type="hidden"
+                                                                        name="protective[protective_equip][type1][{{ $detail->id }}]"
+                                                                        value="{{ $detail->id }}">
+                                                                    {{ $detail->protective_equip }}
+                                                                </td>
+
+                                                                <td>
+                                                                    @if (isset($protective[$detail->id]) && $protective[$detail->id]->default_enable == '1' )
+                                                                    <i class="fa-solid fa-check" style="color: #267709;"></i>
+                                                                    @else
+                                                                    <i class="fa-solid fa-x" style="color: #f72626;"></i>
                                                                     @endif
                                                                 </td>
                                                             </tr>
@@ -111,6 +112,7 @@
                                                                 $index++;
                                                             @endphp
                                                         @endforeach
+
                                                     </tbody>
                                                 </table>
 
@@ -143,13 +145,11 @@
 
                                                                 <td>{{ $index }}</td>
 
-
-
                                                                 <td>
-                                                                    @if ($getequipmentdetails->checked == 1)
-                                                                        <i class="fa-solid fa-check" style="color: #267709;"></i>
-                                                                    @elseif ($getequipmentdetails->checked == 0)
-                                                                        <i class="fa-solid fa-x" style="color: #f72626;"></i>
+                                                                    @if (isset($getequipmentdetails[$detail->id]) && $getequipmentdetails[$detail->id]->checked == '1')
+                                                                    <i class="fa-solid fa-check" style="color: #267709;"></i>
+                                                                    @else
+                                                                    <i class="fa-solid fa-x" style="color: #f72626;"></i>
                                                                     @endif
                                                                 </td>
 
@@ -158,11 +158,12 @@
                                                                 </td>
 
 
+
                                                                 <td>
-                                                                    @if ($getequipmentdetails->default_enable == 1)
-                                                                        <i class="fa-solid fa-check" style="color: #267709;"></i>
-                                                                    @elseif ($getequipmentdetails->default_enable == 0)
-                                                                        <i class="fa-solid fa-x" style="color: #f72626;"></i>
+                                                                    @if (isset($getequipmentdetails[$detail->id]) && $getequipmentdetails[$detail->id]->default_enable == '1' )
+                                                                    <i class="fa-solid fa-check" style="color: #267709;"></i>
+                                                                    @else
+                                                                    <i class="fa-solid fa-x" style="color: #f72626;"></i>
                                                                     @endif
                                                                 </td>
                                                             </tr>
@@ -203,10 +204,10 @@
                                                                 <td>{{ $index }}</td>
 
                                                                 <td>
-                                                                    @if ($getmanualdetails->checked == 1)
-                                                                        <i class="fa-solid fa-check" style="color: #267709;"></i>
-                                                                    @elseif ($getmanualdetails->checked == 0)
-                                                                        <i class="fa-solid fa-x" style="color: #f72626;"></i>
+                                                                    @if (isset($getmanualdetails[$detail->id]) && $getmanualdetails[$detail->id]->checked == '1')
+                                                                    <i class="fa-solid fa-check" style="color: #267709;"></i>
+                                                                    @else
+                                                                    <i class="fa-solid fa-x" style="color: #f72626;"></i>
                                                                     @endif
                                                                 </td>
 
@@ -215,14 +216,12 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @if ($getmanualdetails->default_enable == 1)
-                                                                        <i class="fa-solid fa-check" style="color: #267709;"></i>
-                                                                    @elseif ($getmanualdetails->default_enable == 0)
-                                                                        <i class="fa-solid fa-x" style="color: #f72626;"></i>
+                                                                    @if (isset($getmanualdetails[$detail->id]) && $getmanualdetails[$detail->id]->default_enable == '1' )
+                                                                    <i class="fa-solid fa-check" style="color: #267709;"></i>
+                                                                    @else
+                                                                    <i class="fa-solid fa-x" style="color: #f72626;"></i>
                                                                     @endif
                                                                 </td>
-
-
                                                             </tr>
                                                             @php
                                                                 $index++;
@@ -257,11 +256,12 @@
 
                                                                 <td>{{ $index }}</td>
 
+
                                                                 <td>
-                                                                    @if ($getcheckdetails->checked == 1)
-                                                                        <i class="fa-solid fa-check" style="color: #267709;"></i>
-                                                                    @elseif ($getcheckdetails->checked == 0)
-                                                                        <i class="fa-solid fa-x" style="color: #f72626;"></i>
+                                                                    @if (isset($getcheckdetails[$detail->id]) && $getcheckdetails[$detail->id]->checked == '1')
+                                                                    <i class="fa-solid fa-check" style="color: #267709;"></i>
+                                                                    @else
+                                                                    <i class="fa-solid fa-x" style="color: #f72626;"></i>
                                                                     @endif
                                                                 </td>
 
@@ -270,11 +270,12 @@
                                                                     {{ $getcheckdetails->checklist }}
                                                                 </td>
 
+
                                                                 <td>
-                                                                    @if ($getcheckdetails->default_enable == 1)
-                                                                        <i class="fa-solid fa-check" style="color: #267709;"></i>
-                                                                    @elseif ($getcheckdetails->default_enable == 0)
-                                                                        <i class="fa-solid fa-x" style="color: #f72626;"></i>
+                                                                    @if (isset($getcheckdetails[$detail->id]) && $getcheckdetails[$detail->id]->default_enable == '1' )
+                                                                    <i class="fa-solid fa-check" style="color: #267709;"></i>
+                                                                    @else
+                                                                    <i class="fa-solid fa-x" style="color: #f72626;"></i>
                                                                     @endif
                                                                 </td>
 
@@ -316,23 +317,24 @@
 
                                                             <td>{{ $index }}</td>
 
+
                                                             <td>
-                                                                @if ($getinstructiondetails->checked == 1)
-                                                                    <i class="fa-solid fa-check" style="color: #267709;"></i>
-                                                                @elseif ($getinstructiondetails->checked == 0)
-                                                                    <i class="fa-solid fa-x" style="color: #f72626;"></i>
+                                                                @if (isset($getinstructiondetails[$detail->id]) && $getinstructiondetails[$detail->id]->checked == '1')
+                                                                <i class="fa-solid fa-check" style="color: #267709;"></i>
+                                                                @else
+                                                                <i class="fa-solid fa-x" style="color: #f72626;"></i>
                                                                 @endif
                                                             </td>
-
                                                             <td>
                                                                 {{ $getinstructiondetails->safe_work }}
                                                             </td>
 
+                                                           
                                                             <td>
-                                                                @if ($getinstructiondetails->default_enable == 1)
-                                                                    <i class="fa-solid fa-check" style="color: #267709;"></i>
-                                                                @elseif ($getinstructiondetails->default_enable == 0)
-                                                                    <i class="fa-solid fa-x" style="color: #f72626;"></i>
+                                                                @if (isset($getinstructiondetails[$detail->id]) && $getinstructiondetails[$detail->id]->default_enable == '1')
+                                                                <i class="fa-solid fa-check" style="color: #267709;"></i>
+                                                                @else
+                                                                <i class="fa-solid fa-x" style="color: #f72626;"></i>
                                                                 @endif
                                                             </td>
 

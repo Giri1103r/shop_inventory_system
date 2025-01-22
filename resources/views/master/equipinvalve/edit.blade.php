@@ -82,9 +82,9 @@
                 rules: {
                     equip_involve: {
                         required: true,
-                        minlength: 3,
-                        maxlength: 50,
-                        pattern: /^[a-zA-Z0-9\s\-_'"(),&]*$/,
+                        minlength: 100,
+                        maxlength: 2000,
+
                         remote: {
                             url: '{{ admin_url('ptw/equipinvolvemaster/unique') }}',
                             type: 'post',
@@ -102,10 +102,10 @@
                 messages: {
                     equip_involve: {
                         required: "{{ __('Name is Required') }}",
-                        minlength: "{{ __('common.validate_min_length') }}",
-                        maxlength: "Maximum Characters should not exceed 50",
+                        minlength: "Minimum Characters should be 100",
+                        maxlength: "Maximum Characters should not exceed 2000",
                         remote: "{{ __('Name should be unique') }}",
-                        pattern: "Only alphanumeric characters and -, _, ', \", (), ,, and & are allowed",
+
                     },
                 },
                 errorElement: 'span',

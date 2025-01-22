@@ -32,6 +32,11 @@ use App\Http\Controllers\Master\TypeofWorkController;
 use App\Http\Controllers\Ppemanagement\PpeExemptionController;
 use App\Http\Controllers\Master\WorkerLogController;
 use App\Http\Controllers\Master\EmployeeLogController;
+use App\Http\Controllers\OhcManagement\Master\CertifiedFirstAiderController;
+use App\Http\Controllers\OhcManagement\Master\EmployeecumPatientController;
+use App\Http\Controllers\OhcManagement\Master\FirstAidLocationController;
+use App\Http\Controllers\OhcManagement\Master\MedicineController;
+use App\Http\Controllers\OhcManagement\Master\VendorController;
 use App\Http\Controllers\Ppemanagement\DashboardController;
 use App\Http\Controllers\Ppemanagement\PpeRequestController;
 use App\Http\Controllers\Ppemanagement\PpeStockInventoryController;
@@ -734,6 +739,96 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('ppe-dashboard/getExemptionstatus', [DashboardController::class, 'getExemptionstatus']);
             Route::get('ppe-dashboard/getmonthwiseRequest', [DashboardController::class, 'getmonthwiseRequest']);
             Route::get('ppe-dashboard/getmonthwiseExemption', [DashboardController::class, 'getmonthwiseExemption']);
+        });
+
+        // OHC Management
+
+        Route::group(['prefix' => 'ohc/medicine'], function () {
+            Route::get('/list', [MedicineController::class, 'index']);
+            Route::post('/list', [MedicineController::class, 'index']);
+            Route::get('/add', [MedicineController::class, 'add']);
+            Route::post('/add/submit', [MedicineController::class, 'store']);
+            Route::get('/edit/{id}', [MedicineController::class, 'edit']);
+            Route::post('/edit/submit', [MedicineController::class, 'update']);
+            Route::get('/view/{id}', [MedicineController::class, 'view']);
+            Route::post('/delete', [MedicineController::class, 'delete']);
+            Route::get('/export/excel', [MedicineController::class, 'exportExcel']);
+            Route::get('/export/pdf', [MedicineController::class, 'exportPdf']);
+            Route::get('/sampledownload', [MedicineController::class, 'DownloadSample']);
+            Route::get('/import', [MedicineController::class, 'import']);
+            Route::post('/import/submit', [MedicineController::class, 'importSubmit']);
+            Route::post('/status', [MedicineController::class, 'statusChange']);
+            Route::post('/unique', [MedicineController::class, 'Uniquecheck']);
+        });
+
+        Route::group(['prefix' => 'ohc/vendor'], function () {
+            Route::get('/list', [VendorController::class, 'index']);
+            Route::post('/list', [VendorController::class, 'index']);
+            Route::get('/add', [VendorController::class, 'add']);
+            Route::post('/add/submit', [VendorController::class, 'store']);
+            Route::get('/edit/{id}', [VendorController::class, 'edit']);
+            Route::post('/edit/submit', [VendorController::class, 'update']);
+            Route::get('/view/{id}', [VendorController::class, 'view']);
+            Route::post('/delete', [VendorController::class, 'delete']);
+            Route::get('/export/excel', [VendorController::class, 'exportExcel']);
+            Route::get('/export/pdf', [VendorController::class, 'exportPdf']);
+            Route::get('/sampledownload', [VendorController::class, 'DownloadSample']);
+            Route::get('/import', [VendorController::class, 'import']);
+            Route::post('/import/submit', [VendorController::class, 'importSubmit']);
+            Route::post('/status', [VendorController::class, 'statusChange']);
+            Route::post('/unique', [VendorController::class, 'Uniquecheck']);
+        });
+        Route::group(['prefix' => 'ohc/employee-cum-patient'], function () {
+            Route::get('/list', [EmployeecumPatientController::class, 'index']);
+            Route::post('/list', [EmployeecumPatientController::class, 'index']);
+            Route::get('/add', [EmployeecumPatientController::class, 'add']);
+            Route::post('/add/submit', [EmployeecumPatientController::class, 'store']);
+            Route::get('/edit/{id}', [EmployeecumPatientController::class, 'edit']);
+            Route::post('/edit/submit', [EmployeecumPatientController::class, 'update']);
+            Route::get('/view/{id}', [EmployeecumPatientController::class, 'view']);
+            Route::post('/delete', [EmployeecumPatientController::class, 'delete']);
+            Route::get('/export/excel', [EmployeecumPatientController::class, 'exportExcel']);
+            Route::get('/export/pdf', [EmployeecumPatientController::class, 'exportPdf']);
+            Route::get('/sampledownload', [EmployeecumPatientController::class, 'DownloadSample']);
+            Route::get('/import', [EmployeecumPatientController::class, 'import']);
+            Route::post('/import/submit', [EmployeecumPatientController::class, 'importSubmit']);
+            Route::post('/status', [EmployeecumPatientController::class, 'statusChange']);
+            Route::post('/unique', [EmployeecumPatientController::class, 'Uniquecheck']);
+        });
+        Route::group(['prefix' => 'ohc/first-aid-location'], function () {
+            Route::get('/list', [FirstAidLocationController::class, 'index']);
+            Route::post('/list', [FirstAidLocationController::class, 'index']);
+            Route::get('/add', [FirstAidLocationController::class, 'add']);
+            Route::post('/add/submit', [FirstAidLocationController::class, 'store']);
+            Route::get('/edit/{id}', [FirstAidLocationController::class, 'edit']);
+            Route::post('/edit/submit', [FirstAidLocationController::class, 'update']);
+            Route::get('/view/{id}', [FirstAidLocationController::class, 'view']);
+            Route::post('/delete', [FirstAidLocationController::class, 'delete']);
+            Route::get('/export/excel', [FirstAidLocationController::class, 'exportExcel']);
+            Route::get('/export/pdf', [FirstAidLocationController::class, 'exportPdf']);
+            Route::get('/sampledownload', [FirstAidLocationController::class, 'DownloadSample']);
+            Route::get('/import', [FirstAidLocationController::class, 'import']);
+            Route::post('/import/submit', [FirstAidLocationController::class, 'importSubmit']);
+            Route::post('/status', [FirstAidLocationController::class, 'statusChange']);
+            Route::post('/unique', [FirstAidLocationController::class, 'Uniquecheck']);
+        });
+
+        Route::group(['prefix' => 'ohc/certified-first-aider'], function () {
+            Route::get('/list', [CertifiedFirstAiderController::class, 'index']);
+            Route::post('/list', [CertifiedFirstAiderController::class, 'index']);
+            Route::get('/add', [CertifiedFirstAiderController::class, 'add']);
+            Route::post('/add/submit', [CertifiedFirstAiderController::class, 'store']);
+            Route::get('/edit/{id}', [CertifiedFirstAiderController::class, 'edit']);
+            Route::post('/edit/submit', [CertifiedFirstAiderController::class, 'update']);
+            Route::get('/view/{id}', [CertifiedFirstAiderController::class, 'view']);
+            Route::post('/delete', [CertifiedFirstAiderController::class, 'delete']);
+            Route::get('/export/excel', [CertifiedFirstAiderController::class, 'exportExcel']);
+            Route::get('/export/pdf', [CertifiedFirstAiderController::class, 'exportPdf']);
+            Route::get('/sampledownload', [CertifiedFirstAiderController::class, 'DownloadSample']);
+            Route::get('/import', [CertifiedFirstAiderController::class, 'import']);
+            Route::post('/import/submit', [CertifiedFirstAiderController::class, 'importSubmit']);
+            Route::post('/status', [CertifiedFirstAiderController::class, 'statusChange']);
+            Route::post('/unique', [CertifiedFirstAiderController::class, 'Uniquecheck']);
         });
     });
 });

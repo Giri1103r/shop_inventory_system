@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Protective Equipments to be worn Add')
-@section('pageurl', admin_url('ptw/protectiveequipmentmaster/list'))
+@section('title', 'Company Master Add')
+@section('pageurl', admin_url('company/list'))
 
 
 @section('content')
@@ -42,38 +42,53 @@
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
                                 <div class="align-back-btc">
-                                    <x-button-back
-                                        href="{{ admin_url('ptw/protectiveequipmentmaster/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('company/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="protective_equipadd"
-                                        action="{{ admin_url('ptw/protectiveequipmentmaster/add/submit') }}">
+                                    <form method="POST" id="companyadd" action="{{ admin_url('company/add/submit') }}">
                                         @csrf
 
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Name</label>
-                                                    <input type="text" name="protective_equip" id="protective_equip"
-                                                        class="form-control" placeholder="Name">
+                                                    <label class="form-label require">Company ID</label>
+                                                    <input type="text" name ="company_id" class="form-control"
+                                                        placeholder="Company ID" value="{{ getsequence('company') }}"
+                                                        readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Company Name</label>
+                                                    <input type="text" name="company_name" id="company_name"
+                                                        class="form-control" placeholder="Company Name">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Short Name</label>
+                                                    <input type="text" name="short_name" class="form-control"
+                                                        placeholder="Short Name">
                                                 </div>
                                             </div>
 
-
+                                            <div class="col-md-12">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Address</label>
+                                                    <textarea name="address" class="form-control" placeholder="Company Address"></textarea>
+                                                </div>
+                                            </div>
                                         </div>
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
-
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-reset class="submit"></x-button-reset>
-                                            <x-button-cancel
-                                                href="{{ admin_url('ptw/protectiveequipmentmaster/list') }}"></x-button-cancel>
+                                            <x-button-reset class=""></x-button-reset>
+                                            <x-button-cancel href="{{ admin_url('company/list') }}"></x-button-cancel>
                                         </div>
-
                                     </form>
                                 </div>
 
@@ -97,32 +112,51 @@
             });
         });
         $(function() {
-            $('#protective_equipadd').validate({
+            $('#companyadd').validate({
                 rules: {
-                    protective_equip: {
+                    company_name: {
                         required: true,
-                        minlength: 100,
-                        maxlength: 2000,
-
+                        minlength: 3,
+                        maxlength: 100,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
                         remote: {
-                            url: '{{ admin_url('ptw/protectiveequipmentmaster/unique') }}',
+                            url: '{{ admin_url('company/unique') }}',
                             type: 'post',
                             data: {
                                 location_type_name: function() {
-                                    return $('#protective_equip').val();
+                                    return $('#company_name').val();
                                 }
                             }
                         }
                     },
-
+                    short_name: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 10,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                    },
+                    address: {
+                        required: true,
+                        maxlength: 300,
+                    },
                 },
                 messages: {
-                    protective_equip: {
-                        required: "{{ __('Name is Required') }}",
-                        minlength: "Minimum Characters should be 100",
-                        maxlength: "Maximum Characters should not exceed 2000",
-                        remote: "{{ __('Name should be unique') }}",
-
+                    company_name: {
+                        required: "{{ __('Company Name is Required') }}",
+                        minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 100",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+                        remote: "{{ __('Company Name should be unique') }}"
+                    },
+                    short_name: {
+                        required: "{{ __('Short Name is Required') }}",
+                        minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 10",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+                    },
+                    address: {
+                        required: "{{ __('Company Address is Required') }}",
+                        maxlength: "Maximum Characters should not exceed 300",
                     },
 
                 },
@@ -138,16 +172,14 @@
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
-                    console.log('test');
                     form.submit();
 
                 },
                 invalidHandler: function(event, validator) {
                     var errors = validator.numberOfInvalids();
-                    console.log(errors + " field(s) are invalid");
                     validator.errorList.forEach(function(error) {
-                        console.log("Field: " + error.element.name + ", Error: " + error
-                            .message);
+                        // console.log("Field: " + error.element.name + ", Error: " + error
+                        //     .message);
                     });
                 }
             });

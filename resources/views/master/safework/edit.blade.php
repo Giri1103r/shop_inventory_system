@@ -77,9 +77,8 @@
                 rules: {
                     safe_work: {
                         required: true,
-                        minlength: 3,
-                        // maxlength: 100,
-                        // pattern: /^[a-zA-Z0-9\s\-_'"(),&]*$/,
+                        minlength: 100,
+                        maxlength: 2000,
                         remote: {
                             url: '{{ admin_url("ptw/safeworkmaster/unique") }}',
                             type: 'post',
@@ -97,10 +96,10 @@
                 messages: {
                     safe_work: {
                         required: "{{ __('Name is Required') }}",
-                        minlength: "{{ __('common.validate_min_length') }}",
-                        // maxlength: "Maximum Characters should not exceed 10",
+                        minlength: "Minimum Characters should be 100",
+                        maxlength: "Maximum Characters should not exceed 2000",
                         remote: "{{ __('Name should be unique') }}",
-                        // pattern: "Only alphanumeric characters and -, _, ', \", (), ,, and & are allowed",
+                       
                     },
                 },
                 errorElement: 'span',
