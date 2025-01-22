@@ -132,7 +132,7 @@ class WorkmanInvolved extends Model
                     'workman_name' => $workman->workman_name,
                     'workman_desig' => $workman->workman_desig,
                     'workman_dept' => $workman->workman_dept,
-                    'nature_of_job' => $workman->nature_of_jobs,
+                    'nature_of_job' => $workman->nature_of_job,
                     'created_by' => Auth::id(),
                 ];
 

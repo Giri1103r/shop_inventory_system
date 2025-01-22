@@ -147,7 +147,7 @@ class SafetyPermitController extends Controller
                                     $btn .= '<a href="' . admin_url('safetypermit/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                                 }
                             }
-                            if (($row->permit_status >= STATUS_EHS_APPROVE_PENDING  &&  $row->permit_status != STATUS_CANCELLED &&  $row->permit_status != STATUS_CLOSED)) {
+                            if (($row->permit_status >= STATUS_EHS_APPROVE_PENDING  &&  $row->permit_status != STATUS_PERMIT_EXPIRED &&  $row->permit_status != STATUS_CANCELLED &&  $row->permit_status != STATUS_CLOSED)) {
                                 $permitDateTime = Carbon::parse($row->date . ' ' . $row->time_to);
                                 if ($permitDateTime->isFuture()) {
                                     $btn .= '<a href="' . admin_url('safetypermit/qr/pdf/' . encryptId($row->id)) . '" target="__blank" style="margin-right: 5px;" title="QR PDF">
