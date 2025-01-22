@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Company Master')
-@section('pageurl', admin_url('company/list'))
+@section('title', 'Vendor ')
+@section('pageurl', admin_url('ohc/vendor/list'))
 
 
 @section('content')
@@ -15,13 +15,13 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
                         @if (CheckUserPermission('import'))
-                            <x-button-import href="{{ admin_url('company/import') }}"></x-button-import>
+                            <x-button-import href="{{ admin_url('ohc/vendor/import') }}"></x-button-import>
                         @endif
 
-                        @if (CheckUserPermission('add'))
+                        {{-- @if (CheckUserPermission('add')) --}}
                             <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('company/add') }}">Add</x-button-add>
-                        @endif
+                                href="{{ admin_url('ohc/vendor/add') }}">Add</x-button-add>
+                        {{-- @endif --}}
 
                     </div>
 
@@ -31,14 +31,35 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="company_id" class="form-label">Company ID</label>
-                                            <input type="text" name="company_id" id="company_id" class="form-control"
-                                                placeholder="Company ID">
+                                            <label for="ohc/vendor_id" class="form-label">Vendor Name</label>
+                                            <input type="text" name="vendor_name" id="vendor_name" class="form-control"
+                                                >
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="company_name" class="form-label">Company Name</label>
-                                            <input type="text" name="company_name" id="company_name" class="form-control"
-                                                placeholder="Company Name">
+                                            <label for="ohc/vendor_name" class="form-label">License No</label>
+                                            <input type="text" name="licence_no" id="licence_no" class="form-control"
+                                               >
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
@@ -71,9 +92,9 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Company ID</th>
-                                        <th>Company Name</th>
-                                        <th>Short Name</th>
+                                        <th>Vendor Name</th>
+                                        <th>Address</th>
+                                        <th>License Number</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -126,16 +147,18 @@
                 },
 
                 ajax: {
-                    url: "{{ admin_url('company/list') }}",
+                    url: "{{ admin_url('ohc/vendor/list') }}",
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                             .attr('content')
                     },
                     data: function(d) {
-                        d.company_id = $('#company_id').val();
-                        d.company_name = $('#company_name').val();
-                        d.short_name = $('#short_name').val();
+
+                        d.vendor_name = $('#vendor_name').val();
+                        d.licence_no = $('#licence_no').val();
+                        d.from_date = $('#from_date').val();
+                        d.to_date = $('#to_date').val();
                         d.status = $('#status').val();
 
                     },
@@ -152,16 +175,16 @@
                         searchable: true,
                     },
                     {
-                        data: 'company_id',
-                        name: 'company_id'
+                        data: 'vendor_name',
+                        name: 'vendor_name'
                     },
                     {
-                        data: 'company_name',
-                        name: 'company_name'
+                        data: 'address',
+                        name: 'address'
                     },
                     {
-                        data: 'short_name',
-                        name: 'short_name'
+                        data: 'license_no',
+                        name: 'license_no'
                     },
 
                     {
@@ -205,19 +228,21 @@
                                 text: '{{ __('common.pdf') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    company_id = $('#company_id').val();
-                                    company_name = $('#company_name').val();
-                                    short_name = $('#short_name').val();
-                                    status = $('#status').val();
+                                    var vendor_name = $('#vendor_name').val();
+                                   var license_no = $('#license_no').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
+                                    var status = $('#status').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('company/export/pdf') }}" +
+                                        "{{ admin_url('ohc/vendor/export/pdf') }}" +
                                         '?search=' + searchValue +
-                                        '&company_id=' + company_id +
-                                        '&company_name=' + company_name +
-                                        '&short_name=' + short_name +
+                                        '&medicine=' + vendor_name +
+                                        '&unit=' + license_no +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&status=' + status
                                 }
                             },
@@ -226,18 +251,20 @@
                                 text: '{{ __('common.excel') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    company_id = $('#company_id').val();
-                                    company_name = $('#company_name').val();
-                                    short_name = $('#short_name').val();
-                                    status = $('#status').val();
+                                    var vendor_name = $('#vendor_name').val();
+                                   var license_no = $('#license_no').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
+                                    var status = $('#status').val();
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('company/export/excel') }}" +
+                                        "{{ admin_url('ohc/vendor/export/excel') }}" +
                                         '?search=' + searchValue +
-                                        '&company_id=' + company_id +
-                                        '&company_name=' + company_name +
-                                        '&short_name=' + short_name +
+                                        '&medicine=' + vendor_name +
+                                        '&unit=' + license_no +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&status=' + status
                                 }
                             },
@@ -274,12 +301,12 @@
                 var id = $(this).data('id');
                 var types = $(this).data('type');
                 if (types == 1) {
-                    var title = '{{ __('Do You want to In-Activate Company Details') }}';
+                    var title = '{{ __('Do You want to In-Activate ohc/vendor Details') }}';
                     var text = '{{ __('common.inactive') }}';
                     var btncolor = '#dc3545'
 
                 } else {
-                    var title = '{{ __('Do You want to Activate Company Details') }}';
+                    var title = '{{ __('Do You want to Activate ohc/vendor Details') }}';
                     var text = '{{ __('common.active') }}';
                     var btncolor = '#7ddc35'
                 }
@@ -299,7 +326,7 @@
 
                     if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('company/status') }}",
+                            url: "{{ admin_url('ohc/vendor/status') }}",
                             type: 'post',
 
                             data: {
@@ -347,7 +374,7 @@
                 var id = $(this).data('id');
                 var login_id = $(this).data('login_id');
 
-                var title = '{{ __('Do You want to Delete Company Details') }}';
+                var title = '{{ __('Do You want to Delete ohc/vendor Details') }}';
                 var text = '{{ __('common.delete') }}';
                 var btncolor = '#dc3545'
 
@@ -367,7 +394,7 @@
 
                     if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('company/delete') }}",
+                            url: "{{ admin_url('ohc/vendor/delete') }}",
                             type: 'post',
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -406,7 +433,7 @@
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Error',
-                                        text: 'Company Deletion Failed: Module Dependencies Exist.',
+                                        text: 'ohc/vendor Deletion Failed: Module Dependencies Exist.',
                                     });
                                 } else {
                                     $.notify(data.responseJSON.msg, "error");

@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Company Master Show')
-@section('pageurl', admin_url('company/list'))
+@section('title', 'First Aider Location Show')
+@section('pageurl', admin_url('ohc/first-aid-location/list'))
 
 
 @section('content')
@@ -10,7 +10,7 @@
             {{-- <h4 class="text-black">{{ __('Company Show') }}</h4> --}}
 
         </div>
-       
+
     </div>
 
     <div class="content-body  default-height">
@@ -24,7 +24,7 @@
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('company/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('ohc/first-aid-location/list') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -34,33 +34,39 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Company Details</h4>
+                                        <h4 class="text-white">First Aider Location</h4>
                                     </div>
                                 </div>
                                 <div class="row">
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Company ID') }}</label>
+                                        <label class="form-label view_label">{{ __('Unit') }}</label>
                                         <div class="view_data">
-                                            {{ isset($company->company_id) ? $company->company_id : '' }}
+                                            {{ getUnitName(isset($firstaidlocation->unit_id) ? $firstaidlocation->unit_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Company Name') }}</label>
+                                        <label class="form-label view_label">{{ __('Department Name') }}</label>
                                         <div class="view_data">
-                                            {{ isset($company->company_name) ? $company->company_name : '' }}
+                                            {{ getDeparment(isset($firstaidlocation->department_id) ? $firstaidlocation->department_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Short Name') }}</label>
+                                        <label class="form-label view_label">{{ __('Location Name') }}</label>
                                         <div class="view_data">
-                                            {{ isset($company->short_name) ? $company->short_name : '' }}
+                                            {{ getLocationName(isset($firstaidlocation->location_id) ? $firstaidlocation->location_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Address') }}</label>
+                                        <label class="form-label view_label">{{ __('Station Master') }}</label>
                                         <div class="view_data">
-                                            {{ isset($company->address) ? $company->address : '' }}
+                                            {{ isset($firstaidlocation->station_master) ? $firstaidlocation->station_master : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Station Number') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($firstaidlocation->station_number) ? $firstaidlocation->station_number : '' }}
                                         </div>
                                     </div>
 

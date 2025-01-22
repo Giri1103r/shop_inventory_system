@@ -44,7 +44,10 @@ class Medicine extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_master_medicine.*');
+        $query = $this->select('ohc_master_medicine.*', 'masters_unit.unit_name')
+        ->join('masters_unit', 'ohc_master_medicine.unit_id', '=', 'masters_unit.id')
+        ->where('masters_unit.trash', 'NO');
+
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -60,16 +63,27 @@ class Medicine extends Model
         }
 
 
-        // if ($request->has('company_id') && $request->company_id) {
-        //     $query = $query->where('company_id', 'LIKE', '%' . $request->company_id . '%');
-        // }
-        // if ($request->has('company_name') && $request->company_name) {
-        //     $query = $query->where('company_name', 'LIKE', '%' . $request->company_name . '%');
-        // }
-        // if ($request->has('status') && $request->status) {
+        if ($request->has('medicine') && $request->medicine) {
+            $query = $query->where('medicine', 'LIKE', '%' . $request->medicine . '%');
+        }
+        if ($request->has('unit') && $request->unit) {
+            $query = $query->where('ohc_master_medicine.unit_id', 'LIKE', '%' . $request->unit . '%');
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('ohc_master_medicine.created_at', [$startDate, $endDate]);
+        } elseif ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('ohc_master_medicine.created_at', '>=', $startDate);
+        } elseif ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('ohc_master_medicine.created_at', '<=', $endDate);
+        }
+        if ($request->has('status') && $request->status) {
 
-        //     $query = $query->where('status', decryptId($request->status));
-        // }
+            $query = $query->where('ohc_master_medicine.status', decryptId($request->status));
+        }
         $data_count = $query;
         $total_records = $data_count->count();
 
@@ -180,16 +194,27 @@ class Medicine extends Model
                     ->orWhere('pack', 'LIKE', '%' . $search . '%');
             });
         }
-        // if ($request->has('company_id') && $request->company_id) {
-        //     $query = $query->where('company_id', 'LIKE', '%' . $request->company_id . '%');
-        // }
-        // if ($request->has('company_name') && $request->company_name) {
-        //     $query = $query->where('company_name', 'LIKE', '%' . $request->company_name . '%');
-        // }
-        // if ($request->has('status') && $request->status) {
+        if ($request->has('medicine') && $request->medicine) {
+            $query = $query->where('medicine', 'LIKE', '%' . $request->medicine . '%');
+        }
+        if ($request->has('unit') && $request->unit) {
+            $query = $query->where('ohc_master_medicine.unit_id', 'LIKE', '%' . $request->unit . '%');
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('ohc_master_medicine.created_at', [$startDate, $endDate]);
+        } elseif ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('ohc_master_medicine.created_at', '>=', $startDate);
+        } elseif ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('ohc_master_medicine.created_at', '<=', $endDate);
+        }
+        if ($request->has('status') && $request->status) {
 
-        //     $query = $query->where('status', decryptId($request->status));
-        // }
+            $query = $query->where('ohc_master_medicine.status', decryptId($request->status));
+        }
         $query->orderBy('id', 'DESC');
 
         return  $query->get();

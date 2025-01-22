@@ -5,14 +5,14 @@ namespace App\Http\Controllers\OhcManagement\Master;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use App\Models\Master\Company;
+
 use App\Models\Master\Unit;
 use App\Models\Master\Location;
 use App\Models\Master\Department;
 use App\Models\User;
 use App\Models\UploadLog;
-use App\Jobs\ImportCompanyJob;
-
+use App\Jobs\ImportvendorJob;
+use App\Models\OhcManagement\Master\Vendor;
 use Illuminate\Support\Facades\Auth;
 use Exception;
 use Illuminate\Support\Facades\File;
@@ -26,7 +26,7 @@ use Illuminate\Support\Str;
 class VendorController extends Controller
 {
 
-    private $company;
+    private $vendor;
     private $unit;
     private $location;
     private $department;
@@ -37,7 +37,7 @@ class VendorController extends Controller
     public function __construct()
     {
 
-        $this->company = new Company();
+        $this->vendor = new Vendor();
         $this->unit = new Unit();
         $this->location = new Location();
         $this->department = new Department();
@@ -53,7 +53,7 @@ class VendorController extends Controller
 
                 try {
 
-                    $data =  $this->company->list();
+                    $data =  $this->vendor->list();
 
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
@@ -74,12 +74,12 @@ class VendorController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            if (CheckUserPermission('view')) {
-                                $btn = '<a href="' . admin_url('company/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            }
-                            if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('company/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            }
+                            // if (CheckUserPermission('view')) {
+                                $btn = '<a href="' . admin_url('ohc/vendor/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            // }
+                            // if (CheckUserPermission('edit')) {
+                                $btn .= '<a href="' . admin_url('ohc/vendor/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            // }
 
                             return $btn;
                         })
@@ -97,7 +97,7 @@ class VendorController extends Controller
         }
         $data = array();
 
-        return view('master.company.list', $data);
+        return view('ohcmanagement.master.vendor.list', $data);
     }
 
     public function Add(Request $request)
@@ -106,7 +106,7 @@ class VendorController extends Controller
         try {
 
             $data = array();
-            return view('master.company.add', $data);
+            return view('ohcmanagement.master.vendor.add', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -117,16 +117,16 @@ class VendorController extends Controller
         try {
 
             $rules = [
-                'company_id' => 'required',
-                'company_name' => 'required',
-                'short_name' => 'required',
+
+                'vendor_name' => 'required',
+                'license_no' => 'required',
                 'address' => 'required',
             ];
             $messages = [
-                'company_id.required' => 'Please enter Company ID',
-                'company_name.required' => 'Please enter Company Name',
-                'short_name.required' => 'Please enter Short Name',
-                'address.required' => 'Please enter Company Address',
+
+                'vendor_name.required' => 'Please enter vendor Name',
+                'license_no.required' => 'Please enter license number',
+                'address.required' => 'Please enter vendor Address',
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -136,18 +136,9 @@ class VendorController extends Controller
 
             try {
 
-                // $userDetails = $this->user->companystore();
 
-                // $id = $userDetails->id;
-                $company = $this->company->store();
-                // if ($userDetails->email != '' || $userDetails->email != null) {
+                 $this->vendor->store();
 
-                //     $empdetails =  $this->user->selectOne($id);
-
-                //     $emp  = $empdetails->toArray();
-
-                //     Mail::to($empdetails->email)->queue(new EmployeeRegisterEmail($emp));
-                // }
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
@@ -155,12 +146,12 @@ class VendorController extends Controller
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
-            return redirect(admin_url('company/list'));
+            return redirect(admin_url('ohc/vendor/list'));
         } catch (Exception $ex) {
 
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('company/list'));
+            return redirect(admin_url('ohc/vendor/list'));
         }
     }
 
@@ -169,13 +160,13 @@ class VendorController extends Controller
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
-                $company = $this->company->selectOne($id);
+                $vendor = $this->vendor->selectOne($id);
 
                 $data = array(
-                    'company' => $company,
+                    'vendor' => $vendor,
                 );
             }
-            return view('master.company.view', $data);
+            return view('ohcmanagement.master.vendor.view', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -187,13 +178,13 @@ class VendorController extends Controller
             $id = decryptId($request->id);
 
 
-            $company = $this->company->find($id);
+            $vendor = $this->vendor->find($id);
             $data = array(
-                'company' => $company,
+                'vendor' => $vendor,
             );
 
 
-            return view('master.company.edit', $data);
+            return view('ohcmanagement.master.vendor.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
         }
@@ -204,34 +195,35 @@ class VendorController extends Controller
         try {
             $id = decryptId($request->id);
             $rules = [
-                'company_id' => 'required',
-                'company_name' => 'required',
-                'short_name' => 'required',
+
+                'vendor_name' => 'required',
+                'license_no' => 'required',
                 'address' => 'required',
             ];
             $messages = [
-                'company_id.required' => 'Please enter Company ID',
-                'company_name.required' => 'Please enter Company Name',
-                'short_name.required' => 'Please enter Short Name',
-                'address.required' => 'Please enter Company Address',
+
+                'vendor_name.required' => 'Please enter vendor Name',
+                'license_no.required' => 'Please enter license number',
+                'address.required' => 'Please enter vendor Address',
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
+                dd($validator->errors());
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            $this->company->updates($id);
+            $this->vendor->updates($id);
 
-            // $company = $this->company->find($id);
-            // $this->user->companyUpdate($company->login_id);
+            // $vendor = $this->vendor->find($id);
+            // $this->user->vendorUpdate($vendor->login_id);
 
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('company/list'));
+            return redirect(admin_url('ohc/vendor/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('company/list'));
+            return redirect(admin_url('ohc/vendor/list'));
         }
     }
 
@@ -239,13 +231,13 @@ class VendorController extends Controller
     public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {
-            $company_name = $request->company_name;
+            $vendor_name = $request->vendor_name;
             $id = $request->id;
             if ($id == '') {
-                $record = $this->company->uniqueCheck($company_name);
+                $record = $this->vendor->uniqueCheck($vendor_name);
             } else {
                 $id = decryptId($id);
-                $record = $this->company->ExistuniqueCheck($company_name, $id);
+                $record = $this->vendor->ExistuniqueCheck($vendor_name, $id);
             }
             if ($record->count()) {
                 return Response::json(false);
@@ -260,11 +252,11 @@ class VendorController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $this->company->statuschange($id);
-            // $company =  $this->company->selectOne($id);
-            // $this->user->statuschange($company->login_id);
+            $this->vendor->statuschange($id);
+            // $vendor =  $this->vendor->selectOne($id);
+            // $this->user->statuschange($vendor->login_id);
 
-            return response()->json(['status' => 'success', 'msg' => 'Company status changed'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'Your status has changed successfully'], 200);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
@@ -275,15 +267,15 @@ class VendorController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $location = $this->location->where('company_id', $id)->exists();
-            $unit = $this->unit->where('company_id', $id)->exists();
-            $department = $this->department->where('company_id', $id)->exists();
+            $location = $this->location->where('vendor_id', $id)->exists();
+            $unit = $this->unit->where('vendor_id', $id)->exists();
+            $department = $this->department->where('vendor_id', $id)->exists();
 
             if ($location || $unit || $department) {
                 return response()->json(['status' => 'error', 'msg' => 'module_exits'], 406);
             }
-            $this->company->deleterecord($id);
-            return response()->json(['status' => 'success', 'msg' => 'Company deleted successfully'], 200);
+            $this->vendor->deleterecord($id);
+            return response()->json(['status' => 'success', 'msg' => 'vendor deleted successfully'], 200);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
@@ -293,18 +285,18 @@ class VendorController extends Controller
     // public function Import(Request $request)
     // {
     //     $data = array();
-    //     return view('master.company.import', $data);
+    //     return view('ohcmanagement.master.vendor.import', $data);
     // }
     // public function ImportSubmit(Request $request)
     // {
     //     try {
-    //         $file = $request->file('company_upload');
+    //         $file = $request->file('vendor_upload');
 
     //         $rules = [
-    //             'company_upload' => 'required',
+    //             'vendor_upload' => 'required',
     //         ];
     //         $messages = [
-    //             'company_upload.required' => 'Please upload a file',
+    //             'vendor_upload.required' => 'Please upload a file',
     //         ];
 
     //         $validator = Validator::make($request->all(), $rules, $messages);
@@ -315,9 +307,9 @@ class VendorController extends Controller
 
     //         if ($file != null) {
 
-    //             $uploadpath = 'public/uploads/company';
+    //             $uploadpath = 'public/uploads/vendor';
 
-    //             $folderPath = public_path('uploads/company');
+    //             $folderPath = public_path('uploads/vendor');
 
     //             if (!File::exists($folderPath)) {
 
@@ -357,19 +349,19 @@ class VendorController extends Controller
     //                 "path" => $path,
     //             ];
 
-    //             // dispatch(new ImportCompanyJob($details));
-    //                dispatch((new ImportCompanyJob($details))->onQueue('company'));
+    //             // dispatch(new ImportvendorJob($details));
+    //                dispatch((new ImportvendorJob($details))->onQueue('vendor'));
     //         }
 
     //         $insert_data['log_id'] = $insert_id;
     //         $insert_data['Uploded_by'] = Auth::user()->toArray();
 
-    //         Session::flash('success', __('Company uploaded sucessfully'));
-    //         return redirect(admin_url('company/list'));
+    //         Session::flash('success', __('vendor uploaded sucessfully'));
+    //         return redirect(admin_url('vendor/list'));
     //     } catch (Exception $ex) {
     //         report($ex);
-    //         Session::flash('error', __('Company upload failed'));
-    //         return redirect(admin_url('company/list'));
+    //         Session::flash('error', __('vendor upload failed'));
+    //         return redirect(admin_url('vendor/list'));
     //     }
     // }
     public function ExportExcel(Request $request)
@@ -377,7 +369,7 @@ class VendorController extends Controller
 
         try {
 
-            $allData = $this->company->exportdata();
+            $allData = $this->vendor->exportdata();
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -385,9 +377,8 @@ class VendorController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Company ID',
-                'Company Name',
-                'Short Name',
+                'vendor Name',
+                'License Number',
                 'Address',
                 __("common.status"),
                 __("common.created_by"),
@@ -399,9 +390,8 @@ class VendorController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->company_id;
-                $export[] =  $data->company_name;
-                $export[] =  $data->short_name;
+                $export[] =  $data->vendor_name;
+                $export[] =  $data->license_no;
                 $export[] =  $data->address;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
@@ -412,7 +402,7 @@ class VendorController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Company Master.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('vendor.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -428,7 +418,7 @@ class VendorController extends Controller
 
         try {
 
-            $allData = $this->company->exportdata();
+            $allData = $this->vendor->exportdata();
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -436,9 +426,8 @@ class VendorController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Company ID',
-                'Company Name',
-                'Short Name',
+                'vendor Name',
+                'License Number',
                 'Address',
                 __("common.status"),
                 __("common.created_by"),
@@ -448,7 +437,7 @@ class VendorController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Company Details",
+                'pagetitle' => "vendor Details",
             );
 
             $property = [
@@ -463,14 +452,14 @@ class VendorController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('master.company.pdf', $data);
+            $view = view('ohcmanagement.master.vendor.pdf', $data);
             $html = $view->render();
 
 
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Company Master.pdf";
+            $filename = "vendor Master.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
@@ -481,7 +470,7 @@ class VendorController extends Controller
     public function DownloadSample(Request $request)
     {
 
-        $filedetails =  exportsamplefile('company');
+        $filedetails =  exportsamplefile('vendor');
 
         $filePath = $filedetails->sample_file;
         $customFileName = $filedetails->file_name;

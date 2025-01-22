@@ -37,7 +37,7 @@
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label class="form-label require">Unit</label>
-                                            <select name="unit_id" id="unit_id" class="form-select single-select"
+                                            <select name="unit" id="unit" class="form-select single-select"
                                                 style="width: 100%">
                                                 <option value="">Select the unit</option>
                                                 @foreach ($unit as $list)
@@ -183,9 +183,10 @@
                             .attr('content')
                     },
                     data: function(d) {
-                        d.company_id = $('#company_id').val();
-                        d.company_name = $('#company_name').val();
-                        d.short_name = $('#short_name').val();
+                        d.medicine = $('#medicine').val();
+                        d.unit = $('#unit').val();
+                        d.from_date = $('#from_date').val();
+                        d.to_date = $('#to_date').val();
                         d.status = $('#status').val();
 
                     },
@@ -270,19 +271,21 @@
                                 text: '{{ __('common.pdf') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    company_id = $('#company_id').val();
-                                    company_name = $('#company_name').val();
-                                    short_name = $('#short_name').val();
-                                    status = $('#status').val();
+                                   var medicine = $('#medicine').val();
+                                   var unit = $('#unit').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
+                                    var status = $('#status').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
                                         "{{ admin_url('ohc/medicine/export/pdf') }}" +
                                         '?search=' + searchValue +
-                                        '&company_id=' + company_id +
-                                        '&company_name=' + company_name +
-                                        '&short_name=' + short_name +
+                                        '&medicine=' + medicine +
+                                        '&unit=' + unit +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&status=' + status
                                 }
                             },
@@ -291,18 +294,20 @@
                                 text: '{{ __('common.excel') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    company_id = $('#company_id').val();
-                                    company_name = $('#company_name').val();
-                                    short_name = $('#short_name').val();
-                                    status = $('#status').val();
+                                   var medicine = $('#medicine').val();
+                                   var unit = $('#unit').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
+                                    var status = $('#status').val();
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
                                         "{{ admin_url('ohc/medicine/export/excel') }}" +
                                         '?search=' + searchValue +
-                                        '&company_id=' + company_id +
-                                        '&company_name=' + company_name +
-                                        '&short_name=' + short_name +
+                                        '&medicine=' + medicine +
+                                        '&unit=' + unit +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&status=' + status
                                 }
                             },

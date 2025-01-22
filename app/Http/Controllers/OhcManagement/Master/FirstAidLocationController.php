@@ -4,14 +4,13 @@ namespace App\Http\Controllers\OhcManagement\Master;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Master\Company;
 use App\Models\Master\Unit;
 use App\Models\Master\Location;
 use App\Models\Master\Department;
 use App\Models\User;
 use App\Models\UploadLog;
-use App\Jobs\ImportCompanyJob;
-
+use App\Jobs\ImportfirstaidlocationJob;
+use App\Models\OhcManagement\Master\FirstAidLocation;
 use Illuminate\Support\Facades\Auth;
 use Exception;
 use Illuminate\Support\Facades\File;
@@ -25,7 +24,7 @@ use Illuminate\Support\Str;
 class FirstAidLocationController extends Controller
 {
 
-    private $company;
+    private $firstaidlocation;
     private $unit;
     private $location;
     private $department;
@@ -36,7 +35,7 @@ class FirstAidLocationController extends Controller
     public function __construct()
     {
 
-        $this->company = new Company();
+        $this->firstaidlocation = new FirstAidLocation();
         $this->unit = new Unit();
         $this->location = new Location();
         $this->department = new Department();
@@ -47,12 +46,14 @@ class FirstAidLocationController extends Controller
 
     public function index(Request $request)
     {
+
         if (Auth::check()) {
+
             if ($request->ajax()) {
 
                 try {
 
-                    $data =  $this->company->list();
+                    $data =  $this->firstaidlocation->list();
 
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
@@ -74,10 +75,10 @@ class FirstAidLocationController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             if (CheckUserPermission('view')) {
-                                $btn = '<a href="' . admin_url('company/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                                $btn = '<a href="' . admin_url('ohc/first-aid-location/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             }
                             if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('company/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                                $btn .= '<a href="' . admin_url('ohc/first-aid-location/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
 
                             return $btn;
@@ -89,14 +90,14 @@ class FirstAidLocationController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    report($ex);
+                  dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
         }
         $data = array();
 
-        return view('master.company.list', $data);
+        return view('ohcmanagement.master.first_aider_location.list', $data);
     }
 
     public function Add(Request $request)
@@ -105,7 +106,7 @@ class FirstAidLocationController extends Controller
         try {
 
             $data = array();
-            return view('master.company.add', $data);
+            return view('ohcmanagement.master.first_aider_location.add', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -116,16 +117,16 @@ class FirstAidLocationController extends Controller
         try {
 
             $rules = [
-                'company_id' => 'required',
-                'company_name' => 'required',
+                'firstaidlocation_id' => 'required',
+                'firstaidlocation_name' => 'required',
                 'short_name' => 'required',
                 'address' => 'required',
             ];
             $messages = [
-                'company_id.required' => 'Please enter Company ID',
-                'company_name.required' => 'Please enter Company Name',
+                'firstaidlocation_id.required' => 'Please enter firstaidlocation ID',
+                'firstaidlocation_name.required' => 'Please enter firstaidlocation Name',
                 'short_name.required' => 'Please enter Short Name',
-                'address.required' => 'Please enter Company Address',
+                'address.required' => 'Please enter firstaidlocation Address',
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -135,10 +136,10 @@ class FirstAidLocationController extends Controller
 
             try {
 
-                // $userDetails = $this->user->companystore();
+                // $userDetails = $this->user->firstaidlocationstore();
 
                 // $id = $userDetails->id;
-                $company = $this->company->store();
+                $firstaidlocation = $this->firstaidlocation->store();
                 // if ($userDetails->email != '' || $userDetails->email != null) {
 
                 //     $empdetails =  $this->user->selectOne($id);
@@ -154,12 +155,12 @@ class FirstAidLocationController extends Controller
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
-            return redirect(admin_url('company/list'));
+            return redirect(admin_url('ohc/first-aid-location/list'));
         } catch (Exception $ex) {
 
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('company/list'));
+            return redirect(admin_url('ohc/first-aid-location/list'));
         }
     }
 
@@ -168,13 +169,13 @@ class FirstAidLocationController extends Controller
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
-                $company = $this->company->selectOne($id);
+                $firstaidlocation = $this->firstaidlocation->selectOne($id);
 
                 $data = array(
-                    'company' => $company,
+                    'firstaidlocation' => $firstaidlocation,
                 );
             }
-            return view('master.company.view', $data);
+            return view('ohcmanagement.master.first_aider_location.view', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -186,13 +187,13 @@ class FirstAidLocationController extends Controller
             $id = decryptId($request->id);
 
 
-            $company = $this->company->find($id);
+            $firstaidlocation = $this->firstaidlocation->find($id);
             $data = array(
-                'company' => $company,
+                'firstaidlocation' => $firstaidlocation,
             );
 
 
-            return view('master.company.edit', $data);
+            return view('ohcmanagement.master.first_aider_location.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
         }
@@ -203,16 +204,16 @@ class FirstAidLocationController extends Controller
         try {
             $id = decryptId($request->id);
             $rules = [
-                'company_id' => 'required',
-                'company_name' => 'required',
+                'firstaidlocation_id' => 'required',
+                'firstaidlocation_name' => 'required',
                 'short_name' => 'required',
                 'address' => 'required',
             ];
             $messages = [
-                'company_id.required' => 'Please enter Company ID',
-                'company_name.required' => 'Please enter Company Name',
+                'firstaidlocation_id.required' => 'Please enter firstaidlocation ID',
+                'firstaidlocation_name.required' => 'Please enter firstaidlocation Name',
                 'short_name.required' => 'Please enter Short Name',
-                'address.required' => 'Please enter Company Address',
+                'address.required' => 'Please enter firstaidlocation Address',
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -220,17 +221,17 @@ class FirstAidLocationController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            $this->company->updates($id);
+            $this->firstaidlocation->updates($id);
 
-            // $company = $this->company->find($id);
-            // $this->user->companyUpdate($company->login_id);
+            // $firstaidlocation = $this->firstaidlocation->find($id);
+            // $this->user->firstaidlocationUpdate($firstaidlocation->login_id);
 
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('company/list'));
+            return redirect(admin_url('ohc/first-aid-location/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('company/list'));
+            return redirect(admin_url('ohc/first-aid-location/list'));
         }
     }
 
@@ -238,13 +239,13 @@ class FirstAidLocationController extends Controller
     public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {
-            $company_name = $request->company_name;
+            $firstaidlocation_name = $request->firstaidlocation_name;
             $id = $request->id;
             if ($id == '') {
-                $record = $this->company->uniqueCheck($company_name);
+                $record = $this->firstaidlocation->uniqueCheck($firstaidlocation_name);
             } else {
                 $id = decryptId($id);
-                $record = $this->company->ExistuniqueCheck($company_name, $id);
+                $record = $this->firstaidlocation->ExistuniqueCheck($firstaidlocation_name, $id);
             }
             if ($record->count()) {
                 return Response::json(false);
@@ -259,11 +260,11 @@ class FirstAidLocationController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $this->company->statuschange($id);
-            // $company =  $this->company->selectOne($id);
-            // $this->user->statuschange($company->login_id);
+            $this->firstaidlocation->statuschange($id);
+            // $firstaidlocation =  $this->firstaidlocation->selectOne($id);
+            // $this->user->statuschange($firstaidlocation->login_id);
 
-            return response()->json(['status' => 'success', 'msg' => 'Company status changed'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'Your Status has changed Successfully'], 200);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
@@ -274,15 +275,15 @@ class FirstAidLocationController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $location = $this->location->where('company_id', $id)->exists();
-            $unit = $this->unit->where('company_id', $id)->exists();
-            $department = $this->department->where('company_id', $id)->exists();
+            $location = $this->location->where('firstaidlocation_id', $id)->exists();
+            $unit = $this->unit->where('firstaidlocation_id', $id)->exists();
+            $department = $this->department->where('firstaidlocation_id', $id)->exists();
 
             if ($location || $unit || $department) {
                 return response()->json(['status' => 'error', 'msg' => 'module_exits'], 406);
             }
-            $this->company->deleterecord($id);
-            return response()->json(['status' => 'success', 'msg' => 'Company deleted successfully'], 200);
+            $this->firstaidlocation->deleterecord($id);
+            return response()->json(['status' => 'success', 'msg' => 'firstaidlocation deleted successfully'], 200);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
@@ -292,18 +293,18 @@ class FirstAidLocationController extends Controller
     // public function Import(Request $request)
     // {
     //     $data = array();
-    //     return view('master.company.import', $data);
+    //     return view('ohcmanagement.master.first_aider_location.import', $data);
     // }
     // public function ImportSubmit(Request $request)
     // {
     //     try {
-    //         $file = $request->file('company_upload');
+    //         $file = $request->file('firstaidlocation_upload');
 
     //         $rules = [
-    //             'company_upload' => 'required',
+    //             'firstaidlocation_upload' => 'required',
     //         ];
     //         $messages = [
-    //             'company_upload.required' => 'Please upload a file',
+    //             'firstaidlocation_upload.required' => 'Please upload a file',
     //         ];
 
     //         $validator = Validator::make($request->all(), $rules, $messages);
@@ -314,9 +315,9 @@ class FirstAidLocationController extends Controller
 
     //         if ($file != null) {
 
-    //             $uploadpath = 'public/uploads/company';
+    //             $uploadpath = 'public/uploads/firstaidlocation';
 
-    //             $folderPath = public_path('uploads/company');
+    //             $folderPath = public_path('uploads/firstaidlocation');
 
     //             if (!File::exists($folderPath)) {
 
@@ -356,19 +357,19 @@ class FirstAidLocationController extends Controller
     //                 "path" => $path,
     //             ];
 
-    //             // dispatch(new ImportCompanyJob($details));
-    //                dispatch((new ImportCompanyJob($details))->onQueue('company'));
+    //             // dispatch(new ImportfirstaidlocationJob($details));
+    //                dispatch((new ImportfirstaidlocationJob($details))->onQueue('firstaidlocation'));
     //         }
 
     //         $insert_data['log_id'] = $insert_id;
     //         $insert_data['Uploded_by'] = Auth::user()->toArray();
 
-    //         Session::flash('success', __('Company uploaded sucessfully'));
-    //         return redirect(admin_url('company/list'));
+    //         Session::flash('success', __('firstaidlocation uploaded sucessfully'));
+    //         return redirect(admin_url('firstaidlocation/list'));
     //     } catch (Exception $ex) {
     //         report($ex);
-    //         Session::flash('error', __('Company upload failed'));
-    //         return redirect(admin_url('company/list'));
+    //         Session::flash('error', __('firstaidlocation upload failed'));
+    //         return redirect(admin_url('firstaidlocation/list'));
     //     }
     // }
     public function ExportExcel(Request $request)
@@ -376,7 +377,7 @@ class FirstAidLocationController extends Controller
 
         try {
 
-            $allData = $this->company->exportdata();
+            $allData = $this->firstaidlocation->exportdata();
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -384,10 +385,11 @@ class FirstAidLocationController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Company ID',
-                'Company Name',
-                'Short Name',
-                'Address',
+                'Unit',
+                'Deparment',
+                'Location',
+                'Station Master',
+                'Station Number',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -398,10 +400,11 @@ class FirstAidLocationController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->company_id;
-                $export[] =  $data->company_name;
-                $export[] =  $data->short_name;
-                $export[] =  $data->address;
+                $export[] =  getUnitname($data->unit_id);
+                $export[] =  getDepartment($data->department_id);
+                $export[] =  getLocationName($data->location_id);
+                $export[] =  $data->station_master;
+                $export[] =  $data->station_number;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -411,7 +414,7 @@ class FirstAidLocationController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Company Master.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('first aid location.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -427,7 +430,7 @@ class FirstAidLocationController extends Controller
 
         try {
 
-            $allData = $this->company->exportdata();
+            $allData = $this->firstaidlocation->exportdata();
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -435,10 +438,11 @@ class FirstAidLocationController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Company ID',
-                'Company Name',
-                'Short Name',
-                'Address',
+                'Unit',
+                'Deparment',
+                'Location',
+                'Station Master',
+                'Station Number',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -447,7 +451,7 @@ class FirstAidLocationController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Company Details",
+                'pagetitle' => "first aid location Details",
             );
 
             $property = [
@@ -462,14 +466,14 @@ class FirstAidLocationController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('master.company.pdf', $data);
+            $view = view('ohcmanagement.master.first_aider_location.pdf', $data);
             $html = $view->render();
 
 
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Company Master.pdf";
+            $filename = "firstaidlocation Master.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
@@ -480,7 +484,7 @@ class FirstAidLocationController extends Controller
     public function DownloadSample(Request $request)
     {
 
-        $filedetails =  exportsamplefile('company');
+        $filedetails =  exportsamplefile('firstaidlocation');
 
         $filePath = $filedetails->sample_file;
         $customFileName = $filedetails->file_name;

@@ -16,21 +16,21 @@ class FirstAidLocation extends Model
     use  HasFactory;
 
 
-    protected $table = 'company_management';
+    protected $table = 'ohc_master_first_aid_location';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'company_id',
-        'company_name',
-        'short_name',
-        'address',
+        'unit_id',
+        'department_id',
+        'location_id',
+        'station_master',
+        'station_number',
         'status',
         'trash',
         'created_by',
         'updated_by',
         'created_at',
-        'updated_at'
-
+        'updated_at',
     ];
 
     protected $attributes = [
@@ -40,9 +40,10 @@ class FirstAidLocation extends Model
 
     public function list()
     {
+      
         $request = request();
         $search = '';
-        $query = $this->select('company_management.*');
+        $query = $this->select('ohc_master_first_aid_location.*');
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -52,22 +53,22 @@ class FirstAidLocation extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('company_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('company_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('satation_master', 'LIKE', '%' . $search . '%')
+                    ->orWhere('station_number', 'LIKE', '%' . $search . '%');
             });
         }
 
 
-        if ($request->has('company_id') && $request->company_id) {
-            $query = $query->where('company_id', 'LIKE', '%' . $request->company_id . '%');
-        }
-        if ($request->has('company_name') && $request->company_name) {
-            $query = $query->where('company_name', 'LIKE', '%' . $request->company_name . '%');
-        }
-        if ($request->has('status') && $request->status) {
+        // if ($request->has('company_id') && $request->company_id) {
+        //     $query = $query->where('company_id', 'LIKE', '%' . $request->company_id . '%');
+        // }
+        // if ($request->has('company_name') && $request->company_name) {
+        //     $query = $query->where('company_name', 'LIKE', '%' . $request->company_name . '%');
+        // }
+        // if ($request->has('status') && $request->status) {
 
-            $query = $query->where('status', decryptId($request->status));
-        }
+        //     $query = $query->where('status', decryptId($request->status));
+        // }
         $data_count = $query;
         $total_records = $data_count->count();
 
@@ -87,29 +88,31 @@ class FirstAidLocation extends Model
         return $datas;
     }
 
-    public function UniqueCheck($data)
-    {
+    // public function UniqueCheck($data)
+    // {
 
-        return $this->where('company_name',  $data)->get();
-    }
+    //     return $this->where('company_name',  $data)->get();
+    // }
 
-    public function ExistuniqueCheck($data, $id)
-    {
-        return $this->where('company_name',  $data)
-            ->where('id', '!=', $id)
-            ->get();
-    }
+    // public function ExistuniqueCheck($data, $id)
+    // {
+    //     return $this->where('company_name',  $data)
+    //         ->where('id', '!=', $id)
+    //         ->get();
+    // }
 
     public function store()
     {
         $request = request();
 
         $insert_array = array(
-            'company_id' => $request->company_id,
-            'company_name' => $request->company_name,
-            'short_name' => $request->short_name,
-            'address' => $request->address,
-            'created_by' => Auth::id()
+            'unit_id'         =>$request-> unit_id,
+            'department_id'   =>$request->deparment_id ,
+            'location_id'     =>$request-> location_id,
+            'station_master' =>$request->station_master,
+            'station_number' =>$request->station_number ,
+            'created_by'=>Auth::id(),
+
         );
         return $this->create($insert_array);
     }
@@ -120,10 +123,12 @@ class FirstAidLocation extends Model
         $request = request();
 
         $update_array = array(
-            'company_id' => $request->company_id,
-            'company_name' => $request->company_name,
-            'short_name' => $request->short_name,
-            'address' => $request->address,
+            'unit_id'         =>$request-> unit_id,
+            'department_id'   =>$request->deparment_id ,
+            'location_id'     =>$request-> location_id,
+            'station_master' =>$request->station_master,
+            'station_number' =>$request->station_number ,
+            'created_by'=>Auth::id(),
             'updated_by' => Auth::id()
         );
         return $this->where('id', $id)->update($update_array);
@@ -162,25 +167,20 @@ class FirstAidLocation extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('company_management.*');
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
+        $query = $this->select('.*');
+        $query = $this->select('ohc_master_first_aid_location.*');
 
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhere('company_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('company_name', 'LIKE', '%' . $search . '%');
+
+        if ($request->search['value'] != null || $request->search['value'] != '') {
+            $search = $request->search['value'];
+
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('satation_master', 'LIKE', '%' . $search . '%')
+                    ->orWhere('station_number', 'LIKE', '%' . $search . '%');
             });
         }
-        if ($request->has('company_id') && $request->company_id) {
-            $query = $query->where('company_id', 'LIKE', '%' . $request->company_id . '%');
-        }
-        if ($request->has('company_name') && $request->company_name) {
-            $query = $query->where('company_name', 'LIKE', '%' . $request->company_name . '%');
-        }
-        if ($request->has('status') && $request->status) {
 
-            $query = $query->where('status', decryptId($request->status));
-        }
         $query->orderBy('id', 'DESC');
 
         return  $query->get();
@@ -190,9 +190,9 @@ class FirstAidLocation extends Model
     {
 
         $data = $this->select(
-            'company_management.*'
+            'ohc_master_first_aid_location.*'
         )
-            ->where('company_management.id', $id)
+            ->where('ohc_master_first_aid_location.id', $id)
             ->first();
 
         return $data;
@@ -201,7 +201,7 @@ class FirstAidLocation extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('company_management'));
+        static::addGlobalScope(new TrashScope('ohc_master_first_aid_location'));
 
         static::created(function ($model) {
 

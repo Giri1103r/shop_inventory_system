@@ -73,18 +73,21 @@ class MedicineController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
+                        ->editColumn('unit_id', function ($row) {
+                            return $row->unit_name;
+                        })
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
-                                $btn = '<a href="' . admin_url('ohc/medicine/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('ohc/medicine/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
                             // if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('ohc/medicine/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            $btn .= '<a href="' . admin_url('ohc/medicine/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
 
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status','unit_id'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -97,10 +100,10 @@ class MedicineController extends Controller
             }
         }
         $unit = $this->unit->getunit();
-            $data = array(
-              
-                'unit'=>$unit
-            );
+        $data = array(
+
+            'unit' => $unit
+        );
 
         return view('ohcmanagement.master.medicine.list', $data);
     }
@@ -109,9 +112,9 @@ class MedicineController extends Controller
     {
 
         try {
-         $unit = $this->unit->getunit();
+            $unit = $this->unit->getunit();
             $data = [
-                'unit'=>$unit
+                'unit' => $unit
             ];
             return view('ohcmanagement.master.medicine.add', $data);
         } catch (Exception $ex) {
@@ -178,7 +181,6 @@ class MedicineController extends Controller
             }
             return view('ohcmanagement.master.medicine.view', $data);
         } catch (Exception $ex) {
-
         }
     }
 
@@ -192,7 +194,7 @@ class MedicineController extends Controller
             $unit = $this->unit->getunit();
             $data = array(
                 'medicine' => $medicine,
-                'unit'=>$unit
+                'unit' => $unit
             );
 
 
@@ -295,88 +297,7 @@ class MedicineController extends Controller
         }
     }
 
-    // public function Import(Request $request)
-    // {
-    //     $data = array();
-    //     return view('master.medicine.import', $data);
-    // }
-    // public function ImportSubmit(Request $request)
-    // {
-    //     try {
-    //         $file = $request->file('medicine_upload');
 
-    //         $rules = [
-    //             'medicine_upload' => 'required',
-    //         ];
-    //         $messages = [
-    //             'medicine_upload.required' => 'Please upload a file',
-    //         ];
-
-    //         $validator = Validator::make($request->all(), $rules, $messages);
-    //         if ($validator->fails()) {
-    //             return redirect()->back()->withErrors($validator)->withInput();
-    //         }
-
-
-    //         if ($file != null) {
-
-    //             $uploadpath = 'public/uploads/medicine';
-
-    //             $folderPath = public_path('uploads/medicine');
-
-    //             if (!File::exists($folderPath)) {
-
-    //                 File::makeDirectory($folderPath, 0755, true);
-    //             }
-
-    //             $filenewname = time() . Str::random('10') . '.' . $file->getClientOriginalExtension();
-
-    //             $fileName = $file->getClientOriginalName();
-    //             $fileSize = $file->getSize();
-
-    //             $fileExt = $file->getClientOriginalExtension();
-
-    //             $file->move($uploadpath, $filenewname);
-
-    //             $path = $uploadpath . "/" . $filenewname;
-    //             $user_id = Auth::id();
-
-    //             $insert_data = array(
-    //                 'upload_type' => 1,
-    //                 'upload_status' => 0,
-    //                 'file_name' => $filenewname,
-    //                 'file_orgname' => $fileName,
-    //                 'file_path' => $path,
-    //                 'file_size' => $fileSize,
-    //                 'file_extension' => $fileExt,
-    //                 'created_by' => $user_id,
-    //             );
-
-    //             $insert_id =  $this->uploadlog->create($insert_data)->id;
-
-
-
-    //             $details = [
-    //                 "user_id" => $user_id,
-    //                 "log_id" => $insert_id,
-    //                 "path" => $path,
-    //             ];
-
-    //             // dispatch(new ImportmedicineJob($details));
-    //                dispatch((new ImportmedicineJob($details))->onQueue('medicine'));
-    //         }
-
-    //         $insert_data['log_id'] = $insert_id;
-    //         $insert_data['Uploded_by'] = Auth::user()->toArray();
-
-    //         Session::flash('success', __('medicine uploaded sucessfully'));
-    //         return redirect(admin_url('medicine/list'));
-    //     } catch (Exception $ex) {
-    //         report($ex);
-    //         Session::flash('error', __('medicine upload failed'));
-    //         return redirect(admin_url('medicine/list'));
-    //     }
-    // }
     public function ExportExcel(Request $request)
     {
 
@@ -390,10 +311,13 @@ class MedicineController extends Controller
 
             $header = [
                 __("common.sno"),
-                'medicine ID',
-                'medicine Name',
-                'Short Name',
-                'Address',
+                'Medicine Name',
+                'Pack',
+                'HSN Number',
+                'Unit',
+                'Threshold Limt',
+                'Expiry date',
+                'Reamrks',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -404,10 +328,13 @@ class MedicineController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->medicine_id;
-                $export[] =  $data->medicine_name;
-                $export[] =  $data->short_name;
-                $export[] =  $data->address;
+                $export[] =  $data->medicine;
+                $export[] =  $data->pack;
+                $export[] =  $data->hsn;
+                $export[] =  getUnitname($data->unit_id);
+                $export[] =  $data->threshold_limit;
+                $export[] =  $data->expiry_date;
+                $export[] =  $data->remarks;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -417,7 +344,7 @@ class MedicineController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('medicine Master.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('medicine .xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -441,10 +368,13 @@ class MedicineController extends Controller
 
             $header = [
                 __("common.sno"),
-                'medicine ID',
-                'medicine Name',
-                'Short Name',
-                'Address',
+                'Medicine Name',
+                'Pack',
+                'HSN Number',
+                'Unit',
+                'Threshold Limt',
+                'Expiry date',
+                'Reamrks',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -453,7 +383,7 @@ class MedicineController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "medicine Details",
+                'pagetitle' => "Medicine Details",
             );
 
             $property = [
@@ -468,14 +398,14 @@ class MedicineController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('master.medicine.pdf', $data);
+            $view = view('ohcmanagement.master.medicine.pdf', $data);
             $html = $view->render();
 
 
 
             $mpdf->WriteHTML($html);
 
-            $filename = "medicine Master.pdf";
+            $filename = "Medicine .pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 

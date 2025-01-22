@@ -54,18 +54,29 @@ class Vendor extends Model
                     ->orWhere('license_no', 'LIKE', '%' . $search . '%');
             });
         }
+        if ($request->has('vendor_name') && $request->vendor_name) {
+            $query = $query->where('vendor_name', 'LIKE', '%' . $request->vendor_name . '%');
+        }
+        if ($request->has('licence_no') && $request->license_no) {
+            $query = $query->where('license_no', 'LIKE', '%' . $request->licence_no . '%');
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        } elseif ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('created_at', '>=', $startDate);
+        } elseif ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('created_at', '<=', $endDate);
+        }
+        if ($request->has('status') && $request->status) {
+
+            $query = $query->where('status', decryptId($request->status));
+        }
 
 
-        // if ($request->has('company_id') && $request->company_id) {
-        //     $query = $query->where('company_id', 'LIKE', '%' . $request->company_id . '%');
-        // }
-        // if ($request->has('company_name') && $request->company_name) {
-        //     $query = $query->where('company_name', 'LIKE', '%' . $request->company_name . '%');
-        // }
-        // if ($request->has('status') && $request->status) {
-
-        //     $query = $query->where('status', decryptId($request->status));
-        // }
         $data_count = $query;
         $total_records = $data_count->count();
 
@@ -85,18 +96,18 @@ class Vendor extends Model
         return $datas;
     }
 
-    // public function UniqueCheck($data)
-    // {
+    public function UniqueCheck($data)
+    {
 
-    //     return $this->where('company_name',  $data)->get();
-    // }
+        return $this->where('vendor_name',  $data)->get();
+    }
 
-    // public function ExistuniqueCheck($data, $id)
-    // {
-    //     return $this->where('company_name',  $data)
-    //         ->where('id', '!=', $id)
-    //         ->get();
-    // }
+    public function ExistuniqueCheck($data, $id)
+    {
+        return $this->where('vendor_name',  $data)
+            ->where('id', '!=', $id)
+            ->get();
+    }
 
     public function store()
     {
@@ -167,16 +178,28 @@ class Vendor extends Model
                     ->orWhere('vendor_name', 'LIKE', '%' . $search . '%');
             });
         }
-        // if ($request->has('company_id') && $request->company_id) {
-        //     $query = $query->where('company_id', 'LIKE', '%' . $request->company_id . '%');
-        // }
-        // if ($request->has('company_name') && $request->company_name) {
-        //     $query = $query->where('company_name', 'LIKE', '%' . $request->company_name . '%');
-        // }
-        // if ($request->has('status') && $request->status) {
+        if ($request->has('vendor_name') && $request->vendor_name) {
+            $query = $query->where('vendor_name', 'LIKE', '%' . $request->vendor_name . '%');
+        }
+        if ($request->has('licence_no') && $request->license_no) {
+            $query = $query->where('license_no', 'LIKE', '%' . $request->licence_no . '%');
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        } elseif ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('created_at', '>=', $startDate);
+        } elseif ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('created_at', '<=', $endDate);
+        }
+        if ($request->has('status') && $request->status) {
 
-        //     $query = $query->where('status', decryptId($request->status));
-        // }
+            $query = $query->where('status', decryptId($request->status));
+        }
+
         $query->orderBy('id', 'DESC');
 
         return  $query->get();
