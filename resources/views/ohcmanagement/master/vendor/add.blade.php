@@ -161,8 +161,7 @@
                 invalidHandler: function(event, validator) {
                     var errors = validator.numberOfInvalids();
                     validator.errorList.forEach(function(error) {
-                        // console.log("Field: " + error.element.name + ", Error: " + error
-                        //     .message);
+                       
                     });
                 }
             });

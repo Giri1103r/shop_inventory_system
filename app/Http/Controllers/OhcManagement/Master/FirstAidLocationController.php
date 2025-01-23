@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\UploadLog;
 use App\Jobs\ImportfirstaidlocationJob;
 use App\Models\Master\Employee;
+use App\Models\Master\Work;
 use App\Models\OhcManagement\Master\FirstAidLocation;
 use Illuminate\Support\Facades\Auth;
 use Exception;
@@ -83,9 +84,7 @@ class FirstAidLocationController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
-                        ->addColumn('station_master', function ($row) {
-                            return getEmployeename($row->station_master);
-                        })
+
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
@@ -281,8 +280,7 @@ class FirstAidLocationController extends Controller
             $id = decryptId($request->id);
 
             $this->firstaidlocation->statuschange($id);
-            // $firstaidlocation =  $this->firstaidlocation->selectOne($id);
-            // $this->user->statuschange($firstaidlocation->login_id);
+           
 
             return response()->json(['status' => 'success', 'msg' => 'Your Status has changed Successfully'], 200);
         } catch (Exception $ex) {
@@ -290,108 +288,9 @@ class FirstAidLocationController extends Controller
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
-    public function Delete(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-
-            $location = $this->location->where('firstaidlocation_id', $id)->exists();
-            $unit = $this->unit->where('firstaidlocation_id', $id)->exists();
-            $department = $this->department->where('firstaidlocation_id', $id)->exists();
-
-            if ($location || $unit || $department) {
-                return response()->json(['status' => 'error', 'msg' => 'module_exits'], 406);
-            }
-            $this->firstaidlocation->deleterecord($id);
-            return response()->json(['status' => 'success', 'msg' => 'firstaidlocation deleted successfully'], 200);
-        } catch (Exception $ex) {
-            report($ex);
-            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
-        }
-    }
-
-    // public function Import(Request $request)
-    // {
-    //     $data = array();
-    //     return view('ohcmanagement.master.first_aider_location.import', $data);
-    // }
-    // public function ImportSubmit(Request $request)
-    // {
-    //     try {
-    //         $file = $request->file('firstaidlocation_upload');
-
-    //         $rules = [
-    //             'firstaidlocation_upload' => 'required',
-    //         ];
-    //         $messages = [
-    //             'firstaidlocation_upload.required' => 'Please upload a file',
-    //         ];
-
-    //         $validator = Validator::make($request->all(), $rules, $messages);
-    //         if ($validator->fails()) {
-    //             return redirect()->back()->withErrors($validator)->withInput();
-    //         }
-
-
-    //         if ($file != null) {
-
-    //             $uploadpath = 'public/uploads/firstaidlocation';
-
-    //             $folderPath = public_path('uploads/firstaidlocation');
-
-    //             if (!File::exists($folderPath)) {
-
-    //                 File::makeDirectory($folderPath, 0755, true);
-    //             }
-
-    //             $filenewname = time() . Str::random('10') . '.' . $file->getClientOriginalExtension();
-
-    //             $fileName = $file->getClientOriginalName();
-    //             $fileSize = $file->getSize();
-
-    //             $fileExt = $file->getClientOriginalExtension();
-
-    //             $file->move($uploadpath, $filenewname);
-
-    //             $path = $uploadpath . "/" . $filenewname;
-    //             $user_id = Auth::id();
-
-    //             $insert_data = array(
-    //                 'upload_type' => 1,
-    //                 'upload_status' => 0,
-    //                 'file_name' => $filenewname,
-    //                 'file_orgname' => $fileName,
-    //                 'file_path' => $path,
-    //                 'file_size' => $fileSize,
-    //                 'file_extension' => $fileExt,
-    //                 'created_by' => $user_id,
-    //             );
-
-    //             $insert_id =  $this->uploadlog->create($insert_data)->id;
 
 
 
-    //             $details = [
-    //                 "user_id" => $user_id,
-    //                 "log_id" => $insert_id,
-    //                 "path" => $path,
-    //             ];
-
-    //             // dispatch(new ImportfirstaidlocationJob($details));
-    //                dispatch((new ImportfirstaidlocationJob($details))->onQueue('firstaidlocation'));
-    //         }
-
-    //         $insert_data['log_id'] = $insert_id;
-    //         $insert_data['Uploded_by'] = Auth::user()->toArray();
-
-    //         Session::flash('success', __('firstaidlocation uploaded sucessfully'));
-    //         return redirect(admin_url('firstaidlocation/list'));
-    //     } catch (Exception $ex) {
-    //         report($ex);
-    //         Session::flash('error', __('firstaidlocation upload failed'));
-    //         return redirect(admin_url('firstaidlocation/list'));
-    //     }
-    // }
     public function ExportExcel(Request $request)
     {
 
@@ -423,7 +322,7 @@ class FirstAidLocationController extends Controller
                 $export[] =  getUnitname($data->unit_id);
                 $export[] =  getDepartment($data->department_id);
                 $export[] = $data->location_id;
-                $export[] =  getEmployeename($data->station_master);
+                $export[] =  $data->station_master;
                 $export[] =  $data->station_number;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
@@ -505,18 +404,18 @@ class FirstAidLocationController extends Controller
     {
         $search = $request->input('search');
 
-        $employees = Employee::where('status', 1)
-            ->where(function ($query) use ($search) {
-                $query->where('emp_name', 'like', '%' . $search . '%')
-                      ->orWhere('emp_id', 'like', '%' . $search . '%');
-            })
+        $employees = Work::where(function ($query) use ($search) {
+            $query->where('emp_name', 'like', '%' . $search . '%')
+                ->orWhere('emp_id', 'like', '%' . $search . '%');
+        })
+            ->where('status', 1)
             ->limit(10)
             ->get();
 
         return response()->json(
             $employees->map(function ($employee) {
                 return [
-                    'id' => $employee->id,
+                    'id' => $employee->emp_id,
                     'text' => $employee->emp_name . ' - ' . $employee->emp_id,
                 ];
             })

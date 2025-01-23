@@ -817,6 +817,8 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('/import/submit', [FirstAidLocationController::class, 'importSubmit']);
             Route::post('/status', [FirstAidLocationController::class, 'statusChange']);
             Route::post('/unique', [FirstAidLocationController::class, 'Uniquecheck']);
+            Route::get('/employeename', [FirstAidLocationController::class, 'employeename']);
+
         });
 
         Route::group(['prefix' => 'ohc/certified-first-aider'], function () {

@@ -228,22 +228,22 @@ class VendorController extends Controller
     }
 
 
+    
     public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {
             $vendor_name = $request->vendor_name;
             $license_no = $request->license_no;
             $id = $request->id;
-            if ($id == '') {
-                $record = $this->vendor->uniqueCheck($vendor_name,$license_no);
+
+            if (empty($id)) {
+                $isUnique = !$this->vendor->uniqueCheck($vendor_name,$license_no);
             } else {
                 $id = decryptId($id);
-                $record = $this->vendor->existUniqueCheck($vendor_name,$license_no, $id);
+                $isUnique = !$this->vendor->existUniqueCheck($vendor_name,$license_no, $id);
             }
-            if ($record->count()) {
-                return Response::json(false);
-            }
-            return Response::json(true);
+
+            return Response::json($isUnique);
         }
     }
 

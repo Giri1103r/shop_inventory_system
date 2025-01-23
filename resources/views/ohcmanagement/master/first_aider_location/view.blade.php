@@ -60,7 +60,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Station Master') }}</label>
                                         <div class="view_data">
-                                            {{ getEmployeename(isset($firstaidlocation->station_master) ? $firstaidlocation->station_master : '') }}
+                                            {{ isset($firstaidlocation->station_master) ? $firstaidlocation->station_master : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">

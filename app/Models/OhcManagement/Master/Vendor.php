@@ -103,11 +103,11 @@ class Vendor extends Model
                     ->exists();
     }
 
-    public function existUniqueCheck($vendor_name,$license_no,$id)
+    public function existUniqueCheck($vendor_name, $license_no, $id)
     {
         return $this->where(function ($query) use ($vendor_name, $license_no) {
                         $query->where('vendor_name', $vendor_name)
-                              ->orWhere('emp_name', $license_no);
+                              ->orWhere('license_no', $license_no); // Fixed here
                     })
                     ->where('id', '!=', $id)
                     ->exists();
