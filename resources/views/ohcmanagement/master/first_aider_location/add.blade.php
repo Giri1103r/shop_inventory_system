@@ -1,34 +1,16 @@
 @extends('admin.layouts.admin')
-@section('title', 'Company Master Add')
-@section('pageurl', admin_url('company/list'))
+@section('title', 'First Aider Location Add')
+@section('pageurl', admin_url('ohc/first-aid-location/list'))
 
 
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
-            {{-- <h4 class="text-black">Company Add</h4> --}}
+
 
         </div>
-        {{-- <ol class="breadcrumb">
-            <li class="breadcrumb-item active ms-auto">
-                <a class="d-flex align-self-center" href="{{ admin_url('dashboard') }}">
-                    <svg class="me-2 svg-main-icon" xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24"
-                        version="1.1">
-                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                            <rect x="0" y="0" width="24" height="24"></rect>
-                            <path
-                                d="M3.95709826,8.41510662 L11.47855,3.81866389 C11.7986624,3.62303967 12.2013376,3.62303967 12.52145,3.81866389 L20.0429,8.41510557 C20.6374094,8.77841684 21,9.42493654 21,10.1216692 L21,19.0000642 C21,20.1046337 20.1045695,21.0000642 19,21.0000642 L4.99998155,21.0000673 C3.89541205,21.0000673 2.99998155,20.1046368 2.99998155,19.0000673 L2.99999828,10.1216672 C2.99999935,9.42493561 3.36258984,8.77841732 3.95709826,8.41510662 Z M10,13 C9.44771525,13 9,13.4477153 9,14 L9,17 C9,17.5522847 9.44771525,18 10,18 L14,18 C14.5522847,18 15,17.5522847 15,17 L15,14 C15,13.4477153 14.5522847,13 14,13 L10,13 Z"
-                                fill="#009999"></path>
-                        </g>
-                    </svg>
-                    {{ __('common.dashboard') }}
-                </a>
-            </li>
-            <li class="breadcrumb-item"><a href="javascript:void(0)">{{ __('leftmenu.menu_4') }}</a></li>
-            <li class="breadcrumb-item"><a href="javascript:void(0)">{{ __('leftmenu.menu_8') }}</a></li>
-        </ol> --}}
+
     </div>
 
     <div class="content-body  default-height">
@@ -40,48 +22,69 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
+
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('company/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('ohc/first-aid-location/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="companyadd" action="{{ admin_url('company/add/submit') }}">
+                                    <form method="POST" id="FirstAiderLocationAdd"
+                                        action="{{ admin_url('ohc/first-aid-location/add/submit') }}">
                                         @csrf
 
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Company ID</label>
-                                                    <input type="text" name ="company_id" class="form-control"
-                                                        placeholder="Company ID" value="{{ getsequence('company') }}"
-                                                        readonly>
+                                                    <label class="form-label require">Unit</label>
+                                                    <select name="unit_id" id="unit_id" class="form-control single-select"
+                                                        style="width: 100%">
+                                                        <option value="">Select the unit</option>
+                                                        @foreach ($unit as $list)
+                                                            <option value="{{ $list->id }}">{{ $list->unit_name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Company Name</label>
-                                                    <input type="text" name="company_name" id="company_name"
-                                                        class="form-control" placeholder="Company Name">
+                                                    <label class="form-label require">Department</label>
+                                                    <select name="department_id" id="department_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Department </option>
+
+                                                    </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Short Name</label>
-                                                    <input type="text" name="short_name" class="form-control"
-                                                        placeholder="Short Name">
+                                                    <label class="form-label require">Location Name</label>
+                                                    <input type="text" name="location_id" id="location_id"
+                                                        class="form-control" placeholder="Location Name">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Station Master</label>
+                                                    <select name="station_master" id="station_master" class=" form-control"
+                                                        style="width: 100%">
+                                                        <option value="">Select the person</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Station Number</label>
+                                                    <input type="text" name="station_number" id="station_number"
+                                                        class="form-control" placeholder="Station Number">
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-12">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Address</label>
-                                                    <textarea name="address" class="form-control" placeholder="Company Address"></textarea>
-                                                </div>
-                                            </div>
+
+
                                         </div>
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
@@ -111,54 +114,104 @@
                 location.reload();
             });
         });
+        $('#station_master').select2({
+            ajax: {
+                url: '{{ admin_url('safetypermit/employeename') }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search: params.term
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: $.map(data, function(item) {
+                            return {
+                                id: item.id,
+                                text: item.text
+                            };
+                        })
+                    };
+                }
+            },
+            minimumInputLength: 1,
+            dropdownCssClass: 'form-control',
+            selectionCssClass: 'form-control'
+        });
+
+        $(document).on('change', '#unit_id', function() {
+            var unitId = $(this).val();
+            if (unitId) {
+                $.ajax({
+                    url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#department_id').empty().append(
+                            '<option value="">Select Department</option>');
+                        $.each(data, function(key, value) {
+                            $('#department_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#department_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching department. Please try again.');
+                    }
+                });
+            } else {
+                $('#department_id').empty().append('<option value="">Select Department</option>');
+                $('#department_id').trigger('change.');
+            }
+        });
         $(function() {
-            $('#companyadd').validate({
+            $('#FirstAiderLocationAdd').validate({
                 rules: {
-                    company_name: {
+                    location_id: {
                         required: true,
                         minlength: 3,
-                        maxlength: 100,
+                        maxlength: 30,
                         pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
-                        remote: {
-                            url: '{{ admin_url('company/unique') }}',
-                            type: 'post',
-                            data: {
-                                location_type_name: function() {
-                                    return $('#company_name').val();
-                                }
-                            }
-                        }
                     },
-                    short_name: {
+                    department_id: {
+                        required: true,
+                    },
+                    unit_id: {
+                        required: true,
+                    },
+                    station_master: {
+                        required: true,
+                    },
+                    station_number: {
                         required: true,
                         minlength: 3,
-                        maxlength: 10,
+                        maxlength: 20,
                         pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
-                    },
-                    address: {
-                        required: true,
-                        maxlength: 300,
                     },
                 },
                 messages: {
-                    company_name: {
-                        required: "{{ __('Company Name is Required') }}",
-                        minlength: "{{ __('common.validate_min_length') }}",
-                        maxlength: "Maximum Characters should not exceed 100",
-                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
-                        remote: "{{ __('Company Name should be unique') }}"
+                    location_id: {
+                        required: "Location Name is required.",
+                        minlength: "Location Name must be at least 3 characters long.",
+                        maxlength: "Location Name must not exceed 30 characters.",
+                        pattern: "Location Name contains invalid characters.",
                     },
-                    short_name: {
-                        required: "{{ __('Short Name is Required') }}",
-                        minlength: "{{ __('common.validate_min_length') }}",
-                        maxlength: "Maximum Characters should not exceed 10",
-                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+                    department_id: {
+                        required: "Department is required.",
                     },
-                    address: {
-                        required: "{{ __('Company Address is Required') }}",
-                        maxlength: "Maximum Characters should not exceed 300",
+                    unit_id: {
+                        required: "Unit is required.",
                     },
-
+                    station_master: {
+                        required: "Station master is required.",
+                    },
+                    station_number: {
+                        required: "Station number is required.",
+                        minlength: "Station number must be at least 3 characters long.",
+                        maxlength: "Station number must not exceed 20 characters.",
+                        pattern: "Station number contains invalid characters.",
+                    },
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
@@ -173,15 +226,13 @@
                 },
                 submitHandler: function(form) {
                     form.submit();
-
                 },
                 invalidHandler: function(event, validator) {
                     var errors = validator.numberOfInvalids();
                     validator.errorList.forEach(function(error) {
-                        // console.log("Field: " + error.element.name + ", Error: " + error
-                        //     .message);
+
                     });
-                }
+                },
             });
         });
     </script>

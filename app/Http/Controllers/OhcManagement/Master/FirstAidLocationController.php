@@ -10,6 +10,7 @@ use App\Models\Master\Department;
 use App\Models\User;
 use App\Models\UploadLog;
 use App\Jobs\ImportfirstaidlocationJob;
+use App\Models\Master\Employee;
 use App\Models\OhcManagement\Master\FirstAidLocation;
 use Illuminate\Support\Facades\Auth;
 use Exception;
@@ -104,8 +105,10 @@ class FirstAidLocationController extends Controller
     {
 
         try {
-
-            $data = array();
+            $unit = $this->unit->getunit();
+            $data = [
+                'unit' => $unit
+            ];
             return view('ohcmanagement.master.first_aider_location.add', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -115,18 +118,20 @@ class FirstAidLocationController extends Controller
     public function Store(Request $request)
     {
         try {
-
             $rules = [
-                'firstaidlocation_id' => 'required',
-                'firstaidlocation_name' => 'required',
-                'short_name' => 'required',
-                'address' => 'required',
+                'unit_id' => 'required',
+                'department_id' => 'required',
+                'location_id' => 'required',
+                'station_master' => 'required',
+                'station_number' => 'required',
+
             ];
             $messages = [
-                'firstaidlocation_id.required' => 'Please enter firstaidlocation ID',
-                'firstaidlocation_name.required' => 'Please enter firstaidlocation Name',
-                'short_name.required' => 'Please enter Short Name',
-                'address.required' => 'Please enter firstaidlocation Address',
+              'unit_id.required'=>'Unit is required',
+                'department_id.required'=>'Department is required',
+                'location_id.required'=>'Location Name is required',
+                'station_master.required'=>'Station Master is required',
+                'station_number.required'=>'Station number is required',
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -136,22 +141,13 @@ class FirstAidLocationController extends Controller
 
             try {
 
-                // $userDetails = $this->user->firstaidlocationstore();
 
-                // $id = $userDetails->id;
                 $firstaidlocation = $this->firstaidlocation->store();
-                // if ($userDetails->email != '' || $userDetails->email != null) {
 
-                //     $empdetails =  $this->user->selectOne($id);
-
-                //     $emp  = $empdetails->toArray();
-
-                //     Mail::to($empdetails->email)->queue(new EmployeeRegisterEmail($emp));
-                // }
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
@@ -204,27 +200,29 @@ class FirstAidLocationController extends Controller
         try {
             $id = decryptId($request->id);
             $rules = [
-                'firstaidlocation_id' => 'required',
-                'firstaidlocation_name' => 'required',
-                'short_name' => 'required',
-                'address' => 'required',
+                'unit_id' => 'required',
+                'department_id' => 'required',
+                'location_id' => 'required',
+                'station_master' => 'required',
+                'station_number' => 'required',
+
             ];
             $messages = [
-                'firstaidlocation_id.required' => 'Please enter firstaidlocation ID',
-                'firstaidlocation_name.required' => 'Please enter firstaidlocation Name',
-                'short_name.required' => 'Please enter Short Name',
-                'address.required' => 'Please enter firstaidlocation Address',
+              'unit_id.required'=>'Unit is required',
+                'department_id.required'=>'Department is required',
+                'location_id.required'=>'Location Name is required',
+                'station_master.required'=>'Station Master is required',
+                'station_number.required'=>'Station number is required',
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
+                dd($validator->errors());
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
             $this->firstaidlocation->updates($id);
 
-            // $firstaidlocation = $this->firstaidlocation->find($id);
-            // $this->user->firstaidlocationUpdate($firstaidlocation->login_id);
 
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('ohc/first-aid-location/list'));
@@ -480,6 +478,29 @@ class FirstAidLocationController extends Controller
             report($ex);
         }
     }
+
+    public function employeename(Request $request)
+    {
+        $search = $request->input('search');
+
+        $employees = Employee::where('status', 1)
+            ->where(function ($query) use ($search) {
+                $query->where('emp_name', 'like', '%' . $search . '%')
+                      ->orWhere('emp_id', 'like', '%' . $search . '%');
+            })
+            ->limit(10)
+            ->get();
+
+        return response()->json(
+            $employees->map(function ($employee) {
+                return [
+                    'id' => $employee->id,
+                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+                ];
+            })
+        );
+    }
+
 
     public function DownloadSample(Request $request)
     {

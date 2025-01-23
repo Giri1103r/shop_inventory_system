@@ -508,7 +508,7 @@
                         work_name: {
                             required: true,
                             minlength: 3,
-                            maxlength: 30,
+                            maxlength: 2000,
                             regex: /^[a-zA-Z0-9-\s]*$/,
                             remote: {
                                 url: '{{ admin_url('ptw/typeofworkmaster/unique') }}',
@@ -548,7 +548,7 @@
                         work_name: {
                             required: "{{ __('Name is Required') }}",
                             minlength: "{{ __('common.validate_min_length') }}",
-                            maxlength: "Maximum Characters should not exceed 100",
+                            maxlength: "Maximum Characters should not exceed 2000",
                             remote: "{{ __('Name should be unique') }}",
                         },
                         description: {

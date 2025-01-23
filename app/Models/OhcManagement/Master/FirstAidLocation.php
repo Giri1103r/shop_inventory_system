@@ -40,7 +40,7 @@ class FirstAidLocation extends Model
 
     public function list()
     {
-      
+
         $request = request();
         $search = '';
         $query = $this->select('ohc_master_first_aid_location.*');
@@ -104,10 +104,10 @@ class FirstAidLocation extends Model
     public function store()
     {
         $request = request();
-
+    //    dd( $request->all());
         $insert_array = array(
             'unit_id'         =>$request-> unit_id,
-            'department_id'   =>$request->deparment_id ,
+            'department_id'   =>decryptID($request->department_id) ,
             'location_id'     =>$request-> location_id,
             'station_master' =>$request->station_master,
             'station_number' =>$request->station_number ,

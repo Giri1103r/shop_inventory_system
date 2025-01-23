@@ -101,7 +101,7 @@
                 rules: {
                     protective_equip: {
                         required: true,
-                        minlength: 100,
+                        minlength: 3,
                         maxlength: 2000,
 
                         remote: {
@@ -119,7 +119,7 @@
                 messages: {
                     protective_equip: {
                         required: "{{ __('Name is Required') }}",
-                        minlength: "Minimum Characters should be 100",
+                        minlength: "Minimum Characters should be 3",
                         maxlength: "Maximum Characters should not exceed 2000",
                         remote: "{{ __('Name should be unique') }}",
 

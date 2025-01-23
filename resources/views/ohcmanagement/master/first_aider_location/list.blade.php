@@ -74,9 +74,9 @@
                                         <th>Unit</th>
                                         <th>Department Name</th>
                                         <th>Location Name</th>
-                                        <th>{{ __('common.status') }}</th>
                                         <th>Station Master</th>
                                         <th>Station Number</th>
+                                        <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -96,217 +96,251 @@
 @stop
 
 @push('script')
-<script type="text/javascript">
-    $(document).ready(function() {
-        // Remove default sorting class
-        $('.datatable-list thead th:first').removeClass('sorting_asc');
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Remove default sorting class
+            $('.datatable-list thead th:first').removeClass('sorting_asc');
 
-        // Initialize Flatpickr for date fields
-        var fromDatepicker = flatpickr("#from_date", {
-            dateFormat: "d-m-Y",
-            onChange: function(selectedDates) {
-                if (selectedDates.length > 0) {
-                    var startDate = selectedDates[0];
-                    toDatepicker.set('minDate', startDate);
-                    toDatepicker.clear();
-                }
-            }
-        });
-
-        var toDatepicker = flatpickr("#to_date", {
-            dateFormat: "d-m-Y",
-            minDate: "today"
-        });
-
-        // Initialize DataTable
-        var table = $('.datatable-list').DataTable({
-            autoWidth: false,
-            responsive: true,
-            processing: true,
-            serverSide: true,
-            searching: true,
-            ordering: true,
-            dom: 'Bfrtip',
-            ajax: {
-                url: "{{ admin_url('ohc/first-aid-location/list') }}",
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-               
-                error: function(xhr) {
-                    if (xhr.status === 419) {
-                        alert('Session has expired. You will be redirected to the login page.');
-                        window.location.href = "{{ url('') }}";
+            // Initialize Flatpickr for date fields
+            var fromDatepicker = flatpickr("#from_date", {
+                dateFormat: "d-m-Y",
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        var startDate = selectedDates[0];
+                        toDatepicker.set('minDate', startDate);
+                        toDatepicker.clear();
                     }
                 }
-            },
-            columns: [
-                { data: 'DT_RowIndex', orderable: false, searchable: false },
-                { data: 'unit_id', name: 'unit_id' },
-                { data: 'department_id', name: 'department_id' },
-                { data: 'location_id', name: 'location_id' },
-                { data: 'station_master', name: 'station_master' },
-                { data: 'station_number', name: 'station_number' },
-                { data: 'status', name: 'status' },
-                { data: 'remarks', name: 'remarks' },
-                { data: 'created_by', name: 'created_by' },
-                { data: 'created_at', name: 'created_at' },
-                { data: 'action', name: 'action', orderable: false }
-            ],
-            language: {
-                paginate: {
-                    first: '<i title="{{ __('common.first') }}" class="fa fa-angle-double-left"></i>',
-                    last: '<i title="{{ __('common.last') }}" class="fa fa-angle-double-right"></i>',
-                    next: '<i title="{{ __('common.next') }}" class="fa fa-angle-right"></i>',
-                    previous: '<i title="{{ __('common.previous') }}" class="fa fa-angle-left"></i>'
-                },
-                info: "{{ __('common.dt_info') }}",
-                infoEmpty: "{{ __('common.dt_infoEmpty') }}",
-                infoFiltered: "{{ __('common.dt_infoFiltered') }}"
-            },
-            lengthMenu: [
-                [10, 25, 50, 100],
-                [10, 25, 50, 100]
-            ],
-            buttons: [
-                {
-                    extend: 'collection',
-                    text: '{{ __('common.export') }}',
-                    buttons: [
-                        {
-                            extend: 'pdf',
-                            text: '{{ __('common.pdf') }}',
-                            action: function(e, dt, button, config) {
-                                exportData('pdf');
-                            }
-                        },
-                        {
-                            extend: 'excel',
-                            text: '{{ __('common.excel') }}',
-                            action: function(e, dt, button, config) {
-                                exportData('excel');
-                            }
+            });
+
+            var toDatepicker = flatpickr("#to_date", {
+                dateFormat: "d-m-Y",
+                minDate: "today"
+            });
+
+            // Initialize DataTable
+            var table = $('.datatable-list').DataTable({
+                autoWidth: false,
+                responsive: true,
+                processing: true,
+                serverSide: true,
+                searching: true,
+                ordering: true,
+                dom: 'Bfrtip',
+                ajax: {
+                    url: "{{ admin_url('ohc/first-aid-location/list') }}",
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+
+                    error: function(xhr) {
+                        if (xhr.status === 419) {
+                            alert('Session has expired. You will be redirected to the login page.');
+                            window.location.href = "{{ url('') }}";
                         }
-                    ]
+                    }
                 },
-                {
-                    extend: 'pageLength',
-                    text: '{{ __('common.show') }} 10 {{ __('common.records') }}'
-                }
-            ]
-        });
+                columns: [{
+                        data: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'unit_id',
+                        name: 'unit_id'
+                    },
+                    {
+                        data: 'department_id',
+                        name: 'department_id'
+                    },
+                    {
+                        data: 'location_id',
+                        name: 'location_id'
+                    },
+                    {
+                        data: 'station_master',
+                        name: 'station_master'
+                    },
+                    {
+                        data: 'station_number',
+                        name: 'station_number'
+                    },
+                    {
+                        data: 'status',
+                        name: 'status'
+                    },
+                    {
+                        data: 'created_by',
+                        name: 'created_by'
+                    },
+                    {
+                        data: 'created_at',
+                        name: 'created_at'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false
+                    }
+                ],
+                language: {
+                    paginate: {
+                        first: '<i title="{{ __('common.first') }}" class="fa fa-angle-double-left"></i>',
+                        last: '<i title="{{ __('common.last') }}" class="fa fa-angle-double-right"></i>',
+                        next: '<i title="{{ __('common.next') }}" class="fa fa-angle-right"></i>',
+                        previous: '<i title="{{ __('common.previous') }}" class="fa fa-angle-left"></i>'
+                    },
+                    info: "{{ __('common.dt_info') }}",
+                    infoEmpty: "{{ __('common.dt_infoEmpty') }}",
+                    infoFiltered: "{{ __('common.dt_infoFiltered') }}"
+                },
+                lengthMenu: [
+                    [10, 25, 50, 100],
+                    [10, 25, 50, 100]
+                ],
+                buttons: [{
+                        extend: 'collection',
+                        text: '{{ __('common.export') }}',
+                        buttons: [{
+                                extend: 'pdf',
+                                text: '{{ __('common.pdf') }}',
+                                action: function(e, dt, button, config) {
+                                    exportData('pdf');
+                                }
+                            },
+                            {
+                                extend: 'excel',
+                                text: '{{ __('common.excel') }}',
+                                action: function(e, dt, button, config) {
+                                    exportData('excel');
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        extend: 'pageLength',
+                        text: '{{ __('common.show') }} 10 {{ __('common.records') }}'
+                    }
+                ]
+            });
 
-        // Search and reset functionality
-        $(document).on('click', '#searchform', function() {
-            table.draw();
-        });
-
-        $(document).on('click', '#resetform', function() {
-            $('#formsearch .single-select').val('');
-            $('#formsearch .single-select').trigger('change');
-            setTimeout(function() {
+            // Search and reset functionality
+            $(document).on('click', '#searchform', function() {
                 table.draw();
-            }, 150);
+            });
+
+            $(document).on('click', '#resetform', function() {
+                $('#formsearch .single-select').val('');
+                $('#formsearch .single-select').trigger('change');
+                setTimeout(function() {
+                    table.draw();
+                }, 150);
+            });
+
+            // Status Change functionality
+            $(document).on('click', '.statusChange', function() {
+                var id = $(this).data('id');
+                var type = $(this).data('type');
+                var title = type == 1 ? '{{ __('Do You want to In-Activate Medicine Details') }}' :
+                    '{{ __('Do You want to Activate Medicine Details') }}';
+                var btnColor = type == 1 ? '#dc3545' : '#7ddc35';
+
+                Swal.fire({
+                    title: title,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: type == 1 ? '{{ __('common.inactive') }}' :
+                        '{{ __('common.active') }}',
+                    confirmButtonColor: btnColor,
+                    customClass: {
+                        confirmButton: 'btn-skew',
+                        cancelButton: 'btn-skew'
+                    }
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            url: "{{ admin_url('ohc/first-aid-location/status') }}",
+                            type: 'POST',
+                            data: {
+                                id: id,
+                                types: type
+                            },
+                            success: function(response) {
+                                showToast('success', response.msg);
+                                table.draw();
+                            },
+                            error: function(xhr) {
+                                showToast('error', xhr.responseJSON.msg);
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Delete Record functionality
+            $(document).on('click', '.recordDelete', function() {
+                var id = $(this).data('id');
+                Swal.fire({
+                    title: '{{ __('Do You want to Delete Company Details') }}',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '{{ __('common.delete') }}',
+                    confirmButtonColor: '#dc3545',
+                    customClass: {
+                        confirmButton: 'btn-skew',
+                        cancelButton: 'btn-skew'
+                    }
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            url: "{{ admin_url('company/delete') }}",
+                            type: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            data: {
+                                id: id
+                            },
+                            success: function(response) {
+                                showToast('success', response.msg);
+                                table.draw();
+                            },
+                            error: function(xhr) {
+                                showToast('error', xhr.responseJSON.msg);
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Helper functions
+            function showToast(icon, message) {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-right',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+                Toast.fire({
+                    icon: icon,
+                    title: message
+                });
+            }
+
+            function exportData(type) {
+                var params = {
+                    search: $('#datatable-list_filter input').val(),
+                    medicine: $('#medicine').val(),
+                    unit: $('#unit').val(),
+                    from_date: $('#from_date').val(),
+                    to_date: $('#to_date').val(),
+                    status: $('#status').val()
+                };
+                var url = `{{ admin_url('ohc/first-aid-location/export/${type}') }}?` + $.param(params);
+                window.location.href = url;
+            }
         });
-
-        // Status Change functionality
-        $(document).on('click', '.statusChange', function() {
-            var id = $(this).data('id');
-            var type = $(this).data('type');
-            var title = type == 1 ? '{{ __('Do You want to In-Activate Medicine Details') }}' : '{{ __('Do You want to Activate Medicine Details') }}';
-            var btnColor = type == 1 ? '#dc3545' : '#7ddc35';
-
-            Swal.fire({
-                title: title,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: type == 1 ? '{{ __('common.inactive') }}' : '{{ __('common.active') }}',
-                confirmButtonColor: btnColor,
-                customClass: {
-                    confirmButton: 'btn-skew',
-                    cancelButton: 'btn-skew'
-                }
-            }).then((result) => {
-                if (result.value) {
-                    $.ajax({
-                        url: "{{ admin_url('ohc/first-aid-location/status') }}",
-                        type: 'POST',
-                        data: { id: id, types: type },
-                        success: function(response) {
-                            showToast('success', response.msg);
-                            table.draw();
-                        },
-                        error: function(xhr) {
-                            showToast('error', xhr.responseJSON.msg);
-                        }
-                    });
-                }
-            });
-        });
-
-        // Delete Record functionality
-        $(document).on('click', '.recordDelete', function() {
-            var id = $(this).data('id');
-            Swal.fire({
-                title: '{{ __('Do You want to Delete Company Details') }}',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: '{{ __('common.delete') }}',
-                confirmButtonColor: '#dc3545',
-                customClass: {
-                    confirmButton: 'btn-skew',
-                    cancelButton: 'btn-skew'
-                }
-            }).then((result) => {
-                if (result.value) {
-                    $.ajax({
-                        url: "{{ admin_url('company/delete') }}",
-                        type: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        data: { id: id },
-                        success: function(response) {
-                            showToast('success', response.msg);
-                            table.draw();
-                        },
-                        error: function(xhr) {
-                            showToast('error', xhr.responseJSON.msg);
-                        }
-                    });
-                }
-            });
-        });
-
-        // Helper functions
-        function showToast(icon, message) {
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-right',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true
-            });
-            Toast.fire({
-                icon: icon,
-                title: message
-            });
-        }
-
-        function exportData(type) {
-            var params = {
-                search: $('#datatable-list_filter input').val(),
-                medicine: $('#medicine').val(),
-                unit: $('#unit').val(),
-                from_date: $('#from_date').val(),
-                to_date: $('#to_date').val(),
-                status: $('#status').val()
-            };
-            var url = `{{ admin_url('ohc/first-aid-location/export/${type}') }}?` + $.param(params);
-            window.location.href = url;
-        }
-    });
-</script>
+    </script>
 @endpush
-
