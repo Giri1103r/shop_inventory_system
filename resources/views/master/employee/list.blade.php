@@ -74,7 +74,7 @@
                                         <th>Employee Name</th>
                                         <th>Employee Email</th>
                                         <th>Phone Number</th>
-                                        <th>Department Name</th>
+                                        <th data-priority="3">Department Name</th>
                                         <th>Unit Name</th>
                                         <th>Employee Status</th>
                                         <th>Reporting Manager</th>
