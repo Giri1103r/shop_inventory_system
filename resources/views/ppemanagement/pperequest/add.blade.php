@@ -61,13 +61,9 @@
                                                     <div class="form-group form-input">
                                                         <label for="emp_id" class="form-label require">Employee ID</label>
                                                         <select name="emp_id" id="emp_id"
-                                                            class="form-select form-select-sm single-select"
+                                                            class="form-select single-select form-select-sm"
                                                             style="width: 100%">
-                                                            <option value="">Select the employee</option>
-                                                            @foreach ($employeelist as $list)
-                                                                <option value="{{ $list->employee_id }}">
-                                                                    {{ $list->employee_id }}</option>
-                                                            @endforeach
+                                                            <option value="">Select the worker</option>
                                                         </select>
                                                         <div class="text-danger"></div>
                                                     </div>
@@ -232,6 +228,10 @@
         });
 
         $(document).ready(function() {
+
+
+
+
             $('input[name="request_for"]').on("change", function() {
                 var requestFor = $(this).val();
                 var empIdContainer = $("#emp_id_container");
@@ -253,24 +253,69 @@
                     // If "Worker" is selected
                     empIdContainer.html(`
                 <label for="emp_id" class="form-label require">Employee ID</label>
-                <select name="emp_id" id="emp_id" class="form-select form-select-sm single-select" style="width: 100%">
-                    <option value="">Select the employee</option>
-                    @foreach ($employeelist as $list)
-                        <option value="{{ $list->employee_id }}">{{ $list->employee_id }}</option>
-                    @endforeach
+                <select name="emp_id" id="emp_id" class="form-select form-select-sm " style="width: 100%">
+                    <option value="">Select the Worker</option>
                 </select>
                 <div class="text-danger"></div>
             `);
 
                     // Reinitialize Select2 for the new dropdown
-                    $("#emp_id").select2();
+                    $('#emp_id').select2({
+                ajax: {
+                    url: '{{ admin_url('ppe_request/employeeid') }}',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.id,
+                                    text: item.text
+                                };
+                            })
+                        };
+                    }
+                },
+                minimumInputLength: 1,
+                dropdownCssClass: 'form-control',
+                selectionCssClass: 'form-control'
+            });
 
                     // Clear employee name and department
                     $("#emp_name").val("");
                     $("#department").val("");
                 }
             });
-
+            // $('#emp_id').select2({
+            //     ajax: {
+            //         url: '{{ admin_url('ppe_request/employeeid') }}',
+            //         dataType: 'json',
+            //         delay: 250,
+            //         data: function(params) {
+            //             return {
+            //                 search: params.term
+            //             };
+            //         },
+            //         processResults: function(data) {
+            //             return {
+            //                 results: $.map(data, function(item) {
+            //                     return {
+            //                         id: item.id,
+            //                         text: item.text
+            //                     };
+            //                 })
+            //             };
+            //         }
+            //     },
+            //     minimumInputLength: 1,
+            //     dropdownCssClass: 'form-control',
+            //     selectionCssClass: 'form-control'
+            // });
             // Handle Employee ID change for Worker
             $(document).on("change", "#emp_id", function() {
                 var emp_id = $(this).val();

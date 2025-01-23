@@ -17,6 +17,7 @@ use App\Models\Master\PpeRequest;
 use App\Models\Master\PpeStockinventory;
 use App\Models\Master\PpeType;
 use App\Models\Master\PpeTypeMaster;
+use App\Models\Master\Work;
 use App\Models\Master\Worktemp;
 use App\Models\Statuslog;
 
@@ -37,7 +38,6 @@ use Yajra\DataTables\Facades\DataTables;
 class PpeRequestController extends Controller
 {
     private $ppetypemaster;
-    private $worktemp;
     private $ppetype;
     private $pperequest;
     private $employee;
@@ -47,6 +47,7 @@ class PpeRequestController extends Controller
     private $ppestatus;
     private $approvestatus;
     private $department;
+    private $work;
 
     public function __construct()
     {
@@ -56,11 +57,11 @@ class PpeRequestController extends Controller
         $this->pperequest = new PpeRequest();
         $this->employee = new Employee();
         $this->user = new User();
-        $this->worktemp = new Worktemp();
         $this->ppestock = new PpeStockinventory();
         $this->ppestatus = new Statuslog();
         $this->approvestatus = new ApproveStatus();
         $this->department = new Department();
+        $this->work = new Work();
     }
     public function index(Request $request)
     {
@@ -125,7 +126,7 @@ class PpeRequestController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             if (CheckUserPermission('view')) {
-                                $btn .= '<a href="' . admin_url('ppe_request/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ppe_request/view/' . encryptId($row->ppe_request_id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             }
                             // if (CheckUserPermission('edit')) {
                             //     $btn .= '<a href="' . admin_url('ppe_request/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
@@ -192,24 +193,45 @@ class PpeRequestController extends Controller
         $ppetypedata = $this->ppetype->getPpetypedata();
         $itemCode = $this->ppestock->getItemCode();
         $userdata = $this->pperequest->userdata();
-        $employeelist = $this->user->getEmployeeID();
+        // $employeelist = $this->employee->getEmployeeID();
+
+        $worker  = $this->work->first();
+
         $data = [
             'employee' => $employee,
             'ppetypedata' => $ppetypedata,
             'itemCode' => $itemCode,
             'userdata' => $userdata,
-            'employeelist' => $employeelist,
 
 
 
         ];
         return view('ppemanagement.pperequest.add', $data);
     }
+    public function employeeid(Request $request)
+    {
+        $name = $request->input('search');
+
+
+            $employee_code = Work::where('emp_id', 'like', '%' . $name . '%')
+                ->where('status', 1)
+                ->limit(10)
+                ->get();
+
+        return response()->json(
+            $employee_code->map(function ($employee) {
+                return [
+                    'id' => $employee->emp_id,
+                    'text' => $employee->emp_id,
+                ];
+            })
+        );
+    }
 
     public function fetchEmployeeDetails($emp_id)
     {
 
-        $employee = $this->employee->select('emp_name', 'email', 'department')
+        $employee = $this->work->select('emp_name', 'department')
             ->where('emp_id', $emp_id)
             // ->where('emp_id','!=',Auth::user()->employee_id)
             ->first();

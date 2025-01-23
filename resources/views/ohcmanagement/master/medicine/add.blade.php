@@ -171,7 +171,7 @@
                             url: '{{ admin_url('ohc/medicine/unique') }}',
                             type: 'post',
                             data: {
-                                _token: "{{ csrf_token() }}", // Include CSRF token
+                                _token: "{{ csrf_token() }}",
                                 medicine_name: function() {
                                     return $('#medicine').val();
                                 },

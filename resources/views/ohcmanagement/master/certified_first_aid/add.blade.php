@@ -1,34 +1,16 @@
 @extends('admin.layouts.admin')
-@section('title', 'Company Master Add')
-@section('pageurl', admin_url('company/list'))
+@section('title', 'Certified First Aider Add')
+@section('pageurl', admin_url('ohc/certified-first-aider/list'))
 
 
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
-            {{-- <h4 class="text-black">Company Add</h4> --}}
+
 
         </div>
-        {{-- <ol class="breadcrumb">
-            <li class="breadcrumb-item active ms-auto">
-                <a class="d-flex align-self-center" href="{{ admin_url('dashboard') }}">
-                    <svg class="me-2 svg-main-icon" xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24"
-                        version="1.1">
-                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                            <rect x="0" y="0" width="24" height="24"></rect>
-                            <path
-                                d="M3.95709826,8.41510662 L11.47855,3.81866389 C11.7986624,3.62303967 12.2013376,3.62303967 12.52145,3.81866389 L20.0429,8.41510557 C20.6374094,8.77841684 21,9.42493654 21,10.1216692 L21,19.0000642 C21,20.1046337 20.1045695,21.0000642 19,21.0000642 L4.99998155,21.0000673 C3.89541205,21.0000673 2.99998155,20.1046368 2.99998155,19.0000673 L2.99999828,10.1216672 C2.99999935,9.42493561 3.36258984,8.77841732 3.95709826,8.41510662 Z M10,13 C9.44771525,13 9,13.4477153 9,14 L9,17 C9,17.5522847 9.44771525,18 10,18 L14,18 C14.5522847,18 15,17.5522847 15,17 L15,14 C15,13.4477153 14.5522847,13 14,13 L10,13 Z"
-                                fill="#009999"></path>
-                        </g>
-                    </svg>
-                    {{ __('common.dashboard') }}
-                </a>
-            </li>
-            <li class="breadcrumb-item"><a href="javascript:void(0)">{{ __('leftmenu.menu_4') }}</a></li>
-            <li class="breadcrumb-item"><a href="javascript:void(0)">{{ __('leftmenu.menu_8') }}</a></li>
-        </ol> --}}
+
     </div>
 
     <div class="content-body  default-height">
@@ -40,46 +22,72 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
+
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('company/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('ohc/certified-first-aider/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="companyadd" action="{{ admin_url('company/add/submit') }}">
+                                    <form method="POST" id="CertifiedFirstAiderAdd"
+                                        action="{{ admin_url('ohc/certified-first-aider/add/submit') }}">
                                         @csrf
 
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Company ID</label>
-                                                    <input type="text" name ="company_id" class="form-control"
-                                                        placeholder="Company ID" value="{{ getsequence('company') }}"
-                                                        readonly>
+                                                    <label class="form-label require">Unit</label>
+                                                    <select name="unit_id" id="unit_id" class="form-control single-select"
+                                                        style="width: 100%">
+                                                        <option value="">Select the unit</option>
+                                                        @foreach ($unit as $list)
+                                                            <option value="{{ encryptId($list->id) }}">
+                                                                {{ $list->unit_name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Department</label>
+                                                    <select name="department_id" id="department_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Department </option>
+
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Employee Code</label>
+                                                    <select name="emp_id" class="form-control " id="emp_id"
+                                                        style="width: 100%">
+                                                        <option value="">Select the Employee ID</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Certified First Aider Name</label>
+                                                    <input type="text" name="certifier_name" id="certifier_name"
+                                                        class="form-control"
+                                                        placeholder="Enter the Certified First Aider Name" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Company Name</label>
-                                                    <input type="text" name="company_name" id="company_name"
-                                                        class="form-control" placeholder="Company Name">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Short Name</label>
-                                                    <input type="text" name="short_name" class="form-control"
-                                                        placeholder="Short Name">
+                                                    <label class="form-label require">Mobile Number</label>
+                                                    <input type="text" name="mobile_no" id="mobile_no"
+                                                        class="form-control" placeholder="Mobile Number">
                                                 </div>
                                             </div>
 
                                             <div class="col-md-12">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Address</label>
-                                                    <textarea name="address" class="form-control" placeholder="Company Address"></textarea>
+                                                    <textarea name="address" class="form-control" placeholder="Enter the Address"></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -87,7 +95,8 @@
                                         <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
-                                            <x-button-cancel href="{{ admin_url('company/list') }}"></x-button-cancel>
+                                            <x-button-cancel
+                                                href="{{ admin_url('ohc/certified-first-aider/list') }}"></x-button-cancel>
                                         </div>
                                     </form>
                                 </div>
@@ -111,29 +120,120 @@
                 location.reload();
             });
         });
+        $(document).on('change', '#unit_id', function() {
+            var unitId = $(this).val();
+            if (unitId) {
+                $.ajax({
+                    url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#department_id').empty().append(
+                            '<option value="">Select Department</option>');
+                        $.each(data, function(key, value) {
+                            $('#department_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#department_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching department. Please try again.');
+                    }
+                });
+            } else {
+                $('#department_id').empty().append('<option value="">Select Department</option>');
+                $('#department_id').trigger('change.');
+            }
+        });
+        $('#emp_id').select2({
+            ajax: {
+                url: '{{ admin_url('ohc/employee-cum-patient/employeeid') }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search: params.term
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: $.map(data, function(item) {
+                            return {
+                                id: item.id,
+                                text: item.text
+                            };
+                        })
+                    };
+                }
+            },
+            minimumInputLength: 1,
+            dropdownCssClass: 'form-control',
+            selectionCssClass: 'form-control'
+        });
+        $(document).on('change', '#emp_id', function() {
+            var empId = $(this).val();
+            if (empId) {
+                $.ajax({
+                    url: "{{ admin_url('ohc/employee-cum-patient/employeename') }}",
+                    type: 'GET',
+                    data: {
+                        empId: empId
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+
+                        $('#certifier_name').val(data).prop('disable', true);
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching employee name. Please try again.');
+                    }
+                });
+            } else {
+
+                $('#certifier_name').val('').prop('disable', true);
+            }
+        });
         $(function() {
-            $('#companyadd').validate({
+           
+            $('#CertifiedFirstAiderAdd').validate({
                 rules: {
-                    company_name: {
+                    unit_id: {
                         required: true,
-                        minlength: 3,
-                        maxlength: 100,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                    },
+                    department_id: {
+                        required: true,
+                    },
+                    emp_id: {
+                        required: true,
                         remote: {
-                            url: '{{ admin_url('company/unique') }}',
+                            url: '{{ admin_url('ohc/certified-first-aider/unique') }}',
                             type: 'post',
                             data: {
-                                location_type_name: function() {
-                                    return $('#company_name').val();
-                                }
-                            }
-                        }
+                                _token: "{{ csrf_token() }}",
+                                employee_id: function() {
+                                    return $('#emp_id').val();
+                                },
+                            },
+                        },
                     },
-                    short_name: {
+                    certifier_name: {
                         required: true,
-                        minlength: 3,
+                    },
+                    mobile_no: {
+                        required: true,
+                        minlength: 10,
                         maxlength: 10,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                        digits: true,
+                        remote: {
+                            url: '{{ admin_url('ohc/certified-first-aider/unique') }}',
+                            type: 'post',
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                mobile_no: function() {
+                                    return $('#mobile_no').val();
+                                },
+                            },
+                        },
                     },
                     address: {
                         required: true,
@@ -141,47 +241,61 @@
                     },
                 },
                 messages: {
-                    company_name: {
-                        required: "{{ __('Company Name is Required') }}",
-                        minlength: "{{ __('common.validate_min_length') }}",
-                        maxlength: "Maximum Characters should not exceed 100",
-                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
-                        remote: "{{ __('Company Name should be unique') }}"
+                    unit_id: {
+                        required: "Unit ID is required.",
                     },
-                    short_name: {
-                        required: "{{ __('Short Name is Required') }}",
-                        minlength: "{{ __('common.validate_min_length') }}",
-                        maxlength: "Maximum Characters should not exceed 10",
-                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+                    department_id: {
+                        required: "Department ID is required.",
+                    },
+                    emp_id: {
+                        required: "Employee ID is required.",
+                        remote: "Employee Code already exists.",
+                    },
+                    certifier_name: {
+                        required: "Certifier name is required.",
+                    },
+                    mobile_no: {
+                        required: "Mobile number is required.",
+                        minlength: "Mobile number must be exactly 10 digits.",
+                        maxlength: "Mobile number must be exactly 10 digits.",
+                        digits: "Please enter only digits for the mobile number.",
+                        remote: "Mobile number must be unique.",
                     },
                     address: {
-                        required: "{{ __('Company Address is Required') }}",
-                        maxlength: "Maximum Characters should not exceed 300",
+                        required: "Address is required.",
+                        maxlength: "Address cannot exceed 300 characters.",
                     },
-
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
+                    // Add the 'invalid-feedback' class to the error element
                     error.addClass('invalid-feedback');
+                    // Append the error message to the closest '.form-input' container
                     element.closest('.form-input').append(error);
                 },
-                highlight: function(element, errorClass, validClass) {
+                highlight: function(element) {
+                    // Add the 'is-invalid' class to the invalid input
                     $(element).addClass('is-invalid');
                 },
-                unhighlight: function(element, errorClass, validClass) {
+                unhighlight: function(element) {
+                    // Remove the 'is-invalid' class when the input becomes valid
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
+                    // Submit the form when all validations pass
                     form.submit();
-
                 },
                 invalidHandler: function(event, validator) {
+                    // Handle invalid form submissions
                     var errors = validator.numberOfInvalids();
-                    validator.errorList.forEach(function(error) {
-                        // console.log("Field: " + error.element.name + ", Error: " + error
-                        //     .message);
-                    });
-                }
+                    if (errors) {
+                        console.log(`There are ${errors} validation errors.`);
+                        validator.errorList.forEach(function(error) {
+                            console.log(
+                            `Field: ${error.element.name}, Error: ${error.message}`);
+                        });
+                    }
+                },
             });
         });
     </script>

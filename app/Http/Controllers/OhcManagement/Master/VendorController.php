@@ -232,12 +232,13 @@ class VendorController extends Controller
     {
         if ($request->ajax()) {
             $vendor_name = $request->vendor_name;
+            $license_no = $request->license_no;
             $id = $request->id;
             if ($id == '') {
-                $record = $this->vendor->uniqueCheck($vendor_name);
+                $record = $this->vendor->uniqueCheck($vendor_name,$license_no);
             } else {
                 $id = decryptId($id);
-                $record = $this->vendor->ExistuniqueCheck($vendor_name, $id);
+                $record = $this->vendor->existUniqueCheck($vendor_name,$license_no, $id);
             }
             if ($record->count()) {
                 return Response::json(false);
@@ -253,117 +254,15 @@ class VendorController extends Controller
             $id = decryptId($request->id);
 
             $this->vendor->statuschange($id);
-            // $vendor =  $this->vendor->selectOne($id);
-            // $this->user->statuschange($vendor->login_id);
-
             return response()->json(['status' => 'success', 'msg' => 'Your status has changed successfully'], 200);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
-    public function Delete(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-
-            $location = $this->location->where('vendor_id', $id)->exists();
-            $unit = $this->unit->where('vendor_id', $id)->exists();
-            $department = $this->department->where('vendor_id', $id)->exists();
-
-            if ($location || $unit || $department) {
-                return response()->json(['status' => 'error', 'msg' => 'module_exits'], 406);
-            }
-            $this->vendor->deleterecord($id);
-            return response()->json(['status' => 'success', 'msg' => 'vendor deleted successfully'], 200);
-        } catch (Exception $ex) {
-            report($ex);
-            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
-        }
-    }
-
-    // public function Import(Request $request)
-    // {
-    //     $data = array();
-    //     return view('ohcmanagement.master.vendor.import', $data);
-    // }
-    // public function ImportSubmit(Request $request)
-    // {
-    //     try {
-    //         $file = $request->file('vendor_upload');
-
-    //         $rules = [
-    //             'vendor_upload' => 'required',
-    //         ];
-    //         $messages = [
-    //             'vendor_upload.required' => 'Please upload a file',
-    //         ];
-
-    //         $validator = Validator::make($request->all(), $rules, $messages);
-    //         if ($validator->fails()) {
-    //             return redirect()->back()->withErrors($validator)->withInput();
-    //         }
-
-
-    //         if ($file != null) {
-
-    //             $uploadpath = 'public/uploads/vendor';
-
-    //             $folderPath = public_path('uploads/vendor');
-
-    //             if (!File::exists($folderPath)) {
-
-    //                 File::makeDirectory($folderPath, 0755, true);
-    //             }
-
-    //             $filenewname = time() . Str::random('10') . '.' . $file->getClientOriginalExtension();
-
-    //             $fileName = $file->getClientOriginalName();
-    //             $fileSize = $file->getSize();
-
-    //             $fileExt = $file->getClientOriginalExtension();
-
-    //             $file->move($uploadpath, $filenewname);
-
-    //             $path = $uploadpath . "/" . $filenewname;
-    //             $user_id = Auth::id();
-
-    //             $insert_data = array(
-    //                 'upload_type' => 1,
-    //                 'upload_status' => 0,
-    //                 'file_name' => $filenewname,
-    //                 'file_orgname' => $fileName,
-    //                 'file_path' => $path,
-    //                 'file_size' => $fileSize,
-    //                 'file_extension' => $fileExt,
-    //                 'created_by' => $user_id,
-    //             );
-
-    //             $insert_id =  $this->uploadlog->create($insert_data)->id;
 
 
 
-    //             $details = [
-    //                 "user_id" => $user_id,
-    //                 "log_id" => $insert_id,
-    //                 "path" => $path,
-    //             ];
-
-    //             // dispatch(new ImportvendorJob($details));
-    //                dispatch((new ImportvendorJob($details))->onQueue('vendor'));
-    //         }
-
-    //         $insert_data['log_id'] = $insert_id;
-    //         $insert_data['Uploded_by'] = Auth::user()->toArray();
-
-    //         Session::flash('success', __('vendor uploaded sucessfully'));
-    //         return redirect(admin_url('vendor/list'));
-    //     } catch (Exception $ex) {
-    //         report($ex);
-    //         Session::flash('error', __('vendor upload failed'));
-    //         return redirect(admin_url('vendor/list'));
-    //     }
-    // }
     public function ExportExcel(Request $request)
     {
 

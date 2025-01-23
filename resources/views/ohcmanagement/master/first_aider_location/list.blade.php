@@ -30,17 +30,50 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="company_id" class="form-label">Unit</label>
-                                            <input type="text" name="company_id" id="company_id" class="form-control"
-                                                placeholder="Company ID">
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">Unit</label>
+                                                <select name="unit_id" id="unit_id" class="form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select the unit</option>
+                                                    @foreach ($unit as $list)
+                                                        <option value="{{ encryptId($list->id) }}">
+                                                            {{ $list->unit_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="company_name" class="form-label">Company Name</label>
-                                            <input type="text" name="company_name" id="company_name" class="form-control"
-                                                placeholder="Company Name">
-                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">Department</label>
+                                                <select name="department_id" id="department_id"
+                                                    class=" form-control single-select" style="width: 100%">
+                                                    <option value="">Select Department </option>
 
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
@@ -97,11 +130,32 @@
 
 @push('script')
     <script type="text/javascript">
+        $(document).on('change', '#unit_id', function() {
+            var unitId = $(this).val();
+            if (unitId) {
+                $.ajax({
+                    url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#department_id').empty().append(
+                            '<option value="">Select Department</option>');
+                        $.each(data, function(key, value) {
+                            $('#department_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#department_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching department. Please try again.');
+                    }
+                });
+            } else {
+                $('#department_id').empty().append('<option value="">Select Department</option>');
+                $('#department_id').trigger('change.');
+            }
+        });
         $(document).ready(function() {
-            // Remove default sorting class
-            $('.datatable-list thead th:first').removeClass('sorting_asc');
-
-            // Initialize Flatpickr for date fields
             var fromDatepicker = flatpickr("#from_date", {
                 dateFormat: "d-m-Y",
                 onChange: function(selectedDates) {
@@ -117,6 +171,13 @@
                 dateFormat: "d-m-Y",
                 minDate: "today"
             });
+        });
+        $(document).ready(function() {
+            // Remove default sorting class
+            $('.datatable-list thead th:first').removeClass('sorting_asc');
+
+            // Initialize Flatpickr for date fields
+
 
             // Initialize DataTable
             var table = $('.datatable-list').DataTable({
@@ -132,6 +193,14 @@
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: function(d) {
+                        d.unit_id = $('#unit_id').val();
+                        d.department_id = $('#department_id').val();
+                        d.from_date = $('#from_date').val();
+                        d.to_date = $('#to_date').val();
+                        d.status = $('#status').val();
+
                     },
 
                     error: function(xhr) {
@@ -206,26 +275,63 @@
                                 extend: 'pdf',
                                 text: '{{ __('common.pdf') }}',
                                 action: function(e, dt, button, config) {
-                                    exportData('pdf');
+                                    var searchValue = $('#datatable-list_filter input').val();
+                                    var department_id = $('#department_id').val();
+                                    var unit_id = $('#unit_id').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
+                                    var status = $('#status').val();
+
+                                    $(".dt-button").removeClass('processing');
+                                    $('body').click();
+                                    window.location.href =
+                                        "{{ admin_url('ohc/first-aid-location/export/pdf') }}" +
+                                        '?search=' + searchValue +
+                                        '&unit_id=' + unit_id +
+                                        '&department_id=' + department_id +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
+                                        '&status=' + status
                                 }
                             },
                             {
                                 extend: 'excel',
                                 text: '{{ __('common.excel') }}',
                                 action: function(e, dt, button, config) {
-                                    exportData('excel');
+                                    var searchValue = $('#datatable-list_filter input').val();
+                                    var department_id = $('#department_id').val();
+                                    var unit_id = $('#unit_id').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
+                                    var status = $('#status').val();
+                                    $(".dt-button").removeClass('processing');
+                                    $('body').click();
+                                    window.location.href =
+                                        "{{ admin_url('ohc/first-aid-location/export/excel') }}" +
+                                        '?search=' + searchValue +
+                                        '&unit_id=' + unit_id +
+                                        '&department_id=' + department_id +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
+                                        '&status=' + status
                                 }
-                            }
+                            },
                         ]
                     },
+
                     {
-                        extend: 'pageLength',
-                        text: '{{ __('common.show') }} 10 {{ __('common.records') }}'
+                        "extend": 'pageLength',
+                        "text": '{{ __('common.show') }} 10 {{ __('common.records') }}'
                     }
-                ]
+                ],
+
             });
 
-            // Search and reset functionality
+            table.on('length.dt', function(e, settings, len) {
+                var text = '{{ __('common.show') }} ' + len + ' {{ __('common.records') }}';
+                $('.buttons-page-length').find('span').text(text);
+            });
+
             $(document).on('click', '#searchform', function() {
                 table.draw();
             });
@@ -238,12 +344,13 @@
                 }, 150);
             });
 
+
             // Status Change functionality
             $(document).on('click', '.statusChange', function() {
                 var id = $(this).data('id');
                 var type = $(this).data('type');
-                var title = type == 1 ? '{{ __('Do You want to In-Activate Medicine Details') }}' :
-                    '{{ __('Do You want to Activate Medicine Details') }}';
+                var title = type == 1 ? '{{ __('Do You want to In-Activate First Aider Location') }}' :
+                    '{{ __('Do You want to Activate First Aider Location') }}';
                 var btnColor = type == 1 ? '#dc3545' : '#7ddc35';
 
                 Swal.fire({

@@ -1630,23 +1630,20 @@ class SafetyPermitController extends Controller
     {
         try {
             $id = decryptId($request->id);
-
             $safetypermit = $this->safetypermit->selectOne($id);
-            // $getpermitextension = $this->extension->getpermitextension($id);
-            // $getPermitExtensionsupervisor = $this->approvereject->getPermitExtensionsupervisor($id);
-            // $getPermitExtensionsuperintendednt = $this->approvereject->getPermitExtensionsuperintendednt($id);
 
-            $data = array(
+            $data = [
                 'safetypermit' => $safetypermit,
-                // 'getpermitextension' => $getpermitextension,
-                // 'getPermitExtensionsupervisor' => $getPermitExtensionsupervisor,
-                // 'getPermitExtensionsuperintendednt' => $getPermitExtensionsuperintendednt,
-            );
+                'showAlert' => $safetypermit->reference_id != null, // Pass a flag to the view
+                'totime' => $safetypermit->time_to , // Pass a flag to the view
+            ];
+
             return view('permit.safetypermit.permitextension', $data);
         } catch (Exception $ex) {
             report($ex);
         }
     }
+
 
     public function permitExtensionsubmit(Request $request)
     {
@@ -1658,10 +1655,10 @@ class SafetyPermitController extends Controller
             $workmanInvolved = $this->workmaninvolved->getworkmanData($id);
             $duplicateData = $this->safetypermit->Duplicatepermitdata($id);
 
-                if ($duplicateData) {
-                   Session::flash('error','You have already created the Permit for this ID');
-                   return redirect('safetypermit/list');
-                }
+                // if ($duplicateData) {
+                //    Session::flash('error','You have already created the Permit for this ID');
+                //    return redirect('safetypermit/list');
+                // }
 
 
             $newSafetypermit = $this->safetypermit->CreateData($safetypermit,$id);

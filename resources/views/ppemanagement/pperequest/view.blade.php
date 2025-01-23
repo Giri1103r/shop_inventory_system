@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Shoe Request View')
+@section('title', 'PPE Request View')
 @section('pageurl', admin_url('ppe_request/list'))
 
 
@@ -29,7 +29,7 @@
                             <div class="card-body ">
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">PPE Shoe Request </h4>
+                                        <h4 class="text-white">PPE Request </h4>
                                     </div>
                                 </div>
 

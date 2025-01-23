@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Company Master Show')
-@section('pageurl', admin_url('company/list'))
+@section('title', 'Employee Cum Patient')
+@section('pageurl', admin_url('ohc/employee-cum-patient/list'))
 
 
 @section('content')
@@ -10,7 +10,7 @@
             {{-- <h4 class="text-black">{{ __('Company Show') }}</h4> --}}
 
         </div>
-       
+
     </div>
 
     <div class="content-body  default-height">
@@ -24,7 +24,7 @@
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('company/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('ohc/employee-cum-patient/list') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -34,52 +34,52 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Company Details</h4>
+                                        <h4 class="text-white">Employee Cum Patient</h4>
                                     </div>
                                 </div>
                                 <div class="row">
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Company ID') }}</label>
+                                        <label class="form-label view_label">{{ __('Employee Name') }}</label>
                                         <div class="view_data">
-                                            {{ isset($company->company_id) ? $company->company_id : '' }}
+                                            {{ isset($employeecumpatient->emp_name) ? $employeecumpatient->emp_name : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Company Name') }}</label>
+                                        <label class="form-label view_label">{{ __('Employee type') }}</label>
                                         <div class="view_data">
-                                            {{ isset($company->company_name) ? $company->company_name : '' }}
+                                            {{ getEmployeeType(isset($employeecumpatient->employee_type) ? $employeecumpatient->employee_type : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Short Name') }}</label>
+                                        <label class="form-label view_label">{{ __('Date of birth') }}</label>
                                         <div class="view_data">
-                                            {{ isset($company->short_name) ? $company->short_name : '' }}
+                                            {{ isset($employeecumpatient->dob) ? $employeecumpatient->dob : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Address') }}</label>
                                         <div class="view_data">
-                                            {{ isset($company->address) ? $company->address : '' }}
+                                            {{ isset($employeecumpatient->address) ? $employeecumpatient->address : '' }}
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
-                                            {{ getusername($company->created_by) }}
+                                            {{ getusername($employeecumpatient->created_by) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_date') }}</label>
                                         <div class="view_data">
-                                            {{ displayDateformat($company->created_at) }}
+                                            {{ displayDateformat($employeecumpatient->created_at) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.status') }}</label>
                                         <div class="view_data">
-                                            @if ($company->status == 1)
+                                            @if ($employeecumpatient->status == 1)
                                                 {{ __('common.active') }}
                                             @else
                                                 {{ __('common.inactive') }}

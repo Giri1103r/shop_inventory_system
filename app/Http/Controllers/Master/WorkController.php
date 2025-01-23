@@ -261,7 +261,7 @@ class WorkController extends Controller
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-            
+
             $header = [
                 __("common.sno"),
                 'Worker Id',

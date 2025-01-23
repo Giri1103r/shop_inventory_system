@@ -126,7 +126,7 @@
                                                                         alt="Image" class="img-fluid"
                                                                         style="max-width: 50px; object-fit: cover;">
                                                                 </a>
-                                                                <span>{{ $work->work_name }}</span>
+                                                                <span class="fw-bold">{{ $work->work_name }}</span>
 
                                                             </div>
                                                         @endforeach

@@ -12,7 +12,7 @@ use App\Models\Master\Department;
 use App\Models\User;
 use App\Models\UploadLog;
 use App\Jobs\ImportCompanyJob;
-
+use App\Models\OhcManagement\Master\CertifiedFirstAider;
 use Illuminate\Support\Facades\Auth;
 use Exception;
 use Illuminate\Support\Facades\File;
@@ -22,26 +22,29 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Models\Master\Employee;
 class CertifiedFirstAiderController extends Controller
 {
 
-    private $company;
+    private $certifiedfirstaider;
     private $unit;
     private $location;
     private $department;
     private $user;
     private $uploadlog;
+    private $employee;
 
 
     public function __construct()
     {
 
-        $this->company = new Company();
+        $this->certifiedfirstaider = new CertifiedFirstAider();
         $this->unit = new Unit();
         $this->location = new Location();
         $this->department = new Department();
         $this->user = new User();
         $this->uploadlog = new UploadLog();
+        $this->employee = new Employee();
     }
 
 
@@ -52,7 +55,7 @@ class CertifiedFirstAiderController extends Controller
 
                 try {
 
-                    $data =  $this->company->list();
+                    $data =  $this->certifiedfirstaider->list();
 
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
@@ -66,19 +69,25 @@ class CertifiedFirstAiderController extends Controller
                             return $text;
                         })
                         ->addColumn('created_at', function ($row) {
-                            return Displaydatetimeformat($row->created_at);
+                            return Displaydateformat($row->created_at);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
+                        ->editColumn('department_id', function ($row) {
+                            return $row->department_name;
+                        })
+                        ->editColumn('unit_id', function ($row) {
+                            return $row->unit_name;
+                        })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            if (CheckUserPermission('view')) {
-                                $btn = '<a href="' . admin_url('company/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            }
-                            if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('company/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            }
+                            // if (CheckUserPermission('view')) {
+                                $btn = '<a href="' . admin_url('ohc/certified-first-aider/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            // }
+                            // if (CheckUserPermission('edit')) {
+                                $btn .= '<a href="' . admin_url('ohc/certified-first-aider/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            // }
 
                             return $btn;
                         })
@@ -94,9 +103,15 @@ class CertifiedFirstAiderController extends Controller
                 }
             }
         }
-        $data = array();
+        $departmentList=$this->department->getdepartment();
 
-        return view('master.company.list', $data);
+        $unit = $this->unit->getunit();
+        $data = array(
+            'unit' => $unit,
+            'departmentList'=>$departmentList,
+        );
+
+        return view('ohcmanagement.master.certified_first_aid..list', $data);
     }
 
     public function Add(Request $request)
@@ -104,8 +119,11 @@ class CertifiedFirstAiderController extends Controller
 
         try {
 
-            $data = array();
-            return view('master.company.add', $data);
+            $unit = $this->unit->getunit();
+            $data = [
+                'unit' => $unit
+            ];
+            return view('ohcmanagement.master.certified_first_aid.add', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -116,17 +134,23 @@ class CertifiedFirstAiderController extends Controller
         try {
 
             $rules = [
-                'company_id' => 'required',
-                'company_name' => 'required',
-                'short_name' => 'required',
-                'address' => 'required',
+                'unit_id' => 'required',
+                'department_id' => 'required',
+                'emp_id' => 'required',
+                'certifier_name' => 'required',
+                'mobile_no' => 'required|digits_between:10,15',
+                'address' => 'required|max:300',
             ];
-            $messages = [
-                'company_id.required' => 'Please enter Company ID',
-                'company_name.required' => 'Please enter Company Name',
-                'short_name.required' => 'Please enter Short Name',
-                'address.required' => 'Please enter Company Address',
 
+            $messages = [
+                'unit_id.required' => 'Unit ID is required.',
+                'department_id.required' => 'Department ID is required.',
+                'emp_id.required' => 'Employee ID is required.',
+                'certifier_name.required' => 'Certifier name is required.',
+                'mobile_no.required' => 'Mobile number is required.',
+                'mobile_no.digits_between' => 'Mobile number must be between 10 and 15 digits.',
+                'address.required' => 'Address is required.',
+                'address.max' => 'Address cannot exceed 300 characters.',
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
@@ -135,18 +159,9 @@ class CertifiedFirstAiderController extends Controller
 
             try {
 
-                // $userDetails = $this->user->companystore();
 
-                // $id = $userDetails->id;
-                $company = $this->company->store();
-                // if ($userDetails->email != '' || $userDetails->email != null) {
+                $company = $this->certifiedfirstaider->store();
 
-                //     $empdetails =  $this->user->selectOne($id);
-
-                //     $emp  = $empdetails->toArray();
-
-                //     Mail::to($empdetails->email)->queue(new EmployeeRegisterEmail($emp));
-                // }
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
@@ -154,12 +169,12 @@ class CertifiedFirstAiderController extends Controller
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
-            return redirect(admin_url('company/list'));
+            return redirect(admin_url('ohc/certified-first-aider/list'));
         } catch (Exception $ex) {
 
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('company/list'));
+            return redirect(admin_url('ohc/certified-first-aider/list'));
         }
     }
 
@@ -168,13 +183,13 @@ class CertifiedFirstAiderController extends Controller
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
-                $company = $this->company->selectOne($id);
+                $certifiedfirstaider = $this->certifiedfirstaider->selectOne($id);
 
                 $data = array(
-                    'company' => $company,
+                    'certifiedfirstaider' => $certifiedfirstaider,
                 );
             }
-            return view('master.company.view', $data);
+            return view('ohcmanagement.master.certified_first_aid.view', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -186,13 +201,21 @@ class CertifiedFirstAiderController extends Controller
             $id = decryptId($request->id);
 
 
-            $company = $this->company->find($id);
+            $certifiedfirstaider = $this->certifiedfirstaider->find($id);
+
+            $departmentList=$this->department->getdepartment();
+
+            $unit = $this->unit->getunit();
+            $employeeList=$this->employee->getEmployeefulldata();
             $data = array(
-                'company' => $company,
+                'certifiedfirstaider' => $certifiedfirstaider,
+                'unit' => $unit,
+                'departmentList'=>$departmentList,
+                'employeeList'=>$employeeList
+
             );
 
-
-            return view('master.company.edit', $data);
+            return view('ohcmanagement.master.certified_first_aid.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
         }
@@ -203,34 +226,38 @@ class CertifiedFirstAiderController extends Controller
         try {
             $id = decryptId($request->id);
             $rules = [
-                'company_id' => 'required',
-                'company_name' => 'required',
-                'short_name' => 'required',
-                'address' => 'required',
+                'unit_id' => 'required',
+                'department_id' => 'required',
+                'emp_id' => 'required',
+                'certifier_name' => 'required',
+                'mobile_no' => 'required|digits_between:10,15',
+                'address' => 'required|max:300',
             ];
-            $messages = [
-                'company_id.required' => 'Please enter Company ID',
-                'company_name.required' => 'Please enter Company Name',
-                'short_name.required' => 'Please enter Short Name',
-                'address.required' => 'Please enter Company Address',
 
+            $messages = [
+                'unit_id.required' => 'Unit ID is required.',
+                'department_id.required' => 'Department ID is required.',
+                'emp_id.required' => 'Employee ID is required.',
+                'certifier_name.required' => 'Certifier name is required.',
+                'mobile_no.required' => 'Mobile number is required.',
+                'mobile_no.digits_between' => 'Mobile number must be between 10 and 15 digits.',
+                'address.required' => 'Address is required.',
+                'address.max' => 'Address cannot exceed 300 characters.',
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            $this->company->updates($id);
+            $this->certifiedfirstaider->updates($id);
 
-            // $company = $this->company->find($id);
-            // $this->user->companyUpdate($company->login_id);
 
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('company/list'));
+            return redirect(admin_url('ohc/certified-first-aider/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('company/list'));
+            return redirect(admin_url('ohc/certified-first-aider/list'));
         }
     }
 
@@ -238,145 +265,41 @@ class CertifiedFirstAiderController extends Controller
     public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {
-            $company_name = $request->company_name;
+            $emp_id = $request->emp_id;
+            $mobile_no = $request->mobile_no;
             $id = $request->id;
-            if ($id == '') {
-                $record = $this->company->uniqueCheck($company_name);
+
+            if (empty($id)) {
+                $isUnique = !$this->certifiedfirstaider->uniqueCheck($emp_id, $mobile_no);
             } else {
                 $id = decryptId($id);
-                $record = $this->company->ExistuniqueCheck($company_name, $id);
+                $isUnique = !$this->certifiedfirstaider->existUniqueCheck($emp_id, $mobile_no, $id);
             }
-            if ($record->count()) {
-                return Response::json(false);
-            }
-            return Response::json(true);
+
+            return Response::json($isUnique);
         }
     }
+
 
     public function StatusChange(Request $request)
     {
-
         try {
             $id = decryptId($request->id);
 
-            $this->company->statuschange($id);
-            // $company =  $this->company->selectOne($id);
-            // $this->user->statuschange($company->login_id);
-
-            return response()->json(['status' => 'success', 'msg' => 'Company status changed'], 200);
-        } catch (Exception $ex) {
-            report($ex);
-            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
-        }
-    }
-    public function Delete(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-
-            $location = $this->location->where('company_id', $id)->exists();
-            $unit = $this->unit->where('company_id', $id)->exists();
-            $department = $this->department->where('company_id', $id)->exists();
-
-            if ($location || $unit || $department) {
-                return response()->json(['status' => 'error', 'msg' => 'module_exits'], 406);
-            }
-            $this->company->deleterecord($id);
-            return response()->json(['status' => 'success', 'msg' => 'Company deleted successfully'], 200);
+            $this->certifiedfirstaider->statuschange($id);
+            return response()->json(['status' => 'success', 'msg' => 'Your Status has Changed Successfully'], 200);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
 
-    // public function Import(Request $request)
-    // {
-    //     $data = array();
-    //     return view('master.company.import', $data);
-    // }
-    // public function ImportSubmit(Request $request)
-    // {
-    //     try {
-    //         $file = $request->file('company_upload');
-
-    //         $rules = [
-    //             'company_upload' => 'required',
-    //         ];
-    //         $messages = [
-    //             'company_upload.required' => 'Please upload a file',
-    //         ];
-
-    //         $validator = Validator::make($request->all(), $rules, $messages);
-    //         if ($validator->fails()) {
-    //             return redirect()->back()->withErrors($validator)->withInput();
-    //         }
-
-
-    //         if ($file != null) {
-
-    //             $uploadpath = 'public/uploads/company';
-
-    //             $folderPath = public_path('uploads/company');
-
-    //             if (!File::exists($folderPath)) {
-
-    //                 File::makeDirectory($folderPath, 0755, true);
-    //             }
-
-    //             $filenewname = time() . Str::random('10') . '.' . $file->getClientOriginalExtension();
-
-    //             $fileName = $file->getClientOriginalName();
-    //             $fileSize = $file->getSize();
-
-    //             $fileExt = $file->getClientOriginalExtension();
-
-    //             $file->move($uploadpath, $filenewname);
-
-    //             $path = $uploadpath . "/" . $filenewname;
-    //             $user_id = Auth::id();
-
-    //             $insert_data = array(
-    //                 'upload_type' => 1,
-    //                 'upload_status' => 0,
-    //                 'file_name' => $filenewname,
-    //                 'file_orgname' => $fileName,
-    //                 'file_path' => $path,
-    //                 'file_size' => $fileSize,
-    //                 'file_extension' => $fileExt,
-    //                 'created_by' => $user_id,
-    //             );
-
-    //             $insert_id =  $this->uploadlog->create($insert_data)->id;
-
-
-
-    //             $details = [
-    //                 "user_id" => $user_id,
-    //                 "log_id" => $insert_id,
-    //                 "path" => $path,
-    //             ];
-
-    //             // dispatch(new ImportCompanyJob($details));
-    //                dispatch((new ImportCompanyJob($details))->onQueue('company'));
-    //         }
-
-    //         $insert_data['log_id'] = $insert_id;
-    //         $insert_data['Uploded_by'] = Auth::user()->toArray();
-
-    //         Session::flash('success', __('Company uploaded sucessfully'));
-    //         return redirect(admin_url('company/list'));
-    //     } catch (Exception $ex) {
-    //         report($ex);
-    //         Session::flash('error', __('Company upload failed'));
-    //         return redirect(admin_url('company/list'));
-    //     }
-    // }
     public function ExportExcel(Request $request)
     {
 
         try {
 
-            $allData = $this->company->exportdata();
+            $allData = $this->certifiedfirstaider->exportdata();
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -384,9 +307,11 @@ class CertifiedFirstAiderController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Company ID',
-                'Company Name',
-                'Short Name',
+                'Unit',
+                'Department',
+                'Employee Code',
+                'Certified First Aider Name',
+                'Mobile Number',
                 'Address',
                 __("common.status"),
                 __("common.created_by"),
@@ -398,9 +323,11 @@ class CertifiedFirstAiderController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->company_id;
-                $export[] =  $data->company_name;
-                $export[] =  $data->short_name;
+                $export[] =  getUnitname($data->unit_id);
+                $export[] =  getDepartment($data->department_id);
+                $export[] =  $data->emp_id;
+                $export[] =  $data->certifier_name;
+                $export[] =  $data->mobile_no;
                 $export[] =  $data->address;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
@@ -411,7 +338,7 @@ class CertifiedFirstAiderController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Company Master.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Certified First Aider.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -427,7 +354,7 @@ class CertifiedFirstAiderController extends Controller
 
         try {
 
-            $allData = $this->company->exportdata();
+            $allData = $this->certifiedfirstaider->exportdata();
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -435,9 +362,11 @@ class CertifiedFirstAiderController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Company ID',
-                'Company Name',
-                'Short Name',
+                'Unit',
+                'Department',
+                'Employee Code',
+                'Certified First Aider Name',
+                'Mobile Number',
                 'Address',
                 __("common.status"),
                 __("common.created_by"),
@@ -447,7 +376,7 @@ class CertifiedFirstAiderController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Company Details",
+                'pagetitle' => "Certified First Aider Details",
             );
 
             $property = [
@@ -462,14 +391,14 @@ class CertifiedFirstAiderController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('master.company.pdf', $data);
+            $view = view('ohcmanagement.master.certified_first_aid.pdf', $data);
             $html = $view->render();
 
 
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Company Master.pdf";
+            $filename = "Certified First Aider.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
@@ -477,15 +406,5 @@ class CertifiedFirstAiderController extends Controller
         }
     }
 
-    public function DownloadSample(Request $request)
-    {
 
-        $filedetails =  exportsamplefile('company');
-
-        $filePath = $filedetails->sample_file;
-        $customFileName = $filedetails->file_name;
-
-        //return Response::download($filePath, $customFileName);
-        return redirect(url($filePath));
-    }
 }

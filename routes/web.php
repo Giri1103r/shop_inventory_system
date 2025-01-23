@@ -657,6 +657,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/checkuserDepartment', [PpeRequestController::class, 'checkDepartmentrequest']);
                 Route::post('/storemanger/issued', [PpeRequestController::class, 'storemanagerapproval']);
                 Route::get('/fetchEmployeeDetails/{emp_id}', [PpeRequestController::class, 'fetchEmployeeDetails']);
+                Route::get('/employeeid', [PpeRequestController::class, 'employeeid']);
             });
 
             Route::group(['prefix' => 'ppe_stock_inventory'], function () {
@@ -794,6 +795,11 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('/import/submit', [EmployeecumPatientController::class, 'importSubmit']);
             Route::post('/status', [EmployeecumPatientController::class, 'statusChange']);
             Route::post('/unique', [EmployeecumPatientController::class, 'Uniquecheck']);
+            Route::get('/employeeid', [EmployeecumPatientController::class, 'employeeid']);
+            Route::get('/employeename', [EmployeecumPatientController::class, 'employeename']);
+
+
+
         });
         Route::group(['prefix' => 'ohc/first-aid-location'], function () {
             Route::get('/list', [FirstAidLocationController::class, 'index']);

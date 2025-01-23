@@ -86,7 +86,7 @@
                 <div class="col-xl-4 col-xxl-4 mt-2">
                     <div class="card view_card">
                         <div class="card-header border-0 pb-1 bg-dark d-flex justify-content-between align-items-center">
-                            <h4 class="card-title" style="color: white;">PPE SHOE REQUEST STATUS</h4>
+                            <h4 class="card-title" style="color: white;">PPE Request STATUS</h4>
                         </div>
                         <div class="card-body px-0 pt-0 dlab-scroll height370">
                             <div class="d-flex justify-content-between align-items-center market-preview mt-2">
@@ -197,7 +197,7 @@
                 <div class="col-xl-8 col-xxl-8 mt-2">
                     <div class="card view_card">
                         <div class="card-header border-0 pb-1 bg-dark d-flex justify-content-between align-items-center">
-                            <h4 class="card-title" style="color: white;"> UNIT WISE PPE SHOE REQUEST</h4>
+                            <h4 class="card-title" style="color: white;"> UNIT WISE PPE Request</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="ppeshoerequestDownload"
                                 style="color: white;"></a>
                         </div>

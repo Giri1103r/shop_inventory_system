@@ -43,7 +43,12 @@ class FirstAidLocation extends Model
 
         $request = request();
         $search = '';
-        $query = $this->select('ohc_master_first_aid_location.*');
+        $query = $this->select('ohc_master_first_aid_location.*', 'masters_department.department_name', 'masters_unit.unit_name')
+        ->join('masters_department', 'ohc_master_first_aid_location.department_id', '=', 'masters_department.id')
+        ->join('masters_unit', 'ohc_master_first_aid_location.unit_id', '=', 'masters_unit.id')
+        ->where('masters_department.trash', 'NO')
+        ->where('masters_unit.trash', 'NO');
+
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -59,16 +64,30 @@ class FirstAidLocation extends Model
         }
 
 
-        // if ($request->has('company_id') && $request->company_id) {
-        //     $query = $query->where('company_id', 'LIKE', '%' . $request->company_id . '%');
-        // }
-        // if ($request->has('company_name') && $request->company_name) {
-        //     $query = $query->where('company_name', 'LIKE', '%' . $request->company_name . '%');
-        // }
-        // if ($request->has('status') && $request->status) {
 
-        //     $query = $query->where('status', decryptId($request->status));
-        // }
+        if ($request->has('status') && $request->status) {
+
+            $query = $query->where('ohc_master_first_aid_location.status', decryptId($request->status));
+        }
+        if ($request->has('unit_id') && $request->unit_id) {
+
+            $query = $query->where('ohc_master_first_aid_location.unit_id', decryptId($request->unit_id));
+        }
+        if ($request->has('department_id') && $request->department_id) {
+
+            $query = $query->where('ohc_master_first_aid_location.department_id', decryptId($request->department_id));
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('ohc_master_first_aid_location.created_at', [$startDate, $endDate]);
+        } elseif ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('ohc_master_first_aid_location.created_at', '>=', $startDate);
+        } elseif ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('ohc_master_first_aid_location.created_at', '<=', $endDate);
+        }
         $data_count = $query;
         $total_records = $data_count->count();
 
@@ -106,8 +125,8 @@ class FirstAidLocation extends Model
         $request = request();
     //    dd( $request->all());
         $insert_array = array(
-            'unit_id'         =>$request-> unit_id,
-            'department_id'   =>decryptID($request->department_id) ,
+            'unit_id'         =>decryptId($request-> unit_id),
+            'department_id'   =>decryptId($request->department_id) ,
             'location_id'     =>$request-> location_id,
             'station_master' =>$request->station_master,
             'station_number' =>$request->station_number ,
@@ -123,8 +142,8 @@ class FirstAidLocation extends Model
         $request = request();
 
         $update_array = array(
-            'unit_id'         =>$request-> unit_id,
-            'department_id'   =>$request->deparment_id ,
+            'unit_id'         =>decryptId($request-> unit_id),
+            'department_id'   =>decryptId($request->department_id) ,
             'location_id'     =>$request-> location_id,
             'station_master' =>$request->station_master,
             'station_number' =>$request->station_number ,
@@ -171,7 +190,7 @@ class FirstAidLocation extends Model
         $query = $this->select('ohc_master_first_aid_location.*');
 
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
+        if (!empty($request->search) && is_array($request->search) && !empty($request->search['value'])) {
             $search = $request->search['value'];
 
             $query->where(function ($query) use ($search) {
@@ -179,6 +198,30 @@ class FirstAidLocation extends Model
                     ->orWhere('satation_master', 'LIKE', '%' . $search . '%')
                     ->orWhere('station_number', 'LIKE', '%' . $search . '%');
             });
+        }
+
+        if ($request->has('status') && $request->status) {
+
+            $query = $query->where('ohc_master_first_aid_location.status', decryptId($request->status));
+        }
+        if ($request->has('unit_id') && $request->unit_id) {
+
+            $query = $query->where('ohc_master_first_aid_location.unit_id', decryptId($request->unit_id));
+        }
+        if ($request->has('department_id') && $request->department_id) {
+
+            $query = $query->where('ohc_master_first_aid_location.department_id', decryptId($request->department_id));
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('ohc_master_first_aid_location.created_at', [$startDate, $endDate]);
+        } elseif ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('ohc_master_first_aid_location.created_at', '>=', $startDate);
+        } elseif ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('ohc_master_first_aid_location.created_at', '<=', $endDate);
         }
 
         $query->orderBy('id', 'DESC');

@@ -81,7 +81,22 @@
 @push('script')
     <script>
         $(document).ready(function() {
+
+            @if ($showAlert)
+                Swal.fire({
+                    title: 'Permit Extended',
+                    text: 'This safety permit has already extended.',
+                    icon: 'info',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Redirect to the specified URL
+                        window.location.href = "{{ admin_url('safetypermit/list') }}";
+                    }
+                });
+            @endif
             // Initialize flatpickr
+            const toTime = "{{ $totime }}";
             flatpickr("#time_to", {
                 enableTime: true,
                 noCalendar: true,
@@ -90,16 +105,8 @@
                 dateFormat: "H:i",
                 maxTime: "18:00",
                 onOpen: function(selectedDates, dateStr, instance) {
-                    const now = new Date();
-                    const currentHours = now.getHours();
-                    const currentMinutes = now.getMinutes();
-
-                    instance.set(
-                        "minTime",
-                        `${currentHours.toString().padStart(2, "0")}:${currentMinutes
-          .toString()
-          .padStart(2, "0")}`
-                    );
+                    // Set the minimum time to the toTime value
+                    instance.set("minTime", toTime);
                 },
             });
 

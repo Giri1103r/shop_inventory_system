@@ -48,19 +48,19 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Department Name') }}</label>
                                         <div class="view_data">
-                                            {{ getDeparment(isset($firstaidlocation->department_id) ? $firstaidlocation->department_id : '') }}
+                                            {{ getDepartment(isset($firstaidlocation->department_id) ? $firstaidlocation->department_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Location Name') }}</label>
                                         <div class="view_data">
-                                            {{ getLocationName(isset($firstaidlocation->location_id) ? $firstaidlocation->location_id : '') }}
+                                            {{ isset($firstaidlocation->location_id) ? $firstaidlocation->location_id : ''}}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Station Master') }}</label>
                                         <div class="view_data">
-                                            {{ isset($firstaidlocation->station_master) ? $firstaidlocation->station_master : '' }}
+                                            {{ getEmployeename(isset($firstaidlocation->station_master) ? $firstaidlocation->station_master : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -73,19 +73,19 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
-                                            {{ getusername($company->created_by) }}
+                                            {{ getusername($firstaidlocation->created_by) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_date') }}</label>
                                         <div class="view_data">
-                                            {{ displayDateformat($company->created_at) }}
+                                            {{ displayDateformat($firstaidlocation->created_at) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.status') }}</label>
                                         <div class="view_data">
-                                            @if ($company->status == 1)
+                                            @if ($firstaidlocation->status == 1)
                                                 {{ __('common.active') }}
                                             @else
                                                 {{ __('common.inactive') }}

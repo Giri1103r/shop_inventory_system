@@ -96,19 +96,22 @@ class Vendor extends Model
         return $datas;
     }
 
-    public function UniqueCheck($data)
+    public function uniqueCheck($vendor_name,$license_no)
     {
-
-        return $this->where('vendor_name',  $data)->get();
+        return $this->where('vendor_name', $vendor_name)
+                    ->orWhere('license_no', $license_no)
+                    ->exists();
     }
 
-    public function ExistuniqueCheck($data, $id)
+    public function existUniqueCheck($vendor_name,$license_no,$id)
     {
-        return $this->where('vendor_name',  $data)
-            ->where('id', '!=', $id)
-            ->get();
+        return $this->where(function ($query) use ($vendor_name, $license_no) {
+                        $query->where('vendor_name', $vendor_name)
+                              ->orWhere('emp_name', $license_no);
+                    })
+                    ->where('id', '!=', $id)
+                    ->exists();
     }
-
     public function store()
     {
         $request = request();

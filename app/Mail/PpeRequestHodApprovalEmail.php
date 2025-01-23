@@ -27,7 +27,7 @@ class PpeRequestHodApprovalEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: ('PPE Shoe Request Validation Complete - Pending EHS Officer Approval'),
+            subject: ('PPE Request Validation Complete - Pending EHS Officer Approval'),
         );
     }
 

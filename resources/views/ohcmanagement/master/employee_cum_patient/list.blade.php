@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Company Master')
-@section('pageurl', admin_url('company/list'))
+@section('title', 'Employee Cum Patient')
+@section('pageurl', admin_url('ohc/employee-cum-patient/list'))
 
 
 @section('content')
@@ -18,10 +18,10 @@
                             <x-button-import href="{{ admin_url('company/import') }}"></x-button-import>
                         @endif
 
-                        @if (CheckUserPermission('add'))
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('company/add') }}">Add</x-button-add>
-                        @endif
+                        {{-- @if (CheckUserPermission('add')) --}}
+                        <x-button-add dataId="" class="add btn btn-primary ms-1"
+                            href="{{ admin_url('ohc/employee-cum-patient/add') }}">Add</x-button-add>
+                        {{-- @endif --}}
 
                     </div>
 
@@ -30,17 +30,37 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
+
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="company_id" class="form-label">Company ID</label>
-                                            <input type="text" name="company_id" id="company_id" class="form-control"
-                                                placeholder="Company ID">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="company_name" class="form-label">Company Name</label>
-                                            <input type="text" name="company_name" id="company_name" class="form-control"
-                                                placeholder="Company Name">
+                                            <label for="emp_name" class="form-label ">Emp Name</label>
+                                            <select name="emp_name" id="emp_name" class="form-control form-control-sm"
+                                                style="width: 100%">
+                                                <option value="">Select the Employee Name</option>
+                                            </select>
                                         </div>
 
+
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
@@ -58,6 +78,8 @@
                                     </div>
 
                                 </div>
+
+
                             </div>
                         </form>
                         <hr>
@@ -71,13 +93,15 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Company ID</th>
-                                        <th>Company Name</th>
-                                        <th>Short Name</th>
+                                        <th>Employee Name</th>
+                                        <th>Employee ID</th>
+                                        <th>Date Of Birth</th>
+                                        <th>Address</th>
+                                        <th>Employee Type</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
-                                        <th>{{ __('common.action') }}</th>
+                                        <th data-priority='1'>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -100,70 +124,80 @@
             firstTh.removeClass('sorting_asc');
         });
 
+        $(document).ready(function() {
+            var fromDatepicker = flatpickr("#from_date", {
+                dateFormat: "d-m-Y",
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        var startDate = selectedDates[0];
+                        toDatepicker.set('minDate', startDate);
+                        toDatepicker.clear();
+                    }
+                }
+            });
+
+            var toDatepicker = flatpickr("#to_date", {
+                dateFormat: "d-m-Y",
+                minDate: "today"
+            });
+        });
+
+
         $(function() {
-            /* Datatable */
+            /* Initialize DataTable */
             var table = $('.datatable-list').DataTable({
                 autoWidth: false,
                 responsive: true,
-                processing: false,
+                processing: true,
                 serverSide: true,
                 searching: true,
                 ordering: true,
                 dom: 'Bfrtip',
-                layout: {
-                    top2Start: 'buttons',
-                    top2End: {
-                        search: {
-                            placeholder: ''
-                        }
-                    },
-                    topStart: '',
-                    topEnd: '',
-                    bottomStart: '',
-                    bottomEnd: '',
-                    bottom2Start: 'info',
-                    bottom2End: 'paging'
-                },
-
                 ajax: {
-                    url: "{{ admin_url('company/list') }}",
+                    url: "{{ admin_url('ohc/employee-cum-patient/list') }}",
                     type: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                            .attr('content')
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     data: function(d) {
-                        d.company_id = $('#company_id').val();
-                        d.company_name = $('#company_name').val();
-                        d.short_name = $('#short_name').val();
+                        d.emp_name = $('#emp_name').val();
+                        d.from_date = $('#from_date').val();
+                        d.to_date = $('#to_date').val();
                         d.status = $('#status').val();
 
                     },
-                    error: function(xhr, error, code) {
-                            if (xhr.status === 419) {
-                                alert('Session has expired. You will be redirected to the login page.');
-                                window.location.href = "{{ url('') }}"; // Redirect to login page
-                            }
+                    error: function(xhr) {
+                        if (xhr.status === 419) {
+                            alert('Session has expired. Redirecting to login.');
+                            window.location.href = "{{ url('') }}";
                         }
+                    }
                 },
                 columns: [{
                         data: 'DT_RowIndex',
                         orderable: false,
-                        searchable: true,
+                        searchable: false
                     },
                     {
-                        data: 'company_id',
-                        name: 'company_id'
+                        data: 'emp_name',
+                        name: 'emp_name'
                     },
                     {
-                        data: 'company_name',
-                        name: 'company_name'
+                        data: 'emp_id',
+                        name: 'emp_id'
                     },
                     {
-                        data: 'short_name',
-                        name: 'short_name'
+                        data: 'dob',
+                        name: 'dob'
                     },
-
+                    {
+                        data: 'address',
+                        name: 'address'
+                    },
+                    {
+                        data: 'employee_type',
+                        name: 'employee_type'
+                    },
                     {
                         data: 'status',
                         name: 'status'
@@ -179,21 +213,21 @@
                     {
                         data: 'action',
                         name: 'action',
-                        orderable: false,
-                    },
+                        orderable: false
+                    }
                 ],
                 language: {
                     paginate: {
-                        first: '<i title="{{ __('common.first') }}" class="fa fa-angle-double-left" aria-hidden="true"></i>',
-                        last: '<i title="{{ __('common.last') }}" title="Next" class="fa fa-angle-double-right" aria-hidden="true"></i>',
-                        next: '<i title="{{ __('common.next') }}" class="fa fa-angle-right" aria-hidden="true"></i>',
-                        previous: '<i title="{{ __('common.previous') }}" class="fa fa-angle-left" aria-hidden="true"></i>',
+                        first: '<i class="fa fa-angle-double-left"></i>',
+                        last: '<i class="fa fa-angle-double-right"></i>',
+                        next: '<i class="fa fa-angle-right"></i>',
+                        previous: '<i class="fa fa-angle-left"></i>'
                     },
-                    "info": "{{ __('common.dt_info') }}",
-                    "infoEmpty": "{{ __('common.dt_infoEmpty') }}",
-                    "infoFiltered": "{{ __('common.dt_infoFiltered') }}",
+                    info: "{{ __('common.dt_info') }}",
+                    infoEmpty: "{{ __('common.dt_infoEmpty') }}",
+                    infoFiltered: "{{ __('common.dt_infoFiltered') }}"
                 },
-                aLengthMenu: [
+                lengthMenu: [
                     [10, 25, 50, 100],
                     [10, 25, 50, 100]
                 ],
@@ -203,223 +237,137 @@
                         buttons: [{
                                 extend: 'pdf',
                                 text: '{{ __('common.pdf') }}',
-                                action: function(e, dt, button, config) {
-                                    var searchValue = $('#datatable-list_filter input').val();
-                                    company_id = $('#company_id').val();
-                                    company_name = $('#company_name').val();
-                                    short_name = $('#short_name').val();
-                                    status = $('#status').val();
+                                action: function() {
+                                    var searchValue = $('.dataTables_filter input').val();
 
-                                    $(".dt-button").removeClass('processing');
-                                    $('body').click();
+                                    var emp_name = $('#emp_name').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
+                                    var status = $('#status').val();
                                     window.location.href =
-                                        "{{ admin_url('company/export/pdf') }}" +
-                                        '?search=' + searchValue +
-                                        '&company_id=' + company_id +
-                                        '&company_name=' + company_name +
-                                        '&short_name=' + short_name +
+                                        "{{ admin_url('ohc/employee-cum-patient/export/pdf') }}?search=" +
+                                        searchValue+
+                                        '&emp_name=' + emp_name +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&status=' + status
                                 }
                             },
                             {
                                 extend: 'excel',
                                 text: '{{ __('common.excel') }}',
-                                action: function(e, dt, button, config) {
-                                    var searchValue = $('#datatable-list_filter input').val();
-                                    company_id = $('#company_id').val();
-                                    company_name = $('#company_name').val();
-                                    short_name = $('#short_name').val();
-                                    status = $('#status').val();
-                                    $(".dt-button").removeClass('processing');
-                                    $('body').click();
+                                action: function() {
+                                    var searchValue = $('.dataTables_filter input').val();
+                                    var emp_name = $('#emp_name').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
+                                    var status = $('#status').val();
                                     window.location.href =
-                                        "{{ admin_url('company/export/excel') }}" +
-                                        '?search=' + searchValue +
-                                        '&company_id=' + company_id +
-                                        '&company_name=' + company_name +
-                                        '&short_name=' + short_name +
+                                        "{{ admin_url('ohc/employee-cum-patient/export/excel') }}?search=" +
+                                        searchValue+
+                                        '&emp_name=' + emp_name +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&status=' + status
                                 }
-                            },
+                            }
                         ]
                     },
-
                     {
-                        "extend": 'pageLength',
-                        "text": '{{ __('common.show') }} 10 {{ __('common.records') }}'
+                        extend: 'pageLength',
+                        text: '{{ __('common.show') }}'
                     }
-                ],
-
+                ]
             });
-
-            table.on('length.dt', function(e, settings, len) {
-                var text = '{{ __('common.show') }} ' + len + ' {{ __('common.records') }}';
-                $('.buttons-page-length').find('span').text(text);
-            });
-
+            function showToast(icon, message) {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-right',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+                Toast.fire({
+                    icon: icon,
+                    title: message
+                });
+            }
+            /* Custom Search */
             $(document).on('click', '#searchform', function() {
                 table.draw();
             });
 
             $(document).on('click', '#resetform', function() {
-                $('#formsearch .single-select').val('');
-                $('#formsearch .single-select').trigger('change');
-                setTimeout(function() {
-                    table.draw();
-                }, 150);
+                $('#formsearch input, #formsearch select').val('').trigger('change');
+                table.draw();
             });
 
-            /* Status Change */
             $(document).on('click', '.statusChange', function() {
                 var id = $(this).data('id');
-                var types = $(this).data('type');
-                if (types == 1) {
-                    var title = '{{ __('Do You want to In-Activate Company Details') }}';
-                    var text = '{{ __('common.inactive') }}';
-                    var btncolor = '#dc3545'
+                var type = $(this).data('type');
+                var title = type == 1 ? '{{ __('Do You want to In-Activate Employee Cum Patient') }}' :
+                    '{{ __('Do You want to Activate Employee Cum Patient') }}';
+                var btnColor = type == 1 ? '#dc3545' : '#7ddc35';
 
-                } else {
-                    var title = '{{ __('Do You want to Activate Company Details') }}';
-                    var text = '{{ __('common.active') }}';
-                    var btncolor = '#7ddc35'
+                Swal.fire({
+                    title: title,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: type == 1 ? '{{ __('common.inactive') }}' :
+                        '{{ __('common.active') }}',
+                    confirmButtonColor: btnColor,
+                    customClass: {
+                        confirmButton: 'btn-skew',
+                        cancelButton: 'btn-skew'
+                    }
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            url: "{{ admin_url('ohc/employee-cum-patient/status') }}",
+                            type: 'POST',
+                            data: {
+                                id: id,
+                                types: type
+                            },
+                            success: function(response) {
+                                showToast('success', response.msg);
+                                table.draw();
+                            },
+                            error: function(xhr) {
+                                showToast('error', xhr.responseJSON.msg);
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('#emp_name').select2({
+            ajax: {
+                url: '{{ admin_url('safetypermit/employeename') }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search: params.term
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: $.map(data, function(item) {
+
+                            var cleanedText = item.text.replace(/ - .*/, '').trim();
+                            return {
+                                id: cleanedText,
+                                text: cleanedText
+                            };
+                        })
+                    };
                 }
-
-                Swal.fire({
-                    title: title,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: text,
-                    confirmButtonColor: btncolor,
-                    customClass: {
-                        confirmButton: 'btn-skew',
-                        cancelButton: 'btn-skew'
-                    },
-                }).then((result) => {
-
-
-                    if (result.value) {
-                        $.ajax({
-                            url: "{{ admin_url('company/status') }}",
-                            type: 'post',
-
-                            data: {
-                                id: id,
-                                types: types
-                            },
-                            success: function(response) {
-                                const Toast = Swal.mixin({
-                                    toast: true,
-                                    position: 'top-right',
-                                    showConfirmButton: false,
-                                    timer: 3000,
-                                    timerProgressBar: true,
-                                    didOpen: (toast) => {
-                                        toast.addEventListener(
-                                            'mouseenter',
-                                            Swal.stopTimer)
-                                        toast.addEventListener(
-                                            'mouseleave',
-                                            Swal.resumeTimer
-                                        )
-                                    }
-                                });
-                                Toast.fire({
-                                    icon: 'success',
-                                    title: response.msg
-                                });
-                                table.draw();
-                            },
-                            error: function(data) {
-                                $.notify(data.responseJSON.msg, "error");
-                            }
-                        });
-                    } else if (result.isDenied) {
-                        Swal.fire('Something went wrong', '', 'info');
-                    }
-                })
-
-            });
-
-
-            /* Delete Record */
-            $(document).on('click', '.recordDelete', function() {
-
-                var id = $(this).data('id');
-                var login_id = $(this).data('login_id');
-
-                var title = '{{ __('Do You want to Delete Company Details') }}';
-                var text = '{{ __('common.delete') }}';
-                var btncolor = '#dc3545'
-
-                Swal.fire({
-                    title: title,
-                    icon: 'warning',
-                    showDenyButton: false,
-                    showCancelButton: true,
-                    confirmButtonText: text,
-                    confirmButtonColor: btncolor,
-                    denyButtonColor: '#28a745',
-                    customClass: {
-                        confirmButton: 'btn-skew',
-                        cancelButton: 'btn-skew'
-                    },
-                }).then((result) => {
-
-                    if (result.value) {
-                        $.ajax({
-                            url: "{{ admin_url('company/delete') }}",
-                            type: 'post',
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                                    .attr('content')
-                            },
-                            data: {
-                                id: id,
-                                login_id: login_id
-                            },
-                            success: function(response) {
-                                const Toast = Swal.mixin({
-                                    toast: true,
-                                    position: 'top-right',
-                                    showConfirmButton: false,
-                                    timer: 3000,
-                                    timerProgressBar: true,
-                                    didOpen: (toast) => {
-                                        toast.addEventListener(
-                                            'mouseenter',
-                                            Swal.stopTimer)
-                                        toast.addEventListener(
-                                            'mouseleave',
-                                            Swal.resumeTimer
-                                        )
-                                    }
-                                });
-                                Toast.fire({
-                                    icon: 'success',
-                                    title: response.msg
-                                });
-                                table.draw();
-                            },
-                            error: function(data) {
-                                if (data.status === 406 && data.responseJSON.msg ===
-                                    'module_exits') {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error',
-                                        text: 'Company Deletion Failed: Module Dependencies Exist.',
-                                    });
-                                } else {
-                                    $.notify(data.responseJSON.msg, "error");
-                                }
-                            }
-                        });
-                    } else if (result.isDenied) {
-                        Swal.fire('Something went wrong', '', 'info');
-                    }
-                })
-
-
-            });
+            },
+            minimumInputLength: 1,
+            dropdownCssClass: 'form-control',
+            selectionCssClass: 'form-control'
+        });
 
         });
     </script>

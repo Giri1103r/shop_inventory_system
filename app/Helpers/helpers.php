@@ -422,7 +422,34 @@ if (!function_exists('getUsername')) {
         }
     }
 }
+if (!function_exists('getEmployeename')) {
 
+    function getEmployeename($userid)
+    {
+
+        $user = DB::table('masters_employee')->select('emp_name')->where('id', $userid)->where('trash', 'NO')->first();
+
+        if ($user == null) {
+            return '';
+        } else {
+            return $user->emp_name;
+        }
+    }
+}
+if (!function_exists('getEmployeeType')) {
+
+    function getEmployeeType($userid)
+    {
+
+        $employee_type_name = DB::table('ohc_master_employee_cum_patient_employee_type')->select('employee_type_name')->where('id', $userid)->where('trash', 'NO')->first();
+
+        if ($employee_type_name == null) {
+            return '';
+        } else {
+            return $employee_type_name->employee_type_name;
+        }
+    }
+}
 if (!function_exists('getUserdesignation')) {
     function getUserdesignation($userid)
     {

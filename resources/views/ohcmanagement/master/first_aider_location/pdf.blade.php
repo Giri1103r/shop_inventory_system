@@ -31,10 +31,10 @@
                             {{ getDepartment($value->department_id) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getLocatioName($value->location_id) }}
+                            {{ $value->location_id }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->station_master}}
+                            {{ getEmployeename($value->station_master)}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->station_number}}

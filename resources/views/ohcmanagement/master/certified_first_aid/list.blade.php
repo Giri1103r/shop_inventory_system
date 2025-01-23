@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Company Master')
-@section('pageurl', admin_url('company/list'))
+@section('title', 'Certified First Aider')
+@section('pageurl', admin_url('ohc/certified-first-aider/list'))
 
 
 @section('content')
@@ -14,14 +14,10 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
-                        @if (CheckUserPermission('import'))
-                            <x-button-import href="{{ admin_url('company/import') }}"></x-button-import>
-                        @endif
-
-                        @if (CheckUserPermission('add'))
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('company/add') }}">Add</x-button-add>
-                        @endif
+                        {{-- @if (CheckUserPermission('add')) --}}
+                        <x-button-add dataId="" class="add btn btn-primary ms-1"
+                            href="{{ admin_url('ohc/certified-first-aider/add') }}">Add</x-button-add>
+                        {{-- @endif --}}
 
                     </div>
 
@@ -30,17 +26,57 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="company_id" class="form-label">Company ID</label>
-                                            <input type="text" name="company_id" id="company_id" class="form-control"
-                                                placeholder="Company ID">
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">Unit</label>
+                                                <select name="unit_id" id="unit_id" class="form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select the unit</option>
+                                                    @foreach ($unit as $list)
+                                                        <option value="{{ encryptId($list->id) }}">
+                                                            {{ $list->unit_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="company_name" class="form-label">Company Name</label>
-                                            <input type="text" name="company_name" id="company_name" class="form-control"
-                                                placeholder="Company Name">
-                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">Department</label>
+                                                <select name="department_id" id="department_id"
+                                                    class=" form-control single-select" style="width: 100%">
+                                                    <option value="">Select Department </option>
 
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">Certified First Aider Name</label>
+                                                <input type="text" name="certifier_name" id="certifier_name"
+                                                    class=" form-control ">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
@@ -71,13 +107,16 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Company ID</th>
-                                        <th>Company Name</th>
-                                        <th>Short Name</th>
+                                        <th>Unit</th>
+                                        <th>Department</th>
+                                        <th>Certified First Aider</th>
+                                        <th>Mobile Number</th>
+                                        <th>Employee ID</th>
+                                        <th>Address</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
-                                        <th>{{ __('common.action') }}</th>
+                                        <th data-priority = '1'>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -98,6 +137,48 @@
         $(document).ready(function() {
             var firstTh = $('.datatable-list thead th:first');
             firstTh.removeClass('sorting_asc');
+        });
+        $(document).on('change', '#unit_id', function() {
+            var unitId = $(this).val();
+            if (unitId) {
+                $.ajax({
+                    url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#department_id').empty().append(
+                            '<option value="">Select Department</option>');
+                        $.each(data, function(key, value) {
+                            $('#department_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#department_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching department. Please try again.');
+                    }
+                });
+            } else {
+                $('#department_id').empty().append('<option value="">Select Department</option>');
+                $('#department_id').trigger('change.');
+            }
+        });
+        $(document).ready(function() {
+            var fromDatepicker = flatpickr("#from_date", {
+                dateFormat: "d-m-Y",
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        var startDate = selectedDates[0];
+                        toDatepicker.set('minDate', startDate);
+                        toDatepicker.clear();
+                    }
+                }
+            });
+
+            var toDatepicker = flatpickr("#to_date", {
+                dateFormat: "d-m-Y",
+                minDate: "today"
+            });
         });
 
         $(function() {
@@ -126,25 +207,27 @@
                 },
 
                 ajax: {
-                    url: "{{ admin_url('company/list') }}",
+                    url: "{{ admin_url('ohc/certified-first-aider/list') }}",
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                             .attr('content')
                     },
                     data: function(d) {
-                        d.company_id = $('#company_id').val();
-                        d.company_name = $('#company_name').val();
-                        d.short_name = $('#short_name').val();
+                        d.unit_id = $('#unit_id').val();
+                        d.department_id = $('#department_id').val();
+                        d.certifier_name = $('#certifier_name').val();
+                        d.from_date = $('#from_date').val();
+                        d.to_date = $('#to_date').val();
                         d.status = $('#status').val();
 
                     },
                     error: function(xhr, error, code) {
-                            if (xhr.status === 419) {
-                                alert('Session has expired. You will be redirected to the login page.');
-                                window.location.href = "{{ url('') }}"; // Redirect to login page
-                            }
+                        if (xhr.status === 419) {
+                            alert('Session has expired. You will be redirected to the login page.');
+                            window.location.href = "{{ url('') }}"; // Redirect to login page
                         }
+                    }
                 },
                 columns: [{
                         data: 'DT_RowIndex',
@@ -152,18 +235,29 @@
                         searchable: true,
                     },
                     {
-                        data: 'company_id',
-                        name: 'company_id'
+                        data: 'unit_id',
+                        name: 'unit_id'
                     },
                     {
-                        data: 'company_name',
-                        name: 'company_name'
+                        data: 'department_id',
+                        name: 'department_id'
                     },
                     {
-                        data: 'short_name',
-                        name: 'short_name'
+                        data: 'certifier_name',
+                        name: 'certifier_name'
                     },
-
+                    {
+                        data: 'mobile_no',
+                        name: 'mobile_no'
+                    },
+                    {
+                        data: 'emp_id',
+                        name: 'emp_id'
+                    },
+                    {
+                        data: 'address',
+                        name: 'address'
+                    },
                     {
                         data: 'status',
                         name: 'status'
@@ -205,19 +299,23 @@
                                 text: '{{ __('common.pdf') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    company_id = $('#company_id').val();
-                                    company_name = $('#company_name').val();
-                                    short_name = $('#short_name').val();
-                                    status = $('#status').val();
+                                    var department_id = $('#department_id').val();
+                                    var certifier_name = $('#certifier_name').val();
+                                    var unit_id = $('#unit_id').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
+                                    var status = $('#status').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('company/export/pdf') }}" +
+                                        "{{ admin_url('ohc/certified-first-aider/export/pdf') }}" +
                                         '?search=' + searchValue +
-                                        '&company_id=' + company_id +
-                                        '&company_name=' + company_name +
-                                        '&short_name=' + short_name +
+                                        '&unit_id=' + unit_id +
+                                        '&certifier_name=' + certifier_name +
+                                        '&department_id=' + department_id +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&status=' + status
                                 }
                             },
@@ -225,19 +323,24 @@
                                 extend: 'excel',
                                 text: '{{ __('common.excel') }}',
                                 action: function(e, dt, button, config) {
+
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    company_id = $('#company_id').val();
-                                    company_name = $('#company_name').val();
-                                    short_name = $('#short_name').val();
-                                    status = $('#status').val();
+                                    var department_id = $('#department_id').val();
+                                    var certifier_name = $('#certifier_name').val();
+                                    var unit_id = $('#unit_id').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
+                                    var status = $('#status').val();
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('company/export/excel') }}" +
+                                        "{{ admin_url('ohc/certified-first-aider/export/excel') }}" +
                                         '?search=' + searchValue +
-                                        '&company_id=' + company_id +
-                                        '&company_name=' + company_name +
-                                        '&short_name=' + short_name +
+                                        '&unit_id=' + unit_id +
+                                        '&certifier_name=' + certifier_name +
+                                        '&department_id=' + department_id +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&status=' + status
                                 }
                             },
@@ -274,12 +377,12 @@
                 var id = $(this).data('id');
                 var types = $(this).data('type');
                 if (types == 1) {
-                    var title = '{{ __('Do You want to In-Activate Company Details') }}';
+                    var title = '{{ __('Do You want to In-Activate Certified First Aider') }}';
                     var text = '{{ __('common.inactive') }}';
                     var btncolor = '#dc3545'
 
                 } else {
-                    var title = '{{ __('Do You want to Activate Company Details') }}';
+                    var title = '{{ __('Do You want to Activate Certified First Aider') }}';
                     var text = '{{ __('common.active') }}';
                     var btncolor = '#7ddc35'
                 }
@@ -299,7 +402,7 @@
 
                     if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('company/status') }}",
+                            url: "{{ admin_url('ohc/certified-first-aider/status') }}",
                             type: 'post',
 
                             data: {
@@ -367,7 +470,7 @@
 
                     if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('company/delete') }}",
+                            url: "{{ admin_url('ohc/certified-first-aider/delete') }}",
                             type: 'post',
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

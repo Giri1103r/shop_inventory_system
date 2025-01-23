@@ -31,6 +31,8 @@ class FirstAidLocationController extends Controller
     private $department;
     private $user;
     private $uploadlog;
+    private $employee;
+
 
 
     public function __construct()
@@ -42,6 +44,8 @@ class FirstAidLocationController extends Controller
         $this->department = new Department();
         $this->user = new User();
         $this->uploadlog = new UploadLog();
+        $this->employee = new Employee();
+
     }
 
 
@@ -68,19 +72,28 @@ class FirstAidLocationController extends Controller
                             return $text;
                         })
                         ->addColumn('created_at', function ($row) {
-                            return Displaydatetimeformat($row->created_at);
+                            return Displaydateformat($row->created_at);
+                        })
+                        ->editColumn('department_id', function ($row) {
+                            return $row->department_name;
+                        })
+                        ->editColumn('unit_id', function ($row) {
+                            return $row->unit_name;
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
+                        ->addColumn('station_master', function ($row) {
+                            return getEmployeename($row->station_master);
+                        })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            if (CheckUserPermission('view')) {
+                            // if (CheckUserPermission('view')) {
                                 $btn = '<a href="' . admin_url('ohc/first-aid-location/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            }
-                            if (CheckUserPermission('edit')) {
+                            // }
+                            // if (CheckUserPermission('edit')) {
                                 $btn .= '<a href="' . admin_url('ohc/first-aid-location/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            }
+                            // }
 
                             return $btn;
                         })
@@ -96,7 +109,10 @@ class FirstAidLocationController extends Controller
                 }
             }
         }
-        $data = array();
+        $unit = $this->unit->getunit();
+        $data = [
+            'unit' => $unit
+        ];
 
         return view('ohcmanagement.master.first_aider_location.list', $data);
     }
@@ -147,7 +163,7 @@ class FirstAidLocationController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
@@ -182,10 +198,16 @@ class FirstAidLocationController extends Controller
         try {
             $id = decryptId($request->id);
 
-
+            $departmentList=$this->department->getdepartment();
             $firstaidlocation = $this->firstaidlocation->find($id);
+            $unit = $this->unit->getunit();
+            $employeeList=$this->employee->getEmployeefulldata();
             $data = array(
                 'firstaidlocation' => $firstaidlocation,
+                'unit' => $unit,
+                'departmentList'=>$departmentList,
+                'employeeList'=>$employeeList
+
             );
 
 
@@ -400,8 +422,8 @@ class FirstAidLocationController extends Controller
                 $export[] =  $i;
                 $export[] =  getUnitname($data->unit_id);
                 $export[] =  getDepartment($data->department_id);
-                $export[] =  getLocationName($data->location_id);
-                $export[] =  $data->station_master;
+                $export[] = $data->location_id;
+                $export[] =  getEmployeename($data->station_master);
                 $export[] =  $data->station_number;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
@@ -471,11 +493,11 @@ class FirstAidLocationController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "firstaidlocation Master.pdf";
+            $filename = "first aider location .pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
         }
     }
 

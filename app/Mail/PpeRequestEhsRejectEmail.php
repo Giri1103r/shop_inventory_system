@@ -27,7 +27,7 @@ class PpeRequestEhsRejectEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: ('PPE Shoe Request Rejected by EHS Officer'),
+            subject: ('PPE Request Rejected by EHS Officer'),
         );
     }
 

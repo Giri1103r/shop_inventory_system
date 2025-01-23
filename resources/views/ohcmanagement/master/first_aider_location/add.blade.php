@@ -43,8 +43,8 @@
                                                         style="width: 100%">
                                                         <option value="">Select the unit</option>
                                                         @foreach ($unit as $list)
-                                                            <option value="{{ $list->id }}">{{ $list->unit_name }}
-                                                            </option>
+                                                        <option value="{{ encryptId($list->id) }}">
+                                                            {{ $list->unit_name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>

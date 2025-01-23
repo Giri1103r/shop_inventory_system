@@ -115,6 +115,18 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
+                        remote: {
+                            url: '{{ admin_url('ohc/vendor/unique') }}',
+                            type: 'post',
+                            data: {
+                                license_no: function() {
+                                    return $('#license_no').val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
+                                }
+                            }
+                        }
 
                     },
                     address: {

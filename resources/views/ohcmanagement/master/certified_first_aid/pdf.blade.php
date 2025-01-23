@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Company Master PDF')
+@section('title', 'Certified First Aider PDF')
 @section('content')
 
     <div style="width:100%;">
@@ -25,18 +25,24 @@
                             {{ $i }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->company_id }}
+                            {{ getUnitname($value->unit_id) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->company_name }}
+                            {{ getDepartment($value->department_id) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->short_name }}
+                            {{ $value->emp_id }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->certifier_name }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->mobile_no }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->address}}
                         </td>
-                      
+
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php
                                 $status = $value->status == 1 ? 'Active' : 'In-Active';

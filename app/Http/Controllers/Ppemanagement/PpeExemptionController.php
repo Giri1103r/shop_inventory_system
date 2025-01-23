@@ -15,6 +15,7 @@ use App\Models\ApproveStatus;
 use App\Models\Master\Company;
 use App\Models\Master\Department;
 use App\Models\Master\PpeExemption;
+use App\Models\Master\Work;
 use App\Models\Master\Unit;
 use App\Models\Ppemanagement\PpeFiles;
 use App\Models\Statuslog;
@@ -42,7 +43,7 @@ class PpeExemptionController extends Controller
     private $approvestatus;
     private $company;
     private $ppeFiles;
-
+    private $work;
 
     private $uploadlog;
 
@@ -59,6 +60,7 @@ class PpeExemptionController extends Controller
         $this->company = new Company();
         $this->approvestatus = new ApproveStatus();
         $this->ppeFiles = new PpeFiles();
+        $this->work = new Work();
 
     }
     public function index(Request $request)
@@ -296,7 +298,7 @@ class PpeExemptionController extends Controller
                 'ppefiles' => $ppefiles,
 
             ];
-           
+
 
             return view('ppemanagement.ppeexemption.view', $data);
         } catch (Exception $ex) {

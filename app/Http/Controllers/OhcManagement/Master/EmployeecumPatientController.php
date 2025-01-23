@@ -11,9 +11,11 @@ use App\Models\Master\Department;
 use App\Models\User;
 use App\Models\UploadLog;
 use App\Jobs\ImportCompanyJob;
-
+use App\Models\Master\Employee;
+use App\Models\OhcManagement\Master\EmployeeCumPatient;
 use Illuminate\Support\Facades\Auth;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
@@ -25,23 +27,24 @@ use Illuminate\Support\Str;
 class EmployeecumPatientController extends Controller
 {
 
-    private $company;
+    private $employeecumpatient;
     private $unit;
     private $location;
     private $department;
     private $user;
     private $uploadlog;
-
+    private $employee;
 
     public function __construct()
     {
 
-        $this->company = new Company();
+        $this->employeecumpatient = new EmployeeCumPatient();
         $this->unit = new Unit();
         $this->location = new Location();
         $this->department = new Department();
         $this->user = new User();
         $this->uploadlog = new UploadLog();
+        $this->employee = new Employee();
     }
 
 
@@ -52,7 +55,7 @@ class EmployeecumPatientController extends Controller
 
                 try {
 
-                    $data =  $this->company->list();
+                    $data =  $this->employeecumpatient->list();
 
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
@@ -66,19 +69,22 @@ class EmployeecumPatientController extends Controller
                             return $text;
                         })
                         ->addColumn('created_at', function ($row) {
-                            return Displaydatetimeformat($row->created_at);
+                            return Displaydateformat($row->created_at);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
+                        ->addColumn('employee_type', function ($row) {
+                            return $row->employee_type_name;
+                        })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            if (CheckUserPermission('view')) {
-                                $btn = '<a href="' . admin_url('company/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            }
-                            if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('company/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            }
+                            // if (CheckUserPermission('view')) {
+                                $btn = '<a href="' . admin_url('ohc/employee-cum-patient/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            // }
+                            // if (CheckUserPermission('edit')) {
+                                $btn .= '<a href="' . admin_url('ohc/employee-cum-patient/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            // }
 
                             return $btn;
                         })
@@ -89,23 +95,25 @@ class EmployeecumPatientController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    report($ex);
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
         }
         $data = array();
 
-        return view('master.company.list', $data);
+        return view('ohcmanagement.master.employee_cum_patient.list', $data);
     }
 
     public function Add(Request $request)
     {
 
         try {
-
-            $data = array();
-            return view('master.company.add', $data);
+            $employeeType = DB::table('ohc_master_employee_cum_patient_employee_type')->select('employee_type_name', 'id')->where('trash', 'No')->where('status', 1)->get();
+            $data = [
+                'employeeType' => $employeeType
+            ];
+            return view('ohcmanagement.master.employee_cum_patient.add', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -116,18 +124,21 @@ class EmployeecumPatientController extends Controller
         try {
 
             $rules = [
-                'company_id' => 'required',
-                'company_name' => 'required',
-                'short_name' => 'required',
-                'address' => 'required',
+                'emp_name' => 'required',
+                'employee_type' => 'required',
+                'dob' => 'required',
+                'address' => 'required|max:300',
             ];
-            $messages = [
-                'company_id.required' => 'Please enter Company ID',
-                'company_name.required' => 'Please enter Company Name',
-                'short_name.required' => 'Please enter Short Name',
-                'address.required' => 'Please enter Company Address',
 
+
+            $messages = [
+                'emp_name.required' => 'Employee name is required.',
+                'employee_type.required' => 'Please select an employee type.',
+                'dob.required' => 'Date of birth is required.',
+                'address.required' => 'Address is required.',
+                'address.max' => 'Address cannot exceed 300 characters.',
             ];
+
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
@@ -135,18 +146,9 @@ class EmployeecumPatientController extends Controller
 
             try {
 
-                // $userDetails = $this->user->companystore();
 
-                // $id = $userDetails->id;
-                $company = $this->company->store();
-                // if ($userDetails->email != '' || $userDetails->email != null) {
+               $this->employeecumpatient->store();
 
-                //     $empdetails =  $this->user->selectOne($id);
-
-                //     $emp  = $empdetails->toArray();
-
-                //     Mail::to($empdetails->email)->queue(new EmployeeRegisterEmail($emp));
-                // }
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
@@ -154,12 +156,12 @@ class EmployeecumPatientController extends Controller
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
-            return redirect(admin_url('company/list'));
+            return redirect(admin_url('ohc/employee-cum-patient/list'));
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('company/list'));
+            return redirect(admin_url('ohc/employee-cum-patient/list'));
         }
     }
 
@@ -168,13 +170,13 @@ class EmployeecumPatientController extends Controller
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
-                $company = $this->company->selectOne($id);
+                $employeecumpatient = $this->employeecumpatient->selectOne($id);
 
                 $data = array(
-                    'company' => $company,
+                    'employeecumpatient' => $employeecumpatient,
                 );
             }
-            return view('master.company.view', $data);
+            return view('ohcmanagement.master.employee_cum_patient.view', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -185,14 +187,17 @@ class EmployeecumPatientController extends Controller
         try {
             $id = decryptId($request->id);
 
-
-            $company = $this->company->find($id);
+            $employeeType = DB::table('ohc_master_employee_cum_patient_employee_type')->select('employee_type_name', 'id')->where('trash', 'No')->where('status', 1)->get();
+            $employeeList=$this->employee->getEmployeefulldata();
+            $employeecumpatient = $this->employeecumpatient->find($id);
             $data = array(
-                'company' => $company,
+                'employeecumpatient' => $employeecumpatient,
+                'employeeType' => $employeeType,
+                'employeeList'=>$employeeList
             );
 
 
-            return view('master.company.edit', $data);
+            return view('ohcmanagement.master.employee_cum_patient.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
         }
@@ -203,34 +208,37 @@ class EmployeecumPatientController extends Controller
         try {
             $id = decryptId($request->id);
             $rules = [
-                'company_id' => 'required',
-                'company_name' => 'required',
-                'short_name' => 'required',
-                'address' => 'required',
+                'emp_name' => 'required',
+                'employee_type' => 'required',
+                'dob' => 'required',
+                'address' => 'required|max:300',
             ];
-            $messages = [
-                'company_id.required' => 'Please enter Company ID',
-                'company_name.required' => 'Please enter Company Name',
-                'short_name.required' => 'Please enter Short Name',
-                'address.required' => 'Please enter Company Address',
 
+
+            $messages = [
+                'emp_name.required' => 'Employee name is required.',
+                'employee_type.required' => 'Please select an employee type.',
+                'dob.required' => 'Date of birth is required.',
+                'address.required' => 'Address is required.',
+                'address.max' => 'Address cannot exceed 300 characters.',
             ];
+
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            $this->company->updates($id);
+            $this->employeecumpatient->updates($id);
 
             // $company = $this->company->find($id);
             // $this->user->companyUpdate($company->login_id);
 
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('company/list'));
+            return redirect(admin_url('ohc/employee-cum-patient/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('company/list'));
+            return redirect(admin_url('ohc/employee-cum-patient/list'));
         }
     }
 
@@ -238,18 +246,18 @@ class EmployeecumPatientController extends Controller
     public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {
-            $company_name = $request->company_name;
+            $emp_id = $request->emp_id;
+            $emp_name = $request->emp_name;
             $id = $request->id;
-            if ($id == '') {
-                $record = $this->company->uniqueCheck($company_name);
+
+            if (empty($id)) {
+                $isUnique = !$this->employeecumpatient->uniqueCheck($emp_id, $emp_name);
             } else {
                 $id = decryptId($id);
-                $record = $this->company->ExistuniqueCheck($company_name, $id);
+                $isUnique = !$this->employeecumpatient->existUniqueCheck($emp_id, $emp_name, $id);
             }
-            if ($record->count()) {
-                return Response::json(false);
-            }
-            return Response::json(true);
+
+            return Response::json($isUnique);
         }
     }
 
@@ -259,11 +267,11 @@ class EmployeecumPatientController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $this->company->statuschange($id);
+            $this->employeecumpatient->statuschange($id);
             // $company =  $this->company->selectOne($id);
             // $this->user->statuschange($company->login_id);
 
-            return response()->json(['status' => 'success', 'msg' => 'Company status changed'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'Your Status Changed Successfully'], 200);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
@@ -281,7 +289,7 @@ class EmployeecumPatientController extends Controller
             if ($location || $unit || $department) {
                 return response()->json(['status' => 'error', 'msg' => 'module_exits'], 406);
             }
-            $this->company->deleterecord($id);
+            $this->employeecumpatient->deleterecord($id);
             return response()->json(['status' => 'success', 'msg' => 'Company deleted successfully'], 200);
         } catch (Exception $ex) {
             report($ex);
@@ -292,7 +300,7 @@ class EmployeecumPatientController extends Controller
     // public function Import(Request $request)
     // {
     //     $data = array();
-    //     return view('master.company.import', $data);
+    //     return view('ohcmanagement.master.employee_cum_patient.import', $data);
     // }
     // public function ImportSubmit(Request $request)
     // {
@@ -364,11 +372,11 @@ class EmployeecumPatientController extends Controller
     //         $insert_data['Uploded_by'] = Auth::user()->toArray();
 
     //         Session::flash('success', __('Company uploaded sucessfully'));
-    //         return redirect(admin_url('company/list'));
+    //         return redirect(admin_url('ohc/employee-cum-patient/list'));
     //     } catch (Exception $ex) {
     //         report($ex);
     //         Session::flash('error', __('Company upload failed'));
-    //         return redirect(admin_url('company/list'));
+    //         return redirect(admin_url('ohc/employee-cum-patient/list'));
     //     }
     // }
     public function ExportExcel(Request $request)
@@ -376,7 +384,7 @@ class EmployeecumPatientController extends Controller
 
         try {
 
-            $allData = $this->company->exportdata();
+            $allData = $this->employeecumpatient->exportdata();
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -384,9 +392,9 @@ class EmployeecumPatientController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Company ID',
-                'Company Name',
-                'Short Name',
+                'Employee Name',
+                'Employee Type',
+                'Date of birth',
                 'Address',
                 __("common.status"),
                 __("common.created_by"),
@@ -398,9 +406,9 @@ class EmployeecumPatientController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->company_id;
-                $export[] =  $data->company_name;
-                $export[] =  $data->short_name;
+                $export[] =  $data->emp_name;
+                $export[] =  getEmployeeType($data->employee_type);
+                $export[] =  $data->dob;
                 $export[] =  $data->address;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
@@ -411,7 +419,7 @@ class EmployeecumPatientController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Company Master.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Employee Cum Patient Details.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -427,7 +435,7 @@ class EmployeecumPatientController extends Controller
 
         try {
 
-            $allData = $this->company->exportdata();
+            $allData = $this->employeecumpatient->exportdata();
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -435,9 +443,9 @@ class EmployeecumPatientController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Company ID',
-                'Company Name',
-                'Short Name',
+                'Employee Name',
+                'Employee Type',
+                'Date of birth',
                 'Address',
                 __("common.status"),
                 __("common.created_by"),
@@ -447,7 +455,7 @@ class EmployeecumPatientController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Company Details",
+                'pagetitle' => "Employee Cum Patient Details",
             );
 
             $property = [
@@ -462,19 +470,51 @@ class EmployeecumPatientController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('master.company.pdf', $data);
+            $view = view('ohcmanagement.master.employee_cum_patient.pdf', $data);
             $html = $view->render();
 
 
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Company Master.pdf";
+            $filename = "Employee cum patient.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);
         }
+    }
+
+
+    public function employeeid(Request $request)
+    {
+        $search = $request->input('search');
+
+        $employees = Employee::where(function ($query) use ($search) {
+            $query->where('emp_name', 'like', '%' . $search . '%')
+                ->orWhere('emp_id', 'like', '%' . $search . '%');
+        })
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+        return response()->json(
+            $employees->map(function ($employee) {
+                return [
+                    'id' => $employee->emp_id,
+                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+                ];
+            })
+        );
+    }
+    public function employeename(Request $request)
+    {
+        $empID = $request->input('empId');
+        $employee = Employee::where('emp_id', $empID)->where('trash', 'no')->where('status', 1)->first();
+        return response()->json(
+            $employee->emp_name
+
+        );
     }
 
     public function DownloadSample(Request $request)
