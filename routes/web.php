@@ -37,6 +37,7 @@ use App\Http\Controllers\OhcManagement\Master\EmployeecumPatientController;
 use App\Http\Controllers\OhcManagement\Master\FirstAidLocationController;
 use App\Http\Controllers\OhcManagement\Master\MedicineController;
 use App\Http\Controllers\OhcManagement\Master\VendorController;
+use App\Http\Controllers\OhcManagement\MedicineReceivingController;
 use App\Http\Controllers\Ppemanagement\DashboardController;
 use App\Http\Controllers\Ppemanagement\PpeRequestController;
 use App\Http\Controllers\Ppemanagement\PpeStockInventoryController;
@@ -837,6 +838,24 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('/import/submit', [CertifiedFirstAiderController::class, 'importSubmit']);
             Route::post('/status', [CertifiedFirstAiderController::class, 'statusChange']);
             Route::post('/unique', [CertifiedFirstAiderController::class, 'Uniquecheck']);
+        });
+
+        // Medicine Receiving
+        Route::group(['prefix' => 'ohc/medicine-receiving-form'], function () {
+            Route::get('/list', [MedicineReceivingController::class, 'index']);
+            Route::post('/list', [MedicineReceivingController::class, 'index']);
+            Route::get('/add', [MedicineReceivingController::class, 'add']);
+            Route::post('/add/submit', [MedicineReceivingController::class, 'store']);
+            Route::get('/edit/{id}', [MedicineReceivingController::class, 'edit']);
+            Route::post('/edit/submit', [MedicineReceivingController::class, 'update']);
+            Route::get('/view/{id}', [MedicineReceivingController::class, 'view']);
+            Route::post('/delete', [MedicineReceivingController::class, 'delete']);
+            Route::get('/export/excel', [MedicineReceivingController::class, 'exportExcel']);
+            Route::get('/export/pdf', [MedicineReceivingController::class, 'exportPdf']);
+            Route::post('/status', [MedicineReceivingController::class, 'statusChange']);
+            Route::post('/unique', [MedicineReceivingController::class, 'Uniquecheck']);
+            Route::post('/hsn-number', [MedicineReceivingController::class, 'hsnnumber']);
+
         });
     });
 });

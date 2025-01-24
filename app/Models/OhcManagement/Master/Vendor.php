@@ -221,14 +221,7 @@ class Vendor extends Model
     }
 
 
-    protected static function booted()
-    {
-        static::addGlobalScope(new TrashScope('ohc_master_vendor'));
-
-        static::created(function ($model) {
-
-            $uniqueId = 'CMP-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
-            $model->update(['company_id' => $uniqueId]);
-        });
-    }
+  public function getVendordata(){
+    return $this->where('status',1)->get();
+  }
 }

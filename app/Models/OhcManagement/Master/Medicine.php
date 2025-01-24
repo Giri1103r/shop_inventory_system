@@ -236,14 +236,10 @@ class Medicine extends Model
     }
 
 
-    protected static function booted()
-    {
-        static::addGlobalScope(new TrashScope('ohc_master_medicine'));
-
-        // static::created(function ($model) {
-
-        //     $uniqueId = 'CMP-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
-        //     $model->update(['company_id' => $uniqueId]);
-        // });
-    }
+  public function getMedicineData(){
+    return $this->where('status',1)->where('trash','no')->get();
+  }
+  public function hsnajaxData($medicineID){
+    return $this->where('id',$medicineID)->select('id','hsn')->first();
+  }
 }

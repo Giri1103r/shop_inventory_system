@@ -272,7 +272,7 @@ class TypeofWorkChecklist extends Model
     public function update1($id)
     {
         $request = request();
-dd($request);
+
         if (isset($request->protective['protective_check'])) {
 
             foreach ($request->protective['protective_check'] as $type => $checkedItems) {

@@ -184,6 +184,7 @@
             display: block;
             padding: 0px;
             height: auto;
+            background-color: #fff
         }
 
         body[data-leftbar-color=dark] .left-side-menu {
