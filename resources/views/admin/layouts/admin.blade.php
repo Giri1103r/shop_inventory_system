@@ -179,6 +179,30 @@
             white-space: nowrap;
             z-index: 1000;
         }
+        .logo span.logo-lg {
+    display: block;
+    padding: 0px;
+    height: auto;
+}
+
+body[data-leftbar-color=dark] .left-side-menu {
+    background-color: #fff !important;
+    color: #000 !important;
+}
+
+body[data-leftbar-color=dark] .left-side-menu #sidebar-menu>ul>li>a:hover, body[data-leftbar-color=dark] .left-side-menu #sidebar-menu>ul>li>a:focus, body[data-leftbar-color=dark] .left-side-menu #sidebar-menu>ul>li>a:active {
+    color: #fff;
+    background-color: #000;
+}
+
+.logo-box {
+    height: 80px;
+    width: 240px;
+    float: left;
+    transition: all 0.1s ease-out;
+}
+
+
     </style>
     @stack('style')
 

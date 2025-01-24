@@ -243,21 +243,24 @@ class MedicineController extends Controller
     }
 
 
+   
+
+
     public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {
-            $medicine_name = $request->medicine;
+            $medicine_name = $request->medicine_name;
+            $hsn = $request->hsn;
             $id = $request->id;
-            if ($id == '') {
-                $record = $this->medicine->uniqueCheck($medicine_name);
+
+            if (empty($id)) {
+                $isUnique = !$this->medicine->uniqueCheck($medicine_name,$hsn);
             } else {
                 $id = decryptId($id);
-                $record = $this->medicine->ExistuniqueCheck($medicine_name, $id);
+                $isUnique = !$this->medicine->existUniqueCheck($medicine_name,$hsn, $id);
             }
-            if ($record->count()) {
-                return Response::json(false);
-            }
-            return Response::json(true);
+
+            return Response::json($isUnique);
         }
     }
 

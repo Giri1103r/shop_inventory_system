@@ -103,19 +103,22 @@ class Medicine extends Model
         return $datas;
     }
 
-    public function UniqueCheck($data)
+    public function uniqueCheck($medicine_name,$hsn)
     {
-
-        return $this->where('medicine',  $data)->get();
+        return $this->where('medicine', $medicine_name)
+                    ->orWhere('hsn', $hsn)
+                    ->exists();
     }
 
-    public function ExistuniqueCheck($data, $id)
+    public function existUniqueCheck($medicine_name,$hsn,$id)
     {
-        return $this->where('medicine',  $data)
-            ->where('id', '!=', $id)
-            ->get();
+        return $this->where(function ($query) use ($medicine_name, $hsn) {
+                        $query->where('medicine', $medicine_name)
+                              ->orWhere('hsn', $hsn); // Fixed here
+                    })
+                    ->where('id', '!=', $id)
+                    ->exists();
     }
-
     public function store()
     {
         $request = request();

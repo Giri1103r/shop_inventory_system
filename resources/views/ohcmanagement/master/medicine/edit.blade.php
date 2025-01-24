@@ -191,6 +191,18 @@
                         minlength: 3,
                         maxlength: 30,
                         regex: /^[a-zA-Z0-9\s\-]*$/,
+                        remote: {
+                            url: '{{ admin_url('ohc/medicine/unique') }}',
+                            type: 'post',
+                            data: {
+                                hsn: function() {
+                                    return $('#hsn').val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
+                                }
+                            }
+                        }
                     },
                     unit_id: {
                         required: true,
@@ -228,6 +240,7 @@
                         minlength: "HSN code must be at least 3 characters.",
                         maxlength: "HSN code cannot exceed 30 characters.",
                         regex: "HSN code contains invalid characters.",
+                        remote: "This HSN Number already exists.",
                     },
                     unit_id: {
                         required: "Please select a unit.",
