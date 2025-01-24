@@ -213,10 +213,10 @@ class PpeRequestController extends Controller
         $name = $request->input('search');
 
 
-            $employee_code = Work::where('emp_id', 'like', '%' . $name . '%')
-                ->where('status', 1)
-                ->limit(10)
-                ->get();
+        $employee_code = Work::where('emp_id', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
 
         return response()->json(
             $employee_code->map(function ($employee) {
@@ -396,15 +396,15 @@ class PpeRequestController extends Controller
             $empId = $pperequest->emp_id;
             $userdata = $this->pperequest->getuserdata($empId);
             $hodstatuslog = $this->ppestatus->gethodstatuslog($id);
-            $ehsstatuslog =$this->ppestatus->getehsstatuslog($id);
-            $smStatuslog =$this->ppestatus->getsmstatuslog($id);
+            $ehsstatuslog = $this->ppestatus->getehsstatuslog($id);
+            $smStatuslog = $this->ppestatus->getsmstatuslog($id);
             $data = [
                 'pperequest' =>  $pperequest,
                 'encryptid' => $request->id,
                 'userdata' => $userdata,
-                'hodstatuslog'=>$hodstatuslog,
-                'ehsstatuslog'=>$ehsstatuslog,
-                'smStatuslog'=>$smStatuslog,
+                'hodstatuslog' => $hodstatuslog,
+                'ehsstatuslog' => $ehsstatuslog,
+                'smStatuslog' => $smStatuslog,
             ];
 
             return view('ppemanagement.pperequest.view', $data);
@@ -424,15 +424,15 @@ class PpeRequestController extends Controller
             // $ppestatuslog = $this->ppestatus->getstatusdetails($id);
             $userdata = $this->pperequest->getuserdata($empId);
             $hodstatuslog = $this->ppestatus->gethodstatuslog($id);
-            $ehsstatuslog =$this->ppestatus->getehsstatuslog($id);
-            $smStatuslog =$this->ppestatus->getsmstatuslog($id);
+            $ehsstatuslog = $this->ppestatus->getehsstatuslog($id);
+            $smStatuslog = $this->ppestatus->getsmstatuslog($id);
 
             $data = [
                 'userdata' => $userdata,
                 'pperequest' => $pperequest,
-                'hodstatuslog'=>$hodstatuslog,
-                'ehsstatuslog'=>$ehsstatuslog,
-                'smStatuslog'=>$smStatuslog,
+                'hodstatuslog' => $hodstatuslog,
+                'ehsstatuslog' => $ehsstatuslog,
+                'smStatuslog' => $smStatuslog,
                 'pagetitle' => "PPE request",
             ];
 
@@ -895,10 +895,12 @@ class PpeRequestController extends Controller
                         // Store Data and Update Status
                         $this->ppestock->store($data);
                     } else {
-                        throw new Exception("API returned an empty response for item code: {$itemList}");
+                        Session::flash('error', 'Something went wrong. please try again after some time.');
+                        return redirect()->to(admin_url('ppe_request/list'));
                     }
                 } else {
-                    throw new Exception("Failed to fetch API response for item code: {$itemList}");
+                    Session::flash('error', 'Something went wrong. please try again after some time.');
+                    return redirect()->to(admin_url('ppe_request/list'));
                 }
             }
 

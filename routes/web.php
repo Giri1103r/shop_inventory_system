@@ -37,6 +37,7 @@ use App\Http\Controllers\OhcManagement\Master\EmployeecumPatientController;
 use App\Http\Controllers\OhcManagement\Master\FirstAidLocationController;
 use App\Http\Controllers\OhcManagement\Master\MedicineController;
 use App\Http\Controllers\OhcManagement\Master\VendorController;
+use App\Http\Controllers\OhcManagement\MedicineIssuanceController;
 use App\Http\Controllers\OhcManagement\MedicineReceivingController;
 use App\Http\Controllers\OhcManagement\MedicineRequisitionController;
 use App\Http\Controllers\Ppemanagement\DashboardController;
@@ -871,6 +872,21 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('/export/excel', [MedicineRequisitionController::class, 'exportExcel']);
             Route::get('/export/pdf', [MedicineRequisitionController::class, 'exportPdf']);
             Route::post('/status', [MedicineRequisitionController::class, 'statusChange']);
+
+        });
+
+        Route::group(['prefix' => 'ohc/medicine-issuance'], function () {
+            Route::get('/list', [MedicineIssuanceController::class, 'index']);
+            Route::post('/list', [MedicineIssuanceController::class, 'index']);
+            Route::get('/add', [MedicineIssuanceController::class, 'add']);
+            Route::post('/add/submit', [MedicineIssuanceController::class, 'store']);
+            Route::get('/edit/{id}', [MedicineIssuanceController::class, 'edit']);
+            Route::post('/edit/submit', [MedicineIssuanceController::class, 'update']);
+            Route::get('/view/{id}', [MedicineIssuanceController::class, 'view']);
+            Route::post('/delete', [MedicineIssuanceController::class, 'delete']);
+            Route::get('/export/excel', [MedicineIssuanceController::class, 'exportExcel']);
+            Route::get('/export/pdf', [MedicineIssuanceController::class, 'exportPdf']);
+            Route::post('/status', [MedicineIssuanceController::class, 'statusChange']);
 
         });
     });

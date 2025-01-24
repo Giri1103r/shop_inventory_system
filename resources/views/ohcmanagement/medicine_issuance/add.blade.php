@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Shoe Exemption Add')
-@section('pageurl', admin_url('ppe_exemption/list'))
+@section('title', 'Medicine Issuance')
+@section('pageurl', admin_url('ohc/medicine-issuance/list'))
 @section('content')
 
     <div class="clearfix"></div>
@@ -21,183 +21,102 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('ppe_exemption/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('ohc/medicine-issuance/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body">
                                 <div class="basic-form">
-                                    <form method="POST" id="ppeExemptionForm" enctype="multipart/form-data"
-                                        action="{{ admin_url('ppe_exemption/add/submit') }}">
+                                    <form method="POST" id="MedicineRequisitionForm" enctype="multipart/form-data"
+                                        action="{{ admin_url('ohc/medicine-issuance/add/submit') }}">
                                         @csrf
-                                        <input type="hidden" name="unit" id="unit"
-                                            value="{{ $userData->unit_id }}">
-                                        <input type="hidden" name="company" id="company"
-                                            value="{{ $userData->company_id }}">
+
                                         <hr>
                                         <div class="row">
-                                            @if (checkUserrole(ROLE_SUPERADMIN) || checkUserRole(ROLE_WORKER_REQUEST))
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label require">Request For</label>
-                                                        <div class="gap-2">
-                                                            <label class="form-check form-check-inline">
-                                                                <input type="radio" name="request_for"
-                                                                    id="request_for_myself" class="form-check-input"
-                                                                    value="1">
-                                                                <span class="form-check-label">Myself</span>
-                                                            </label>
-                                                            <label class="form-check form-check-inline">
-                                                                <input type="radio" name="request_for"
-                                                                    id="request_for_worker" class="form-check-input"
-                                                                    value="2">
-                                                                <span class="form-check-label">Worker</span>
-                                                            </label>
-                                                        </div>
-                                                        <div class="text-danger"></div>
-                                                    </div>
-                                                </div>
 
-                                                <div class="col-md-4 mb-3" id="emp_id_container">
-                                                    <div class="form-group form-input">
-                                                        <label for="emp_id" class="form-label require">Employee ID</label>
-                                                        <select name="emp_id" id="emp_id"
-                                                            class="form-select form-select-sm single-select"
-                                                            style="width: 100%">
-                                                            <option value="">Select the employee</option>
 
-                                                        </select>
-                                                        <div class="text-danger"></div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="emp_name" class="form-label require">Employee
-                                                            Name</label>
-                                                        <input type="text" name="emp_name"
-                                                            class="form-control form-control-sm" id="emp_name" readonly>
-                                                        <div class="text-danger"></div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="department"
-                                                            class="form-label require">Department</label>
-                                                        <input type="text" name="department" id="department"
-                                                            class="form-control form-control-sm" readonly>
-                                                        <div class="text-danger"></div>
-                                                    </div>
-                                                </div>
-                                            @else
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="emp_id" class="form-label require">Employee ID</label>
-                                                        <input type="text" name="emp_id"
-                                                            class="form-control form-control-sm "id="emp_id"
-                                                            value="{{ $employee->employee_id }}" readonly>
-                                                        <div class="text-danger"></div>
-
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="emp_name" class="form-label require">Employee
-                                                            Name</label>
-                                                        <input type="text" name="emp_name"
-                                                            class="form-control form-control-sm " id="emp_name"
-                                                            value="{{ $employee->name }}" readonly>
-                                                        <div class="text-danger"></div>
-
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="department"
-                                                            class="form-label require">Department</label>
-                                                        <input type="text" name="department" id="department"
-                                                            class="form-control form-control-sm"
-                                                            value="{{ getDepartment($employee->department_id) }}" readonly>
-                                                        <div class="text-danger"></div>
-
-                                                    </div>
-                                                </div>
-                                            @endif
                                             <div class="col-md-4 mb-2">
-                                                <label for="date" class="form-label require">From Date</label>
-                                                <div class="input-group date form-input">
-                                                    <input type="text" class="form-control form-control-sm"
-                                                        name="from_date" id="from_date" placeholder="Enter the From Date"
-                                                        autocomplete="off">
-                                                    <div class="input-group-addon input-group-text">
-                                                        <span class="fa fa-calendar"></span>
-                                                    </div>
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Unit</label>
+                                                    <select name="unit_id" id="unit_id" class="form-control single-select"
+                                                        style="width: 100%">
+                                                        <option value="">Select the unit</option>
+                                                        @foreach ($unit as $list)
+                                                            <option value="{{ encryptId($list->id) }}">
+                                                                {{ $list->unit_name }}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
-                                                <div class="text-danger" id="from_date_error"></div>
-                                                @error('from_date')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-
                                             </div>
                                             <div class="col-md-4 mb-2">
-                                                <label for="date" class="form-label require">To Date</label>
-                                                <div class="input-group date form-input">
-                                                    <input type="text" class="form-control form-control-sm"
-                                                        name="to_date" autocomplete="off" id="to_date"
-                                                        placeholder="Enter the To Date">
-                                                    <div class="input-group-addon input-group-text">
-                                                        <span class="fa fa-calendar"></span>
-                                                    </div>
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Department</label>
+                                                    <select name="department_id" id="department_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Department </option>
 
-                                                </div>
-                                                <div class="text-danger" id="to_date_error"></div>
-                                                @error('to_date')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-
-                                            </div>
-
-
-                                            <div class="col-md-12 mb-2">
-                                                <label for="reason" class="form-label require">Reason</label>
-                                                <textarea name="reason" id="reason" cols="3" rows="4" class="form-control form-control-sm"
-                                                    placeholder="Enter the Reason"></textarea>
-                                                @error('reason')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                                <div class="text-danger" id="reason_error"></div>
-                                            </div>
-
-                                            <div id="file-upload-container" class="row">
-                                                <div class="col-12 mb-3">
-                                                    <button class="btn btn-primary addmorebutton" type="button"
-                                                        id="dynamic-add-more">
-                                                        Add
-                                                    </button>
-                                                </div>
-                                                <div class="col-md-4 mb-3 file-upload-block" id="file-upload-0">
-                                                    <label for="ppe_file_0" class="form-label require">Reference Document
-                                                        Upload</label>
-                                                    <input type="file" class="form-control ppe-file-input"
-                                                        accept: "image/png, image/jpeg, image/jpg, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                                        name="ppe_file[0][]" id="ppe_file_0" multiple>
-                                                    <div class="text-danger"></div>
-                                                    <small>Allowed file types: png, jpeg, jpg, pdf, .docx, .doc</small>
+                                                    </select>
                                                 </div>
                                             </div>
 
-
-
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label for="rate" class="form-label require ">Issued
+                                                        Date</label>
+                                                    <input type="text" name="request_date" id="request_date"
+                                                        class="form-control">
+                                                </div>
+                                            </div>
 
                                         </div>
+                                        <div class="table-responsive d-flex justify-content-center mt-2">
+                                            <div class="col-md-8">
+                                                <table class="table table-bordered view_card text-center" id="requisition_medicine" style="margin: auto;">
+                                                    <thead style="background-color: #343a40; color: white;">
+                                                <thead >
+                                                    <tr>
+                                                        <th>Medicine</th>
+                                                        <th>Available Quantity</th>
+                                                        <th>Quantity</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <select name="medicine_id[]" class="form-control " id="medicine_id"
+                                                                style="width: 100%">
+                                                                <option value="">Select the Medicine Name</option>
+                                                                @foreach ($medicine as $list)
+                                                                    <option value="{{ $list->id }}">
+                                                                        {{ $list->medicine }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" name="available_quantity[]"
+                                                                class="form-control" readonly>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" name="quantity[]" class="form-control">
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center align-items-center bg-primary mt-2 ml-2 text-white rounded add-row"
+                                                                style="width: 30px; height: 30px; cursor: pointer;">
+                                                                <i class="fa-solid fa-plus"></i>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                         <hr>
                                         <div class="submit-button float-end">
                                             <x-button-submit class="submit" id="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('ppe_exemption/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('ohc/medicine-issuance/list') }}"></x-button-cancel>
                                         </div>
                                     </form>
                                 </div>
@@ -209,36 +128,6 @@
             </div>
         </div>
         </form>
-
-        <div id="termsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="termsModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
-                    </div>
-                    <div class="modal-body">
-                        <ul>
-                            <!-- Display the 10 points (for example) -->
-                            <li>The PPE Shoe Exemption Policy is designed to address cases where individuals are unable to
-                                wear safety shoes due to medical, religious, or other legitimate reasons.</li>
-
-                        </ul>
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="agreeTerms">
-                            <label class="form-check-label" for="agreeTerms">I agree to the terms and conditions.</label>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-
-                        <button type="button" class="btn btn-secondary" id="closeModal">Close</button>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
     </div>
 
 @stop
@@ -246,248 +135,127 @@
 @push('script')
     <script>
         $(document).ready(function() {
-            $('input[name="request_for"]').on("change", function() {
-                var requestFor = $(this).val();
-                var empIdContainer = $("#emp_id_container");
-                var authEmployeeId =
-                    "{{ auth()->user()->employee_id }}"; // Authenticated user's employee ID
-
-                if (requestFor === "1") {
-                    // If "Myself" is selected
-                    empIdContainer.html(`
-                <label for="emp_id" class="form-label require">Employee ID</label>
-                <input type="text" name="emp_id" id="emp_id" class="form-control form-control-sm" value="${authEmployeeId}" readonly>
-                <div class="text-danger"></div>
-            `);
-
-                    // Populate employee name and department using helper function
-                    $("#emp_name").val("{{ auth()->user()->name }}");
-                    $("#department").val("{{ getDepartment(auth()->user()->department_id) ?? 'N/A' }}");
-                } else if (requestFor === "2") {
-                    // If "Worker" is selected
-                    empIdContainer.html(`
-                <label for="emp_id" class="form-label require">Employee ID</label>
-                <select name="emp_id" id="emp_id" class="form-select form-select-sm " style="width: 100%">
-                    <option value="">Select the employee</option>
-
-                </select>
-                <div class="text-danger"></div>
-            `);
-
-
-            $('#emp_id').select2({
-                ajax: {
-                    url: '{{ admin_url('ppe_request/employeeid') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            })
-                        };
-                    }
-                },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
-            });
-                    // Clear employee name and department
-                    $("#emp_name").val("");
-                    $("#department").val("");
-                }
-            });
-
-            // Handle Employee ID change for Worker
-            $(document).on("change", "#emp_id", function() {
-                var emp_id = $(this).val();
-
-                if (emp_id) {
-                    $.ajax({
-                        url: "{{ url('ppe_request/fetchEmployeeDetails') }}/" + emp_id,
-                        type: "GET",
-                        success: function(data) {
-                            if (data && data.employee) {
-                                $("#emp_name").val(data.employee.emp_name);
-                                $("#department").val(data.departments?.department_name ||
-                                    "No department available");
-                            } else {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Error",
-                                    text: "Employee data could not be fetched.",
-                                });
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error("Error during AJAX request:", error);
-                            Swal.fire({
-                                icon: "error",
-                                title: "Error",
-                                text: "An error occurred while fetching employee details.",
-                            });
-                        },
-                    });
-                } else {
-                    $("#emp_name").val("");
-                    $("#department").val("");
-                }
-            });
-        });
-
-
-        $(document).ready(function() {
-
-            const maxUploads = 3;
-
-            $('#dynamic-add-more').on('click', function() {
-                let currentFileUploads = $('.file-upload-block').length;
-
-                if (currentFileUploads >= maxUploads) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Sorry!',
-                        text: 'Maximum 3 records only.',
-                    });
-                    return;
-                }
-
-                let newFileUploadBlock = `
-        <div class="col-md-4 mb-3 file-upload-block">
-            <label for="ppe_file_${currentFileUploads}" class="form-label require">Reference Document Upload</label>
-            <input type="file" class="form-control ppe-file-input" accept="image/png, image/jpeg, image/jpg, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                name="ppe_file[${currentFileUploads}][]" id="ppe_file_${currentFileUploads}" multiple data-error="Please upload a valid file type">
-            <div class="text-danger"></div>
-            <small>Allowed file types: png, jpeg , jpg, pdf, .docx, .doc</small>
-            <button type="button" class="btn btn-danger btn-sm remove-upload-block">
-                <i class="fas fa-trash"></i>
-            </button>
-        </div>
-    `;
-
-                // Append the new file upload block
-                $('#file-upload-container').append(newFileUploadBlock);
-
-                // Add validation rule for the new input
-                $('input[name="ppe_file[' + currentFileUploads + '][]"]').rules('add', {
-                    required: true,
-                    extension: "doc|docx|pdf|png|jpeg|jpg",
-                    accept: "image/png, image/jpeg, image/jpg, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                    messages: {
-                        required: 'Please select the file',
-                        extension: "Please select a file with .doc, .docx, .pdf, .png, .jpeg, .jpg extensions.",
-                        accept: "Please upload a valid file with the correct MIME type (PNG, JPEG, JPG, PDF, DOC, DOCX)."
-                    }
-                });
-
-                // Remove file upload block
-                $(document).on('click', '.remove-upload-block', function() {
-                    $(this).closest('.file-upload-block').remove();
-                });
-            });
-
-            // Initialize the date pickers
-            var fromDatepicker = flatpickr("#from_date", {
+            var fromDatepicker = flatpickr("#request_date", {
                 dateFormat: "d-m-Y",
                 minDate: new Date(),
-                onChange: function(selectedDates) {
-                    if (selectedDates.length > 0) {
-                        var startDate = selectedDates[0];
-                        toDatepicker.set('minDate', startDate);
-                        toDatepicker.clear();
+
+            });
+        });
+        $('#medicine_id').select2();
+        $(document).on('click', '.add-row', function() {
+            const maxRows = 5; // Maximum allowed rows
+            const rowCount = $('#requisition_medicine tbody tr').length;
+
+            if (rowCount >= maxRows) {
+                // Show SweetAlert warning
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Warning',
+                    text: 'Your request has exceeded the limit of 5 rows.',
+                    confirmButtonText: 'OK',
+                });
+                return;
+            }
+
+            const newRow = `
+            <tr>
+                <td>
+                    <select name="medicine_id[]" class="form-control single-select" style="width: 100%">
+                        <option value="">Select the Medicine Name</option>
+                        @foreach ($medicine as $list)
+                            <option value="{{ $list->id }}">{{ $list->medicine }}</option>
+                        @endforeach
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="available_quantity[]" class="form-control" readonly>
+                </td>
+                <td>
+                    <input type="text" name="quantity[]" class="form-control">
+                </td>
+                <td>
+                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded remove-row" style="width: 30px; height: 30px; cursor: pointer;">
+                        <i class="fa-solid fa-minus"></i>
+                    </div>
+                </td>
+            </tr>`;
+
+           $('.single-select').select2();
+            $('#requisition_medicine tbody').append(newRow);
+        });
+
+        // Remove a row when the minus icon is clicked
+        $(document).on('click', '.remove-row', function() {
+            $(this).closest('tr').remove();
+        });
+        $(document).on('change', '#unit_id', function() {
+            var unitId = $(this).val();
+            if (unitId) {
+                $.ajax({
+                    url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#department_id').empty().append(
+                            '<option value="">Select Department</option>');
+                        $.each(data, function(key, value) {
+                            $('#department_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#department_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching department. Please try again.');
                     }
-                }
-            });
+                });
+            } else {
+                $('#department_id').empty().append('<option value="">Select Department</option>');
+                $('#department_id').trigger('change.');
+            }
+        });
+        $(function() {
 
-            var toDatepicker = flatpickr("#to_date", {
-                dateFormat: "d-m-Y",
-                minDate: new Date()
-            });
+            $.validator.addMethod(
+                "regex",
+                function(value, element, regex) {
+                    return this.optional(element) || regex.test(value);
+                },
+                "Invalid format."
+            );
 
-            // jQuery Validation Setup
-            $('#ppeExemptionForm').validate({
+            $('#MedicineRequisitionForm').validate({
                 rules: {
-                    emp_id: {
+                    unit_id: {
                         required: true,
                     },
-                    emp_name: {
+                    department_id: {
                         required: true,
                     },
-                    request_for: {
+                    req_id: {
                         required: true,
                     },
-                    department: {
+                    request_date: {
                         required: true,
-                    },
-                    from_date: {
-                        required: true
-                    },
-                    to_date: {
-                        required: true
-                    },
-                    'ppe_file[0][]': {
-                        required: true,
-                        extension: "doc|docx|pdf|png|jpeg|jpg",
-                        accept: "image/png, image/jpeg, image/jpg, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    },
-                    reason: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 600,
                     },
                 },
                 messages: {
-                    emp_id: {
-                        required: "Employee Id cannot be empty.",
+                    unit_id: {
+                        required: "Please select the Unit name.",
                     },
-                    emp_name: {
-                        required: "Employee name cannot be empty.",
+                    department_id: {
+                        required: "Please select the Department Name.",
                     },
-                    request_for: {
-                        required: "Please select the Request For option",
+                    req_id: {
+                        required: "Requisition ID cannot be empty.",
                     },
-                    department: {
-                        required: "Department cannot be empty.",
-                    },
-                    from_date: {
-                        required: "Please Select the From date."
-                    },
-                    to_date: {
-                        required: "Please Select the To date."
-                    },
-                    'ppe_file[0][]': {
-                        required: "Please Select the file",
-                        extension: "Please select a file with .doc, .docx, .pdf, .png, .jpeg, .jpg .",
-                        accept: "Please upload a valid file with the correct MIME type (PNG, JPEG, JPG, PDF, DOC, DOCX)."
-                    },
-                    reason: {
-                        required: "Reason cannot be empty.",
-                        minlength: "Reason must contain between 3 and 600 characters.",
-                        maxlength: "Reason must contain between 3 and 600 characters.",
+                    request_date: {
+                        required: "Please select the request date.",
                     },
                 },
-                errorElement: 'div',
+                errorElement: 'span',
                 errorPlacement: function(error, element) {
-                    if (element.attr("name") === "from_date") {
-                        error.appendTo("#from_date_error");
-                    } else if (element.attr("name") === "to_date") {
-                        error.appendTo("#to_date_error");
-                    } else if (element.attr("name") === "reason") {
-                        error.appendTo("#reason_error");
-                    } else if (element.attr("name") == "request_for") {
-
-                        error.appendTo(element.closest('.form-group').find('.text-danger'));
-                    } else {
-                        error.appendTo(element.siblings('div.text-danger'));
-                    }
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
                 },
                 highlight: function(element, errorClass, validClass) {
                     $(element).addClass('is-invalid');
@@ -496,28 +264,13 @@
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
-                    if ($('#agreeTerms').is(':checked')) {
-                        form.submit();
-                    } else {
-                        $('#termsModal').modal('show');
-                    }
-                }
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log("Form has " + errors + " invalid fields.");
+                },
             });
-
-            // Enable/Disable Submit button based on terms agreement
-            $('#agreeTerms').on('change', function() {
-                if ($(this).is(':checked')) {
-                    $('#submitBtn').prop('disabled', false);
-                } else {
-                    $('#submitBtn').prop('disabled', true);
-                }
-            });
-
-            // Close terms modal
-            $('#closeModal').on('click', function() {
-                $('#termsModal').modal('hide');
-            });
-
         });
     </script>
 @endpush
