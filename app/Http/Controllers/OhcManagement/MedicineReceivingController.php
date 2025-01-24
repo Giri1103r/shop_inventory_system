@@ -43,16 +43,22 @@ class MedicineReceivingController extends Controller
                     $data = $this->medicine_receiving->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
-
-                        ->addColumn('created_at', function ($row) {
-                            return Displaydateformat($row->created_at);
+                        ->editColumn('medicine_id', function ($row) {
+                            return$row->medicine;
                         })
-                        ->addColumn('created_by', function ($row) {
-                            return getUsername($row->created_by);
+                        ->editColumn('pack_id', function ($row) {
+                            return$row->pack;
                         })
-
-
-                        ->addColumn('action', function ($row) {
+                        ->editColumn('hsn_id', function ($row) {
+                            return$row->hsn;
+                        })
+                        ->editColumn('vendor_id', function ($row) {
+                            return$row->vendor_name;
+                        })
+                        ->editColumn('expire_date', function ($row) {
+                            return displaydateformat($row->expire_date);
+                        })
+                        ->editColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
                             $btn .= '<a href="' . admin_url('ohc/medicine-receiving-form/view/' . encryptId($row->ohc_management_medicine_receiving_id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
@@ -66,7 +72,7 @@ class MedicineReceivingController extends Controller
                             return $btn;
                         })
 
-                        ->rawColumns(['action', 'created_at', 'created_by'])
+                        ->rawColumns(['action','expire_date'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -170,10 +176,15 @@ class MedicineReceivingController extends Controller
             $medicine_receiving = $this->medicine_receiving->find($id);
             $medicine = $this->medicine->getMedicineData();
             $vendor = $this->vendor->getVendordata();
+            $hsn = $this->medicine->where('id', $id)->select('medicine', 'hsn', 'pack')->first();
+
             $data = [
                 'medicine' => $medicine,
                 'vendor' => $vendor,
-                'medicine_receiving' => $medicine_receiving
+                'medicine_receiving' => $medicine_receiving,
+                'hsn' => $hsn
+
+
             ];
 
             return view('ohcmanagement.medicine_receiving.edit', $data);
@@ -287,13 +298,14 @@ class MedicineReceivingController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->medicine_id;
-                $export[] =  $data->hsn_id;
-                $export[] =  $data->pack_id;
+                $export[] =  $data->medicine;
+                $export[] =  $data->hsn;
+                $export[] =  $data->pack;
                 $export[] =  $data->quantity;
                 $export[] =  $data->batch_number;
                 $export[] =  $data->rate;
                 $export[] =  Displaydateformat($data->expire_date);
+                $export[] =  $data->vendor_name;
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 
@@ -309,7 +321,7 @@ class MedicineReceivingController extends Controller
                 );
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
         }
     }
 
@@ -367,7 +379,7 @@ class MedicineReceivingController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
         }
     }
     public function hsnnumber(Request $request)

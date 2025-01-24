@@ -336,7 +336,7 @@ class TypeofWorkChecklist extends Model
                             ->where('type', $type)
                             ->where('check_points', $checkPoint)
                             ->first();
-                        // dd($equipmentrecord_id,$id,$type,$checkPoint,$existingRecord);
+
                         $data = [
                             'typeofwork_id' => $id,
                             'type' => $type,
@@ -380,7 +380,7 @@ class TypeofWorkChecklist extends Model
                             ->where('type', $type)
                             ->where('check_points', $checkPoint)
                             ->first();
-                        // dd($equipmentrecord_id,$id,$type,$checkPoint,$existingRecord);
+
                         $data = [
                             'typeofwork_id' => $id,
                             'type' => $type,
@@ -424,7 +424,7 @@ class TypeofWorkChecklist extends Model
                             ->where('type', $type)
                             ->where('check_points', $checkPoint)
                             ->first();
-                        // dd($equipmentrecord_id,$id,$type,$checkPoint,$existingRecord);
+                      
                         $data = [
                             'typeofwork_id' => $id,
                             'type' => $type,

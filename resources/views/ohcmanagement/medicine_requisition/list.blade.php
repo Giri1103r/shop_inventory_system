@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medicine Receiving')
-@section('pageurl', admin_url('ohc/medicine-receiving-form/list'))
+@section('title', 'Medicine Requisition')
+@section('pageurl', admin_url('ohc/medicine-requisition/list'))
 @section('content')
     @push('style')
         <style>
@@ -21,7 +21,7 @@
 
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary"
-                            href="{{ admin_url('ohc/medicine-receiving-form/add') }}">Add</x-button-add>
+                            href="{{ admin_url('ohc/medicine-requisition/add') }}">Add</x-button-add>
                         {{-- @endif --}}
 
                     </div>
@@ -31,29 +31,29 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="medicine_name" class="form-label ">Medicine Name</label>
-                                            <select name="medicine_id" id="medicine_id"
-                                                class="form-control single-select form-control-sm" style="width: 100%">
-                                                <option value="">Select the Medicine Name</option>
-                                                @foreach ($medicine as $list)
-                                                    <option value="{{ $list->id }}">{{ $list->medicine }}</option>
-                                                @endforeach
-                                            </select>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">Unit</label>
+                                                <select name="unit_id" id="unit_id" class="form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select the unit</option>
+                                                    @foreach ($unit as $list)
+                                                        <option value="{{ encryptId($list->id) }}">
+                                                            {{ $list->unit_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="vendor_name" class="form-label ">Vendor Name</label>
-                                            <select name="vendor_id" id="vendor_id"
-                                                class="form-control single-select form-control-sm" style="width: 100%">
-                                                <option value="">Select the Vendor Name</option>
-                                                @foreach ($vendor as $list)
-                                                    <option value="{{ $list->id }}">{{ $list->vendor_name }}</option>
-                                                @endforeach
-                                            </select>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">Department</label>
+                                                <select name="department_id" id="department_id"
+                                                    class=" form-control single-select" style="width: 100%">
+                                                    <option value="">Select Department </option>
+
+                                                </select>
+                                            </div>
                                         </div>
-
-
-
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
                                             <div class="input-group date form-input custom-height">
@@ -75,7 +75,15 @@
                                                 </div>
                                             </div>
                                         </div>
-
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="status" class="form-label">{{ __('common.status') }}</label>
+                                            <select name="status" id="status" style="width: 100%"
+                                                class="form-control single-select">
+                                                <option value="">Select Status</option>
+                                                <option value="{{ encryptId(1) }}">Active</option>
+                                                <option value="{{ encryptId(0) }}">In-Active</option>
+                                            </select>
+                                        </div>
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -94,14 +102,11 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Medicine Name</th>
-                                        <th>Vendor Name</th>
-                                        <th>HSN Number</th>
-                                        <th>Pack</th>
-                                        <th>Quantity</th>
-                                        <th>Batch Number</th>
-                                        <th>Rate</th>
-                                        <th>Expire Date</th>
+                                        <th>Requisition</th>
+                                        <th>Unit Name</th>
+                                        <th>Department Name</th>
+                                        <th>Request Date</th>
+                                        <th>Status</th>
                                         <th data-priority="1">Action</th>
                                     </tr>
                                 </thead>
@@ -122,6 +127,32 @@
             $('#resetform').on('click', function(e) {
                 e.preventDefault();
                 location.reload();
+            });
+
+            $(document).on('change', '#unit_id', function() {
+                var unitId = $(this).val();
+                if (unitId) {
+                    $.ajax({
+                        url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#department_id').empty().append(
+                                '<option value="">Select Department</option>');
+                            $.each(data, function(key, value) {
+                                $('#department_id').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#department_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching department. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#department_id').empty().append('<option value="">Select Department</option>');
+                    $('#department_id').trigger('change.');
+                }
             });
 
             var fromDatepicker = flatpickr("#from_date", {
@@ -158,8 +189,8 @@
             // Reset form submit event
             $('#resetform').on('click', function(e) {
                 e.preventDefault();
-                $('#medicine_id').val('');
-                $('#vendor_id').val('');
+                $('#unit_id').val('');
+                $('#department_id').val('');
                 $('#from_date').val('');
                 $('#to_date').val('');
                 $('#datatable-list').DataTable().draw();
@@ -190,16 +221,17 @@
                 bottom2End: 'paging'
             },
             ajax: {
-                url: "{{ admin_url('ohc/medicine-receiving-form/list') }}",
+                url: "{{ admin_url('ohc/medicine-requisition/list') }}",
                 type: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 data: function(d) {
-                    d.medicine_id = $('#medicine_id').val();
-                    d.vendor_id = $('#vendor_id').val();
+                    d.unit_id = $('#unit_id').val();
+                    d.department_id = $('#department_id').val();
                     d.from_date = $('#from_date').val();
                     d.to_date = $('#to_date').val();
+                    d.status = $('#status').val();
                 },
                 error: function(xhr, error, code) {
                     if (xhr.status === 419) {
@@ -214,36 +246,25 @@
                     searchable: false
                 },
                 {
-                    data: 'medicine_id',
-                    name: 'medicine_id'
+                    data: 'req_id',
+                    name: 'req_id'
                 },
                 {
-                    data: 'vendor_id',
-                    name: 'vendor_id'
+                    data: 'unit_id',
+                    name: 'unit_id'
                 },
                 {
-                    data: 'hsn_id',
-                    name: 'hsn_id'
+                    data: 'department_id',
+                    name: 'department_id'
                 },
                 {
-                    data: 'pack_id',
-                    name: 'pack_id'
+                    data: 'request_date',
+                    name: 'request_date'
                 },
+
                 {
-                    data: 'quantity',
-                    name: 'quantity'
-                },
-                {
-                    data: 'batch_number',
-                    name: 'batch_number'
-                },
-                {
-                    data: 'rate',
-                    name: 'rate'
-                },
-                {
-                    data: 'expire_date',
-                    name: 'expire_date'
+                    data: 'status',
+                    name: 'status'
                 },
                 {
                     data: 'action',
@@ -274,19 +295,20 @@
                             text: '{{ __('common.pdf') }}',
                             action: function(e, dt, button, config) {
                                 var searchValue = $('#datatable-list_filter input').val();
-                                var medicine_id = $('#medicine_id').val();
-                                var vendor_id = $('#vendor_id').val();
+                                var department_id = $('#department_id').val();
+                                var unit_id = $('#unit_id').val();
                                 var from_date = $('#from_date').val();
                                 var to_date = $('#to_date').val();
-
+                                var status = $('#status').val();
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
                                 window.location.href =
-                                    "{{ admin_url('ohc/medicine-receiving-form/export/pdf') }}" +
+                                    "{{ admin_url('ohc/medicine-requisition/export/pdf') }}" +
                                     '?search=' + searchValue +
-                                    '&medicine_id=' + medicine_id +
-                                    '&vendor_id=' + vendor_id +
+                                    '&department_id=' + department_id +
+                                    '&unit_id=' + unit_id +
                                     '&from_date=' + from_date +
+                                    '&status=' + status +
                                     '&to_date=' + to_date;
                             }
                         },
@@ -295,19 +317,21 @@
                             text: '{{ __('common.excel') }}',
                             action: function(e, dt, button, config) {
                                 var searchValue = $('#datatable-list_filter input').val();
-                                var medicine_id = $('#medicine_id').val();
-                                var vendor_id = $('#vendor_id').val();
+                                var department_id = $('#department_id').val();
+                                var unit_id = $('#unit_id').val();
                                 var from_date = $('#from_date').val();
                                 var to_date = $('#to_date').val();
+                                var status = $('#status').val();
 
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
                                 window.location.href =
-                                    "{{ admin_url('ohc/medicine-receiving-form/export/excel') }}" +
+                                    "{{ admin_url('ohc/medicine-requisition/export/excel') }}" +
                                     '?search=' + searchValue +
-                                    '&medicine_id=' + medicine_id +
-                                    '&vendor_id=' + vendor_id +
+                                    '&department_id=' + department_id +
+                                    '&unit_id=' + unit_id +
                                     '&from_date=' + from_date +
+                                    '&status=' + status +
                                     '&to_date=' + to_date;
                             }
                         }

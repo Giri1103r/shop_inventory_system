@@ -54,6 +54,23 @@ class MedicineReceiving extends Model
                 $query->orWhere('medicine_id', 'LIKE', '%' . $search . '%');
             });
         }
+        if ($request->has('medicine_id') && $request->medicine_id) {
+            $query = $query->where('ohc_management_medicine_receiving.medicine_id', 'LIKE', '%' . $request->medicine_id . '%');
+        }
+        if ($request->has('vendor_id') && $request->vendor_id) {
+            $query = $query->where('ohc_management_medicine_receiving.vendor_id', 'LIKE', '%' . $request->vendor_id . '%');
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('ohc_management_medicine_receiving.created_at', [$startDate, $endDate]);
+        } elseif ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('ohc_management_medicine_receiving.created_at', '>=', $startDate);
+        } elseif ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('ohc_management_medicine_receiving.created_at', '<=', $endDate);
+        }
 
 
         $org_total_counts = $query->count();
@@ -86,7 +103,7 @@ class MedicineReceiving extends Model
               'pack_id'=>decryptId($request->pack_id),
               'created_by'=>Auth::id(),
         ];
-      
+
         return $this->create($insert_array);
     }
     public function updates($id)
@@ -100,7 +117,7 @@ class MedicineReceiving extends Model
             'quantity'=>$request->quantity,
             'batch_number'=>$request->batch_number,
             'expire_date'=>DBdateformat($request->expire_date),
-            'hsn_id'=>decryptId($request->hsn_id),
+            'hsn_id'=>$request->hsn_id,
             'rate'=>$request->rate,
             'pack_id'=>decryptId($request->pack_id),
             'updated_by'=>Auth::id(),
@@ -138,12 +155,28 @@ class MedicineReceiving extends Model
             $search = $request->search;
 
             $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhere('license_no', 'LIKE', '%' . $search . '%')
-                    ->orWhere('vendor_name', 'LIKE', '%' . $search . '%');
+                $query->orWhere('medicine_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('vendor_id', 'LIKE', '%' . $search . '%');
             });
         }
-
-        $query->orderBy('id', 'DESC');
+        if ($request->has('medicine_id') && $request->medicine_id) {
+            $query = $query->where('ohc_management_medicine_receiving.medicine_id', 'LIKE', '%' . $request->medicine_id . '%');
+        }
+        if ($request->has('vendor_id') && $request->vendor_id) {
+            $query = $query->where('ohc_management_medicine_receiving.vendor_id', 'LIKE', '%' . $request->vendor_id . '%');
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('ohc_management_medicine_receiving.created_at', [$startDate, $endDate]);
+        } elseif ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('ohc_management_medicine_receiving.created_at', '>=', $startDate);
+        } elseif ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('ohc_management_medicine_receiving.created_at', '<=', $endDate);
+        }
+        $query->orderBy('ohc_management_medicine_receiving.id', 'DESC');
 
         return  $query->get();
     }

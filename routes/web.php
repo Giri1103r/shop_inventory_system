@@ -38,6 +38,7 @@ use App\Http\Controllers\OhcManagement\Master\FirstAidLocationController;
 use App\Http\Controllers\OhcManagement\Master\MedicineController;
 use App\Http\Controllers\OhcManagement\Master\VendorController;
 use App\Http\Controllers\OhcManagement\MedicineReceivingController;
+use App\Http\Controllers\OhcManagement\MedicineRequisitionController;
 use App\Http\Controllers\Ppemanagement\DashboardController;
 use App\Http\Controllers\Ppemanagement\PpeRequestController;
 use App\Http\Controllers\Ppemanagement\PpeStockInventoryController;
@@ -855,6 +856,21 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('/status', [MedicineReceivingController::class, 'statusChange']);
             Route::post('/unique', [MedicineReceivingController::class, 'Uniquecheck']);
             Route::post('/hsn-number', [MedicineReceivingController::class, 'hsnnumber']);
+
+        });
+        // Medicine Requistion
+        Route::group(['prefix' => 'ohc/medicine-requisition'], function () {
+            Route::get('/list', [MedicineRequisitionController::class, 'index']);
+            Route::post('/list', [MedicineRequisitionController::class, 'index']);
+            Route::get('/add', [MedicineRequisitionController::class, 'add']);
+            Route::post('/add/submit', [MedicineRequisitionController::class, 'store']);
+            Route::get('/edit/{id}', [MedicineRequisitionController::class, 'edit']);
+            Route::post('/edit/submit', [MedicineRequisitionController::class, 'update']);
+            Route::get('/view/{id}', [MedicineRequisitionController::class, 'view']);
+            Route::post('/delete', [MedicineRequisitionController::class, 'delete']);
+            Route::get('/export/excel', [MedicineRequisitionController::class, 'exportExcel']);
+            Route::get('/export/pdf', [MedicineRequisitionController::class, 'exportPdf']);
+            Route::post('/status', [MedicineRequisitionController::class, 'statusChange']);
 
         });
     });
