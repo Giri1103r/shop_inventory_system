@@ -91,7 +91,7 @@ class UserMedicineIssuance extends Model
         $request = request();
 
         $insert_array = [
-            'unit_id' => decryptId($request->medicine_id),
+            'unit_id' => decryptId($request->unit_id),
             'department_id' => decryptId($request->department_id),
             'issue_date' => DBdateformat($request->issue_date),
             'created_by' => Auth::id(),
@@ -105,7 +105,7 @@ class UserMedicineIssuance extends Model
         $request = request();
 
         $update_array = array(
-            'unit_id' => decryptId($request->medicine_id),
+            'unit_id' => decryptId($request->unit_id),
             'department_id' => decryptId($request->department_id),
             'issue_date' => DBdateformat($request->issue_date),
             'created_by' => Auth::id(),

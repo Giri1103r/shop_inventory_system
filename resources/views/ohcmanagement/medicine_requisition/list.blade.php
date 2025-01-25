@@ -31,93 +31,100 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">Unit</label>
-                                                <select name="unit_id" id="unit_id" class="form-control single-select"
-                                                    style="width: 100%">
-                                                    <option value="">Select the unit</option>
-                                                    @foreach ($unit as $list)
-                                                        <option value="{{ encryptId($list->id) }}">
-                                                            {{ $list->unit_name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
+                                        
+                                    <div class="col-md-3 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">Requisition ID</label>
+                                            <input type="text" name="req_id" class="form-control" id="req_id">
                                         </div>
-                                        <div class="col-md-3 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">Department</label>
-                                                <select name="department_id" id="department_id"
-                                                    class=" form-control single-select" style="width: 100%">
-                                                    <option value="">Select Department </option>
-
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">From Date</label>
-                                            <div class="input-group date form-input custom-height">
-                                                <input type="text" class="form-control " name="from_date" id="from_date"
-                                                    autocomplete="off">
-                                                <div class="input-group-addon input-group-text">
-                                                    <span class="fa fa-calendar"></span>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">To Date</label>
-                                            <div class="input-group date form-input  custom-height">
-                                                <input type="text" class="form-control " name="to_date" id="to_date"
-                                                    autocomplete="off">
-                                                <div class="input-group-addon input-group-text">
-                                                    <span class="fa fa-calendar"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
-                                                class="form-control single-select">
-                                                <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">Unit</label>
+                                            <select name="unit_id" id="unit_id" class="form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select the unit</option>
+                                                @foreach ($unit as $list)
+                                                    <option value="{{ encryptId($list->id) }}">
+                                                        {{ $list->unit_name }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mt-3">
-                                            <x-button-search></x-button-search>
-                                            <x-button-reset></x-button-reset>
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">Department</label>
+                                            <select name="department_id" id="department_id"
+                                                class=" form-control single-select" style="width: 100%">
+                                                <option value="">Select Department </option>
+
+                                            </select>
                                         </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3 form-input">
+                                        <label for="emp_name" class="form-label ">From Date</label>
+                                        <div class="input-group date form-input custom-height">
+                                            <input type="text" class="form-control " name="from_date" id="from_date"
+                                                autocomplete="off">
+                                            <div class="input-group-addon input-group-text">
+                                                <span class="fa fa-calendar"></span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-3 mb-3 form-input">
+                                        <label for="emp_name" class="form-label ">To Date</label>
+                                        <div class="input-group date form-input  custom-height">
+                                            <input type="text" class="form-control " name="to_date" id="to_date"
+                                                autocomplete="off">
+                                            <div class="input-group-addon input-group-text">
+                                                <span class="fa fa-calendar"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3 form-input">
+                                        <label for="status" class="form-label">{{ __('common.status') }}</label>
+                                        <select name="status" id="status" style="width: 100%"
+                                            class="form-control single-select">
+                                            <option value="">Select Status</option>
+                                            <option value="{{ encryptId(1) }}">Active</option>
+                                            <option value="{{ encryptId(0) }}">In-Active</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <x-button-search></x-button-search>
+                                        <x-button-reset></x-button-reset>
                                     </div>
                                 </div>
                             </div>
-                        </form>
-                        <hr>
                     </div>
-
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="datatable-list"
-                                class="table primary-table-bordered table-bordered table-striped  nowrap w-100 mt-2 datatable-list">
-                                <thead class="thead-primary">
-                                    <tr>
-                                        <th>{{ __('common.sno') }}</th>
-                                        <th>Requisition</th>
-                                        <th>Unit Name</th>
-                                        <th>Department Name</th>
-                                        <th>Request Date</th>
-                                        <th>Status</th>
-                                        <th data-priority="1">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-
+                    </form>
+                    <hr>
                 </div>
+
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="datatable-list"
+                            class="table primary-table-bordered table-bordered table-striped  nowrap w-100 mt-2 datatable-list">
+                            <thead class="thead-primary">
+                                <tr>
+                                    <th>{{ __('common.sno') }}</th>
+                                    <th>Requisition ID</th>
+                                    <th>Unit Name</th>
+                                    <th>Department Name</th>
+                                    <th>Request Date</th>
+                                    <th>Status</th>
+                                    <th data-priority="1">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </div>
+    </div>
     </div>
 @stop
 @push('script')
@@ -228,6 +235,7 @@
                 },
                 data: function(d) {
                     d.unit_id = $('#unit_id').val();
+                    d.req_id = $('#req_id').val();
                     d.department_id = $('#department_id').val();
                     d.from_date = $('#from_date').val();
                     d.to_date = $('#to_date').val();
@@ -296,6 +304,7 @@
                             action: function(e, dt, button, config) {
                                 var searchValue = $('#datatable-list_filter input').val();
                                 var department_id = $('#department_id').val();
+                                var req_id = $('#req_id').val();
                                 var unit_id = $('#unit_id').val();
                                 var from_date = $('#from_date').val();
                                 var to_date = $('#to_date').val();
@@ -306,6 +315,7 @@
                                     "{{ admin_url('ohc/medicine-requisition/export/pdf') }}" +
                                     '?search=' + searchValue +
                                     '&department_id=' + department_id +
+                                    '&req_id=' + req_id +
                                     '&unit_id=' + unit_id +
                                     '&from_date=' + from_date +
                                     '&status=' + status +
@@ -318,6 +328,7 @@
                             action: function(e, dt, button, config) {
                                 var searchValue = $('#datatable-list_filter input').val();
                                 var department_id = $('#department_id').val();
+                                var req_id = $('#req_id').val();
                                 var unit_id = $('#unit_id').val();
                                 var from_date = $('#from_date').val();
                                 var to_date = $('#to_date').val();
@@ -328,6 +339,7 @@
                                 window.location.href =
                                     "{{ admin_url('ohc/medicine-requisition/export/excel') }}" +
                                     '?search=' + searchValue +
+                                    '&req_id=' + req_id +
                                     '&department_id=' + department_id +
                                     '&unit_id=' + unit_id +
                                     '&from_date=' + from_date +
@@ -342,6 +354,76 @@
                     text: '{{ __('common.show') }} 10 {{ __('common.records') }}'
                 }
             ],
+        });
+
+        $(document).on('click', '.statusChange', function() {
+            var id = $(this).data('id');
+            var types = $(this).data('type');
+            if (types == 1) {
+                var title = '{{ __('Do You want to In-Activate Medicine Requisition Details') }}';
+                var text = '{{ __('common.inactive') }}';
+                var btncolor = '#dc3545'
+
+            } else {
+                var title = '{{ __('Do You want to Activate Medicine Requisition Details') }}';
+                var text = '{{ __('common.active') }}';
+                var btncolor = '#7ddc35'
+            }
+
+            Swal.fire({
+                title: title,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: text,
+                confirmButtonColor: btncolor,
+                customClass: {
+                    confirmButton: 'btn-skew',
+                    cancelButton: 'btn-skew'
+                },
+            }).then((result) => {
+
+
+                if (result.value) {
+                    $.ajax({
+                        url: "{{ admin_url('ohc/medicine-requisition/status') }}",
+                        type: 'post',
+
+                        data: {
+                            id: id,
+                            types: types
+                        },
+                        success: function(response) {
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-right',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.addEventListener(
+                                        'mouseenter',
+                                        Swal.stopTimer)
+                                    toast.addEventListener(
+                                        'mouseleave',
+                                        Swal.resumeTimer
+                                    )
+                                }
+                            });
+                            Toast.fire({
+                                icon: 'success',
+                                title: response.msg
+                            });
+                            table.draw();
+                        },
+                        error: function(data) {
+                            $.notify(data.responseJSON.msg, "error");
+                        }
+                    });
+                } else if (result.isDenied) {
+                    Swal.fire('Something went wrong', '', 'info');
+                }
+            })
+
         });
     </script>
 @endpush

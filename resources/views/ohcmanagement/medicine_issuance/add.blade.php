@@ -63,17 +63,15 @@
                                                 <div class="form-group form-input">
                                                     <label for="rate" class="form-label require ">Issued
                                                         Date</label>
-                                                    <input type="text" name="request_date" id="request_date"
+                                                    <input type="text" name="issue_date" id="issue_date"
                                                         class="form-control">
                                                 </div>
                                             </div>
 
                                         </div>
-                                        <div class="table-responsive d-flex justify-content-center mt-2">
-                                            <div class="col-md-8">
-                                                <table class="table table-bordered view_card text-center" id="requisition_medicine" style="margin: auto;">
-                                                    <thead style="background-color: #343a40; color: white;">
-                                                <thead >
+                                        <div class="table-responsive">
+                                            <table class="table view_card" id="requisition_medicine">
+                                                <thead style="background-color: #0000;color:#ffff">
                                                     <tr>
                                                         <th>Medicine</th>
                                                         <th>Available Quantity</th>
@@ -81,53 +79,73 @@
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
+                                                <tbody id="medicine-tbody">
                                                     <tr>
                                                         <td>
-                                                            <select name="medicine_id[]" class="form-control " id="medicine_id"
-                                                                style="width: 100%">
-                                                                <option value="">Select the Medicine Name</option>
-                                                                @foreach ($medicine as $list)
-                                                                    <option value="{{ $list->id }}">
-                                                                        {{ $list->medicine }}</option>
-                                                                @endforeach
-                                                            </select>
+                                                            <div class="form-group form-input">
+                                                                <label for="medicine_id"class="require">Medicine
+                                                                    Name</label>
+                                                                <select name="medicine_id[0]" id="medicine_id"
+                                                                    class="form-control single-select" style="width: 100%">
+                                                                    <option value="">Select the Medicine Name</option>
+                                                                    @foreach ($medicine as $list)
+                                                                        <option value="{{ $list->id }}">
+                                                                            {{ $list->medicine }}</option>
+                                                                    @endforeach
+                                                            </div> </select>
                                                         </td>
                                                         <td>
-                                                            <input type="text" name="available_quantity[]"
-                                                                class="form-control" readonly>
-                                                        </td>
-                                                        <td>
-                                                            <input type="text" name="quantity[]" class="form-control">
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex justify-content-center align-items-center bg-primary mt-2 ml-2 text-white rounded add-row"
-                                                                style="width: 30px; height: 30px; cursor: pointer;">
-                                                                <i class="fa-solid fa-plus"></i>
+                                                            <div class="form-group form-input">
+                                                                <label for="available_quantity " class="require">Available
+                                                                    Quantity</label>
+
+                                                                <input type="text" name="available_quantity[0]"
+                                                                    id="available_quantity"
+                                                                    placeholder="Enter the available quantity"
+                                                                    class="form-control" readonly>
                                                             </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="form-group form-input">
+                                                                <label for="remarks"class="require">Quantity</label>
+                                                                <input type="text" name="quantity[0]" id="quantity"
+                                                                    placeholder="Enter the quantity" class="form-control">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="row gap-2">
+                                                                <div class="d-flex justify-content-center align-items-center bg-primary mt-2 ml-2 text-white rounded add-row"
+                                                                    style="width: 30px; height: 30px;">
+                                                                    <i class="fa-solid fa-plus"></i>
+                                                                </div>
+                                                                <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row"
+                                                                    style="width: 30px; height: 30px;">
+                                                                    <i class="fa-solid fa-trash"></i>
+                                                                </div>
+                                                            </div>
+
                                                         </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </div>
-                                    </div>
-                                        <hr>
-                                        <div class="submit-button float-end">
-                                            <x-button-submit class="submit" id="submit"></x-button-submit>
-                                            <x-button-reset class="submit"></x-button-reset>
-                                            <x-button-cancel
-                                                href="{{ admin_url('ohc/medicine-issuance/list') }}"></x-button-cancel>
-                                        </div>
-                                    </form>
                                 </div>
+                                <hr>
+                                <div class="submit-button float-end">
+                                    <x-button-submit class="submit" id="submit"></x-button-submit>
+                                    <x-button-reset class="submit"></x-button-reset>
+                                    <x-button-cancel href="{{ admin_url('ohc/medicine-issuance/list') }}"></x-button-cancel>
+                                </div>
+                                </form>
                             </div>
-
                         </div>
+
                     </div>
                 </div>
             </div>
         </div>
-        </form>
+    </div>
+    </form>
     </div>
 
 @stop
@@ -135,59 +153,109 @@
 @push('script')
     <script>
         $(document).ready(function() {
-            var fromDatepicker = flatpickr("#request_date", {
+            var fromDatepicker = flatpickr("#issue_date", {
                 dateFormat: "d-m-Y",
                 minDate: new Date(),
 
             });
         });
-        $('#medicine_id').select2();
-        $(document).on('click', '.add-row', function() {
-            const maxRows = 5; // Maximum allowed rows
-            const rowCount = $('#requisition_medicine tbody tr').length;
 
-            if (rowCount >= maxRows) {
-                // Show SweetAlert warning
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Warning',
-                    text: 'Your request has exceeded the limit of 5 rows.',
-                    confirmButtonText: 'OK',
-                });
-                return;
-            }
 
-            const newRow = `
-            <tr>
-                <td>
-                    <select name="medicine_id[]" class="form-control single-select" style="width: 100%">
+        $(document).ready(function() {
+            let medicine_issuance_row_count = 1;
+
+            // Adding a new row
+            $(".add-row").click(function() {
+                var newRow = `
+        <tr>
+            <td>
+                <div class="form-group form-input">
+                    <label for="medicine_id" class="require">Medicine Name</label>
+                    <select name="medicine_id[${medicine_issuance_row_count}]" class="form-control single-select" style="width: 100%">
                         <option value="">Select the Medicine Name</option>
                         @foreach ($medicine as $list)
                             <option value="{{ $list->id }}">{{ $list->medicine }}</option>
                         @endforeach
                     </select>
-                </td>
-                <td>
-                    <input type="text" name="available_quantity[]" class="form-control" readonly>
-                </td>
-                <td>
-                    <input type="text" name="quantity[]" class="form-control">
-                </td>
-                <td>
-                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded remove-row" style="width: 30px; height: 30px; cursor: pointer;">
-                        <i class="fa-solid fa-minus"></i>
-                    </div>
-                </td>
-            </tr>`;
+                </div>
+            </td>
+            <td>
+                <div class="form-group form-input">
+                    <label for="available_quantity" class="require">Available Quantity</label>
+                    <input type="text" name="available_quantity[${medicine_issuance_row_count}]" id="available_quantity_${medicine_issuance_row_count}" placeholder="Enter the available quantity" class="form-control" readonly>
+                </div>
+            </td>
+            <td>
+                <div class="form-group form-input">
+                    <label for="quantity" class="require">Quantity</label>
+                    <input type="text" name="quantity[${medicine_issuance_row_count}]" id="quantity_${medicine_issuance_row_count}" class="form-control" placeholder="Enter the quantity">
+                </div>
+            </td>
+            <td>
+                <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px;">
+                    <i class="fa-solid fa-trash"></i>
+                </div>
+            </td>
+        </tr>`;
 
-           $('.single-select').select2();
-            $('#requisition_medicine tbody').append(newRow);
+                // Append the new row to the table body
+                $('#medicine-tbody').append(newRow);
+
+                // Initialize select2 for the newly added select element
+                $('select[name="medicine_id[' + medicine_issuance_row_count + ']"]').select2({
+                    placeholder: "Select the Medicine Name",
+                    width: '100%' // Ensuring it spans the full width
+                });
+
+                // Add validation rules for the newly added row
+                $('select[name="medicine_id[' + medicine_issuance_row_count + ']"]').rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'This Medicine name is required'
+                    }
+                });
+
+                $('input[name="quantity[' + medicine_issuance_row_count + ']"]').rules('add', {
+                    required: true,
+                    digits: true,
+                    messages: {
+                        required: 'Quantity is required',
+                        digits: 'Quantity must be numeric',
+                    }
+                });
+
+                // $('input[name="available_quantity[' + medicine_issuance_row_count + ']"]').rules('add', {
+                //     required: true,
+                //     digits: true,
+                //     messages: {
+                //         required: 'Quantity is required',
+                //         digits: 'Quantity must be numeric',
+                //     }
+                // });
+
+                // Increment the row count for the next row
+                medicine_issuance_row_count++;
+            });
+
+            // Delete a row
+            $(document).on("click", ".delete-row", function() {
+                var rowCount = $('#medicine-tbody tr').length;
+
+
+                if (rowCount > 1) {
+                    $(this).closest("tr").remove();
+                } else {
+                    // Show SweetAlert warning if there's only one row
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Warning',
+                        text: 'At least one row is required.',
+                        confirmButtonColor: '#3085d6'
+                    });
+                }
+            });
         });
 
-        // Remove a row when the minus icon is clicked
-        $(document).on('click', '.remove-row', function() {
-            $(this).closest('tr').remove();
-        });
         $(document).on('change', '#unit_id', function() {
             var unitId = $(this).val();
             if (unitId) {
@@ -213,6 +281,38 @@
                 $('#department_id').trigger('change.');
             }
         });
+
+
+        $(document).on("change", "[name^='medicine_id']", function() {
+            var medicineIds = [];
+            var isDuplicate = false;
+            var currentRow = $(this).closest("tr");
+            var medicineId = $(this).val();
+
+
+            $("[name^='medicine_id']").each(function() {
+                var otherMedicineId = $(this).val();
+                if (otherMedicineId) {
+                    if (medicineIds.includes(otherMedicineId)) {
+                        isDuplicate = true;
+                    }
+                    medicineIds.push(otherMedicineId);
+                }
+            });
+
+
+            if (isDuplicate) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Duplicate Medicine Selection!",
+                    text: "Each Medicine must be unique across all rows.",
+                });
+
+                currentRow.find('select[name^="medicine_id"]').val("");
+                return;
+            }
+        });
+
         $(function() {
 
             $.validator.addMethod(
@@ -231,12 +331,21 @@
                     department_id: {
                         required: true,
                     },
-                    req_id: {
+                    issue_date: {
                         required: true,
                     },
-                    request_date: {
+                    'medicine_id[0]': {
                         required: true,
                     },
+                    // 'available_quantity[0]': {
+                    //     required: true,
+                    //     digits: true,
+                    // },
+                    'quantity[0]': {
+                        required: true,
+                        digits: true,
+                    }
+
                 },
                 messages: {
                     unit_id: {
@@ -245,12 +354,21 @@
                     department_id: {
                         required: "Please select the Department Name.",
                     },
-                    req_id: {
-                        required: "Requisition ID cannot be empty.",
-                    },
                     request_date: {
                         required: "Please select the request date.",
                     },
+                    'medicine_id[0]': {
+                        required: 'Medicine Name is required',
+                    },
+                    // 'available_quantity[0]': {
+                    //     required: 'Available Quantity is required',
+                    //     digits: 'Quantity should be numeric',
+                    // },
+                    'quantity[0]': {
+                        required: ' Quantity is required',
+                        digits: 'Quantity should be numeric',
+
+                    }
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {

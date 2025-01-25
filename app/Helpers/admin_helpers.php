@@ -191,7 +191,7 @@ if (!function_exists('getsequence')) {
             case 'requistion':
                 $count = UserMedicineRequisition::withoutGlobalScopes()->count();
                 $count = $count + 1;
-                $sequence =  getautogen($count);
+                $sequence = 'REQ-' . getautogen($count);
                 break;
             default:
                 $sequence = Str::random(5);

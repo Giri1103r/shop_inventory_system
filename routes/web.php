@@ -887,6 +887,8 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('/export/excel', [MedicineIssuanceController::class, 'exportExcel']);
             Route::get('/export/pdf', [MedicineIssuanceController::class, 'exportPdf']);
             Route::post('/status', [MedicineIssuanceController::class, 'statusChange']);
+            Route::get('/quantity', [MedicineIssuanceController::class, 'quantity']);
+
 
         });
     });

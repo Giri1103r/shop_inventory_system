@@ -243,9 +243,6 @@ class MedicineController extends Controller
     }
 
 
-   
-
-
     public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {

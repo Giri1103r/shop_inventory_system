@@ -25,28 +25,23 @@
                             {{ $i }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->medicine }}
+                            {{ $value->req_id }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->hsn }}
+                            {{ getUnitname($value->unit_id) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->pack }}
+                            {{ getDepartment($value->department_id) }}
+                        </td>
+
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ displaydateformat($value->request_date) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->quantity }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->batch_number }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->rate }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->expire_date) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->vendor_name }}
+                            @php
+                                $status = $value->status == 1 ? 'Active' : 'In-Active';
+                            @endphp
+                            {{ $status }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>

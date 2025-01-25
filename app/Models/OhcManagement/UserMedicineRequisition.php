@@ -49,6 +49,10 @@ class UserMedicineRequisition extends Model
 
             $query = $query->where('ohc_management_user_medicine_requisition.status', decryptId($request->status));
         }
+        if ($request->has('req_id') && $request->req_id) {
+
+            $query = $query->where('ohc_management_user_medicine_requisition.req_id', $request->req_id);
+        }
         if ($request->has('unit_id') && $request->unit_id) {
 
             $query = $query->where('ohc_management_user_medicine_requisition.unit_id', decryptId($request->unit_id));
@@ -91,9 +95,9 @@ class UserMedicineRequisition extends Model
         $request = request();
 
         $insert_array = [
-            'unit_id' => decryptId($request->medicine_id),
+            'unit_id' => decryptId($request->unit_id),
             'department_id' => decryptId($request->department_id),
-            'request_date' => DBdateformat($request->expire_date),
+            'request_date' => DBdateformat($request->request_date),
             'req_id' => $request->req_id,
             'created_by' => Auth::id(),
         ];
@@ -106,14 +110,16 @@ class UserMedicineRequisition extends Model
         $request = request();
 
         $update_array = array(
-            'unit_id' => decryptId($request->medicine_id),
+            'unit_id' => decryptId($request->unit_id),
             'department_id' => decryptId($request->department_id),
-            'request_date' => DBdateformat($request->expire_date),
+            'request_date' => DBdateformat($request->request_date),
             'req_id' => $request->req_id,
             'updated_by' => Auth::id(),
         );
+
         return $this->where('id', $id)->update($update_array);
     }
+
     public function selectOne($id)
     {
 
@@ -161,6 +167,10 @@ class UserMedicineRequisition extends Model
                 $query->orWhere('unit_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('department_id', 'LIKE', '%' . $search . '%');
             });
+        }
+        if ($request->has('req_id') && $request->req_id) {
+
+            $query = $query->where('ohc_management_user_medicine_requisition.req_id', $request->req_id);
         }
         if ($request->has('status') && $request->status) {
 

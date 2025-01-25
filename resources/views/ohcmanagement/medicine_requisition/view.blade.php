@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Medicine Requisition Show')
-@section('pageurl', admin_url('ohc/medicine-receiving-form/list'))
+@section('pageurl', admin_url('ohc/medicine-requisition/list'))
 
 
 @section('content')
@@ -22,7 +22,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('ohc/medicine-receiving-form/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('ohc/medicine-requisition/list') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -30,79 +30,70 @@
                             <div class="card-body ">
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Medicine Receving Form</h4>
+                                        <h4 class="text-white">Medicine Requisition</h4>
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Medicine Name') }}</label>
+                                        <label class="form-label view_label">{{ __('Requisition ID') }}</label>
                                         <div class="view_data">
-                                            {{ isset($medicine->medicine) ? $medicine->medicine : '' }}
+                                            {{ isset($user_medicine_requisition->req_id) ? $user_medicine_requisition->req_id : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('HSN Number') }}</label>
+                                        <label class="form-label view_label">{{ __('Unit') }}</label>
                                         <div class="view_data">
-                                            {{ isset($medicine->hsn) ? $medicine->hsn : '' }}
+                                            {{ getUnitname(isset($user_medicine_requisition->unit_id) ? $user_medicine_requisition->unit_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Pack Details') }}</label>
+                                        <label class="form-label view_label">{{ __('Department') }}</label>
                                         <div class="view_data">
-                                            {{ isset($medicine->pack) ? $medicine->pack : '' }}
+                                            {{ getDepartment(isset($user_medicine_requisition->department_id) ? $user_medicine_requisition->department_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Quantity') }}</label>
+                                        <label class="form-label view_label">{{ __('Request date') }}</label>
                                         <div class="view_data">
-                                            {{ isset($medicine_receiving->quantity) ? $medicine_receiving->quantity : '' }}
+                                            {{ displaydateformat(isset($user_medicine_requisition->request_date) ? $user_medicine_requisition->request_date : '') }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Batch Number') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($medicine_receiving->batch_number) ? $medicine_receiving->batch_number : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Rate') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($medicine_receiving->rate) ? $medicine_receiving->rate : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Expire Date') }}</label>
-                                        <div class="view_data">
-                                            {{ displaydateformat(isset($medicine_receiving->expire_date) ? $medicine_receiving->expire_date : '') }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Vendor Name') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($vendor->vendor_name) ? $vendor->vendor_name : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Created By') }}</label>
-                                        <div class="view_data">
-                                            {{ getUsername(isset($medicine_receiving->created_by) ? $medicine_receiving->created_by : '') }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('common.created_date') }}</label>
-                                        <div class="view_data">
-                                            {{ displayDateformat($medicine_receiving->created_at) }}
-                                        </div>
-                                    </div>
-
                                 </div>
+                                <div class="table-responsive">
+                                    <table class="table view_card ">
+                                        <thead>
+                                            <tr>
+                                                <th>S.No</th>
+                                                <th>Medicine Name</th>
+                                                <th>Quantity</th>
+                                                <th>Remarks</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if ($medicine_requisition->isEmpty())
+                                                <tr>
+                                                    <td colspan="4" class="text-center">No data is available</td>
+                                                </tr>
+                                            @else
+                                                @foreach ($medicine_requisition as $data)
+                                                    <tr>
+                                                        <td>{{$data->id}}</td>
+                                                        <td>{{$data->medicine}}</td>
+                                                        <td>{{$data->quantity}}</td>
+                                                        <td>{{$data->remarks}}</td>
+                                                    </tr>
+                                                @endforeach
+                                            @endif
+                                        </tbody>
+                                    </table>
+                                </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-@stop
+    @stop

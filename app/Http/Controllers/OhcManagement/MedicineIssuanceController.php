@@ -10,6 +10,8 @@ use App\Models\Master\Unit;
 use App\Models\OhcManagement\Master\Medicine;
 use App\Models\OhcManagement\Master\Vendor;
 use App\Models\OhcManagement\UserMedicineIssuance;
+use App\Models\OhcManagement\MedicineIssuance;
+use App\Models\OhcManagement\MedicineReceiving;
 use App\Models\OhcManagement\UserMedicineRequisition;
 use App\Models\UploadLog;
 
@@ -32,6 +34,8 @@ class MedicineIssuanceController extends Controller
     private $user_medicine_issuance;
     private $unit;
     private $department;
+    private $medicine_issuance;
+    private $medicine_receiving;
 
 
     public function __construct()
@@ -39,6 +43,9 @@ class MedicineIssuanceController extends Controller
         $this->medicine = new Medicine();
         $this->vendor = new Vendor();
         $this->user_medicine_issuance = new UserMedicineIssuance();
+        $this->medicine_issuance = new MedicineIssuance();
+        $this->medicine_receiving= new MedicineReceiving();
+
         $this->unit = new Unit();
         $this->department = new Department();
     }
@@ -57,8 +64,8 @@ class MedicineIssuanceController extends Controller
                             return $row->department_name;
                         })
 
-                        ->editColumn('request_date', function ($row) {
-                            return displaydateformat($row->request_date);
+                        ->editColumn('issue_date', function ($row) {
+                            return displaydateformat($row->issue_date);
                         })
                         ->editColumn('action', function ($row) {
                             $btn = '';
@@ -113,5 +120,73 @@ class MedicineIssuanceController extends Controller
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }
+    }
+    public function store(Request $request)
+    {
+        try {
+            $rules = [
+                'unit_id' => 'required',
+                'department_id' => 'required',
+                'issue_date' => 'required',
+
+            ];
+            $messages = [
+                'department_id.required' => 'Please select a Deparment.',
+                'unit_id.required' => 'Please select a unit.',
+                'issue_date.required' => 'Please select the Issued date.',
+            ];
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            try {
+
+                $user_medicine_issuance = $this->user_medicine_issuance->store();
+                $this->medicine_issuance->store($user_medicine_issuance);
+
+                Session::flash('success', 'Your data has been created successfully!');
+            } catch (Exception $ex) {
+                dd($ex);
+                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            }
+
+            return redirect(admin_url('ohc/medicine-issuance/list'));
+        } catch (Exception $ex) {
+
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medicine-issuance/list'));
+        }
+    }
+    public function edit(Request $request){
+        try {
+            $id = decryptId($request->id);
+
+
+            $user_medicine_issuance = $this->user_medicine_issuance->find($id);
+            $departmentList = $this->department->getdepartment();
+            $unit = $this->unit->getunit();
+            $medicine = $this->medicine->getMedicineData();
+            $medicine_issuance = $this->medicine_issuance->where('req_id', $id)->GET();
+
+            $data = array(
+                'medicine' => $medicine,
+                'unit' => $unit,
+                'departmentList' => $departmentList,
+                'user_medicine_issuance' => $user_medicine_issuance,
+                'medicine_issuance' => $medicine_issuance
+            );
+            return view('ohcmanagement.medicine_requisition.edit', $data);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medicine-requisition/list'));
+        }
+    }
+    public function quantity(Request $request)
+    {
+        $medicine_id = $request->medicine_id;
+        $medicine = $this->medicine_receiving->where('medicine_id',$medicine_id)->select('quantity')->first();
     }
 }
