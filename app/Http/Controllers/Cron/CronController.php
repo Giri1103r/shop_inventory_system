@@ -496,7 +496,7 @@ class CronController extends Controller
             $currentTime = Carbon::now()->format('H:i:s');
             $permits = SafetyPermit::where('trash', 'NO')
                 ->where('permit_status', '!=', STATUS_CLOSED)
-                ->where('permit_status', '!=', STATUS_PERMIT_EXPIRED) 
+                ->where('permit_status', '!=', STATUS_PERMIT_EXPIRED)
                 ->whereDate('date', Carbon::today())
                 ->where('time_to', '<', $currentTime)
                 ->get();
@@ -554,7 +554,7 @@ class CronController extends Controller
                         ]),
                         'web_link' => admin_url('safetypermit/view/' . encryptId($permit->id)),
                         'assigned_user' => array_to_string($UserId),
-                        'created_by' => Auth::id(),
+                        'created_by' => 1,
                     ];
                     notificationSave($notificationData);
                     Log::info("Notification sent", ['permit_id' => $permit->id]);
@@ -627,7 +627,7 @@ class CronController extends Controller
                         )),
                         'web_link' =>  admin_url('safetypermit/view/' . encryptId($permit->id)),
                         'assigned_user' => array_to_string($UserId),
-                        'created_by' => Auth::id(),
+                        'created_by' => 1,
                     );
                     notificationSave($notificationData);
 

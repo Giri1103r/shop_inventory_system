@@ -98,7 +98,7 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table id="datatable-list"
-                                class="table primary-table-bordered table-bordered table-striped  nowrap w-100 mt-2 datatable-list">
+                            class="table primary-table-bordered table-bordered table-striped  nowrap w-100 mt-2 datatable-list">
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>

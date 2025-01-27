@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'PPE Exemption')
+@section('title', 'Medicine Issuance')
 @section('content')
 
     <div style="width:100%;">
@@ -26,56 +26,16 @@
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->emp_id }}
+                            {{ getUnitname($value->unit_id) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->emp_name }}
+                            {{ getDepartment($value->department_id) }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getDepartment($value->department) }}
+                            {{ displaydateformat($value->issue_date) }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getUnitname($value->unit) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getCompanyname($value->company) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydateformat($value->from_date) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydateformat($value->to_date) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            @php
-                                $status = $value->status == 1 ? 'Active' : 'In-Active';
-                            @endphp
-                            {{ $status }}
-                        </td>
-                        <td style='padding: 7px; border: 0.5px solid'>
-
-                            @if($value->approve_status == STATUS_EHS_APPROVAL_PENDING)
-                                <p>{{ 'User Applied' }}</p>
-                            @elseif($value->approve_status == STATUS_EHS_APPROVED)
-                                <p>{{ 'EHS Head Approval Pending' }}</p>
-                            @elseif($value->approve_status == STATUS_EHS_REJECTED)
-                                <p>{{ 'EHS Head Approval Pending' }}</p>
-                            @endif
-                        </td>
-
-                        <td style='padding: 7px; border: 0.5px solid'>
-
-                                @if($value->approve_status == STATUS_EHS_APPROVAL_PENDING)
-                                <p>{{ 'EHS Officer Approval Pending' }}</p>
-                            @elseif($value->approve_status == STATUS_EHS_APPROVED)
-                                <p>{{ 'EHS Head Approved' }}</p>
-                            @elseif($value->approve_status == STATUS_EHS_REJECTED)
-                                <p>{{ 'EHS Head Rejected' }}</p>
-                            @else
-                                {{ removeUnderScore(getStatus($value->approve_status)) }}
-                            @endif
-                        </td>
+                       
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
                         </td>

@@ -10,10 +10,12 @@
                     <h4 class="card-title"></h4>
                     <div class="d-flex justify-content-end p-2 me-2">
                         <x-button-filter dataId="" class="search me-2" href=""></x-button-filter>
+                       
                         @if (CheckUserPermission('add'))
-                            <x-button-add dataId="" class="add btn btn-primary"
-                                href="{{ admin_url('safetypermit/add') }}">Add</x-button-add>
-                        @endif
+                        <a data-id="" class="add btn btn-primary" href="{{ admin_url('safetypermit/add') }}">New
+                            Request</a>
+                    @endif
+
                     </div>
 
 
@@ -410,7 +412,7 @@
                     icon: 'warning',
                     input: 'textarea', // Add a textarea for remarks
                     inputPlaceholder: '{{ __('Enter your remarks here...') }}',
-                    showCloseButton: true, 
+                    showCloseButton: true,
                     confirmButtonText: text,
                     confirmButtonColor: btncolor,
                     customClass: {
@@ -491,7 +493,7 @@
                     icon: 'warning',
                     input: 'textarea', // Add a textarea for remarks
                     inputPlaceholder: '{{ __('Enter your remarks here...') }}',
-                    showCloseButton: true, 
+                    showCloseButton: true,
                     confirmButtonText: text,
                     confirmButtonColor: btncolor,
                     customClass: {
@@ -557,7 +559,7 @@
                     }
                 });
             });
-        
+
         });
     </script>
 @endpush

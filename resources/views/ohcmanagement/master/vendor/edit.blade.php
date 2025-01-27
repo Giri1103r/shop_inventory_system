@@ -37,7 +37,7 @@
                                             value="{{ encryptId($vendor->id) }}">
 
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2 ">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Vender Name</label>
                                                     <input type="text" name ="vendor_name" id="vendor_name"
@@ -45,7 +45,7 @@
                                                         value="{{ $vendor->vendor_name }}" >
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">License Number</label>
                                                     <input type="text" name="license_no" id="license_no" class="form-control"

@@ -40,7 +40,7 @@
                             {{ $value->threshold_limit}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->expiry_date}}
+                            {{ displaydateformat($value->expiry_date)}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->remarks}}

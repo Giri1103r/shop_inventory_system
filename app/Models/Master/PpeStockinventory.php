@@ -133,7 +133,7 @@ class PpeStockinventory extends Model
                     'uom' => $item['UOM'] ?? null,
                     'quantity' => $item['QTY'] ?? null,
                     'item_description' => $item['ITEM_DESCRIPTION'] ?? null,
-                    'created_by' => Auth::id(),
+                    'created_by' =>1,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
@@ -162,8 +162,8 @@ class PpeStockinventory extends Model
             'item_description'=>$request->item_description,
             // 'item_name'=>$request->item_name,
             'ppe_name'=>$request->ppe_name,
-            'created_by'=>Auth::id(),
-            'updated_by'=>Auth::id(),
+            'created_by'=>1,
+            'updated_by'=>1,
          ];
        $this->where('id',$id)->update( $update_array);
     }

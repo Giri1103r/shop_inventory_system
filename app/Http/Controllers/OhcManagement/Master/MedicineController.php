@@ -68,7 +68,10 @@ class MedicineController extends Controller
                             return $text;
                         })
                         ->addColumn('created_at', function ($row) {
-                            return Displaydatetimeformat($row->created_at);
+                            return Displaydateformat($row->created_at);
+                        })
+                        ->addColumn('expiry_date', function ($row) {
+                            return Displaydateformat($row->expiry_date);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -87,7 +90,7 @@ class MedicineController extends Controller
 
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status','unit_id'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status','unit_id','expiry_date'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -333,7 +336,7 @@ class MedicineController extends Controller
                 $export[] =  $data->hsn;
                 $export[] =  getUnitname($data->unit_id);
                 $export[] =  $data->threshold_limit;
-                $export[] =  $data->expiry_date;
+                $export[] =  Displaydateformat($data->expiry_date);
                 $export[] =  $data->remarks;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);

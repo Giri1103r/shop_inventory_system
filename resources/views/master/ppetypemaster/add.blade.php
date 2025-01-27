@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Type')
+@section('title', 'PPE Master')
 @section('pageurl', admin_url('ppe_ppetype_master/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -222,7 +222,7 @@
                         required: "Protection Category cannot be empty.",
                         minlength: "Protection Category must be between 3 and 200 characters.",
                         maxlength: "Protection Category must be between 3 and 200 characters.",
-                       
+
                     },
                     ppe_standard: {
                         required: "PPE Standard cannot be empty.",

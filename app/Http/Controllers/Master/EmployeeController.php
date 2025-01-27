@@ -116,9 +116,10 @@ class EmployeeController extends Controller
             }
         }
         $companyList  = $this->company->where('status', '1')->get();
-
+        $unit = $this->unit->getunit();
         $data = array(
             'companyList' => $companyList,
+            'unit' => $unit,
         );
         return view('master.employee.list', $data);
     }
@@ -413,5 +414,36 @@ class EmployeeController extends Controller
             }
             return Response::json(true);
         }
+    }
+
+    public function companyajax(Request $request)
+    {
+        $companyID = decryptId($request->company_id);
+
+        // Fetch unit list
+        $unitList = $this->unit
+            ->where('company_id', $companyID)
+            ->where('status', 1)
+            ->where('trash', 'NO')
+            ->select('id', 'unit_name')
+            ->get()
+            ->map(function ($unit) {
+                $unit->id = $unit->id;
+                return $unit;
+            });
+
+        return response()->json([
+            'unit' => $unitList,
+        ]);
+    }
+
+    public function list(Request $request, $unit_id)
+    {
+        $unit_id = $unit_id;
+        $id = $request->id;
+        $departments = $this->department->where('unit_id',$unit_id)->select('id','department_name')  ->where('status', 1)
+        ->where('trash', 'NO') ->get();
+       
+        return response()->json($departments);
     }
 }

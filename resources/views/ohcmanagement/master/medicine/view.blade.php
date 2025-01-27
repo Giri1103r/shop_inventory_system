@@ -67,7 +67,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Expire Date') }}</label>
                                         <div class="view_data">
-                                            {{ isset($medicine->expiry_date) ? $medicine->expiry_date : '' }}
+                                            {{displayDateformat(isset($medicine->expiry_date) ? $medicine->expiry_date : '' ) }}
                                         </div>
                                     </div>
 

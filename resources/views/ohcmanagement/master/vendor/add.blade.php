@@ -34,14 +34,14 @@
                                         @csrf
 
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Vendor Name</label>
                                                     <input type="text" name ="vendor_name" id="vendor_name"
                                                         class="form-control" placeholder="Enter the Vendor name">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">License Number</label>
                                                     <input type="text" name="license_no" id="license_no"
@@ -161,7 +161,7 @@
                 invalidHandler: function(event, validator) {
                     var errors = validator.numberOfInvalids();
                     validator.errorList.forEach(function(error) {
-                       
+
                     });
                 }
             });

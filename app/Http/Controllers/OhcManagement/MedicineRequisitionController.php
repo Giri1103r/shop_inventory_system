@@ -193,7 +193,7 @@ class MedicineRequisitionController extends Controller
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
                 return redirect(admin_url('ohc/medicine-requisition/list'));
             }
-        
+
     }
     public function update(Request $request)
     {
@@ -298,8 +298,8 @@ class MedicineRequisitionController extends Controller
                 $export = [];
                 $export[] =  $i;
                 $export[] =  $data->req_id;
-                $export[] =  $data->unit_id;
-                $export[] =  $data->department_id;
+                $export[] =  getUnitname($data->unit_id);
+                $export[] =  getDepartment($data->department_id);
                 $export[] =  Displaydateformat($data->request_date);
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);

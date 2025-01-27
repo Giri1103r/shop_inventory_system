@@ -95,6 +95,18 @@ class Employee extends Model
             $query = $query->where('masters_employee.status', decryptId($request->status));
         }
 
+        if ($request->has('company_id') && $request->company_id) {
+
+            $query = $query->where('masters_employee.company', decryptId($request->company_id));
+        }
+        if ($request->has('unit_id') && $request->unit_id) {
+
+            $query = $query->where('masters_employee.unit', $request->unit_id);
+        }
+        if ($request->has('department_id') && $request->department_id) {
+
+            $query = $query->where('masters_employee.department', $request->department_id);
+        }
         $data_count = $query;
         $total_records = $data_count->count();
 
@@ -327,6 +339,18 @@ class Employee extends Model
         if ($request->has('status') && $request->status) {
 
             $query = $query->where('masters_employee.status', decryptId($request->status));
+        }
+        if ($request->has('company_id') && $request->company_id) {
+
+            $query = $query->where('masters_employee.company', decryptId($request->company_id));
+        }
+        if ($request->has('unit_id') && $request->unit_id) {
+
+            $query = $query->where('masters_employee.unit', $request->unit_id);
+        }
+        if ($request->has('department_id') && $request->department_id) {
+
+            $query = $query->where('masters_employee.department', $request->department_id);
         }
         $query->orderBy('id', 'DESC');
         return  $query->get();

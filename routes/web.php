@@ -40,6 +40,9 @@ use App\Http\Controllers\OhcManagement\Master\VendorController;
 use App\Http\Controllers\OhcManagement\MedicineIssuanceController;
 use App\Http\Controllers\OhcManagement\MedicineReceivingController;
 use App\Http\Controllers\OhcManagement\MedicineRequisitionController;
+use App\Http\Controllers\OhcManagement\Opd\FirstAidController;
+use App\Http\Controllers\OhcManagement\Opd\PrescribetoPatientController;
+use App\Http\Controllers\OhcManagement\Opd\RoadsideFirstAidController;
 use App\Http\Controllers\Ppemanagement\DashboardController;
 use App\Http\Controllers\Ppemanagement\PpeRequestController;
 use App\Http\Controllers\Ppemanagement\PpeStockInventoryController;
@@ -340,7 +343,9 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/status', [EmployeeController::class, 'statusChange']);
                 Route::post('/unique', [EmployeeController::class, 'Uniquecheck']);
                 Route::get('/passwordchange/{id}', [EmployeeController::class, 'PasswordUpdate']);
-                Route::post('/passwordchange/submit', [EmployeeController::class, 'PasswordUpdateSubmit']);
+                Route::post('/passwordchange/submit', [EmployeeController::class, 'PasswordUp`dateSubmit']);
+                Route::post('/company-ajax', [EmployeeController::class, 'companyajax']);
+                Route::get('/ajax-list/{unit_id}/{id}', [EmployeeController::class, 'list']);
             });
 
             Route::group(['prefix' => 'ptw/protectiveequipmentmaster'], function () {
@@ -888,8 +893,58 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('/export/pdf', [MedicineIssuanceController::class, 'exportPdf']);
             Route::post('/status', [MedicineIssuanceController::class, 'statusChange']);
             Route::get('/quantity', [MedicineIssuanceController::class, 'quantity']);
+            Route::post('/delete', [MedicineIssuanceController::class, 'delete']);
 
 
+
+        });
+
+        // opd
+
+        Route::group(['prefix' => 'ohc/prescribe-to-patient'], function () {
+            Route::get('/list', [PrescribetoPatientController::class, 'index']);
+            Route::post('/list', [PrescribetoPatientController::class, 'index']);
+            Route::get('/add', [PrescribetoPatientController::class, 'add']);
+            Route::post('/add/submit', [PrescribetoPatientController::class, 'store']);
+            Route::get('/edit/{id}', [PrescribetoPatientController::class, 'edit']);
+            Route::post('/edit/submit', [PrescribetoPatientController::class, 'update']);
+            Route::get('/view/{id}', [PrescribetoPatientController::class, 'view']);
+            Route::post('/delete', [PrescribetoPatientController::class, 'delete']);
+            Route::get('/export/excel', [PrescribetoPatientController::class, 'exportExcel']);
+            Route::get('/export/pdf', [PrescribetoPatientController::class, 'exportPdf']);
+            Route::post('/status', [PrescribetoPatientController::class, 'statusChange']);
+            Route::get('/quantity', [PrescribetoPatientController::class, 'quantity']);
+        });
+
+        Route::group(['prefix' => 'ohc/first-aid'], function () {
+            Route::get('/list', [FirstAidController::class, 'index']);
+            Route::post('/list', [FirstAidController::class, 'index']);
+            Route::get('/add', [FirstAidController::class, 'add']);
+            Route::post('/add/submit', [FirstAidController::class, 'store']);
+            Route::get('/edit/{id}', [FirstAidController::class, 'edit']);
+            Route::post('/edit/submit', [FirstAidController::class, 'update']);
+            Route::get('/view/{id}', [FirstAidController::class, 'view']);
+            Route::post('/delete', [FirstAidController::class, 'delete']);
+            Route::get('/export/excel', [FirstAidController::class, 'exportExcel']);
+            Route::get('/export/pdf', [FirstAidController::class, 'exportPdf']);
+            Route::post('/status', [FirstAidController::class, 'statusChange']);
+            Route::get('/quantity', [FirstAidController::class, 'quantity']);
+
+        });
+
+        Route::group(['prefix' => 'ohc/roadside-first-aid'], function () {
+            Route::get('/list', [RoadsideFirstAidController::class, 'index']);
+            Route::post('/list', [RoadsideFirstAidController::class, 'index']);
+            Route::get('/add', [RoadsideFirstAidController::class, 'add']);
+            Route::post('/add/submit', [RoadsideFirstAidController::class, 'store']);
+            Route::get('/edit/{id}', [RoadsideFirstAidController::class, 'edit']);
+            Route::post('/edit/submit', [RoadsideFirstAidController::class, 'update']);
+            Route::get('/view/{id}', [RoadsideFirstAidController::class, 'view']);
+            Route::post('/delete', [RoadsideFirstAidController::class, 'delete']);
+            Route::get('/export/excel', [RoadsideFirstAidController::class, 'exportExcel']);
+            Route::get('/export/pdf', [RoadsideFirstAidController::class, 'exportPdf']);
+            Route::post('/status', [RoadsideFirstAidController::class, 'statusChange']);
+            Route::get('/quantity', [RoadsideFirstAidController::class, 'quantity']);
         });
     });
 });

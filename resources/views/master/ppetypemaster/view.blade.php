@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Type View')
+@section('title', 'PPE Master Show')
 @section('pageurl', admin_url('ppe_ppetype_master/list'))
 
 
@@ -32,7 +32,7 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">PPE Type Details</h4>
+                                        <h4 class="text-white">PPE Master Details</h4>
                                     </div>
                                 </div>
                                 <div class="row">

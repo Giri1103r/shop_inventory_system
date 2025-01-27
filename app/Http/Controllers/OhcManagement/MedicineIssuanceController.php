@@ -44,7 +44,7 @@ class MedicineIssuanceController extends Controller
         $this->vendor = new Vendor();
         $this->user_medicine_issuance = new UserMedicineIssuance();
         $this->medicine_issuance = new MedicineIssuance();
-        $this->medicine_receiving= new MedicineReceiving();
+        $this->medicine_receiving = new MedicineReceiving();
 
         $this->unit = new Unit();
         $this->department = new Department();
@@ -159,7 +159,8 @@ class MedicineIssuanceController extends Controller
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }
     }
-    public function edit(Request $request){
+    public function edit(Request $request)
+    {
         try {
             $id = decryptId($request->id);
 
@@ -168,7 +169,7 @@ class MedicineIssuanceController extends Controller
             $departmentList = $this->department->getdepartment();
             $unit = $this->unit->getunit();
             $medicine = $this->medicine->getMedicineData();
-            $medicine_issuance = $this->medicine_issuance->where('req_id', $id)->GET();
+            $medicine_issuance = $this->medicine_issuance->where('reference_id', $id)->GET();
 
             $data = array(
                 'medicine' => $medicine,
@@ -177,16 +178,192 @@ class MedicineIssuanceController extends Controller
                 'user_medicine_issuance' => $user_medicine_issuance,
                 'medicine_issuance' => $medicine_issuance
             );
-            return view('ohcmanagement.medicine_requisition.edit', $data);
+            return view('ohcmanagement.medicine_issuance.edit', $data);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('ohc/medicine-requisition/list'));
+            return redirect(admin_url('ohc/medicine-issuance/list'));
         }
     }
-    public function quantity(Request $request)
+
+    public function update(Request $request)
     {
-        $medicine_id = $request->medicine_id;
-        $medicine = $this->medicine_receiving->where('medicine_id',$medicine_id)->select('quantity')->first();
+        try {
+            $id = decryptId($request->id);
+            $rules = [
+                'unit_id' => 'required',
+                'department_id' => 'required',
+                'issue_date' => 'required',
+
+            ];
+            $messages = [
+                'department_id.required' => 'Please select a Deparment.',
+                'unit_id.required' => 'Please select a unit.',
+                'issue_date.required' => 'Please select the Issued date.',
+            ];
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            try {
+
+                $user_medicine_issuance = $this->user_medicine_issuance->updates($id);
+                $this->medicine_issuance->updates($id);
+
+                Session::flash('success', 'Your data has been Updated successfully!');
+            } catch (Exception $ex) {
+                dd($ex);
+                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            }
+
+            return redirect(admin_url('ohc/medicine-issuance/list'));
+        } catch (Exception $ex) {
+
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medicine-issuance/list'));
+        }
+    }
+
+    public function view(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $user_medicine_issuance = $this->user_medicine_issuance->selectOne($id);
+                $medicine_issuance = $this->medicine_issuance->selectOne($id);
+            }
+            $unit = $this->unit->getunit();
+            $data = array(
+                'user_medicine_issuance' => $user_medicine_issuance,
+                'medicine_issuance' => $medicine_issuance,
+
+            );
+            return view('ohcmanagement.medicine_issuance.view', $data);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong please try again after some time');
+            return redirect(admin_url('ohc/medicine-issuance/list'));
+        }
+    }
+    // public function quantity(Request $request)
+    // {
+    //     $medicine_id = $request->medicine_id;
+    //     $medicine = $this->medicine_receiving->where('medicine_id',$medicine_id)->select('quantity')->first();
+    // }
+
+    public function ExportExcel(Request $request)
+    {
+
+        try {
+
+            $allData = $this->user_medicine_issuance->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                'Unit Name',
+                'Department Name',
+                'Issue Date',
+                'Created_by',
+                'Created_at'
+            ];
+
+            $i = 1;
+            foreach ($allData as $data) {
+
+                $export = [];
+                $export[] =  $i;
+                $export[] =  getUnitname($data->unit_id);
+                $export[] =  getDepartment($data->department_id);
+                $export[] =  Displaydateformat($data->issue_date);
+                $export[] =  getusername($data->created_by);
+                $export[] =  Displaydateformat($data->created_at);
+
+                $exportData[] = $export;
+
+                $i++;
+            }
+
+            $writer = SimpleExcelWriter::streamDownload('Medicine Issuance.xlsx')
+                ->addHeader($header)
+                ->addRows(
+                    $exportData
+                );
+        } catch (Exception $ex) {
+
+            dd($ex);
+        }
+    }
+
+    public function delete(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            $this->medicine_issuance->deleterecord($id);
+
+
+        } catch (Exception $ex) {
+
+           
+        }
+    }
+
+    public function ExportPdf(Request $request)
+    {
+
+        try {
+
+            $allData = $this->user_medicine_issuance->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                'Unit Name',
+                'Department Name',
+                'Issue Date',
+                'Created_by',
+                'Created_at'
+            ];
+
+            $data = array(
+                'header' => $header,
+                'content' => $allData,
+                'pagetitle' => "Medicine Issuance",
+            );
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $view = view('ohcmanagement.medicine_issuance.pdf', $data);
+            $html = $view->render();
+
+
+
+            $mpdf->WriteHTML($html);
+
+            $filename = "Medicine Issuance.pdf";
+            $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+
+            dd($ex);
+        }
     }
 }

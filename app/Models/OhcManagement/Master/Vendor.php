@@ -55,10 +55,10 @@ class Vendor extends Model
             });
         }
         if ($request->has('vendor_name') && $request->vendor_name) {
-            $query = $query->where('vendor_name', 'LIKE', '%' . $request->vendor_name . '%');
+            $query = $query->where('vendor_name',  $request->vendor_name);
         }
-        if ($request->has('licence_no') && $request->license_no) {
-            $query = $query->where('license_no', 'LIKE', '%' . $request->licence_no . '%');
+        if ($request->has('licence_no') && $request->licence_no) {
+            $query = $query->where('license_no', 'LIKE', $request->licence_no );
         }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
@@ -184,8 +184,8 @@ class Vendor extends Model
         if ($request->has('vendor_name') && $request->vendor_name) {
             $query = $query->where('vendor_name', 'LIKE', '%' . $request->vendor_name . '%');
         }
-        if ($request->has('licence_no') && $request->license_no) {
-            $query = $query->where('license_no', 'LIKE', '%' . $request->licence_no . '%');
+        if ($request->has('licence_no') && $request->licence_no) {
+            $query = $query->where('license_no', 'LIKE', $request->licence_no );
         }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');

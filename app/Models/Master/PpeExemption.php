@@ -175,12 +175,18 @@ class PpeExemption extends Model
 
     public function laststatus()
     {
-        $employeeId = Auth::user()->employee_id;
-        $laststatus = PpeExemption::where('emp_id', $employeeId)
-            ->orderBy('id', 'DESC')
-            ->where('status', '=', 1)
-            ->first();
-        return $laststatus;
+
+        $user = Auth::user();
+
+        if ($user->role == 9) {
+            $employeeId = $user->employee_id;
+
+            $laststatus = PpeExemption::where('emp_id', $employeeId)
+                ->where('status', '=', 1)
+                ->orderBy('id', 'DESC')
+                ->first();
+            return $laststatus;
+        }
     }
 
     public function statuschange($id)

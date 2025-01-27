@@ -83,7 +83,23 @@
                                             {{ displayDateformat($pperequest->created_at) }}
                                         </div>
                                     </div>
+                                    @if ($pperequest->ppe_image != '')
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Image</label>
+                                        @if (isset($pperequest) && $pperequest && $pperequest->ppe_image)
+                                            <p>
+                                                <a href="{{ asset('public/' . $pperequest->ppe_image) }}"
+                                                    target="_blank">
+                                                    <img src="{{ asset('public/' . $pperequest->ppe_image) }}"
+                                                        style="width: 100px" alt="image">
+                                                </a>
+                                            </p>
+                                        @else
+                                            <p>No image is uploaded</p>
+                                        @endif
 
+                                    </div>
+                                @endif
                                     <div class="mb-3 col-md-12 form-input">
                                         <label class="form-label view_label">{{ __('Reason') }}</label>
                                         <div class="view_data">

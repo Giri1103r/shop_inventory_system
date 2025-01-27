@@ -67,7 +67,7 @@ class VendorController extends Controller
                             return $text;
                         })
                         ->addColumn('created_at', function ($row) {
-                            return Displaydatetimeformat($row->created_at);
+                            return Displaydateformat($row->created_at);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -228,7 +228,7 @@ class VendorController extends Controller
     }
 
 
-    
+
     public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {
@@ -301,7 +301,7 @@ class VendorController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('vendor.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Vendor.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -336,7 +336,7 @@ class VendorController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "vendor Details",
+                'pagetitle' => "Vendor Details",
             );
 
             $property = [

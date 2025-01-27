@@ -424,7 +424,7 @@ class TypeofWorkChecklist extends Model
                             ->where('type', $type)
                             ->where('check_points', $checkPoint)
                             ->first();
-                      
+
                         $data = [
                             'typeofwork_id' => $id,
                             'type' => $type,

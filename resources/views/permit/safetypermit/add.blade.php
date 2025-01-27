@@ -1642,7 +1642,9 @@
                             type: 'GET',
                             dataType: 'json',
                             success: function(data) {
+                              
                                 data.forEach(function(item) {
+
                                     const equipmentName = item.precaution;
 
                                     // Check if equipment is already displayed

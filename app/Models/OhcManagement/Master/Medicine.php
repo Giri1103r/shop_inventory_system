@@ -129,7 +129,7 @@ class Medicine extends Model
             'hsn' => $request->hsn,
             'threshold_limit' => $request->threshold_limit,
             'unit_id' => $request->unit_id,
-            'expiry_date'=> $request->expire_date,
+            'expiry_date'=>  DBdateformat($request->expire_date),
             'remarks'=>$request->remarks,
             'created_by' => Auth::id()
         );
@@ -147,7 +147,7 @@ class Medicine extends Model
             'hsn' => $request->hsn,
             'threshold_limit' => $request->threshold_limit,
             'unit_id' => $request->unit_id,
-            'expiry_date'=> $request->expire_date,
+            'expiry_date'=> DBdateformat($request->expire_date),
             'remarks'=>$request->remarks,
             'updated_by' => Auth::id()
         );

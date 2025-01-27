@@ -45,7 +45,7 @@ class PpeRequest extends Model
         $user = Auth::user();
         $userRole = string_to_array($user->role);
         $empId = $user->employee_id;
-        $query = $this->select('ppe_pperequest.*', 'masters_department.department_name', 'inventory1.*', 'inventory2.*','ppe_pperequest.id As ppe_request_id')
+        $query = $this->select('ppe_pperequest.*', 'masters_department.department_name', 'inventory1.*', 'inventory2.*', 'ppe_pperequest.id As ppe_request_id')
             ->join('masters_department', 'ppe_pperequest.department', '=', 'masters_department.id')
             ->join('ppe_stock_inventory as inventory1', 'ppe_pperequest.ppe_name', '=', 'inventory1.id')
             ->join('ppe_stock_inventory as inventory2', 'ppe_pperequest.item_code', '=', 'inventory2.id')
@@ -151,7 +151,7 @@ class PpeRequest extends Model
             'emp_name' => $request->emp_name,
             'department' => Auth::user()->department_id,
             'unit_id' => Auth::user()->unit_id,
-            'request_for'=>$request->request_for,
+            'request_for' => $request->request_for,
             'item_code' => $request->item_code,
             'ppe_type' => $request->ppe_type_id,
             'ppe_name' => $request->ppe_name_id,
@@ -273,12 +273,20 @@ class PpeRequest extends Model
 
     public function laststatus()
     {
-        $employeeId = Auth::user()->employee_id;
-        $laststatus = PpeRequest::where('emp_id', $employeeId)
-            ->orderBy('id', 'DESC')
-            ->where('status', '=', 1)
-            ->first();
-        return $laststatus;
+        $user = Auth::user();
+
+       
+        if ($user->role == 9) {
+            $employeeId = $user->employee_id;
+
+
+            $laststatus = PpeRequest::where('emp_id', $employeeId)
+                ->where('status', '=', 1)
+                ->orderBy('id', 'DESC')
+                ->first();
+
+            return $laststatus;
+        }
     }
 
     public function lastPpeRequest()

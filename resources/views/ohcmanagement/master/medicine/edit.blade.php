@@ -97,7 +97,7 @@
                                                     <label class="form-label require">Expire Date</label>
 
                                                     <div class="input-group date form-input">
-                                                        <input type="text" name="expire_date" id="expire_date" value="{{$medicine->expiry_date}}"
+                                                        <input type="text" name="expire_date" id="expire_date" value="{{ displaydateformat($medicine->expiry_date)}}"
                                                             class="form-control" placeholder="Select the Expire Date">
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
@@ -122,7 +122,7 @@
                                         <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
-                                            <x-button-cancel href="{{ admin_url('company/list') }}"></x-button-cancel>
+                                            <x-button-cancel href="{{ admin_url('ohc/medicine/list') }}"></x-button-cancel>
                                         </div>
                                     </form>
                                 </div>
