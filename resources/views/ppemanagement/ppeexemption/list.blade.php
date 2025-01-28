@@ -128,8 +128,8 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Employee ID</th>
-                                        <th>Employee Name</th>
+                                        <th>Employee / Worker ID</th>
+                                        <th>Employee / Worker Name</th>
                                         <th>Department</th>
                                         <th>Unit</th>
                                         <th>From Date</th>
