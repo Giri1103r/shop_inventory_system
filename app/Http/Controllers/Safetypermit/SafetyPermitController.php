@@ -128,16 +128,10 @@ class SafetyPermitController extends Controller
                         </a>';
                             }
 
-                            if ($row->date == date('Y-m-d')) {
-                                if (!(
-                                    $row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||
-                                    $row->permit_status == STATUS_EHS_DECLINE ||
-                                    $row->permit_status == STATUS_CLOSED ||
-                                    $row->permit_status == STATUS_PERMIT_EXPIRED ||
-                                    $row->permit_status == STATUS_PLANTHEAD_REJECTED ||
-                                    $row->permit_status == STATUS_CANCELLED ||
-                                    $row->permit_status == STATUS_EHS_HOLD
-                                ) && ($row->created_by == Auth::id() || isAdmin())) {
+                            if (in_array($row->date, [date('Y-m-d'), date('Y-m-d', strtotime('+1 day'))])) {
+                                if (($row->permit_status == STATUS_PERMIT_EXPIRED)
+                                    && ($row->created_by == Auth::id() || CheckUserRole(ROLE_SUPERADMIN))
+                                ) {
                                     $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '" class="permitExtension" title="' . __('Permit Extension') . '"><i class="fa fa-external-link"></i></a>';
                                 }
                             }
@@ -153,7 +147,7 @@ class SafetyPermitController extends Controller
                                     $btn .= '<a href="' . admin_url('safetypermit/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                                 }
                             }
-                            if (($row->permit_status >= STATUS_EHS_APPROVE_PENDING  &&  $row->permit_status != STATUS_CANCELLED &&  $row->permit_status != STATUS_CLOSED)) {
+                            if (($row->permit_status >= STATUS_EHS_APPROVE_PENDING  &&  $row->permit_status != STATUS_PERMIT_EXPIRED &&  $row->permit_status != STATUS_CANCELLED &&  $row->permit_status != STATUS_CLOSED)) {
                                 $permitDateTime = Carbon::parse($row->date . ' ' . $row->time_to);
                                 if ($permitDateTime->isFuture()) {
                                     $btn .= '<a href="' . admin_url('safetypermit/qr/pdf/' . encryptId($row->id)) . '" target="__blank" style="margin-right: 5px;" title="QR PDF">
@@ -166,9 +160,13 @@ class SafetyPermitController extends Controller
                             $btn .= '<a href="' . admin_url('safetypermit/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
-                            if (($row->created_by == Auth::id() || isAdmin()) && ($row->permit_status != STATUS_CANCELLED)) {
+
+                            if ((checkUserRole(ROLE_EHS_OFFICER) || isAdmin()) &&
+                                ($row->permit_status == STATUS_EHS_APPROVE_PENDING || $row->permit_status == STATUS_EHS_VERIFICATION_PENDING)
+                            ) {
                                 $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Cancel" style="color: #e21e23;margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
                             }
+
 
                             if (($row->created_by == Auth::id() || isAdmin()) && ($row->permit_status == STATUS_PLANT_HEAD_APPROVED)) {
                                 $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="permitClose" title="Close" style="color: green;margin-right: 5px;"><i class="fa fa-window-close" aria-hidden="true"></i></a> ';
@@ -1195,7 +1193,7 @@ class SafetyPermitController extends Controller
 
             return response()->json(['status' => 'success', 'msg' => __('Work Permit Cancelled Successfully')], 200);
         } catch (Exception $ex) {
-
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => __('ptw.please_try_after_some_time')], 406);
         }
     }
@@ -1632,23 +1630,20 @@ class SafetyPermitController extends Controller
     {
         try {
             $id = decryptId($request->id);
-
             $safetypermit = $this->safetypermit->selectOne($id);
-            // $getpermitextension = $this->extension->getpermitextension($id);
-            // $getPermitExtensionsupervisor = $this->approvereject->getPermitExtensionsupervisor($id);
-            // $getPermitExtensionsuperintendednt = $this->approvereject->getPermitExtensionsuperintendednt($id);
 
-            $data = array(
+            $data = [
                 'safetypermit' => $safetypermit,
-                // 'getpermitextension' => $getpermitextension,
-                // 'getPermitExtensionsupervisor' => $getPermitExtensionsupervisor,
-                // 'getPermitExtensionsuperintendednt' => $getPermitExtensionsuperintendednt,
-            );
+                'showAlert' => $safetypermit->reference_id != null, // Pass a flag to the view
+                'totime' => $safetypermit->time_to , // Pass a flag to the view
+            ];
+
             return view('permit.safetypermit.permitextension', $data);
         } catch (Exception $ex) {
             report($ex);
         }
     }
+
 
     public function permitExtensionsubmit(Request $request)
     {
@@ -1656,27 +1651,38 @@ class SafetyPermitController extends Controller
         try {
 
             $id = $request->permit_id;
-            $safetypermit = $this->safetypermit->find($id);
+            $safetypermit = $this->safetypermit->permitData($id);
+            $workmanInvolved = $this->workmaninvolved->getworkmanData($id);
+            $duplicateData = $this->safetypermit->Duplicatepermitdata($id);
+
+                // if ($duplicateData) {
+                //    Session::flash('error','You have already created the Permit for this ID');
+                //    return redirect('safetypermit/list');
+                // }
+
+
+            $newSafetypermit = $this->safetypermit->CreateData($safetypermit,$id);
+            $this->workmaninvolved->CreateExpireData($newSafetypermit, $workmanInvolved);
             $permit_status = STATUS_PERMIT_EXTENDED;
             $approve =   $this->safetyPermitExtension->store($permit_status, $id);
-            $this->safetypermit->permitstatus($permit_status, $id);
-            $this->safetypermit->permit_extended_status($id, $permit_status);
+
             $this->safetypermit->permit_extended_time($id, $request->time_to);
 
-            $mailsubject = 'Permit Extended';
-            $Assignedusers = User::where('id', $safetypermit->verified_by)
-                ->select('name', 'email')
-                ->get()
-                ->unique('email');
+            $permit_status =  1;
+            $mailsubject = 'Safety Permit has been submitted';
+            $user_role = ROLE_EHS_OFFICER;
+            $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
+            $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
 
-            if ($Assignedusers != null) {
 
-                foreach ($Assignedusers as $user) {
+            if (count($users) > 0) {
+
+                foreach ($users as $user) {
 
                     $email_id = $user->email;
 
                     if ($email_id != '' || $email_id != null) {
-                        $safetypermitdetails =  $this->safetypermit->selectmail($id);
+                        $safetypermitdetails =  $this->safetypermit->selectmail($safetypermit->id);
                         $permitrray  = $safetypermitdetails->toArray();
 
                         $permitrray['name'] = $user->name;
@@ -1688,7 +1694,7 @@ class SafetyPermitController extends Controller
                 }
             }
 
-            $userids = User::where('id', $safetypermit->verified_by)->pluck('id')->toArray();
+
             /**
              * Send Web notification
              */
@@ -1699,7 +1705,7 @@ class SafetyPermitController extends Controller
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => 'Safety Permit ' . $safetypermit->permit_id . 'submitted for permit extension by ' . getUsername($approve->created_by),
+                    'message' => 'Safety Permit ' . $safetypermit->permit_id . ' submitted by ' . getUsername($safetypermit->created_by),
                     'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                     'id' => $safetypermit->id,
                     'module' => 1,
@@ -1711,24 +1717,26 @@ class SafetyPermitController extends Controller
             notificationSave($notificationData);
 
             $insert_array = array(
-                'permit_type' => 1,
-                'permit_id' => $id,
-                'from_status' => $request->permit_status,
+                'permit_type' => 0,
+                'permit_id' => $safetypermit->id,
+                'from_status' => 0,
                 'to_status' => $permit_status,
                 'is_reject' => null,
-                'remarks' => $request->extension_remarks,
+                'remarks' => null,
                 'approved_by' => Auth::id(),
             );
             $this->statuslog->create($insert_array);
 
-
+            Session::flash('success','Safety permit Is created Successfully');
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error','Something went wrong plese try again after some time');
             return redirect(admin_url('safetypermit/list'));
         }
     }
+
 
     public function permitextensionapproval(Request $request)
     {
@@ -1846,22 +1854,40 @@ class SafetyPermitController extends Controller
         $user = Auth::user();
         $id = Auth::id();
 
+
         $unit = $this->unit
             ->select('id', 'unit_name')
             ->where('status', 1)
             ->where('trash', 'NO')
             ->get();
-        $permitCounts = $this->safetypermit
+
+
+        $permitCountsQuery = $this->safetypermit
             ->selectRaw('unit_id, COUNT(*) as permit_count')
             ->where('status', 1)
             ->where('trash', 'NO')
-            ->groupBy('unit_id')
-            ->pluck('permit_count', 'unit_id');
+            ->groupBy('unit_id');
 
-        if ($request->has('Unit') && !empty($request->Unit)) {
-            $unitid = is_array($request->Unit) ? $request->Unit : [$request->Unit];
-            $permitCounts->whereIn('unit_id', $unitid);
+
+        if ($request->has('Unit') && $request->Unit) {
+            $permitCountsQuery->where('unit_id', 'LIKE', '%' . $request->Unit . '%');
         }
+        if ($request->has('Fromdate') && !empty($request->Fromdate)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->Fromdate)->startOfDay()->format('Y-m-d H:i:s');
+            $permitCountsQuery->where('created_at', '>=', $startDate);
+        }
+        if ($request->has('Todate') && !empty($request->Todate)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->Todate)->endOfDay()->format('Y-m-d H:i:s');
+            $permitCountsQuery->where('created_at', '<=', $endDate);
+        }
+        if ($request->has('Fromdate') && !empty($request->Fromdate) && $request->has('Todate') && !empty($request->Todate)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->Fromdate)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->Todate)->endOfDay()->format('Y-m-d H:i:s');
+            $permitCountsQuery->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        $permitCounts = $permitCountsQuery->get()->pluck('permit_count', 'unit_id');
+
         $result = $unit->map(function ($unit) use ($permitCounts) {
             return [
                 'unit_id' => $unit->id,
@@ -1875,6 +1901,7 @@ class SafetyPermitController extends Controller
             'unitData' => $result,
         ]);
     }
+
 
     public function monthwiseptw(Request $request)
     {

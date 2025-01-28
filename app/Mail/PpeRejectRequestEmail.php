@@ -31,7 +31,7 @@ class PpeRejectRequestEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: ('PPE Shoe Request Rejected'),
+            subject: ('PPE Request Rejected'),
         );
     }
 

@@ -11,11 +11,13 @@ use App\Mail\PpeRequestHodApprovalEmail;
 use App\Mail\PpeRequestRequestorEmail;
 use App\Mail\PpeRequestStoremanagerEmail;
 use App\Models\ApproveStatus;
+use App\Models\Master\Department;
 use App\Models\Master\Employee;
 use App\Models\Master\PpeRequest;
 use App\Models\Master\PpeStockinventory;
 use App\Models\Master\PpeType;
 use App\Models\Master\PpeTypeMaster;
+use App\Models\Master\Work;
 use App\Models\Master\Worktemp;
 use App\Models\Statuslog;
 
@@ -36,7 +38,6 @@ use Yajra\DataTables\Facades\DataTables;
 class PpeRequestController extends Controller
 {
     private $ppetypemaster;
-    private $worktemp;
     private $ppetype;
     private $pperequest;
     private $employee;
@@ -45,6 +46,8 @@ class PpeRequestController extends Controller
     private $ppestock;
     private $ppestatus;
     private $approvestatus;
+    private $department;
+    private $work;
 
     public function __construct()
     {
@@ -54,10 +57,11 @@ class PpeRequestController extends Controller
         $this->pperequest = new PpeRequest();
         $this->employee = new Employee();
         $this->user = new User();
-        $this->worktemp = new Worktemp();
         $this->ppestock = new PpeStockinventory();
         $this->ppestatus = new Statuslog();
         $this->approvestatus = new ApproveStatus();
+        $this->department = new Department();
+        $this->work = new Work();
     }
     public function index(Request $request)
     {
@@ -109,7 +113,7 @@ class PpeRequestController extends Controller
                                     $text = "<span class='badge bg-info' style='font-size: 1.0em;'>EHS Officer Approval Pending</span>";
                                 }
                             } else if ($row->approve_status == STATUS_EHS_APPROVED) {
-                                $text = "<span class='badge bg-info' style='font-size: 1.0em;'>EHS Officer Approved</span>";
+                                $text = "<span class='badge bg-info' style='font-size: 1.0em;'>Store manager Issue Pending</span>";
                             } else if ($row->approve_status == STATUS_EHS_REJECTED) {
                                 $text = "<span class='badge bg-danger' style='font-size: 1.0em;'>EHS Officer Rejected</span>";
                             } else if ($row->approve_status == STATUS_ISSUED) {
@@ -122,7 +126,7 @@ class PpeRequestController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             if (CheckUserPermission('view')) {
-                                $btn .= '<a href="' . admin_url('ppe_request/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ppe_request/view/' . encryptId($row->ppe_request_id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             }
                             // if (CheckUserPermission('edit')) {
                             //     $btn .= '<a href="' . admin_url('ppe_request/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
@@ -130,7 +134,7 @@ class PpeRequestController extends Controller
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
 
                             if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_HOD)) && $row->approve_status == STATUS_HOD_APPROVAL_PENDING) {
-                                $btn .= '<a href="' . admin_url('ppe_request/hodapproval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ppe_request/hodapproval/view/' . encryptId($row->ppe_request_id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
                             if (
@@ -148,10 +152,10 @@ class PpeRequestController extends Controller
                                     $row->approve_status != STATUS_ISSUED
                                 )
                             ) {
-                                $btn .= '<a href="' . admin_url('ppe_request/ehsapproval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ppe_request/ehsapproval/view/' . encryptId($row->ppe_request_id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
-                            $btn .= '<a href="' . admin_url('ppe_request/generalpdf/' . encryptId($row->id)) . '" class="" title="Pdf"> <i class="fa-solid fa-file-pdf" style="color: #e67265;"></i></a> ';
+                            $btn .= '<a href="' . admin_url('ppe_request/generalpdf/' . encryptId($row->ppe_request_id)) . '" class="" title="Pdf"> <i class="fa-solid fa-file-pdf" style="color: #e67265;"></i></a> ';
 
                             return $btn;
                         })
@@ -187,18 +191,57 @@ class PpeRequestController extends Controller
     {
         $employee = $this->user->getEmployeedata();
         $ppetypedata = $this->ppetype->getPpetypedata();
-        $ppetypemaster = $this->ppetypemaster->getppetypemaster();
+        $itemCode = $this->ppestock->getItemCode();
         $userdata = $this->pperequest->userdata();
+        // $employeelist = $this->employee->getEmployeeID();
+
+        $worker  = $this->work->first();
 
         $data = [
             'employee' => $employee,
             'ppetypedata' => $ppetypedata,
-            'ppetypemaster' => $ppetypemaster,
+            'itemCode' => $itemCode,
             'userdata' => $userdata,
+
 
 
         ];
         return view('ppemanagement.pperequest.add', $data);
+    }
+    public function employeeid(Request $request)
+    {
+        $name = $request->input('search');
+
+
+        $employee_code = Work::where('emp_id', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+        return response()->json(
+            $employee_code->map(function ($employee) {
+                return [
+                    'id' => $employee->emp_id,
+                    'text' => $employee->emp_id,
+                ];
+            })
+        );
+    }
+
+    public function fetchEmployeeDetails($emp_id)
+    {
+
+        $employee = $this->work->select('emp_name', 'department')
+            ->where('emp_id', $emp_id)
+            // ->where('emp_id','!=',Auth::user()->employee_id)
+            ->first();
+
+        $departments = $this->department->select('id', 'department_name')->where('status', '1')->first();
+
+        return response()->json([
+            'employee' => $employee,
+            'departments' => $departments
+        ]);
     }
 
     public function checkDepartmentrequest(Request $request)
@@ -238,13 +281,11 @@ class PpeRequestController extends Controller
         try {
             $rules = [
                 'item_code' => 'required',
-                'ppe_type' => 'required',
                 'ppe_name' => 'required',
             ];
             $messages = [
                 'item_code.required' => __('Item Code is required'),
                 'ppe_name.required' => __('PPE Name is required'),
-                'ppe_type.required' => __('PPE Type is required'),
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -354,13 +395,18 @@ class PpeRequestController extends Controller
             }
             $empId = $pperequest->emp_id;
             $userdata = $this->pperequest->getuserdata($empId);
-            $ppestatuslog = $this->ppestatus->statuslog($id);
+            $hodstatuslog = $this->ppestatus->gethodstatuslog($id);
+            $ehsstatuslog = $this->ppestatus->getehsstatuslog($id);
+            $smStatuslog = $this->ppestatus->getsmstatuslog($id);
             $data = [
                 'pperequest' =>  $pperequest,
                 'encryptid' => $request->id,
                 'userdata' => $userdata,
-                'ppestatuslog' => $ppestatuslog
+                'hodstatuslog' => $hodstatuslog,
+                'ehsstatuslog' => $ehsstatuslog,
+                'smStatuslog' => $smStatuslog,
             ];
+
             return view('ppemanagement.pperequest.view', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -377,12 +423,16 @@ class PpeRequestController extends Controller
             $empId = $pperequest->emp_id;
             // $ppestatuslog = $this->ppestatus->getstatusdetails($id);
             $userdata = $this->pperequest->getuserdata($empId);
-            $ppestatuslog = $this->ppestatus->statuslog($id);
+            $hodstatuslog = $this->ppestatus->gethodstatuslog($id);
+            $ehsstatuslog = $this->ppestatus->getehsstatuslog($id);
+            $smStatuslog = $this->ppestatus->getsmstatuslog($id);
 
             $data = [
                 'userdata' => $userdata,
                 'pperequest' => $pperequest,
-                'ppestatuslog' => $ppestatuslog,
+                'hodstatuslog' => $hodstatuslog,
+                'ehsstatuslog' => $ehsstatuslog,
+                'smStatuslog' => $smStatuslog,
                 'pagetitle' => "PPE request",
             ];
 
@@ -414,15 +464,19 @@ class PpeRequestController extends Controller
 
         try {
             $id = decryptId($request->id);
+            // dd( $id);
             if (Auth::check()) {
                 $pperequest = $this->pperequest->selectOne($id);
             }
             if ($pperequest->approve_status != STATUS_HOD_APPROVAL_PENDING) {
                 return redirect('ppe_request/view/' . encryptId($id));
             }
+            $itemId = $pperequest->item_code;
+            $stockdata = $this->ppestock->getStockInventorydata($itemId);
             $data = [
                 'pperequest' =>  $pperequest,
                 'encryptid' => $request->id,
+                'stockdata' => $stockdata,
             ];
             return view('ppemanagement.pperequest.hodapproval', $data);
         } catch (Exception $ex) {
@@ -581,12 +635,13 @@ class PpeRequestController extends Controller
             if (Auth::check()) {
                 $pperequest = $this->pperequest->selectOne($id);
             }
-            // dd( $pperequest);
             $empId = $pperequest->emp_id;
+            $itemId = $pperequest->item_code;
             $userdata = $this->pperequest->getuserdata($empId);
-            $statuslog = $this->ppestatus->getstatuslogdata( $id);
+            $statuslog = $this->ppestatus->getstatuslogdata($id);
             $ehslogdata = $this->ppestatus->getehsstatuslogdetails($id);
-            if($pperequest->approve_status == STATUS_ISSUED){
+            $stockdata = $this->ppestock->getStockInventorydata($itemId);
+            if ($pperequest->approve_status == STATUS_ISSUED) {
                 return redirect('ppe_request/view/' . encryptId($id));
             }
 
@@ -595,8 +650,9 @@ class PpeRequestController extends Controller
                 'pperequest' =>  $pperequest,
                 'encryptid' => $request->id,
                 'userdata' => $userdata,
-                'statuslog'=>$statuslog,
-                'ehslogdata'=> $ehslogdata
+                'statuslog' => $statuslog,
+                'stockdata' => $stockdata,
+                'ehslogdata' => $ehslogdata
             ];
 
             return view('ppemanagement.pperequest.ehsapproval', $data);
@@ -640,8 +696,8 @@ class PpeRequestController extends Controller
                 'approve_status' =>  $approveStatus,
             ];
 
-            if($action != 'approve'){
-                $updateEhsData['status']=0;
+            if ($action != 'approve') {
+                $updateEhsData['status'] = 0;
             }
 
             $statuslog = $this->ppestatus->storeEhsStatus($updateEhsData, $empDetails);
@@ -671,7 +727,7 @@ class PpeRequestController extends Controller
                     'status' => $updateEhsData['approve_status'],
                     'department' => $empDetails->department,
                     'approved_by' => $empDetails->approved_by,
-                    'approve_link' =>admin_url('ppe_request/ehsapproval/view/' . encryptId($id)),
+                    'approve_link' => admin_url('ppe_request/ehsapproval/view/' . encryptId($id)),
                 ];
 
                 if ($action == 'approve') {
@@ -695,7 +751,7 @@ class PpeRequestController extends Controller
                             'module' => 1,
                         ]),
                         'web_link' => admin_url('ppe_request/ehsapproval/view/' . encryptId($id)),
-                        'assigned_user' =>array_to_string($assignedUsers) ,
+                        'assigned_user' => array_to_string($assignedUsers),
                         'created_by' => Auth::id(),
                     ];
 
@@ -774,16 +830,14 @@ class PpeRequestController extends Controller
     {
         $rules = [
             'store_remarks' => 'required',
-
         ];
+
         $messages = [
             'store_remarks.required' => 'Remarks Field is Mandatory',
-
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
         if ($validator->fails()) {
-            dd($validator->errors());
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
@@ -794,57 +848,76 @@ class PpeRequestController extends Controller
             $action = $request->input('action');
 
 
-
             $empDetails = $this->pperequest->find($id);
+            $itemId = $empDetails->item_code;
+
+
+            $ItemCode = $this->ppestock->Quantitydata($itemId);
+            $Oldquantity = $ItemCode->quantity;
+
+
+            $newQuantity = $Oldquantity - 1;
+
             if (!$empDetails) {
                 throw new Exception('Employee details not found.');
             }
 
             $departmentId = $empDetails->department;
 
-
+            // Define Status Arrays
             $updateStatus = [
                 'remarks' => $remarks,
                 'approved_at' => $approved_at,
                 'approved_by' => Auth::id(),
                 'approve_status' => STATUS_ISSUED,
-
             ];
-            $storeStatus =[
+            $storeStatus = [
                 'remarks' => $remarks,
                 'approved_at' => $approved_at,
                 'approved_by' => Auth::id(),
                 'approve_status' => STATUS_ISSUED,
-                'status'=>0,
+                'status' => 0,
             ];
 
+            $itemcodes = $this->ppetypemaster->getppetypemaster();
 
-            $apiUrl = 'https://vmsapi.karam.in/emp.asmx/GetPPEInventory?TokenId=123&Orgid=86&Item=71160-H';
-            $response = Http::get($apiUrl);
+            foreach ($itemcodes as $code) {
+                $itemList = $code->item_code;
 
-            if ($response->successful()) {
-                $data = $response->json();
+                // API Call
+                $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetPPEInventory?TokenId=123&Orgid=86&Item={$itemList}";
+                $response = Http::get($apiUrl);
 
-                if (!empty($data)) {
+                if ($response->successful()) {
+                    $data = $response->json();
 
-                    $this->ppestock->store($data);
-                    $this->ppestatus->storemangerstatus($updateStatus, $empDetails);
-                    $this->pperequest->updatestoremanager($storeStatus, $id);
-                    $this->ppestock->store($data);
-                    Session::flash('success', 'PPE Request has successfully responded');
-                    return redirect()->to(admin_url('ppe_request/list'));
+                    if (!empty($data)) {
+                        // Store Data and Update Status
+                        $this->ppestock->store($data);
+                    } else {
+                        Session::flash('error', 'Something went wrong. please try again after some time.');
+                        return redirect()->to(admin_url('ppe_request/list'));
+                    }
                 } else {
-                    throw new Exception('API response is empty.');
+                    Session::flash('error', 'Something went wrong. please try again after some time.');
+                    return redirect()->to(admin_url('ppe_request/list'));
                 }
-            } else {
-                throw new Exception('Failed to fetch API response.');
             }
+
+            // Update Status
+            $this->ppestock->updateQuantity($itemId, $newQuantity);
+            $this->ppestatus->storemangerstatus($updateStatus, $empDetails);
+            $this->pperequest->updatestoremanager($storeStatus, $id);
+
+            Session::flash('success', 'PPE Request has been successfully responded to.');
+            return redirect()->to(admin_url('ppe_request/list'));
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try again later.');
+            Session::flash('error', $ex->getMessage());
             return redirect()->to(admin_url('ppe_request/list'));
         }
     }
+
 
 
 
@@ -1008,7 +1081,7 @@ class PpeRequestController extends Controller
                 __("common.sno"),
                 __("Emp Id"),
                 __('Emp Name'),
-                __("PPE Type"),
+                __("Item Code"),
                 __("PPE Name"),
                 __("Department"),
                 __("From Status"),
@@ -1028,48 +1101,39 @@ class PpeRequestController extends Controller
                 $export[] = $i;
                 $export[] = $data->emp_id;
                 $export[] = $data->emp_name;
-                $export[] = getPpeType($data->ppe_type);
+                $export[] = getItemCode($data->item_code);
                 $export[] = getPpename($data->ppe_name);
                 $export[] = getDepartment($data->department);
                 if ($data->approve_status == STATUS_HOD_APPROVAL_PENDING) {
                     $export[] = 'User Applied';
-                }elseif ($data->approve_status == STATUS_HOD_APPROVED) {
+                } elseif ($data->approve_status == STATUS_HOD_APPROVED) {
                     $export[] = 'HOD Approval Pending';
-                }
-                elseif ($data->approve_status == STATUS_HOD_REJECTED) {
+                } elseif ($data->approve_status == STATUS_HOD_REJECTED) {
                     $export[] = 'HOD Approval Pending';
-                }elseif ($data->approve_status == STATUS_EHS_APPROVAL_PENDING) {
+                } elseif ($data->approve_status == STATUS_EHS_APPROVAL_PENDING) {
                     $export[] = 'HOD Approved';
-                }
-                elseif ($data->approve_status == STATUS_EHS_APPROVED) {
+                } elseif ($data->approve_status == STATUS_EHS_APPROVED) {
                     $export[] = 'EHS Officer Approval Pending';
-                }
-                elseif ($data->approve_status == STATUS_EHS_REJECTED) {
+                } elseif ($data->approve_status == STATUS_EHS_REJECTED) {
                     $export[] = 'EHS Officer Approval Pending';
-                }
-                elseif ($data->approve_status == STATUS_ISSUED) {
+                } elseif ($data->approve_status == STATUS_ISSUED) {
                     $export[] = 'EHS Officer Approved';
-                }
-                else {
+                } else {
                     $export[] = removeUnderScore(getStatus($data->approve_status));
                 }
                 if ($data->approve_status == STATUS_HOD_APPROVAL_PENDING) {
                     $export[] = 'HOD Approval Pending';
-                }elseif ($data->approve_status == STATUS_HOD_APPROVED) {
+                } elseif ($data->approve_status == STATUS_HOD_APPROVED) {
                     $export[] = 'HOD Approved';
-                }
-                elseif ($data->approve_status == STATUS_HOD_REJECTED) {
+                } elseif ($data->approve_status == STATUS_HOD_REJECTED) {
                     $export[] = 'HOD Rejected';
-                }elseif ($data->approve_status == STATUS_EHS_APPROVAL_PENDING) {
+                } elseif ($data->approve_status == STATUS_EHS_APPROVAL_PENDING) {
                     $export[] = 'EHS Officer Approval Pending';
-                }
-                elseif ($data->approve_status == STATUS_EHS_APPROVED) {
+                } elseif ($data->approve_status == STATUS_EHS_APPROVED) {
                     $export[] = 'EHS Officer Approved';
-                }
-                elseif ($data->approve_status == STATUS_EHS_REJECTED) {
+                } elseif ($data->approve_status == STATUS_EHS_REJECTED) {
                     $export[] = 'EHS Officer Rejected';
-                }
-                else {
+                } else {
                     $export[] = removeUnderScore(getStatus($data->approve_status));
                 }
                 $export[] = getusername($data->created_by);
@@ -1107,7 +1171,7 @@ class PpeRequestController extends Controller
                 __("common.sno"),
                 __("Emp Id"),
                 __('Emp Name'),
-                __("PPE Type"),
+                __("Item Code"),
                 __("PPE Name"),
                 __("Department"),
                 __("From Status"),

@@ -16,7 +16,7 @@ use App\Models\Permit\SafetyPermit;
 use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Notification;
-
+use App\Models\OhcManagement\UserMedicineRequisition;
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\WebPushConfig;
@@ -187,6 +187,11 @@ if (!function_exists('getsequence')) {
                 $count = SafetyPermit::withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'ORD/' . getautogen($count);
+                break;
+            case 'requistion':
+                $count = UserMedicineRequisition::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'REQ-' . getautogen($count);
                 break;
             default:
                 $sequence = Str::random(5);

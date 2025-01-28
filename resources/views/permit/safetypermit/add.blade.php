@@ -126,7 +126,7 @@
                                                                         alt="Image" class="img-fluid"
                                                                         style="max-width: 50px; object-fit: cover;">
                                                                 </a>
-                                                                <span>{{ $work->work_name }}</span>
+                                                                <span class="fw-bold">{{ $work->work_name }}</span>
 
                                                             </div>
                                                         @endforeach
@@ -1642,7 +1642,9 @@
                             type: 'GET',
                             dataType: 'json',
                             success: function(data) {
+                              
                                 data.forEach(function(item) {
+
                                     const equipmentName = item.precaution;
 
                                     // Check if equipment is already displayed
@@ -1991,6 +1993,14 @@
         // validation
 
         $(document).ready(function() {
+            $.validator.addMethod(
+                "validTimeTo",
+                function(value, element) {
+                    const maxTime = "18:00";
+                    return value <= maxTime;
+                },
+                "Time cannot exceed 18:00."
+            );
             $.validator.addMethod("regex", function(value, element, regexp) {
                 return this.optional(element) || regexp.test(value);
             }, "Please check your input.");
@@ -2005,6 +2015,7 @@
                     },
                     time_to: {
                         required: true,
+                        validTimeTo: true,
                     },
                     unit_id: {
                         required: true,
@@ -2067,6 +2078,7 @@
                     },
                     time_to: {
                         required: "To Time cannot be empty.",
+                        validTimeTo: "To Time should not exceed 18:00 PM.",
                     },
                     unit_id: {
                         required: "Please Select the unit.",

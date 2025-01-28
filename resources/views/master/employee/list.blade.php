@@ -40,7 +40,49 @@
                                             <input type="text" name="employee_status" id="employee_status"
                                                 class="form-control" placeholder="Employee Status">
                                         </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">Company Name</label>
+                                                <select name="company_id" id="company_id" class="form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Company Name</option>
 
+                                                    @foreach ($companyList as $list)
+                                                        <option value="{{ encryptId($list->id) }}">
+                                                            {{ $list->company_name }}
+                                                        </option>
+                                                    @endforeach
+
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">Unit Name</label>
+
+                                                    <select name="unit_id" id="unit_id" class="form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select the unit</option>
+                                                    {{-- @foreach ($unit as $list)
+                                                        <option value="{{ $list->id }}">
+                                                            {{ $list->unit_name }}</option>
+                                                    @endforeach --}}
+                                                </select>
+
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">Department Name</label>
+                                                <select name="department_id" id="department_id"
+                                                    class=" form-control single-select" style="width: 100%">
+                                                    <option value="">Select Department Name</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
@@ -74,6 +116,7 @@
                                         <th>Employee Name</th>
                                         <th>Employee Email</th>
                                         <th>Phone Number</th>
+                                        <th data-priority="3">Department Name</th>
                                         <th>Unit Name</th>
                                         <th>Employee Status</th>
                                         <th>Reporting Manager</th>
@@ -99,6 +142,61 @@
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
+            });
+            $(document).on('change', '#company_id', function() {
+                var company_id = $(this).val();
+
+                if (company_id) {
+                    $.ajax({
+                        url: "{{ admin_url('employee/company-ajax') }}",
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            company_id: company_id,
+                            _token: '{{ csrf_token() }}' // Include CSRF token
+                        },
+                        success: function(data) {
+                            // Populate the unit dropdown
+                            var unitOptions = '<option value="">Select Unit Name</option>';
+                            $.each(data.unit, function(index, unit) {
+                                unitOptions +=
+                                    `<option value="${unit.id}">${unit.unit_name}</option>`;
+                            });
+                            $('#unit_id').html(unitOptions);
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching units. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#unit_id').empty().append('<option value="">Select Unit Name</option>');
+                }
+            });
+
+            $(document).on('change', '#unit_id', function() {
+                var unitId = $(this).val();
+
+                if (unitId) {
+                    $.ajax({
+                        url: "{{ admin_url('employee/ajax-list') }}/" + unitId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            console.log(data);
+                            var departmentOptions = '<option value="">Select Department</option>';
+                            $.each(data, function(index, department) {
+                                departmentOptions +=
+                                    `<option value="${department.id}">${department.department_name}</option>`;
+                            });
+                            $('#department_id').html(departmentOptions);
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching departments. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#department_id').empty().append('<option value="">Select Department</option>');
+                }
             });
 
             $(function() {
@@ -134,13 +232,16 @@
                                 .attr('content')
                         },
                         data: function(d) {
+                            d.company_id = $('#company_id').val();
+                            d.unit_id = $('#unit_id').val();
+                            d.department_id = $('#department_id').val();
                             d.emp_id = $('#emp_id').val();
                             d.emp_name = $('#emp_name').val();
                             d.email = $('#email').val();
                             d.employee_status = $('#employee_status').val();
                             d.status = $('#status').val();
-
                         },
+
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
                                 alert('Session has expired. You will be redirected to the login page.');
@@ -168,6 +269,11 @@
                         {
                             data: 'mobile_no',
                             name: 'mobile_no'
+                        },
+
+                        {
+                            data: 'department',
+                            name: 'department'
                         },
                         {
                             data: 'unit',
@@ -218,11 +324,15 @@
                                     extend: 'pdf',
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
-                                        var searchValue = $('#datatable-list_filter input').val();
+                                        var searchValue = $('#datatable-list_filter input')
+                                            .val();
                                         emp_id = $('#emp_id').val();
                                         emp_name = $('#emp_name').val();
                                         email = $('#email').val();
                                         employee_status = $('#employee_status').val();
+                                        unit_id = $('#unit_id').val();
+                                        company_id = $('#company_id').val();
+                                        department_id = $('#department_id').val();
 
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
@@ -233,6 +343,10 @@
                                             '&emp_id=' + emp_id +
                                             '&emp_name=' + emp_name +
                                             '&email=' + email +
+                                            '&company_id=' + company_id +
+                                            '&department_id=' + department_id +
+                                            '&unit_id=' + unit_id +
+
                                             '&employee_status=' + employee_status +
                                             '&status=' + status
                                     } // Closing brace for action function
@@ -241,12 +355,16 @@
                                     extend: 'excel',
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
-                                        var searchValue = $('#datatable-list_filter input').val();
+                                        var searchValue = $('#datatable-list_filter input')
+                                            .val();
                                         emp_id = $('#emp_id').val();
                                         emp_name = $('#emp_name').val();
                                         email = $('#email').val();
                                         employee_status = $('#employee_status').val();
                                         status = $('#status').val();
+                                        unit_id = $('#unit_id').val();
+                                        company_id = $('#company_id').val();
+                                        department_id = $('#department_id').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
@@ -256,6 +374,9 @@
                                             '&emp_name=' + emp_name +
                                             '&email=' + email +
                                             '&employee_status=' + employee_status +
+                                            '&company_id=' + company_id +
+                                            '&department_id=' + department_id +
+                                            '&unit_id=' + unit_id +
                                             '&status=' + status
                                     } // Closing brace for action function
                                 }
@@ -276,7 +397,7 @@
                 });
 
                 $(document).on('click', '#searchform', function() {
-                    console.log('test');
+
                     table.draw();
                 });
 

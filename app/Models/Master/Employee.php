@@ -29,6 +29,7 @@ class Employee extends Model
         'user_role',
         'id_type',
         'id_number',
+        'blood_group',
         'joining_date',
         'mobile_no',
         'company',
@@ -94,6 +95,18 @@ class Employee extends Model
             $query = $query->where('masters_employee.status', decryptId($request->status));
         }
 
+        if ($request->has('company_id') && $request->company_id) {
+
+            $query = $query->where('masters_employee.company', decryptId($request->company_id));
+        }
+        if ($request->has('unit_id') && $request->unit_id) {
+
+            $query = $query->where('masters_employee.unit', $request->unit_id);
+        }
+        if ($request->has('department_id') && $request->department_id) {
+
+            $query = $query->where('masters_employee.department', $request->department_id);
+        }
         $data_count = $query;
         $total_records = $data_count->count();
 
@@ -131,7 +144,7 @@ class Employee extends Model
         foreach ($emptemp as $item) {
 
             $emailExists = $this->where('email', $item->email)->where('emp_id', '!=', $item->emp_id)->exists();
-            
+
             if ($emailExists) {
                 $errorMessage = "Email already exists.";
                 $this->updateErrorStatus($item->emp_id, $errorMessage);
@@ -140,7 +153,7 @@ class Employee extends Model
             $role = DB::table('template_user_role')
             ->where('role_name', $item->user_role)
             ->first();
-         
+
             $data = [
                 'emp_id' => $item->emp_id ?? null,
                 'emp_name' => $item->emp_name ?? null,
@@ -213,6 +226,7 @@ class Employee extends Model
             'nationality' => $request->nationality ?? null,
             'id_type' => $request->id_type  ?? null,
             'id_number' => $request->id_number  ?? null,
+            'blood_group' => $request->blood_group  ?? null,
             'email' => $request->email ?? null,
             'joining_date' => DBdateformat($request->joining_date) ?? '',
             'mobile_no' => $request->mobile_no ?? null,
@@ -325,6 +339,18 @@ class Employee extends Model
         if ($request->has('status') && $request->status) {
 
             $query = $query->where('masters_employee.status', decryptId($request->status));
+        }
+        if ($request->has('company_id') && $request->company_id) {
+
+            $query = $query->where('masters_employee.company', decryptId($request->company_id));
+        }
+        if ($request->has('unit_id') && $request->unit_id) {
+
+            $query = $query->where('masters_employee.unit', $request->unit_id);
+        }
+        if ($request->has('department_id') && $request->department_id) {
+
+            $query = $query->where('masters_employee.department', $request->department_id);
         }
         $query->orderBy('id', 'DESC');
         return  $query->get();

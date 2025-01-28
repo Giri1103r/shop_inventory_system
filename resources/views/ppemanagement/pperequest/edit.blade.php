@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Shoe Request Edit')
+@section('title', 'PPE Request Edit')
 @section('pageurl', admin_url('ppe_request/list'))
 
 

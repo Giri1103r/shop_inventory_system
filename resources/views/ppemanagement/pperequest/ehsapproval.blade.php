@@ -63,12 +63,12 @@
                                             {{ getPpename(isset($pperequest->ppe_name) ? $pperequest->ppe_name : '') }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
+                                    {{-- <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('PPE Type') }}</label>
                                         <div class="view_data">
                                             {{ getPpeType(isset($pperequest->ppe_type) ? $pperequest->ppe_type : '') }}
                                         </div>
-                                    </div>
+                                    </div> --}}
 
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Created By') }}</label>
@@ -82,7 +82,23 @@
                                             {{ displayDateformat($pperequest->created_at) }}
                                         </div>
                                     </div>
+                                    @if ($pperequest->ppe_image != '')
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Image</label>
+                                        @if (isset($pperequest) && $pperequest && $pperequest->ppe_image)
+                                            <p>
+                                                <a href="{{ asset('public/' . $pperequest->ppe_image) }}"
+                                                    target="_blank">
+                                                    <img src="{{ asset('public/' . $pperequest->ppe_image) }}"
+                                                        style="width: 100px" alt="image">
+                                                </a>
+                                            </p>
+                                        @else
+                                            <p>No image is uploaded</p>
+                                        @endif
 
+                                    </div>
+                                @endif
                                     <div class="mb-3 col-md-12 form-input">
                                         <label class="form-label view_label">{{ __('Reason') }}</label>
                                         <div class="view_data">
@@ -91,6 +107,52 @@
 
                                         </div>
                                     </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Stock Inventory Details</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('ORG') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($stockdata->org) ? $stockdata->org : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Inventory Item ID') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($stockdata->inventory_item_id) ? $stockdata->inventory_item_id : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Item Code') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($stockdata->item_code) ? $stockdata->item_code : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('PPE Name') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($stockdata->ppe_name) ? $stockdata->ppe_name : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('UOM') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($stockdata->uom) ? $stockdata->uom : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Quantity') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($stockdata->quantity) ? $stockdata->quantity : '' }}
+                                        </div>
+                                    </div>
+
 
                                 </div>
 

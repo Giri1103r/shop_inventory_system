@@ -19,7 +19,7 @@ use Response;
 use App\Jobs\ImportdepartmentJob;
 
 use App\Mail\RestEmployeePasswordEmail;
-
+use App\Models\Master\Bloodgroup;
 use App\Models\Master\Company;
 use App\Models\Master\Employee;
 use App\Models\Master\Location;
@@ -42,6 +42,8 @@ class EmployeeController extends Controller
     private $uploadlog;
     private $employee;
     private $userrole;
+    private $bloodgroup;
+
 
     public function __construct()
     {
@@ -54,6 +56,8 @@ class EmployeeController extends Controller
         $this->uploadlog = new UploadLog();
         $this->employee = new Employee();
         $this->userrole = new UserRole();
+        $this->bloodgroup = new Bloodgroup();
+
     }
 
 
@@ -96,6 +100,9 @@ class EmployeeController extends Controller
                         ->editColumn('unit', function ($row) {
                             return getUnitname($row->unit);
                         })
+                        ->editColumn('department', function ($row) {
+                            return getDepartment($row->department);
+                        })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
@@ -109,9 +116,10 @@ class EmployeeController extends Controller
             }
         }
         $companyList  = $this->company->where('status', '1')->get();
-
+        $unit = $this->unit->getunit();
         $data = array(
             'companyList' => $companyList,
+            'unit' => $unit,
         );
         return view('master.employee.list', $data);
     }
@@ -145,10 +153,12 @@ class EmployeeController extends Controller
 
             $companyList  = $this->company->select('id', 'company_name')->where('status', '1')->get();
             $userrole  = $this->userrole->select('id', 'role_name')->where('status', '1')->get();
+            $bloodgroup=$this->bloodgroup->getBloodgroup();
             $data = array(
                 'companyList' => $companyList,
                 'employee' => $employee,
                 'userrole' => $userrole,
+                'bloodgroup'=>$bloodgroup,
             );
 
 
@@ -404,5 +414,36 @@ class EmployeeController extends Controller
             }
             return Response::json(true);
         }
+    }
+
+    public function companyajax(Request $request)
+    {
+        $companyID = decryptId($request->company_id);
+
+        // Fetch unit list
+        $unitList = $this->unit
+            ->where('company_id', $companyID)
+            ->where('status', 1)
+            ->where('trash', 'NO')
+            ->select('id', 'unit_name')
+            ->get()
+            ->map(function ($unit) {
+                $unit->id = $unit->id;
+                return $unit;
+            });
+
+        return response()->json([
+            'unit' => $unitList,
+        ]);
+    }
+
+    public function list(Request $request, $unit_id)
+    {
+        $unit_id = $unit_id;
+        $id = $request->id;
+        $departments = $this->department->where('unit_id',$unit_id)->select('id','department_name')  ->where('status', 1)
+        ->where('trash', 'NO') ->get();
+       
+        return response()->json($departments);
     }
 }

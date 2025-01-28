@@ -61,7 +61,7 @@
                                                 </div>
                                             </div>
 
-                                           
+
                                         </div>
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
@@ -93,10 +93,8 @@
                 rules: {
                     precaution: {
                         required: true,
-
                         minlength: 3,
-                        maxlength: 100,
-                        pattern: /^[a-zA-Z0-9\s\-_'",&().]*$/,
+                        maxlength: 2000,
                         remote: {
                             url: '{{ admin_url("ptw/precautionmaster/unique") }}',
                             type: 'post',
@@ -107,17 +105,17 @@
                             }
                         }
                     },
-                   
+
                 },
                 messages: {
                     precaution: {
                         required: "{{ __('Name is Required') }}",
-                        minlength: "{{ __('common.validate_min_length') }}",
-                        maxlength: "Maximum Characters should not exceed 100",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 2000",
                         remote: "{{ __('Name should be unique') }}",
-                        pattern: "Only alphanumeric characters and -, _, ', \", (), ,, and & are allowed",
+
                     },
-                    
+
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {

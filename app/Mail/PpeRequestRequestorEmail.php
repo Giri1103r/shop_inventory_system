@@ -27,7 +27,7 @@ class PpeRequestRequestorEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: ('New PPE Shoe Request Submitted by   - ' . $this->details['emp_name']),
+            subject: ('New PPE Request Submitted by   - ' . $this->details['emp_name']),
         );
     }
 

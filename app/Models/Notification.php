@@ -109,17 +109,16 @@ class Notification extends Model
             $nominations = DB::table('users')
                 ->select('id')
                 ->where('department_id', Auth::user()->department_id)
+                ->WhereRaw("FIND_IN_SET(?, role)", [4])
                 ->get();
 
             if ($nominations->isNotEmpty()) {
                 $assignedUserIds = $nominations->pluck('id')->toArray();
-
                 $query->where(function ($query) use ($assignedUserIds) {
                     foreach ($assignedUserIds as $assignedUserId) {
                         $query->orWhereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserId]);
                     }
                 })->where('template_notification.trash', 'NO')
-                    ->where('notification_message', 'New PPE Request')
                     ->where('notification_type', 1);
             }
         } elseif (Auth::user()->role == ROLE_EHS_HEAD || Auth::user()->role == ROLE_EHS_OFFICER) {

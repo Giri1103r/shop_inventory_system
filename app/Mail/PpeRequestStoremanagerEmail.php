@@ -28,7 +28,7 @@ class PpeRequestStoremanagerEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject:('PPE Shoe Request Approved'),
+            subject:('PPE Request Approved'),
         );
     }
 

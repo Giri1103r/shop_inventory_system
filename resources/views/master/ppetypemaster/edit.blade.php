@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Type Edit')
+@section('title', 'PPE Master Edit')
 @section('pageurl', admin_url('ppe_ppetype_master/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -193,7 +193,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 200,
-                       
+
                     },
                     ppe_type: {
                         required: true

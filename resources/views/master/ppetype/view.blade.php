@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Type View')
+@section('title', 'PPE Type Show')
 @section('pageurl', admin_url('ppe_type/list'))
 
 

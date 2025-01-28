@@ -197,6 +197,8 @@ class PpeStockInventoryController extends Controller
                 __("Org"),
                 __('Inventory Item Id'),
                 __("Item Code"),
+                // __("Item Name"),
+                __("PPE Name"),
                 __("SUB"),
                 __("UOM"),
                 __("Quantity"),
@@ -214,6 +216,8 @@ class PpeStockInventoryController extends Controller
                 $export[] =  $data->org;
                 $export[] =  $data->inventory_item_id;
                 $export[] =  $data->item_code;
+                // $export[] =  $data->item_name;
+                $export[] =  $data->ppe_name;
                 $export[] =  $data->sub;
                 $export[] =  $data->uom;
                 $export[] =  $data->quantity;
@@ -258,6 +262,8 @@ class PpeStockInventoryController extends Controller
                 __("Org"),
                 __('Inventory Item Id'),
                 __("Item Code"),
+                // __("Item Name"),
+                __("PPE Name"),
                 __("SUB"),
                 __("UOM"),
                 __("Quantity"),
@@ -298,6 +304,13 @@ class PpeStockInventoryController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
+        }
+    }
+    public function list(Request $request)
+    {
+        if ($request->ajax()) {
+            $PPEtypeId = $request->input('id');
+            return $this->ppestock->ajaxlist($PPEtypeId);
         }
     }
 }

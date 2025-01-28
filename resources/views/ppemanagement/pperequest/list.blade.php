@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Shoe Request')
+@section('title', 'PPE Request')
 @section('pageurl', admin_url('ppe_request/list'))
 @section('content')
     @push('style')
@@ -20,9 +20,10 @@
                         <x-button-filter dataId="" class="search me-2" href=""></x-button-filter>
 
 
-                        <x-button-add dataId="" class="add btn btn-primary"
-                            href="{{ admin_url('ppe_request/add') }}">Add</x-button-add>
-
+                        @if (CheckUserPermission('add'))
+                            <a data-id="" class="add btn btn-primary" href="{{ admin_url('ppe_request/add') }}">New
+                                Request</a>
+                        @endif
 
                     </div>
 
@@ -76,7 +77,7 @@
                                                 <option value="2">HOD Approved</option>
                                                 <option value="3">HOD Rejected</option>
                                                 <option value="4">EHS Officer Approval Pending</option>
-                                                <option value="5">EHS Officer Approved</option>
+                                                <option value="5">Store manager Issue pending</option>
                                                 <option value="6">EHS Officer Rejected</option>
                                                 <option value="8">Issued</option>
 
@@ -104,8 +105,8 @@
                                         <th>{{ __('common.sno') }}</th>
                                         <th>Employee ID</th>
                                         <th>Employee Name</th>
+                                        <th>Item Code</th>
                                         <th>PPE Name</th>
-                                        <th>PPE Type</th>
                                         <th>Department</th>
                                         <th data-priority="2">Approval Status</th>
                                         <th>{{ __('common.created_by') }}</th>
@@ -247,11 +248,11 @@
                         d.approve_status = $('#approve_status').val();
                     },
                     error: function(xhr, error, code) {
-                            if (xhr.status === 419) {
-                                alert('Session has expired. You will be redirected to the login page.');
-                                window.location.href = "{{ url('') }}"; // Redirect to login page
-                            }
+                        if (xhr.status === 419) {
+                            alert('Session has expired. You will be redirected to the login page.');
+                            window.location.href = "{{ url('') }}"; // Redirect to login page
                         }
+                    }
                 },
                 columns: [{
                         data: 'DT_RowIndex',
@@ -267,12 +268,12 @@
                         name: 'emp_name'
                     },
                     {
-                        data: 'ppe_name',
-                        name: 'ppe_name'
+                        data: 'item_code',
+                        name: 'item_code'
                     },
                     {
-                        data: 'ppe_type',
-                        name: 'ppe_type'
+                        data: 'ppe_name',
+                        name: 'ppe_name'
                     },
                     {
                         data: 'department',

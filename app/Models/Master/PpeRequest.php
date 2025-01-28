@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 
 class PpeRequest extends Model
 {
@@ -20,6 +21,8 @@ class PpeRequest extends Model
         'emp_name',
         'ppe_name',
         'department',
+        'request_for',
+        'unit_id',
         'item_code',
         'ppe_type',
         'approve_status',
@@ -42,14 +45,15 @@ class PpeRequest extends Model
         $user = Auth::user();
         $userRole = string_to_array($user->role);
         $empId = $user->employee_id;
-
-        $query = $this->select('ppe_pperequest.*', 'masters_department.department_name', 'masters_ppetype.ppe_type', 'ppe_master_ppetypemaster.ppe_name')
+        $query = $this->select('ppe_pperequest.*', 'masters_department.department_name', 'inventory1.*', 'inventory2.*', 'ppe_pperequest.id As ppe_request_id')
             ->join('masters_department', 'ppe_pperequest.department', '=', 'masters_department.id')
-            ->join('masters_ppetype', 'ppe_pperequest.ppe_type', '=', 'masters_ppetype.id')
-            ->join('ppe_master_ppetypemaster', 'ppe_pperequest.ppe_name', '=', 'ppe_master_ppetypemaster.id')
-            ->where('ppe_master_ppetypemaster.trash', 'NO')
+            ->join('ppe_stock_inventory as inventory1', 'ppe_pperequest.ppe_name', '=', 'inventory1.id')
+            ->join('ppe_stock_inventory as inventory2', 'ppe_pperequest.item_code', '=', 'inventory2.id')
+            ->where('inventory1.trash', 'NO')
+            ->where('inventory2.trash', 'NO')
             ->where('masters_department.trash', 'NO')
-            ->where('masters_ppetype.trash', 'NO');
+            ->where('ppe_pperequest.trash', 'NO');
+
 
         if (in_array(ROLE_EHS_OFFICER, $userRole)) {
             $query->orderBy('ppe_pperequest.id', 'DESC');
@@ -57,11 +61,9 @@ class PpeRequest extends Model
             $departmentId = $user->department_id;
             $query->where('ppe_pperequest.department', $departmentId)
                 ->orderBy('ppe_pperequest.id', 'DESC');
-
-        } elseif(in_array(ROLE_STORE_MANAGER, $userRole)){
+        } elseif (in_array(ROLE_STORE_MANAGER, $userRole)) {
             $query->orderBy('ppe_pperequest.id', 'DESC');
-        }
-        elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+        } elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
         } else {
             $query->where('ppe_pperequest.emp_id', $empId);
         }
@@ -110,7 +112,7 @@ class PpeRequest extends Model
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
         }
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('ppe_pperequest.id', 'DESC');
         $data = $query->get();
         $total_records = $data->count();
 
@@ -128,16 +130,34 @@ class PpeRequest extends Model
     public function store()
     {
         $request = request();
+        $destinationPath = 'uploads/ppe_files';
+
+        if (!File::exists(public_path($destinationPath))) {
+            File::makeDirectory(public_path($destinationPath), 0777, true, true);
+        }
+
+        $ppe_file_path = null;
+
+        if ($request->hasFile('ppe_file')) {
+            $ppe_file = $request->file('ppe_file');
+
+            $ppe_file_name = time() . '_' . $ppe_file->getClientOriginalName();
+            $ppe_file->move(public_path($destinationPath), $ppe_file_name);
+
+            $ppe_file_path = $destinationPath . '/' . $ppe_file_name;
+        }
         $insert_array = array(
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
             'department' => Auth::user()->department_id,
+            'unit_id' => Auth::user()->unit_id,
+            'request_for' => $request->request_for,
             'item_code' => $request->item_code,
             'ppe_type' => $request->ppe_type_id,
             'ppe_name' => $request->ppe_name_id,
             'employee_reason' => $request->reason,
-            'ppe_image'=>$request->image,
-             'employee_remarks'=>$request->remarks,
+            'ppe_image' => $ppe_file_path,
+            'employee_remarks' => $request->remarks,
             'approve_status' => STATUS_HOD_APPROVAL_PENDING,
             'created_by' => Auth::id()
         );
@@ -153,12 +173,12 @@ class PpeRequest extends Model
         if ($type == 1) {
             $update_data = array(
                 'status' => 0,
-                'updated_by'=>Auth::id(),
+                'updated_by' => Auth::id(),
             );
         } else {
             $update_data = array(
                 'status' => 1,
-                'updated_by'=>Auth::id(),
+                'updated_by' => Auth::id(),
             );
         }
 
@@ -206,7 +226,8 @@ class PpeRequest extends Model
         return $this->where('id', $id)->update($updateEhsData);
     }
 
-    public function updatestoremanager($storeStatus, $id){
+    public function updatestoremanager($storeStatus, $id)
+    {
         return $this->where('id', $id)->update($storeStatus);
     }
 
@@ -252,12 +273,20 @@ class PpeRequest extends Model
 
     public function laststatus()
     {
-        $employeeId = Auth::user()->employee_id;
-        $laststatus = PpeRequest::where('emp_id', $employeeId)
-            ->orderBy('id', 'DESC')
-            ->where('status', '=', 1)
-            ->first();
-        return $laststatus;
+        $user = Auth::user();
+
+       
+        if ($user->role == 9) {
+            $employeeId = $user->employee_id;
+
+
+            $laststatus = PpeRequest::where('emp_id', $employeeId)
+                ->where('status', '=', 1)
+                ->orderBy('id', 'DESC')
+                ->first();
+
+            return $laststatus;
+        }
     }
 
     public function lastPpeRequest()
@@ -292,7 +321,7 @@ class PpeRequest extends Model
 
     public function getuserdata($empId)
     {
-        return PpeRequest::where('emp_id', $empId)->where('approve_status', '!=', STATUS_HOD_APPROVAL_PENDING)->where('approve_status', '!=', STATUS_EHS_APPROVAL_PENDING)->where('approve_status', '!=', STATUS_EHS_APPROVED)->orderBy('id','DESC')->get();
+        return PpeRequest::where('emp_id', $empId)->orderBy('id', 'DESC')->get();
     }
 
     public function exportdata()
@@ -357,5 +386,134 @@ class PpeRequest extends Model
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('ppe_pperequest'));
+    }
+
+    public function getPperequestUnit($unitIds)
+    {
+        $unitData = $this->whereIn('ppe_pperequest.unit_id', $unitIds->pluck('id'))
+            ->join('masters_unit', 'masters_unit.id', '=', 'ppe_pperequest.unit_id')
+            ->selectRaw('masters_unit.unit_name, ppe_pperequest.unit_id, COUNT(ppe_pperequest.id) as total')
+            ->groupBy('ppe_pperequest.unit_id', 'masters_unit.unit_name')
+            ->get();
+
+        return $unitData;
+    }
+    public function getRequestChartData($units, $fromDate, $toDate, $unitName)
+    {
+
+        if (!empty($fromDate)) {
+            $fromDate = DBdateformat($fromDate);
+        } else {
+            $fromDate = null;
+        }
+
+        if (!empty($toDate)) {
+            $toDate = DBdateformat($toDate);
+        } else {
+            $toDate = null;
+        }
+
+        $data = [];
+
+
+        foreach ($units as $unit) {
+
+            $query = $this->newQuery();
+
+
+            if ($fromDate) {
+                $query = $query->where('ppe_pperequest.created_at', '>=', $fromDate);
+            }
+
+            if ($toDate) {
+                $query = $query->where('ppe_pperequest.created_at', '<=', $toDate);
+            }
+
+
+            if ($unitName) {
+                $query = $query->where('ppe_pperequest.unit_id', $unitName);
+            } else {
+                $query = $query->where('ppe_pperequest.unit_id', $unit->id);
+            }
+
+
+            $unitData = $query->where('ppe_pperequest.unit_id', $unit->id)
+                ->groupBy('approve_status')
+                ->selectRaw('approve_status, COUNT(*) as count')
+                ->get()
+                ->keyBy('approve_status');
+
+
+            $approvedCount = $unitData->get('8')->count ?? 0;
+            $rejectedCount = ($unitData->get('3')->count ?? 0) + ($unitData->get('6')->count ?? 0);
+
+
+            $data[] = [
+                'unit_name' => $unit->unit_name,
+                'total' => $unitData->sum('count'),
+                'approved' => $approvedCount,
+                'rejected' => $rejectedCount,
+            ];
+        }
+
+        return $data;
+    }
+
+    public function statusCount($type = '', $params = [])
+    {
+        $query = $this->where('ppe_pperequest.trash', 'NO');
+
+        if (isset($params['ppe_pperequest.from_date']) && isset($params['ppe_pperequest.to_date'])) {
+            $query->whereBetween('ppe_pperequest.created_at', [DBdateformat($params['ppe_pperequest.from_date']), DBdateformat($params['ppe_pperequest.to_date'])]);
+        } elseif (isset($params['from_date'])) {
+            $query->where('ppe_pperequest.created_at', '>=', DBdateformat($params['ppe_pperequest.from_date']));
+        } elseif (isset($params['to_date'])) {
+            $query->where('ppe_pperequest.created_at', '<=', DBdateformat($params['ppe_pperequest.to_date']));
+        } else if (isset($params['unit'])) { // Changed to check for 'unit' directly
+            $query->where('ppe_pperequest.unit_id', $params['unit']); // Corrected key
+        }
+
+        if (!empty($type)) {
+            if (is_array($type)) {
+                $query->whereIn('ppe_pperequest.approve_status', $type);
+            } else {
+                $query->where('ppe_pperequest.approve_status', $type);
+            }
+        }
+
+        return $query->count();
+    }
+
+
+    public function monthwiserequest()
+    {
+        $request = request();
+
+
+        $query = self::query();
+
+
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('ppe_pperequest.from_date', [DBdateformat($request->Fromdate), DBdateformat($request->Todate)]);
+        } elseif ($request->Fromdate) {
+            $query->where('ppe_pperequest.from_date', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('ppe_pperequest.from_date', '<=', DBdateformat($request->Todate));
+        }
+
+
+        $results = $query->selectRaw(
+            'YEAR(from_date) as year,
+             MONTH(from_date) as month,
+             COUNT(*) as total_count,
+             SUM(CASE WHEN approve_status IN (1,4) THEN 1 ELSE 0 END) as pending_count,
+             SUM(CASE WHEN approve_status =IN (3,6)THEN 1 ELSE 0 END) as rejected_count,
+             SUM(CASE WHEN approve_status = 8 THEN 1 ELSE 0 END) as completed_count'
+        )
+            ->groupBy('year', 'month')
+            ->orderByRaw('year ASC, month ASC') // Ensure chronological order
+            ->get();
+
+        return $results;
     }
 }

@@ -156,7 +156,7 @@ class TypeofWorkUpload extends Model
             $fileSize = $intendent->getSize();
 
             $fileExt = $intendent->getClientOriginalExtension();
-            
+
 
             $intendent->move($uploadpath, $filenewname);
 

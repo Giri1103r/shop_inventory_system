@@ -51,6 +51,19 @@
                                         <div class="view_data">
                                             {{ isset($ppestock->inventory_item_id) ? $ppestock->inventory_item_id : ''}}
                                         </div>
+
+                                    </div>
+                                    {{-- <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Item name') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($ppestock->item_name) ? $ppestock->item_name : ''}}
+                                        </div>
+                                    </div> --}}
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('PPE Name') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($ppestock->ppe_name) ? $ppestock->ppe_name : ''}}
+                                        </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('SUB') }}</label>
@@ -84,7 +97,7 @@
                                             {{ displayDateformat($ppestock->created_at) }}
                                         </div>
                                     </div>
-                                  
+
 
                                 </div>
                             </div>

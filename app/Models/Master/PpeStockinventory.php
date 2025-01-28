@@ -15,6 +15,8 @@ class PpeStockinventory extends Model
         'org',
         'item_code',
         'inventory_item_id',
+        // 'item_name',
+        'ppe_name',
         'uom',
         'sub',
         'quantity',
@@ -113,44 +115,39 @@ class PpeStockinventory extends Model
         $updatedItemCodes = [];
 
 
+        $itemCodesWithPpeNames = PpeTypeMaster::
+            pluck('ppe_name', 'item_code')
+            ->toArray();
+
         $groupedData = collect($data)->groupBy('ITEM_CODE');
 
-
         foreach ($groupedData as $itemCode => $items) {
-
-
             foreach ($items as $item) {
                 $insert_array = [
-                    'org' => isset($item['ORG']) ? $item['ORG'] : null,
-                    'inventory_item_id' => isset($item['INVENTORY_ITEM_ID']) ? $item['INVENTORY_ITEM_ID'] : null,
-                    'item_code' => isset($item['ITEM_CODE']) ? $item['ITEM_CODE'] : null,
-                    'sub' => isset($item['SUB']) ? $item['SUB'] : null,
-                    'uom' => isset($item['UOM']) ? $item['UOM'] : null,
-                    'quantity' => isset($item['QTY']) ? $item['QTY'] : null,
-                    'item_description' => isset($item['ITEM_DESCRIPTION']) ? $item['ITEM_DESCRIPTION'] : null,
-                    'created_by' => Auth::id(),
+                    'org' => $item['ORG'] ?? null,
+                    'inventory_item_id' => $item['INVENTORY_ITEM_ID'] ?? null,
+                    'item_code' => $item['ITEM_CODE'] ?? null,
+
+                    'ppe_name' => $item['PPE_NAME'] ?? $itemCodesWithPpeNames[$itemCode] ?? null,
+                    'sub' => $item['SUB'] ?? null,
+                    'uom' => $item['UOM'] ?? null,
+                    'quantity' => $item['QTY'] ?? null,
+                    'item_description' => $item['ITEM_DESCRIPTION'] ?? null,
+                    'created_by' =>1,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
 
-
                 $this->updateOrInsert(
-                    ['item_code' => $itemCode, 'sub' => $item['SUB']],
+                    ['item_code' => $itemCode],
                     $insert_array
                 );
             }
-
-
             $updatedItemCodes[] = $itemCode;
         }
 
-
         return $updatedItemCodes;
     }
-
-
-
-
 
     public function updates($id)
     {
@@ -163,10 +160,18 @@ class PpeStockinventory extends Model
             'sub'=>$request->sub,
             'quantity'=>$request->quantity,
             'item_description'=>$request->item_description,
-            'created_by'=>Auth::id(),
-            'updated_by'=>Auth::id(),
+            // 'item_name'=>$request->item_name,
+            'ppe_name'=>$request->ppe_name,
+            'created_by'=>1,
+            'updated_by'=>1,
          ];
        $this->where('id',$id)->update( $update_array);
+    }
+
+
+    public function updateQuantity($itemId, $newQuantity)
+    {
+        return $this->where('id', $itemId)->update(['quantity' => $newQuantity]);
     }
 
     // public function getquantity($itemCode, $action)
@@ -181,6 +186,29 @@ class PpeStockinventory extends Model
 
     //     return $currentQuantity;
     // }
+
+    public function getItemCode(){
+        return $this->where('status',1)->where('trash','NO')->where('quantity','!=',0)->get();
+    }
+
+    public function ajaxlist($PPEtypeId)
+    {
+        $data =$this->where('id',$PPEtypeId)->select( 'id','item_code','ppe_name')
+            ->get();
+
+        return response()->json($data)
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Fri, 01 Jan 1990 00:00:00 GMT');
+    }
+
+    public function getStockInventorydata($itemId){
+        return  $this->where('id',$itemId)->where('status',1)->where('quantity','!=',0)->first();
+    }
+
+    public function Quantitydata($itemId){
+        return  $this->where('id',$itemId)->where('status',1)->where('quantity','!=',0)->first();
+    }
 
 
     public function exportdata()
@@ -205,7 +233,7 @@ class PpeStockinventory extends Model
             $query->where('inventory_item_id', 'LIKE', '%' . $request->inventory_item_id . '%');
         }
 
-      
+
 
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');

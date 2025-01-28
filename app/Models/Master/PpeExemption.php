@@ -6,6 +6,7 @@ use App\Scopes\TrashScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 
 class PpeExemption extends Model
 {
@@ -15,6 +16,7 @@ class PpeExemption extends Model
     protected $fillable = [
         'emp_id',
         'emp_name',
+        'request_for',
         'department',
         'unit',
         'from_date',
@@ -56,7 +58,7 @@ class PpeExemption extends Model
             $query->where('ppe_ppeexemption.department', $departmentId);
         } elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
         } elseif (in_array(ROLE_STORE_MANAGER, $userRole)) {
-            $query->where('ppe_ppeexemption.approve_status', STATUS_EHS_APPROVED)
+            $query
                   ->orderBy('ppe_ppeexemption.id', 'DESC');
         } else {
             $query->where('ppe_ppeexemption.emp_id', $empId);
@@ -131,19 +133,23 @@ class PpeExemption extends Model
     public function store()
     {
         $request = request();
+
+
         $insert_array = [
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
             'department' => Auth::user()->department_id,
             'unit' => $request->unit,
-            'company'=>$request->company,
+            'company' => $request->company,
+            'request_for'=>$request->request_for,
             'from_date' => $request->from_date,
             'to_date' => $request->to_date,
             'approve_status' => STATUS_EHS_APPROVAL_PENDING,
             'reason' => $request->reason,
-            'created_by'=>Auth::id(),
-
+            'created_by' => Auth::id(),
         ];
+
+
         return $this->create($insert_array);
     }
 
@@ -169,12 +175,18 @@ class PpeExemption extends Model
 
     public function laststatus()
     {
-        $employeeId = Auth::user()->employee_id;
-        $laststatus = PpeExemption::where('emp_id', $employeeId)
-            ->orderBy('id', 'DESC')
-            ->where('status', '=', 1)
-            ->first();
-        return $laststatus;
+
+        $user = Auth::user();
+
+        if ($user->role == 9) {
+            $employeeId = $user->employee_id;
+
+            $laststatus = PpeExemption::where('emp_id', $employeeId)
+                ->where('status', '=', 1)
+                ->orderBy('id', 'DESC')
+                ->first();
+            return $laststatus;
+        }
     }
 
     public function statuschange($id)
@@ -314,4 +326,131 @@ class PpeExemption extends Model
     {
         static::addGlobalScope(new TrashScope('ppe_ppeexemption'));
     }
+    public function getExemptionUnit($unitIds)
+    {
+        $unitData = $this->whereIn('unit', $unitIds->pluck('id'))
+            ->join('masters_unit', 'masters_unit.id', '=', 'ppe_ppeexemption.unit')
+            ->selectRaw('masters_unit.unit_name, ppe_ppeexemption.unit, COUNT(ppe_ppeexemption.id) as total')
+            ->groupBy('ppe_ppeexemption.unit', 'masters_unit.unit_name')
+            ->get();
+
+        return $unitData;
+    }
+
+
+    public function getExemptionChartData($unitIds, $fromDate, $toDate, $unitName)
+    {
+        // Ensure date format conversion and handling
+        if (!empty($fromDate)) {
+            $fromDate = DBdateformat($fromDate);
+        } else {
+            $fromDate = null;
+        }
+
+        if (!empty($toDate)) {
+            $toDate = DBdateformat($toDate);
+        } else {
+            $toDate = null;
+        }
+
+
+
+
+        $data = [];
+
+        foreach ($unitIds as $unit) {
+            $query = $this->newQuery();
+
+
+            if ($fromDate) {
+                $query = $query->where('ppe_ppeexemption.created_at', '>=', $fromDate);
+            }
+
+            if ($toDate) {
+                $query = $query->where('ppe_ppeexemption.created_at', '<=', $toDate);
+            }
+
+
+            if ($unitName) {
+                $query = $query->where('ppe_ppeexemption.unit', $unitName);
+            } else {
+                $query = $query->where('ppe_ppeexemption.unit', $unit->id);
+            }
+
+
+            // Group by approve_status and get the count
+            $unitData = $query->where('unit', $unit->id)
+                ->groupBy('approve_status')
+                ->selectRaw('approve_status, COUNT(*) as count')
+                ->get()
+                ->keyBy('approve_status');
+
+            $data[] = [
+                'unit_name' => $unit->unit_name,
+                'total' => $unitData->sum('count'),
+                'approved' => $unitData->get('5')->count ?? 0,
+                'rejected' => $unitData->get('6')->count ?? 0,
+            ];
+        }
+
+        return $data;
+    }
+
+    public function statusCount($type = '', $params = [])
+    {
+        $query = $this->where('ppe_ppeexemption.trash', 'NO');
+
+        if (isset($params['ppe_pperequest.from_date']) && isset($params['ppe_ppeexemption.to_date'])) {
+            $query->whereBetween('ppe_ppeexemption.created_at', [DBdateformat($params['ppe_ppeexemption.from_date']), DBdateformat($params['ppe_ppeexemption.to_date'])]);
+        } elseif (isset($params['from_date'])) {
+            $query->where('ppe_ppeexemption.created_at', '>=', DBdateformat($params['ppe_ppeexemption.from_date']));
+        } elseif (isset($params['to_date'])) {
+            $query->where('ppe_ppeexemption.created_at', '<=', DBdateformat($params['ppe_ppeexemption.to_date']));
+        } elseif (isset($params['unit'])) {
+            $query->where('ppe_ppeexemption.unit',  $params['unit']);
+        }
+
+        if (!empty($type)) {
+            if (is_array($type)) {
+                $query->whereIn('ppe_ppeexemption.approve_status', $type);
+            } else {
+                $query->where('ppe_ppeexemption.approve_status', $type);
+            }
+        }
+
+        return $query->count();
+    }
+
+
+    public function monthwiseexemption(){
+        $request = request();
+
+
+        $query = self::query();
+
+
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('ppe_ppeexemption.from_date', [DBdateformat($request->Fromdate), DBdateformat($request->Todate)]);
+        } elseif ($request->Fromdate) {
+            $query->where('ppe_ppeexemption.from_date', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('ppe_ppeexemption.from_date', '<=', DBdateformat($request->Todate));
+        }
+
+
+        $results = $query->selectRaw(
+            'YEAR(from_date) as year,
+             MONTH(from_date) as month,
+             COUNT(*) as total_count,
+             SUM(CASE WHEN approve_status = 4 THEN 1 ELSE 0 END) as pending_count,
+             SUM(CASE WHEN approve_status = 6 THEN 1 ELSE 0 END) as rejected_count,
+             SUM(CASE WHEN approve_status = 5 THEN 1 ELSE 0 END) as completed_count'
+        )
+            ->groupBy('year', 'month')
+            ->orderByRaw('year ASC, month ASC')
+            ->get();
+
+        return $results;
+    }
+
 }

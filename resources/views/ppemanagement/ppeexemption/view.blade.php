@@ -101,6 +101,39 @@
 
                                         </div>
                                     </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Files</label>
+                                        @if (isset($ppefiles) && $ppefiles->count() > 0)
+                                            <div class="d-flex flex-wrap gap-2">
+                                                @foreach ($ppefiles as $file)
+                                                    <p>
+                                                        @php
+                                                            $fileExtension = strtolower(
+                                                                pathinfo($file->file_path, PATHINFO_EXTENSION),
+                                                            );
+                                                        @endphp
+
+                                                        @if (in_array($fileExtension, ['docx', 'pdf', 'doc']))
+                                                            <a href="{{ asset('' . $file->file_path) }}" target="_blank">
+                                                                <i class="fa-solid fa-eye text-danger"></i> View
+                                                            </a>
+                                                        @elseif (in_array($fileExtension, ['png', 'jpg', 'jpeg']))
+                                                            <a href="{{ asset('' . $file->file_path) }}" target="_blank">
+                                                                <img src="{{ asset('' . $file->file_path) }}"
+                                                                    alt="image"
+                                                                    style="max-width: 100px; max-height: 100px;">
+                                                            </a>
+                                                        @else
+                                                            <span>{{ $file->file_path }}</span>
+                                                        @endif
+                                                    </p>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <p>No files are uploaded</p>
+                                        @endif
+                                    </div>
+
                                     <div class="mb-3 col-md-8 form-input">
                                         <label class="form-label view_label">{{ __('Reason') }}</label>
                                         <div class="view_data">
@@ -123,7 +156,8 @@
                                             <table class="table table-bordered table-hover">
                                                 <thead>
                                                     <tr>
-                                                        <th>Status</th>
+                                                        <th>From Status</th>
+                                                        <th>To Status</th>
                                                         <th>Approved By</th>
                                                         <th>Remarks</th>
                                                         <th>Date</th>
@@ -132,38 +166,41 @@
                                                 </thead>
 
                                                 <tbody>
-                                                    @if ($ppestatuslog->isEmpty())
-                                                        <tr>
-                                                            <td class="text-center" colspan="5">No data is available</td>
-                                                        </tr>
-                                                    @else
-                                                        @foreach ($ppestatuslog as $log)
-                                                            <tr class="hover-row">
+                                                    <tr>
+                                                        <td> <span class='badge bg-info' style='font-size: 1.0em;'>User
+                                                                Applied</span></td>
+                                                        <td><span class='badge bg-info' style='font-size: 1.0em;'>EHS Head
+                                                                Approval
+                                                                Pending</span></td>
+                                                        <td> {{ getUsername(isset($ppeexemption->created_by) ? $ppeexemption->created_by : '') }}
+                                                        </td>
+                                                        <td> {{ isset($ppeexemption->reason) ? $ppeexemption->reason : '' }}
+                                                        </td>
+                                                        <td> {{ displaydateformat(isset($ppeexemption->created_at) ? $ppeexemption->created_at : '') }}
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                            <td> <span class='badge bg-info' style='font-size: 1.0em;'>EHS Head Approval
+                                                                Pending</span></td>
                                                                 <td>
-                                                                    @if ($log['to_status'] == STATUS_EHS_APPROVAL_PENDING)
-                                                                        <span class='badge bg-warning'
-                                                                            style='font-size: 1.0em;'>EHS Approval
-                                                                            Pending</span>
-                                                                    @elseif ($log['to_status'] == STATUS_USER_APPLIED)
-                                                                        <span class='badge bg-primary'
-                                                                            style='font-size: 1.0em;'>User Applied</span>
-                                                                    @elseif ($log['to_status'] == STATUS_EHS_APPROVED)
-                                                                        <span class='badge bg-success'
-                                                                            style='font-size: 1.0em;'>EHS Head
-                                                                            Approved</span>
-                                                                    @elseif ($log['to_status'] == STATUS_EHS_REJECTED)
-                                                                        <span class='badge bg-danger'
-                                                                            style='font-size: 1.0em;'>EHS Head
-                                                                            Rejected</span>
+                                                                    @if (isset($ehsheadstatus['to_status']) && $ehsheadstatus['to_status'] == STATUS_EHS_APPROVED)
+                                                                        <span class='badge bg-success' style='font-size: 1.0em;'>EHS Head Approved</span>
+                                                                    @elseif (isset($ehsheadstatus['to_status']) && $ehsheadstatus['to_status'] == STATUS_EHS_REJECTED)
+                                                                        <span class='badge bg-danger' style='font-size: 1.0em;'>EHS Head Rejected</span>
+                                                                    @else
+                                                                        <p>-</p>
                                                                     @endif
-                                                                </td>
-                                                                <td>{{ getUsername($log['created_by']) }}</td>
-                                                                <td>{{ $log['remarks'] }}</td>
-                                                                <td>{{ displaydateformat($log['created_at']) }}</td>
+                                                            </td>
 
-                                                            </tr>
-                                                        @endforeach
-                                                    @endif
+
+                                                            <td> {{ isset($ehsheadstatus->created_by) && $ehsheadstatus->created_by != '' ? getUsername($ehsheadstatus->created_by) : '-' }}
+                                                            </td>
+                                                            <td> {{ isset($ehsheadstatus->remarks) ? $ehsheadstatus->remarks : '-' }}
+                                                            </td>
+                                                            <td>  {{ isset($ehsheadstatus->created_at) && $ehsheadstatus->created_at != '' ? displaydateformat($ehsheadstatus->created_at) : '-' }}
+                                                            </td>
+                                                    </tr>
+
                                                 </tbody>
                                             </table>
 

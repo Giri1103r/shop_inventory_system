@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use App\Models\FcmToken;
+use App\Models\Master\PpeExemption;
+use App\Models\Master\PpeRequest;
 use App\Models\Permit\SafetyPermit;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\AndroidConfig;
@@ -420,7 +422,34 @@ if (!function_exists('getUsername')) {
         }
     }
 }
+if (!function_exists('getEmployeename')) {
 
+    function getEmployeename($userid)
+    {
+
+        $user = DB::table('masters_employee')->select('emp_name')->where('id', $userid)->where('trash', 'NO')->first();
+
+        if ($user == null) {
+            return '';
+        } else {
+            return $user->emp_name;
+        }
+    }
+}
+if (!function_exists('getEmployeeType')) {
+
+    function getEmployeeType($userid)
+    {
+
+        $employee_type_name = DB::table('ohc_master_employee_cum_patient_employee_type')->select('employee_type_name')->where('id', $userid)->where('trash', 'NO')->first();
+
+        if ($employee_type_name == null) {
+            return '';
+        } else {
+            return $employee_type_name->employee_type_name;
+        }
+    }
+}
 if (!function_exists('getUserdesignation')) {
     function getUserdesignation($userid)
     {
@@ -1368,7 +1397,7 @@ if (!function_exists('getMonth')) {
         function getItemCode($userid)
         {
 
-            $item_code = DB::table('ppe_master_ppetypemaster')->select('item_code')->where('id', $userid)->where('trash', 'NO')->first();
+            $item_code = DB::table('ppe_stock_inventory')->select('item_code')->where('id', $userid)->where('trash', 'NO')->first();
 
             if ($item_code == null) {
                 return '';
@@ -1407,6 +1436,21 @@ if (!function_exists('getMonth')) {
             }
         }
     }
+
+    if (!function_exists('getBloodGroupname')) {
+
+        function getBloodGroupname($userid)
+        {
+
+            $blood_group_name = DB::table('masters_blood_group')->select('blood_group_name')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($blood_group_name == null) {
+                return '';
+            } else {
+                return $blood_group_name->blood_group_name;
+            }
+        }
+    }
     if (!function_exists('getStatus')) {
 
         function getStatus($userid)
@@ -1432,6 +1476,22 @@ if (!function_exists('getMonth')) {
 
             $data = SafetyPermit::where('id', $id)->select('permit_id')->first();
             return $data->permit_id;
+        }
+    }
+
+    if (!function_exists('ShoerequestStatusCount')) {
+        function ShoerequestStatusCount($type = '', $params = [])
+        {
+            $request = new PpeRequest();
+            return $request->statusCount($type, $params);
+        }
+    }
+
+    if (!function_exists('ShoeExemptionStatusCount')) {
+        function ShoeExemptionStatusCount($type = '', $params = [])
+        {
+            $exemption = new PpeExemption();
+            return $exemption->statusCount($type, $params);
         }
     }
 }

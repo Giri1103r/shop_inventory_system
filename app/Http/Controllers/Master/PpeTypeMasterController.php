@@ -141,7 +141,7 @@ class PpeTypeMasterController extends Controller
             }
             return redirect(admin_url('ppe_ppetype_master/list'));
         } catch (Exception $ex) {
-            
+
             Session::flash('error',  'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_ppetype_master/list'));
         }
@@ -331,7 +331,7 @@ class PpeTypeMasterController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('PPE Type Details.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('PPE Master Details.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -369,7 +369,7 @@ class PpeTypeMasterController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "PPE Type",
+                'pagetitle' => "PPE Master",
             );
 
             $property = [
@@ -391,7 +391,7 @@ class PpeTypeMasterController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "PPE Type Details.pdf";
+            $filename = "PPE Master Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);

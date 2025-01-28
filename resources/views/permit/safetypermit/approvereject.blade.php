@@ -1226,10 +1226,10 @@
 @push('script')
 <script>
     $(document).ready(function () {
-        // Maximum number of uploads allowed
+       
         const maxUploads = 5;
 
-        // Add more file upload blocks dynamically
+       
         $('#dynamic-add-more').on('click', function () {
     let currentFileUploads = $('.file-upload-block').length;
 
@@ -1242,7 +1242,7 @@
         return;
     }
 
-    // Create new file upload block HTML
+ 
     let newFileUploadBlock = `
         <div class="col-md-4 mb-3 file-upload-block">
             <label for="site_image_${currentFileUploads}" class="form-label require">Site Image</label>

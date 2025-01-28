@@ -137,7 +137,7 @@ class Work extends Model
             ->get();
     }
 
- 
+
     // public function store($worktemp)
     // {
     //     $insertArray = [];
@@ -214,10 +214,10 @@ class Work extends Model
     {
         $insertedRecords = [];
         $batchSize = 500;
-    
+
         // Convert to array
         $worktemp = $worktemp->toArray();
-    
+
         // Process in chunks
         foreach (array_chunk($worktemp, $batchSize) as $chunk) {
             foreach ($chunk as $item) {
@@ -237,7 +237,7 @@ class Work extends Model
                 //     $this->updateErrorStatus($item['emp_id'], "Department does not exist.");
                 //     continue;
                 // }
-    
+
                 // Prepare data for insertion or update
                 $valuesToInsertOrUpdate = [
                     'emp_name' => $item['emp_name'] ?? null,
@@ -257,26 +257,26 @@ class Work extends Model
                     'status' => 1,
                     'created_by' => Auth::id(),
                 ];
-    
+
                 // Check if record exists
                 if ($this->where('emp_id', $item['emp_id'])->exists()) {
                     $valuesToInsertOrUpdate['updated_at'] = now();
                 } else {
                     $valuesToInsertOrUpdate['created_at'] = now();
                 }
-    
+
                 // Perform update or insert
                 $this->updateOrInsert(['emp_id' => $item['emp_id']], $valuesToInsertOrUpdate);
-    
+
                 // Add to insertedRecords for tracking
                 $insertedRecords[] = array_merge(['emp_id' => $item['emp_id']], $valuesToInsertOrUpdate);
             }
         }
-    
+
         // Return inserted or updated records
         return $insertedRecords;
     }
-    
+
 
 
     public function updates($id)
@@ -315,6 +315,9 @@ class Work extends Model
         ];
 
         return Worktemp::where('emp_id', $emp_id)->update($update_data);
+    }
+    public function getEmployeeID(){
+        return $this->where('status',1)->where('trash','NO')->get();
     }
 
     public function statuschange($id)

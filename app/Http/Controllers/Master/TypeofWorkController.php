@@ -211,6 +211,7 @@ class TypeofWorkController extends Controller
                 $getcheckdetails = $this->typeofworkchecklist->getcheckchecklistdetails($typeofwork->id, 'type4');
                 $getinstructiondetails = $this->typeofworkchecklist->getinstructionchecklistdetails($typeofwork->id, 'type5');
 
+
                 $data = array(
                     'typeofwork' => $typeofwork,
                     'protectivequip_checklist' => $protectivequip_checklist,
@@ -304,7 +305,7 @@ class TypeofWorkController extends Controller
 
             $typeofwork =  $this->typeofwork->updates($id);
             $updatedRecord = $this->typeofwork->find($id);
-           
+
             $this->typeofworkupload->updates($updatedRecord->id);
             $this->typeofworkchecklist->update1($updatedRecord->id);
             $this->typeofworkchecklist->update2($updatedRecord->id);
@@ -564,7 +565,7 @@ class TypeofWorkController extends Controller
             $filename = "Type of work Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-         
+
             report($ex);
         }
     }

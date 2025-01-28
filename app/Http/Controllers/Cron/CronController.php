@@ -30,6 +30,7 @@ use App\Models\Master\PpeExemption;
 use App\Mail\EmployeeRegisterEmail;
 use App\Mail\PermitExpiryEmail;
 use App\Mail\SafetyPermitEmail;
+use App\Models\Master\PpeTypeMaster;
 use App\Models\Permit\Statuslog;
 
 
@@ -48,6 +49,7 @@ class CronController extends Controller
     private $ppeexemption;
     private $safetypermit;
     private $statuslog;
+    private $ppetypemaster;
 
     public function __construct()
     {
@@ -60,6 +62,7 @@ class CronController extends Controller
         $this->ppestock = new PpeStockinventory();
         $this->statuslog = new Statuslog();
         $this->ppeexemption = new PpeExemption();
+        $this->ppetypemaster = new PpeTypeMaster();
     }
     public function queueHigh()
     {
@@ -444,52 +447,45 @@ class CronController extends Controller
     {
         try {
 
-            $apiUrl = 'https://vmsapi.karam.in/emp.asmx/GetPPEInventory?TokenId=123&Orgid=86&Item=71160-H';
+            $itemcodes = $this->ppetypemaster->getppetypemaster();
 
-            $response = Http::get($apiUrl);
+            foreach ($itemcodes as $code) {
+                $itemList = $code->item_code;
 
-            if ($response->successful()) {
-                $data = $response->json();
 
-                if (!empty($data)) {
-                    $work = $this->ppestock->store($data);
-                    return response()->json(['message' => 'Data saved successfully.']);
+                $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetPPEInventory?TokenId=123&Orgid=86&Item={$itemList}";
+
+
+                $response = Http::get($apiUrl);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+
+                    if (!empty($data)) {
+
+                        $this->ppestock->store($data);
+                    } else {
+
+                        return response()->json(['message' => 'No data found in API response.']);
+                    }
                 } else {
-                    return response()->json(['message' => 'No data found in API response.']);
+
+                    return response()->json([
+                        'message' => 'Failed to fetch data from API.',
+                        'status' => $response->status(),
+                    ]);
                 }
-            } else {
-                return response()->json(['message' => 'Failed to fetch data from API.', 'status' => $response->status()]);
             }
+
+
+            return response()->json(['message' => 'Data saved successfully.']);
         } catch (Exception $ex) {
+
             report($ex);
-            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
-        }
-    }
-
-    public function updateItem()
-    {
-        try {
-
-            $apiUrl = 'https://vmsapi.karam.in/emp.asmx/GetPPEInventory?TokenId=123&Orgid=86&Item=71160-H';
-
-            $response = Http::get($apiUrl);
-
-            if ($response->successful()) {
-                $data = $response->json();
-
-                if (!empty($data)) {
-                    $work = $this->ppestock->store($data);
-                    Session::flash('sucess', 'Your data has been created Sucessfully');
-                    return redirect('ppe_stock_inventory/list');
-                } else {
-                    return response()->json(['message' => 'No data found in API response.']);
-                }
-            } else {
-                return response()->json(['message' => 'Failed to fetch data from API.', 'status' => $response->status()]);
-            }
-        } catch (Exception $ex) {
-            report($ex);
-            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
+            return response()->json([
+                'message' => 'An error occurred.',
+                'error' => $ex->getMessage(),
+            ]);
         }
     }
 
@@ -500,7 +496,7 @@ class CronController extends Controller
             $currentTime = Carbon::now()->format('H:i:s');
             $permits = SafetyPermit::where('trash', 'NO')
                 ->where('permit_status', '!=', STATUS_CLOSED)
-                ->where('permit_status', '!=', STATUS_PERMIT_EXPIRED) // Avoid already updated permits
+                ->where('permit_status', '!=', STATUS_PERMIT_EXPIRED)
                 ->whereDate('date', Carbon::today())
                 ->where('time_to', '<', $currentTime)
                 ->get();
@@ -558,7 +554,7 @@ class CronController extends Controller
                         ]),
                         'web_link' => admin_url('safetypermit/view/' . encryptId($permit->id)),
                         'assigned_user' => array_to_string($UserId),
-                        'created_by' => Auth::id(),
+                        'created_by' => 1,
                     ];
                     notificationSave($notificationData);
                     Log::info("Notification sent", ['permit_id' => $permit->id]);
@@ -631,7 +627,7 @@ class CronController extends Controller
                         )),
                         'web_link' =>  admin_url('safetypermit/view/' . encryptId($permit->id)),
                         'assigned_user' => array_to_string($UserId),
-                        'created_by' => Auth::id(),
+                        'created_by' => 1,
                     );
                     notificationSave($notificationData);
 

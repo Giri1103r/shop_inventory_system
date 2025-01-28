@@ -304,10 +304,6 @@ class TypeofWorkChecklist extends Model
                         if ($existingRecord) {
                             $existingRecord->update($data);
                         }
-                        else {
-                            $data['created_by'] = Auth::id();
-                            $this->create($data);
-                        }
                     }
                 }
             }
@@ -340,7 +336,7 @@ class TypeofWorkChecklist extends Model
                             ->where('type', $type)
                             ->where('check_points', $checkPoint)
                             ->first();
-                        // dd($equipmentrecord_id,$id,$type,$checkPoint,$existingRecord);
+
                         $data = [
                             'typeofwork_id' => $id,
                             'type' => $type,
@@ -351,10 +347,6 @@ class TypeofWorkChecklist extends Model
                         ];
                         if ($existingRecord) {
                             $existingRecord->update($data);
-                        }
-                        else {
-                            $data['created_by'] = Auth::id();
-                            $this->create($data);
                         }
                     }
                 }
@@ -388,7 +380,7 @@ class TypeofWorkChecklist extends Model
                             ->where('type', $type)
                             ->where('check_points', $checkPoint)
                             ->first();
-                        // dd($equipmentrecord_id,$id,$type,$checkPoint,$existingRecord);
+
                         $data = [
                             'typeofwork_id' => $id,
                             'type' => $type,
@@ -399,10 +391,6 @@ class TypeofWorkChecklist extends Model
                         ];
                         if ($existingRecord) {
                             $existingRecord->update($data);
-                        }
-                        else {
-                            $data['created_by'] = Auth::id();
-                            $this->create($data);
                         }
                     }
                 }
@@ -436,7 +424,7 @@ class TypeofWorkChecklist extends Model
                             ->where('type', $type)
                             ->where('check_points', $checkPoint)
                             ->first();
-                        // dd($equipmentrecord_id,$id,$type,$checkPoint,$existingRecord);
+
                         $data = [
                             'typeofwork_id' => $id,
                             'type' => $type,
@@ -447,10 +435,6 @@ class TypeofWorkChecklist extends Model
                         ];
                         if ($existingRecord) {
                             $existingRecord->update($data);
-                        }
-                        else {
-                            $data['created_by'] = Auth::id();
-                            $this->create($data);
                         }
                     }
                 }
@@ -484,7 +468,7 @@ class TypeofWorkChecklist extends Model
                             ->where('type', $type)
                             ->where('check_points', $checkPoint)
                             ->first();
-                        // dd($equipmentrecord_id,$id,$type,$checkPoint,$existingRecord);
+
                         $data = [
                             'typeofwork_id' => $id,
                             'type' => $type,
@@ -495,10 +479,6 @@ class TypeofWorkChecklist extends Model
                         ];
                         if ($existingRecord) {
                             $existingRecord->update($data);
-                        }
-                        else {
-                            $data['created_by'] = Auth::id();
-                            $this->create($data);
                         }
                     }
                 }
