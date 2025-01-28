@@ -101,4 +101,22 @@ class PrescribetoPatientController extends Controller
 
         return view('ohcmanagement.medicine_issuance.list', $data);
     }
+
+    public function add()
+    {
+        try {
+            $unit = $this->unit->getunit();
+            $medicine = $this->medicine->getMedicineData();
+            $data = array(
+                'medicine' => $medicine,
+                'unit' => $unit
+            );
+
+            return view('ohcmanagement.ohc-opd.prescribe-to-patient.add', $data);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medicine-issuance/list'));
+        }
+    }
 }
