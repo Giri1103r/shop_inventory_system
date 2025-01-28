@@ -240,6 +240,6 @@ class Medicine extends Model
     return $this->where('status',1)->where('trash','no')->get();
   }
   public function hsnajaxData($medicineID){
-    return $this->where('id',$medicineID)->select('id','hsn')->first();
+    return $this->where('id',$medicineID)->select('id','hsn','threshold_limit')->first();
   }
 }

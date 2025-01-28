@@ -66,10 +66,13 @@ class PpeRequestController extends Controller
     public function index(Request $request)
     {
         if (Auth::check()) {
+
             if ($request->ajax()) {
                 try {
                     $data = $this->pperequest->list();
+
                     $datatables = DataTables::of($data['data'])
+
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
@@ -80,8 +83,8 @@ class PpeRequestController extends Controller
                             }
                             return $text;
                         })
-                        ->addColumn('created_at', function ($row) {
-                            return Displaydateformat($row->created_at);
+                        ->editColumn('ppe_created_at', function ($row) {
+                            return Displaydateformat($row->ppe_created_at);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
