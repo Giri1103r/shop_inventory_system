@@ -124,7 +124,7 @@ class TrainingScheduleController extends Controller
                                          </a> ';
                             }
 
-                            if (($row->training_status == VP_APPROVE) && (in_array(ROLE_TRAINER, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
+                            if (($row->training_status == VP_APPROVE || $row->training_status == TRAINING_NOMINATION_COMPLETED ) && (in_array(ROLE_TRAINER, getUserRoleId(Auth::id())) || in_array(ROLE_ADMIN, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
                                 $btn .= '<a href="' . admin_url('training_schedule/nominationProcess/' . encryptId($row->id)) . '" title="Nomination">
                                             <i class="fa fa-calendar" style="color: #0013ff;"></i>
                                          </a> ';

@@ -374,12 +374,12 @@
                                                                             name="employee[{{ $i }}][last_training_attended_on]"
                                                                             class="form-control"
                                                                             id="last_training_attended_on_{{ $i }}"
-                                                                            value="{{ Displaydateformat($nominationProcess->last_training_attended_on) }}"
+                                                                            value="{{ $nominationProcess->last_training_attended_on ? Displaydateformat($nominationProcess->last_training_attended_on) : 'No Data' }}"
                                                                             readonly></td>
 
                                                                     <td><input type="text" class="form-control"
-                                                                           name="employee[{{ $i }}][topic_id]"
-                                                                           id="topic_id_{{ $i }}" readonly value="{{ $nominationProcess->topic_name }}"></td>
+                                                                           name="employee[{{ $i }}][last_training_topic]"
+                                                                           id="last_training_topic_{{ $i }}" readonly value="{{ $nominationProcess->topic_name ?? 'No Data' }}"></td>
 
                                                                     <td><button class="btn btn-danger removerow"
                                                                             type="button" style="margin:10px;"><i
