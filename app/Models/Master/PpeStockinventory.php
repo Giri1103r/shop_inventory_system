@@ -116,7 +116,7 @@ class PpeStockinventory extends Model
 
 
         $itemCodesWithPpeNames = PpeTypeMaster::
-            pluck('ppe_name', 'item_code')
+            pluck('ppe_name', 'item_code')->where('status',1)
             ->toArray();
 
         $groupedData = collect($data)->groupBy('ITEM_CODE');
