@@ -47,11 +47,11 @@
                                                     style="width: 100%">
                                                     <option value="">Select Company Name</option>
 
-                                                    @foreach ($companyList as $list)
+                                                    {{-- @foreach ($companyList as $list)
                                                         <option value="{{ encryptId($list->id) }}">
                                                             {{ $list->company_name }}
                                                         </option>
-                                                    @endforeach
+                                                    @endforeach --}}
 
 
                                                 </select>
@@ -112,17 +112,14 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Employee Id</th>
-                                        <th>Employee Name</th>
-                                        <th>Employee Email</th>
-                                        <th>Phone Number</th>
-                                        <th data-priority="3">Department Name</th>
-                                        <th>Unit Name</th>
-                                        <th>Employee Status</th>
-                                        <th>Reporting Manager</th>
-                                        <th data-priority="2">{{ __('common.status') }} </th>
+                                        <th>Medicine Name</th>
+                                        <th>Quantity</th>
+                                        <th>Unit</th>
+                                        <th>Threshold Limit</th>
+                                        <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
-                                        <th data-priority="1">{{ __('common.action') }}</th>
+                                        <th>{{ __('common.created_by') }}</th>
+                                        <th data-priority='1'>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -225,7 +222,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('employee/list') }}",
+                        url: "{{ admin_url('ohc/medicine-stock-inventory/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -255,46 +252,34 @@
                             searchable: false
                         },
                         {
-                            data: 'emp_id',
-                            name: 'emp_id'
+                            data: 'medicine_id',
+                            name: 'medicine_id'
                         },
                         {
-                            data: 'emp_name',
-                            name: 'emp_name'
+                            data: 'quantity',
+                            name: 'quantity'
                         },
                         {
-                            data: 'email',
-                            name: 'email'
+                            data: 'unit_id',
+                            name: 'unit_id'
                         },
                         {
-                            data: 'mobile_no',
-                            name: 'mobile_no'
+                            data: 'threshold_limit',
+                            name: 'threshold_limit'
                         },
 
                         {
-                            data: 'department',
-                            name: 'department'
-                        },
-                        {
-                            data: 'unit',
-                            name: 'unit'
+                            data: 'stock_status',
+                            name: 'stock_status'
                         },
 
-                        {
-                            data: 'employee_status',
-                            name: 'employee_status'
-                        },
-                        {
-                            data: 'reporting_manager',
-                            name: 'reporting_manager'
-                        },
-                        {
-                            data: 'status',
-                            name: 'status'
-                        },
                         {
                             data: 'created_at',
                             name: 'created_at'
+                        },
+                        {
+                            data: 'created_by',
+                            name: 'created_by'
                         },
                         {
                             data: 'action',
@@ -414,15 +399,15 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Employee Details') }}';
-                        var text = '{{ __('common.inactive') }}';
-                        var btncolor = '#dc3545'
+                    var title = '{{ __('Do You want to In-Activate Medicine Stock Details') }}';
+                    var text = '{{ __('common.inactive') }}';
+                    var btncolor = '#dc3545'
 
-                    } else {
-                        var title = '{{ __('Do You want to Activate Employee Details') }}';
-                        var text = '{{ __('common.active') }}';
-                        var btncolor = '#7ddc35'
-                    }
+                } else {
+                    var title = '{{ __('Do You want to Activate Medicine Stock Details') }}';
+                    var text = '{{ __('common.active') }}';
+                    var btncolor = '#7ddc35'
+                }
 
                     Swal.fire({
                         title: title,
@@ -439,7 +424,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('employee/status') }}",
+                                url: "{{ admin_url('ohc/medicine-stock-inventory/status') }}",
                                 type: 'post',
 
                                 data: {

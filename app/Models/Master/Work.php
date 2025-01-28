@@ -283,7 +283,6 @@ class Work extends Model
     {
 
         $request = request();
-
         $update_array = array(
             'emp_id' => $request->emp_id ?? null,
             'emp_name' => $request->emp_name ?? null,
@@ -291,7 +290,7 @@ class Work extends Model
             'nationality' => $request->nationality ?? null,
             'biometric_code' => $request->biometric_code ?? null,
             'doi' => DBdatetimeformat($request->doi),
-            'exit_date' => DBdatetimeformat($request->exit_date),
+            'exit_date' => $request->exit_date ? DBdatetimeformat($request->exit_date) : null,
             'mobile_no' => $request->mobile_no ?? null,
             'company' => decryptId($request->company),
             'location' => decryptId($request->location),

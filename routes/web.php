@@ -40,6 +40,7 @@ use App\Http\Controllers\OhcManagement\Master\VendorController;
 use App\Http\Controllers\OhcManagement\MedicineIssuanceController;
 use App\Http\Controllers\OhcManagement\MedicineReceivingController;
 use App\Http\Controllers\OhcManagement\MedicineRequisitionController;
+use App\Http\Controllers\OhcManagement\MedicineStockController;
 use App\Http\Controllers\OhcManagement\Opd\FirstAidController;
 use App\Http\Controllers\OhcManagement\Opd\PrescribetoPatientController;
 use App\Http\Controllers\OhcManagement\Opd\RoadsideFirstAidController;
@@ -945,6 +946,25 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('/export/pdf', [RoadsideFirstAidController::class, 'exportPdf']);
             Route::post('/status', [RoadsideFirstAidController::class, 'statusChange']);
             Route::get('/quantity', [RoadsideFirstAidController::class, 'quantity']);
+        });
+
+        Route::group(['prefix' => 'ohc/medicine-stock-inventory'], function () {
+            Route::get('/list', [MedicineStockController::class, 'index']);
+            Route::post('/list', [MedicineStockController::class, 'index']);
+            Route::get('/add', [MedicineStockController::class, 'add']);
+            Route::post('/add/submit', [MedicineStockController::class, 'store']);
+            Route::get('/edit/{id}', [MedicineStockController::class, 'edit']);
+            Route::post('/edit/submit', [MedicineStockController::class, 'update']);
+            Route::get('/view/{id}', [MedicineStockController::class, 'view']);
+            Route::post('/delete', [MedicineStockController::class, 'delete']);
+            Route::get('/export/excel', [MedicineStockController::class, 'exportExcel']);
+            Route::get('/export/pdf', [MedicineStockController::class, 'exportPdf']);
+            Route::post('/status', [MedicineStockController::class, 'statusChange']);
+            Route::get('/quantity', [MedicineStockController::class, 'quantity']);
+            Route::post('/threshold-limit', [MedicineStockController::class, 'thresholdlimit']);
+            Route::post('/unique', [MedicineStockController::class, 'Uniquecheck']);
+
+
         });
     });
 });

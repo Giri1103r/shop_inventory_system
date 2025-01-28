@@ -288,8 +288,8 @@
                         name: 'created_by'
                     },
                     {
-                        data: 'created_at',
-                        name: 'created_at'
+                        data: 'ppe_created_at',
+                        name: 'ppe_created_at'
                     },
                     {
                         data: 'action',
