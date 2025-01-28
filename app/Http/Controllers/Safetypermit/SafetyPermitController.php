@@ -1193,7 +1193,7 @@ class SafetyPermitController extends Controller
 
             return response()->json(['status' => 'success', 'msg' => __('Work Permit Cancelled Successfully')], 200);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => __('ptw.please_try_after_some_time')], 406);
         }
     }
