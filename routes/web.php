@@ -539,7 +539,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/unique', [NominationProcessController::class, 'Uniquecheck']);
                 Route::delete('/delete/{id}', [NominationProcessController::class, 'delete']);
                 Route::get('/view/{id}', [NominationProcessController::class, 'view']);
-                Route::get('fetchEmployeeDetails/{emp_id}', [NominationProcessController::class, 'fetchEmployeeDetails']);
+                Route::get('/fetchEmployeeDetails/{emp_id}', [NominationProcessController::class, 'fetchEmployeeDetails']);
             });
 
 

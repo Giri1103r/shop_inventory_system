@@ -220,7 +220,7 @@
                                 </div>
 
                                 <div class="d-flex justify-content-end align-items-center mb-3 button-container">
-                                  
+
                                     <button class="btn btn-primary addmorebutton" data-block='lesson_learned_block'
                                         data-row='lesson_learned_row' type="button" id="dynamic-add-more"
                                         style="margin-left: 10px; width: 84px;">
@@ -228,8 +228,8 @@
                                     </button>
 
                                     <x-button-import
-                                    href="{{ admin_url('nomination_process/import/' . encryptId($training_schedule->id) . '/' . encryptId($training_schedule->trainer_id)) }}">
-                                </x-button-import>
+                                        href="{{ admin_url('nomination_process/import/' . encryptId($training_schedule->id) . '/' . encryptId($training_schedule->trainer_id)) }}">
+                                    </x-button-import>
                                 </div>
 
                                 <div class="basic-form">
@@ -237,7 +237,7 @@
                                         action="{{ admin_url('nomination_process/add/submit') }}"
                                         enctype="multipart/form-data">
                                         @csrf
-                                    
+
                                         <div class="row">
 
                                             <div class="table-responsive">
@@ -374,24 +374,13 @@
                                                                             name="employee[{{ $i }}][last_training_attended_on]"
                                                                             class="form-control"
                                                                             id="last_training_attended_on_{{ $i }}"
-                                                                            value="{{ $nominationProcess->last_training_attended_on }}">
-                                                                    </td>
-                                                                    <td>
-                                                                        <select
-                                                                            name="employee[{{ $i }}][topic_id]"
-                                                                            class="form-control single-select"
-                                                                            style="width: 100%"
-                                                                            id="topic_id_{{ $i }}">
-                                                                            <option value="">Select Topic</option>
-                                                                            @foreach ($topicList as $topic)
-                                                                                <option
-                                                                                    value="{{ encryptId($topic->id) }}"
-                                                                                    {{ $nominationProcess->topic_id == $topic->id ? 'selected' : '' }}>
-                                                                                    {{ $topic->topic_name }}
-                                                                                </option>
-                                                                            @endforeach
-                                                                        </select>
-                                                                    </td>
+                                                                            value="{{ Displaydateformat($nominationProcess->last_training_attended_on) }}"
+                                                                            readonly></td>
+
+                                                                    <td><input type="text" class="form-control"
+                                                                           name="employee[{{ $i }}][topic_id]"
+                                                                           id="topic_id_{{ $i }}" readonly value="{{ $nominationProcess->topic_name }}"></td>
+
                                                                     <td><button class="btn btn-danger removerow"
                                                                             type="button" style="margin:10px;"><i
                                                                                 class="fa fa-trash"></i></button></td>

@@ -25,6 +25,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use App\Models\Master\TrainingAttendance;
+use App\Models\Master\TrainingStatuslog;
 
 
 use App\Models\Master\TrainingSchedule;
@@ -82,7 +84,7 @@ class ImporNominationProcessJob  implements ShouldQueue
 
             if ($i == 1) {
 
-                if (count($row) === 8) {
+                if (count($row) === 6) {
                 } else {
                     $error_data = array(
                         'upload_id' => $this->details['log_id'],
@@ -99,9 +101,7 @@ class ImporNominationProcessJob  implements ShouldQueue
                     trim($row['2']) != 'Employee Name' ||
                     trim($row['3']) != 'Email ID' ||
                     trim($row['4']) != 'Department' ||
-                    trim($row['5']) != 'Employee Type' ||
-                    trim($row['6']) != 'Last Taining Attended on (Date)' ||
-                    trim($row['7']) != 'Last Training Attended on (Topic)'
+                    trim($row['5']) != 'Employee Type'
                 ) {
                     $error_data_1 = array(
                         'upload_id' => $this->details['log_id'],
@@ -122,9 +122,6 @@ class ImporNominationProcessJob  implements ShouldQueue
             $email = trim($row['3']);
             $department_id = trim($row['4']);
             $employee_type = trim($row['5']);
-            $last_training_attended_on = trim($row['6']);
-            $topic_id = trim($row['7']);
-
             /* Column data validation */
 
             if ($emp_id == '') {
@@ -186,43 +183,12 @@ class ImporNominationProcessJob  implements ShouldQueue
                 $i++;
                 continue;
             }
-            if (empty($last_training_attended_on)) {
-                $cond_error_data = [
-                    'upload_id' => $this->details['log_id'],
-                    'line_no' => $i,
-                    'error' => 'Last Taining Attended on (Date) is missing',
-                ];
-
-                $cond_error_datas[] = $cond_error_data;
-                $i++;
-                continue;
-            }
-            if (empty($topic_id)) {
-                $cond_error_data = [
-                    'upload_id' => $this->details['log_id'],
-                    'line_no' => $i,
-                    'error' => 'Last Training Attended on (Topic) is missing',
-                ];
-
-                $cond_error_datas[] = $cond_error_data;
-                $i++;
-                continue;
-            }
-
-            // Validate date format (d-m-Y)
-            if (!DBdateformat($last_training_attended_on)) {
-                $cond_error_datas[] = [
-                    'upload_id' => $this->details['log_id'],
-                    'line_no' => $i,
-                    'error' => 'Invalid date format for Last Training Attended on (Date). Expected format: d-m-Y',
-                ];
-                $i++;
-                continue;
-            }
 
 
             $empExist = Employee::select('id', 'emp_id', 'emp_name', 'email', 'department', 'employee_status')
-                ->where('emp_id', $emp_id)->where('user_role', '!=', 1)->where('id', '!=', $this->details['trainerId'])
+                ->where('emp_id', $emp_id)
+                ->where('user_role', '!=', 1)
+                ->where('id', '!=', $this->details['trainerId'])
                 ->where('status', 1)
                 ->first();
 
@@ -236,6 +202,7 @@ class ImporNominationProcessJob  implements ShouldQueue
                 continue;
             }
 
+            // Validate employee details
             if ($empExist->emp_name !== $emp_name) {
                 $cond_error_datas[] = [
                     'upload_id' => $this->details['log_id'],
@@ -254,6 +221,8 @@ class ImporNominationProcessJob  implements ShouldQueue
                 $i++;
                 continue;
             }
+
+
             if ($empExist->employee_status !== $employee_type) {
                 $cond_error_datas[] = [
                     'upload_id' => $this->details['log_id'],
@@ -264,7 +233,7 @@ class ImporNominationProcessJob  implements ShouldQueue
                 continue;
             }
 
-            // Department Validation
+            // Validate department
             $deptExist = Department::select('id', 'department_name')
                 ->where('department_name', $department_id)
                 ->where('status', 1)
@@ -280,89 +249,48 @@ class ImporNominationProcessJob  implements ShouldQueue
                 continue;
             }
 
-            // if ($empExist->department != $deptExist->id) {
-            //     $cond_error_datas[] = [
-            //         'upload_id' => $this->details['log_id'],
-            //         'line_no' => $i,
-            //         'error' => 'Employee does not belong to the specified Department',
-            //     ];
-            //     $i++;
-            //     continue;
-            // }
-
-
-            // Topic Validation
-            $topicExist = Topic::select('id', 'topic_name')
-                ->where('topic_name', $topic_id)
+            // Check for existing nomination process
+            $nominationProcessExist = NominationProcess::where('training_schedule_id', $this->details['trainingScheduleIid'])
+                ->where('employee_id', $empExist->id)
                 ->where('status', 1)
                 ->first();
-
-            if (!$topicExist) {
+            if ($nominationProcessExist) {
                 $cond_error_datas[] = [
                     'upload_id' => $this->details['log_id'],
                     'line_no' => $i,
-                    'error' => 'Invalid Topic',
+                    'error' => 'Nomination Process for this Employee ID already exists',
                 ];
                 $i++;
                 continue;
             }
-            $nominationProcessExist = NominationProcess::where('training_schedule_id', $this->details['trainingScheduleIid'])->where('employee_id', $emp_id)->where('status', 1)->first();
-            if ($nominationProcessExist) {
 
-                if ($nominationProcessExist->employee_id !== $emp_id) {
-                    $cond_error_datas[] = [
-                        'upload_id' => $this->details['log_id'],
-                        'line_no' => $i,
-                        'error' => 'Nomination Process for this Employee ID already exists',
-                    ];
-                    $i++;
-                    continue;
-                }
+            // Fetch last training details
+            $lastTraining = TrainingAttendance::select('training_masters_topic.id', 'training_attendance.attendance_date')
+                ->leftJoin('training_masters_topic', 'training_attendance.topic_id', '=', 'training_masters_topic.id')
+                ->where('training_attendance.email', $empExist->email)
+                ->where('training_attendance.attendance_status', 1)
+                ->orderBy('training_attendance.attendance_date', 'desc')
+                ->first();
 
-                if ($nominationProcessExist->emp_name !== $emp_name) {
-                    $cond_error_datas[] = [
-                        'upload_id' => $this->details['log_id'],
-                        'line_no' => $i,
-                        'error' => 'Nomination Process for this Employee Name already exists for this Employee ID',
-                    ];
-                    $i++;
-                    continue;
-                }
-                if ($nominationProcessExist->email !== $email) {
-                    $cond_error_datas[] = [
-                        'upload_id' => $this->details['log_id'],
-                        'line_no' => $i,
-                        'error' => 'Nomination Process for this Email ID already exists for this Employee ID',
-                    ];
-                    $i++;
-                    continue;
-                }
-            }
+            $lastTrainingDate = optional($lastTraining)->attendance_date ?? null;
+            $lastTrainingTopic = optional($lastTraining)->id ?? null;
+
+            // Create nomination process
             $data = [
                 'training_schedule_id' => $this->details['trainingScheduleIid'],
                 'employee_id' => $empExist->id,
                 'emp_name' => $empExist->emp_name,
                 'email' => $empExist->email,
-                'department_id' => $empExist->department,
+                'department_id' => $deptExist->id,
                 'employee_type' => $employee_type,
-                'last_training_attended_on' => DBdateformat($last_training_attended_on),
-                'topic_id' => $topicExist->id,
+                'last_training_attended_on' => $lastTrainingDate,
+                'topic_id' => $lastTrainingTopic,
                 'created_by' => $this->details['user_id'],
             ];
-
             $nomination = NominationProcess::create($data);
-
-            // if ($nomination) {
-            //     TrainingSchedule::where('id', $this->details['trainingScheduleIid'])->update([
-            //         'training_status' => 5,
-            //         'updated_by' => Auth::id(),
-            //         'updated_at' => now(),
-            //     ]);
-            // }
 
             $i++;
         }
-      
 
         // Log errors or mark as successful
         if (count($cond_error_datas) > 0) {
@@ -370,6 +298,19 @@ class ImporNominationProcessJob  implements ShouldQueue
             UploadLog::where('id', $this->details['log_id'])->update(['upload_status' => 3]);
             Session::flash('error', 'Failed to upload. Please check the upload log.');
         } else {
+                $training_status = TRAINING_NOMINATION_COMPLETED;
+                TrainingSchedule::where('id', $this->details['trainingScheduleIid'])->update([
+                    'training_status' => $training_status,
+                    'updated_by' => Auth::id(),
+                    'updated_at' => now(),
+                ]);
+
+                TrainingStatuslog::where('id', $this->details['trainingScheduleIid'])->update([
+                    'training_schedule_id' => $this->details['trainingScheduleIid'],
+                    'training_status' => $training_status,
+                    'remarks' => null,
+                    'created_by' => Auth::id(),
+                ]);
             UploadLog::where('id', $this->details['log_id'])->update(['upload_status' => 2]);
             Session::flash('success', 'Upload completed successfully.');
         }
