@@ -78,7 +78,7 @@
                         </div>
                         <div class="card-body px-0 pt-0 dlab-scroll height370">
                             <div class="d-flex justify-content-between align-items-center market-preview"
-                                onclick="redirectToUAUClist()">
+                                onclick="redirectToTraininglist()">
                                 <div class="d-flex align-items-center">
                                     <span>
                                         <svg width="38" height="38" viewBox="0 0 64 64" fill="none"
@@ -104,7 +104,7 @@
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between align-items-center market-preview"
-                                onclick="redirectToTraininglist('{{ encryptId(1) }}')">
+                                onclick="redirectToTraininglist('{{ encryptId(1, 2, 4, 5) }}')">
                                 <div class="d-flex align-items-center">
                                     <span>
                                         <svg width="38" height="38" viewBox="0 0 64 64" fill="none"
@@ -129,7 +129,7 @@
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between align-items-center market-preview"
-                                onclick="redirectToTraininglist('{{ encryptId(2) }}')">
+                                onclick="redirectToTraininglist('{{ encryptId(3) }}')">
                                 <div class="d-flex align-items-center">
                                     <span>
                                         <svg width="38" height="38" viewBox="0 0 64 64" fill="none"
@@ -155,7 +155,7 @@
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between align-items-center market-preview"
-                                onclick="redirectToTraininglist('{{ encryptId(3) }}')">
+                                onclick="redirectToTraininglist('{{ encryptId(6, 7) }}')">
                                 <div class="d-flex align-items-center">
                                     <span>
                                         <svg width="38" height="38" viewBox="0 0 64 64" fill="none"
@@ -181,7 +181,7 @@
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center market-preview"
-                                onclick="redirectToTraininglist('{{ encryptId(4) }}')">
+                                onclick="redirectToTraininglist('{{ encryptId(8) }}')">
                                 <div class="d-flex align-items-center">
                                     <span>
 
@@ -407,8 +407,8 @@
                 location.reload();
             });
             const toDatePicker = flatpickr("#toDate", {
-                dateFormat: "d-m-Y", 
-                minDate: "today", 
+                dateFormat: "d-m-Y",
+                minDate: "today",
             });
 
             flatpickr("#fromDate", {
@@ -418,7 +418,7 @@
                         const fromDate = selectedDates[0];
                         if (toDatePicker) {
                             toDatePicker.set("minDate",
-                                dateStr); 
+                                dateStr);
                         }
                     }
                 },
