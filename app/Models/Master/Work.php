@@ -283,7 +283,7 @@ class Work extends Model
     {
 
         $request = request();
-
+dd($request);
         $update_array = array(
             'emp_id' => $request->emp_id ?? null,
             'emp_name' => $request->emp_name ?? null,
