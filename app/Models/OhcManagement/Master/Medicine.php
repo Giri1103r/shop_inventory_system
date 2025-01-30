@@ -27,6 +27,7 @@ class Medicine extends Model
         'threshold_limit',
         'expiry_date',
         'remarks',
+        'approve_status',
         'status',
         'trash',
         'created_by',
@@ -45,8 +46,8 @@ class Medicine extends Model
         $request = request();
         $search = '';
         $query = $this->select('ohc_master_medicine.*', 'masters_unit.unit_name')
-        ->join('masters_unit', 'ohc_master_medicine.unit_id', '=', 'masters_unit.id')
-        ->where('masters_unit.trash', 'NO');
+            ->join('masters_unit', 'ohc_master_medicine.unit_id', '=', 'masters_unit.id')
+            ->where('masters_unit.trash', 'NO');
 
         // dd($query);
         $org_total =  $query;
@@ -68,6 +69,9 @@ class Medicine extends Model
         }
         if ($request->has('unit') && $request->unit) {
             $query = $query->where('ohc_master_medicine.unit_id', 'LIKE', '%' . $request->unit . '%');
+        }
+        if ($request->has('expire_date') && $request->expire_date) {
+            $query = $query->where('ohc_master_medicine.expiry_date', 'LIKE', '%' . DBdateformat($request->expire_date) . '%');
         }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
@@ -103,21 +107,30 @@ class Medicine extends Model
         return $datas;
     }
 
-    public function uniqueCheck($medicine_name,$hsn)
+    public function uniqueCheck($medicine_name, $unit_id)
     {
-        return $this->where('medicine', $medicine_name)
-                    ->orWhere('hsn', $hsn)
-                    ->exists();
+
+        return $this->where('unit_id',  $unit_id)->where('medicine', $medicine_name)->get();
     }
 
-    public function existUniqueCheck($medicine_name,$hsn,$id)
+    public function existUniqueCheck($medicine_name,  $unit_id, $id)
     {
-        return $this->where(function ($query) use ($medicine_name, $hsn) {
-                        $query->where('medicine', $medicine_name)
-                              ->orWhere('hsn', $hsn); // Fixed here
-                    })
-                    ->where('id', '!=', $id)
-                    ->exists();
+        return $this->where('unit_id',  $unit_id)->where('medicine', $medicine_name)
+            ->where('id', '!=', $id)
+            ->get();
+    }
+    public function HsnuniqueCheck($hsn)
+    {
+
+        return $this->where('hsn',  $hsn)->get();
+    }
+
+
+    public function existHsnUniqueCheck($hsn, $id)
+    {
+        return $this->where('hsn',  $hsn)
+            ->where('id', '!=', $id)
+            ->get();
     }
     public function store()
     {
@@ -129,9 +142,10 @@ class Medicine extends Model
             'hsn' => $request->hsn,
             'threshold_limit' => $request->threshold_limit,
             'unit_id' => $request->unit_id,
-            'expiry_date'=>  DBdateformat($request->expire_date),
-            'remarks'=>$request->remarks,
-            'created_by' => Auth::id()
+            'expiry_date' =>  DBdateformat($request->expire_date),
+            'remarks' => $request->remarks,
+            'created_by' => Auth::id(),
+            'status' => 1,
         );
         return $this->create($insert_array);
     }
@@ -147,12 +161,25 @@ class Medicine extends Model
             'hsn' => $request->hsn,
             'threshold_limit' => $request->threshold_limit,
             'unit_id' => $request->unit_id,
-            'expiry_date'=> DBdateformat($request->expire_date),
-            'remarks'=>$request->remarks,
+            'expiry_date' => DBdateformat($request->expire_date),
+            'remarks' => $request->remarks,
             'updated_by' => Auth::id()
         );
 
         return $this->where('id', $id)->update($update_array);
+    }
+
+    public function approvalupdate($id)
+    {
+        $request = request();
+
+        if ($request->action == 'approve') {
+            return $this->where('id', $id)->update(['status' => 1, 'approve_status' => STATUS_OHC_CLOSE]);
+        } elseif ($request->action == 'reject') {
+            return $this->where('id', $id)->update(['trash' => 'YES', 'approve_status' => STATUS_OHC_CLOSE]);
+        }
+
+        return false;
     }
 
     public function statuschange($id)
@@ -203,6 +230,9 @@ class Medicine extends Model
         if ($request->has('unit') && $request->unit) {
             $query = $query->where('ohc_master_medicine.unit_id', 'LIKE', '%' . $request->unit . '%');
         }
+        if ($request->has('expire_date') && $request->expire_date) {
+            $query = $query->where('ohc_master_medicine.expiry_date', 'LIKE', '%' . DBdateformat($request->expire_date) . '%');
+        }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
@@ -229,17 +259,52 @@ class Medicine extends Model
         $data = $this->select(
             'ohc_master_medicine.*'
         )
-            ->where('ohc_master_medicine.id', $id)
+            ->where('ohc_master_medicine.id', $id)->where('trash','NO')
             ->first();
 
         return $data;
     }
 
 
-  public function getMedicineData(){
-    return $this->where('status',1)->where('trash','no')->get();
-  }
-  public function hsnajaxData($medicineID){
-    return $this->where('id',$medicineID)->select('id','hsn','threshold_limit')->first();
-  }
+    public function getMedicineData()
+    {
+        return $this->where('status', 1)->where('trash', 'no')->get();
+    }
+    public function hsnajaxData($medicineID)
+    {
+        return $this->where('id', $medicineID)->select('id', 'hsn', 'threshold_limit')->first();
+    }
+
+    public function ajaxList($unitId = '')
+    {
+        $query = $this->select('id', 'medicine')->where('status', 1);
+
+
+        if (!empty($unitId)) {
+            $query = $query->where(function ($q) use ($unitId) {
+                $q->where('unit_id', $unitId)->where('status', 1);
+            });
+        }
+        $datas = $query->get();
+
+        $list = [];
+        foreach ($datas as $data) {
+            $listvalue = [];
+            $listvalue['id'] = encryptId($data->id);
+            $listvalue['name'] = $data->medicine;
+            $list[] = $listvalue;
+        }
+
+        return $list;
+    }
+
+    public function stocklist($medicineid)
+    {
+       return $this->where('id',$medicineid)->where('status',1)->first();
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('ohc_master_medicine'));
+    }
 }

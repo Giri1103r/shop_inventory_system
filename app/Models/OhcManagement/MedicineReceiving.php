@@ -20,6 +20,7 @@ class MedicineReceiving extends Model
         'rate',
         'batch_number',
         'vendor_id',
+        'approve_status',
         'status',
         'trash',
         'created_by',
@@ -101,6 +102,7 @@ class MedicineReceiving extends Model
               'hsn_id'=>$request->hsn_id,
               'rate'=>$request->rate,
               'pack_id'=>decryptId($request->pack_id),
+              'approve_status'=>STATUS_OHC_EHS_VERIFICATION_PENDING,
               'created_by'=>Auth::id(),
         ];
 
@@ -179,5 +181,9 @@ class MedicineReceiving extends Model
         $query->orderBy('ohc_management_medicine_receiving.id', 'DESC');
 
         return  $query->get();
+    }
+
+    public function statusupdate($id){
+        $this->where('id',$id)->update(['approve_status'=>STATUS_OHC_L1_EHS_VERIFICATION_PENDING]);
     }
 }

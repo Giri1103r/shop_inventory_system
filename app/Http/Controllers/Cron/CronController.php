@@ -28,9 +28,13 @@ use App\Models\Master\PpeStockinventory;
 use App\Models\Permit\SafetyPermit;
 use App\Models\Master\PpeExemption;
 use App\Mail\EmployeeRegisterEmail;
+use App\Mail\Ohc\MedicineRequestEmail;
+use App\Mail\Ohc\MedicineStockRequestEmail;
 use App\Mail\PermitExpiryEmail;
 use App\Mail\SafetyPermitEmail;
 use App\Models\Master\PpeTypeMaster;
+use App\Models\OhcManagement\Master\Medicine;
+use App\Models\OhcManagement\MedicineStock;
 use App\Models\Permit\Statuslog;
 
 
@@ -50,6 +54,8 @@ class CronController extends Controller
     private $safetypermit;
     private $statuslog;
     private $ppetypemaster;
+    private $medicine;
+    private $medicine_stock;
 
     public function __construct()
     {
@@ -63,6 +69,8 @@ class CronController extends Controller
         $this->statuslog = new Statuslog();
         $this->ppeexemption = new PpeExemption();
         $this->ppetypemaster = new PpeTypeMaster();
+        $this->medicine = new Medicine();
+        $this->medicine_stock = new MedicineStock();
     }
     public function queueHigh()
     {
@@ -481,6 +489,70 @@ class CronController extends Controller
             return response()->json(['message' => 'Data saved successfully.']);
         } catch (Exception $ex) {
 
+            report($ex);
+            return response()->json([
+                'message' => 'An error occurred.',
+                'error' => $ex->getMessage(),
+            ]);
+        }
+    }
+
+    public function stockrequest()
+    {
+        try {
+            $medicinestock = MedicineStock::whereColumn('quantity', '<', 'threshold_limit')
+                ->where('status', 1)
+                ->get();
+
+            $ids = $medicinestock->pluck('id')->toArray();
+
+            $mailsubject = 'Medicine Stock Request';
+            $user_role = ROLE_PARAMEDICS;
+
+            $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
+            $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+
+            if (count($users) > 0) {
+                foreach ($users as $user) {
+                    $email_id = $user->email;
+
+                    if (!empty($email_id)) {
+                        foreach ($ids as $medicineId) {
+                            $medicinedetails = $this->medicine_stock->selectone($medicineId);
+                            $details  = $medicinedetails->toArray();
+
+                            $details['name'] = $user->name;
+                            $details['email_id'] =  $email_id;
+                            $details['mail_subject'] = $mailsubject;
+                            $details['request_link'] = admin_url('ohc/medicine-stock-inventory/list');
+
+                            Mail::to($details['email_id'])->queue(new MedicineStockRequestEmail($details));
+
+
+                            $notificationData = array(
+                                'notification_type' => 4,
+                                'module_type' => 1,
+                                'notification_message' => $mailsubject,
+                                'mobile_notification' => json_encode(array(
+                                    'title' => $mailsubject,
+                                    'message' => 'Medicine has less than the Threshold Limit',
+                                    'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                                    'id' => $medicineId,
+                                    'module' => 1,
+                                )),
+                                'web_link' => admin_url('ohc/medicine-stock-inventory/list'),
+                                'assigned_user' => array_to_string([$user->id]),
+                                'created_by' => Auth::id(),
+                            );
+
+                            notificationSave($notificationData);
+                        }
+                    }
+                }
+            }
+
+            return response()->json(['message' => 'Request sent successfully.']);
+        } catch (Exception $ex) {
             report($ex);
             return response()->json([
                 'message' => 'An error occurred.',

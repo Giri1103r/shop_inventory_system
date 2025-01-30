@@ -13,10 +13,13 @@ use App\Models\Master\Department;
 use App\Models\User;
 use App\Models\UploadLog;
 use App\Jobs\ImportmedicineJob;
+use App\Mail\Ohc\MedicineRequestEmail;
 use App\Models\OhcManagement\Master\Medicine;
+use App\Models\OhcManagement\OhcStatuslog;
 use Illuminate\Support\Facades\Auth;
 use Exception;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 use Spatie\SimpleExcel\SimpleExcelWriter;
@@ -33,6 +36,7 @@ class MedicineController extends Controller
     private $department;
     private $user;
     private $uploadlog;
+    private $ohc_statuslog;
 
 
     public function __construct()
@@ -44,6 +48,7 @@ class MedicineController extends Controller
         $this->department = new Department();
         $this->user = new User();
         $this->uploadlog = new UploadLog();
+        $this->ohc_statuslog = new OhcStatuslog();
     }
 
 
@@ -84,13 +89,13 @@ class MedicineController extends Controller
                             // if (CheckUserPermission('view')) {
                             $btn = '<a href="' . admin_url('ohc/medicine/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
-                            // if (CheckUserPermission('edit')) {
-                            $btn .= '<a href="' . admin_url('ohc/medicine/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            // }
+                            if (CheckUserPermission('edit') ) {
+                                $btn .= '<a href="' . admin_url('ohc/medicine/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            }
 
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status','unit_id','expiry_date'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'unit_id', 'expiry_date'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -136,7 +141,7 @@ class MedicineController extends Controller
                 'unit_id' => 'required',
                 'threshold_limit' => 'required',
                 'expire_date' => 'required',
-                'remarks' => 'required',
+
             ];
             $messages = [
                 'medicine.required' => 'Please enter the medicine name.',
@@ -145,7 +150,7 @@ class MedicineController extends Controller
                 'unit_id.required' => 'Please select a unit.',
                 'threshold_limit.required' => 'Please enter the threshold limit.',
                 'expire_date.required' => 'Please select the expiry date.',
-                'remarks.required' => 'Please provide remarks.',
+
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
@@ -154,18 +159,20 @@ class MedicineController extends Controller
 
             try {
 
-                $medicine = $this->medicine->store();
+                $data =  $this->medicine->store();
+
+
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medicine/list'));
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine/list'));
         }
@@ -186,7 +193,6 @@ class MedicineController extends Controller
         } catch (Exception $ex) {
         }
     }
-
     public function Edit(Request $request)
     {
         try {
@@ -218,7 +224,7 @@ class MedicineController extends Controller
                 'unit_id' => 'required',
                 'threshold_limit' => 'required',
                 'expire_date' => 'required',
-                'remarks' => 'required',
+
             ];
             $messages = [
                 'medicine.required' => 'Please enter the medicine name.',
@@ -227,7 +233,7 @@ class MedicineController extends Controller
                 'unit_id.required' => 'Please select a unit.',
                 'threshold_limit.required' => 'Please enter the threshold limit.',
                 'expire_date.required' => 'Please select the expiry date.',
-                'remarks.required' => 'Please provide remarks.',
+
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
@@ -235,6 +241,7 @@ class MedicineController extends Controller
             }
 
             $this->medicine->updates($id);
+
 
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('ohc/medicine/list'));
@@ -245,22 +252,48 @@ class MedicineController extends Controller
         }
     }
 
-
     public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {
             $medicine_name = $request->medicine_name;
+            $unit_id = $request->unit_id;
             $hsn = $request->hsn;
             $id = $request->id;
 
             if (empty($id)) {
-                $isUnique = !$this->medicine->uniqueCheck($medicine_name,$hsn);
+                $isUnique = $this->medicine->uniqueCheck($medicine_name, $unit_id);
             } else {
                 $id = decryptId($id);
-                $isUnique = !$this->medicine->existUniqueCheck($medicine_name,$hsn, $id);
+                // dd( $unit_id );
+                $isUnique = $this->medicine->existUniqueCheck($medicine_name,  $id, $unit_id);
             }
 
-            return Response::json($isUnique);
+            if ($isUnique->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
+        }
+    }
+
+    public function hsnNumber(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $hsn = $request->hsn;
+
+            $id = $request->id;
+            if (empty($id)) {
+                $isUnique = $this->medicine->HsnuniqueCheck($hsn);
+            } else {
+                $id = decryptId($id);
+
+                $isUnique = $this->medicine->existHsnUniqueCheck($id, $hsn);
+            }
+
+            if ($isUnique->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
         }
     }
 
@@ -280,6 +313,7 @@ class MedicineController extends Controller
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
+
     public function Delete(Request $request)
     {
         try {
@@ -299,7 +333,6 @@ class MedicineController extends Controller
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
-
 
     public function ExportExcel(Request $request)
     {

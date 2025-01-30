@@ -72,16 +72,17 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_USER') or define('ROLE_USER', 9);
         defined('ROLE_VISE_PRESIDENT') or define('ROLE_VISE_PRESIDENT', 10);
         defined('ROLE_WORKER_REQUEST') or define('ROLE_WORKER_REQUEST', 12);
+        defined('ROLE_PARAMEDICS') or define('ROLE_PARAMEDICS', 13);
 
 
         defined('NEW_TRAINING_SCHEDULE') or define('NEW_TRAINING_SCHEDULE', 1);
-        defined('VP_APPROVE') or define('VP_APPROVE',2);
+        defined('VP_APPROVE') or define('VP_APPROVE', 2);
         defined('VP_REJECTED') or define('VP_REJECTED', 3);
-        defined('TRAINING_RESCHEDULE_APPROVAL') or define('TRAINING_RESCHEDULE_APPROVAL',4);
+        defined('TRAINING_RESCHEDULE_APPROVAL') or define('TRAINING_RESCHEDULE_APPROVAL', 4);
         defined('TRAINING_NOMINATION_COMPLETED') or define('TRAINING_NOMINATION_COMPLETED', 5);
         defined('TRAINING_START') or define('TRAINING_START', 6);
         defined('TRAINING_FEEDBACK_ADMIN_APPROVE') or define('TRAINING_FEEDBACK_ADMIN_APPROVE', 7);
-        defined('TRAINING_COMPLETED') or define('TRAINING_COMPLETED',8);
+        defined('TRAINING_COMPLETED') or define('TRAINING_COMPLETED', 8);
 
 
 
@@ -99,6 +100,11 @@ class AppServiceProvider extends ServiceProvider
 
         defined('TYPE_PPE_REQUEST') or define('TYPE_PPE_REQUEST', 1);
         defined('TYPE_PPE_EXEMPTION') or define('TYPE_PPE_EXEMPTION', 2);
+        defined('TYPE_OHC_MEDICINE') or define('TYPE_OHC_MEDICINE', 3);
+        defined('TYPE_OHC_MEDICINE_RECEIVING') or define('TYPE_OHC_MEDICINE_RECEIVING', 4);
+        defined('TYPE_OHC_MEDICINE_REQUISITION') or define('TYPE_OHC_MEDICINE_REQUISITION', 5);
+        defined('TYPE_OHC_MEDICINE_STOCK') or define('TYPE_OHC_MEDICINE_STOCK', 6);
+
 
         defined('CHEMICAL_DEPARTMENT') or define('CHEMICAL_DEPARTMENT', 53);
 
@@ -120,7 +126,16 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_CANCELLED') or define('STATUS_CANCELLED', 14);
         defined('STATUS_CLOSED') or define('STATUS_CLOSED', 15);
 
+        // OHC Management
 
+       defined('STATUS_OHC_MEDICINE_APPROVAL_PENDING')or define('STATUS_OHC_MEDICINE_APPROVAL_PENDING', 6);
+       defined('STATUS_OHC_OPEN')or define('STATUS_OHC_OPEN', 1);
+       defined('STATUS_OHC_CLOSE')or define('STATUS_OHC_CLOSE', 5);
+       defined('STATUS_OHC_MEDICINE_APPROVED')or define('STATUS_OHC_MEDICINE_APPROVED',7);
+       defined('STATUS_OHC_EHS_VERIFICATION_PENDING')or define('STATUS_OHC_EHS_VERIFICATION_PENDING',2);
+       defined('STATUS_OHC_L1_EHS_VERIFICATION_PENDING')or define('STATUS_OHC_L1_EHS_VERIFICATION_PENDING',3);
+       defined('STATUS_OHC_EHS_HEAD_APPROVAL_PENDING')or define('STATUS_OHC_EHS_HEAD_APPROVAL_PENDING',4);
+       defined('STATUS_OHC_PARAMEDIES_REQUEST')or define('STATUS_OHC_PARAMEDIES_REQUEST',8);
 
         View::composer('*', function ($view) {
 
