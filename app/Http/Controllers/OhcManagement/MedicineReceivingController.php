@@ -101,7 +101,7 @@ private $ohc_status;
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
                 }
             }
@@ -178,14 +178,14 @@ private $ohc_status;
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         }
@@ -452,7 +452,7 @@ $ehsverify = $this->ohc_status->ehsverifydata($id);
                 );
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -510,7 +510,7 @@ $ehsverify = $this->ohc_status->ehsverifydata($id);
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
         }
     }
     public function hsnnumber(Request $request)
