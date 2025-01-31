@@ -49,6 +49,9 @@ use App\Http\Controllers\Ppemanagement\PpeRequestController;
 use App\Http\Controllers\Ppemanagement\PpeStockInventoryController;
 use App\Http\Controllers\Safetypermit\SafetyPermitController;
 use App\Http\Controllers\Training\TrainingController;
+use App\Http\Controllers\IMS\Master\IncidentTypeController;
+use App\Http\Controllers\IMS\Master\HiraController;
+use App\Http\Controllers\IMS\Incident\InitialIncidentController;
 
 Route::get('cache', function () {
     Artisan::call('optimize:clear');
@@ -965,6 +968,60 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('/unique', [MedicineStockController::class, 'Uniquecheck']);
 
 
+        });
+
+
+        Route::group(['prefix' => 'incident/type-master'], function () {
+            Route::get('/list', [IncidentTypeController::class, 'index']);
+            Route::post('/list', [IncidentTypeController::class, 'index']);
+            Route::get('/add', [IncidentTypeController::class, 'add']);
+            Route::post('/add/submit', [IncidentTypeController::class, 'store']);
+            Route::get('/edit/{id}', [IncidentTypeController::class, 'edit']);
+            Route::post('/edit/submit', [IncidentTypeController::class, 'update']);
+            Route::get('/view/{id}', [IncidentTypeController::class, 'view']);
+            Route::post('/delete', [IncidentTypeController::class, 'delete']);
+            Route::get('/export/excel', [IncidentTypeController::class, 'exportExcel']);
+            Route::get('/export/pdf', [IncidentTypeController::class, 'exportPdf']);
+            Route::get('/sample_download', [IncidentTypeController::class, 'DownloadSample']);
+            Route::get('/import', [IncidentTypeController::class, 'import']);
+            Route::post('/import/Submit', [IncidentTypeController::class, 'importSubmit']);
+            Route::post('/status', [IncidentTypeController::class, 'statusChange']);
+            Route::post('/unique', [IncidentTypeController::class, 'Uniquecheck']);
+        });
+        Route::group(['prefix' => 'incident/hira-master'], function () {
+            Route::get('/list', [HiraController::class, 'index']);
+            Route::post('/list', [HiraController::class, 'index']);
+            Route::get('/add', [HiraController::class, 'add']);
+            Route::post('/add/submit', [HiraController::class, 'store']);
+            Route::get('/edit/{id}', [HiraController::class, 'edit']);
+            Route::post('/edit/submit', [HiraController::class, 'update']);
+            Route::get('/view/{id}', [HiraController::class, 'view']);
+            Route::post('/delete', [HiraController::class, 'delete']);
+            Route::get('/export/excel', [HiraController::class, 'exportExcel']);
+            Route::get('/export/pdf', [HiraController::class, 'exportPdf']);
+            Route::get('/sample_download', [HiraController::class, 'DownloadSample']);
+            Route::get('/import', [HiraController::class, 'import']);
+            Route::post('/import/Submit', [HiraController::class, 'importSubmit']);
+            Route::post('/status', [HiraController::class, 'statusChange']);
+            Route::post('/unique', [HiraController::class, 'Uniquecheck']);
+        });
+
+        Route::group(['prefix' => 'incident/initial-incident'], function () {
+            Route::get('/list', [InitialIncidentController::class, 'index']);
+            Route::post('/list', [InitialIncidentController::class, 'index']);
+            Route::get('/add', [InitialIncidentController::class, 'add']);
+            Route::post('/add/submit', [InitialIncidentController::class, 'store']);
+            Route::get('/edit/{id}', [InitialIncidentController::class, 'edit']);
+            Route::post('/edit/submit', [InitialIncidentController::class, 'update']);
+            Route::get('/view/{id}', [InitialIncidentController::class, 'view']);
+            Route::post('/delete', [InitialIncidentController::class, 'delete']);
+            Route::get('/export/excel', [InitialIncidentController::class, 'exportExcel']);
+            Route::get('/export/pdf', [InitialIncidentController::class, 'exportPdf']);
+            Route::get('/sample_download', [InitialIncidentController::class, 'DownloadSample']);
+            Route::get('/import', [InitialIncidentController::class, 'import']);
+            Route::post('/import/Submit', [InitialIncidentController::class, 'importSubmit']);
+            Route::post('/status', [InitialIncidentController::class, 'statusChange']);
+            Route::post('/unique', [InitialIncidentController::class, 'Uniquecheck']);
         });
     });
 });
