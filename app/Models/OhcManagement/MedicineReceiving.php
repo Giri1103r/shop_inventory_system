@@ -21,6 +21,7 @@ class MedicineReceiving extends Model
         'batch_number',
         'vendor_id',
         'approve_status',
+        'cron_time',
         'status',
         'trash',
         'created_by',
@@ -185,5 +186,19 @@ class MedicineReceiving extends Model
 
     public function statusupdate($id){
         $this->where('id',$id)->update(['approve_status'=>STATUS_OHC_L1_EHS_VERIFICATION_PENDING]);
+    }
+    public function ehsstatus($id){
+        $this->where('id',$id)->update(['approve_status'=>STATUS_OHC_EHS_HEAD_APPROVAL_PENDING]);
+
+    }
+    public function ehsheadstatus($id) {
+        $this->where('id', $id)->update([
+            'approve_status' => STATUS_OHC_OPEN,
+            'cron_time' => Carbon::now() 
+        ]);
+    }
+
+    public function stockupdate($id){
+        $this->where('id',$id)->update(['approve_status'=>STATUS_OHC_CLOSE]);
     }
 }

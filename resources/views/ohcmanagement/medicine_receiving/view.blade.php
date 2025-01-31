@@ -22,7 +22,8 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('ohc/medicine-receiving-form/list') }}"></x-button-back>
+                                    <x-button-back
+                                        href="{{ admin_url('ohc/medicine-receiving-form/list') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -97,6 +98,129 @@
                                     </div>
 
                                 </div>
+                                <div>
+                                    {{-- View of the EHS Verification --}}
+                                    @if (
+                                        $medicine_receiving->approve_status == STATUS_OHC_L1_EHS_VERIFICATION_PENDING ||
+                                            $medicine_receiving->approve_status == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING ||
+                                            $medicine_receiving->approve_status == STATUS_OHC_OPEN ||
+                                            $medicine_receiving->approve_status == STATUS_OHC_CLOSE)
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">EHS Verification</h4>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="row">
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                                    <div class="view_data">
+                                                        {{ getUsername(isset($ehsverify->created_by) ? $ehsverify->created_by : '') }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">{{ __('Approved Date') }}</label>
+                                                    <div class="view_data">
+                                                        {{ displaydateformat(isset($ehsverify->created_at) ? $ehsverify->created_at : '') }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">{{ __('Approved Time') }}</label>
+                                                    <div class="view_data">
+                                                        {{ displaytimeformat(isset($ehsverify->created_at) ? $ehsverify->created_at : '') }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-12 form-input">
+                                                    <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                                    <div class="view_data">
+                                                        {{ isset($ehsverify->remarks) ? $ehsverify->remarks : '' }}
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div>
+                                    @if (
+                                        $medicine_receiving->approve_status == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING ||
+                                            $medicine_receiving->approve_status == STATUS_OHC_OPEN ||
+                                            $medicine_receiving->approve_status == STATUS_OHC_CLOSE)
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">L1 EHS Approval</h4>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="row">
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                                    <div class="view_data">
+                                                        {{ getUsername(isset($l1ehsverify->created_by) ? $l1ehsverify->created_by : '') }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">{{ __('Approved Date') }}</label>
+                                                    <div class="view_data">
+                                                        {{ displaydateformat(isset($l1ehsverify->created_at) ? $l1ehsverify->created_at : '') }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">{{ __('Approved Time') }}</label>
+                                                    <div class="view_data">
+                                                        {{ displaytimeformat(isset($l1ehsverify->created_at) ? $l1ehsverify->created_at : '') }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-12 form-input">
+                                                    <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                                    <div class="view_data">
+                                                        {{ isset($l1ehsverify->remarks) ? $l1ehsverify->remarks : '' }}
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div>
+                                    @if ($medicine_receiving->approve_status == STATUS_OHC_OPEN || $medicine_receiving->approve_status == STATUS_OHC_CLOSE)
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">EHS Head Approved</h4>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="row">
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                                    <div class="view_data">
+                                                        {{ getUsername(isset($ehsheadverify->created_by) ? $ehsheadverify->created_by : '') }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">{{ __('Approved Date') }}</label>
+                                                    <div class="view_data">
+                                                        {{ displaydateformat(isset($ehsheadverify->created_at) ? $ehsheadverify->created_at : '') }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">{{ __('Approved Time') }}</label>
+                                                    <div class="view_data">
+                                                        {{ displaytimeformat(isset($ehsheadverify->created_at) ? $ehsheadverify->created_at : '') }}
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-12 form-input">
+                                                    <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                                    <div class="view_data">
+                                                        {{ isset($ehsheadverify->remarks) ? $ehsheadverify->remarks : '' }}
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                               
                             </div>
                         </div>
                     </div>

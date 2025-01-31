@@ -105,7 +105,7 @@ Route::get('cron/master/employee_save', [CronController::class, 'EmployeeSave'])
 Route::get('permit_expiry', [CronController::class, 'permitExpiry']);
 Route::get('permit_close', [CronController::class, 'permitClose']);
 Route::get('stockrequest', [CronController::class, 'stockrequest']);
-
+Route::get('stockupdate', [CronController::class, 'stockupdate']);
 
 Route::get('test', [TestController::class,  'index']);
 
@@ -869,9 +869,11 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('/unique', [MedicineReceivingController::class, 'Uniquecheck']);
             Route::post('/hsn-number', [MedicineReceivingController::class, 'hsnnumber']);
             Route::post('/medicine-list', [MedicineReceivingController::class, 'medicinelist']);
-            Route::get('approval/view/{id}', [MedicineReceivingController::class, 'approvalview']);
+            Route::get('medicineapproval/view/{id}', [MedicineReceivingController::class, 'approvalview']);
             Route::post('requestapproval/submit', [MedicineReceivingController::class, 'requestsubmit']);
-
+            Route::post('ehsapproval/submit', [MedicineReceivingController::class, 'ehssubmit']);
+            Route::post('ehsheadapproval/submit', [MedicineReceivingController::class, 'ehsheadsubmit']);
+            Route::post('stockapproval/submit', [MedicineReceivingController::class, 'stockclosesubmit']);
 
         });
         // Medicine Requistion

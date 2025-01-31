@@ -149,7 +149,10 @@
                             @endif
 
                             {{-- View of the EHS Verification --}}
-                            @if ($medicine_receiving->approve_status == STATUS_OHC_L1_EHS_VERIFICATION_PENDING)
+                            @if (
+                                $medicine_receiving->approve_status == STATUS_OHC_L1_EHS_VERIFICATION_PENDING ||
+                                    $medicine_receiving->approve_status == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING ||
+                                    $medicine_receiving->approve_status == STATUS_OHC_OPEN)
                                 <div class="row">
                                     <div class="card-header-inner">
                                         <h4 class="text-white">EHS Verification</h4>
@@ -185,7 +188,249 @@
                                     </div>
                                 </div>
                             @endif
+                            <div>
+                                @if ($medicine_receiving->approve_status == STATUS_OHC_L1_EHS_VERIFICATION_PENDING)
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">L1 EHS Officer Approval </h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <form method="POST" id="EhsForm"
+                                            action="{{ admin_url('ohc/medicine-receiving-form/ehsapproval/submit') }}">
+                                            @csrf
+                                            <input type="hidden" name="id"
+                                                value="{{ encryptId($medicine_receiving->id) }}">
+                                            <div class="row">
 
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-input">
+                                                        <label for="ehs_head" class="require form-label">Approver
+                                                            Name</label>
+                                                        <input type="text" name="ehs_approver_name"
+                                                            id="ehs_approver_name" class="form-control"
+                                                            value="{{ Auth::user()->name }}" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-input">
+                                                        <label for="ehs_head" class="require form-label">Date</label>
+                                                        <input type="text" name="ehs_date" id="ehs_date"
+                                                            class="form-control" value="{{ date('d-m-Y H:i:s') }}"
+                                                            readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 mb-3">
+                                                    <div class="mb-1 form-input">
+                                                        <label for="remarks" class="form-label require">Remarks</label>
+                                                        <textarea class="form-control @error('remarks') is-invalid @enderror" id="ehs_remarks" name="ehs_remarks"
+                                                            rows="3"></textarea>
+                                                        <div class="text-danger" id="remarks_error"></div>
+                                                        @error('remarks')
+                                                            <span id="remark_error"
+                                                                class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex float-end gap-2 mx-auto">
+                                                <button type="submit" name="action" value="approve"
+                                                    class="btn btn-success w-100">Forward</button>
+                                                {{-- <button type="submit" name="action" value="reject"
+                                        class="btn btn-danger w-100">reject</button> --}}
+                                            </div>
+                                        </form>
+                                    </div>
+                                @endif
+                            </div>
+                            <div>
+                                @if (
+                                    $medicine_receiving->approve_status == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING ||
+                                        $medicine_receiving->approve_status == STATUS_OHC_OPEN)
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">L1 EHS Approval</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="row">
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                                <div class="view_data">
+                                                    {{ getUsername(isset($l1ehsverify->created_by) ? $l1ehsverify->created_by : '') }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Approved Date') }}</label>
+                                                <div class="view_data">
+                                                    {{ displaydateformat(isset($l1ehsverify->created_at) ? $l1ehsverify->created_at : '') }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Approved Time') }}</label>
+                                                <div class="view_data">
+                                                    {{ displaytimeformat(isset($l1ehsverify->created_at) ? $l1ehsverify->created_at : '') }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-12 form-input">
+                                                <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                                <div class="view_data">
+                                                    {{ isset($l1ehsverify->remarks) ? $l1ehsverify->remarks : '' }}
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                            <div>
+                                @if ($medicine_receiving->approve_status == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING)
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white"> EHS Head Approval </h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <form method="POST" id="EhsHeadForm"
+                                            action="{{ admin_url('ohc/medicine-receiving-form/ehsheadapproval/submit') }}">
+                                            @csrf
+                                            <input type="hidden" name="id"
+                                                value="{{ encryptId($medicine_receiving->id) }}">
+                                            <div class="row">
+
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-input">
+                                                        <label for="ehs_head" class="require form-label">Approver
+                                                            Name</label>
+                                                        <input type="text" name="ehs_head_approver_name"
+                                                            id="ehs_head_approver_name" class="form-control"
+                                                            value="{{ Auth::user()->name }}" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-input">
+                                                        <label for="ehs_head_head" class="require form-label">Date</label>
+                                                        <input type="text" name="ehs_head_date" id="ehs_head_date"
+                                                            class="form-control" value="{{ date('d-m-Y H:i:s') }}"
+                                                            readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 mb-3">
+                                                    <div class="mb-1 form-input">
+                                                        <label for="remarks" class="form-label require">Remarks</label>
+                                                        <textarea class="form-control @error('remarks') is-invalid @enderror" id="ehs_head_remarks" name="ehs_head_remarks"
+                                                            rows="3"></textarea>
+                                                        <div class="text-danger" id="remarks_error"></div>
+                                                        @error('remarks')
+                                                            <span id="remark_error"
+                                                                class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex float-end gap-2 mx-auto">
+                                                <button type="submit" name="action" value="approve"
+                                                    class="btn btn-success w-100">Forward</button>
+                                                {{-- <button type="submit" name="action" value="reject"
+                                        class="btn btn-danger w-100">reject</button> --}}
+                                            </div>
+                                        </form>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div>
+                                @if ($medicine_receiving->approve_status == STATUS_OHC_OPEN)
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">EHS Head Approved</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="row">
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                                <div class="view_data">
+                                                    {{ getUsername(isset($ehsheadverify->created_by) ? $ehsheadverify->created_by : '') }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Approved Date') }}</label>
+                                                <div class="view_data">
+                                                    {{ displaydateformat(isset($ehsheadverify->created_at) ? $ehsheadverify->created_at : '') }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Approved Time') }}</label>
+                                                <div class="view_data">
+                                                    {{ displaytimeformat(isset($ehsheadverify->created_at) ? $ehsheadverify->created_at : '') }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-12 form-input">
+                                                <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                                <div class="view_data">
+                                                    {{ isset($ehsheadverify->remarks) ? $ehsheadverify->remarks : '' }}
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                            <div>
+                                @if ($medicine_receiving->approve_status == STATUS_OHC_OPEN)
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">Stock Close</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <form method="POST" id="StockCloseForm"
+                                            action="{{ admin_url('ohc/medicine-receiving-form/stockapproval/submit') }}">
+                                            @csrf
+                                            <input type="hidden" name="id"
+                                                value="{{ encryptId($medicine_receiving->id) }}">
+                                            <div class="row">
+
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-input">
+                                                        <label for="ehs_head" class="require form-label">Approver
+                                                            Name</label>
+                                                        <input type="text" name="stock_approver_name"
+                                                            id="stock_approver_name" class="form-control"
+                                                            value="{{ Auth::user()->name }}" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-input">
+                                                        <label for="stock_head" class="require form-label">Date</label>
+                                                        <input type="text" name="stock_date" id="stock_date"
+                                                            class="form-control" value="{{ date('d-m-Y H:i:s') }}"
+                                                            readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 mb-3">
+                                                    <div class="mb-1 form-input">
+                                                        <label for="remarks" class="form-label require">Remarks</label>
+                                                        <textarea class="form-control @error('remarks') is-invalid @enderror" id="stock_remarks" name="stock_remarks"
+                                                            rows="3"></textarea>
+                                                        <div class="text-danger" id="remarks_error"></div>
+                                                        @error('remarks')
+                                                            <span id="remark_error"
+                                                                class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex float-end gap-2 mx-auto">
+                                                <button type="submit" name="action" value="approve"
+                                                    class="btn btn-success w-100">Close</button>
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -216,7 +461,147 @@
                     },
                 },
                 messages: {
-                    medicine: {
+                    remarks: {
+                        required: "Remarks is required",
+                        minlength: "Minimum 3 characters are needed",
+                        maxlength: "Maximum Characters should not be exceed more than 600",
+                    },
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log("Form has " + errors + " invalid fields.");
+                },
+            });
+        });
+
+        $(function() {
+            // Add custom regex rule
+            $.validator.addMethod(
+                "regex",
+                function(value, element, regex) {
+                    return this.optional(element) || regex.test(value);
+                },
+                "Invalid format."
+            );
+
+            $('#EhsForm').validate({
+                rules: {
+                    ehs_remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 600,
+
+                    },
+                },
+                messages: {
+                    ehs_remarks: {
+                        required: "Remarks is required",
+                        minlength: "Minimum 3 characters are needed",
+                        maxlength: "Maximum Characters should not be exceed more than 600",
+                    },
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log("Form has " + errors + " invalid fields.");
+                },
+            });
+        });
+
+        $(function() {
+            // Add custom regex rule
+            $.validator.addMethod(
+                "regex",
+                function(value, element, regex) {
+                    return this.optional(element) || regex.test(value);
+                },
+                "Invalid format."
+            );
+
+            $('#EhsHeadForm').validate({
+                rules: {
+                    ehs_head_remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 600,
+
+                    },
+                },
+                messages: {
+                    ehs_head_remarks: {
+                        required: "Remarks is required",
+                        minlength: "Minimum 3 characters are needed",
+                        maxlength: "Maximum Characters should not be exceed more than 600",
+                    },
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log("Form has " + errors + " invalid fields.");
+                },
+            });
+        });
+        $(function() {
+            // Add custom regex rule
+            $.validator.addMethod(
+                "regex",
+                function(value, element, regex) {
+                    return this.optional(element) || regex.test(value);
+                },
+                "Invalid format."
+            );
+
+            $('#StockCloseForm').validate({
+                rules: {
+                    stock_remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 600,
+
+                    },
+                },
+                messages: {
+                    stock_remarks: {
                         required: "Remarks is required",
                         minlength: "Minimum 3 characters are needed",
                         maxlength: "Maximum Characters should not be exceed more than 600",
