@@ -57,7 +57,10 @@ class NotificationController extends Controller
                                 $btn = "TRAINING";
                             } elseif ($row->notification_type == 3) {
                                 $btn = "PTW";
+                            }elseif ($row->notification_type == 4) {
+                                $btn = "OHC Management";
                             }
+
                             return $btn;
                         })
                         ->editColumn('mobile_notification', function ($row) {

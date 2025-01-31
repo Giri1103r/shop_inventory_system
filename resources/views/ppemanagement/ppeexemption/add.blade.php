@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Shoe Exemption Add')
+@section('title', 'PPE Shoe Exemption Request')
 @section('pageurl', admin_url('ppe_exemption/list'))
 @section('content')
 

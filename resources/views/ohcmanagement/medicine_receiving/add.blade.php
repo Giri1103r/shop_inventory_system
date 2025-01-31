@@ -43,10 +43,9 @@
                                                         class="form-control form-control-sm single-select"
                                                         style="width: 100%">
                                                         <option value="">Select the Medicine Name</option>
-                                                        @foreach ($medicine as $list)
-                                                            <option value="{{ encryptId($list->id) }}">{{ $list->medicine }}
-                                                            </option>
-                                                        @endforeach
+                                                         @foreach ($medicine_stock as $list )
+                                                             <option value="{{encryptId($list->medicine_id)}}">{{getMedicinename($list->medicine_id)}}</option>
+                                                         @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -123,7 +122,7 @@
                                         <div class="submit-button float-end">
                                             <x-button-submit class="submit" id="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
-                                            <x-button-cancel href="{{ admin_url('ppe_exemption/list') }}"></x-button-cancel>
+                                            <x-button-cancel href="{{ admin_url('ohc/medicine-receiving-form/list') }}"></x-button-cancel>
                                         </div>
                                     </form>
                                 </div>
@@ -148,8 +147,9 @@
 
             });
         });
-        $(document).on('change', '#medicine_id', function() {
-            var medicineId = $(this).val();
+
+        $('#medicine_id').on('change',function() {
+            var medicineId = $('#medicine_id').val();
             if (medicineId) {
                 $.ajax({
                     url: "{{ admin_url('ohc/medicine-receiving-form/hsn-number') }}",

@@ -109,7 +109,7 @@
                                             </div>
                                             <div class="col-md-12">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Remarks</label>
+                                                    <label class="form-label ">Remarks</label>
                                                     <textarea name="remarks" id="remarks" class="form-control" placeholder="Enter the Remarks"></textarea>
                                                     @error('remarks')
                                                     <div class="text-danger">{{ $message }}</div>
@@ -171,9 +171,11 @@
                             url: '{{ admin_url('ohc/medicine/unique') }}',
                             type: 'post',
                             data: {
-                                _token: "{{ csrf_token() }}",
                                 medicine_name: function() {
                                     return $('#medicine').val();
+                                },
+                                unit_id: function() {
+                                    return $('#unit_id').val();
                                 },
                             },
                         },
@@ -189,7 +191,7 @@
                         maxlength: 30,
                         regex: /^[a-zA-Z0-9\s\-]*$/,
                         remote: {
-                            url: '{{ admin_url('ohc/medicine/unique') }}',
+                            url: '{{ admin_url('ohc/medicine/hsn-unique') }}',
                             type: 'post',
                             data: {
                                 hsn: function() {
@@ -200,21 +202,18 @@
                     },
                     unit_id: {
                         required: true,
+
                     },
                     threshold_limit: {
                         required: true,
-                        minlength: 3,
+                        minlength: 2,
                         maxlength: 100,
                         regex: /^[a-zA-Z0-9\s\-]*$/,
                     },
                     expire_date: {
                         required: true,
                     },
-                    remarks: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 600,
-                    },
+
                 },
                 messages: {
                     medicine: {
@@ -222,7 +221,7 @@
                         minlength: "Medicine name must be at least 3 characters.",
                         maxlength: "Medicine name cannot exceed 100 characters.",
                         regex: "Medicine name contains invalid characters.",
-                        remote: "This Medicine Name already exists.",
+                        remote: "This Medicine Name should be unique according to the unit.",
                     },
                     pack: {
                         required: "Pack details Cannot be empty.",
@@ -238,6 +237,8 @@
                     },
                     unit_id: {
                         required: "Please select a unit.",
+
+
                     },
                     threshold_limit: {
                         required: "Please enter the threshold limit.",
@@ -248,11 +249,7 @@
                     expire_date: {
                         required: "Please select the expiry date.",
                     },
-                    remarks: {
-                        required: "Please provide remarks.",
-                        minlength: "Remarks must be at least 3 characters.",
-                        maxlength: "Remarks cannot exceed 600 characters.",
-                    },
+
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {

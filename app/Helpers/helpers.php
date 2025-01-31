@@ -1465,6 +1465,34 @@ if (!function_exists('getMonth')) {
             }
         }
     }
+    if (!function_exists('getMedicinename')) {
+
+        function getMedicinename($userid)
+        {
+
+            $medicine = DB::table('ohc_master_medicine')->select('medicine')->where('id', $userid)->first();
+
+            if ($medicine == null) {
+                return '';
+            } else {
+                return $medicine->medicine;
+            }
+        }
+    }
+    if (!function_exists('gethsn')) {
+
+        function gethsn($userid)
+        {
+
+            $hsn = DB::table('ohc_master_medicine')->select('hsn')->where('id', $userid)->first();
+
+            if ($hsn == null) {
+                return '';
+            } else {
+                return $hsn->hsn;
+            }
+        }
+    }
     function removeUnderScore($string)
     {
         return Str::replace('_', " ", $string);

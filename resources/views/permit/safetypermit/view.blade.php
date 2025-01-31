@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Permit view')
+@section('title', 'Safety Permit')
 @section('pageurl', admin_url('safetypermit/list'))
 
 
@@ -971,7 +971,7 @@
                         </div>
                     @endif
 
-        
+
                     <div class="card-body ">
                         <div class="row">
                             <div class="card-header-inner">

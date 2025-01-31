@@ -14,9 +14,6 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
-                        @if (CheckUserPermission('import'))
-                            <x-button-import href="{{ admin_url('ohc/vendor/import') }}"></x-button-import>
-                        @endif
 
                         {{-- @if (CheckUserPermission('add')) --}}
                             <x-button-add dataId="" class="add btn btn-primary ms-1"

@@ -103,7 +103,7 @@ class FirstAidLocationController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                  dd($ex);
+                  report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -396,7 +396,7 @@ class FirstAidLocationController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
         }
     }
 

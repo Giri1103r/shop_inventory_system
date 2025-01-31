@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Permit Add')
+@section('title', 'Safety Permit')
 @section('pageurl', admin_url('safetypermit/list'))
 
 
@@ -2050,14 +2050,14 @@
                     exact_location_job: {
                         required: true,
                         minlength: 3,
-                        maxlength: 30,
-                        regex: /^[a-zA-Z0-9, ]{3,30}$/
+                        maxlength: 500,
+                        regex: /^[a-zA-Z0-9, ]{3,500}$/
                     },
                     job_location_area: {
                         required: true,
                         minlength: 3,
-                        maxlength: 30,
-                        regex: /^[a-zA-Z0-9, ]{3,30}$/
+                        maxlength: 500,
+                        regex: /^[a-zA-Z0-9, ]{3,500}$/
                     },
 
                     'sub_permit[]': {
@@ -2112,14 +2112,14 @@
                     },
                     exact_location_job: {
                         required: "Exact Job Location cannot be empty.",
-                        minlength: "Exact Job Location between 3 and 30 characters.",
-                        maxlength: "Exact Job Location between 3 and 30 characters.",
+                        minlength: "Exact Job Location between 3 and 500 characters.",
+                        maxlength: "Exact Job Location between 3 and 500 characters.",
                         regex: "Exact Job Location contains only the letters and numbers",
                     },
                     job_location_area: {
                         required: "Job Location Area cannot be empty.",
-                        minlength: "Job Location Area between 3 and 30 characters.",
-                        maxlength: "Job Location Area between 3 and 30 characters.",
+                        minlength: "Job Location Area between 3 and 500 characters.",
+                        maxlength: "Job Location Area between 3 and 500 characters.",
                         regex: "Job Location Area contains only the letters and numbers",
                     },
                     'sub_permit[]': {

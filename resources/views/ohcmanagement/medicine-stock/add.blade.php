@@ -37,7 +37,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="unit_name" class="form-label require ">Unit
-                                                        </label>
+                                                    </label>
                                                     <select name="unit_id" id="unit_id"
                                                         class="form-control form-control-sm single-select"
                                                         style="width: 100%">
@@ -57,22 +57,33 @@
                                                         class="form-control form-control-sm single-select"
                                                         style="width: 100%">
                                                         <option value="">Select the Medicine Name</option>
-                                                        @foreach ($medicine as $list)
-                                                            <option value="{{ encryptId($list->id) }}">
-                                                                {{ $list->medicine }}</option>
-                                                        @endforeach
+
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="hsn_id" class="form-label require">threshold Limit</label>
+                                                    <label for="hsn_id" class="form-label require">Threshold Limit</label>
                                                     <input type="text" name="threshold_limit" id="threshold_limit"
                                                         class="form-control" readonly>
-                                                    <input type="hidden" name="threshold_limit" id="threshold_limit_id">
                                                 </div>
                                             </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label for="hsn_id" class="form-label require">HSN Number</label>
+                                                    <input type="text" name="hsn_number" id="hsn_number"
+                                                        class="form-control" readonly>
+                                                    <input type="hidden" name="hsn_number" id="hsn_number_id">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label for="hsn_id" class="form-label require">Expire Date</label>
+                                                    <input type="text" name="expire_date" id="expire_date"
+                                                        class="form-control"readonly>
 
+                                                </div>
+                                            </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="quantity" class="form-label require ">Quantity</label>
@@ -81,27 +92,26 @@
                                                 </div>
                                             </div>
 
-                                            </div>
+                                        </div>
 
 
-                                        </div>
-                                        <hr>
-                                        <div class="submit-button float-end">
-                                            <x-button-submit class="submit" id="submit"></x-button-submit>
-                                            <x-button-reset class="submit"></x-button-reset>
-                                            <x-button-cancel
-                                                href="{{ admin_url('ppe_exemption/list') }}"></x-button-cancel>
-                                        </div>
-                                    </form>
                                 </div>
+                                <hr>
+                                <div class="submit-button float-end">
+                                    <x-button-submit class="submit" id="submit"></x-button-submit>
+                                    <x-button-reset class="submit"></x-button-reset>
+                                    <x-button-cancel href="{{ admin_url('ppe_exemption/list') }}"></x-button-cancel>
+                                </div>
+                                </form>
                             </div>
-
                         </div>
+
                     </div>
                 </div>
             </div>
         </div>
-        </form>
+    </div>
+    </form>
 
 
 
@@ -118,36 +128,60 @@
 
             });
         });
+        $(document).on('change', '#unit_id', function() {
+            var unitId = $(this).val();
+            if (unitId) {
+                $.ajax({
+                    url: "{{ admin_url('ohc/medicine-stock-inventory/ajax-list') }}/" + unitId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#medicine_id').empty().append(
+                            '<option value="">Select Medicine Name</option>');
+                        $.each(data, function(key, value) {
+                            $('#medicine_id').append('<option value="' + value.id + '">' + value
+                                .name + '</option>');
+                        });
+                        $('#medicine_id').trigger('change');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching medicine. Please try again.');
+                    }
+                });
+            } else {
+                $('#medicine_id').empty().append('<option value="">Select Medicine Name</option>').trigger(
+                    'change');
+            }
+        });
+
         $(document).on('change', '#medicine_id', function() {
             var medicineId = $(this).val();
             if (medicineId) {
                 $.ajax({
-                    url: "{{ admin_url('ohc/medicine-stock-inventory/threshold-limit') }}",
-                    type: 'POST',
-                    data: {
-                        medicine_id: medicineId,
-                    },
+                    url: "{{ admin_url('ohc/medicine-stock-inventory/stocklist') }}/" + medicineId,
+                    type: 'GET',
                     dataType: 'json',
                     success: function(data) {
                         console.log('Response data:', data);
-
-
-                        if (data && data.id && data.text && data.encrypted_id) {
-                            $('#threshold_limit').val(data.text);
-                            $('#threshold_limit_id').val(data.id);
+                        if (data && data.id && data.threshold_limit) {
+                            $('#threshold_limit').val(data.threshold_limit);
+                            $('#hsn_number').val(data.hsn);
+                            $('#hsn_number_id').val(data.id);
+                            $('#expire_date').val(data.expire_date);
                         } else {
                             alert('Threshold Limit is incomplete or invalid.');
                         }
                     },
                     error: function(xhr) {
-                        console.error(xhr);
-                        alert('Error fetching Threshold limit. Please try again.');
-                    },
+                        alert('Error fetching medicine details. Please try again.');
+                    }
                 });
             } else {
-
-                $('#threshold_limit').val('').prop('readonly', true);
+                $('#threshold_limit').val('');
                 $('#threshold_limit_id').val('');
+                $('#hsn_number').val('');
+                $('#hsn_number_id').val('');
+                $('#expire_date').val('');
             }
         });
 
@@ -165,16 +199,7 @@
                 rules: {
                     medicine_id: {
                         required: true,
-                        remote: {
-                            url: '{{ admin_url('ohc/medicine-stock-inventory/unique') }}',
-                            type: 'post',
-                            data: {
-                                _token: "{{ csrf_token() }}",
-                                medicine_id: function() {
-                                    return $('#medicine_id').val();
-                                },
-                            },
-                        },
+                      
                     },
                     unit_id: {
                         required: true,
@@ -193,7 +218,7 @@
                 messages: {
                     medicine_id: {
                         required: "Please select the medicine name.",
-                        remote:"Medicine name should Be unique",
+                        remote: "Medicine name should Be unique",
                     },
                     unit_id: {
                         required: "Please select the Unit name .",

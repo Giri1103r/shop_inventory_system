@@ -96,7 +96,7 @@ class EmployeecumPatientController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -160,7 +160,7 @@ class EmployeecumPatientController extends Controller
             return redirect(admin_url('ohc/employee-cum-patient/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/employee-cum-patient/list'));
         }
@@ -237,7 +237,7 @@ class EmployeecumPatientController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('ohc/employee-cum-patient/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/employee-cum-patient/list'));
         }
