@@ -34,6 +34,7 @@ use App\Models\Master\SafeWork;
 use App\Models\Master\Precaution;
 use App\Models\Master\Checklist;
 use App\Models\Master\Employee;
+use App\Models\Master\Work;
 use App\Models\Master\Department;
 use Illuminate\Support\Facades\Session;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -349,11 +350,15 @@ class SafetyPermitController extends Controller
 
                 return redirect(admin_url('safetypermit/list'));
             } catch (Exception $ex) {
+
+                dd($ex);
                 report($ex);
                 Session::flash('error', 'Something went wrong Please try again after some time');
                 return redirect(admin_url('safetypermit/list'));
             }
         } catch (Exception $ex) {
+            dd($ex);
+
             report($ex);
             Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
@@ -1428,24 +1433,61 @@ class SafetyPermitController extends Controller
         return response()->json($getinstruction);
     }
 
+    // public function employeename(Request $request)
+    // {
+    //     $name = $request->input('search');
+
+    //     $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
+    //         ->where('status', 1)
+    //         ->limit(10)
+    //         ->get();
+
+
+    //     return response()->json(
+    //         $employees->map(function ($employee) {
+    //             return [
+    //                 'id' => $employee->id,
+    //                 'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+    //             ];
+    //         })
+    //     );
+    // }
+
     public function employeename(Request $request)
     {
-        $name = $request->input('search');
+        $name = trim(preg_replace('/\s+/', ' ', $request->input('search')));
 
         $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
             ->where('status', 1)
             ->limit(10)
             ->get();
 
-        return response()->json(
-            $employees->map(function ($employee) {
-                return [
-                    'id' => $employee->id,
-                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
-                ];
-            })
-        );
+        $work = Work::where('emp_name', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(20)
+            ->get();
+
+        $work = collect($work);
+
+        $employeeResults = $employees->map(function ($employee) {
+            return [
+                'id' =>  $employee->emp_id,
+                'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+            ];
+        });
+
+        $workResults = $work->map(function ($worker) {
+            return [
+                'id' => $worker->emp_id,
+                'text' => $worker->emp_name . ' - ' . $worker->emp_id,
+            ];
+        });
+
+        $results = $employeeResults->concat($workResults)->values();
+
+        return response()->json($results);
     }
+
 
     public function reassignemployeename(Request $request)
     {
@@ -1469,44 +1511,119 @@ class SafetyPermitController extends Controller
         );
     }
 
+    // public function employeeid(Request $request)
+    // {
+    //     $name = $request->input('search');
+
+    //     $permit_id = decryptId($request->input('permit_id'));
+
+
+    //     $emp_ids = $this->workmaninvolved->getempIds($permit_id);
+
+    //     if ($permit_id) {
+
+    //         $employee_code = Employee::whereIn('id', $emp_ids)
+    //             ->where('emp_id', 'like', '%' . $name . '%')
+    //             ->where('status', 1)
+    //             ->limit(10)
+    //             ->get();
+    //     } else {
+    //         $employee_code = Employee::where('emp_id', 'like', '%' . $name . '%')
+    //             ->where('status', 1)
+    //             ->limit(10)
+    //             ->get();
+    //     }
+
+    //     return response()->json(
+    //         $employee_code->map(function ($employee) {
+    //             return [
+    //                 'id' => $employee->id,
+    //                 'text' => $employee->emp_id,
+    //             ];
+    //         })
+    //     );
+    // }
+
+
     public function employeeid(Request $request)
     {
         $name = $request->input('search');
-
         $permit_id = decryptId($request->input('permit_id'));
-
 
         $emp_ids = $this->workmaninvolved->getempIds($permit_id);
 
         if ($permit_id) {
-
-            $employee_code = Employee::whereIn('id', $emp_ids)
+            $employees = Employee::whereIn('id', $emp_ids)
                 ->where('emp_id', 'like', '%' . $name . '%')
                 ->where('status', 1)
                 ->limit(10)
                 ->get();
         } else {
-            $employee_code = Employee::where('emp_id', 'like', '%' . $name . '%')
+            $employees = Employee::where('emp_id', 'like', '%' . $name . '%')
                 ->where('status', 1)
                 ->limit(10)
                 ->get();
         }
 
-        return response()->json(
-            $employee_code->map(function ($employee) {
-                return [
-                    'id' => $employee->id,
-                    'text' => $employee->emp_id,
-                ];
-            })
-        );
+
+        $work = Work::where('emp_id', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+        $employeeResults = $employees->map(function ($employee) {
+            return [
+                'id' =>  $employee->emp_id,
+                'text' => $employee->emp_id,
+            ];
+        });
+
+        $workResults = $work->map(function ($worker) {
+            return [
+                'id' =>  $worker->emp_id,
+                'text' => $worker->emp_id,
+            ];
+        });
+
+
+        $results = $employeeResults->concat($workResults)->values();
+
+        return response()->json($results);
     }
+
+
+    // public function fetchEmployeeDetails($emp_id)
+    // {
+    //     $employee = Employee::select('emp_name', 'email', 'department', 'designation')
+    //         ->where('id', $emp_id)
+    //         ->first();
+
+    //     $work = Work::select('emp_name', 'department', 'designation')
+    //         ->where('id', $emp_id)
+    //         ->first();
+
+    //     $departments = $this->department->select('id', 'department_name')->where('status', '1')->get();
+
+    //     return response()->json([
+    //         'employee' => $employee,
+    //         'departments' => $departments
+    //     ]);
+    // }
 
     public function fetchEmployeeDetails($emp_id)
     {
         $employee = Employee::select('emp_name', 'email', 'department', 'designation')
-            ->where('id', $emp_id)
+            ->where('emp_id', $emp_id)
             ->first();
+        if (!$employee) {
+            $employee = Work::select('emp_name', 'department', 'designation')
+                ->where('emp_id', $emp_id)
+                ->first();
+        }
+
+        if (!$employee) {
+            return response()->json(['error' => 'Employee not found'], 404);
+        }
 
         $departments = $this->department->select('id', 'department_name')->where('status', '1')->get();
 
@@ -1515,6 +1632,8 @@ class SafetyPermitController extends Controller
             'departments' => $departments
         ]);
     }
+
+
 
     public function permitQRPDF($id)
     {
@@ -1635,7 +1754,7 @@ class SafetyPermitController extends Controller
             $data = [
                 'safetypermit' => $safetypermit,
                 'showAlert' => $safetypermit->reference_id != null, // Pass a flag to the view
-                'totime' => $safetypermit->time_to , // Pass a flag to the view
+                'totime' => $safetypermit->time_to, // Pass a flag to the view
             ];
 
             return view('permit.safetypermit.permitextension', $data);
@@ -1655,13 +1774,13 @@ class SafetyPermitController extends Controller
             $workmanInvolved = $this->workmaninvolved->getworkmanData($id);
             $duplicateData = $this->safetypermit->Duplicatepermitdata($id);
 
-                // if ($duplicateData) {
-                //    Session::flash('error','You have already created the Permit for this ID');
-                //    return redirect('safetypermit/list');
-                // }
+            // if ($duplicateData) {
+            //    Session::flash('error','You have already created the Permit for this ID');
+            //    return redirect('safetypermit/list');
+            // }
 
 
-            $newSafetypermit = $this->safetypermit->CreateData($safetypermit,$id);
+            $newSafetypermit = $this->safetypermit->CreateData($safetypermit, $id);
             $this->workmaninvolved->CreateExpireData($newSafetypermit, $workmanInvolved);
             $permit_status = STATUS_PERMIT_EXTENDED;
             $approve =   $this->safetyPermitExtension->store($permit_status, $id);
@@ -1727,12 +1846,12 @@ class SafetyPermitController extends Controller
             );
             $this->statuslog->create($insert_array);
 
-            Session::flash('success','Safety permit Is created Successfully');
+            Session::flash('success', 'Safety permit Is created Successfully');
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error','Something went wrong plese try again after some time');
+            Session::flash('error', 'Something went wrong plese try again after some time');
             return redirect(admin_url('safetypermit/list'));
         }
     }

@@ -1008,7 +1008,6 @@
                         url: "{{ url('safetypermit/fetchEmployeeDetails') }}/" + emp_id,
                         type: "GET",
                         success: function(data) {
-
                             if (data.employee) {
 
                                 currentRow.find('input[name="workman_name"]').val(data.employee
@@ -1135,6 +1134,33 @@
                 $(this).closest("tr").remove();
             });
 
+            // $('#employeenameshutdown,#employeenameloto').select2({
+            //     ajax: {
+            //         url: '{{ admin_url('safetypermit/employeename') }}',
+            //         dataType: 'json',
+            //         delay: 250,
+            //         data: function(params) {
+            //             return {
+            //                 search: params.term
+            //             };
+            //         },
+            //         processResults: function(data) {
+            //             return {
+            //                 results: $.map(data, function(item) {
+            //                     return {
+            //                         id: item.id,
+            //                         text: item.text
+            //                     };
+            //                 })
+            //             };
+            //         }
+            //     },
+            //     minimumInputLength: 1,
+            //     dropdownCssClass: 'form-control',
+            //     selectionCssClass: 'form-control'
+            // });
+
+
             $('#employeenameshutdown,#employeenameloto').select2({
                 ajax: {
                     url: '{{ admin_url('safetypermit/employeename') }}',
@@ -1160,6 +1186,7 @@
                 dropdownCssClass: 'form-control',
                 selectionCssClass: 'form-control'
             });
+
 
 
             $('#shutdown-checkbox').on('change', function() {
