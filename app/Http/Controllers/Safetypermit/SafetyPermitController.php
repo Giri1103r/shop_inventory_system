@@ -144,7 +144,7 @@ class SafetyPermitController extends Controller
                             }
 
                             if (CheckUserPermission('edit')) {
-                                if (($row->created_by == Auth::id() && ($row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||  $row->permit_status == STATUS_EHS_DECLINE))) {
+                                if (($row->created_by == Auth::id() &&  ($row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||  $row->permit_status == STATUS_EHS_DECLINE) || checkUserRole(ROLE_EHS_OFFICER) && ($row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||  $row->permit_status == STATUS_EHS_DECLINE))) {
                                     $btn .= '<a href="' . admin_url('safetypermit/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                                 }
                             }
@@ -395,6 +395,7 @@ class SafetyPermitController extends Controller
                     'status_log' => $status_log,
 
                 );
+                // dd($data);
             }
             return view('permit.safetypermit.view', $data);
         } catch (Exception $ex) {
@@ -651,12 +652,7 @@ class SafetyPermitController extends Controller
 
             $id = $request->permit_id;
             $safetypermit = $this->safetypermit->find($id);
-
-            if ($request->has('verify')) {
-                $permit_status = STATUS_EHS_APPROVE_PENDING;
-            }
-
-
+            $permit_status = STATUS_EHS_APPROVE_PENDING;
 
             $approve =   $this->approvereject->ehsverification($permit_status);
             $this->safetypermitehsfile->store($approve, $permit_status);
@@ -713,7 +709,6 @@ class SafetyPermitController extends Controller
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
-
             $insert_array = array(
                 'permit_type' => 1,
                 'permit_id' => $id,
@@ -723,11 +718,13 @@ class SafetyPermitController extends Controller
                 'remarks' => $request->ehs_verification_remarks,
                 'approved_by' => Auth::id(),
             );
+
+
             $this->statuslog->create($insert_array);
 
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
         }
@@ -1401,80 +1398,89 @@ class SafetyPermitController extends Controller
     public function getprotectivechecklist(Request $request, $workId)
     {
         $id = decryptId($request->input('id'));
+        $workId = decryptId($workId);
 
         $checkpoints = $this->typeofworkchecklist->getprotectiveequipment($workId, 'type1');
-
-        return response()->json($checkpoints);
+        if ($request->ajax()) {
+            return response()->json($checkpoints);
+        } else {
+            return response()->json(['error', 'Something went wrong please try again after some time']);
+        }
     }
 
-    public function getequipmentinvolved($workId)
+    public function getequipmentinvolved(Request $request, $workId)
     {
-
+        $workId = decryptId($workId);
         $getequipmentinvolved = $this->typeofworkchecklist->getequipmentinvolved($workId, 'type2');
-        return response()->json($getequipmentinvolved);
+        if ($request->ajax()) {
+            return response()->json($getequipmentinvolved);
+        } else {
+            return response()->json(['error', 'Something went wrong please try again after some time']);
+        }
     }
 
-    public function getprecaution($workId)
+    public function getprecaution(Request $request, $workId)
     {
+        $workId = decryptId($workId);
         $getprecaution = $this->typeofworkchecklist->getprecaution($workId, 'type3');
-        return response()->json($getprecaution);
+        if ($request->ajax()) {
+            return response()->json($getprecaution);
+        } else {
+            return response()->json(['error', 'Something went wrong please try again after some time']);
+        }
     }
 
-    public function getchecklist($workId)
+    public function getchecklist(Request $request, $workId)
     {
-
+        $workId = decryptId($workId);
         $getchecklist = $this->typeofworkchecklist->getchecklist($workId, 'type4');
-        return response()->json($getchecklist);
+        if ($request->ajax()) {
+            return response()->json($getchecklist);
+        } else {
+            return response()->json(['error', 'Something went wrong please try again after some time']);
+        }
     }
 
-    public function getinstruction($workId)
+    public function getinstruction(Request $request, $workId)
     {
+        $workId = decryptId($workId);
         $getinstruction = $this->typeofworkchecklist->getinstruction($workId, 'type5');
-        return response()->json($getinstruction);
+        if ($request->ajax()) {
+            return response()->json($getinstruction);
+        } else {
+            return response()->json(['error', 'Something went wrong please try again after some time']);
+        }
     }
-
-    // public function employeename(Request $request)
-    // {
-    //     $name = $request->input('search');
-
-    //     $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
-    //         ->where('status', 1)
-    //         ->limit(10)
-    //         ->get();
-
-
-    //     return response()->json(
-    //         $employees->map(function ($employee) {
-    //             return [
-    //                 'id' => $employee->id,
-    //                 'text' => $employee->emp_name . ' - ' . $employee->emp_id,
-    //             ];
-    //         })
-    //     );
-    // }
 
     public function employeename(Request $request)
     {
-        $name = trim(preg_replace('/\s+/', ' ', $request->input('search')));
+        $name = $request->input('search');
 
         $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
             ->where('status', 1)
             ->limit(10)
             ->get();
 
+
+        return response()->json(
+            $employees->map(function ($employee) {
+                return [
+                    'id' => $employee->id,
+                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+                ];
+            })
+        );
+    }
+
+    public function workername(Request $request)
+    {
+        $name = trim(preg_replace('/\s+/', ' ', $request->input('search')));
+
+
         $work = Work::where('emp_name', 'like', '%' . $name . '%')
             ->where('status', 1)
             ->limit(20)
             ->get();
-
-        $work = collect($work);
-
-        $employeeResults = $employees->map(function ($employee) {
-            return [
-                'id' =>  $employee->emp_id,
-                'text' => $employee->emp_name . ' - ' . $employee->emp_id,
-            ];
-        });
 
         $workResults = $work->map(function ($worker) {
             return [
@@ -1483,9 +1489,7 @@ class SafetyPermitController extends Controller
             ];
         });
 
-        $results = $employeeResults->concat($workResults)->values();
-
-        return response()->json($results);
+        return response()->json($workResults );
     }
 
 

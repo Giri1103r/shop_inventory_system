@@ -515,8 +515,7 @@ $request = request();
     {
         $data = $this->select(
             'ptw_safety.*',
-            'shut_down_takenby_employee.emp_name as shut_down_takenby',
-            'loto_takenby_employee.emp_name as loto_takenby',
+
             DB::raw("(SELECT GROUP_CONCAT(work_name SEPARATOR ', ')
                       FROM ptw_masters_typeofwork
                       WHERE FIND_IN_SET(ptw_masters_typeofwork.id, ptw_safety.sub_permit)
@@ -538,8 +537,7 @@ $request = request();
             })
             ->leftJoin('ptw_masters_typeofwork_checklist', 'ptw_masters_typeofwork_checklist.typeofwork_id', '=', 'ptw_masters_typeofwork.id')
             ->leftJoin('ptw_masters_typeofwork_upload', 'ptw_masters_typeofwork_upload.typeofwork_id', '=', 'ptw_masters_typeofwork.id')
-            ->leftJoin('masters_employee as shut_down_takenby_employee', 'shut_down_takenby_employee.id', '=', 'ptw_safety.shut_down_takenby')
-            ->leftJoin('masters_employee as loto_takenby_employee', 'loto_takenby_employee.id', '=', 'ptw_safety.loto_takenby')
+           
             ->where('ptw_safety.id', $id)
             ->where('ptw_safety.trash', 'NO')
             ->where('ptw_masters_typeofwork_upload.trash', 'NO')

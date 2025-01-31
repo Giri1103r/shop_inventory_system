@@ -20,8 +20,10 @@ use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Backtrace\Arguments\ReducedArgument\ReducedArgument;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -50,7 +52,7 @@ class MedicineReceivingController extends Controller
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->editColumn('medicine_id', function ($row) {
-                            return $row->medicine;
+                            return getMedicinename($row->medicine_id);
                         })
                         ->editColumn('pack_id', function ($row) {
                             return $row->pack;
@@ -82,14 +84,16 @@ class MedicineReceivingController extends Controller
                         ->editColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
-                            $btn .= '<a href="' . admin_url('ohc/medicine-receiving-form/view/' . encryptId($row->ohc_management_medicine_receiving_id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn .= '<a href="' . admin_url('ohc/medicine-receiving-form/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
                             // if (CheckUserPermission('edit')) {
-                            $btn .= '<a href="' . admin_url('ohc/medicine-receiving-form/edit/' . encryptId($row->ohc_management_medicine_receiving_id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
+                            $btn .= '<a href="' . admin_url('ohc/medicine-receiving-form/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             // }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
-                            $btn .= '<a href="' . admin_url('ohc/medicine-receiving-form/medicineapproval/view/' . encryptId($row->ohc_management_medicine_receiving_id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
-
+                            $btn .= '<a href="' . admin_url('ohc/medicine-receiving-form/medicineapproval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            $btn .= '<a href="' . admin_url('ohc/medicine-receiving-form/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                        </a>';
                             return $btn;
                         })
 
@@ -101,7 +105,7 @@ class MedicineReceivingController extends Controller
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    report($ex);
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
                 }
             }
@@ -172,7 +176,7 @@ class MedicineReceivingController extends Controller
 
             try {
 
-// dd($request->all());
+                // dd($request->all());
                 $this->medicine_receiving->store();
 
 
@@ -277,18 +281,19 @@ class MedicineReceivingController extends Controller
                 $vendor = $this->vendor->where('id', $id)->select('vendor_name')->first();
                 $ehsverify = $this->ohc_status->ehsverifydata($id);
                 $l1ehsverify = $this->ohc_status->ehsL1verifydata($id);
-                $ehsheadverify = $this->ohc_status->jjehsheadstatuslog($id);
+                $ehsheadverify = $this->ohc_status->ehsheadverifydata($id);
                 $stockopen = $this->ohc_status->stockopen($id);
                 $data = array(
                     'medicine_receiving' => $medicine_receiving,
                     'medicine' => $medicine,
                     'vendor' => $vendor,
                     'ehsverify' => $ehsverify,
-                    'l1ehsverify'=>$l1ehsverify,
-                    'ehsheadverify'=>$ehsheadverify,
-                    'stockopen'=>$stockopen,
+                    'l1ehsverify' => $l1ehsverify,
+                    'ehsheadverify' => $ehsheadverify,
+                    'stockopen' => $stockopen,
 
                 );
+                // dd($data);
             }
             return view('ohcmanagement.medicine_receiving.view', $data);
         } catch (Exception $ex) {
@@ -316,9 +321,9 @@ class MedicineReceivingController extends Controller
                     'medicine' => $medicine,
                     'vendor' => $vendor,
                     'ehsverify' => $ehsverify,
-                    'l1ehsverify'=>$l1ehsverify,
-                    'ehsheadverify'=>$ehsheadverify,
-                    'stockopen'=>$stockopen,
+                    'l1ehsverify' => $l1ehsverify,
+                    'ehsheadverify' => $ehsheadverify,
+                    'stockopen' => $stockopen,
                 );
             }
             return view('ohcmanagement.medicine_receiving.approve', $data);
@@ -717,6 +722,55 @@ class MedicineReceivingController extends Controller
         }
     }
 
+    public function generalpdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            if (Auth::check()) {
+                $medicine_receiving = $this->medicine_receiving->selectOne($id);
+            }
+
+            $ehsverify = $this->ohc_status->ehsverifydata($id);
+            $l1ehsverify = $this->ohc_status->ehsL1verifydata($id);
+            $ehsheadverify = $this->ohc_status->ehsheadverifydata($id);
+            $stockopen = $this->ohc_status->stockopen($id);
+            $medicine = $this->medicine->where('id', $id)->select('medicine', 'hsn', 'pack')->first();
+            $vendor = $this->vendor->where('id', $id)->select('vendor_name')->first();
+            $data = [
+                'medicine_receiving' => $medicine_receiving,
+                'medicine' => $medicine,
+                'vendor' => $vendor,
+                'ehsverify' => $ehsverify,
+                'l1ehsverify' => $l1ehsverify,
+                'ehsheadverify' => $ehsheadverify,
+                'stockopen' => $stockopen,
+                'pagetitle' => "Medicine Receiving Stock  Details",
+            ];
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('ohcmanagement.medicine_receiving.generalpdf', $data)->render();
+            $mpdf->WriteHTML($html);
+
+            $filename = "Medicine Receiving Stock Details.pdf";
+            return $mpdf->Output($filename, 'I');
+        } catch (Exception $ex) {
+            dd($ex);
+            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+        }
+    }
+
     public function ExportPdf(Request $request)
     {
 
@@ -776,17 +830,27 @@ class MedicineReceivingController extends Controller
     }
     public function hsnnumber(Request $request)
     {
-        $medicineID = decryptId($request->medicine_id);
-        $hsnnumber = $this->medicine->hsnajaxData($medicineID);
-
+        $medicineId = decryptId($request->medicine_id);
+        $hsnnumber = $this->medicine_stock->where('id', $medicineId)->select('hsn_number', 'id')->first();
+        $getHsn = $this->medicine->where('id',  $hsnnumber->hsn_number)->pluck('hsn')->first();
         if ($hsnnumber) {
             return response()->json([
                 'id' => $hsnnumber->id,
-                'text' => $hsnnumber->hsn,
+                'text' => $getHsn,
                 'encrypted_id' => encrypt($hsnnumber->id),
             ]);
         }
 
         return response()->json(['error' => 'No HSN number found'], 404);
+    }
+    public function checkExistmedicineId(Request $request){
+        $medicineId = decryptId($request->medicine_id);
+
+        $data = $this->medicine_receiving->where('medicine_id',$medicineId)->where('status',1)->get();
+
+        if ($data->count()) {
+            return Response::json(false);
+        }//dd($data);
+        return Response::json(true);
     }
 }

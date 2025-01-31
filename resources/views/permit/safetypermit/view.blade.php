@@ -664,7 +664,7 @@
                                     <tbody id="workman-list-entries">
                                         @if (empty($workmaninvolved) ||
                                                 $workmaninvolved->every(function ($item) {
-                                                    return is_null($item->employee_id) &&
+                                                    return is_null($item->emp_id) &&
                                                         is_null($item->workman_name) &&
                                                         is_null($item->workman_desig) &&
                                                         is_null($item->department_name) &&
@@ -676,7 +676,7 @@
                                         @else
                                             @foreach ($workmaninvolved as $workman)
                                                 <tr>
-                                                    <td>{{ $workman->employee_id }}</td>
+                                                    <td>{{ $workman->emp_id }}</td>
                                                     <td>{{ $workman->workman_name }}</td>
                                                     <td>{{ $workman->workman_desig }}</td>
                                                     <td>{{ $workman->department_name }}</td>

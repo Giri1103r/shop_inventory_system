@@ -220,7 +220,113 @@
                                         </div>
                                     @endif
                                 </div>
-                               
+                                <div class="row mt-2">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Status Logs</h4>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <div class="col-md-12">
+                                        <table class="table table-bordered table-hover">
+
+                                            <thead>
+                                                <th>From Status</th>
+                                                <th>To Status</th>
+                                                <th>Approved By</th>
+                                                <th>Remarks</th>
+                                                <th>Created Date</th>
+                                            </thead>
+
+                                            <tbody>
+                                                <tr>
+                                                    <td> <span class='badge bg-info' style='font-size: 1.0em;'>Stock
+                                                            Request</span></td>
+                                                    <td> <span class='badge bg-info' style='font-size: 1.0em;'>EHS
+                                                            Verification Pending</span></td>
+                                                    <td> {{ getUsername(isset($medicine_receiving->created_by) ? $medicine_receiving->created_by : '') }}
+                                                    </td>
+                                                    <td>
+                                                        <p>-</p>
+                                                    </td>
+                                                    <td> {{ Displaydateformat(isset($medicine_receiving->created_at) ? $medicine_receiving->created_at : '') }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> <span class='badge bg-info' style='font-size: 1.0em;'>EHS
+                                                        Verification Pending</span></td>
+                                                        <td>
+                                                            @if (isset($ehsverify['to_status']) && $ehsverify['to_status'] == STATUS_OHC_EHS_VERIFICATION_PENDING)
+                                                                <span class='badge bg-info' style='font-size: 1.0em;'>L1 EHS officer Approval Pending</span>
+
+                                                            @else
+                                                                <p>-</p>
+                                                            @endif
+                                                        </td>
+
+                                                    <td> {{ getUsername(isset($ehsverify->created_by) ? $ehsverify->created_by : '') }}
+                                                    </td>
+                                                    <td>{{ isset($ehsverify->remarks) ? $ehsverify->remarks : '' }}</td>
+                                                    <td> {{ Displaydateformat(isset($ehsverify->created_at) ? $ehsverify->created_at : '') }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> <span class='badge bg-info' style='font-size: 1.0em;'>L1 EHS
+                                                        Verification Pending</span></td>
+                                                        <td>
+                                                            @if (isset($l1ehsverify['to_status']) && $l1ehsverify['to_status'] == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING)
+                                                                <span class='badge bg-info' style='font-size: 1.0em;'>EHS HEAD Approval Pending</span>
+
+                                                            @else
+                                                                <p>-</p>
+                                                            @endif
+                                                        </td>
+
+                                                    <td> {{ getUsername(isset($l1ehsverify->created_by) ? $l1ehsverify->created_by : '') }}
+                                                    </td>
+                                                    <td>{{ isset($l1ehsverify->remarks) ? $l1ehsverify->remarks : '' }}</td>
+                                                    <td> {{ Displaydateformat(isset($l1ehsverify->created_at) ? $l1ehsverify->created_at : '') }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> <span class='badge bg-info' style='font-size: 1.0em;'>EHS Head Approval Pending</span></td>
+                                                        <td>
+                                                            @if (isset($ehsheadverify['to_status']) && $ehsheadverify['to_status'] == STATUS_OHC_OPEN)
+                                                                <span class='badge bg-success' style='font-size: 1.0em;'>Open </span>
+
+                                                            @else
+                                                                <p>-</p>
+                                                            @endif
+                                                        </td>
+
+                                                    <td> {{ getUsername(isset($ehsheadverify->created_by) ? $ehsheadverify->created_by : '') }}
+                                                    </td>
+                                                    <td>{{ isset($ehsheadverify->remarks) ? $ehsheadverify->remarks : '' }}</td>
+                                                    <td> {{ Displaydateformat(isset($ehsheadverify->created_at) ? $ehsheadverify->created_at : '') }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> <span class='badge bg-success' style='font-size: 1.0em;'>Open</span></td>
+                                                        <td>
+                                                            @if (isset($stockopen['to_status']) && $stockopen['to_status'] == STATUS_OHC_CLOSE)
+                                                                <span class='badge bg-info' style='font-size: 1.0em;'>Closed</span>
+
+                                                            @else
+                                                                <p>-</p>
+                                                            @endif
+                                                        </td>
+
+                                                    <td> {{ getUsername(isset($stockopen->created_by) ? $stockopen->created_by : '') }}
+                                                    </td>
+                                                    <td>{{ isset($stockopen->remarks) ? $stockopen->remarks : '' }}</td>
+                                                    <td> {{ Displaydateformat(isset($stockopen->created_at) ? $stockopen->created_at : '') }}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+
+                                        </table>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>

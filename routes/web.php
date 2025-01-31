@@ -715,6 +715,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/getchecklist/{workId}', [SafetyPermitController::class, 'getchecklist']);
                 Route::get('/getinstruction/{workId}', [SafetyPermitController::class, 'getinstruction']);
                 Route::get('/employeename', [SafetyPermitController::class, 'employeename']);
+                Route::get('/workername', [SafetyPermitController::class, 'workername']);
+
                 Route::get('/reassignemployeename', [SafetyPermitController::class, 'reassignemployeename']);
                 Route::get('/employeeid', [SafetyPermitController::class, 'employeeid']);
                 Route::get('/fetchEmployeeDetails/{emp_id}', [SafetyPermitController::class, 'fetchEmployeeDetails']);
@@ -877,6 +879,8 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('ehsapproval/submit', [MedicineReceivingController::class, 'ehssubmit']);
             Route::post('ehsheadapproval/submit', [MedicineReceivingController::class, 'ehsheadsubmit']);
             Route::post('stockapproval/submit', [MedicineReceivingController::class, 'stockclosesubmit']);
+            Route::get('generalpdf/{id}', [MedicineReceivingController::class, 'generalpdf']);
+            Route::post('/checkExistmedicineId', [MedicineReceivingController::class, 'checkExistmedicineId']);
 
         });
         // Medicine Requistion

@@ -43,9 +43,10 @@
                                                         class="form-control form-control-sm single-select"
                                                         style="width: 100%">
                                                         <option value="">Select the Medicine Name</option>
-                                                         @foreach ($medicine_stock as $list )
-                                                             <option value="{{encryptId($list->medicine_id)}}">{{getMedicinename($list->medicine_id)}}</option>
-                                                         @endforeach
+                                                        @foreach ($medicine_stock as $list)
+                                                            <option value="{{ encryptId($list->id) }}">
+                                                                {{ getMedicinename($list->medicine_id) }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -122,7 +123,8 @@
                                         <div class="submit-button float-end">
                                             <x-button-submit class="submit" id="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
-                                            <x-button-cancel href="{{ admin_url('ohc/medicine-receiving-form/list') }}"></x-button-cancel>
+                                            <x-button-cancel
+                                                href="{{ admin_url('ohc/medicine-receiving-form/list') }}"></x-button-cancel>
                                         </div>
                                     </form>
                                 </div>
@@ -148,7 +150,7 @@
             });
         });
 
-        $('#medicine_id').on('change',function() {
+        $('#medicine_id').on('change', function() {
             var medicineId = $('#medicine_id').val();
             if (medicineId) {
                 $.ajax({
@@ -180,6 +182,34 @@
                 $('#hsn_hidden_id').val('');
             }
         });
+        $(document).on("change", "#medicine_id", function() {
+
+            var medicineId = $('#medicine_id').val();
+            if (medicineId) {
+                $.ajax({
+                    url: "{{ admin_url('ohc/medicine-receiving-form/checkExistmedicineId') }}",
+                    type: 'POST',
+                    data: {
+                        medicine_id: medicineId,
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response === true) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Duplicate Entry',
+                                text: 'This medicine already exists in the system!',
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error(xhr);
+                        alert('Error fetching medicine status. Please try again.');
+                    },
+                });
+            }
+        });
+
         $(function() {
 
             $.validator.addMethod(
@@ -194,6 +224,7 @@
                 rules: {
                     medicine_id: {
                         required: true,
+
                     },
                     pack_id: {
                         required: true,

@@ -661,7 +661,7 @@
                                     </thead>
                                     <tbody id="workman-list-entries">
                                         @if (empty($workmaninvolved) || $workmaninvolved->every(function ($item) {
-                                            return is_null($item->employee_id) && is_null($item->workman_name) && is_null($item->workman_desig) && is_null($item->department_name) && is_null($item->nature_of_job);
+                                            return is_null($item->emp_id) && is_null($item->workman_name) && is_null($item->workman_desig) && is_null($item->department_name) && is_null($item->nature_of_job);
                                         }))
                                             <tr>
                                                 <td colspan="5" class="text-center">No data is available</td>
@@ -669,7 +669,7 @@
                                         @else
                                             @foreach ($workmaninvolved as $workman)
                                                 <tr>
-                                                    <td>{{ $workman->employee_id }}</td>
+                                                    <td>{{ $workman->emp_id }}</td>
                                                     <td>{{ $workman->workman_name }}</td>
                                                     <td>{{ $workman->workman_desig }}</td>
                                                     <td>{{ $workman->department_name }}</td>
@@ -755,12 +755,12 @@
                                                     <small>Allowed file types: png, jpeg , jpg</small>
                                                     <div class="preview-container mt-2 d-flex flex-wrap gap-2" id="preview-container-0"></div>
                                                 </div>
-                                               
+
                                             </div>
 
                                         </div>
-                                       
-                                       
+
+
                                     </div>
                                     </div>
                                     <hr>
@@ -1234,7 +1234,7 @@
 <script>
     $(document).ready(function () {
 
-      
+
 
 
         $(document).ready(function () {
@@ -1255,7 +1255,7 @@
         let newFileUploadBlock = `
             <div class="col-md-4 mb-3 file-upload-block">
                 <label for="site_image_${currentFileUploads}" class="form-label require">Site Image</label>
-                <input type="file" class="form-control validate-file-accept validate-file-required"  
+                <input type="file" class="form-control validate-file-accept validate-file-required"
                     accept="image/png, image/jpeg, image/jpg"
                     name="site_images[${currentFileUploads}][]"
                     id="site_image_${currentFileUploads}"
@@ -1282,7 +1282,7 @@
         let fileInputId = input.attr('id').split('_')[2];
         let previewContainer = $('#preview-container-' + fileInputId);
 
-        previewContainer.html(""); 
+        previewContainer.html("");
 
         let files = event.target.files;
         if (files.length > 0) {
