@@ -34,6 +34,7 @@ use App\Models\Master\SafeWork;
 use App\Models\Master\Precaution;
 use App\Models\Master\Checklist;
 use App\Models\Master\Employee;
+use App\Models\Master\Work;
 use App\Models\Master\Department;
 use Illuminate\Support\Facades\Session;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -143,7 +144,7 @@ class SafetyPermitController extends Controller
                             }
 
                             if (CheckUserPermission('edit')) {
-                                if (($row->created_by == Auth::id() && ($row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||  $row->permit_status == STATUS_EHS_DECLINE))) {
+                                if (($row->created_by == Auth::id() &&  ($row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||  $row->permit_status == STATUS_EHS_DECLINE) || checkUserRole(ROLE_EHS_OFFICER) && ($row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||  $row->permit_status == STATUS_EHS_DECLINE))) {
                                     $btn .= '<a href="' . admin_url('safetypermit/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                                 }
                             }
@@ -349,11 +350,15 @@ class SafetyPermitController extends Controller
 
                 return redirect(admin_url('safetypermit/list'));
             } catch (Exception $ex) {
+
+                dd($ex);
                 report($ex);
                 Session::flash('error', 'Something went wrong Please try again after some time');
                 return redirect(admin_url('safetypermit/list'));
             }
         } catch (Exception $ex) {
+            dd($ex);
+
             report($ex);
             Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
@@ -390,6 +395,7 @@ class SafetyPermitController extends Controller
                     'status_log' => $status_log,
 
                 );
+                // dd($data);
             }
             return view('permit.safetypermit.view', $data);
         } catch (Exception $ex) {
@@ -646,12 +652,7 @@ class SafetyPermitController extends Controller
 
             $id = $request->permit_id;
             $safetypermit = $this->safetypermit->find($id);
-
-            if ($request->has('verify')) {
-                $permit_status = STATUS_EHS_APPROVE_PENDING;
-            }
-
-
+            $permit_status = STATUS_EHS_APPROVE_PENDING;
 
             $approve =   $this->approvereject->ehsverification($permit_status);
             $this->safetypermitehsfile->store($approve, $permit_status);
@@ -708,7 +709,6 @@ class SafetyPermitController extends Controller
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
-
             $insert_array = array(
                 'permit_type' => 1,
                 'permit_id' => $id,
@@ -718,11 +718,13 @@ class SafetyPermitController extends Controller
                 'remarks' => $request->ehs_verification_remarks,
                 'approved_by' => Auth::id(),
             );
+
+
             $this->statuslog->create($insert_array);
 
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
         }
@@ -1396,36 +1398,58 @@ class SafetyPermitController extends Controller
     public function getprotectivechecklist(Request $request, $workId)
     {
         $id = decryptId($request->input('id'));
+        $workId = decryptId($workId);
 
         $checkpoints = $this->typeofworkchecklist->getprotectiveequipment($workId, 'type1');
-
-        return response()->json($checkpoints);
+        if ($request->ajax()) {
+            return response()->json($checkpoints);
+        } else {
+            return response()->json(['error', 'Something went wrong please try again after some time']);
+        }
     }
 
-    public function getequipmentinvolved($workId)
+    public function getequipmentinvolved(Request $request, $workId)
     {
-
+        $workId = decryptId($workId);
         $getequipmentinvolved = $this->typeofworkchecklist->getequipmentinvolved($workId, 'type2');
-        return response()->json($getequipmentinvolved);
+        if ($request->ajax()) {
+            return response()->json($getequipmentinvolved);
+        } else {
+            return response()->json(['error', 'Something went wrong please try again after some time']);
+        }
     }
 
-    public function getprecaution($workId)
+    public function getprecaution(Request $request, $workId)
     {
+        $workId = decryptId($workId);
         $getprecaution = $this->typeofworkchecklist->getprecaution($workId, 'type3');
-        return response()->json($getprecaution);
+        if ($request->ajax()) {
+            return response()->json($getprecaution);
+        } else {
+            return response()->json(['error', 'Something went wrong please try again after some time']);
+        }
     }
 
-    public function getchecklist($workId)
+    public function getchecklist(Request $request, $workId)
     {
-
+        $workId = decryptId($workId);
         $getchecklist = $this->typeofworkchecklist->getchecklist($workId, 'type4');
-        return response()->json($getchecklist);
+        if ($request->ajax()) {
+            return response()->json($getchecklist);
+        } else {
+            return response()->json(['error', 'Something went wrong please try again after some time']);
+        }
     }
 
-    public function getinstruction($workId)
+    public function getinstruction(Request $request, $workId)
     {
+        $workId = decryptId($workId);
         $getinstruction = $this->typeofworkchecklist->getinstruction($workId, 'type5');
-        return response()->json($getinstruction);
+        if ($request->ajax()) {
+            return response()->json($getinstruction);
+        } else {
+            return response()->json(['error', 'Something went wrong please try again after some time']);
+        }
     }
 
     public function employeename(Request $request)
@@ -1437,6 +1461,7 @@ class SafetyPermitController extends Controller
             ->limit(10)
             ->get();
 
+
         return response()->json(
             $employees->map(function ($employee) {
                 return [
@@ -1446,6 +1471,27 @@ class SafetyPermitController extends Controller
             })
         );
     }
+
+    public function workername(Request $request)
+    {
+        $name = trim(preg_replace('/\s+/', ' ', $request->input('search')));
+
+
+        $work = Work::where('emp_name', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(20)
+            ->get();
+
+        $workResults = $work->map(function ($worker) {
+            return [
+                'id' => $worker->emp_id,
+                'text' => $worker->emp_name . ' - ' . $worker->emp_id,
+            ];
+        });
+
+        return response()->json($workResults );
+    }
+
 
     public function reassignemployeename(Request $request)
     {
@@ -1469,44 +1515,119 @@ class SafetyPermitController extends Controller
         );
     }
 
+    // public function employeeid(Request $request)
+    // {
+    //     $name = $request->input('search');
+
+    //     $permit_id = decryptId($request->input('permit_id'));
+
+
+    //     $emp_ids = $this->workmaninvolved->getempIds($permit_id);
+
+    //     if ($permit_id) {
+
+    //         $employee_code = Employee::whereIn('id', $emp_ids)
+    //             ->where('emp_id', 'like', '%' . $name . '%')
+    //             ->where('status', 1)
+    //             ->limit(10)
+    //             ->get();
+    //     } else {
+    //         $employee_code = Employee::where('emp_id', 'like', '%' . $name . '%')
+    //             ->where('status', 1)
+    //             ->limit(10)
+    //             ->get();
+    //     }
+
+    //     return response()->json(
+    //         $employee_code->map(function ($employee) {
+    //             return [
+    //                 'id' => $employee->id,
+    //                 'text' => $employee->emp_id,
+    //             ];
+    //         })
+    //     );
+    // }
+
+
     public function employeeid(Request $request)
     {
         $name = $request->input('search');
-
         $permit_id = decryptId($request->input('permit_id'));
-
 
         $emp_ids = $this->workmaninvolved->getempIds($permit_id);
 
         if ($permit_id) {
-
-            $employee_code = Employee::whereIn('id', $emp_ids)
+            $employees = Employee::whereIn('id', $emp_ids)
                 ->where('emp_id', 'like', '%' . $name . '%')
                 ->where('status', 1)
                 ->limit(10)
                 ->get();
         } else {
-            $employee_code = Employee::where('emp_id', 'like', '%' . $name . '%')
+            $employees = Employee::where('emp_id', 'like', '%' . $name . '%')
                 ->where('status', 1)
                 ->limit(10)
                 ->get();
         }
 
-        return response()->json(
-            $employee_code->map(function ($employee) {
-                return [
-                    'id' => $employee->id,
-                    'text' => $employee->emp_id,
-                ];
-            })
-        );
+
+        $work = Work::where('emp_id', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+        $employeeResults = $employees->map(function ($employee) {
+            return [
+                'id' =>  $employee->emp_id,
+                'text' => $employee->emp_id,
+            ];
+        });
+
+        $workResults = $work->map(function ($worker) {
+            return [
+                'id' =>  $worker->emp_id,
+                'text' => $worker->emp_id,
+            ];
+        });
+
+
+        $results = $employeeResults->concat($workResults)->values();
+
+        return response()->json($results);
     }
+
+
+    // public function fetchEmployeeDetails($emp_id)
+    // {
+    //     $employee = Employee::select('emp_name', 'email', 'department', 'designation')
+    //         ->where('id', $emp_id)
+    //         ->first();
+
+    //     $work = Work::select('emp_name', 'department', 'designation')
+    //         ->where('id', $emp_id)
+    //         ->first();
+
+    //     $departments = $this->department->select('id', 'department_name')->where('status', '1')->get();
+
+    //     return response()->json([
+    //         'employee' => $employee,
+    //         'departments' => $departments
+    //     ]);
+    // }
 
     public function fetchEmployeeDetails($emp_id)
     {
         $employee = Employee::select('emp_name', 'email', 'department', 'designation')
-            ->where('id', $emp_id)
+            ->where('emp_id', $emp_id)
             ->first();
+        if (!$employee) {
+            $employee = Work::select('emp_name', 'department', 'designation')
+                ->where('emp_id', $emp_id)
+                ->first();
+        }
+
+        if (!$employee) {
+            return response()->json(['error' => 'Employee not found'], 404);
+        }
 
         $departments = $this->department->select('id', 'department_name')->where('status', '1')->get();
 
@@ -1515,6 +1636,8 @@ class SafetyPermitController extends Controller
             'departments' => $departments
         ]);
     }
+
+
 
     public function permitQRPDF($id)
     {
@@ -1635,7 +1758,7 @@ class SafetyPermitController extends Controller
             $data = [
                 'safetypermit' => $safetypermit,
                 'showAlert' => $safetypermit->reference_id != null, // Pass a flag to the view
-                'totime' => $safetypermit->time_to , // Pass a flag to the view
+                'totime' => $safetypermit->time_to, // Pass a flag to the view
             ];
 
             return view('permit.safetypermit.permitextension', $data);
@@ -1655,13 +1778,13 @@ class SafetyPermitController extends Controller
             $workmanInvolved = $this->workmaninvolved->getworkmanData($id);
             $duplicateData = $this->safetypermit->Duplicatepermitdata($id);
 
-                // if ($duplicateData) {
-                //    Session::flash('error','You have already created the Permit for this ID');
-                //    return redirect('safetypermit/list');
-                // }
+            // if ($duplicateData) {
+            //    Session::flash('error','You have already created the Permit for this ID');
+            //    return redirect('safetypermit/list');
+            // }
 
 
-            $newSafetypermit = $this->safetypermit->CreateData($safetypermit,$id);
+            $newSafetypermit = $this->safetypermit->CreateData($safetypermit, $id);
             $this->workmaninvolved->CreateExpireData($newSafetypermit, $workmanInvolved);
             $permit_status = STATUS_PERMIT_EXTENDED;
             $approve =   $this->safetyPermitExtension->store($permit_status, $id);
@@ -1727,12 +1850,12 @@ class SafetyPermitController extends Controller
             );
             $this->statuslog->create($insert_array);
 
-            Session::flash('success','Safety permit Is created Successfully');
+            Session::flash('success', 'Safety permit Is created Successfully');
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error','Something went wrong plese try again after some time');
+            Session::flash('error', 'Something went wrong plese try again after some time');
             return redirect(admin_url('safetypermit/list'));
         }
     }

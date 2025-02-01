@@ -49,7 +49,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('HSN Number') }}</label>
                                         <div class="view_data">
-                                            {{ (isset($medicine->hsn) ? $medicine->hsn : '') }}
+                                            {{ isset($medicine->hsn) ? $medicine->hsn : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -61,13 +61,13 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Threshold Limit') }}</label>
                                         <div class="view_data">
-                                            {{ (isset($medicine->threshold_limit) ? $medicine->threshold_limit : '') }}
+                                            {{ isset($medicine->threshold_limit) ? $medicine->threshold_limit : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Expire Date') }}</label>
                                         <div class="view_data">
-                                            {{displayDateformat(isset($medicine->expiry_date) ? $medicine->expiry_date : '' ) }}
+                                            {{ displayDateformat(isset($medicine->expiry_date) ? $medicine->expiry_date : '') }}
                                         </div>
                                     </div>
 
@@ -95,13 +95,15 @@
 
                                         </div>
                                     </div>
-
-                                    <div class="mb-3 col-md-8 form-input">
-                                        <label class="form-label view_label">{{ __('Remarks') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($medicine->remarks) ? $medicine->remarks : '' }}
+                                    @if ($medicine->remarks != null)
+                                        <div class="mb-3 col-md-8 form-input">
+                                            <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                            <div class="view_data">
+                                                {{ isset($medicine->remarks) ? $medicine->remarks : '' }}
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
+
                                 </div>
 
 
@@ -117,5 +119,3 @@
     </div>
 
 @stop
-
-

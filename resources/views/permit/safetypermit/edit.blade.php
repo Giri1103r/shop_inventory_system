@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Permit Edit')
+@section('title', 'Safety Permit ')
 @section('pageurl', admin_url('safetypermit/list'))
 
 
@@ -40,7 +40,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Date</label>
                                                     <input type="text" name="date" id="date_picker"
-                                                        class="form-control" value="{{ displaydateformat($safetypermit->date) }}">
+                                                        class="form-control"
+                                                        value="{{ displaydateformat($safetypermit->date) }}">
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
@@ -209,15 +210,12 @@
                                                     <img src="{{ url('public/assets/images/safetypermit/profile.png') }}"
                                                         class="img-fluid" style="width: 50px; height: 50px;">
                                                     <label class="form-label mb-0 ">Taken By (Name & Department)</label>
-                                                    {{-- <input type="text" name="description"
-                                                        class="form-control lotocheckbox"
-                                                        placeholder="Search by Employee Name" disabled> --}}
 
                                                     <select name="loto_takenby" id="employeenameloto"
                                                         class="form-control lotocheckbox"
                                                         {{ $safetypermit->loto_req == 1 ? '' : 'disabled' }}>
                                                         <option value="">{{ $safetypermit->loto_takenby }}</option>
-                                                    </select>
+                                                </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -229,8 +227,7 @@
                                                         No</label>
                                                     <div class="col-sm-6 p-0">
                                                         <input type="text" name="loto_no" class="form-control"
-                                                            placeholder="Loto No"
-                                                            value="{{$safetypermit->loto_no}}">
+                                                            placeholder="Loto No" value="{{ $safetypermit->loto_no }}">
                                                     </div>
                                                 </div>
 
@@ -240,8 +237,8 @@
                                                     <label for = "tagfield" class="form-label mb-0"
                                                         style="margin-right:30px;">Tag Field
                                                         properly (Yes/No)</label>
-                                                    <input type="checkbox" class="shutdowncheckbox"
-                                                        id = "tagfield" name="tagfield" value="1"
+                                                    <input type="checkbox" class="shutdowncheckbox" id = "tagfield"
+                                                        name="tagfield" value="1"
                                                         {{ $safetypermit->tagfield == 1 ? 'checked' : '' }}>
                                                 </div>
                                             </div>
@@ -614,25 +611,23 @@
                                                             <div id="getequipmentinvolved-container" class="row g-3 mt-3">
                                                                 @if ($safetypermit->mapped_equiment_involved)
 
-                                                                            @foreach ($safetypermit->mapped_equiment_involved as $job => $details)
-
-                                                                                    @foreach ($details['checkpoint_names'] as $index => $checkpoint_name)
-                                                                                        <div
-                                                                                            style="flex: 1 1 calc(33% - 10px); display: flex; align-items: center; gap: 5px;">
-                                                                                            <input type="checkbox"
-                                                                                                class="equiment_involved"
-                                                                                                name="equiment_involved[{{ $job }}][]"
-                                                                                                value="{{ $details['checkpoints'][$index] }}"
-                                                                                                id="checkpoint-{{ $job }}-{{ $details['checkpoints'][$index] }}"
-                                                                                                @if (isset($details['checkpoints'][$index]) && $details['checkpoints'][$index]) checked @endif>
-                                                                                            <label class="form-label"
-                                                                                                for="checkpoint-{{ $job }}-{{ $details['checkpoints'][$index] }}">
-                                                                                                {{ $checkpoint_name }}
-                                                                                            </label>
-                                                                                        </div>
-                                                                                    @endforeach
-
-                                                                            @endforeach
+                                                                    @foreach ($safetypermit->mapped_equiment_involved as $job => $details)
+                                                                        @foreach ($details['checkpoint_names'] as $index => $checkpoint_name)
+                                                                            <div
+                                                                                style="flex: 1 1 calc(33% - 10px); display: flex; align-items: center; gap: 5px;">
+                                                                                <input type="checkbox"
+                                                                                    class="equiment_involved"
+                                                                                    name="equiment_involved[{{ $job }}][]"
+                                                                                    value="{{ $details['checkpoints'][$index] }}"
+                                                                                    id="checkpoint-{{ $job }}-{{ $details['checkpoints'][$index] }}"
+                                                                                    @if (isset($details['checkpoints'][$index]) && $details['checkpoints'][$index]) checked @endif>
+                                                                                <label class="form-label"
+                                                                                    for="checkpoint-{{ $job }}-{{ $details['checkpoints'][$index] }}">
+                                                                                    {{ $checkpoint_name }}
+                                                                                </label>
+                                                                            </div>
+                                                                        @endforeach
+                                                                    @endforeach
 
                                                                 @endif
                                                             </div>
@@ -895,7 +890,7 @@
                                                 <tbody id="workman-list-entries">
                                                     @foreach ($workman as $item)
                                                         <tr>
-                                                            <td>{{ getEmployeeId($item->emp_id) }}</td>
+                                                            <td>{{ $item->emp_id }}</td>
                                                             <td>{{ $item->workman_name }}</td>
                                                             <td>{{ $item->workman_desig }}</td>
                                                             <td>{{ getDepartment($item->workman_dept) }}</td>
@@ -1058,7 +1053,7 @@
                     onChange: function(selectedDates, dateStr) {
                         if (selectedDates.length > 0) {
                             endTimePicker.set("minTime",
-                            dateStr);
+                                dateStr);
                         }
                     },
                 });
@@ -1240,33 +1235,82 @@
                 $(this).closest("tr").remove();
             });
 
-            $('#employeenameshutdown,#employeenameloto').select2({
-                ajax: {
-                    url: '{{ admin_url('safetypermit/employeename') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
+
+            $(document).ready(function() {
+                let selectedEmployeeId = "{{ $safetypermit->shut_down_takenby }}";
+                let selectedEmployeeName =
+                "{{ $safetypermit->shut_down_takenby }}";
+
+                $('#employeenameshutdown').select2({
+                    ajax: {
+                        url: '{{ admin_url('safetypermit/employeename') }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.id,
+                                        text: item.text
+                                    };
+                                })
+                            };
+                        }
                     },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            })
-                        };
-                    }
-                },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
+                    minimumInputLength: 1,
+                    dropdownCssClass: 'form-control',
+                    selectionCssClass: 'form-control'
+                });
+
+                // **Set Default Selected Value**
+                if (selectedEmployeeId) {
+                    let newOption = new Option(selectedEmployeeName, selectedEmployeeId, true, true);
+                    $('#employeenameshutdown').append(newOption).trigger('change');
+                }
             });
 
+            $(document).ready(function() {
+                let selectedEmployeeLotoId = "{{ $safetypermit->loto_takenby }}";
+                let selectedEmployeeLotoName =
+                "{{ $safetypermit->loto_takenby }}";
 
+                $('#employeenameloto').select2({
+                    ajax: {
+                        url: '{{ admin_url('safetypermit/employeename') }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.id,
+                                        text: item.text
+                                    };
+                                })
+                            };
+                        }
+                    },
+                    minimumInputLength: 1,
+                    dropdownCssClass: 'form-control',
+                    selectionCssClass: 'form-control'
+                });
+
+                // **Set Default Selected Value**
+                if (selectedEmployeeLotoId) {
+                    let newOption = new Option(selectedEmployeeLotoName, selectedEmployeeLotoId, true, true);
+                    $('#employeenameloto').append(newOption).trigger('change');
+                }
+            });
             $('#shutdown-checkbox').on('change', function() {
                 if ($(this).is(':checked')) {
                     $('#employeenameshutdown').prop('disabled', false);
@@ -2231,7 +2275,7 @@
             const targetInputs = $('.lotocheckbox').not('#loto-checkbox');
 
 
-            targetInputs.prop('disabled', true);
+            targetInputs.prop('disabled', false);
 
 
             lotoCheckbox.on('change', function() {
@@ -2268,14 +2312,14 @@
                     exact_location_job: {
                         required: true,
                         minlength: 3,
-                        maxlength: 30,
-                        regex: /^[a-zA-Z0-9, ]{3,30}$/
+                        maxlength: 500,
+                        regex: /^[a-zA-Z0-9, ]{3,500}$/
                     },
                     job_location_area: {
                         required: true,
                         minlength: 3,
-                        maxlength: 30,
-                        regex: /^[a-zA-Z0-9, ]{3,30}$/
+                        maxlength: 500,
+                        regex: /^[a-zA-Z0-9, ]{3,500}$/
                     },
 
                     'sub_permit[]': {
@@ -2329,14 +2373,14 @@
                     },
                     exact_location_job: {
                         required: "Exact Job Location cannot be empty.",
-                        minlength: "Exact Job Location between 3 and 30 characters.",
-                        maxlength: "Exact Job Location between 3 and 30 characters.",
+                        minlength: "Exact Job Location between 3 and 500 characters.",
+                        maxlength: "Exact Job Location between 3 and 500 characters.",
                         regex: "Exact Job Location contains only the letters and numbers",
                     },
                     job_location_area: {
                         required: "Job Location Area cannot be empty.",
-                        minlength: "Job Location Area between 3 and 30 characters.",
-                        maxlength: "Job Location Area between 3 and 30 characters.",
+                        minlength: "Job Location Area between 3 and 500 characters.",
+                        maxlength: "Job Location Area between 3 and 500 characters.",
                         regex: "Job Location Area contains only the letters and numbers",
                     },
                     'sub_permit[]': {

@@ -2,7 +2,7 @@
 
 
 <head>
-    <title>PPE Exemption | KARAM</title>
+    <title>PPE Shoe Exemption Request| KARAM</title>
     <style>
         .badge {
             padding: 1px 9px 2px;

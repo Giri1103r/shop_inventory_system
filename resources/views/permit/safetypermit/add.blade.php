@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Permit Add')
+@section('title', 'Safety Permit')
 @section('pageurl', admin_url('safetypermit/list'))
 
 
@@ -117,10 +117,10 @@
                                                         @foreach ($typeofwork as $work)
                                                             <div class="col-12 col-md-4 d-flex align-items-center gap-2">
                                                                 <input type="hidden" name=""
-                                                                    value="{{ $work->id }}">
+                                                                    value="{{ encryptId($work->id) }}">
                                                                 <input type="checkbox" class="work-type-checkbox"
-                                                                    data-id="{{ $work->id }}" name="sub_permit[]"
-                                                                    value="{{ $work->id }}">
+                                                                    data-id="{{ encryptId($work->id) }}" name="sub_permit[]"
+                                                                    value="{{ encryptId($work->id) }}">
                                                                 <a href="{{ asset($work->file_path) }}" target="_blank">
                                                                     <img src="{{ asset($work->file_path) }}"
                                                                         alt="Image" class="img-fluid"
@@ -166,13 +166,37 @@
                                                     <img src="{{ url('public/assets/images/safetypermit/profile.png') }}"
                                                         class="img-fluid" style="width: 50px; height: 50px;">
                                                     <label class="form-label mb-0">Taken By (Name & Department)</label>
+                                                    {{-- <div class="gap-2">
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for_shut_down"
+                                                                id="request_for_employee" class="form-check-input"
+                                                                value="1"disabled>
+                                                            <span class="form-check-label">Employee</span>
+                                                        </label>
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for_shut_down"
+                                                                id="request_for_worker" class="form-check-input"
+                                                                value="2"disabled>
+                                                            <span class="form-check-label">Worker</span>
+                                                        </label>
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for_shut_down"
+                                                                id="request_for_visitor" class="form-check-input"
+                                                                value="3" disabled>
+                                                            <span class="form-check-label">Visitor</span>
+                                                        </label>
+                                                    </div> --}}
                                                     <select name="shut_down_takenby" id="employeenameshutdown"
-                                                        class="form-control shutdowncheckbox" disabled>
+                                                        class="form-control shutdowncheckbox" style="width: 100%"
+                                                        disabled>
                                                         <option value="">Select Person</option>
                                                     </select>
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
+
+
+
                                         </div>
 
                                         <div class="row border p-3 mx-1">
@@ -194,13 +218,36 @@
                                                     <img src="{{ url('public/assets/images/safetypermit/profile.png') }}"
                                                         class="img-fluid" style="width: 50px; height: 50px;">
                                                     <label class="form-label mb-0">Taken By (Name & Department)</label>
+
+                                                        {{-- <div class="gap-2">
+                                                            <label class="form-check form-check-inline">
+                                                                <input type="radio" name="request_for_loto_down"
+                                                                    id="loto_request_for_employee" class="form-check-input"
+                                                                    value="1">
+                                                                <span class="form-check-label">Employee</span>
+                                                            </label>
+                                                            <label class="form-check form-check-inline">
+                                                                <input type="radio" name="request_for_loto_down"
+                                                                    id="loto_request_for_worker" class="form-check-input"
+                                                                    value="2">
+                                                                <span class="form-check-label">Worker</span>
+                                                            </label>
+                                                            <label class="form-check form-check-inline">
+                                                                <input type="radio" name="request_for_loto_down"
+                                                                    id="loto_request_for_visitor" class="form-check-input"
+                                                                    value="3">
+                                                                <span class="form-check-label">Visitor</span>
+                                                            </label>
+                                                        </div> --}}
                                                     <select name="loto_takenby" id="employeenameloto"
-                                                        class="form-control lotocheckbox" disabled>
+                                                        class="form-control lotocheckbox" style="width: 100%" disabled>
                                                         <option value="">Select Person</option>
                                                     </select>
                                                     <div class="text-danger"></div>
+
                                                 </div>
                                             </div>
+
                                         </div>
 
                                         <div class="row border p-3 mx-1">
@@ -1008,7 +1055,6 @@
                         url: "{{ url('safetypermit/fetchEmployeeDetails') }}/" + emp_id,
                         type: "GET",
                         success: function(data) {
-
                             if (data.employee) {
 
                                 currentRow.find('input[name="workman_name"]').val(data.employee
@@ -1160,6 +1206,64 @@
                 dropdownCssClass: 'form-control',
                 selectionCssClass: 'form-control'
             });
+
+
+            $(document).ready(function() {
+                function initSelect2(url) {
+                    $('#employeenameshutdown').select2({
+                        ajax: {
+                            url: url,
+                            dataType: 'json',
+                            delay: 250,
+                            data: function(params) {
+                                return {
+                                    search: params.term
+                                };
+                            },
+                            processResults: function(data) {
+                                return {
+                                    results: $.map(data, function(item) {
+                                        return {
+                                            id: item.id,
+                                            text: item.text
+                                        };
+                                    })
+                                };
+                            }
+                        },
+                        minimumInputLength: 1,
+                        dropdownCssClass: 'form-control',
+                        selectionCssClass: 'form-control'
+                    });
+                }
+
+                // Initially disable the dropdown
+                $('#employeenameshutdown').prop('disabled', true);
+
+                $('input[name="request_for_shut_down"]').change(function() {
+                    let selectedValue = $(this).val();
+                    let url = '';
+
+                    if (selectedValue == '1') {
+                        url = '{{ admin_url('safetypermit/employeename') }}';
+                    } else if (selectedValue == '2') {
+                        url = '{{ admin_url('safetypermit/workername') }}';
+                    } else {
+                        $('#employeenameshutdown').prop('disabled', true).val(null).trigger(
+                            'change');
+                        return;
+                    }
+
+                    // Enable the dropdown
+                    $('#employeenameshutdown').prop('disabled', false).val(null).trigger('change');
+
+                    // Reinitialize Select2 with new URL
+                    $('#employeenameshutdown').select2('destroy');
+                    initSelect2(url);
+                });
+            });
+
+
 
 
             $('#shutdown-checkbox').on('change', function() {
@@ -1642,7 +1746,7 @@
                             type: 'GET',
                             dataType: 'json',
                             success: function(data) {
-                              
+
                                 data.forEach(function(item) {
 
                                     const equipmentName = item.precaution;
@@ -1943,7 +2047,7 @@
 
         $(document).ready(function() {
             const shutdownCheckbox = $('#shutdown-checkbox');
-            const targetInputs = $('.shutdowncheckbox').not('#shutdown-checkbox');
+            const targetInputs = $('.shutdowncheckbox, input[name="request_for_shut_down"]');
 
 
             targetInputs.prop('disabled', true);
@@ -1960,9 +2064,9 @@
         });
 
         $(document).ready(function() {
-            // On checkbox change
+
             $('#isolationpanel_checkbox').change(function() {
-                // Enable/disable the textarea based on checkbox state
+
                 if ($(this).prop('checked')) {
                     $('.isolationpanel_description').prop('disabled', false);
                 } else {
@@ -1974,9 +2078,7 @@
 
         $(document).ready(function() {
             const lotoCheckbox = $('#loto-checkbox');
-            const targetInputs = $('.lotocheckbox').not('#loto-checkbox');
-
-
+            const targetInputs = $('.lotocheckbox, input[name="request_for_loto_down"]');
             targetInputs.prop('disabled', true);
 
 
@@ -2023,14 +2125,14 @@
                     exact_location_job: {
                         required: true,
                         minlength: 3,
-                        maxlength: 30,
-                        regex: /^[a-zA-Z0-9, ]{3,30}$/
+                        maxlength: 500,
+                        regex: /^[a-zA-Z0-9, ]{3,500}$/
                     },
                     job_location_area: {
                         required: true,
                         minlength: 3,
-                        maxlength: 30,
-                        regex: /^[a-zA-Z0-9, ]{3,30}$/
+                        maxlength: 500,
+                        regex: /^[a-zA-Z0-9, ]{3,500}$/
                     },
 
                     'sub_permit[]': {
@@ -2085,14 +2187,14 @@
                     },
                     exact_location_job: {
                         required: "Exact Job Location cannot be empty.",
-                        minlength: "Exact Job Location between 3 and 30 characters.",
-                        maxlength: "Exact Job Location between 3 and 30 characters.",
+                        minlength: "Exact Job Location between 3 and 500 characters.",
+                        maxlength: "Exact Job Location between 3 and 500 characters.",
                         regex: "Exact Job Location contains only the letters and numbers",
                     },
                     job_location_area: {
                         required: "Job Location Area cannot be empty.",
-                        minlength: "Job Location Area between 3 and 30 characters.",
-                        maxlength: "Job Location Area between 3 and 30 characters.",
+                        minlength: "Job Location Area between 3 and 500 characters.",
+                        maxlength: "Job Location Area between 3 and 500 characters.",
                         regex: "Job Location Area contains only the letters and numbers",
                     },
                     'sub_permit[]': {

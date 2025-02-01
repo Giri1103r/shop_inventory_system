@@ -61,7 +61,7 @@ class PpeExemption extends Model
             $query
                   ->orderBy('ppe_ppeexemption.id', 'DESC');
         } else {
-            $query->where('ppe_ppeexemption.emp_id', $empId);
+            $query->where('ppe_ppeexemption.created_by',Auth::id());
         }
 
         $org_total = $query;
