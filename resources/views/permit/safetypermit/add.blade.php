@@ -166,26 +166,26 @@
                                                     <img src="{{ url('public/assets/images/safetypermit/profile.png') }}"
                                                         class="img-fluid" style="width: 50px; height: 50px;">
                                                     <label class="form-label mb-0">Taken By (Name & Department)</label>
-                                                    {{-- <div class="gap-2">
+                                                    <div class="gap-2">
                                                         <label class="form-check form-check-inline">
                                                             <input type="radio" name="request_for_shut_down"
                                                                 id="request_for_employee" class="form-check-input"
-                                                                value="1"disabled>
+                                                                value="1">
                                                             <span class="form-check-label">Employee</span>
                                                         </label>
                                                         <label class="form-check form-check-inline">
                                                             <input type="radio" name="request_for_shut_down"
                                                                 id="request_for_worker" class="form-check-input"
-                                                                value="2"disabled>
+                                                                value="2">
                                                             <span class="form-check-label">Worker</span>
                                                         </label>
                                                         <label class="form-check form-check-inline">
                                                             <input type="radio" name="request_for_shut_down"
                                                                 id="request_for_visitor" class="form-check-input"
-                                                                value="3" disabled>
+                                                                value="3">
                                                             <span class="form-check-label">Visitor</span>
                                                         </label>
-                                                    </div> --}}
+                                                    </div>
                                                     <select name="shut_down_takenby" id="employeenameshutdown"
                                                         class="form-control shutdowncheckbox" style="width: 100%"
                                                         disabled>
@@ -194,7 +194,6 @@
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
-
 
 
                                         </div>
@@ -219,26 +218,26 @@
                                                         class="img-fluid" style="width: 50px; height: 50px;">
                                                     <label class="form-label mb-0">Taken By (Name & Department)</label>
 
-                                                        {{-- <div class="gap-2">
-                                                            <label class="form-check form-check-inline">
-                                                                <input type="radio" name="request_for_loto_down"
-                                                                    id="loto_request_for_employee" class="form-check-input"
-                                                                    value="1">
-                                                                <span class="form-check-label">Employee</span>
-                                                            </label>
-                                                            <label class="form-check form-check-inline">
-                                                                <input type="radio" name="request_for_loto_down"
-                                                                    id="loto_request_for_worker" class="form-check-input"
-                                                                    value="2">
-                                                                <span class="form-check-label">Worker</span>
-                                                            </label>
-                                                            <label class="form-check form-check-inline">
-                                                                <input type="radio" name="request_for_loto_down"
-                                                                    id="loto_request_for_visitor" class="form-check-input"
-                                                                    value="3">
-                                                                <span class="form-check-label">Visitor</span>
-                                                            </label>
-                                                        </div> --}}
+                                                    <div class="gap-2">
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for_loto_down"
+                                                                id="loto_request_for_employee" class="form-check-input"
+                                                                value="1">
+                                                            <span class="form-check-label">Employee</span>
+                                                        </label>
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for_loto_down"
+                                                                id="loto_request_for_worker" class="form-check-input"
+                                                                value="2">
+                                                            <span class="form-check-label">Worker</span>
+                                                        </label>
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for_loto_down"
+                                                                id="loto_request_for_visitor" class="form-check-input"
+                                                                value="3">
+                                                            <span class="form-check-label">Visitor</span>
+                                                        </label>
+                                                    </div>
                                                     <select name="loto_takenby" id="employeenameloto"
                                                         class="form-control lotocheckbox" style="width: 100%" disabled>
                                                         <option value="">Select Person</option>
@@ -1181,36 +1180,88 @@
                 $(this).closest("tr").remove();
             });
 
-            $('#employeenameshutdown,#employeenameloto').select2({
-                ajax: {
-                    url: '{{ admin_url('safetypermit/employeename') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            })
-                        };
+            $(document).ready(function() {
+
+                $("input[name='request_for_shut_down']").on('change', function() {
+                    let selectedValue = $("input[name='request_for_shut_down']:checked").val();
+                    let url = '';
+                    let placeholder = 'Select Person';
+                    let minimumInputLength = 1;
+
+
+                    $('#employeenameshutdown').prop('disabled', false);
+                    $('#employeenameshutdown').val(null).trigger('change');
+
+
+                    if (selectedValue == '1') {
+                        url = '{{ admin_url('safetypermit/employeename') }}';
+                        placeholder = 'Select Employee';
+                    } else if (selectedValue == '2') {
+                        url = '{{ admin_url('safetypermit/workername') }}';
+                        placeholder = 'Select Worker';
+                    } else if (selectedValue == '3') {
+                        url = '{{ admin_url('safetypermit/visitorid') }}';
+                        placeholder = 'Search by Emp ID or Name';
                     }
-                },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
+
+
+                    $('#employeenameshutdown').select2({
+                        ajax: {
+                            url: url,
+                            dataType: 'json',
+                            delay: 250,
+                            data: function(params) {
+
+                                return {
+                                    search: params.term
+                                };
+                            },
+                            processResults: function(data) {
+
+                                return {
+                                    results: $.map(data, function(item) {
+                                        return {
+                                            id: item.id,
+                                            text: item.text
+                                        };
+                                    })
+                                };
+                            }
+                        },
+                        minimumInputLength: minimumInputLength,
+                        placeholder: placeholder,
+                        dropdownCssClass: 'form-control',
+                        selectionCssClass: 'form-control'
+                    });
+                });
             });
 
 
             $(document).ready(function() {
-                function initSelect2(url) {
-                    $('#employeenameshutdown').select2({
+                $("input[name='request_for_loto_down']").on('change', function() {
+                    let selectedValue = $("input[name='request_for_loto_down']:checked").val();
+                    let url = '';
+                    let placeholder = 'Select Person';
+                    let minimumInputLength = 1;
+
+
+                    $('#employeenameloto').prop('disabled', false);
+
+                    $('#employeenameloto').val(null).trigger('change');
+
+                    if (selectedValue == '1') {
+                        url = '{{ admin_url('safetypermit/employeename') }}';
+                        placeholder = 'Select Employee';
+                    } else if (selectedValue == '2') {
+                        url = '{{ admin_url('safetypermit/workername') }}';
+                        placeholder = 'Select Worker';
+                    } else if (selectedValue == '3') {
+                        url = '{{ admin_url('safetypermit/visitorid') }}';
+                        placeholder = 'Search by Emp ID or Name';
+                    }
+
+
+                    $('#employeenameloto').select2({
                         ajax: {
                             url: url,
                             dataType: 'json',
@@ -1231,37 +1282,14 @@
                                 };
                             }
                         },
-                        minimumInputLength: 1,
+                        minimumInputLength: minimumInputLength,
+                        placeholder: placeholder,
                         dropdownCssClass: 'form-control',
                         selectionCssClass: 'form-control'
                     });
-                }
-
-                // Initially disable the dropdown
-                $('#employeenameshutdown').prop('disabled', true);
-
-                $('input[name="request_for_shut_down"]').change(function() {
-                    let selectedValue = $(this).val();
-                    let url = '';
-
-                    if (selectedValue == '1') {
-                        url = '{{ admin_url('safetypermit/employeename') }}';
-                    } else if (selectedValue == '2') {
-                        url = '{{ admin_url('safetypermit/workername') }}';
-                    } else {
-                        $('#employeenameshutdown').prop('disabled', true).val(null).trigger(
-                            'change');
-                        return;
-                    }
-
-                    // Enable the dropdown
-                    $('#employeenameshutdown').prop('disabled', false).val(null).trigger('change');
-
-                    // Reinitialize Select2 with new URL
-                    $('#employeenameshutdown').select2('destroy');
-                    initSelect2(url);
                 });
             });
+
 
 
 

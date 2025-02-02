@@ -15,6 +15,7 @@ use Response;
 use Exception;
 use DataTables;
 use Mail;
+use Illuminate\Support\Facades\Http;
 use App\Models\User;
 use App\Models\Permit\SafetyPermit;
 use App\Models\Permit\SafetyPermitEHSfile;
@@ -1489,8 +1490,55 @@ class SafetyPermitController extends Controller
             ];
         });
 
-        return response()->json($workResults );
+        return response()->json($workResults);
     }
+    public function visitorid(Request $request)
+    {
+        $searchTerm = $request->input('search');
+
+        if (empty($searchTerm)) {
+            return response()->json([
+                'results' => [],
+            ]);
+        }
+
+        $response = Http::get('https://vmsapi.karam.in/emp.asmx/GetVisitorGatePass', [
+            'visitorid' => $searchTerm,
+        ]);
+
+        if ($response->successful()) {
+            $data = $response->json();
+
+            if (isset($data['data']) && is_array($data['data'])) {
+                return response()->json([
+                    'results' => array_map(function ($item) {
+                        return [
+                            'id' => isset($item['Emp_ID']) ? $item['Emp_ID'] : 'N/A',
+                            'text' => isset($item['Emp_ID']) ? $item['Emp_ID'] . ' - ' . (isset($item['NAME']) ? $item['NAME'] : 'Unknown') : 'Unknown',
+                        ];
+                    }, $data['data']),
+                ]);
+            } elseif (is_array($data)) {
+                return response()->json([
+                    'results' => array_map(function ($item) {
+
+                        return [
+                            'id' => isset($item['Emp_ID']) ? $item['Emp_ID'] : 'N/A', 
+                            'text' => isset($item['Emp_ID']) ? $item['Emp_ID'] . ' - ' . (isset($item['NAME']) ? $item['NAME'] : 'Unknown') : 'Unknown',
+                        ];
+                    }, $data),
+                ]);
+            }
+        }
+
+        return response()->json([
+            'results' => [],
+        ]);
+    }
+
+
+
+
 
 
     public function reassignemployeename(Request $request)
