@@ -352,13 +352,13 @@ class SafetyPermitController extends Controller
                 return redirect(admin_url('safetypermit/list'));
             } catch (Exception $ex) {
 
-                dd($ex);
+                report($ex);
                 report($ex);
                 Session::flash('error', 'Something went wrong Please try again after some time');
                 return redirect(admin_url('safetypermit/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
 
             report($ex);
             Session::flash('error', 'Something went wrong Please try again after some time');
@@ -725,7 +725,7 @@ class SafetyPermitController extends Controller
 
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
         }
@@ -1458,6 +1458,7 @@ class SafetyPermitController extends Controller
         $name = $request->input('search');
 
         $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
+            ->orWhere('emp_id', 'like', '%' . $name . '%')
             ->where('status', 1)
             ->limit(10)
             ->get();
@@ -1466,7 +1467,7 @@ class SafetyPermitController extends Controller
         return response()->json(
             $employees->map(function ($employee) {
                 return [
-                    'id' => $employee->id,
+                    'id' => $employee->emp_id,
                     'text' => $employee->emp_name . ' - ' . $employee->emp_id,
                 ];
             })
@@ -1479,6 +1480,7 @@ class SafetyPermitController extends Controller
 
 
         $work = Work::where('emp_name', 'like', '%' . $name . '%')
+            ->orWhere('emp_id', 'like', '%' . $name . '%')
             ->where('status', 1)
             ->limit(20)
             ->get();
@@ -1497,9 +1499,7 @@ class SafetyPermitController extends Controller
         $searchTerm = $request->input('search');
 
         if (empty($searchTerm)) {
-            return response()->json([
-                'results' => [],
-            ]);
+            return response()->json(['results' => []]);
         }
 
         $response = Http::get('https://vmsapi.karam.in/emp.asmx/GetVisitorGatePass', [
@@ -1509,31 +1509,33 @@ class SafetyPermitController extends Controller
         if ($response->successful()) {
             $data = $response->json();
 
+            // Ensure the data structure is correct
             if (isset($data['data']) && is_array($data['data'])) {
+                $results = array_map(function ($item) {
+                    return [
+                        'id' => $item['Emp_ID'] ?? 'N/A',
+                        'text' => ($item['Emp_ID'] ?? 'Unknown') . ' - ' . ($item['NAME'] ?? 'Unknown'),
+                    ];
+                }, $data['data']);
+
                 return response()->json([
-                    'results' => array_map(function ($item) {
-                        return [
-                            'id' => isset($item['Emp_ID']) ? $item['Emp_ID'] : 'N/A',
-                            'text' => isset($item['Emp_ID']) ? $item['Emp_ID'] . ' - ' . (isset($item['NAME']) ? $item['NAME'] : 'Unknown') : 'Unknown',
-                        ];
-                    }, $data['data']),
+                    'results' => array_slice($results, 0, 20), // Limit to 20 items
                 ]);
             } elseif (is_array($data)) {
-                return response()->json([
-                    'results' => array_map(function ($item) {
+                $results = array_map(function ($item) {
+                    return [
+                        'id' => $item['Emp_ID'] ?? 'N/A',
+                        'text' => ($item['Emp_ID'] ?? 'Unknown') . ' - ' . ($item['NAME'] ?? 'Unknown'),
+                    ];
+                }, $data);
 
-                        return [
-                            'id' => isset($item['Emp_ID']) ? $item['Emp_ID'] : 'N/A', 
-                            'text' => isset($item['Emp_ID']) ? $item['Emp_ID'] . ' - ' . (isset($item['NAME']) ? $item['NAME'] : 'Unknown') : 'Unknown',
-                        ];
-                    }, $data),
+                return response()->json([
+                    'results' => array_slice($results, 0, 20), // Limit to 20 items
                 ]);
             }
         }
 
-        return response()->json([
-            'results' => [],
-        ]);
+        return response()->json(['results' => []]);
     }
 
 
@@ -1563,59 +1565,47 @@ class SafetyPermitController extends Controller
         );
     }
 
-    // public function employeeid(Request $request)
-    // {
-    //     $name = $request->input('search');
-
-    //     $permit_id = decryptId($request->input('permit_id'));
-
-
-    //     $emp_ids = $this->workmaninvolved->getempIds($permit_id);
-
-    //     if ($permit_id) {
-
-    //         $employee_code = Employee::whereIn('id', $emp_ids)
-    //             ->where('emp_id', 'like', '%' . $name . '%')
-    //             ->where('status', 1)
-    //             ->limit(10)
-    //             ->get();
-    //     } else {
-    //         $employee_code = Employee::where('emp_id', 'like', '%' . $name . '%')
-    //             ->where('status', 1)
-    //             ->limit(10)
-    //             ->get();
-    //     }
-
-    //     return response()->json(
-    //         $employee_code->map(function ($employee) {
-    //             return [
-    //                 'id' => $employee->id,
-    //                 'text' => $employee->emp_id,
-    //             ];
-    //         })
-    //     );
-    // }
-
-
     public function employeeid(Request $request)
+    {
+        $name = $request->input('search');
+
+        $permit_id = decryptId($request->input('permit_id'));
+
+
+        $emp_ids = $this->workmaninvolved->getempIds($permit_id);
+
+        if ($permit_id) {
+
+            $employee_code = Employee::whereIn('id', $emp_ids)
+                ->where('emp_id', 'like', '%' . $name . '%')
+                ->where('status', 1)
+                ->limit(10)
+                ->get();
+        } else {
+            $employee_code = Employee::where('emp_id', 'like', '%' . $name . '%')
+                ->where('status', 1)
+                ->limit(10)
+                ->get();
+        }
+
+        return response()->json(
+            $employee_code->map(function ($employee) {
+                return [
+                    'id' => $employee->emp_id,
+                    'text' => $employee->emp_id,
+                ];
+            })
+        );
+    }
+
+
+    public function workerid(Request $request)
     {
         $name = $request->input('search');
         $permit_id = decryptId($request->input('permit_id'));
 
         $emp_ids = $this->workmaninvolved->getempIds($permit_id);
 
-        if ($permit_id) {
-            $employees = Employee::whereIn('id', $emp_ids)
-                ->where('emp_id', 'like', '%' . $name . '%')
-                ->where('status', 1)
-                ->limit(10)
-                ->get();
-        } else {
-            $employees = Employee::where('emp_id', 'like', '%' . $name . '%')
-                ->where('status', 1)
-                ->limit(10)
-                ->get();
-        }
 
 
         $work = Work::where('emp_id', 'like', '%' . $name . '%')
@@ -1623,12 +1613,7 @@ class SafetyPermitController extends Controller
             ->limit(10)
             ->get();
 
-        $employeeResults = $employees->map(function ($employee) {
-            return [
-                'id' =>  $employee->emp_id,
-                'text' => $employee->emp_id,
-            ];
-        });
+
 
         $workResults = $work->map(function ($worker) {
             return [
@@ -1638,11 +1623,53 @@ class SafetyPermitController extends Controller
         });
 
 
-        $results = $employeeResults->concat($workResults)->values();
 
-        return response()->json($results);
+
+        return response()->json($workResults);
     }
+    public function visitorname(Request $request)
+    {
+        $searchTerm = $request->input('search');
 
+        if (empty($searchTerm)) {
+            return response()->json([
+                'results' => [],
+            ]);
+        }
+
+        $response = Http::get('https://vmsapi.karam.in/emp.asmx/GetVisitorGatePass', [
+            'visitorid' => $searchTerm,
+        ]);
+
+        if ($response->successful()) {
+            $data = $response->json();
+
+            if (isset($data['data']) && is_array($data['data'])) {
+                return response()->json([
+                    'results' => array_map(function ($item) {
+                        return [
+                            'id' => isset($item['Emp_ID']) ? $item['Emp_ID'] : 'N/A',
+                            'text' => isset($item['Emp_ID']) ? $item['Emp_ID'] : 'N/A',
+                        ];
+                    }, $data['data']),
+                ]);
+            } elseif (is_array($data)) {
+                return response()->json([
+                    'results' => array_map(function ($item) {
+
+                        return [
+                            'id' => isset($item['Emp_ID']) ? $item['Emp_ID'] : 'N/A',
+                            'text' => isset($item['Emp_ID']) ? $item['Emp_ID'] : 'N/A',
+                        ];
+                    }, $data),
+                ]);
+            }
+        }
+
+        return response()->json([
+            'results' => [],
+        ]);
+    }
 
     // public function fetchEmployeeDetails($emp_id)
     // {
@@ -1662,28 +1689,63 @@ class SafetyPermitController extends Controller
     //     ]);
     // }
 
+
+
+
+
     public function fetchEmployeeDetails($emp_id)
     {
+
         $employee = Employee::select('emp_name', 'email', 'department', 'designation')
             ->where('emp_id', $emp_id)
             ->first();
-        if (!$employee) {
-            $employee = Work::select('emp_name', 'department', 'designation')
-                ->where('emp_id', $emp_id)
-                ->first();
+
+        if ($employee) {
+            return response()->json([
+                'employee' => $employee,
+                'departments' => $this->department->select('id', 'department_name')->where('status', '1')->get()
+            ]);
         }
 
-        if (!$employee) {
-            return response()->json(['error' => 'Employee not found'], 404);
+        $employee = Work::select('emp_name', 'department', 'designation')
+            ->where('emp_id', $emp_id)
+            ->first();
+
+        if ($employee) {
+            return response()->json([
+                'employee' => $employee,
+                'departments' => $this->department->select('id', 'department_name')->where('status', '1')->get()
+            ]);
         }
 
-        $departments = $this->department->select('id', 'department_name')->where('status', '1')->get();
 
-        return response()->json([
-            'employee' => $employee,
-            'departments' => $departments
+        $response = Http::get('https://vmsapi.karam.in/emp.asmx/GetVisitorGatePass', [
+            'visitorid' => $emp_id
         ]);
+
+        if ($response->successful()) {
+            $data = $response->json();
+
+
+            $employeeData = $data[0];
+
+            $employee = [
+                'emp_name' => $employeeData['NAME'] ?? 'Unknown',
+                'email' => 'Not Provided',
+                'department' => !empty($employeeData['Department']) ? $employeeData['Department'] : 'Not Provided',
+                'designation' => !empty($employeeData['Designation']) ? $employeeData['Designation'] : 'Not Provided',
+            ];
+
+            return response()->json([
+                'employee' => $employee,
+                'departments' => []
+            ]);
+        }
+        return response()->json(['error' => 'API request failed.'], 500);
     }
+
+
+
 
 
 

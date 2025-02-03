@@ -717,7 +717,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/employeename', [SafetyPermitController::class, 'employeename']);
                 Route::get('/workername', [SafetyPermitController::class, 'workername']);
                 Route::get('/visitorid', [SafetyPermitController::class, 'visitorid']);
-
+                Route::get('/workerid', [SafetyPermitController::class, 'workerid']);
+                Route::get('/visitorname', [SafetyPermitController::class, 'visitorname']);
                 Route::get('/reassignemployeename', [SafetyPermitController::class, 'reassignemployeename']);
                 Route::get('/employeeid', [SafetyPermitController::class, 'employeeid']);
                 Route::get('/fetchEmployeeDetails/{emp_id}', [SafetyPermitController::class, 'fetchEmployeeDetails']);
