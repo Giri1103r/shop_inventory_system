@@ -65,6 +65,8 @@ class SafetyPermit extends Model
         'permit_status',
         'permit_extension_status',
         'reference_id',
+        'select_employee_shut_down',
+        'select_employee_loto_takenby',
         'status',
         'trash',
         'created_by',
@@ -190,6 +192,7 @@ class SafetyPermit extends Model
         $toolboxTalk = $request->has('toolbox_talk') ? 1 : 0;
         $assignedJob = $request->has('assigned_job') ? 1 : 0;
         $equipment_checklist_inspection = $request->has('equipment_checklist_inspection') ? 1 : 0;
+        // dd($request->all());
 
         $insert_array = array(
             'permit_id' => $request->permit_id,
@@ -206,6 +209,8 @@ class SafetyPermit extends Model
             'loto_req' => $lotoReq,
             'loto_takenby' => $request->loto_takenby,
             'loto_no' => $request->loto_no,
+            'select_employee_loto_takenby' => $request->request_for_loto_down,
+            'select_employee_shut_down' => $request->request_for_shut_down,
             'tagfield' => $tagfield,
             'state_isolation_loto' => $state_isolation_loto,
             'isolationpanel_checkbox' => $request->isolationpanel_checkbox,
@@ -433,14 +438,14 @@ class SafetyPermit extends Model
 
     public function CreateData($safetypermit)
     {
-$request = request();
+        $request = request();
         $permitId = SafetyPermit::orderBy('id', 'DESC')->pluck('permit_id')->first();
         preg_match('/(\d+)$/', $permitId, $matches);
 
         $newPermitNumeric = str_pad((int)$matches[0] + 1, 5, '0', STR_PAD_LEFT);
 
         $newPermitID = 'ORD/' . $newPermitNumeric;
-// dd($safetypermit->shut_down_takenby);
+        // dd($safetypermit->shut_down_takenby);
         $insert_array = array(
             'permit_id' => $newPermitID,
             'date' => DBdateformat(now()),
@@ -473,7 +478,7 @@ $request = request();
             'assigned_job' => $safetypermit->assigned_job,
             'attendance_toolbox_talk' => $safetypermit->attendance_toolbox_talk,
             'permit_status' => STATUS_EHS_VERIFICATION_PENDING,
-            'reference_id'=> $safetypermit->id,
+            'reference_id' => $safetypermit->id,
             'created_by' => Auth::id(),
         );
 
@@ -515,7 +520,8 @@ $request = request();
     {
         $data = $this->select(
             'ptw_safety.*',
-
+            'shut_down_takenby_employee.emp_name as shut_down_takenby',
+            'loto_takenby_employee.emp_name as loto_takenby',
             DB::raw("(SELECT GROUP_CONCAT(work_name SEPARATOR ', ')
                       FROM ptw_masters_typeofwork
                       WHERE FIND_IN_SET(ptw_masters_typeofwork.id, ptw_safety.sub_permit)
@@ -537,7 +543,8 @@ $request = request();
             })
             ->leftJoin('ptw_masters_typeofwork_checklist', 'ptw_masters_typeofwork_checklist.typeofwork_id', '=', 'ptw_masters_typeofwork.id')
             ->leftJoin('ptw_masters_typeofwork_upload', 'ptw_masters_typeofwork_upload.typeofwork_id', '=', 'ptw_masters_typeofwork.id')
-           
+            ->leftJoin('masters_employee as shut_down_takenby_employee', 'shut_down_takenby_employee.id', '=', 'ptw_safety.shut_down_takenby')
+            ->leftJoin('masters_employee as loto_takenby_employee', 'loto_takenby_employee.id', '=', 'ptw_safety.loto_takenby')
             ->where('ptw_safety.id', $id)
             ->where('ptw_safety.trash', 'NO')
             ->where('ptw_masters_typeofwork_upload.trash', 'NO')
@@ -913,12 +920,13 @@ $request = request();
         });
     }
 
-    public function permitData($id){
-       return SafetyPermit::where('id',$id)->first();
+    public function permitData($id)
+    {
+        return SafetyPermit::where('id', $id)->first();
     }
 
-    public function DuplicatepermitData($id){
+    public function DuplicatepermitData($id)
+    {
         return SafetyPermit::where('reference_id', $id)->exists();
-     }
-
+    }
 }
