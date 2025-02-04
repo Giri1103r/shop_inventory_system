@@ -412,7 +412,6 @@ class TrainingScheduleController extends Controller
                             'venue' => $nominee->name_of_the_conference_hall,
                             'mail_subject' => $mailsubject,
                         ];
-                        dd($nomineeArray, $nomineesWithEmail);
                         Mail::to($nominee->email)->queue(new TrainingStartedEmail($nomineeArray));
                     }
 

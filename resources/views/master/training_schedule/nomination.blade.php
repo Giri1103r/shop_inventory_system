@@ -292,12 +292,13 @@
                                                                             name="employee[1][emp_worker]" id="emp_1"
                                                                             value="1"
                                                                             class="emp-worker validate-radio-required">
-                                                                        Employee<br>
+                                                                        <label>Employee</label>
+                                                                        <br>
                                                                         <input type="radio"
                                                                             name="employee[1][emp_worker]" id="worker_1"
-                                                                            value="2"
+                                                                            value="2" style="margin-left: -14px;"
                                                                             class="emp-worker validate-radio-required">
-                                                                        Worker
+                                                                        <label>Worker</label>
 
                                                                     </td>
                                                                     <td>
@@ -372,15 +373,18 @@
                                                                                 value="1"
                                                                                 class="emp-worker validate-radio-required"
                                                                                 {{ $nominationProcess->emp_worker == 1 ? 'checked' : '' }}>
-                                                                            Employee
+                                                                            <label>
+                                                                                Employee</label>
                                                                             <br>
                                                                             <input type="radio"
                                                                                 name="employee[{{ $i }}][emp_worker]"
                                                                                 id="worker_{{ $i }}"
                                                                                 value="2"
                                                                                 class="emp-worker validate-radio-required"
+                                                                                style="margin-left: -14px;"
                                                                                 {{ $nominationProcess->emp_worker == 2 ? 'checked' : '' }}>
-                                                                            Worker
+                                                                            <label>Worker</label>
+
                                                                         </td>
                                                                         <td>
                                                                             <select
@@ -410,7 +414,7 @@
                                                                         </td>
 
 
-                                                                        <td><input type="text"
+                                                                        <td><input type="hidden"
                                                                                 name="employee[{{ $i }}][emp_name]"
                                                                                 class="form-control"
                                                                                 id="emp_name_{{ $i }}"
@@ -530,6 +534,9 @@
                     if ($(this).is("input[type='radio']")) {
                         $(this).prop("checked", false);
                     }
+                    if ($(this).is("input[type='hidden'][name*='[id]']")) {
+                        $(this).val(""); 
+                    }
                 });
 
                 newRow.find(".invalid-feedback").remove();
@@ -560,6 +567,7 @@
                     },
                 });
             });
+
 
             $(document).on("change",
                 "[name^='employee'][name$='[department_id]'], [name^='employee'][name$='[emp_worker]']",
@@ -622,20 +630,23 @@
                     empIds.push(otherEmpId);
                 });
 
+
+                // Inside the duplicate check block
                 if (isDuplicate) {
                     Swal.fire({
                         icon: "error",
                         title: "Duplicate Employee ID!",
                         text: "Each Employee ID must be unique."
                     });
-                    currentRow.find('input').not('[type="hidden"]').val("");
-                    currentRow.find("input[type='text'], input[type='email']").val("");
-                    currentRow.find("input[type='radio']").prop("checked", false);
-                    currentRow.find("select[name*='[department_id]']").val("").trigger("change");
-                    currentRow.find("select[name*='[emp_id]']").val("").trigger("change");
+
+                    currentRow.find("select[name*='[emp_id]']").val("").empty().append(
+                        '<option value="">Select Employee/Worker ID</option>');
+                    currentRow.find(
+                        "input[name*='[emp_name]'], input[name*='[email]'], input[name*='[employee_type]'], input[name*='[last_training_attended_on]'], input[name*='[last_training_topic]']"
+                    ).val("");
+
                     return;
                 }
-
                 if (emp_id) {
                     $.ajax({
                         url: "{{ url('nomination_process/fetchEmployeeDetails') }}/" + emp_id,
@@ -678,6 +689,7 @@
             $(document).on('click', '.removerow', function() {
                 var row = $(this).closest(".lesson_learned_row");
                 var rowId = row.find("input[name*='[id]']").val();
+                alert(rowId);
                 if (rowId) {
                     Swal.fire({
                         title: 'Are you sure?',
@@ -722,57 +734,6 @@
                 var rowCount = $(".lesson_learned_row").length;
                 $('#dynamic-add-more').attr("disabled", rowCount >= 10);
             }
-
-            // $(document).on('click', '.removerow', function() {
-            //     var row = $(this).closest(
-            //         ".lesson_learned_row");
-            //     var rowId = row.find("input[name*='[id]']").val();
-            //          alert(rowId);
-            //     Swal.fire({
-            //         title: 'Are you sure?',
-            //         text: 'Do you want to delete this record?',
-            //         icon: 'warning',
-            //         showCancelButton: true,
-            //         confirmButtonText: 'Yes, delete it!',
-            //         cancelButtonText: 'No, keep it'
-            //     }).then((result) => {
-            //         if (result.isConfirmed) {
-            //             $.ajax({
-            //                 url: "{{ url('nomination_process/delete') }}/" +
-            //                     rowId,
-            //                 type: 'DELETE',
-            //                 data: {
-            //                     _token: '{{ csrf_token() }}',
-            //                     id: rowId
-            //                 },
-            //                 success: function(response) {
-            //                     if (response.status === 'success') {
-            //                         row.remove();
-
-            //                         Swal.fire(
-            //                             'Deleted!',
-            //                             response.msg,
-            //                             'success'
-            //                         );
-            //                     } else {
-            //                         Swal.fire(
-            //                             'Error!',
-            //                             response.msg,
-            //                             'error'
-            //                         );
-            //                     }
-            //                 },
-            //                 error: function() {
-            //                     Swal.fire(
-            //                         'Error!',
-            //                         'Something went wrong. Please try again later.',
-            //                         'error'
-            //                     );
-            //                 }
-            //             });
-            //         }
-            //     });
-            // });
 
             $(document).on('click', '.removerowdata', function() {
                 var rowCount = $("#lesson_learned_block .lesson_learned_row").length;
