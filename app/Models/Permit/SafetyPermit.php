@@ -681,9 +681,9 @@ class SafetyPermit extends Model
             ->leftJoin('ptw_masters_typeofwork_upload', 'ptw_masters_typeofwork_upload.typeofwork_id', '=', 'ptw_masters_typeofwork.id')
             ->where('ptw_safety.id', $id)
             ->where('ptw_safety.trash', 'NO')
-            // ->where('ptw_masters_typeofwork_upload.trash', 'NO')
+            ->where('ptw_masters_typeofwork_upload.trash', 'NO')
             ->first();
-        // dd($data);
+       
 
         if ($data) {
 
