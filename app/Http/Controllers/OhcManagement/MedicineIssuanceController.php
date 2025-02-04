@@ -89,7 +89,7 @@ class MedicineIssuanceController extends Controller
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
                 }
             }
@@ -147,14 +147,14 @@ class MedicineIssuanceController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medicine-issuance/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }
@@ -180,7 +180,7 @@ class MedicineIssuanceController extends Controller
             );
             return view('ohcmanagement.medicine_issuance.edit', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }
@@ -213,14 +213,14 @@ class MedicineIssuanceController extends Controller
 
                 Session::flash('success', 'Your data has been Updated successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medicine-issuance/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }
@@ -296,7 +296,7 @@ class MedicineIssuanceController extends Controller
                 );
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -363,7 +363,7 @@ class MedicineIssuanceController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
         }
     }
 }

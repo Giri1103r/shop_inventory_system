@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Medicine Receiving Stock Details| KARAM</title>
+
+    <style>
+        .badge {
+            padding: 1px 9px 2px;
+            font-size: 12.025px;
+            font-weight: bold;
+            white-space: nowrap;
+            color: #ffffff;
+            background-color: #999999;
+            border-radius: 9px;
+        }
+
+        @page {
+            size: auto;
+            odd-header-name: html_myHeader1;
+            even-header-name: html_myHeader1;
+            odd-footer-name: html_myFooter1;
+            even-footer-name: html_myFooter1;
+        }
+
+        @page noheader {
+            odd-header-name: _blank;
+            even-header-name: _blank;
+            odd-footer-name: _blank;
+            even-footer-name: _blank;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table td,
+        .table th {
+            border: 1px solid black;
+            padding: 5px;
+            word-wrap: break-word;
+            max-width: 100px;
+            /* Adjust as needed */
+        }
+
+        .table-striped tr:nth-of-type(odd) {
+            background-color: rgba(0, 0, 0, .05) !important;
+        }
+
+        body {
+            font-size: 13px;
+        }
+
+        .full-width {
+            width: 100%;
+            font-size: 11px;
+        }
+
+        .tblborder {
+            border: 1px solid black;
+        }
+
+        .activity,
+        .activity th,
+        .activity td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        .header-cell {
+            background-color: #ce0f1f;
+            color: #000;
+            font-weight: bold;
+            padding: 5px;
+        }
+
+        .table_card {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 16px;
+            text-align: left;
+        }
+
+        .table_card th,
+        .table_card td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .table_card th {
+            background-color: #f2f2f2;
+            color: #333;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .table_card tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .table_card tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .table_card td {
+            text-align: center;
+        }
+
+        .table-container {
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <htmlpageheader name="myHeader1" style="display:block;">
+        <table border="0" style="width:100%;border:0;border-bottom: 4px solid #000;background-color: #FFF;">
+            <tr style="">
+                <td border="0" style="width:50%;float:left;text-align:left;">
+                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+                </td>
+                <td border="0"
+                    style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
+                   Medicine Receiving Stock Details
+                </td>
+            </tr>
+        </table>
+    </htmlpageheader>
+
+    <htmlpagefooter name="myFooter1" style="display:none">
+        <table width="100%"
+            style="width:100%;border:0;background-color: #FFF;border-top: 4px solid #000;padding-top:10px;padding-bottom:10px;">
+            <tr>
+                <td width="33%">
+                    <span style="font-style: italic;">{DATE d-m-Y}</span>
+                </td>
+                <td width="33%" align="center" style="font-weight: bold; font-style: italic;">
+                </td>
+                <td width="33%" style="text-align: right;">
+                    {PAGENO}/{nbpg}
+                </td>
+            </tr>
+        </table>
+    </htmlpagefooter>
+
+    <div style="width:100%;">
+        <table style="width:100%;">
+            <tr>
+                <td
+                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;" >
+                  Medicine Details
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <table width="100%" style="width:100%;">
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Medicine Name</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">{{ isset($medicine->medicine) ? $medicine->medicine : '' }}</td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>HSN Number</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;"> {{ isset($medicine->hsn) ? $medicine->hsn : '' }}</td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Pack Details</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{isset($medicine->pack) ? $medicine->pack : '' }}</td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Quantity</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{   isset($medicine_receiving->quantity) ? $medicine_receiving->quantity : '' }}</td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Batch Number</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($medicine_receiving->batch_number) ? $medicine_receiving->batch_number : '' }}</td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Rate</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($medicine_receiving->rate) ? $medicine_receiving->rate : '' }}</td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Expire Date</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ Displaydateformat(isset($medicine_receiving->expire_date) ? $medicine_receiving->expire_date : '') }}</td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Vendor Name</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($vendor->vendor_name) ? $vendor->vendor_name : '' }}</td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Created By</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getUsername(isset($medicine_receiving->created_by) ? $medicine_receiving->created_by : '') }}</td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Created Date</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;"> {{ displayDateformat($medicine_receiving->created_at) }}</td>
+        </tr>
+    </table>
+
+    <br>
+
+
+
+
+    <div>
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
+                        Status Logs
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="table-responsive">
+            <div class="col-md-12">
+                <table class="table table-bordered table-hover tblborder">
+                    <thead>
+                        <tr>
+                            <th>From Status</th>
+                            <th>To Status</th>
+                            <th>Approved By</th>
+                            <th>Remarks</th>
+                            <th>Created Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Stock Request</td>
+                            <td>EHS Verification Pending</td>
+                            <td>{{ getUsername(isset($medicine_receiving->created_by) ? $medicine_receiving->created_by : '') }}</td>
+                            <td><p>-</p></td>
+                            <td>{{ displaydateformat(isset($medicine_receiving->created_at) ? $medicine_receiving->created_at : '') }}</td>
+                        </tr>
+                        <tr>
+                            <td>EHS Officer Verification Pending</td>
+                            <td>
+                                @if (isset($ehsverify['to_status']) && $ehsverify['to_status'] == STATUS_OHC_EHS_VERIFICATION_PENDING)
+                                   L1 EHS Officer Verification Pending
+                                @else
+                                <p>-</p>
+                                @endif
+                            </td>
+                            <td>{{ isset($ehsverify->created_by) && $ehsverify->created_by != '' ? getUsername($ehsverify->created_by) : '-' }}</td>
+                            <td>{{ isset($ehsverify->remarks) ? $ehsverify->remarks : '-' }}</td>
+                            <td>{{ isset($ehsverify->created_at) && $ehsverify->created_at != '' ? displaydateformat($ehsverify->created_at) : '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td>  L1 EHS Officer Verification Pending</td>
+                            <td>
+                                @if (isset($l1ehsverify['to_status']) && $l1ehsverify['to_status'] == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING)
+                                   L1  EHS Officer Approval Pending
+
+                                   @else
+                                   <p>-</p>
+                                @endif
+                            </td>
+                            <td>{{ isset($l1ehsverify->created_by) && $l1ehsverify->created_by != '' ? getUsername($l1ehsverify->created_by) : '-' }}</td>
+                            <td>{{ isset($l1ehsverify->remarks) ? $l1ehsverify->remarks : '-' }}</td>
+                            <td>{{ isset($l1ehsverify->created_at) && $l1ehsverify->created_at != '' ? displaydateformat($l1ehsverify->created_at) : '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td>EHS Head Approval Pending</td>
+                            <td>
+                                @if (isset($ehsheadverify['to_status']) && $ehsheadverify['to_status'] == STATUS_OHC_OPEN)
+                              Open
+                              @else
+                              <p>-</p>
+
+                                @endif
+                            </td>
+                            <td>{{ isset($ehsheadverify->created_by) && $ehsheadverify->created_by != '' ? getUsername($ehsheadverify->created_by) : '-' }}</td>
+                            <td>{{ isset($ehsheadverify->remarks) ? $ehsheadverify->remarks : '-' }}</td>
+                            <td>{{ isset($ehsheadverify->created_at) && $ehsheadverify->created_at != '' ? displaydateformat($ehsheadverify->created_at) : '-' }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Open</td>
+                            <td>
+                                @if (isset($stockopen['to_status']) && $stockopen['to_status'] == STATUS_OHC_CLOSE)
+                            Close
+
+                            @else
+                            <p>-</p>
+                                @endif
+                            </td>
+                            <td>{{ isset($stockopen->created_by) && $stockopen->created_by != '' ? getUsername($stockopen->created_by) : '-' }}</td>
+                            <td>{{ isset($stockopen->remarks) ? $stockopen->remarks : '-' }}</td>
+                            <td>{{ isset($stockopen->created_at) && $stockopen->created_at != '' ? displaydateformat($stockopen->created_at) : '-' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <br>
+    </div>
+
+
+    <br>
+
+</body>
+
+</html>

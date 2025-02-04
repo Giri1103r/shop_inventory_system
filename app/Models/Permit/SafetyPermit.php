@@ -65,6 +65,8 @@ class SafetyPermit extends Model
         'permit_status',
         'permit_extension_status',
         'reference_id',
+        'select_employee_shut_down',
+        'select_employee_loto_takenby',
         'status',
         'trash',
         'created_by',
@@ -173,16 +175,73 @@ class SafetyPermit extends Model
     {
         $request = request();
 
-        $sub_permit = is_array($request->sub_permit) ? implode(',', $request->sub_permit) : $request->sub_permit;
+
+        if (is_array($request->sub_permit)) {
+            $sub_permit = implode(',', array_map(function ($item) {
+                return decryptId($item);
+            }, $request->sub_permit));
+        } else {
+
+            $sub_permit = decryptId($request->sub_permit);
+        }
+        // dd($request->protective_equip);
+        $values = [];
+        $data = $request->protective_equip;
+        foreach ($data as $index => $data) {
+            // Decrypt the index (workId)
+            $id = decryptId($index);
+
+            $values[$id] = $data;
+        }
+
+        $values = [];
+        $data = $request->equiment_involved;
+        foreach ($data as $index => $data) {
+            // Decrypt the index (workId)
+            $id = decryptId($index);
+
+            $values[$id] = $data;
+        }
+
+        $values = [];
+        $data = $request->precaution_taken;
+        foreach ($data as $index => $data) {
+            // Decrypt the index (workId)
+            $id = decryptId($index);
+
+            $values[$id] = $data;
+        }
+
+
+        $values = [];
+        $data = $request->equipment_checklist;
+        foreach ($data as $index => $data) {
+            // Decrypt the index (workId)
+            $id = decryptId($index);
+
+            $values[$id] = $data;
+        }
+        $values = [];
+        $data = $request->safework_instruction;
+        foreach ($data as $index => $data) {
+            // Decrypt the index (workId)
+            $id = decryptId($index);
+
+            $values[$id] = $data;
+        }
+        $protective_equip = !empty($values) ? json_encode($values, true) : null;
+        $equiment_involved = !empty($values) ? json_encode($values, true) : null;
+        $precaution_taken = !empty($values) ? json_encode($values, true) : null;
+        $equipment_checklist = !empty($values) ? json_encode($values, true) : null;
+        $safework_instruction = !empty($values) ? json_encode($values, true) : null;
 
         $state_isolation_loto = !empty($request->state_isolation_loto) ? json_encode($request->state_isolation_loto) : null;
         $confined_space_entry = !empty($request->confined_space_entry) ? json_encode($request->confined_space_entry) : null;
-        $protective_equip = !empty($request->protective_equip) ? json_encode($request->protective_equip) : null;
-        $equiment_involved = !empty($request->equiment_involved) ? json_encode($request->equiment_involved) : null;
-        $precaution_taken = !empty($request->precaution_taken) ? json_encode($request->precaution_taken) : null;
-        $equipment_checklist = !empty($request->equipment_checklist) ? json_encode($request->equipment_checklist) : null;
-        $safework_instruction = !empty($request->safework_instruction) ? json_encode($request->safework_instruction) : null;
-
+        // $protective_equip = !empty($request->protective_equip) ? json_encode($request->protective_equip) : null;
+        // $equiment_involved = !empty($request->equiment_involved) ? json_encode($request->equiment_involved) : null;
+        // $precaution_taken = !empty($request->precaution_taken) ? json_encode($request->precaution_taken) : null;
+        // $equipment_checklist = !empty($request->equipment_checklist) ? json_encode($request->equipment_checklist) : null;
+        // $safework_instruction = !empty($request->safework_instruction) ? json_encode($request->safework_instruction) : null;
 
         $shutdownReq = $request->has('shutdown_req') ? 1 : 0;
         $lotoReq = $request->has('loto_req') ? 1 : 0;
@@ -206,6 +265,8 @@ class SafetyPermit extends Model
             'loto_req' => $lotoReq,
             'loto_takenby' => $request->loto_takenby,
             'loto_no' => $request->loto_no,
+            'select_employee_loto_takenby' => $request->request_for_loto_down,
+            'select_employee_shut_down' => $request->request_for_shut_down,
             'tagfield' => $tagfield,
             'state_isolation_loto' => $state_isolation_loto,
             'isolationpanel_checkbox' => $request->isolationpanel_checkbox,
@@ -235,6 +296,7 @@ class SafetyPermit extends Model
         $request = request();
 
         $safetypermit = $this->find($id);
+
         $update_array = [];
 
         $update_array['permit_id'] = $request->permit_id ?? $safetypermit->permit_id;
@@ -248,8 +310,87 @@ class SafetyPermit extends Model
         $update_array['isolationpanel_description'] = $request->isolationpanel_description ?? $safetypermit->isolationpanel_description;
 
         $update_array['sub_permit'] = is_array($request->sub_permit)
-            ? implode(',', $request->sub_permit)
-            : $request->sub_permit ?? $safetypermit->sub_permit;
+            ? implode(',', array_map('decryptId', $request->sub_permit))
+            : ($request->sub_permit ? decryptId($request->sub_permit) : $safetypermit->sub_permit);
+        // Protective Equip
+        $values = [];
+        $data = $request->protective_equip ?? [];
+
+        foreach ($data as $index => $equipData) {
+            $safetydata = decryptId($index);
+            $values[$safetydata] = $equipData;
+        }
+
+        $existingEquip = json_decode($safetypermit->protective_equip, true) ?? [];
+
+        $update_array['protective_equip'] = !empty($values) && $values !== $existingEquip
+            ? json_encode($values)
+            : $safetypermit->protective_equip;
+
+        // Equipment Invlved
+
+        $values = [];
+        $data = $request->equiment_involved ?? [];
+
+        foreach ($data as $index => $equipData) {
+            $safetydata = decryptId($index);
+            $values[$safetydata] = $equipData;
+        }
+
+        $existingEquip = json_decode($safetypermit->equiment_involved, true) ?? [];
+
+        $update_array['equiment_involved'] = !empty($values) && $values !== $existingEquip
+            ? json_encode($values)
+            : $safetypermit->equiment_involved;
+
+        // Precaution TO Be Taken
+
+
+        $values = [];
+        $data = $request->equipment_checklist ?? [];
+
+        foreach ($data as $index => $equipData) {
+            $safetydata = decryptId($index);
+            $values[$safetydata] = $equipData;
+        }
+
+        $existingEquip = json_decode($safetypermit->equipment_checklist, true) ?? [];
+
+        $update_array['equipment_checklist'] = !empty($values) && $values !== $existingEquip
+            ? json_encode($values)
+            : $safetypermit->equipment_checklist;
+        // Check List
+
+        $values = [];
+        $data = $request->equipment_checklist ?? [];
+
+        foreach ($data as $index => $equipData) {
+            $safetydata = decryptId($index);
+            $values[$safetydata] = $equipData;
+        }
+
+        $existingEquip = json_decode($safetypermit->equipment_checklist, true) ?? [];
+
+        $update_array['equipment_checklist'] = !empty($values) && $values !== $existingEquip
+            ? json_encode($values)
+            : $safetypermit->equipment_checklist;
+
+        // Instruction
+
+        $values = [];
+        $data = $request->safework_instruction ?? [];
+
+        foreach ($data as $index => $equipData) {
+            $safetydata = decryptId($index);
+            $values[$safetydata] = $equipData;
+        }
+
+        $existingEquip = json_decode($safetypermit->safework_instruction, true) ?? [];
+
+        $update_array['safework_instruction'] = !empty($values) && $values !== $existingEquip
+            ? json_encode($values)
+            : $safetypermit->safework_instruction;
+
 
         $update_array['state_isolation_loto'] = !empty($request->state_isolation_loto) && $request->state_isolation_loto !== $safetypermit->state_isolation_loto
             ? json_encode($request->state_isolation_loto)
@@ -259,25 +400,25 @@ class SafetyPermit extends Model
             ? json_encode($request->confined_space_entry)
             : $safetypermit->confined_space_entry;
 
-        $update_array['protective_equip'] = !empty($request->protective_equip) && $request->protective_equip !== $safetypermit->protective_equip
-            ? json_encode($request->protective_equip)
-            : $safetypermit->protective_equip;
+        // $update_array['protective_equip'] = !empty($request->protective_equip) && $request->protective_equip !== $safetypermit->protective_equip
+        //     ? json_encode($request->protective_equip)
+        //     : $safetypermit->protective_equip;
 
-        $update_array['equiment_involved'] = !empty($request->equiment_involved) && $request->equiment_involved !== $safetypermit->equiment_involved
-            ? json_encode($request->equiment_involved)
-            : $safetypermit->equiment_involved;
+        // $update_array['equiment_involved'] = !empty($request->equiment_involved) && $request->equiment_involved !== $safetypermit->equiment_involved
+        //     ? json_encode($request->equiment_involved)
+        //     : $safetypermit->equiment_involved;
 
-        $update_array['precaution_taken'] = !empty($request->precaution_taken) && $request->precaution_taken !== $safetypermit->precaution_taken
-            ? json_encode($request->precaution_taken)
-            : $safetypermit->precaution_taken;
+        // $update_array['precaution_taken'] = !empty($request->precaution_taken) && $request->precaution_taken !== $safetypermit->precaution_taken
+        //     ? json_encode($request->precaution_taken)
+        //     : $safetypermit->precaution_taken;
 
-        $update_array['equipment_checklist'] = !empty($request->equipment_checklist) && $request->equipment_checklist !== $safetypermit->equipment_checklist
-            ? json_encode($request->equipment_checklist)
-            : $safetypermit->equipment_checklist;
+        // $update_array['equipment_checklist'] = !empty($request->equipment_checklist) && $request->equipment_checklist !== $safetypermit->equipment_checklist
+        //     ? json_encode($request->equipment_checklist)
+        //     : $safetypermit->equipment_checklist;
 
-        $update_array['safework_instruction'] = !empty($request->safework_instruction) && $request->safework_instruction !== $safetypermit->safework_instruction
-            ? json_encode($request->safework_instruction)
-            : $safetypermit->safework_instruction;
+        // $update_array['safework_instruction'] = !empty($request->safework_instruction) && $request->safework_instruction !== $safetypermit->safework_instruction
+        //     ? json_encode($request->safework_instruction)
+        //     : $safetypermit->safework_instruction;
 
         $update_array['shutdown_req'] = $request->has('shutdown_req') ? 1 : $safetypermit->shutdown_req;
         $update_array['loto_req'] = $request->has('loto_req') ? 1 : $safetypermit->loto_req;
@@ -293,6 +434,8 @@ class SafetyPermit extends Model
         $update_array['equiment_involved_others'] = $request->equiment_involved_others ?? $safetypermit->equiment_involved_others;
         $update_array['talk_givenby'] = $request->talk_givenby ?? $safetypermit->talk_givenby;
         $update_array['attendance_toolbox_talk'] = $request->attendance_toolbox_talk ?? $safetypermit->attendance_toolbox_talk;
+        $update_array['select_employee_loto_takenby'] = $request->request_for_loto_down ?? $safetypermit->request_for_loto_down;
+        $update_array['select_employee_shut_down'] = $request->request_for_shut_down ?? $safetypermit->request_for_shut_down;
         $update_array['permit_status'] = STATUS_EHS_VERIFICATION_PENDING;
         $update_array['updated_by'] = Auth::id();
 
@@ -433,14 +576,14 @@ class SafetyPermit extends Model
 
     public function CreateData($safetypermit)
     {
-$request = request();
+        $request = request();
         $permitId = SafetyPermit::orderBy('id', 'DESC')->pluck('permit_id')->first();
         preg_match('/(\d+)$/', $permitId, $matches);
 
         $newPermitNumeric = str_pad((int)$matches[0] + 1, 5, '0', STR_PAD_LEFT);
 
         $newPermitID = 'ORD/' . $newPermitNumeric;
-// dd($safetypermit->shut_down_takenby);
+
         $insert_array = array(
             'permit_id' => $newPermitID,
             'date' => DBdateformat(now()),
@@ -473,7 +616,7 @@ $request = request();
             'assigned_job' => $safetypermit->assigned_job,
             'attendance_toolbox_talk' => $safetypermit->attendance_toolbox_talk,
             'permit_status' => STATUS_EHS_VERIFICATION_PENDING,
-            'reference_id'=> $safetypermit->id,
+            'reference_id' => $safetypermit->id,
             'created_by' => Auth::id(),
         );
 
@@ -515,8 +658,6 @@ $request = request();
     {
         $data = $this->select(
             'ptw_safety.*',
-            'shut_down_takenby_employee.emp_name as shut_down_takenby',
-            'loto_takenby_employee.emp_name as loto_takenby',
             DB::raw("(SELECT GROUP_CONCAT(work_name SEPARATOR ', ')
                       FROM ptw_masters_typeofwork
                       WHERE FIND_IN_SET(ptw_masters_typeofwork.id, ptw_safety.sub_permit)
@@ -538,13 +679,11 @@ $request = request();
             })
             ->leftJoin('ptw_masters_typeofwork_checklist', 'ptw_masters_typeofwork_checklist.typeofwork_id', '=', 'ptw_masters_typeofwork.id')
             ->leftJoin('ptw_masters_typeofwork_upload', 'ptw_masters_typeofwork_upload.typeofwork_id', '=', 'ptw_masters_typeofwork.id')
-            ->leftJoin('masters_employee as shut_down_takenby_employee', 'shut_down_takenby_employee.id', '=', 'ptw_safety.shut_down_takenby')
-            ->leftJoin('masters_employee as loto_takenby_employee', 'loto_takenby_employee.id', '=', 'ptw_safety.loto_takenby')
             ->where('ptw_safety.id', $id)
             ->where('ptw_safety.trash', 'NO')
             ->where('ptw_masters_typeofwork_upload.trash', 'NO')
             ->first();
-
+       
 
         if ($data) {
 
@@ -915,12 +1054,13 @@ $request = request();
         });
     }
 
-    public function permitData($id){
-       return SafetyPermit::where('id',$id)->first();
+    public function permitData($id)
+    {
+        return SafetyPermit::where('id', $id)->first();
     }
 
-    public function DuplicatepermitData($id){
+    public function DuplicatepermitData($id)
+    {
         return SafetyPermit::where('reference_id', $id)->exists();
-     }
-
+    }
 }

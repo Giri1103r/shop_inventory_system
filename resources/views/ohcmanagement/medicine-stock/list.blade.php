@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Employee Master')
-@section('pageurl', admin_url('employee/list'))
+@section('title', 'Medicine Stock Inventory')
+@section('pageurl', admin_url('ohc/medicine-stock-inventory/list'))
 
 
 @section('content')
@@ -10,79 +10,22 @@
 
                 <div class="card">
                     <h4 class="card-title"></h4>
-                    <div class="align-add-btc" style="margin-left: 90%;">
+                    <div class="d-flex justify-content-end p-2">
 
-                        <x-button-filter dataId="" class="search" href=""></x-button-filter>
+                        <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
+
+
+                        {{-- @if (CheckUserPermission('add')) --}}
+                            <x-button-add dataId="" class="add btn btn-primary ms-1"
+                                href="{{ admin_url('ohc/medicine-stock-inventory/add') }}">Add</x-button-add>
+                        {{-- @endif --}}
+
                     </div>
                     <div id="search" class="collapse">
                         <form action="" id="formsearch">
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_id" class="form-label ">Employee ID</label>
-                                            <input type="text" name="emp_id" id="emp_id" class="form-control"
-                                                placeholder="Employee ID">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">Employee Name</label>
-                                            <input type="text" name="emp_name" id="emp_name" class="form-control"
-                                                placeholder="Employee Name">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="email" class="form-label ">Employee Email</label>
-                                            <input type="text" name="email" id="email" class="form-control"
-                                                placeholder="Employee Email">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="employee_status" class="form-label ">Employee Status</label>
-                                            <input type="text" name="employee_status" id="employee_status"
-                                                class="form-control" placeholder="Employee Status">
-                                        </div>
-                                        <div class="col-md-3 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">Company Name</label>
-                                                <select name="company_id" id="company_id" class="form-control single-select"
-                                                    style="width: 100%">
-                                                    <option value="">Select Company Name</option>
-
-                                                    {{-- @foreach ($companyList as $list)
-                                                        <option value="{{ encryptId($list->id) }}">
-                                                            {{ $list->company_name }}
-                                                        </option>
-                                                    @endforeach --}}
-
-
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">Unit Name</label>
-
-                                                <select name="unit_id" id="unit_id" class="form-control single-select"
-                                                    style="width: 100%">
-                                                    <option value="">Select the unit</option>
-                                                    {{-- @foreach ($unit as $list)
-                                                        <option value="{{ $list->id }}">
-                                                            {{ $list->unit_name }}</option>
-                                                    @endforeach --}}
-                                                </select>
-
-
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">Department Name</label>
-                                                <select name="department_id" id="department_id"
-                                                    class=" form-control single-select" style="width: 100%">
-                                                    <option value="">Select Department Name</option>
-
-                                                </select>
-                                            </div>
-                                        </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
@@ -116,6 +59,8 @@
                                         <th>Quantity</th>
                                         <th>Unit</th>
                                         <th>Threshold Limit</th>
+                                        <th>HSN Number</th>
+                                        <th>Expire Date</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
@@ -267,10 +212,17 @@
                             data: 'threshold_limit',
                             name: 'threshold_limit'
                         },
-
                         {
-                            data: 'stock_status',
-                            name: 'stock_status'
+                            data: 'hsn_number',
+                            name: 'hsn_number'
+                        },
+                        {
+                            data: 'expire_date',
+                            name: 'expire_date'
+                        },
+                        {
+                            data: 'status',
+                            name: 'status'
                         },
 
                         {

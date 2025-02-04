@@ -46,80 +46,90 @@
                                             </select>
 
                                         </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">Expire Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="expire_date"
+                                                    id="expire_date" autocomplete="off" autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
 
-                                    <div class="col-md-3 mb-3 form-input">
-                                        <label for="emp_name" class="form-label ">From Date</label>
-                                        <div class="input-group date form-input custom-height">
-                                            <input type="text" class="form-control " name="from_date" id="from_date"
-                                                autocomplete="off">
-                                            <div class="input-group-addon input-group-text">
-                                                <span class="fa fa-calendar"></span>
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
                                             </div>
                                         </div>
 
-                                    </div>
-                                    <div class="col-md-3 mb-3 form-input">
-                                        <label for="emp_name" class="form-label ">To Date</label>
-                                        <div class="input-group date form-input  custom-height">
-                                            <input type="text" class="form-control " name="to_date" id="to_date"
-                                                autocomplete="off">
-                                            <div class="input-group-addon input-group-text">
-                                                <span class="fa fa-calendar"></span>
-                                            </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="status" class="form-label">{{ __('common.status') }}</label>
+                                            <select name="status" id="status" style="width: 100%"
+                                                class="form-control single-select">
+                                                <option value="">Select Status</option>
+                                                <option value="{{ encryptId(1) }}">Active</option>
+                                                <option value="{{ encryptId(0) }}">In-Active</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-3 mb-3 d-flex align-items-end gap-2">
+                                            <x-button-search class="me-2"></x-button-search>
+                                            <x-button-reset class="ms-1"></x-button-reset>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-3 mb-3 form-input">
-                                        <label for="status" class="form-label">{{ __('common.status') }}</label>
-                                        <select name="status" id="status" style="width: 100%"
-                                            class="form-control single-select">
-                                            <option value="">Select Status</option>
-                                            <option value="{{ encryptId(1) }}">Active</option>
-                                            <option value="{{ encryptId(0) }}">In-Active</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-md-3 mb-3 d-flex align-items-end gap-2">
-                                        <x-button-search class="me-2"></x-button-search>
-                                        <x-button-reset class="ms-1"></x-button-reset>
-                                    </div>
                                 </div>
-
                             </div>
+                        </form>
+                        <hr>
                     </div>
-                    </form>
-                    <hr>
-                </div>
 
 
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="datatable-list"
-                            class="table primary-table-bordered table-bordered table-striped display responsive nowrap w-100 mt-2 datatable-list">
-                            <thead class="thead-primary">
-                                <tr>
-                                    <th>{{ __('common.sno') }}</th>
-                                    <th>Medicine Name</th>
-                                    <th>Pack</th>
-                                    <th>HSN Number</th>
-                                    <th>Unit</th>
-                                    <th>ThresholdLimit</th>
-                                    <th>Expire Date</th>
-                                    <th>{{ __('common.status') }}</th>
-                                    <th>Remarks</th>
-                                    <th>{{ __('common.created_by') }}</th>
-                                    <th>{{ __('common.created_date') }}</th>
-                                    <th data-priority="1">{{ __('common.action') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="datatable-list"
+                                class="table primary-table-bordered table-bordered table-striped display responsive nowrap w-100 mt-2 datatable-list">
+                                <thead class="thead-primary">
+                                    <tr>
+                                        <th>{{ __('common.sno') }}</th>
+                                        <th>Medicine Name</th>
+                                        <th>Pack</th>
+                                        <th>HSN Number</th>
+                                        <th>Unit</th>
+                                        <th>ThresholdLimit</th>
+                                        <th>Expire Date</th>
+                                        <th>{{ __('common.status') }}</th>
+                                        <th>Remarks</th>
+                                        <th>{{ __('common.created_by') }}</th>
+                                        <th>{{ __('common.created_date') }}</th>
+                                        <th data-priority="1">{{ __('common.action') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
 
+                </div>
             </div>
         </div>
-    </div>
     </div>
 
 
@@ -147,6 +157,9 @@
                 dateFormat: "d-m-Y",
                 minDate: "today"
             });
+            $('#expire_date').flatpickr({
+                dateFormat: "d-m-Y",
+            })
         });
 
 
@@ -188,6 +201,7 @@
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
                         d.status = $('#status').val();
+                        d.expire_date = $('#expire_date').val();
 
                     },
                     error: function(xhr, error, code) {
@@ -271,11 +285,12 @@
                                 text: '{{ __('common.pdf') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                   var medicine = $('#medicine').val();
-                                   var unit = $('#unit').val();
+                                    var medicine = $('#medicine').val();
+                                    var unit = $('#unit').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
                                     var status = $('#status').val();
+                                    var expire_date = $('#expire_date').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
@@ -284,6 +299,7 @@
                                         '?search=' + searchValue +
                                         '&medicine=' + medicine +
                                         '&unit=' + unit +
+                                        '&expire_date=' + expire_date +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
                                         '&status=' + status
@@ -294,8 +310,9 @@
                                 text: '{{ __('common.excel') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                   var medicine = $('#medicine').val();
-                                   var unit = $('#unit').val();
+                                    var medicine = $('#medicine').val();
+                                    var unit = $('#unit').val();
+                                    var expire_date = $('#expire_date').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
                                     var status = $('#status').val();
@@ -306,6 +323,7 @@
                                         '?search=' + searchValue +
                                         '&medicine=' + medicine +
                                         '&unit=' + unit +
+                                        '&expire_date=' + expire_date +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
                                         '&status=' + status

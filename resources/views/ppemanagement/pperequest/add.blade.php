@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Request Add')
+@section('title', 'PPE Request')
 @section('pageurl', admin_url('ppe_request/list'))
 
 

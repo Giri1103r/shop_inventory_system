@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'vendor Edit')
+@section('title', 'Vendor Edit')
 @section('pageurl', admin_url('ohc/vendor/list'))
 
 
@@ -39,7 +39,7 @@
                                         <div class="row">
                                             <div class="col-md-4 mb-2 ">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Vender Name</label>
+                                                    <label class="form-label require">Vendor Name</label>
                                                     <input type="text" name ="vendor_name" id="vendor_name"
                                                         class="form-control" placeholder="Enter the vendor name"
                                                         value="{{ $vendor->vendor_name }}" >

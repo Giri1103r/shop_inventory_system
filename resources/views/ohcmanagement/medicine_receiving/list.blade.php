@@ -102,6 +102,7 @@
                                         <th>Batch Number</th>
                                         <th>Rate</th>
                                         <th>Expire Date</th>
+                                        <th>Approve Status</th>
                                         <th data-priority="1">Action</th>
                                     </tr>
                                 </thead>
@@ -244,6 +245,10 @@
                 {
                     data: 'expire_date',
                     name: 'expire_date'
+                },
+                {
+                    data: 'approve_status',
+                    name: 'approve_status'
                 },
                 {
                     data: 'action',

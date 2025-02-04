@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Permit Approval')
+@section('title', 'Safety Permit')
 @section('pageurl', admin_url('safetypermit/list'))
 
 
@@ -661,7 +661,7 @@
                                     </thead>
                                     <tbody id="workman-list-entries">
                                         @if (empty($workmaninvolved) || $workmaninvolved->every(function ($item) {
-                                            return is_null($item->employee_id) && is_null($item->workman_name) && is_null($item->workman_desig) && is_null($item->department_name) && is_null($item->nature_of_job);
+                                            return is_null($item->emp_id) && is_null($item->workman_name) && is_null($item->workman_desig) && is_null($item->department_name) && is_null($item->nature_of_job);
                                         }))
                                             <tr>
                                                 <td colspan="5" class="text-center">No data is available</td>
@@ -669,7 +669,7 @@
                                         @else
                                             @foreach ($workmaninvolved as $workman)
                                                 <tr>
-                                                    <td>{{ $workman->employee_id }}</td>
+                                                    <td>{{ $workman->emp_id }}</td>
                                                     <td>{{ $workman->workman_name }}</td>
                                                     <td>{{ $workman->workman_desig }}</td>
                                                     <td>{{ $workman->department_name }}</td>
@@ -741,7 +741,7 @@
                                                     @enderror
                                                 </div>
                                             </div>
-                                            <div id="file-upload-container" class="row">
+                                            <div id="file-upload-container" class="row mb-3">
                                                 <div class="col-12 mb-3">
                                                     <button class="btn btn-primary addmorebutton" type="button" id="dynamic-add-more">
                                                         Add
@@ -753,10 +753,15 @@
                                                            name="site_images[0][]" id="site_image_0" multiple>
                                                     <div class="text-danger"></div>
                                                     <small>Allowed file types: png, jpeg , jpg</small>
+                                                    <div class="preview-container mt-2 d-flex flex-wrap gap-2" id="preview-container-0"></div>
                                                 </div>
+
                                             </div>
 
                                         </div>
+
+
+                                    </div>
                                     </div>
                                     <hr>
                                     <div class="d-flex float-end gap-2 mx-auto">
@@ -1224,51 +1229,83 @@
 @stop
 
 @push('script')
+
+
 <script>
     $(document).ready(function () {
-       
-        const maxUploads = 5;
-
-       
-        $('#dynamic-add-more').on('click', function () {
-    let currentFileUploads = $('.file-upload-block').length;
-
-    if (currentFileUploads >= maxUploads) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Sorry!',
-            text: 'Maximum 5 records only.',
-        });
-        return;
-    }
-
- 
-    let newFileUploadBlock = `
-        <div class="col-md-4 mb-3 file-upload-block">
-            <label for="site_image_${currentFileUploads}" class="form-label require">Site Image</label>
-            <input type="file" class="form-control validate-file-accept validate-file-required"  accept="image/png, image/jpeg, image/jpg"
-                name="site_images[${currentFileUploads}][]"
-                id="site_image_${currentFileUploads}"
-                multiple data-error="Please upload with a valid file type">
-            <div class="text-danger"></div>
-            <small>Allowed file types: png, jpeg , jpg</small>
-            <button type="button" class="btn btn-danger btn-sm remove-upload-block">
-                <i class="fas fa-trash"></i>
-            </button>
-        </div>
-    `;
 
 
-    $('#file-upload-container').append(newFileUploadBlock);
 
 
-    $(document).on('click', '.remove-upload-block', function() {
-        $(this).closest('.file-upload-block').remove();
+        $(document).ready(function () {
+    const maxUploads = 5;
+
+    $('#dynamic-add-more').on('click', function () {
+        let currentFileUploads = $('.file-upload-block').length;
+
+        if (currentFileUploads >= maxUploads) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Sorry!',
+                text: 'Maximum 5 records only.',
+            });
+            return;
+        }
+
+        let newFileUploadBlock = `
+            <div class="col-md-4 mb-3 file-upload-block">
+                <label for="site_image_${currentFileUploads}" class="form-label require">Site Image</label>
+                <input type="file" class="form-control validate-file-accept validate-file-required"
+                    accept="image/png, image/jpeg, image/jpg"
+                    name="site_images[${currentFileUploads}][]"
+                    id="site_image_${currentFileUploads}"
+                    multiple>
+                <div class="text-danger"></div>
+                <small>Allowed file types: png, jpeg , jpg</small>
+                <button type="button" class="btn btn-danger btn-sm remove-upload-block">
+                    <i class="fas fa-trash"></i>
+                </button>
+                <div class="preview-container mt-2 d-flex flex-wrap gap-2" id="preview-container-${currentFileUploads}"></div>
+            </div>
+        `;
+
+        $('#file-upload-container').append(newFileUploadBlock);
     });
 
 
+    $(document).on('click', '.remove-upload-block', function () {
+        $(this).closest('.file-upload-block').remove();
+    });
+
+    $(document).on('change', 'input[type="file"]', function (event) {
+        let input = $(this);
+        let fileInputId = input.attr('id').split('_')[2];
+        let previewContainer = $('#preview-container-' + fileInputId);
+
+        previewContainer.html("");
+
+        let files = event.target.files;
+        if (files.length > 0) {
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith("image/")) {
+                    let reader = new FileReader();
+                    reader.onload = function (e) {
+                        let img = $("<img>").attr("src", e.target.result)
+                            .addClass("img-thumbnail")
+                            .css({ width: "100px", height: "100px", objectFit: "cover", marginRight: "5px" });
+
+                        previewContainer.append(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    });
+
     $('#ehs_verification').validate().resetForm();
 });
+
+
 
 
         // Initialize form validation
@@ -1277,7 +1314,7 @@
                 ehs_verification_remarks: {
                     required: true,
                     minlength: 3,
-                    maxlength: 600,
+                    maxlength: 2000,
                 },
 
 
@@ -1285,8 +1322,8 @@
             messages: {
                 ehs_verification_remarks: {
                     required: "Remarks cannot be empty.",
-                    minlength: "Remarks must contain between 3 and 600 characters.",
-                    maxlength: "Remarks must contain between 3 and 600 characters.",
+                    minlength: "Remarks must contain between 3 and 2000 characters.",
+                    maxlength: "Remarks must contain between 3 and 2000 characters.",
                 },
 
             },

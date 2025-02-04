@@ -2,6 +2,7 @@
 
 namespace App\Models\OhcManagement;
 
+use App\Scopes\TrashScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +18,9 @@ class MedicineStock extends Model
         'medicine_id',
         'quantity',
         'threshold_limit',
+        'hsn_number',
+        'expire_date',
+        'approve_status',
         'status',
         'trash',
         'created_by',
@@ -32,13 +36,18 @@ class MedicineStock extends Model
         $user = Auth::user();
         $userRole = string_to_array($user->role);
         $empId = $user->employee_id;
-        $query = $this->select('ohc_management_medicine_stock_inventory.*', 'ohc_management_medicine_stock_inventory.status as stock_status', 'masters_unit.unit_name', 'inventory1.*', 'inventory2.*', 'ohc_management_medicine_stock_inventory.id As ohc_management_medicine_stock_inventory_id')
-            ->join('masters_unit', 'ohc_management_medicine_stock_inventory.unit_id', '=', 'masters_unit.id')
-            ->join('ohc_master_medicine as inventory1', 'ohc_management_medicine_stock_inventory.medicine_id', '=', 'inventory1.id')
-            ->join('ohc_master_medicine as inventory2', 'ohc_management_medicine_stock_inventory.threshold_limit', '=', 'inventory2.id')
-            ->where('inventory1.trash', 'NO')
-            ->where('inventory2.trash', 'NO')
-            ->where('masters_unit.trash', 'NO');
+        $query = $this->select(
+            'ohc_management_medicine_stock_inventory.*',
+            'medicine_table.medicine',
+            'hsn_table.hsn',
+            'masters_unit.unit_name'
+        )
+        ->join('masters_unit', 'ohc_management_medicine_stock_inventory.unit_id', '=', 'masters_unit.id')
+        ->join('ohc_master_medicine as medicine_table', 'ohc_management_medicine_stock_inventory.medicine_id', '=', 'medicine_table.id')
+        ->join('ohc_master_medicine as hsn_table', 'ohc_management_medicine_stock_inventory.hsn_number', '=', 'hsn_table.id')
+        ->where('medicine_table.trash', 'NO')
+        ->where('masters_unit.trash', 'NO');
+
 
 
         if ($request->search['value'] != null) {
@@ -100,10 +109,15 @@ class MedicineStock extends Model
             'medicine_id' => decryptId($request->medicine_id),
             'quantity' => $request->quantity,
             'threshold_limit' => $request->threshold_limit,
+            'hsn_number'=>decryptId($request->hsn_number),
+            'expire_date' =>DBdateformat($request->expire_date),
+            'status'=>0,
+            'approve_status'=>STATUS_OHC_MEDICINE_APPROVAL_PENDING,
             'created_by' => Auth::id(),
         ];
 
-        $this->create($insert_array);
+        $data = $this->create($insert_array);
+        return $data;
     }
     public function updates($id)
     {
@@ -165,11 +179,13 @@ class MedicineStock extends Model
                     ->exists();
     }
 
+
+
     public function exportdata()
     {
         $request = request();
 
-        // Build the base query
+
         $query = $this->select(
             'ohc_management_medicine_stock_inventory.*',
             'masters_unit.unit_name',
@@ -244,5 +260,23 @@ class MedicineStock extends Model
 
         return $query->get();
     }
+    public function approvalupdate($id)
+    {
+        $request = request();
 
+        if ($request->action == 'approve') {
+            return $this->where('id', $id)->update(['status' => 1, 'approve_status' => STATUS_OHC_CLOSE]);
+        } elseif ($request->action == 'reject') {
+            return $this->where('id', $id)->update(['trash' => 'YES', 'approve_status' => STATUS_OHC_CLOSE]);
+        }
+
+        return false;
+    }
+    public function getMedicineData(){
+        return $this->whereColumn('quantity', '<', 'threshold_limit')->where('status',1)->get();
+    }
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('ohc_management_medicine_stock_inventory'));
+    }
 }

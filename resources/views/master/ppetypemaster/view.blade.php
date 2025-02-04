@@ -52,7 +52,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('PPE Type') }}</label>
                                         <div class="view_data">
-                                            {{ getPpename(isset($ppetypemaster->ppe_type) ? $ppetypemaster->ppe_type : '') }}
+                                            {{ getPpeType(isset($ppetypemaster->ppe_type) ? $ppetypemaster->ppe_type : '') }}
                                         </div>
                                     </div>
 

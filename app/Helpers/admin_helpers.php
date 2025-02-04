@@ -20,7 +20,8 @@ use App\Models\OhcManagement\UserMedicineRequisition;
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\WebPushConfig;
-
+use App\Models\IMS\Master\IncidentType;
+use App\Models\IMS\Master\Hira;
 
 
 /*
@@ -192,6 +193,16 @@ if (!function_exists('getsequence')) {
                 $count = UserMedicineRequisition::withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'REQ-' . getautogen($count);
+                break;
+            case 'inctype':
+                $count = IncidentType::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'INC-TYPE-' . getautogen($count);
+                break;
+            case 'hira':
+                $count = Hira::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'HIRA-' . getautogen($count);
                 break;
             default:
                 $sequence = Str::random(5);

@@ -15,6 +15,7 @@ use Response;
 use Exception;
 use DataTables;
 use Mail;
+use Illuminate\Support\Facades\Http;
 use App\Models\User;
 use App\Models\Permit\SafetyPermit;
 use App\Models\Permit\SafetyPermitEHSfile;
@@ -34,6 +35,7 @@ use App\Models\Master\SafeWork;
 use App\Models\Master\Precaution;
 use App\Models\Master\Checklist;
 use App\Models\Master\Employee;
+use App\Models\Master\Work;
 use App\Models\Master\Department;
 use Illuminate\Support\Facades\Session;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -143,7 +145,7 @@ class SafetyPermitController extends Controller
                             }
 
                             if (CheckUserPermission('edit')) {
-                                if (($row->created_by == Auth::id() && ($row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||  $row->permit_status == STATUS_EHS_DECLINE))) {
+                                if (($row->created_by == Auth::id() &&  ($row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||  $row->permit_status == STATUS_EHS_DECLINE) || checkUserRole(ROLE_EHS_OFFICER) && ($row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||  $row->permit_status == STATUS_EHS_DECLINE))) {
                                     $btn .= '<a href="' . admin_url('safetypermit/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                                 }
                             }
@@ -349,11 +351,15 @@ class SafetyPermitController extends Controller
 
                 return redirect(admin_url('safetypermit/list'));
             } catch (Exception $ex) {
+
+                report($ex);
                 report($ex);
                 Session::flash('error', 'Something went wrong Please try again after some time');
                 return redirect(admin_url('safetypermit/list'));
             }
         } catch (Exception $ex) {
+            report($ex);
+
             report($ex);
             Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
@@ -390,6 +396,7 @@ class SafetyPermitController extends Controller
                     'status_log' => $status_log,
 
                 );
+                // dd($data);
             }
             return view('permit.safetypermit.view', $data);
         } catch (Exception $ex) {
@@ -646,12 +653,7 @@ class SafetyPermitController extends Controller
 
             $id = $request->permit_id;
             $safetypermit = $this->safetypermit->find($id);
-
-            if ($request->has('verify')) {
-                $permit_status = STATUS_EHS_APPROVE_PENDING;
-            }
-
-
+            $permit_status = STATUS_EHS_APPROVE_PENDING;
 
             $approve =   $this->approvereject->ehsverification($permit_status);
             $this->safetypermitehsfile->store($approve, $permit_status);
@@ -708,7 +710,6 @@ class SafetyPermitController extends Controller
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
-
             $insert_array = array(
                 'permit_type' => 1,
                 'permit_id' => $id,
@@ -718,6 +719,8 @@ class SafetyPermitController extends Controller
                 'remarks' => $request->ehs_verification_remarks,
                 'approved_by' => Auth::id(),
             );
+
+
             $this->statuslog->create($insert_array);
 
             return redirect(admin_url('safetypermit/list'));
@@ -1396,36 +1399,58 @@ class SafetyPermitController extends Controller
     public function getprotectivechecklist(Request $request, $workId)
     {
         $id = decryptId($request->input('id'));
+        $workId = decryptId($workId);
 
         $checkpoints = $this->typeofworkchecklist->getprotectiveequipment($workId, 'type1');
-
-        return response()->json($checkpoints);
+        if ($request->ajax()) {
+            return response()->json($checkpoints);
+        } else {
+            return response()->json(['error', 'Something went wrong please try again after some time']);
+        }
     }
 
-    public function getequipmentinvolved($workId)
+    public function getequipmentinvolved(Request $request, $workId)
     {
-
+        $workId = decryptId($workId);
         $getequipmentinvolved = $this->typeofworkchecklist->getequipmentinvolved($workId, 'type2');
-        return response()->json($getequipmentinvolved);
+        if ($request->ajax()) {
+            return response()->json($getequipmentinvolved);
+        } else {
+            return response()->json(['error', 'Something went wrong please try again after some time']);
+        }
     }
 
-    public function getprecaution($workId)
+    public function getprecaution(Request $request, $workId)
     {
+        $workId = decryptId($workId);
         $getprecaution = $this->typeofworkchecklist->getprecaution($workId, 'type3');
-        return response()->json($getprecaution);
+        if ($request->ajax()) {
+            return response()->json($getprecaution);
+        } else {
+            return response()->json(['error', 'Something went wrong please try again after some time']);
+        }
     }
 
-    public function getchecklist($workId)
+    public function getchecklist(Request $request, $workId)
     {
-
+        $workId = decryptId($workId);
         $getchecklist = $this->typeofworkchecklist->getchecklist($workId, 'type4');
-        return response()->json($getchecklist);
+        if ($request->ajax()) {
+            return response()->json($getchecklist);
+        } else {
+            return response()->json(['error', 'Something went wrong please try again after some time']);
+        }
     }
 
-    public function getinstruction($workId)
+    public function getinstruction(Request $request, $workId)
     {
+        $workId = decryptId($workId);
         $getinstruction = $this->typeofworkchecklist->getinstruction($workId, 'type5');
-        return response()->json($getinstruction);
+        if ($request->ajax()) {
+            return response()->json($getinstruction);
+        } else {
+            return response()->json(['error', 'Something went wrong please try again after some time']);
+        }
     }
 
     public function employeename(Request $request)
@@ -1433,19 +1458,90 @@ class SafetyPermitController extends Controller
         $name = $request->input('search');
 
         $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
+            ->orWhere('emp_id', 'like', '%' . $name . '%')
             ->where('status', 1)
             ->limit(10)
             ->get();
 
+
         return response()->json(
             $employees->map(function ($employee) {
                 return [
-                    'id' => $employee->id,
+                    'id' => $employee->emp_id,
                     'text' => $employee->emp_name . ' - ' . $employee->emp_id,
                 ];
             })
         );
     }
+
+    public function workername(Request $request)
+    {
+        $name = trim(preg_replace('/\s+/', ' ', $request->input('search')));
+
+
+        $work = Work::where('emp_name', 'like', '%' . $name . '%')
+            ->orWhere('emp_id', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(20)
+            ->get();
+
+        $workResults = $work->map(function ($worker) {
+            return [
+                'id' => $worker->emp_id,
+                'text' => $worker->emp_name . ' - ' . $worker->emp_id,
+            ];
+        });
+
+        return response()->json($workResults);
+    }
+    public function visitorid(Request $request)
+    {
+        $searchTerm = $request->input('search');
+
+        if (empty($searchTerm)) {
+            return response()->json(['results' => []]);
+        }
+
+        $response = Http::get('https://vmsapi.karam.in/emp.asmx/GetVisitorGatePass', [
+            'visitorid' => $searchTerm,
+        ]);
+
+        if ($response->successful()) {
+            $data = $response->json();
+
+            // Ensure the data structure is correct
+            if (isset($data['data']) && is_array($data['data'])) {
+                $results = array_map(function ($item) {
+                    return [
+                        'id' => $item['Emp_ID'] ?? 'N/A',
+                        'text' => ($item['Emp_ID'] ?? 'Unknown') . ' - ' . ($item['NAME'] ?? 'Unknown'),
+                    ];
+                }, $data['data']);
+
+                return response()->json([
+                    'results' => array_slice($results, 0, 20), // Limit to 20 items
+                ]);
+            } elseif (is_array($data)) {
+                $results = array_map(function ($item) {
+                    return [
+                        'id' => $item['Emp_ID'] ?? 'N/A',
+                        'text' => ($item['Emp_ID'] ?? 'Unknown') . ' - ' . ($item['NAME'] ?? 'Unknown'),
+                    ];
+                }, $data);
+
+                return response()->json([
+                    'results' => array_slice($results, 0, 20), // Limit to 20 items
+                ]);
+            }
+        }
+
+        return response()->json(['results' => []]);
+    }
+
+
+
+
+
 
     public function reassignemployeename(Request $request)
     {
@@ -1495,26 +1591,163 @@ class SafetyPermitController extends Controller
         return response()->json(
             $employee_code->map(function ($employee) {
                 return [
-                    'id' => $employee->id,
+                    'id' => $employee->emp_id,
                     'text' => $employee->emp_id,
                 ];
             })
         );
     }
 
-    public function fetchEmployeeDetails($emp_id)
-    {
-        $employee = Employee::select('emp_name', 'email', 'department', 'designation')
-            ->where('id', $emp_id)
-            ->first();
 
-        $departments = $this->department->select('id', 'department_name')->where('status', '1')->get();
+    public function workerid(Request $request)
+    {
+        $name = $request->input('search');
+        $permit_id = decryptId($request->input('permit_id'));
+
+        $emp_ids = $this->workmaninvolved->getempIds($permit_id);
+
+
+
+        $work = Work::where('emp_id', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+
+
+        $workResults = $work->map(function ($worker) {
+            return [
+                'id' =>  $worker->emp_id,
+                'text' => $worker->emp_id,
+            ];
+        });
+
+
+
+
+        return response()->json($workResults);
+    }
+    public function visitorname(Request $request)
+    {
+        $searchTerm = $request->input('search');
+
+        if (empty($searchTerm)) {
+            return response()->json([
+                'results' => [],
+            ]);
+        }
+
+        $response = Http::get('https://vmsapi.karam.in/emp.asmx/GetVisitorGatePass', [
+            'visitorid' => $searchTerm,
+        ]);
+
+        if ($response->successful()) {
+            $data = $response->json();
+
+            if (isset($data['data']) && is_array($data['data'])) {
+                return response()->json([
+                    'results' => array_map(function ($item) {
+                        return [
+                            'id' => isset($item['Emp_ID']) ? $item['Emp_ID'] : 'N/A',
+                            'text' => isset($item['Emp_ID']) ? $item['Emp_ID'] : 'N/A',
+                        ];
+                    }, $data['data']),
+                ]);
+            } elseif (is_array($data)) {
+                return response()->json([
+                    'results' => array_map(function ($item) {
+
+                        return [
+                            'id' => isset($item['Emp_ID']) ? $item['Emp_ID'] : 'N/A',
+                            'text' => isset($item['Emp_ID']) ? $item['Emp_ID'] : 'N/A',
+                        ];
+                    }, $data),
+                ]);
+            }
+        }
 
         return response()->json([
-            'employee' => $employee,
-            'departments' => $departments
+            'results' => [],
         ]);
     }
+
+    // public function fetchEmployeeDetails($emp_id)
+    // {
+    //     $employee = Employee::select('emp_name', 'email', 'department', 'designation')
+    //         ->where('id', $emp_id)
+    //         ->first();
+
+    //     $work = Work::select('emp_name', 'department', 'designation')
+    //         ->where('id', $emp_id)
+    //         ->first();
+
+    //     $departments = $this->department->select('id', 'department_name')->where('status', '1')->get();
+
+    //     return response()->json([
+    //         'employee' => $employee,
+    //         'departments' => $departments
+    //     ]);
+    // }
+
+
+
+
+
+    public function fetchEmployeeDetails($emp_id)
+    {
+
+        $employee = Employee::select('emp_name', 'email', 'department', 'designation')
+            ->where('emp_id', $emp_id)
+            ->first();
+
+        if ($employee) {
+            return response()->json([
+                'employee' => $employee,
+                'departments' => $this->department->select('id', 'department_name')->where('status', '1')->get()
+            ]);
+        }
+
+        $employee = Work::select('emp_name', 'department', 'designation')
+            ->where('emp_id', $emp_id)
+            ->first();
+
+        if ($employee) {
+            return response()->json([
+                'employee' => $employee,
+                'departments' => $this->department->select('id', 'department_name')->where('status', '1')->get()
+            ]);
+        }
+
+
+        $response = Http::get('https://vmsapi.karam.in/emp.asmx/GetVisitorGatePass', [
+            'visitorid' => $emp_id
+        ]);
+
+        if ($response->successful()) {
+            $data = $response->json();
+
+
+            $employeeData = $data[0];
+
+            $employee = [
+                'emp_name' => $employeeData['NAME'] ?? 'Unknown',
+                'email' => 'Not Provided',
+                'department' => !empty($employeeData['Department']) ? $employeeData['Department'] : 'Not Provided',
+                'designation' => !empty($employeeData['Designation']) ? $employeeData['Designation'] : 'Not Provided',
+            ];
+
+            return response()->json([
+                'employee' => $employee,
+                'departments' => []
+            ]);
+        }
+        return response()->json(['error' => 'API request failed.'], 500);
+    }
+
+
+
+
+
 
     public function permitQRPDF($id)
     {
@@ -1635,7 +1868,7 @@ class SafetyPermitController extends Controller
             $data = [
                 'safetypermit' => $safetypermit,
                 'showAlert' => $safetypermit->reference_id != null, // Pass a flag to the view
-                'totime' => $safetypermit->time_to , // Pass a flag to the view
+                'totime' => $safetypermit->time_to, // Pass a flag to the view
             ];
 
             return view('permit.safetypermit.permitextension', $data);
@@ -1655,13 +1888,13 @@ class SafetyPermitController extends Controller
             $workmanInvolved = $this->workmaninvolved->getworkmanData($id);
             $duplicateData = $this->safetypermit->Duplicatepermitdata($id);
 
-                // if ($duplicateData) {
-                //    Session::flash('error','You have already created the Permit for this ID');
-                //    return redirect('safetypermit/list');
-                // }
+            // if ($duplicateData) {
+            //    Session::flash('error','You have already created the Permit for this ID');
+            //    return redirect('safetypermit/list');
+            // }
 
 
-            $newSafetypermit = $this->safetypermit->CreateData($safetypermit,$id);
+            $newSafetypermit = $this->safetypermit->CreateData($safetypermit, $id);
             $this->workmaninvolved->CreateExpireData($newSafetypermit, $workmanInvolved);
             $permit_status = STATUS_PERMIT_EXTENDED;
             $approve =   $this->safetyPermitExtension->store($permit_status, $id);
@@ -1727,12 +1960,12 @@ class SafetyPermitController extends Controller
             );
             $this->statuslog->create($insert_array);
 
-            Session::flash('success','Safety permit Is created Successfully');
+            Session::flash('success', 'Safety permit Is created Successfully');
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error','Something went wrong plese try again after some time');
+            Session::flash('error', 'Something went wrong plese try again after some time');
             return redirect(admin_url('safetypermit/list'));
         }
     }

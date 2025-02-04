@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Permit Add')
+@section('title', 'Safety Permit')
 @section('pageurl', admin_url('safetypermit/list'))
 
 
@@ -117,10 +117,10 @@
                                                         @foreach ($typeofwork as $work)
                                                             <div class="col-12 col-md-4 d-flex align-items-center gap-2">
                                                                 <input type="hidden" name=""
-                                                                    value="{{ $work->id }}">
+                                                                    value="{{ encryptId($work->id) }}">
                                                                 <input type="checkbox" class="work-type-checkbox"
-                                                                    data-id="{{ $work->id }}" name="sub_permit[]"
-                                                                    value="{{ $work->id }}">
+                                                                    data-id="{{ encryptId($work->id) }}" name="sub_permit[]"
+                                                                    value="{{ encryptId($work->id) }}">
                                                                 <a href="{{ asset($work->file_path) }}" target="_blank">
                                                                     <img src="{{ asset($work->file_path) }}"
                                                                         alt="Image" class="img-fluid"
@@ -166,6 +166,26 @@
                                                     <img src="{{ url('public/assets/images/safetypermit/profile.png') }}"
                                                         class="img-fluid" style="width: 50px; height: 50px;">
                                                     <label class="form-label mb-0">Taken By (Name & Department)</label>
+                                                    <div class="gap-2">
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for_shut_down"
+                                                                id="request_for_employee" class="form-check-input"
+                                                                value="1">
+                                                            <span class="form-check-label">Employee</span>
+                                                        </label>
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for_shut_down"
+                                                                id="request_for_worker" class="form-check-input"
+                                                                value="2">
+                                                            <span class="form-check-label">Worker</span>
+                                                        </label>
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for_shut_down"
+                                                                id="request_for_visitor" class="form-check-input"
+                                                                value="3">
+                                                            <span class="form-check-label">Visitor</span>
+                                                        </label>
+                                                    </div>
                                                     <select name="shut_down_takenby" id="employeenameshutdown"
                                                         class="form-control shutdowncheckbox" disabled>
                                                         <option value="">Select Person</option>
@@ -173,6 +193,8 @@
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
+
+
                                         </div>
 
                                         <div class="row border p-3 mx-1">
@@ -194,13 +216,36 @@
                                                     <img src="{{ url('public/assets/images/safetypermit/profile.png') }}"
                                                         class="img-fluid" style="width: 50px; height: 50px;">
                                                     <label class="form-label mb-0">Taken By (Name & Department)</label>
+
+                                                    <div class="gap-2">
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for_loto_down"
+                                                                id="loto_request_for_employee" class="form-check-input"
+                                                                value="1">
+                                                            <span class="form-check-label">Employee</span>
+                                                        </label>
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for_loto_down"
+                                                                id="loto_request_for_worker" class="form-check-input"
+                                                                value="2">
+                                                            <span class="form-check-label">Worker</span>
+                                                        </label>
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for_loto_down"
+                                                                id="loto_request_for_visitor" class="form-check-input"
+                                                                value="3">
+                                                            <span class="form-check-label">Visitor</span>
+                                                        </label>
+                                                    </div>
                                                     <select name="loto_takenby" id="employeenameloto"
                                                         class="form-control lotocheckbox" disabled>
                                                         <option value="">Select Person</option>
                                                     </select>
                                                     <div class="text-danger"></div>
+
                                                 </div>
                                             </div>
+
                                         </div>
 
                                         <div class="row border p-3 mx-1">
@@ -725,7 +770,30 @@
                                         <p class="fw-bold fs-5 mt-3">List of Workman involved in Job</span>
                                         </p>
                                         <div class="row">
-
+                                            <div class="col-md-4 mt-3">
+                                                <div class="form-group form-input">
+                                                    <div class="gap-2">
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for_work_man"
+                                                                id="request_for_workman_employee" class="form-check-input"
+                                                                value="1">
+                                                            <span class="form-check-label">Employee</span>
+                                                        </label>
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for_work_man"
+                                                                id="request_for_workman_worker" class="form-check-input"
+                                                                value="2">
+                                                            <span class="form-check-label">Worker</span>
+                                                        </label>
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for_work_man"
+                                                                id="request_for_workman_visitor" class="form-check-input"
+                                                                value="3">
+                                                            <span class="form-check-label">Visitor</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="col-md-4 col-sm-6 col-12 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Employee Code / Visitor ID</label>
@@ -970,47 +1038,78 @@
                 maxTime: "18:00", // Until 6:00 PM
             });
 
-            $('#employee_code').select2({
-                ajax: {
-                    url: '{{ admin_url('safetypermit/employeeid') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            })
-                        };
+
+            $(document).ready(function() {
+                $("input[name='request_for_work_man']").on('change', function() {
+                    let selectedValue = $("input[name='request_for_work_man']:checked").val();
+                    let url = '';
+                    let placeholder = 'Select Person';
+                    let minimumInputLength = 1;
+
+                    // Set parameters based on the selected value
+                    if (selectedValue == '1') {
+                        url = '{{ admin_url('safetypermit/employeeid') }}';
+                        placeholder = 'Select Employee';
+                        minimumInputLength = 3; // Employee requires 3 characters
+                    } else if (selectedValue == '2') {
+                        url = '{{ admin_url('safetypermit/workerid') }}';
+                        placeholder = 'Select Worker';
+                        minimumInputLength = 3; // Worker requires 3 characters
+                    } else if (selectedValue == '3') {
+                        url = '{{ admin_url('safetypermit/visitorname') }}';
+                        placeholder = 'Search by Emp ID or Name';
+                        minimumInputLength = 3; // Visitor requires 3 characters
                     }
-                },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
+
+                    $('#employee_code').select2({
+                        ajax: {
+                            url: url,
+                            dataType: 'json',
+                            delay: 250,
+                            data: function(params) {
+                                return {
+                                    search: params.term
+                                };
+                            },
+                            processResults: function(data) {
+                                console.log("API Response:", data);
+
+                                let items = data.results || data;
+
+                                return {
+                                    results: items.map(function(item) {
+                                        return {
+                                            id: item.id,
+                                            text: item.text
+                                        };
+                                    })
+                                };
+                            },
+                            error: function(xhr, textStatus, errorThrown) {
+                                console.log("Error in AJAX request:", textStatus,
+                                    errorThrown);
+                            }
+                        },
+                        minimumInputLength: minimumInputLength,
+                        placeholder: placeholder,
+                        dropdownCssClass: 'form-control',
+                        selectionCssClass: 'form-control'
+                    });
+                });
             });
 
 
             $(document).on("change", "#employee_code", function() {
                 var emp_id = $(this).val();
                 var currentRow = $(this).closest(".row");
-                var departmentDropdown = currentRow.find(
-                    'select[name="workman_dept"]');
+                var departmentDropdown = currentRow.find('select[name="workman_dept"]');
 
                 if (emp_id) {
                     $.ajax({
                         url: "{{ url('safetypermit/fetchEmployeeDetails') }}/" + emp_id,
                         type: "GET",
                         success: function(data) {
-
                             if (data.employee) {
-
                                 currentRow.find('input[name="workman_name"]').val(data.employee
                                     .emp_name);
                                 currentRow.find('input[name="workman_desig"]').val(data.employee
@@ -1018,8 +1117,7 @@
 
                                 departmentDropdown.empty();
                                 departmentDropdown.append(
-                                    '<option value="">Select Department</option>'
-                                );
+                                    '<option value="">Select Department</option>');
 
                                 if (data.departments && data.departments.length > 0) {
                                     data.departments.forEach(function(department) {
@@ -1032,7 +1130,7 @@
                                 } else {
                                     departmentDropdown.append(
                                         '<option value="">No departments available</option>'
-                                    );
+                                        );
                                 }
                             } else {
                                 Swal.fire({
@@ -1051,14 +1149,12 @@
                         },
                     });
                 } else {
-
                     currentRow.find('input[name="workman_name"]').val("");
                     currentRow.find('input[name="workman_desig"]').val("");
                     departmentDropdown.empty();
                     departmentDropdown.append('<option value="">Select Department</option>');
                 }
             });
-
 
             $(document).on("click", ".add", function(e) {
                 e.preventDefault();
@@ -1087,30 +1183,26 @@
                         .text("Workman Name is required.");
                     isValid = false;
                 }
-                if (!department) {
-                    parentRow.find('select[name="workman_dept"]').closest('.form-group').find(
-                        '.text-danger').text("Department is required.");
-                    isValid = false;
-                }
                 if (!natureOfJob || !/^[a-zA-Z\s]{3,30}$/.test(natureOfJob)) {
                     parentRow.find('input[name="nature_of_job"]').closest('.form-group').find(
                         '.text-danger').text(
-                        "Nature of Job should only contain letters and spaces (3 to 30 characters).");
+                        "Nature of Job should only contain letters and spaces (3 to 30 characters)."
+                    );
                     isValid = false;
                 }
 
                 if (isValid) {
                     var newRow = `
-                        <tr>
-                            <td><input type="hidden" name="emp_id[]" value="${employeeCode}">${employeeName}</td>
-                            <td><input type="hidden" name="workman_name[]" value="${workmanName}">${workmanName}</td>
-                            <td><input type="hidden" name="workman_desig[]" value="${designation}">${designation}</td>
-                            <td><input type="hidden" name="workman_dept[]" value="${department}">${departmentName}</td>
-                            <td><input type="hidden" name="nature_of_job[]" value="${natureOfJob}">${natureOfJob}</td>
-                            <td>
-                                <button class="btn btn-danger btn-sm remove-entry">Remove</button>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td><input type="hidden" name="emp_id[]" value="${employeeCode}">${employeeName}</td>
+                        <td><input type="hidden" name="workman_name[]" value="${workmanName}">${workmanName}</td>
+                        <td><input type="hidden" name="workman_desig[]" value="${designation}">${designation}</td>
+                        <td><input type="hidden" name="workman_dept[]" value="${department}">${departmentName}</td>
+                        <td><input type="hidden" name="nature_of_job[]" value="${natureOfJob}">${natureOfJob}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm remove-entry">Remove</button>
+                        </td>
+                    </tr>
                     `;
 
                     $("#workman-list-entries").append(newRow);
@@ -1131,34 +1223,82 @@
 
 
 
+
             $(document).on("click", ".remove-entry", function() {
                 $(this).closest("tr").remove();
             });
 
-            $('#employeenameshutdown,#employeenameloto').select2({
-                ajax: {
-                    url: '{{ admin_url('safetypermit/employeename') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            })
-                        };
+            $(document).ready(function() {
+                function initializeSelect2(selectId, selectedValue) {
+                    let url = '';
+                    let placeholder = 'Select Person';
+                    let minimumInputLength = 3;
+
+                    if (selectedValue == '1') {
+                        url = '{{ admin_url('safetypermit/employeename') }}';
+                        placeholder = 'Select Employee';
+                        minimumInputLength = 3;
+                    } else if (selectedValue == '2') {
+                        url = '{{ admin_url('safetypermit/workername') }}';
+                        placeholder = 'Select Worker';
+                        minimumInputLength = 3;
+                    } else if (selectedValue == '3') {
+                        url = '{{ admin_url('safetypermit/visitorid') }}';
+                        placeholder = 'Search by Emp ID or Name';
+                        minimumInputLength = 3;
                     }
-                },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
+
+                    $(selectId).prop('disabled', false);
+                    $(selectId).val(null).trigger('change');
+
+                    $(selectId).select2({
+                        ajax: {
+                            url: url,
+                            dataType: 'json',
+                            delay: 250,
+                            data: function(params) {
+                                return {
+                                    search: params.term
+                                };
+                            },
+                            processResults: function(data) {
+                                console.log("API Response:", data);
+
+
+                                let items = data.results || data;
+
+                                return {
+                                    results: items.map(function(item) {
+                                        return {
+                                            id: item.id,
+                                            text: item.text
+                                        };
+                                    })
+                                };
+                            },
+                            error: function(xhr, textStatus, errorThrown) {
+                                console.log("Error in AJAX request:", textStatus,
+                                    errorThrown);
+                            }
+                        },
+                        minimumInputLength: minimumInputLength,
+                        placeholder: placeholder,
+                        dropdownCssClass: 'form-control',
+                        selectionCssClass: 'form-control'
+                    });
+                }
+
+                // Shutdown Select2 Initialization
+                $("input[name='request_for_shut_down']").on('change', function() {
+                    let selectedValue = $("input[name='request_for_shut_down']:checked").val();
+                    initializeSelect2('#employeenameshutdown', selectedValue);
+                });
+
+                // Loto Select2 Initialization
+                $("input[name='request_for_loto_down']").on('change', function() {
+                    let selectedValue = $("input[name='request_for_loto_down']:checked").val();
+                    initializeSelect2('#employeenameloto', selectedValue);
+                });
             });
 
 
@@ -1190,7 +1330,8 @@
                 if (fromTimeValue) {
                     endTimePicker.set('disable', [
                         function(date) {
-                            return date.getHours() === fromTimeValue.getHours() && date.getMinutes() ===
+                            return date.getHours() === fromTimeValue.getHours() && date
+                                .getMinutes() ===
                                 fromTimeValue.getMinutes();
                         }
                     ]);
@@ -1335,6 +1476,8 @@
             });
 
         });
+
+
         $(document).ready(function() {
             const protectiveEquipmentMap = new Map();
             $('#noDataMessage').show();
@@ -1344,7 +1487,7 @@
                 const checkboxState = $(this).prop('checked');
 
                 if (!checkboxState) {
-                    // Unchecking a work name: Remove associated equipment
+
                     container.find(`.checkpoint[data-work-id="${workId}"]`).each(function() {
                         const equipmentName = $(this).data('name');
                         if (protectiveEquipmentMap.has(equipmentName)) {
@@ -1355,12 +1498,12 @@
                                 protectiveEquipmentMap.set(equipmentName, updatedWorkIds);
                             } else {
                                 protectiveEquipmentMap.delete(equipmentName);
-                                $(this).remove(); // Remove from DOM if no workId is associated
+                                $(this).remove();
                             }
                         }
                     });
                 } else {
-                    // Checking a work name: Fetch protective equipment only if not already loaded
+
                     if (!protectiveEquipmentMap.has(workId)) {
                         $.ajax({
                             url: "{{ admin_url('safetypermit/getprotectivechecklist') }}/" +
@@ -1371,13 +1514,13 @@
                                 data.forEach(function(item) {
                                     const equipmentName = item.protective_equip;
 
-                                    // Check if equipment is already displayed
+
                                     const existingCheckpoint = container.find(
                                         `.checkpoint[data-name="${equipmentName}"]`
                                     );
 
                                     if (existingCheckpoint.length > 0) {
-                                        // Add the current workId to its association
+
                                         const associatedWorkIds = protectiveEquipmentMap
                                             .get(equipmentName) || [];
                                         if (!associatedWorkIds.includes(workId)) {
@@ -1386,7 +1529,7 @@
                                                 associatedWorkIds);
                                         }
 
-                                        // Preserve the checked state only if it is default_enable
+
                                         if (item.default_enable == 1) {
                                             existingCheckpoint
                                                 .find('.protective-checkbox')
@@ -1468,8 +1611,6 @@
                 }
             });
         });
-
-
 
         // equipement involved
 
@@ -1642,7 +1783,7 @@
                             type: 'GET',
                             dataType: 'json',
                             success: function(data) {
-                              
+
                                 data.forEach(function(item) {
 
                                     const equipmentName = item.precaution;
@@ -1943,7 +2084,7 @@
 
         $(document).ready(function() {
             const shutdownCheckbox = $('#shutdown-checkbox');
-            const targetInputs = $('.shutdowncheckbox').not('#shutdown-checkbox');
+            const targetInputs = $('.shutdowncheckbox, input[name="request_for_shut_down"]');
 
 
             targetInputs.prop('disabled', true);
@@ -1960,9 +2101,9 @@
         });
 
         $(document).ready(function() {
-            // On checkbox change
+
             $('#isolationpanel_checkbox').change(function() {
-                // Enable/disable the textarea based on checkbox state
+
                 if ($(this).prop('checked')) {
                     $('.isolationpanel_description').prop('disabled', false);
                 } else {
@@ -1974,9 +2115,7 @@
 
         $(document).ready(function() {
             const lotoCheckbox = $('#loto-checkbox');
-            const targetInputs = $('.lotocheckbox').not('#loto-checkbox');
-
-
+            const targetInputs = $('.lotocheckbox, input[name="request_for_loto_down"]');
             targetInputs.prop('disabled', true);
 
 
@@ -2023,14 +2162,14 @@
                     exact_location_job: {
                         required: true,
                         minlength: 3,
-                        maxlength: 30,
-                        regex: /^[a-zA-Z0-9, ]{3,30}$/
+                        maxlength: 500,
+                        regex: /^[a-zA-Z0-9, ]{3,500}$/
                     },
                     job_location_area: {
                         required: true,
                         minlength: 3,
-                        maxlength: 30,
-                        regex: /^[a-zA-Z0-9, ]{3,30}$/
+                        maxlength: 500,
+                        regex: /^[a-zA-Z0-9, ]{3,500}$/
                     },
 
                     'sub_permit[]': {
@@ -2085,14 +2224,14 @@
                     },
                     exact_location_job: {
                         required: "Exact Job Location cannot be empty.",
-                        minlength: "Exact Job Location between 3 and 30 characters.",
-                        maxlength: "Exact Job Location between 3 and 30 characters.",
+                        minlength: "Exact Job Location between 3 and 500 characters.",
+                        maxlength: "Exact Job Location between 3 and 500 characters.",
                         regex: "Exact Job Location contains only the letters and numbers",
                     },
                     job_location_area: {
                         required: "Job Location Area cannot be empty.",
-                        minlength: "Job Location Area between 3 and 30 characters.",
-                        maxlength: "Job Location Area between 3 and 30 characters.",
+                        minlength: "Job Location Area between 3 and 500 characters.",
+                        maxlength: "Job Location Area between 3 and 500 characters.",
                         regex: "Job Location Area contains only the letters and numbers",
                     },
                     'sub_permit[]': {

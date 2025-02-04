@@ -35,13 +35,14 @@
                                         action="{{ admin_url('ohc/medicine/edit/submit') }}">
                                         @csrf
                                         <input type="hidden" name="id" id="id"
-                                        value="{{ encryptId($medicine->id) }}">
+                                            value="{{ encryptId($medicine->id) }}">
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Medicine Name</label>
                                                     <input type="text" name ="medicine" id="medicine"
-                                                        class="form-control" placeholder=" Enter the medicine Name" value="{{$medicine->medicine}}">
+                                                        class="form-control" placeholder=" Enter the medicine Name"
+                                                        value="{{ $medicine->medicine }}">
                                                     @error('medicine')
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
@@ -50,8 +51,8 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Pack</label>
-                                                    <input type="text" name="pack" id="pack" class="form-control"  value="{{$medicine->pack}}"
-                                                        placeholder="Enter the Pack name">
+                                                    <input type="text" name="pack" id="pack" class="form-control"
+                                                        value="{{ $medicine->pack }}" placeholder="Enter the Pack name">
                                                     @error('pack')
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
@@ -60,8 +61,8 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">HSN Number</label>
-                                                    <input type="text" name="hsn" id="hsn" class="form-control" value="{{$medicine->hsn}}"
-                                                        placeholder="Enter the HSN Number">
+                                                    <input type="text" name="hsn" id="hsn" class="form-control"
+                                                        value="{{ $medicine->hsn }}" placeholder="Enter the HSN Number">
                                                     @error('hsn')
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
@@ -74,8 +75,10 @@
                                                         style="width: 100%">
                                                         <option value="">Select the unit</option>
                                                         @foreach ($unit as $list)
-                                                        <option value="{{$list->id}}"  @if ($list->id == $medicine->unit_id) selected @endif>{{$list->unit_name}}</option>
-                                                    @endforeach
+                                                            <option value="{{ $list->id }}"
+                                                                @if ($list->id == $medicine->unit_id) selected @endif>
+                                                                {{ $list->unit_name }}</option>
+                                                        @endforeach
                                                     </select>
                                                     @error('unit_id')
                                                         <div class="text-danger">{{ $message }}</div>
@@ -85,8 +88,9 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Threshold Limit</label>
-                                                    <input type="text" name="threshold_limit" id="threshold_limit" value="{{$medicine->threshold_limit}}"
-                                                        class="form-control" placeholder="Enter the threshold limit">
+                                                    <input type="text" name="threshold_limit" id="threshold_limit"
+                                                        value="{{ $medicine->threshold_limit }}" class="form-control"
+                                                        placeholder="Enter the threshold limit">
                                                     @error('threshold_limit')
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
@@ -97,7 +101,8 @@
                                                     <label class="form-label require">Expire Date</label>
 
                                                     <div class="input-group date form-input">
-                                                        <input type="text" name="expire_date" id="expire_date" value="{{ displaydateformat($medicine->expiry_date)}}"
+                                                        <input type="text" name="expire_date" id="expire_date"
+                                                            value="{{ displaydateformat($medicine->expiry_date) }}"
                                                             class="form-control" placeholder="Select the Expire Date">
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
@@ -108,15 +113,17 @@
                                                     @enderror
                                                 </div>
                                             </div>
-                                            <div class="col-md-12">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Remarks</label>
-                                                    <textarea name="remarks" id="remarks" class="form-control" placeholder="Enter the Remarks">{{$medicine->remarks}}</textarea>
-                                                    @error('remarks')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
+
+                                                <div class="col-md-12">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">Remarks</label>
+                                                        <textarea name="remarks" id="remarks" class="form-control" placeholder="Enter the Remarks">{{ $medicine->remarks }}</textarea>
+                                                        @error('remarks')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
                                                 </div>
-                                            </div>
+                                        
                                         </div>
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
@@ -172,13 +179,16 @@
                             url: '{{ admin_url('ohc/medicine/unique') }}',
                             type: 'post',
                             data: {
-                            medicine_name: function() {
+                                medicine_name: function() {
                                     return $('#medicine').val();
+                                },
+                                unit_id: function() {
+                                    return $('#unit_id').val();
                                 },
                                 id: function() {
                                     return $('#id').val();
                                 }
-                            }
+                            },
                         },
                     },
                     pack: {
@@ -192,7 +202,7 @@
                         maxlength: 30,
                         regex: /^[a-zA-Z0-9\s\-]*$/,
                         remote: {
-                            url: '{{ admin_url('ohc/medicine/unique') }}',
+                            url: '{{ admin_url('ohc/medicine/hsn-unique') }}',
                             type: 'post',
                             data: {
                                 hsn: function() {
@@ -206,21 +216,18 @@
                     },
                     unit_id: {
                         required: true,
+
                     },
                     threshold_limit: {
                         required: true,
-                        minlength: 3,
+                        minlength: 2,
                         maxlength: 100,
                         regex: /^[a-zA-Z0-9\s\-]*$/,
                     },
                     expire_date: {
                         required: true,
                     },
-                    remarks: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 600,
-                    },
+
                 },
                 messages: {
                     medicine: {
@@ -228,7 +235,7 @@
                         minlength: "Medicine name must be at least 3 characters.",
                         maxlength: "Medicine name cannot exceed 100 characters.",
                         regex: "Medicine name contains invalid characters.",
-                        remote: "This Medicine Name already exists.",
+                        remote: "This Medicine Name should be unique according to the unit.",
                     },
                     pack: {
                         required: "Pack details Cannot be empty.",
@@ -244,6 +251,8 @@
                     },
                     unit_id: {
                         required: "Please select a unit.",
+
+
                     },
                     threshold_limit: {
                         required: "Please enter the threshold limit.",
@@ -254,11 +263,7 @@
                     expire_date: {
                         required: "Please select the expiry date.",
                     },
-                    remarks: {
-                        required: "Please provide remarks.",
-                        minlength: "Remarks must be at least 3 characters.",
-                        maxlength: "Remarks cannot exceed 600 characters.",
-                    },
+
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
