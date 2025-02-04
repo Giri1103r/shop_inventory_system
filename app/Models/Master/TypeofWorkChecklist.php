@@ -289,10 +289,8 @@ class TypeofWorkChecklist extends Model
 
                     foreach ($request->protective['record_id'] as $name => $recordId) {
 
-                        $existingRecord = $this->where('id', $recordId)->where('typeofwork_id', $id)
-                            ->where('type', $type)
-                            ->where('check_points', $checkPoint)
-                            ->first();
+                        $recordIds = $this->where('id', $recordId)->exists();
+
                         $data = [
                             'typeofwork_id' => $id,
                             'type' => $type,
@@ -301,13 +299,21 @@ class TypeofWorkChecklist extends Model
                             'default_enable' => $defaultEnable,
                             'updated_by' => Auth::id(),
                         ];
-                        if ($existingRecord) {
-                            $existingRecord->update($data);
-                        }
-                        else {
-                            $data['created_by'] = Auth::id();
-                            $this->create($data);
-                            break;
+                        if ($recordIds) {
+                            $existingRecord = $this->where('id', $recordId)->where('typeofwork_id', $id)
+                                ->where('type', $type)
+                                ->where('check_points', $checkPoint)
+                                ->first();
+
+                            if ($existingRecord) {
+
+                                $existingRecord->update($data);
+                            }
+                        } else {
+                            if (!$recordIds) {
+                                $data['created_by'] = Auth::id();
+                                $this->create($data);
+                            }
                         }
                     }
                 }
@@ -336,11 +342,7 @@ class TypeofWorkChecklist extends Model
 
                     foreach ($request->equipment['equipmentrecord_id'] as $name => $equipmentrecord_id) {
 
-
-                        $existingRecord = $this->where('id', $equipmentrecord_id)->where('typeofwork_id', $id)
-                            ->where('type', $type)
-                            ->where('check_points', $checkPoint)
-                            ->first();
+                        $recordId = $this->where('id', $equipmentrecord_id)->exists();
 
                         $data = [
                             'typeofwork_id' => $id,
@@ -350,12 +352,21 @@ class TypeofWorkChecklist extends Model
                             'default_enable' => $defaultEnable,
                             'updated_by' => Auth::id(),
                         ];
-                        if ($existingRecord) {
-                            $existingRecord->update($data);
-                        }else {
-                            $data['created_by'] = Auth::id();
-                            $this->create($data);
-                            break;
+                        if ($recordId) {
+                            $existingRecord = $this->where('id', $equipmentrecord_id)->where('typeofwork_id', $id)
+                                ->where('type', $type)
+                                ->where('check_points', $checkPoint)
+                                ->first();
+
+                            if ($existingRecord) {
+
+                                $existingRecord->update($data);
+                            }
+                        } else {
+                            if (!$recordId) {
+                                $data['created_by'] = Auth::id();
+                                $this->create($data);
+                            }
                         }
                     }
                 }
@@ -385,11 +396,7 @@ class TypeofWorkChecklist extends Model
                     foreach ($request->manual['manualrecord_id'] as $name => $manualrecord_id) {
 
 
-                        $existingRecord = $this->where('id', $manualrecord_id)->where('typeofwork_id', $id)
-                            ->where('type', $type)
-                            ->where('check_points', $checkPoint)
-                            ->first();
-
+                        $recordId = $this->where('id', $manualrecord_id)->exists();
                         $data = [
                             'typeofwork_id' => $id,
                             'type' => $type,
@@ -398,12 +405,23 @@ class TypeofWorkChecklist extends Model
                             'default_enable' => $defaultEnable,
                             'updated_by' => Auth::id(),
                         ];
-                        if ($existingRecord) {
-                            $existingRecord->update($data);
-                        }else {
-                            $data['created_by'] = Auth::id();
-                            $this->create($data);
-                            break;
+                        if ($recordId) {
+                            $existingRecord = $this->where('id', $manualrecord_id)->where('typeofwork_id', $id)
+                                ->where('type', $type)
+                                ->where('check_points', $checkPoint)
+                                ->first();
+
+
+
+                            if ($existingRecord) {
+
+                                $existingRecord->update($data);
+                            }
+                        } else {
+                            if (!$recordId) {
+                                $data['created_by'] = Auth::id();
+                                $this->create($data);
+                            }
                         }
                     }
                 }
@@ -432,12 +450,7 @@ class TypeofWorkChecklist extends Model
 
                     foreach ($request->check['checkrecord_id'] as $name => $checkrecord_id) {
 
-
-                        $existingRecord = $this->where('id', $checkrecord_id)->where('typeofwork_id', $id)
-                            ->where('type', $type)
-                            ->where('check_points', $checkPoint)
-                            ->first();
-
+                        $recordId = $this->where('id', $checkrecord_id)->exists();
                         $data = [
                             'typeofwork_id' => $id,
                             'type' => $type,
@@ -446,12 +459,22 @@ class TypeofWorkChecklist extends Model
                             'default_enable' => $defaultEnable,
                             'updated_by' => Auth::id(),
                         ];
-                        if ($existingRecord) {
-                            $existingRecord->update($data);
-                        }else {
-                            $data['created_by'] = Auth::id();
-                            $this->create($data);
-                            break;
+
+                        if ($recordId) {
+                            $existingRecord = $this->where('id', $checkrecord_id)->where('typeofwork_id', $id)
+                                ->where('type', $type)
+                                ->where('check_points', $checkPoint)
+                                ->first();
+
+                            if ($existingRecord) {
+
+                                $existingRecord->update($data);
+                            }
+                        } else {
+                            if (!$recordId) {
+                                $data['created_by'] = Auth::id();
+                                $this->create($data);
+                            }
                         }
                     }
                 }
@@ -480,11 +503,7 @@ class TypeofWorkChecklist extends Model
 
                     foreach ($request->instruction['instructionrecord_id'] as $name => $instructionrecord_id) {
 
-
-                        $existingRecord = $this->where('id', $instructionrecord_id)->where('typeofwork_id', $id)
-                            ->where('type', $type)
-                            ->where('check_points', $checkPoint)
-                            ->first();
+                        $recordId = $this->where('id', $instructionrecord_id)->exists();
 
                         $data = [
                             'typeofwork_id' => $id,
@@ -494,12 +513,24 @@ class TypeofWorkChecklist extends Model
                             'default_enable' => $defaultEnable,
                             'updated_by' => Auth::id(),
                         ];
-                        if ($existingRecord) {
-                            $existingRecord->update($data);
-                        }else {
+
+
+                        if ($recordId) {
+
+                            $existingRecord = $this->where('id', $instructionrecord_id)
+                                ->where('typeofwork_id', $id)
+                                ->where('type', $type)
+                                ->where('check_points', $checkPoint)
+                                ->first();
+
+                            if ($existingRecord) {
+
+                                $existingRecord->update($data);
+                            }
+                        } else {
+
                             $data['created_by'] = Auth::id();
                             $this->create($data);
-                            break;
                         }
                     }
                 }
@@ -508,6 +539,7 @@ class TypeofWorkChecklist extends Model
 
         return true;
     }
+
 
 
     public function getprotectivechecklistdetails($id, $type)
