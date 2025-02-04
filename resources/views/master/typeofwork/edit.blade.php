@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Equipment Checklist Edit')
+@section('title', 'Type Of work Edit')
 @section('pageurl', admin_url('ptw/typeofworkmaster/list'))
 
 
