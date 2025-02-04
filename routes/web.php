@@ -510,6 +510,9 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('training/feedback_approve/submit', [TrainingScheduleController::class, 'adminfeedbackApprove']);
             Route::get('training/feedback_link/{id}/{training_schedule_id}', [TrainingScheduleController::class, 'feedbackLinkPage']);
             Route::post('training/feedback_link/submit', [TrainingScheduleController::class, 'feedbackLinkSubmit']);
+            Route::get('training/worker/feedback_link/{training_schedule_id}', [TrainingScheduleController::class, 'workerFeedbackLinkPage']);
+            Route::post('training/worker/feedback_link/submit', [TrainingScheduleController::class, 'workerFeedbackLinkSubmit']);
+            Route::post('training/workerId/unique', [TrainingScheduleController::class, 'checkUniqueworkerId']);
 
 
             /**
@@ -540,6 +543,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::delete('/delete/{id}', [NominationProcessController::class, 'delete']);
                 Route::get('/view/{id}', [NominationProcessController::class, 'view']);
                 Route::get('/fetchEmployeeDetails/{emp_id}', [NominationProcessController::class, 'fetchEmployeeDetails']);
+                Route::get('/fetchEmployeeOrWorkerList/{type}/{deptID}/{training_schedule_id}', [NominationProcessController::class, 'fetchEmployeeOrWorkerList']);
             });
 
 

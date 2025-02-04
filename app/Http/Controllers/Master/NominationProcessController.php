@@ -17,6 +17,7 @@ use DataTables;
 use Response;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
+use App\Models\Master\Work;
 use App\Models\Master\Topic;
 use App\Models\Master\NominationProcess;
 use App\Models\Master\TrainingSchedule;
@@ -34,6 +35,7 @@ class NominationProcessController extends Controller
     private $uploadlog;
     private $department;
     private $employee;
+    private $work;
     private $topic;
     private $training_schedule;
     private $nomination_process;
@@ -46,6 +48,7 @@ class NominationProcessController extends Controller
         $this->training_attendance = new TrainingAttendance();
         $this->topic = new Topic();
         $this->employee = new Employee();
+        $this->work = new Work();
         $this->nomination_process = new NominationProcess();
         $this->department = new Department();
         $this->user = new User();
@@ -115,40 +118,97 @@ class NominationProcessController extends Controller
         return view('master.training.nomination_process.list', $data);
     }
 
+    public function fetchEmployeeOrWorkerList($type, $deptID, $training_schedule_id)
+    {
+        if ($type == 1) { // Employee
+            $training_schedule = $this->training_schedule->selectOne(decryptId($training_schedule_id));
 
-
+            $list = Employee::select('id', 'emp_id', 'department')
+                ->where('id', '!=', $training_schedule->trainer_id)
+                ->where('user_role', '!=', 1)->where('user_role', '!=', 10)->where('user_role', '!=', 2)
+                ->where('status', 1)->where('department', $deptID)
+                ->get();
+        } else { // Worker
+            $list = Work::select('id', 'emp_id', 'department')->where('department', $deptID)
+                ->where('status', 1)
+                ->get();
+        }
+        //   dd($list,$type,$deptID);
+        return response()->json($list);
+    }
     public function fetchEmployeeDetails($emp_id)
     {
-        $employee = Employee::select('id', 'emp_name', 'email', 'department', 'employee_status')
-            ->where('id', $emp_id)->where('user_role', '!=', 10)
+        $employee = Employee::select('id', 'emp_name', 'email', 'employee_status')
+            ->where('id', $emp_id)
+            ->where('user_role', '!=', 10)
             ->where('status', 1)
             ->first();
-        if (!$employee) {
-            return response()->json([
-                'error' => 'Employee not found.',
-            ], 404);
+
+        $worker = Work::select('id', 'emp_id', 'emp_name', 'wfemptype')
+            ->where('id', $emp_id)
+            ->where('status', 1)
+            ->first();
+        if (!$employee && !$worker) {
+            return response()->json(['error' => 'Employee/Worker not found.'], 404);
         }
 
-        $departments = $this->department->select('id', 'department_name')
-            ->where('status', '1')
-            ->get();
+
         $lastTraining = TrainingAttendance::select('training_masters_topic.topic_name', 'training_attendance.attendance_date')
             ->leftJoin('training_masters_topic', 'training_attendance.topic_id', '=', 'training_masters_topic.id')
-            ->where('training_attendance.email', $employee->email)
+            ->where('training_attendance.email', optional($employee)->email)
             ->where('training_attendance.attendance_status', 1)
             ->orderBy('training_attendance.attendance_date', 'desc')
             ->first();
 
-        $lastTrainingDate = optional($lastTraining)->attendance_date ? $lastTraining->attendance_date->format('d-m-Y') : 'No data';
-        $lastTrainingTopic = optional($lastTraining)->topic_name ?? 'No data';
-
         return response()->json([
-            'employee' => $employee,
-            'departments' => $departments,
-            'lastTrainingDate' => $lastTrainingDate,
-            'lastTrainingTopic' => $lastTrainingTopic,
+            'employee' => $employee ?? $worker,
+            'employee_type' => $employee ? $employee->employee_status : ($worker ? $worker->wfemptype : ''),
+            'lastTrainingDate' => optional($lastTraining)->attendance_date ? $lastTraining->attendance_date->format('d-m-Y') : 'No data',
+            'lastTrainingTopic' => optional($lastTraining)->topic_name ?? 'No data',
         ]);
     }
+
+    // public function fetchEmployeeDetails($emp_id)
+    // {
+    //     $employee = Employee::select('id', 'emp_name', 'email', 'department', 'employee_status')
+    //         ->where('id', $emp_id)->where('user_role', '!=', 10)
+    //         ->where('status', 1)
+    //         ->first();
+    //     $worker = Work::select('id', 'emp_id', 'emp_name', 'department', 'wfemptype')
+    //         ->where('id', $emp_id)
+    //         ->where('status', 1)
+    //         ->first();
+    //     if (!$employee) {
+    //         return response()->json([
+    //             'error' => 'Employee not found.',
+    //         ], 404);
+    //     }
+    //     if (!$worker) {
+    //         return response()->json([
+    //             'error' => 'Worker not found.',
+    //         ], 404);
+    //     }
+
+    //     $departments = $this->department->select('id', 'department_name')
+    //         ->where('status', '1')
+    //         ->get();
+    //     $lastTraining = TrainingAttendance::select('training_masters_topic.topic_name', 'training_attendance.attendance_date')
+    //         ->leftJoin('training_masters_topic', 'training_attendance.topic_id', '=', 'training_masters_topic.id')
+    //         ->where('training_attendance.email', $employee->email)
+    //         ->where('training_attendance.attendance_status', 1)
+    //         ->orderBy('training_attendance.attendance_date', 'desc')
+    //         ->first();
+
+    //     $lastTrainingDate = optional($lastTraining)->attendance_date ? $lastTraining->attendance_date->format('d-m-Y') : 'No data';
+    //     $lastTrainingTopic = optional($lastTraining)->topic_name ?? 'No data';
+
+    //     return response()->json([
+    //         'employee' => $employee,
+    //         'departments' => $departments,
+    //         'lastTrainingDate' => $lastTrainingDate,
+    //         'lastTrainingTopic' => $lastTrainingTopic,
+    //     ]);
+    // }
 
     public function Store(Request $request)
     {
@@ -225,6 +285,7 @@ class NominationProcessController extends Controller
     public function delete($id)
     {
         try {
+           
             $nominationProcess = $this->nomination_process->findOrFail($id);
             $update_data = array(
                 'status' => 0,
@@ -313,9 +374,8 @@ class NominationProcessController extends Controller
                     "path" => $path,
                 ];
 
-                // dispatch(new ImporNominationProcessJob($details));
-                dispatch((new ImporNominationProcessJob($details))->onQueue('nomination_process'));
-
+                dispatch(new ImporNominationProcessJob($details));
+                // dispatch((new ImporNominationProcessJob($details))->onQueue('nomination_process'));
             }
 
             $insert_data['log_id'] = $insert_id;

@@ -239,158 +239,225 @@
                                         @csrf
 
                                         <div class="row">
+                                            <div class="col-12">
 
-                                            <div class="table-responsive">
-                                                <table class="table table-bordered table-striped" style="margin-top: 20px;">
-                                                    <thead class="table-light">
-                                                        <tr>
-                                                            <th><span class="form-label">Employee ID</span> <span
-                                                                    class="required">*</span></th>
-                                                            <th><span class="form-label">Employee Name</span> <span
-                                                                    class="required">*</span></th>
-                                                            <th><span class="form-label">Email ID</span> <span
-                                                                    class="required">*</span></th>
-                                                            <th><span class="form-label">Department</span> <span
-                                                                    class="required">*</span></th>
-                                                            <th><span class="form-label">Employee Type</span> <span
-                                                                    class="required">*</span></th>
-                                                            <th><span class="form-label">Last Training Attended On
-                                                                    (Date)</span></th>
-                                                            <th><span class="form-label">Last Training Attended On
-                                                                    (Topic)</span></th>
-                                                            <th>Delete</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <input type="hidden" class="form-control" name="training_schedule_id"
-                                                        id="training_schedule_id"
-                                                        value="{{ encryptId($training_schedule->id) }}">
-
-                                                    <tbody id="lesson_learned_block">
-                                                        @if ($nominationProcessList->isEmpty())
-                                                            <tr class="lesson_learned_row" style="width: 100%">
-                                                                <td>
-                                                                    <select name="employee[1][emp_id]" id="emp_id_1"
-                                                                        class="form-control single-select validate-select-required"
-                                                                        style="width: 100%">
-                                                                        <option value="">Select Employee</option>
-                                                                        @foreach ($employeeList as $emp)
-                                                                            <option value="{{ $emp->id }}">
-                                                                                {{ $emp->emp_id }}
-                                                                            </option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </td>
-                                                                <td><input type="text" class="form-control"
-                                                                        name="employee[1][emp_name]" id="emp_name_1"
-                                                                        readonly>
-                                                                </td>
-                                                                <td><input type="email" class="form-control"
-                                                                        name="employee[1][email]" id="email_1" readonly>
-                                                                </td>
-                                                                <td style="width: 15%;">
-                                                                    <select name="employee[1][department_id]"
-                                                                        id="department_1"
-                                                                        class="form-control single-select validate-select-required"
-                                                                        style="width: 100%">
-                                                                    </select>
-                                                                </td>
-                                                                <td><input type="text" class="form-control"
-                                                                        name="employee[1][employee_type]"
-                                                                        id="employee_type_1" readonly></td>
-                                                                <td><input type="text" class="form-control"
-                                                                        name="employee[1][last_training_attended_on]"
-                                                                        id="last_training_attended_on_1" readonly></td>
-
-                                                                <td><input type="text" class="form-control"
-                                                                        name="employee[1][last_training_topic]"
-                                                                        id="last_training_topic_1" readonly></td>
-
-                                                                <td><button class="btn btn-danger removerowdata"
-                                                                        type="button" style="margin:10px;"><i
-                                                                            class="fa fa-trash"></i></button>
-                                                                </td>
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered table-striped"
+                                                        style="margin-top: 20px;">
+                                                        <thead class="table-light">
+                                                            <tr>
+                                                                <th><span class="form-label">Department</span> <span
+                                                                        class="required">*</span></th>
+                                                                <th><span class="form-label">Employee/Worker</span> <span
+                                                                        class="required">*</span></th>
+                                                                <th><span class="form-label">Employee/Worker ID</span> <span
+                                                                        class="required">*</span></th>
+                                                                <th><span class="form-label">Employee Name</span> <span
+                                                                        class="required">*</span></th>
+                                                                <th><span class="form-label">Email ID</span> <span
+                                                                        class="required">*</span></th>
+                                                                <th><span class="form-label">Employee Type</span> <span
+                                                                        class="required">*</span></th>
+                                                                <th><span class="form-label">Last Training Attended On
+                                                                        (Date)</span></th>
+                                                                <th><span class="form-label">Last Training Attended On
+                                                                        (Topic)</span></th>
+                                                                <th>Delete</th>
                                                             </tr>
-                                                        @else
-                                                            @php $i = 1; @endphp
-                                                            @foreach ($nominationProcessList as $nominationProcess)
-                                                                <tr class="lesson_learned_row">
-                                                                    <input type="hidden"
-                                                                        id="employee[{{ $i }}][id]"
-                                                                        name="employee[{{ $i }}][id]"
-                                                                        value="{{ $nominationProcess->id }}">
+                                                        </thead>
+                                                        <input type="hidden" class="form-control"
+                                                            name="training_schedule_id" id="training_schedule_id"
+                                                            value="{{ encryptId($training_schedule->id) }}">
 
-                                                                    <td>
-                                                                        <select
-                                                                            name="employee[{{ $i }}][emp_id]"
-                                                                            class="form-control single-select validate-select-required"
-                                                                            id="emp_id_{{ $i }}"
+                                                        <tbody id="lesson_learned_block">
+                                                            @if ($nominationProcessList->isEmpty())
+                                                                <tr class="lesson_learned_row" style="width: 100%">
+                                                                    <td style="width: 15%;">
+                                                                        <select name="employee[1][department_id]"
+                                                                            id="department_1"
+                                                                            class="form-control department-select single-select validate-select-required"
                                                                             style="width: 100%">
-                                                                            <option value="">Select Employee</option>
-                                                                            @foreach ($employeeList as $employee)
-                                                                                <option value="{{ $employee->id }}"
-                                                                                    {{ $nominationProcess->employee_id == $employee->id ? 'selected' : '' }}>
-                                                                                    {{ $employee->emp_id }}
+                                                                            <option value="">Select Department
+                                                                            </option>
+                                                                            @foreach ($departmentList as $dept)
+                                                                                <option value="{{ $dept->id }}">
+                                                                                    {{ $dept->department_name }}
+                                                                                    ({{ $dept->unit_name }})
                                                                                 </option>
                                                                             @endforeach
                                                                         </select>
                                                                     </td>
+                                                                    <td>
+                                                                        <input type="radio"
+                                                                            name="employee[1][emp_worker]" id="emp_1"
+                                                                            value="1"
+                                                                            class="emp-worker validate-radio-required">
+                                                                        Employee<br>
+                                                                        <input type="radio"
+                                                                            name="employee[1][emp_worker]" id="worker_1"
+                                                                            value="2"
+                                                                            class="emp-worker validate-radio-required">
+                                                                        Worker
+
+                                                                    </td>
+                                                                    <td>
+                                                                        <select name="employee[1][emp_id]" id="emp_id_1"
+                                                                            class="form-control single-select emp-id-select  validate-select-required"
+                                                                            style="width: 100%">
+
+                                                                        </select>
+                                                                    </td>
                                                                     <td><input type="text"
-                                                                            name="employee[{{ $i }}][emp_name]"
-                                                                            class="form-control"
-                                                                            id="emp_id_{{ $i }}"
-                                                                            value="{{ $nominationProcess->emp_name }}"
+                                                                            class="form-control emp-name"
+                                                                            name="employee[1][emp_name]" id="emp_name_1"
                                                                             readonly>
                                                                     </td>
                                                                     <td><input type="email"
-                                                                            name="employee[{{ $i }}][email]"
-                                                                            class="form-control"
-                                                                            id="emp_id_{{ $i }}"
-                                                                            value="{{ $nominationProcess->email }}"
+                                                                            class="form-control emp-email"
+                                                                            name="employee[1][email]" id="email_1"
                                                                             readonly>
                                                                     </td>
-                                                                    <td>
-                                                                        <select
-                                                                            name="employee[{{ $i }}][department_id]"
-                                                                            class="form-control single-select validate-select-required"
-                                                                            style="width: 100%"
-                                                                            id="department_{{ $i }}">
-                                                                            <option value="">Select Department
-                                                                            </option>
-                                                                            @foreach ($departmentList as $department)
-                                                                                <option value="{{ $department->id }}"
-                                                                                    {{ $nominationProcess->department_id == $department->id ? 'selected' : '' }}>
-                                                                                    {{ $department->department_name }}
-                                                                                </option>
-                                                                            @endforeach
-                                                                        </select>
-                                                                    </td>
-                                                                    <td><input type="text"
-                                                                            name="employee[{{ $i }}][employee_type]"
-                                                                            class="form-control"
-                                                                            id="employee_type_{{ $i }}"
-                                                                            value="{{ $nominationProcess->employee_type }}"
-                                                                            readonly></td>
-                                                                    <td><input type="text"
-                                                                            name="employee[{{ $i }}][last_training_attended_on]"
-                                                                            class="form-control"
-                                                                            id="last_training_attended_on_{{ $i }}"
-                                                                            value="{{ $nominationProcess->last_training_attended_on ? Displaydateformat($nominationProcess->last_training_attended_on) : 'No Data' }}"
-                                                                            readonly></td>
 
-                                                                    <td><input type="text" class="form-control"
-                                                                           name="employee[{{ $i }}][last_training_topic]"
-                                                                           id="last_training_topic_{{ $i }}" readonly value="{{ $nominationProcess->topic_name ?? 'No Data' }}"></td>
+                                                                    <td><input type="text"
+                                                                            class="form-control emp-type"
+                                                                            name="employee[1][employee_type]"
+                                                                            id="employee_type_1" readonly></td>
 
-                                                                    <td><button class="btn btn-danger removerow"
+                                                                    <td><input type="text"
+                                                                            class="form-control last-training-date"
+                                                                            name="employee[1][last_training_attended_on]"
+                                                                            id="last_training_attended_on_1" readonly></td>
+
+                                                                    <td><input type="text"
+                                                                            class="form-control last-training-topic"
+                                                                            name="employee[1][last_training_topic]"
+                                                                            id="last_training_topic_1" readonly></td>
+
+                                                                    <td><button class="btn btn-danger removerowdata"
                                                                             type="button" style="margin:10px;"><i
-                                                                                class="fa fa-trash"></i></button></td>
+                                                                                class="fa fa-trash"></i></button>
+                                                                    </td>
                                                                 </tr>
-                                                                @php $i++; @endphp
-                                                            @endforeach
-                                                        @endif
-                                                    </tbody>
+                                                            @else
+                                                                @php $i = 1; @endphp
+                                                                @foreach ($nominationProcessList as $nominationProcess)
+                                                                    <tr class="lesson_learned_row">
+                                                                        <td>
+                                                                            <input type="hidden"
+                                                                                id="employee_{{ $i }}_id"
+                                                                                name="employee[{{ $i }}][id]"
+                                                                                value="{{ $nominationProcess->id }}">
 
-                                                </table>
+                                                                            <select
+                                                                                name="employee[{{ $i }}][department_id]"
+                                                                                class="form-control single-select validate-select-required"
+                                                                                id="department_{{ $i }}"
+                                                                                style="width: 100%">
+                                                                                <option value="">Select Department
+                                                                                </option>
+                                                                                @foreach ($departmentList as $department)
+                                                                                    <option value="{{ $department->id }}"
+                                                                                        {{ $nominationProcess->department_id == $department->id ? 'selected' : '' }}>
+                                                                                        {{ $department->department_name }}
+                                                                                        ({{ $department->unit_name }})
+                                                                                    </option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        </td>
+
+                                                                        <td>
+                                                                            <input type="radio"
+                                                                                name="employee[{{ $i }}][emp_worker]"
+                                                                                id="emp_{{ $i }}"
+                                                                                value="1"
+                                                                                class="emp-worker validate-radio-required"
+                                                                                {{ $nominationProcess->emp_worker == 1 ? 'checked' : '' }}>
+                                                                            Employee
+                                                                            <br>
+                                                                            <input type="radio"
+                                                                                name="employee[{{ $i }}][emp_worker]"
+                                                                                id="worker_{{ $i }}"
+                                                                                value="2"
+                                                                                class="emp-worker validate-radio-required"
+                                                                                {{ $nominationProcess->emp_worker == 2 ? 'checked' : '' }}>
+                                                                            Worker
+                                                                        </td>
+                                                                        <td>
+                                                                            <select
+                                                                                name="employee[{{ $i }}][emp_id]"
+                                                                                id="emp_id_{{ $i }}"
+                                                                                class="form-control single-select emp-id-select validate-select-required"
+                                                                                style="width: 100%">
+                                                                                <option value="">Select
+                                                                                    Employee/Worker ID</option>
+
+                                                                                @if ($nominationProcess->emp_worker == 1)
+                                                                                    {{-- If employee --}}
+                                                                                    <option
+                                                                                        value="{{ $nominationProcess->emp_master_id }}"
+                                                                                        {{ $nominationProcess->employee_id == $nominationProcess->emp_master_id ? 'selected' : '' }}>
+                                                                                        {{ $nominationProcess->emp_id }}
+                                                                                    </option>
+                                                                                @elseif ($nominationProcess->emp_worker == 2)
+                                                                                    {{-- If worker --}}
+                                                                                    <option
+                                                                                        value="{{ $nominationProcess->worker_id }}"
+                                                                                        {{ $nominationProcess->employee_id == $nominationProcess->worker_id ? 'selected' : '' }}>
+                                                                                        {{ $nominationProcess->emp_id }}
+                                                                                    </option>
+                                                                                @endif
+                                                                            </select>
+                                                                        </td>
+
+
+                                                                        <td><input type="text"
+                                                                                name="employee[{{ $i }}][emp_name]"
+                                                                                class="form-control"
+                                                                                id="emp_name_{{ $i }}"
+                                                                                value="{{ $nominationProcess->emp_name }}"
+                                                                                readonly></td>
+
+                                                                        <td><input type="email"
+                                                                                name="employee[{{ $i }}][email]"
+                                                                                class="form-control"
+                                                                                id="email_{{ $i }}"
+                                                                                value="{{ $nominationProcess->email }}"
+                                                                                readonly></td>
+
+                                                                        <td><input type="text"
+                                                                                name="employee[{{ $i }}][employee_type]"
+                                                                                class="form-control"
+                                                                                id="employee_type_{{ $i }}"
+                                                                                value="{{ $nominationProcess->employee_type }}"
+                                                                                readonly></td>
+
+                                                                        <td><input type="text"
+                                                                                name="employee[{{ $i }}][last_training_attended_on]"
+                                                                                class="form-control"
+                                                                                id="last_training_attended_on_{{ $i }}"
+                                                                                value="{{ $nominationProcess->last_training_attended_on ? Displaydateformat($nominationProcess->last_training_attended_on) : 'No Data' }}"
+                                                                                readonly></td>
+
+                                                                        <td><input type="text"
+                                                                                name="employee[{{ $i }}][last_training_topic]"
+                                                                                class="form-control"
+                                                                                id="last_training_topic_{{ $i }}"
+                                                                                value="{{ $nominationProcess->topic_name ?? 'No Data' }}"
+                                                                                readonly></td>
+
+                                                                        <td><button class="btn btn-danger removerow"
+                                                                                type="button" style="margin:10px;">
+                                                                                <i class="fa fa-trash"></i>
+                                                                            </button></td>
+                                                                    </tr>
+                                                                    @php $i++; @endphp
+                                                                @endforeach
+
+                                                            @endif
+                                                        </tbody>
+
+                                                    </table>
+                                                </div>
                                             </div>
                                         </div>
                                         <hr>
@@ -424,91 +491,6 @@
             });
         });
         $(document).ready(function() {
-
-            $(document).on("change", "[name^='employee'][name$='[emp_id]']", function() {
-                var empIds = [];
-                var isDuplicate = false;
-                var currentRow = $(this).closest("tr");
-                var emp_id = $(this).val();
-
-                $("[name^='employee'][name$='[emp_id]']").each(function() {
-                    var otherEmpId = $(this).val();
-                    if (otherEmpId) {
-                        if (empIds.includes(otherEmpId)) {
-                            isDuplicate = true;
-                        }
-                        empIds.push(otherEmpId);
-                    }
-                });
-
-                if (isDuplicate) {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Duplicate Employee ID!",
-                        text: "Each Employee ID must be unique.",
-                    });
-                    // Clear inputs in the current row
-                    currentRow.find('input, select').not('[type="hidden"]').val("");
-                    currentRow.find('select[name*="[department_id]"]').empty().append(
-                        '<option value="">Select Department</option>');
-                    return;
-                }
-
-                if (emp_id) {
-                    $.ajax({
-                        url: "{{ url('nomination_process/fetchEmployeeDetails') }}/" + emp_id,
-                        type: "GET",
-                        success: function(data) {
-                            if (data.employee) {
-                                currentRow.find('input[name*="[emp_name]"]').val(data.employee
-                                    .emp_name);
-                                currentRow.find('input[name*="[email]"]').val(data.employee
-                                    .email);
-                                currentRow.find('input[name*="[employee_type]"]').val(data
-                                    .employee.employee_status);
-
-                                var departmentDropdown = currentRow.find(
-                                    'select[name*="[department_id]"]');
-                                departmentDropdown.empty().append(
-                                    '<option value="">Select Department</option>');
-                                data.departments.forEach(function(dept) {
-                                    var selected = dept.id == data.employee.department ?
-                                        "selected" : "";
-                                    departmentDropdown.append(
-                                        `<option value="${dept.id}" ${selected}>${dept.department_name}</option>`
-                                    );
-                                });
-
-                                currentRow.find('input[name*="[last_training_attended_on]"]')
-                                    .val(data.lastTrainingDate);
-                                currentRow.find('input[name*="[last_training_topic]"]').val(data
-                                    .lastTrainingTopic);
-                            } else {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Error",
-                                    text: "Employee data could not be fetched.",
-                                });
-                            }
-                        },
-                        error: function() {
-                            Swal.fire({
-                                icon: "error",
-                                title: "Error",
-                                text: "An error occurred while fetching employee details.",
-                            });
-                        }
-                    });
-                } else {
-                    currentRow.find('input[name*="[emp_name]"]').val("");
-                    currentRow.find('input[name*="[email]"]').val("");
-                    currentRow.find('input[name*="[employee_type]"]').val("");
-                    currentRow.find('select[name*="[department_id]"]').empty().append(
-                        '<option value="">Select Department</option>');
-                    currentRow.find('input[name*="[last_training_attended_on]"]').val("");
-                    currentRow.find('input[name*="[last_training_topic]"]').val("");
-                }
-            });
             $("#dynamic-add-more").on("click", function() {
                 var rowCount = $("#lesson_learned_block .lesson_learned_row").length;
 
@@ -536,8 +518,18 @@
                         var newId = oldId.replace(/\d+$/, rowCount + 1);
                         $(this).attr("id", newId);
                     }
+                    if ($(this).is("input[type='text'], input[type='email'], select")) {
+                        $(this).val("");
+                    }
 
-                    $(this).val("");
+                    if ($(this).is("select[name*='[emp_id]']")) {
+                        $(this).empty().append(
+                            '<option value="">Select Employee/Worker ID</option>');
+                    }
+
+                    if ($(this).is("input[type='radio']")) {
+                        $(this).prop("checked", false);
+                    }
                 });
 
                 newRow.find(".invalid-feedback").remove();
@@ -554,6 +546,13 @@
                     },
                 });
 
+                newRow.find("input[name*='[emp_worker]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Employee/Worker is required.",
+                    },
+                });
+
                 newRow.find("select[name*='[department_id]']").rules("add", {
                     required: true,
                     messages: {
@@ -562,58 +561,218 @@
                 });
             });
 
-            // edit delete function
-            $(document).on('click', '.removerow', function() {
-                var row = $(this).closest(
-                    ".lesson_learned_row");
-                var rowId = row.find("input[name*='[id]']")
-                    .val();
+            $(document).on("change",
+                "[name^='employee'][name$='[department_id]'], [name^='employee'][name$='[emp_worker]']",
+                function() {
+                    var currentRow = $(this).closest("tr");
+                    var deptID = currentRow.find("[name^='employee'][name$='[department_id]']").val();
+                    var empWorkerType = currentRow.find("[name^='employee'][name$='[emp_worker]']:checked")
+                        .val();
+                    var empIdDropdown = currentRow.find("[name^='employee'][name$='[emp_id]']");
 
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'Do you want to delete this record?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, delete it!',
-                    cancelButtonText: 'No, keep it'
-                }).then((result) => {
-                    if (result.isConfirmed) {
+                    empIdDropdown.empty().append('<option value="">Select Employee/Worker ID</option>');
+
+                    if (deptID && empWorkerType) {
                         $.ajax({
-                            url: "{{ url('nomination_process/delete') }}/" +
-                                rowId,
-                            type: 'DELETE',
-                            data: {
-                                _token: '{{ csrf_token() }}',
-                                id: rowId
-                            },
-                            success: function(response) {
-                                if (response.status === 'success') {
-                                    row.remove();
-
-                                    Swal.fire(
-                                        'Deleted!',
-                                        response.msg,
-                                        'success'
-                                    );
+                            url: "{{ url('nomination_process/fetchEmployeeOrWorkerList') }}/" +
+                                empWorkerType + "/" + deptID +
+                                "/{{ encryptId($training_schedule->id) }}",
+                            type: "GET",
+                            success: function(data) {
+                                if (data.length > 0) {
+                                    data.forEach(function(item) {
+                                        empIdDropdown.append(
+                                            `<option value="${item.id}">${item.emp_id}</option>`
+                                        );
+                                    });
                                 } else {
-                                    Swal.fire(
-                                        'Error!',
-                                        response.msg,
-                                        'error'
-                                    );
+                                    Swal.fire({
+                                        icon: "info",
+                                        title: "No Data",
+                                        text: "No records found for the selected type."
+                                    });
                                 }
                             },
                             error: function() {
-                                Swal.fire(
-                                    'Error!',
-                                    'Something went wrong. Please try again later.',
-                                    'error'
-                                );
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Error",
+                                    text: "An error occurred while fetching the list."
+                                });
                             }
                         });
                     }
                 });
+
+
+
+            $(document).on("change", "[name^='employee'][name$='[emp_id]']", function() {
+                var currentRow = $(this).closest("tr");
+                var emp_id = $(this).val();
+
+                // Check for duplicate Employee IDs
+                var empIds = [];
+                var isDuplicate = false;
+
+                $("[name^='employee'][name$='[emp_id]']").each(function() {
+                    var otherEmpId = $(this).val();
+                    if (otherEmpId && empIds.includes(otherEmpId)) {
+                        isDuplicate = true;
+                    }
+                    empIds.push(otherEmpId);
+                });
+
+                if (isDuplicate) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Duplicate Employee ID!",
+                        text: "Each Employee ID must be unique."
+                    });
+                    currentRow.find('input').not('[type="hidden"]').val("");
+                    currentRow.find("input[type='text'], input[type='email']").val("");
+                    currentRow.find("input[type='radio']").prop("checked", false);
+                    currentRow.find("select[name*='[department_id]']").val("").trigger("change");
+                    currentRow.find("select[name*='[emp_id]']").val("").trigger("change");
+                    return;
+                }
+
+                if (emp_id) {
+                    $.ajax({
+                        url: "{{ url('nomination_process/fetchEmployeeDetails') }}/" + emp_id,
+                        type: "GET",
+                        success: function(data) {
+                            if (data.employee) {
+                                currentRow.find('input[name*="[emp_name]"]').val(data.employee
+                                    .emp_name);
+                                currentRow.find('input[name*="[email]"]').val(data.employee
+                                    .email);
+                                currentRow.find('input[name*="[employee_type]"]').val(data
+                                    .employee_type);
+                                currentRow.find('input[name*="[last_training_attended_on]"]')
+                                    .val(data.lastTrainingDate);
+                                currentRow.find('input[name*="[last_training_topic]"]').val(data
+                                    .lastTrainingTopic);
+                            } else {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Error",
+                                    text: "Employee data could not be fetched."
+                                });
+                            }
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: "An error occurred while fetching employee details."
+                            });
+                        }
+                    });
+                } else {
+                    currentRow.find("input, select").not("[type='hidden']").val("");
+                }
             });
+
+
+            // edit delete function
+            $(document).on('click', '.removerow', function() {
+                var row = $(this).closest(".lesson_learned_row");
+                var rowId = row.find("input[name*='[id]']").val();
+                if (rowId) {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: 'Do you want to delete this record?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, delete it!',
+                        cancelButtonText: 'No, keep it'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "{{ url('nomination_process/delete') }}/" + rowId,
+                                type: 'DELETE',
+                                data: {
+                                    _token: '{{ csrf_token() }}',
+                                    id: rowId
+                                },
+                                success: function(response) {
+                                    if (response.status === 'success') {
+                                        row.remove();
+                                        Swal.fire('Deleted!', response.msg, 'success');
+                                        updateAddMoreButton();
+                                    } else {
+                                        Swal.fire('Error!', response.msg, 'error');
+                                    }
+                                },
+                                error: function() {
+                                    Swal.fire('Error!',
+                                        'Something went wrong. Please try again later.',
+                                        'error');
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    row.remove();
+                    updateAddMoreButton();
+                }
+            });
+
+            function updateAddMoreButton() {
+                var rowCount = $(".lesson_learned_row").length;
+                $('#dynamic-add-more').attr("disabled", rowCount >= 10);
+            }
+
+            // $(document).on('click', '.removerow', function() {
+            //     var row = $(this).closest(
+            //         ".lesson_learned_row");
+            //     var rowId = row.find("input[name*='[id]']").val();
+            //          alert(rowId);
+            //     Swal.fire({
+            //         title: 'Are you sure?',
+            //         text: 'Do you want to delete this record?',
+            //         icon: 'warning',
+            //         showCancelButton: true,
+            //         confirmButtonText: 'Yes, delete it!',
+            //         cancelButtonText: 'No, keep it'
+            //     }).then((result) => {
+            //         if (result.isConfirmed) {
+            //             $.ajax({
+            //                 url: "{{ url('nomination_process/delete') }}/" +
+            //                     rowId,
+            //                 type: 'DELETE',
+            //                 data: {
+            //                     _token: '{{ csrf_token() }}',
+            //                     id: rowId
+            //                 },
+            //                 success: function(response) {
+            //                     if (response.status === 'success') {
+            //                         row.remove();
+
+            //                         Swal.fire(
+            //                             'Deleted!',
+            //                             response.msg,
+            //                             'success'
+            //                         );
+            //                     } else {
+            //                         Swal.fire(
+            //                             'Error!',
+            //                             response.msg,
+            //                             'error'
+            //                         );
+            //                     }
+            //                 },
+            //                 error: function() {
+            //                     Swal.fire(
+            //                         'Error!',
+            //                         'Something went wrong. Please try again later.',
+            //                         'error'
+            //                     );
+            //                 }
+            //             });
+            //         }
+            //     });
+            // });
 
             $(document).on('click', '.removerowdata', function() {
                 var rowCount = $("#lesson_learned_block .lesson_learned_row").length;
@@ -661,6 +820,9 @@
                     'employee[1][emp_id]': {
                         required: true,
                     },
+                    'employee[1][emp_worker]': {
+                        required: true
+                    },
                     'employee[1][department_id]': {
                         required: true
                     }
@@ -668,6 +830,9 @@
                 messages: {
                     'employee[1][emp_id]': {
                         required: "Select an Employee ID."
+                    },
+                    'employee[1][emp_worker]': {
+                        required: "Employee/Worker is required."
                     },
                     'employee[1][department_id]': {
                         required: "Department is required."

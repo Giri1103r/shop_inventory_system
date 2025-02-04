@@ -124,7 +124,7 @@ class TrainingScheduleController extends Controller
                                          </a> ';
                             }
 
-                            if (($row->training_status == VP_APPROVE || $row->training_status == TRAINING_NOMINATION_COMPLETED ) && (in_array(ROLE_TRAINER, getUserRoleId(Auth::id())) || in_array(ROLE_ADMIN, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
+                            if (($row->training_status == VP_APPROVE || $row->training_status == TRAINING_NOMINATION_COMPLETED) && (in_array(ROLE_TRAINER, getUserRoleId(Auth::id())) || in_array(ROLE_ADMIN, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
                                 $btn .= '<a href="' . admin_url('training_schedule/nominationProcess/' . encryptId($row->id)) . '" title="Nomination">
                                             <i class="fa fa-calendar" style="color: #0013ff;"></i>
                                          </a> ';
@@ -235,7 +235,7 @@ class TrainingScheduleController extends Controller
     public function Add(Request $request)
     {
 
-        try { 
+        try {
             $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
@@ -392,30 +392,34 @@ class TrainingScheduleController extends Controller
                 if ($nominees->isNotEmpty()) {
                     $mailsubject = 'Training Started';
                     $assignedUsers = [];
+
                     /**
                      * Send email notification
                      */
-                    foreach ($nominees as $nominee) {
-                        if (!empty($nominee->email)) {
-                            $nomineeArray = [
-                                'emp_name' => $nominee->emp_name,
-                                'from_date' => Displaydateformat($nominee->from_date),
-                                'to_date' => Displaydateformat($nominee->to_date),
-                                'start_time' => Displaytimeformat($nominee->start_time),
-                                'end_time' => Displaytimeformat($nominee->end_time),
-                                'topic_name' => $nominee->topic_name,
-                                'venue' => $nominee->name_of_the_conference_hall,
-                                'mail_subject' => $mailsubject,
-                            ];
+                    $nomineesWithEmail = $nominees->filter(function ($nominee) {
+                        return !empty($nominee->email);
+                    });
 
-                            Mail::to($nominee->email)->queue(new TrainingStartedEmail($nomineeArray));
-                        }
-                        $assignedUsers[] = $nominee->login_id;
+                    foreach ($nomineesWithEmail  as $nominee) {
+
+                        $nomineeArray = [
+                            'emp_name' => $nominee->emp_name,
+                            'from_date' => Displaydateformat($nominee->from_date),
+                            'to_date' => Displaydateformat($nominee->to_date),
+                            'start_time' => Displaytimeformat($nominee->start_time),
+                            'end_time' => Displaytimeformat($nominee->end_time),
+                            'topic_name' => $nominee->topic_name,
+                            'venue' => $nominee->name_of_the_conference_hall,
+                            'mail_subject' => $mailsubject,
+                        ];
+                        dd($nomineeArray, $nomineesWithEmail);
+                        Mail::to($nominee->email)->queue(new TrainingStartedEmail($nomineeArray));
                     }
 
                     /**
                      * Send Web notification
                      */
+                    $assignedUsers = $nominees->pluck('login_id')->filter()->toArray(); // Ensure it's not null
 
                     $img = admin_url('public/assets/icons/traning.png');
                     if (!empty($assignedUsers)) {
@@ -430,7 +434,7 @@ class TrainingScheduleController extends Controller
                                 'module' => 2,
                             ]),
                             'web_link' => 'training_schedule/view/' . encryptId($trainingScheduleId),
-                            'assigned_user' => implode(',', $assignedUsers),
+                            'assigned_user' => array_to_string($assignedUsers),
                             'created_by' => Auth::id(),
                         ];
 
@@ -441,7 +445,7 @@ class TrainingScheduleController extends Controller
                 Session::flash('success', 'Training has been started successfully!');
             }
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong. Please try again later!');
             return redirect(admin_url('training_schedule/list'));
         }
@@ -540,6 +544,7 @@ class TrainingScheduleController extends Controller
 
         return response()->json(true);
     }
+
     public function checkUniqueNomination(Request $request)
     {
         $empId = $request->input('emp_id');
@@ -564,7 +569,6 @@ class TrainingScheduleController extends Controller
 
             $trainingAssessmentFeedback = $this->training_assessment_feedback->getempId($feedback_id);
             $training_schedule = $this->training_schedule->selectOne($training_schedule_id);
-
 
             $exists = $this->training_feedback->where('training_assessment_feedback_id', $feedback_id)->exists();
             if (!$exists) {
@@ -593,6 +597,7 @@ class TrainingScheduleController extends Controller
             return redirect()->back()->withErrors(['error' => 'Something went wrong. Please try again later!']);
         }
     }
+
     public function feedbackLinkSubmit(Request $request)
     {
         try {
@@ -602,6 +607,65 @@ class TrainingScheduleController extends Controller
             ];
 
             $messages = [
+                'trainer_feedback.required' => 'Please provide feedback about the trainer.',
+                'training_feedback.required' => 'Please provide feedback about the training.',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            $this->training_feedback->store();
+
+            return redirect(admin_url('training_schedule/list'))->with('success', 'Your feedback has been submitted successfully.');
+        } catch (Exception $ex) {
+            report($ex);
+            return redirect(admin_url('training_schedule/list'))->withErrors(['error' => 'Something went wrong. Please try again later!']);
+        }
+    }
+    public function workerFeedbackLinkPage($trainingScheduleId)
+    {
+        try {
+            $training_schedule_id = decryptId($trainingScheduleId);
+
+            $empIds = $this->training_assessment_feedback->getWorkers($training_schedule_id);
+
+            $training_schedule = $this->training_schedule->selectOne($training_schedule_id);
+
+
+            $data = [
+                'training_schedule' => $training_schedule,
+                'empIds' => $empIds,
+            ];
+            return view('master.training_schedule.worker_feedbacklink', $data);
+        } catch (Exception $ex) {
+            dd($ex);
+            return redirect()->back()->withErrors(['error' => 'Something went wrong. Please try again later!']);
+        }
+    }
+    public function checkUniqueworkerId(Request $request)
+    {
+        $workerIdExists = $this->training_feedback
+            ->where('training_schedule_id', decryptId($request->training_schedule_id))
+            ->where('emp_id', $request->emp_id)
+            ->exists();
+
+        return response()->json(!$workerIdExists);
+    }
+
+    public function workerFeedbackLinkSubmit(Request $request)
+    {
+        try {
+            $rules = [
+                'emp_id' => 'required',
+                'trainer_feedback' => 'required',
+                'training_feedback' => 'required',
+            ];
+
+            $messages = [
+                'emp_id.required' => 'Select Worker Id.',
                 'trainer_feedback.required' => 'Please provide feedback about the trainer.',
                 'training_feedback.required' => 'Please provide feedback about the training.',
             ];
@@ -672,23 +736,26 @@ class TrainingScheduleController extends Controller
                             Mail::to($emp->email)->queue(new TrainingFeedbackMail($nomineeArray));
                         }
 
-                        // Prepare a single notification
-                        $notificationData = [
-                            'notification_type' => 2,
-                            'module_type' => 2,
-                            'notification_message' => $mailSubject,
-                            'mobile_notification' => json_encode([
-                                'title' => $mailSubject,
-                                'message' => $mailSubject,
-                                'icon' => $img,
-                                'module' => 2,
-                            ]),
-                            'web_link' => $feedbackLink,
-                            'assigned_user' => $emp->login_id,
-                            'created_by' => Auth::id(),
-                        ];
+                        $empIds = $emp->login_id;
+                        if (!empty($empIds)) {
+                            // Prepare a single notification
+                            $notificationData = [
+                                'notification_type' => 2,
+                                'module_type' => 2,
+                                'notification_message' => $mailSubject,
+                                'mobile_notification' => json_encode([
+                                    'title' => $mailSubject,
+                                    'message' => $mailSubject,
+                                    'icon' => $img,
+                                    'module' => 2,
+                                ]),
+                                'web_link' => $feedbackLink,
+                                'assigned_user' => $empIds,
+                                'created_by' => Auth::id(),
+                            ];
 
-                        notificationSave($notificationData); // Save one notification at a time
+                            notificationSave($notificationData); // Save one notification at a time
+                        }
                     }
                 }
 
@@ -789,6 +856,20 @@ class TrainingScheduleController extends Controller
                     })
                     ->get();
 
+                $workerIds = $this->training_assessment_feedback->getWorkers($training_schedule->id)->pluck('emp_id')
+                ->toArray();;
+
+
+                // Check how many workers have given feedback
+                $workerFeedbackCount = $this->training_feedback
+                    ->whereIn('emp_id', $workerIds)
+                    ->where('training_feedback.status', 1)
+                    ->count();
+
+                // If all workers gave feedback, hide button
+                $showWorkerFeedbackButton = count($workerIds) > 0 && count($workerIds) > $workerFeedbackCount;
+
+
                 $data = [
                     'training_schedule' => $training_schedule,
                     'nominationProcessList' => $nominationProcessList,
@@ -796,6 +877,7 @@ class TrainingScheduleController extends Controller
                     'trainingAssessmentList' => $trainingAssessmentList,
                     'trainingFeedbackList' => $trainingFeedbackList,
                     'rejectedlog' => $rejectedlog,
+                    'showWorkerFeedbackButton' => $showWorkerFeedbackButton,
                 ];
 
                 if (Auth::user()->role != ROLE_TRAINER  &&  Auth::user()->role != ROLE_SUPERADMIN &&  Auth::user()->role != ROLE_ADMIN &&  Auth::user()->role != ROLE_VISE_PRESIDENT) {
@@ -940,22 +1022,24 @@ class TrainingScheduleController extends Controller
                              */
                             $assigned_users = $trainingSchedule->login_id;
                             $img = admin_url('public/assets/icons/traning.png');
-                            $notificationData = [
-                                'notification_type' => 2,
-                                'module_type' => 2,
-                                'notification_message' => $mailsubject,
-                                'mobile_notification' => json_encode([
-                                    'title' => $mailsubject,
-                                    'message' => 'A new training schedule has been created by ' . getUsername($trainingSchedule->created_by),
-                                    'icon' =>  $img,
-                                    'module' => 2,
-                                ]),
-                                'web_link' => 'training_schedule/view/' . encryptId($trainingSchedule->id),
-                                'assigned_user' => $assigned_users,
-                                'created_by' => Auth::id(),
-                            ];
+                            if (!empty($assigned_users)) {
+                                $notificationData = [
+                                    'notification_type' => 2,
+                                    'module_type' => 2,
+                                    'notification_message' => $mailsubject,
+                                    'mobile_notification' => json_encode([
+                                        'title' => $mailsubject,
+                                        'message' => 'A new training schedule has been created by ' . getUsername($trainingSchedule->created_by),
+                                        'icon' =>  $img,
+                                        'module' => 2,
+                                    ]),
+                                    'web_link' => 'training_schedule/view/' . encryptId($trainingSchedule->id),
+                                    'assigned_user' => $assigned_users,
+                                    'created_by' => Auth::id(),
+                                ];
 
-                            notificationSave($notificationData);
+                                notificationSave($notificationData);
+                            }
                         }
                     }
                 } elseif ($request->action == "reject") {
@@ -1047,7 +1131,11 @@ class TrainingScheduleController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $training_schedule = $this->training_schedule->selectOne($id);
-                $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
+                $departmentList = $this->department
+                    ->select('masters_department.id', 'masters_unit.unit_name', 'masters_department.department_name')
+                    ->leftJoin('masters_unit', 'masters_department.unit_id', '=', 'masters_unit.id')
+                    ->where('masters_department.status', '1')
+                    ->get();
                 $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
                 $employeeList = Employee::select('id', 'emp_id', 'emp_name', 'email', 'department', 'employee_status')
                     ->where('id', '!=', $training_schedule->trainer_id)
@@ -1055,7 +1143,6 @@ class TrainingScheduleController extends Controller
                     ->where('status', 1)
                     ->get();
                 $nominationProcessList = $this->nomination_process->getNomination($training_schedule->id);
-
                 $data = array(
                     'departmentList' => $departmentList,
                     'topicList' => $topicList,
@@ -1066,7 +1153,7 @@ class TrainingScheduleController extends Controller
             }
             return view('master.training_schedule.nomination', $data);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
         }
     }
 
@@ -1172,7 +1259,7 @@ class TrainingScheduleController extends Controller
                                 'module' => 2,
                             ]),
                             'web_link' => 'training_schedule/vp_approval/' . encryptId($trainingSchedule->id),
-                            'assigned_user' =>array_to_string($vpids),
+                            'assigned_user' => array_to_string($vpids),
                             'created_by' => Auth::id(),
                         ];
                         notificationSave($notificationData);
