@@ -118,6 +118,17 @@ class TrainingAssessmentFeedback extends Model
             ->where('training_assessment_feedback.attended_status', 1)
             ->get();
     }
+    public function getWorkers($training_schedule_id)
+    {
+        return $this->select('training_assessment_feedback.*', 'training_attendance.emp_id')
+            ->leftJoin('training_attendance', 'training_assessment_feedback.attendance_id', '=', 'training_attendance.id')
+            ->where('training_assessment_feedback.status', 1)
+            ->where('training_assessment_feedback.attended_status', 1)
+            ->where('training_assessment_feedback.training_schedule_id', $training_schedule_id)
+            ->whereNull('training_assessment_feedback.email')
+            ->get();
+    }
+
     public function getempId($id)
     {
         return $this->select('training_assessment_feedback.*', 'masters_employee.emp_id')

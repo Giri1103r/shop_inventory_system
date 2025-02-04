@@ -335,7 +335,10 @@
                                                             <table class="table_card" style="margin-top: 20px;">
                                                                 <thead>
                                                                     <tr>
-                                                                        <th class="form-label required">Employee ID</th>
+                                                                        <th class="form-label required">Employee/Worker
+                                                                        </th>
+                                                                        <th class="form-label required">Employee/Worker ID
+                                                                        </th>
                                                                         <th class="form-label required">Employee Name</th>
                                                                         <th class="form-label required">Email ID</th>
                                                                         <th class="form-label required">Department</th>
@@ -362,6 +365,9 @@
                                                                                 id="employee[{{ $i }}][id]"
                                                                                 name="employee[{{ $i }}][id]"
                                                                                 value="{{ $nomination_process->id }}">
+                                                                            <td>
+                                                                                {{ isset($nomination_process->emp_worker) ? ($nomination_process->emp_worker == 1 ? 'Employee' : 'Worker') : '' }}
+                                                                            </td>
                                                                             <td>
                                                                                 {{ isset($nomination_process->emp_id) ? $nomination_process->emp_id : '' }}
                                                                             </td>
@@ -611,7 +617,25 @@
                                             <div class="row">
                                                 <div class="card-header-inner">
                                                     <h4 class="text-white">Training Feedback By Trainees</h4>
+                                                    @if (in_array(ROLE_ADMIN, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))
+                                                        @if ($showWorkerFeedbackButton)
+                                                            <div style="padding-left: 85%;">
+                                                                @php
+                                                                    $encryptedTrainingScheduleId = encryptId(
+                                                                        $training_schedule->id,
+                                                                    );
+                                                                @endphp
+                                                                <a
+                                                                    href="{{ admin_url('training/worker/feedback_link/' . $encryptedTrainingScheduleId) }}">
+                                                                    <button class="btn btn-primary"
+                                                                        style="margin-top: -50px;">Worker Feedback</button>
+                                                                </a>
+                                                            </div>
+                                                        @endif
+                                                    @endif
+
                                                 </div>
+
                                             </div>
                                             @if (isset($trainingFeedbackList) && $trainingFeedbackList->isNotEmpty())
                                                 <div class="basic-form">
