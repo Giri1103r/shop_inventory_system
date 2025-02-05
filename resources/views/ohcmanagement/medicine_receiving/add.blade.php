@@ -98,8 +98,13 @@
                                                 <div class="form-group form-input">
                                                     <label for="rate" class="form-label require ">Expire
                                                         Date</label>
-                                                    <input type="text" name="expire_date" id="expire_date"
-                                                        class="form-control">
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="expire_date" id="expire_date"
+                                                            class="form-control" autocomplete="off">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -180,33 +185,6 @@
 
                 $('#hsn_id').val('').prop('readonly', true);
                 $('#hsn_hidden_id').val('');
-            }
-        });
-        $(document).on("change", "#medicine_id", function() {
-
-            var medicineId = $('#medicine_id').val();
-            if (medicineId) {
-                $.ajax({
-                    url: "{{ admin_url('ohc/medicine-receiving-form/checkExistmedicineId') }}",
-                    type: 'POST',
-                    data: {
-                        medicine_id: medicineId,
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response === true) {
-                            Swal.fire({
-                                icon: 'warning',
-                                title: 'Duplicate Entry',
-                                text: 'This medicine already exists in the system!',
-                            });
-                        }
-                    },
-                    error: function(xhr) {
-                        console.error(xhr);
-                        alert('Error fetching medicine status. Please try again.');
-                    },
-                });
             }
         });
 

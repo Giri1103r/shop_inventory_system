@@ -283,7 +283,6 @@ class SafetyPermitController extends Controller
                 // }
                 $safetypermit =   $this->safetypermit->store();
                 $WorkmanInvolved =   $this->workmaninvolved->store($safetypermit->id);
-
                 $permit_status =  1;
                 $mailsubject = 'Safety Permit has been submitted';
                 $user_role = ROLE_EHS_OFFICER;
@@ -296,7 +295,6 @@ class SafetyPermitController extends Controller
 
 
                 if (count($users) > 0) {
-
                     foreach ($users as $user) {
 
                         $email_id = $user->email;
@@ -351,15 +349,11 @@ class SafetyPermitController extends Controller
 
                 return redirect(admin_url('safetypermit/list'));
             } catch (Exception $ex) {
-
-                report($ex);
                 report($ex);
                 Session::flash('error', 'Something went wrong Please try again after some time');
                 return redirect(admin_url('safetypermit/list'));
             }
         } catch (Exception $ex) {
-            report($ex);
-
             report($ex);
             Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));

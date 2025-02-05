@@ -226,13 +226,14 @@ class MedicineReceivingController extends Controller
     {
         try {
             $id = decryptId($request->id);
+
             $rules = [
                 'medicine_id' => 'required',
                 'vendor_id' => 'required',
                 'quantity' => 'required',
                 'batch_number' => 'required',
                 'expire_date' => 'required',
-                'hsn_id' => 'required',
+                // 'hsn_id' => 'required',
                 'rate' => 'required',
                 'pack_id' => 'required',
 
@@ -245,13 +246,14 @@ class MedicineReceivingController extends Controller
                 'quantity.required' => 'Quantity is required',
                 'batch_number.required' => 'Quantity is required',
                 'expire_date.required' => 'Expire Date is required',
-                'hsn_id.required' => 'HSN Numner is required',
+                // 'hsn_id.required' => 'HSN Numner is required',
                 'rate.required' => 'Rate is required',
                 'pack_id.required => Pack Details is required',
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
+                dd($validator->errors());
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
@@ -259,14 +261,14 @@ class MedicineReceivingController extends Controller
                 $this->medicine_receiving->updates($id);
                 Session::flash('success', 'Your data has been updated successfully!');
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         }

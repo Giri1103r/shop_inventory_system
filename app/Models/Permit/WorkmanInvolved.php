@@ -105,6 +105,7 @@ class WorkmanInvolved extends Model
         $workmanDepts = $request->input('workman_dept');
         $natureOfJobs = $request->input('nature_of_job');
         if (isset($empIds)) {
+
             foreach ($empIds as $index => $empId) {
                 $insert_array = array(
                     'permit_id' => $permit_id,
@@ -116,7 +117,8 @@ class WorkmanInvolved extends Model
                     'created_by' => Auth::id()
                 );
 
-                $this->insert($insert_array);
+                return   $this->insert($insert_array);
+                // dd($insert_array);
             }
         }
     }
@@ -136,7 +138,7 @@ class WorkmanInvolved extends Model
                     'created_by' => Auth::id(),
                 ];
 
-                $this->insert($insert_array);
+                return  $this->insert($insert_array);
             }
         }
     }

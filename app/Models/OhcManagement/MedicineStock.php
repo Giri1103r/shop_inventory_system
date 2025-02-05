@@ -275,6 +275,9 @@ class MedicineStock extends Model
     public function getMedicineData(){
         return $this->whereColumn('quantity', '<', 'threshold_limit')->where('status',1)->get();
     }
+    public function getMedicinerequisiondata(){
+        return $this->where('status',1)->where('trash','NO')->whereColumn('quantity','>','threshold_limit')->get();
+    }
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('ohc_management_medicine_stock_inventory'));

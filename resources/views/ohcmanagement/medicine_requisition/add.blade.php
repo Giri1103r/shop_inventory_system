@@ -42,36 +42,33 @@
                                                         readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
+                                            <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Unit</label>
-                                                    <select name="unit_id" id="unit_id" class="form-control single-select"
-                                                        style="width: 100%">
-                                                        <option value="">Select the unit</option>
-                                                        @foreach ($unit as $list)
-                                                            <option value="{{ encryptId($list->id) }}">
-                                                                {{ $list->unit_name }}</option>
-                                                        @endforeach
-                                                    </select>
+                                                    <label class="form-label require">Unit </label>
+                                                    <input type="text" name ="unit_id" id="unit_id"
+                                                        class="form-control" placeholder="Enter the Unit Name"
+                                                        value="{{ getUnitname(Auth::user()->unit_id) }}" readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
+                                            <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Department</label>
-                                                    <select name="department_id" id="department_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Department </option>
-
-                                                    </select>
+                                                    <label class="form-label require">Department </label>
+                                                    <input type="text" name ="department_id" id="department_id"
+                                                        class="form-control" placeholder="Enter the Department Name"
+                                                        value="{{ getDepartment(Auth::user()->department_id) }}" readonly>
                                                 </div>
                                             </div>
-
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="rate" class="form-label require ">Request
                                                         Date</label>
-                                                    <input type="text" name="request_date" id="request_date"
-                                                        class="form-control">
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="request_date" id="request_date"
+                                                            class="form-control"autocomplete="off">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -81,6 +78,7 @@
                                                 <thead style="background-color: #0000;color:#ffff">
                                                     <tr>
                                                         <th>Medicine</th>
+                                                        <th>Available Quantity</th>
                                                         <th>Quantity</th>
                                                         <th>Remarks</th>
                                                         <th>Action</th>
@@ -97,9 +95,17 @@
                                                                     <option value="">Select the Medicine Name</option>
                                                                     @foreach ($medicine as $list)
                                                                         <option value="{{ $list->id }}">
-                                                                            {{ $list->medicine }}</option>
+                                                                            {{ getMedicinename($list->medicine_id) }}</option>
                                                                     @endforeach
                                                                 </select>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="form-group form-input">
+                                                                <label for="quantity " class="require">Available Quantity</label>
+
+                                                                <input type="text" name="available_quantity[0]" id="available_quantity"
+                                                                    placeholder="Enter the available quantity" class="form-control" readonly>
                                                             </div>
                                                         </td>
                                                         <td>
@@ -163,7 +169,7 @@
 
             });
         });
-        $(document).on('change', '#unit_id', function() {
+        $(document).on('change', '#', function() {
             var unitId = $(this).val();
             if (unitId) {
                 $.ajax({

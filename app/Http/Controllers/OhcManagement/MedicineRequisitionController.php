@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\OhcManagement\MedicineStock;
 
 class MedicineRequisitionController extends Controller
 {
@@ -33,7 +34,7 @@ class MedicineRequisitionController extends Controller
     private $unit;
     private $department;
     private $medicine_requisition;
-
+    private $medicine_stock;
 
 
     public function __construct()
@@ -42,7 +43,7 @@ class MedicineRequisitionController extends Controller
         $this->vendor = new Vendor();
         $this->user_medicine_requisition = new UserMedicineRequisition();
         $this->medicine_requisition = new MedicineRequisition();
-
+        $this->medicine_stock = new MedicineStock();
         $this->unit = new Unit();
         $this->department = new Department();
     }
@@ -114,7 +115,7 @@ class MedicineRequisitionController extends Controller
     {
         try {
             $unit = $this->unit->getunit();
-            $medicine = $this->medicine->getMedicineData();
+            $medicine =$this->medicine_stock->getMedicinerequisiondata();
             $data = array(
                 'medicine' => $medicine,
                 'unit' => $unit
