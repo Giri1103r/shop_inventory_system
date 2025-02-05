@@ -113,7 +113,7 @@
                                     <th>Unit Name</th>
                                     <th>Department Name</th>
                                     <th>Request Date</th>
-                                    <th>Status</th>
+                                    <th>Approve Status</th>
                                     <th data-priority="1">Action</th>
                                 </tr>
                             </thead>
@@ -271,8 +271,8 @@
                 },
 
                 {
-                    data: 'status',
-                    name: 'status'
+                    data: 'approve_status',
+                    name: 'approve_status'
                 },
                 {
                     data: 'action',

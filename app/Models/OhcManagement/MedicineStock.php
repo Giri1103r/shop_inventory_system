@@ -276,7 +276,10 @@ class MedicineStock extends Model
         return $this->whereColumn('quantity', '<', 'threshold_limit')->where('status',1)->get();
     }
     public function getMedicinerequisiondata(){
-        return $this->where('status',1)->where('trash','NO')->whereColumn('quantity','>','threshold_limit')->get();
+        return $this->where('status',1)->where('trash','NO')->where('status',1)->whereColumn('quantity','>','threshold_limit')->get();
+    }
+    public function getAvailableQuantity( $id){
+        return $this->where('id',$id)->where('trash','NO')->where('status',1)->select('quantity')->first();
     }
     protected static function booted()
     {

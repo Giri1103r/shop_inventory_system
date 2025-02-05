@@ -18,6 +18,7 @@ class UserMedicineRequisition extends Model
         'department_id',
         'request_date',
         'status',
+        'approve_status',
         'trash',
         'created_by',
         'updated_by',
@@ -32,11 +33,7 @@ class UserMedicineRequisition extends Model
         $user = Auth::user();
         $userRole = string_to_array($user->role);
         $empId = $user->employee_id;
-        $query = $this->select('ohc_management_user_medicine_requisition.*', 'masters_department.department_name', 'masters_unit.unit_name')
-            ->join('masters_department', 'ohc_management_user_medicine_requisition.department_id', '=', 'masters_department.id')
-            ->join('masters_unit', 'ohc_management_user_medicine_requisition.unit_id', '=', 'masters_unit.id')
-            ->where('masters_department.trash', 'NO')
-            ->where('masters_unit.trash', 'NO');
+        $query = $this->select('ohc_management_user_medicine_requisition.*', );
 
 
         if ($request->search['value'] != null) {
@@ -95,10 +92,11 @@ class UserMedicineRequisition extends Model
         $request = request();
 
         $insert_array = [
-            'unit_id' => decryptId($request->unit_id),
-            'department_id' => decryptId($request->department_id),
+            'unit_id' => ($request->unit_id),
+            'department_id' => ($request->department_id),
             'request_date' => DBdateformat($request->request_date),
             'req_id' => $request->req_id,
+            'approve_status'=>STATUS_OHC_PARAMEDICS_APPROVAL_PENDING,
             'created_by' => Auth::id(),
         ];
 
@@ -211,5 +209,10 @@ class UserMedicineRequisition extends Model
             $uniqueId = 'REQ-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
             $model->update(['req_id' => $uniqueId]);
         });
+    }
+
+    public function approvereject($id, $data)
+    {
+        return $this->where('id', $id)->update(['approve_status' => $data['approve_status']]);
     }
 }

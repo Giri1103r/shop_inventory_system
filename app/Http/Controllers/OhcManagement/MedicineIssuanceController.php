@@ -12,6 +12,7 @@ use App\Models\OhcManagement\Master\Vendor;
 use App\Models\OhcManagement\UserMedicineIssuance;
 use App\Models\OhcManagement\MedicineIssuance;
 use App\Models\OhcManagement\MedicineReceiving;
+use App\Models\OhcManagement\MedicineRequisition;
 use App\Models\OhcManagement\UserMedicineRequisition;
 use App\Models\UploadLog;
 
@@ -26,6 +27,8 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\OhcManagement\MedicineStock;
+use App\Models\OhcManagement\OhcStatuslog;
 
 class MedicineIssuanceController extends Controller
 {
@@ -36,8 +39,10 @@ class MedicineIssuanceController extends Controller
     private $department;
     private $medicine_issuance;
     private $medicine_receiving;
-
-
+    private $medicine_stock;
+    private $ohc_status;
+    private $user_medicine_requisition;
+    private $medicine_requisition;
     public function __construct()
     {
         $this->medicine = new Medicine();
@@ -45,7 +50,10 @@ class MedicineIssuanceController extends Controller
         $this->user_medicine_issuance = new UserMedicineIssuance();
         $this->medicine_issuance = new MedicineIssuance();
         $this->medicine_receiving = new MedicineReceiving();
-
+        $this->medicine_stock = new MedicineStock();
+        $this->ohc_status = new OhcStatuslog();
+        $this->user_medicine_requisition = new UserMedicineRequisition();
+        $this->medicine_requisition = new MedicineRequisition();
         $this->unit = new Unit();
         $this->department = new Department();
     }
@@ -117,6 +125,24 @@ class MedicineIssuanceController extends Controller
             return view('ohcmanagement.medicine_issuance.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medicine-issuance/list'));
+        }
+    }
+    public function issue(Request $request){
+        try {
+            $id = decryptId($request->id);
+
+            $unit = $this->unit->getunit();
+            $medicine = $this->medicine->getMedicineData();
+            $data = array(
+                'medicine' => $medicine,
+                'unit' => $unit
+            );
+
+            return view('ohcmanagement.medicine_issuance.issue', $data);
+        } catch (Exception $ex) {
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }
@@ -310,7 +336,7 @@ class MedicineIssuanceController extends Controller
 
         } catch (Exception $ex) {
 
-           
+
         }
     }
 

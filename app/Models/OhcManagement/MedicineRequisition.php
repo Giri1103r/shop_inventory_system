@@ -13,9 +13,11 @@ class MedicineRequisition extends Model
     protected $fillable = [
         'req_id',
         'medicine_id',
+        'available_quantity',
         'quantity',
         'remarks',
         'status',
+
         'trash',
         'created_by',
         'updated_by',
@@ -31,7 +33,8 @@ class MedicineRequisition extends Model
 
             $insert_array = [
                 'req_id' => $user_medicine_requisition->id,
-                'medicine_id' => $medicine,
+                'medicine_id' => decryptId($medicine),
+                'available_quantity'=> $request->available_quantity[$index],
                 'quantity' => $request->quantity[$index],
                 'remarks' => $request->remarks[$index],
                 'created_by' => Auth::id(),
@@ -89,5 +92,7 @@ class MedicineRequisition extends Model
 
         return $data;
     }
+
+ 
 
 }
