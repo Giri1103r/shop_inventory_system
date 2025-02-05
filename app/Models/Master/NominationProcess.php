@@ -245,6 +245,8 @@ class NominationProcess extends Model
             'training_schedule.from_date',
             'training_schedule.to_date',
             'training_schedule.venue_id',
+            'training_schedule.start_time',
+            'training_schedule.end_time',
             'training_masters_venue.name_of_the_conference_hall'
         )
             ->leftJoin('masters_work', 'training_nomination_process.employee_id', '=', 'masters_work.id')
