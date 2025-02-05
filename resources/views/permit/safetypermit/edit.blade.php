@@ -959,8 +959,12 @@
                                                 </thead>
                                                 <tbody id="workman-list-entries">
                                                     @foreach ($workman as $item)
-                                                        <tr>
-                                                            <td>{{ $item->emp_id }}</td>
+                                                        <tr class="workmandata">
+                                                            <td>
+                                                                <input type="hidden" name="id" class="id"
+                                                                    value="{{ $item->id }}">
+                                                                {{ $item->emp_id }}
+                                                            </td>
                                                             <td>{{ $item->workman_name }}</td>
                                                             <td>{{ $item->workman_desig }}</td>
                                                             <td>{{ getDepartment($item->workman_dept) }}</td>
@@ -1324,9 +1328,55 @@
 
 
 
-            $(document).on("click", ".remove-entry", function() {
-                $(this).closest("tr").remove();
+
+
+            $(document).on('click', '.remove-entry', function(event) {
+                event.preventDefault(); // Prevents the form from submitting
+
+                var row = $(this).closest(".workmandata");
+                var rowId = row.find("input[name='id']").val(); // Fixing selector
+
+                if (rowId) {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: 'Do you want to delete this record?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, delete it!',
+                        cancelButtonText: 'No, keep it'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "{{ url('safetypermit/deleteworkmaninvolved') }}/" +
+                                    rowId,
+                                type: 'POST', // Use POST instead of DELETE
+                                data: {
+                                    _token: '{{ csrf_token() }}',
+                                    _method: 'POST', // Simulate DELETE method
+                                    id: rowId
+                                },
+                                success: function(response) {
+                                    if (response.status === 'success') {
+                                        row.remove();
+                                        Swal.fire('Deleted!', response.msg, 'success');
+                                    } else {
+                                        Swal.fire('Error!', response.msg, 'error');
+                                    }
+                                },
+                                error: function() {
+                                    Swal.fire('Error!',
+                                        'Something went wrong. Please try again later.',
+                                        'error');
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    row.remove();
+                }
             });
+
+
 
 
             $(document).ready(function() {

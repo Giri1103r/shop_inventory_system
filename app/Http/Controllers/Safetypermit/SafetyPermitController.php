@@ -232,7 +232,7 @@ class SafetyPermitController extends Controller
     public function store(Request $request)
     {
         try {
-
+           
             try {
                 $rules = [
                     'date' => 'required|date',
@@ -500,7 +500,10 @@ class SafetyPermitController extends Controller
             }
             $permit_status =  1;
             $safetypermit = $this->safetypermit->find($id);
+
             $this->safetypermit->updates($id);
+
+
             $this->workmaninvolved->store($id);
 
             $mailsubject = 'Safety Permit has been submitted';
@@ -2298,5 +2301,10 @@ class SafetyPermitController extends Controller
         // return view('permit.safetypermit.dashboard', $data);
 
         return json_encode($data);
+    }
+    public function deleteworkmaninvolved($id){
+        $data  = $this->workmaninvolved->deleterecord($id);
+
+         return response()->json(['status' => 'success', 'msg' => 'Deleted successfully'], 200);
     }
 }

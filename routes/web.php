@@ -733,6 +733,9 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/dashboard/monthwiseptw', [SafetyPermitController::class, 'monthwiseptw']);
                 Route::get('/dashboard/getpermitstatus', [SafetyPermitController::class, 'getPermitStatus']);
                 Route::post('/statusExpire', [SafetyPermitController::class, 'ExpireStatus']);
+                Route::post('/deleteworkmaninvolved/{rowId}', [SafetyPermitController::class, 'deleteworkmaninvolved']);
+
+
             });
             Route::group(['prefix' => 'ppe_exemption'], function () {
 
