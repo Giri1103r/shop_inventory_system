@@ -162,65 +162,7 @@
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
-            function checkSelections() {
-                var fromDate = $('#from_date_datepicker').val();
-                var toDate = $('#to_date_datepicker').val();
-                var topicId = $('#topic_id').val();
-                var trainerId = $('#trainer_id').val();
-                var unitId = $('#unit_id').val();
-                var departmentId = $('#department_id').val();
-                var venueId = $('#venue_id').val();
-
-                if (fromDate && toDate && topicId && trainerId && unitId && departmentId && venueId) {
-                    $.ajax({
-                        url: "{{ url('training_schedule/topic/ajax-list') }}",
-                        type: 'GET',
-                        dataType: 'json',
-                        data: {
-                            from_date: fromDate,
-                            to_date: toDate,
-                            topicId: topicId,
-                            trainerId: trainerId,
-                            unitId: unitId,
-                            departmentId: departmentId,
-                            venueId: venueId,
-                        },
-                        success: function(response) {
-                            $('.text-danger').remove();
-                            var conflicts = response.conflicts;
-
-                            if (Object.keys(conflicts).length > 0) {
-                                for (var key in conflicts) {
-                                    if (conflicts.hasOwnProperty(key)) {
-                                        $('#' + key).closest('.form-group').append(
-                                            '<div><span class="text-danger">' + conflicts[key] +
-                                            '</span></div>'
-                                        );
-                                    }
-                                }
-                                $('#training_scheduleadd').data('conflict', true);
-                            } else {
-                                $('#training_scheduleadd').data('conflict', false);
-                            }
-                        },
-                        error: function(xhr) {
-                            alert('Error fetching data. Please try again.');
-                        }
-                    });
-                } else {
-                    $('.text-danger').remove();
-                    $('#training_scheduleadd').data('conflict', false);
-                }
-            }
-
-            $('#from_date_datepicker').on('change', checkSelections);
-            $('#to_date_datepicker').on('change', checkSelections);
-            $('#topic_id').on('change', checkSelections);
-            $('#trainer_id').on('change', checkSelections);
-            $('#unit_id').on('change', checkSelections);
-            $('#department_id').on('change', checkSelections);
-            $('#venue_id').on('change', checkSelections);
-
+           
             $(document).on('change', '#unit_id', function() {
                 var unitId = $(this).val();
                 if (unitId) {

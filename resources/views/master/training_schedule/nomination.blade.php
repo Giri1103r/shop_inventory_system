@@ -689,7 +689,6 @@
             $(document).on('click', '.removerow', function() {
                 var row = $(this).closest(".lesson_learned_row");
                 var rowId = row.find("input[name*='[id]']").val();
-                alert(rowId);
                 if (rowId) {
                     Swal.fire({
                         title: 'Are you sure?',
