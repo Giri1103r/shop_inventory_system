@@ -348,8 +348,10 @@ class PpeRequestController extends Controller
                     'approve_link' => url('ppe_request/hodapproval/view/' . encryptID($id)),
                     'reject_link' => url('ppe_request/hodapproval/view/' . encryptID($id))
                 ];
-                Mail::to($hod)->queue(new PpeRequestRequestorEmail($details));
-
+                if($hod != ''){
+                    Mail::to($hod)->queue(new PpeRequestRequestorEmail($details));
+                }
+               
                 // Notification
                 $message = 'New PPE Request';
                 $hodId = $this->user->getdepartmenthodId($departmentId);
