@@ -233,7 +233,7 @@ class MedicineIssuanceController extends Controller
                 $createdby = $details->created_by;
                 $userEmail = $this->user->where('id', $createdby)->pluck('email');
                 $emailDetails = $this->user_medicine_requisition->getEmailData($id);
-               Mail::to($userEmail)->to(new OhcMedicineRequisitionEmail($emailDetails));
+               Mail::to($userEmail)->to(new MedicineRequisitionEmail($emailDetails));
 
                 $notificationData = array(
                     'notification_type' => 4,

@@ -348,10 +348,8 @@ class PpeRequestController extends Controller
                     'approve_link' => url('ppe_request/hodapproval/view/' . encryptID($id)),
                     'reject_link' => url('ppe_request/hodapproval/view/' . encryptID($id))
                 ];
-                if($hod != ''){
-                    Mail::to($hod)->queue(new PpeRequestRequestorEmail($details));
-                }
-               
+                Mail::to($hod)->queue(new PpeRequestRequestorEmail($details));
+
                 // Notification
                 $message = 'New PPE Request';
                 $hodId = $this->user->getdepartmenthodId($departmentId);
@@ -897,7 +895,7 @@ class PpeRequestController extends Controller
                     $data = $response->json();
 
                     if (!empty($data)) {
-                        // Store Data and Update Status
+                      
                         $this->ppestock->store($data);
                     } else {
                         Session::flash('error', 'Something went wrong. please try again after some time.');
@@ -909,7 +907,7 @@ class PpeRequestController extends Controller
                 }
             }
 
-            // Update Status
+           
             $this->ppestock->updateQuantity($itemId, $newQuantity);
             $this->ppestatus->storemangerstatus($updateStatus, $empDetails);
             $this->pperequest->updatestoremanager($storeStatus, $id);

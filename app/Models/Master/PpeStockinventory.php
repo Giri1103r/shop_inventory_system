@@ -127,7 +127,6 @@ class PpeStockinventory extends Model
                     'org' => $item['ORG'] ?? null,
                     'inventory_item_id' => $item['INVENTORY_ITEM_ID'] ?? null,
                     'item_code' => $item['ITEM_CODE'] ?? null,
-
                     'ppe_name' => $item['PPE_NAME'] ?? $itemCodesWithPpeNames[$itemCode] ?? null,
                     'sub' => $item['SUB'] ?? null,
                     'uom' => $item['UOM'] ?? null,
@@ -145,8 +144,9 @@ class PpeStockinventory extends Model
             }
             $updatedItemCodes[] = $itemCode;
         }
-
+      
         return $updatedItemCodes;
+      
     }
 
     public function updates($id)

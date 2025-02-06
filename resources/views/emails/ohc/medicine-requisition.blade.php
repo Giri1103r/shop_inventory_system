@@ -71,19 +71,19 @@
                    <tr>
 
                     <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                        valign="top"> {{ getMedicinename($details['medicine_id']) }}</td>
+                        valign="top"> {{ getMedicinename($data['medicine_id']) }}</td>
                 </tr>
                 <tr>
 
                     <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                        valign="top"> {{ ($details['available_quantity']) }}</td>
+                        valign="top"> {{ ($data['available_quantity']) }}</td>
                 </tr>
 
 
                 <tr>
 
                     <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                        valign="top"> {{ ($details['quantity']) }}</td>
+                        valign="top"> {{ ($data['quantity']) }}</td>
                 </tr>
                    @endforeach
 
