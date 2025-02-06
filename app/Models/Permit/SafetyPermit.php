@@ -95,13 +95,13 @@ class SafetyPermit extends Model
         $request = request();
 
         $search = '';
-        $id = Auth::id();
+        $empid = Auth::id();
 
         $user = Auth::user();
         $empId = $user->employee_id;
         $userRole = $user->role;
         $unit_id = $user->unit_id;
-        $id = $user->id;
+        $empid = $user->id;
 
         $userRole = string_to_array($userRole);
         if (isAdmin()) {
@@ -113,7 +113,7 @@ class SafetyPermit extends Model
         } elseif (in_array(ROLE_EHS_HEAD, $userRole)) {
             $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
         } else {
-            $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')->where('ptw_safety.created_by', $id);
+            $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')->where('ptw_safety.created_by', $empid);
         }
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -184,56 +184,56 @@ class SafetyPermit extends Model
 
             $sub_permit = decryptId($request->sub_permit);
         }
-        // dd($request->protective_equip);
-        $values = [];
+
+        $protective_equip = [];
         $data = $request->protective_equip;
         foreach ($data as $index => $data) {
             // Decrypt the index (workId)
             $id = decryptId($index);
 
-            $values[$id] = $data;
+            $protective_equip[$id] = $data;
         }
 
-        $values = [];
+        $equiment_involved = [];
         $data = $request->equiment_involved;
         foreach ($data as $index => $data) {
             // Decrypt the index (workId)
             $id = decryptId($index);
 
-            $values[$id] = $data;
+            $equiment_involved[$id] = $data;
         }
 
-        $values = [];
+        $precaution_taken = [];
         $data = $request->precaution_taken;
         foreach ($data as $index => $data) {
             // Decrypt the index (workId)
             $id = decryptId($index);
 
-            $values[$id] = $data;
+            $precaution_taken[$id] = $data;
         }
 
 
-        $values = [];
+        $equipment_checklist = [];
         $data = $request->equipment_checklist;
         foreach ($data as $index => $data) {
             // Decrypt the index (workId)
             $id = decryptId($index);
 
-            $values[$id] = $data;
+            $equipment_checklist[$id] = $data;
         }
-        $values = [];
+        $safework_instruction = [];
         $data = $request->safework_instruction;
         foreach ($data as $index => $data) {
             // Decrypt the index (workId)
             $id = decryptId($index);
 
-            $values[$id] = $data;
+            $safework_instruction[$id] = $data;
         }
-        $protective_equip = !empty($values) ? json_encode($values, true) : null;
-        $equiment_involved = !empty($values) ? json_encode($values, true) : null;
-        $precaution_taken = !empty($values) ? json_encode($values, true) : null;
-        $equipment_checklist = !empty($values) ? json_encode($values, true) : null;
-        $safework_instruction = !empty($values) ? json_encode($values, true) : null;
+        $protective_equip = !empty($protective_equip) ? json_encode($protective_equip, true) : null;
+        $equiment_involved = !empty($equiment_involved) ? json_encode($equiment_involved, true) : null;
+        $precaution_taken = !empty($precaution_taken) ? json_encode($precaution_taken, true) : null;
+        $equipment_checklist = !empty($equipment_checklist) ? json_encode($equipment_checklist, true) : null;
+        $safework_instruction = !empty($safework_instruction) ? json_encode($safework_instruction, true) : null;
 
         $state_isolation_loto = !empty($request->state_isolation_loto) ? json_encode($request->state_isolation_loto) : null;
         $confined_space_entry = !empty($request->confined_space_entry) ? json_encode($request->confined_space_entry) : null;
@@ -294,11 +294,10 @@ class SafetyPermit extends Model
     public function updates($id)
     {
         $request = request();
-
+//  dd($request->all());
         $safetypermit = $this->find($id);
 
         $update_array = [];
-
         $update_array['permit_id'] = $request->permit_id ?? $safetypermit->permit_id;
         $update_array['date'] = DBdateformat($request->date ?? $safetypermit->date);
         $update_array['time_from'] = $request->time_from ?? $safetypermit->time_from;
@@ -307,88 +306,93 @@ class SafetyPermit extends Model
         $update_array['exact_location_job'] = $request->exact_location_job ?? $safetypermit->exact_location_job;
         $update_array['job_location_area'] = $request->job_location_area ?? $safetypermit->job_location_area;
         $update_array['isolationpanel_checkbox'] = $request->isolationpanel_checkbox ?? $safetypermit->isolationpanel_checkbox;
-        $update_array['isolationpanel_description'] = $request->isolationpanel_description ?? $safetypermit->isolationpanel_description;
+        $update_array['isolationpanel_description'] = $request->isolationpanel_description ? $safetypermit->isolationpanel_description :null;
 
         $update_array['sub_permit'] = is_array($request->sub_permit)
             ? implode(',', array_map('decryptId', $request->sub_permit))
             : ($request->sub_permit ? decryptId($request->sub_permit) : $safetypermit->sub_permit);
         // Protective Equip
-        $values = [];
+
+
+        $protective_equip = [];
         $data = $request->protective_equip ?? [];
 
-        foreach ($data as $index => $equipData) {
+        foreach ($data as $index => $ProtectiveequipData) {
             $safetydata = decryptId($index);
-            $values[$safetydata] = $equipData;
+            $protective_equip[$safetydata] = $ProtectiveequipData;
         }
 
-        $existingEquip = json_decode($safetypermit->protective_equip, true) ?? [];
+        $existingProtectiveEquip = json_decode($safetypermit->protective_equip, true) ?? [];
 
-        $update_array['protective_equip'] = !empty($values) && $values !== $existingEquip
-            ? json_encode($values)
+        $update_array['protective_equip'] = !empty($protective_equip) && $protective_equip !== $existingProtectiveEquip
+            ? json_encode($protective_equip)
             : $safetypermit->protective_equip;
 
+    //    dd($update_array['protective_equip']);
         // Equipment Invlved
 
-        $values = [];
+        $equiment_involved = [];
         $data = $request->equiment_involved ?? [];
 
-        foreach ($data as $index => $equipData) {
+        foreach ($data as $index => $equipInvoleData) {
             $safetydata = decryptId($index);
-            $values[$safetydata] = $equipData;
+            $equiment_involved[$safetydata] = $equipInvoleData;
         }
 
-        $existingEquip = json_decode($safetypermit->equiment_involved, true) ?? [];
+        $existingEquipInvolve = json_decode($safetypermit->equiment_involved, true) ?? [];
 
-        $update_array['equiment_involved'] = !empty($values) && $values !== $existingEquip
-            ? json_encode($values)
+        $update_array['equiment_involved'] = !empty($equiment_involved) && $equiment_involved !== $existingEquipInvolve
+            ? json_encode($equiment_involved)
             : $safetypermit->equiment_involved;
 
         // Precaution TO Be Taken
 
 
-        $values = [];
-        $data = $request->equipment_checklist ?? [];
+        $precaution_taken = [];
+        $data = $request->precaution_taken ?? [];
 
-        foreach ($data as $index => $equipData) {
+        foreach ($data as $index => $EquipPrecautionData) {
             $safetydata = decryptId($index);
-            $values[$safetydata] = $equipData;
+            $precaution_taken[$safetydata] = $EquipPrecautionData;
         }
 
-        $existingEquip = json_decode($safetypermit->equipment_checklist, true) ?? [];
+        $existingPrecaution = json_decode($safetypermit->precaution_taken, true) ?? [];
 
-        $update_array['equipment_checklist'] = !empty($values) && $values !== $existingEquip
-            ? json_encode($values)
-            : $safetypermit->equipment_checklist;
+        $update_array['precaution_taken'] = !empty($precaution_taken) && $precaution_taken !== $existingPrecaution
+            ? json_encode($precaution_taken)
+            : $safetypermit->precaution_taken;
+
+
         // Check List
 
-        $values = [];
+        $equipment_checklist = [];
         $data = $request->equipment_checklist ?? [];
 
-        foreach ($data as $index => $equipData) {
+        foreach ($data as $index => $EquipChecklistData) {
             $safetydata = decryptId($index);
-            $values[$safetydata] = $equipData;
+            $equipment_checklist[$safetydata] = $EquipChecklistData;
         }
 
-        $existingEquip = json_decode($safetypermit->equipment_checklist, true) ?? [];
+        $existingChecklistEquip = json_decode($safetypermit->equipment_checklist, true) ?? [];
 
-        $update_array['equipment_checklist'] = !empty($values) && $values !== $existingEquip
-            ? json_encode($values)
+        $update_array['equipment_checklist'] = !empty($equipment_checklist) && $equipment_checklist !== $existingChecklistEquip
+            ? json_encode($equipment_checklist)
             : $safetypermit->equipment_checklist;
 
         // Instruction
 
-        $values = [];
+        $safework_instruction = [];
         $data = $request->safework_instruction ?? [];
 
-        foreach ($data as $index => $equipData) {
+        foreach ($data as $index => $equipIntructionData) {
             $safetydata = decryptId($index);
-            $values[$safetydata] = $equipData;
+            $safework_instruction[$safetydata] = $equipIntructionData;
         }
 
         $existingEquip = json_decode($safetypermit->safework_instruction, true) ?? [];
 
-        $update_array['safework_instruction'] = !empty($values) && $values !== $existingEquip
-            ? json_encode($values)
+        $update_array['safework_instruction'] = !empty($safework_instruction) && $safework_instruction !== $existingEquip
+            ? json_encode($safework_instruction)
             : $safetypermit->safework_instruction;
 
 
@@ -439,7 +443,7 @@ class SafetyPermit extends Model
         $update_array['permit_status'] = STATUS_EHS_VERIFICATION_PENDING;
         $update_array['updated_by'] = Auth::id();
 
-
+        // dd($update_array);
         return  $this->where('id', $id)->update($update_array);
     }
     public function verifiedby($verifiedby, $id)
@@ -656,8 +660,12 @@ class SafetyPermit extends Model
 
     public function selectOne($id)
     {
+
+        // dd($id);
         $data = $this->select(
             'ptw_safety.*',
+            // 'shut_down_takenby_employee.emp_name as shut_down_takenby',
+            // 'loto_takenby_employee.emp_name as loto_takenby',
             DB::raw("(SELECT GROUP_CONCAT(work_name SEPARATOR ', ')
                       FROM ptw_masters_typeofwork
                       WHERE FIND_IN_SET(ptw_masters_typeofwork.id, ptw_safety.sub_permit)
@@ -679,12 +687,13 @@ class SafetyPermit extends Model
             })
             ->leftJoin('ptw_masters_typeofwork_checklist', 'ptw_masters_typeofwork_checklist.typeofwork_id', '=', 'ptw_masters_typeofwork.id')
             ->leftJoin('ptw_masters_typeofwork_upload', 'ptw_masters_typeofwork_upload.typeofwork_id', '=', 'ptw_masters_typeofwork.id')
+            // ->leftJoin('masters_employee as shut_down_takenby_employee', 'shut_down_takenby_employee.id', '=', 'ptw_safety.shut_down_takenby')
+            // ->leftJoin('masters_employee as loto_takenby_employee', 'loto_takenby_employee.id', '=', 'ptw_safety.loto_takenby')
             ->where('ptw_safety.id', $id)
             ->where('ptw_safety.trash', 'NO')
             ->where('ptw_masters_typeofwork_upload.trash', 'NO')
             ->first();
-       
-
+// dd($data);
         if ($data) {
 
             if (isset($data->sub_permit_names)) {
@@ -702,6 +711,9 @@ class SafetyPermit extends Model
                     $workName = DB::table('ptw_masters_typeofwork')
                         ->where('id', $typeofWorkId)
                         ->value('work_name');
+                    $workid = DB::table('ptw_masters_typeofwork')
+                        ->where('id', $typeofWorkId)
+                        ->value('id');
 
                     $checkpoints = DB::table('ptw_masters_typeofwork_checklist')
                         ->whereIn('id', $checklistIds)
@@ -717,7 +729,7 @@ class SafetyPermit extends Model
                         ->pluck('protective_equip')
                         ->toArray();
 
-                    $mappedProtectiveEquip[$workName] = [
+                    $mappedProtectiveEquip[$workid] = [
                         'checkpoints' => $checkpoints,
                         'checkpoint_names' => $checkPointNames,
                         'checkid' => $checkid
@@ -737,6 +749,9 @@ class SafetyPermit extends Model
                     $workName = DB::table('ptw_masters_typeofwork')
                         ->where('id', $typeofWorkId)
                         ->value('work_name');
+                        $workid = DB::table('ptw_masters_typeofwork')
+                        ->where('id', $typeofWorkId)
+                        ->value('id');
                     $checkpoints = DB::table('ptw_masters_typeofwork_checklist')
                         ->whereIn('id', $checklistIds)
                         ->pluck('check_points')
@@ -752,7 +767,7 @@ class SafetyPermit extends Model
                         ->pluck('equip_involve')
                         ->toArray();
 
-                    $mappedequiment_involved[$workName] = [
+                    $mappedequiment_involved[$workid] = [
                         'checkpoints' => $checkpoints,
                         'checkpoint_names' => $checkPointNames,
                         'checkid' => $checkid
@@ -771,6 +786,9 @@ class SafetyPermit extends Model
                     $workName = DB::table('ptw_masters_typeofwork')
                         ->where('id', $typeofWorkId)
                         ->value('work_name');
+                        $workid = DB::table('ptw_masters_typeofwork')
+                        ->where('id', $typeofWorkId)
+                        ->value('id');
                     $checkpoints = DB::table('ptw_masters_typeofwork_checklist')
                         ->whereIn('id', $checklistIds)
                         ->pluck('check_points')
@@ -784,7 +802,7 @@ class SafetyPermit extends Model
                         ->whereIn('id', $checkpoints)
                         ->pluck('precaution')
                         ->toArray();
-                    $mappeprecaution_taken[$workName] = [
+                    $mappeprecaution_taken[$workid] = [
                         'checkpoints' => $checkpoints,
                         'checkpoint_names' => $checkPointNames,
                         'checkid' => $checkid
@@ -802,6 +820,9 @@ class SafetyPermit extends Model
                     $workName = DB::table('ptw_masters_typeofwork')
                         ->where('id', $typeofWorkId)
                         ->value('work_name');
+                        $workid = DB::table('ptw_masters_typeofwork')
+                        ->where('id', $typeofWorkId)
+                        ->value('id');
                     $checkpoints = DB::table('ptw_masters_typeofwork_checklist')
                         ->whereIn('id', $checklistIds)
                         ->pluck('check_points')
@@ -818,7 +839,7 @@ class SafetyPermit extends Model
 
 
 
-                    $mappeequipment_checklist[$workName] = [
+                    $mappeequipment_checklist[$workid] = [
                         'checkpoints' => $checkpoints,
                         'checkpoint_names' => $checkPointNames,
                         'checkid' => $checkid
@@ -837,6 +858,9 @@ class SafetyPermit extends Model
                     $workName = DB::table('ptw_masters_typeofwork')
                         ->where('id', $typeofWorkId)
                         ->value('work_name');
+                        $workid = DB::table('ptw_masters_typeofwork')
+                        ->where('id', $typeofWorkId)
+                        ->value('id');
                     $checkpoints = DB::table('ptw_masters_typeofwork_checklist')
                         ->whereIn('id', $checklistIds)
                         ->pluck('check_points')
@@ -852,7 +876,7 @@ class SafetyPermit extends Model
                         ->toArray();
 
 
-                    $mappesafework_instruction[$workName] = [
+                    $mappesafework_instruction[$workid] = [
                         'checkpoints' => $checkpoints,
                         'checkpoint_names' => $checkPointNames,
                         'checkid' => $checkid

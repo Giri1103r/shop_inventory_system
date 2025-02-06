@@ -145,7 +145,7 @@ class SafetyPermitController extends Controller
                             }
 
                             if (CheckUserPermission('edit')) {
-                                if (($row->created_by == Auth::id() &&  ($row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||  $row->permit_status == STATUS_EHS_DECLINE) || checkUserRole(ROLE_EHS_OFFICER) && ($row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||  $row->permit_status == STATUS_EHS_DECLINE))) {
+                                if ( (CheckUserRole(ROLE_SUPERADMIN) &&($row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||  $row->permit_status == STATUS_EHS_DECLINE ||  $row->permit_status == STATUS_PLANTHEAD_REJECTED)) || ($row->created_by == Auth::id() &&  ($row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||  $row->permit_status == STATUS_EHS_DECLINE ||  $row->permit_status == STATUS_PLANTHEAD_REJECTED) || checkUserRole(ROLE_EHS_OFFICER) && ($row->permit_status == STATUS_EHS_VERIFICATION_PENDING ||  $row->permit_status == STATUS_EHS_DECLINE ||  $row->permit_status == STATUS_PLANTHEAD_REJECTED))) {
                                     $btn .= '<a href="' . admin_url('safetypermit/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                                 }
                             }
@@ -232,7 +232,7 @@ class SafetyPermitController extends Controller
     public function store(Request $request)
     {
         try {
-           
+
             try {
                 $rules = [
                     'date' => 'required|date',
@@ -349,11 +349,13 @@ class SafetyPermitController extends Controller
 
                 return redirect(admin_url('safetypermit/list'));
             } catch (Exception $ex) {
+
                 report($ex);
                 Session::flash('error', 'Something went wrong Please try again after some time');
                 return redirect(admin_url('safetypermit/list'));
             }
         } catch (Exception $ex) {
+
             report($ex);
             Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
@@ -409,7 +411,7 @@ class SafetyPermitController extends Controller
 
             $safetypermit = $this->safetypermit->selectOne($id);
 
-            // dd($safetypermit);
+
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $typeofwork = $this->typeofwork->gettypework();
 
@@ -454,7 +456,7 @@ class SafetyPermitController extends Controller
     public function update(Request $request)
     {
         try {
-            $id = decryptId($request->id);
+            $id = decryptId($request->safetypermitid);
 
             $rules = [
                 'date' => 'required|date',
@@ -499,7 +501,8 @@ class SafetyPermitController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
             $permit_status =  1;
-            $safetypermit = $this->safetypermit->find($id);
+           
+            $safetypermit = $this->safetypermit->selectone($id);
 
             $this->safetypermit->updates($id);
 
@@ -571,6 +574,8 @@ class SafetyPermitController extends Controller
             Session::flash('success', __('Your data has been updated successfully'));
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
+
+
             report($ex);
             Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
@@ -1775,7 +1780,7 @@ class SafetyPermitController extends Controller
 
         $mpdf->WriteHTML($html);
         $filename = "SafetyPermit.pdf";
-        $mpdf->Output($filename, 'I');
+        $mpdf->Output($filename, 'D');
     }
     public function permit_join($id)
     {
@@ -2294,11 +2299,11 @@ class SafetyPermitController extends Controller
             ],
         ];
 
-        //    dd($permitStatus);
+     
         $data = [
             'permit_status' => $permitStatus,
         ];
-        // return view('permit.safetypermit.dashboard', $data);
+      
 
         return json_encode($data);
     }

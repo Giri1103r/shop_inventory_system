@@ -701,7 +701,7 @@
                             </div>
                         </div>
                     </div>
-                    @if (((in_array(ROLE_EHS_OFFICER, getUserRoleId(Auth::id()))|| isAdmin()) && $safetypermit['permit_status'] == STATUS_EHS_VERIFICATION_PENDING) || ($safetypermit['verified_by'] == Auth::id() &&  $safetypermit['permit_status'] == STATUS_PLANTHEAD_REJECTED) )
+                    @if (((in_array(ROLE_EHS_OFFICER, getUserRoleId(Auth::id()))|| isAdmin() &&  $safetypermit['permit_status'] == STATUS_EHS_VERIFICATION_PENDING) || ($safetypermit['permit_status'] == STATUS_EHS_VERIFICATION_PENDING  || $safetypermit['permit_status'] == STATUS_PLANTHEAD_REJECTED) && ($safetypermit['verified_by'] == Auth::id())))
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">

@@ -128,7 +128,7 @@ class MedicineRequisitionController extends Controller
     {
         try {
             $unit = $this->unit->getunit();
-            $medicine =$this->medicine_stock->getMedicinerequisiondata();
+            $medicine =$this->medicine_stock->getMedicinestockdata();
             $data = array(
                 'medicine' => $medicine,
                 'unit' => $unit

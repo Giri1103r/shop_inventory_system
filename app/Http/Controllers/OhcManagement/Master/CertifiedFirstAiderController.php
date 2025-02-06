@@ -111,7 +111,7 @@ class CertifiedFirstAiderController extends Controller
             'departmentList'=>$departmentList,
         );
 
-        return view('ohcmanagement.master.certified_first_aid..list', $data);
+        return view('ohcmanagement.master.certified_first_aid.list', $data);
     }
 
     public function Add(Request $request)

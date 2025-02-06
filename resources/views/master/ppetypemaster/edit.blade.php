@@ -174,7 +174,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex:/^[a-zA-Z0-9-\s.+]*$/,
+
                         remote: {
                             url: '{{ admin_url('ppe_ppetype_master/unique') }}',
                             type: 'get',
@@ -219,7 +219,7 @@
                         required: "Item Code cannot be empty.",
                         minlength: "Item code must contain between 3 and 30 characters.",
                         maxlength: "Item code must contain between 3 and 30 characters.",
-                        regex: "Item code can only contain letters, numbers, spaces, hyphens, periods, or plus signs",
+                     
                         remote: "Item code already exists."
                     },
                     ppe_name: {

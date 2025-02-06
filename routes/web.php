@@ -926,7 +926,7 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('/quantity', [MedicineIssuanceController::class, 'quantity']);
             Route::post('/delete', [MedicineIssuanceController::class, 'delete']);
             Route::get('add/{id}', [MedicineIssuanceController::class, 'issue']);
-
+            Route::post('/issue/submit', [MedicineIssuanceController::class, 'issuestore']);
 
 
         });

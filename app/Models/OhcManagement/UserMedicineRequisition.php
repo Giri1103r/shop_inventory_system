@@ -215,4 +215,19 @@ class UserMedicineRequisition extends Model
     {
         return $this->where('id', $id)->update(['approve_status' => $data['approve_status']]);
     }
+    // status closed
+
+    public function updatestatus($id){
+        return $this->where('id',$id)->update(['approve_status'=>STATUS_OHC_CLOSE]);
+    }
+
+    // sending the data to email
+
+    public function getEmailData($id){
+        return $this->select('ohc_management_user_medicine_requisition.*','ohc_management_medicine_requisition.*','ohc_master_medicine.medicine'
+        )
+            ->join('ohc_management_medicine_requisition.req_id', $id)
+            ->join('ohc_master_medicine','ohc_management_medicine_requisition.medicine_id','=','ohc_master_medicine.id')
+            ->get();
+    }
 }
