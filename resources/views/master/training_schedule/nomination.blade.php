@@ -412,9 +412,7 @@
                                                                                 @endif
                                                                             </select>
                                                                         </td>
-
-
-                                                                        <td><input type="hidden"
+                                                                        <td><input type="text"
                                                                                 name="employee[{{ $i }}][emp_name]"
                                                                                 class="form-control"
                                                                                 id="emp_name_{{ $i }}"

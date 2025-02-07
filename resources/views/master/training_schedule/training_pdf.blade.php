@@ -319,7 +319,7 @@
                 <tr>
                     <td
                         style="width:100%;background-color: #ce0f1f;color:#ffffff;font-weight:bold;padding: 10px 10px 10px;">
-                        Vice President Approval
+                        EHS Head Approval
                     </td>
                 </tr>
             </table>

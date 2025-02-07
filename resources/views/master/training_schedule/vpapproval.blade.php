@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Vice President Approval')
+@section('title', 'EHS Head Approval')
 @section('pageurl', admin_url('training_schedule/list'))
 
 
@@ -135,13 +135,13 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Vice President Approval</h4>
+                                        <h4 class="text-white">EHS Head Approval</h4>
                                     </div>
                                 </div>
 
                                 <div class="basic-form">
                                     <form method="POST" id="vp_approval"
-                                        action="{{ admin_url('training_schedule/vp_approval/submit') }}"
+                                        action="{{ admin_url('training_schedule/ehs_approval/submit') }}"
                                         enctype="multipart/form-data">
                                         @csrf
                                         <div class="row">
@@ -149,12 +149,13 @@
                                                 value="{{ encryptId($training_schedule->id) }}">
 
                                             <input type="hidden" name="approver_emp_id" id="approver_emp_id"
-                                                class="form-control" value="{{ $vp_detail->employee_id ?? '' }}">
+                                                class="form-control" value="{{ Auth::user()->employee_id ?? '' }}">
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label for="name" class="form-label">Approver Name</label>
                                                     <input type="text" name="approver_name" id="approver_name"
-                                                        class="form-control" value="{{ $vp_detail->name ?? '' }}" readonly>
+                                                        class="form-control" value="{{ Auth::user()->name ?? '' }}"
+                                                        readonly>
                                                 </div>
                                             </div>
 
@@ -162,7 +163,8 @@
                                                 <div class="form-group form-input">
                                                     <label for="date" class="form-label require">Date</label>
                                                     <input type="text" name ="date" id="date_datepicker"
-                                                        class="form-control" placeholder="Date">
+                                                        class="form-control" placeholder="Date" readonly
+                                                        value="{{ todaydate() }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-12 mb-3">
@@ -202,16 +204,16 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
-        document.addEventListener("DOMContentLoaded", function() {
-            const fromDate =
-                "{{ $training_schedule->from_date }}"; 
-            const formattedFromDate = flatpickr.formatDate(new Date(fromDate),
-                "d-m-Y"); 
-            flatpickr("#date_datepicker", {
-                dateFormat: "d-m-Y",
-                minDate: formattedFromDate // Use the formatted from_date as the minimum date
-            });
-        });
+        // document.addEventListener("DOMContentLoaded", function() {
+        //     const fromDate =
+        //         "{{ $training_schedule->from_date }}"; 
+        //     const formattedFromDate = flatpickr.formatDate(new Date(fromDate),
+        //         "d-m-Y"); 
+        //     flatpickr("#date_datepicker", {
+        //         dateFormat: "d-m-Y",
+        //         minDate: formattedFromDate // Use the formatted from_date as the minimum date
+        //     });
+        // });
 
         $(document).ready(function() {
             $('#resetform').on('click', function(e) {

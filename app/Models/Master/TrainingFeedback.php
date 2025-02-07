@@ -49,7 +49,6 @@ class TrainingFeedback extends Model
             ->select('id', 'emp_id', 'emp_name')
             ->where('emp_id', $request->emp_id)
             ->first();
-
         // Fetch training assessment feedback ID
         $training_assessment_feedback = DB::table('training_assessment_feedback')
             ->select('id', 'attendance_id', 'training_schedule_id')
@@ -69,7 +68,6 @@ class TrainingFeedback extends Model
             'training_feedback' => $request->training_feedback,
             'created_by' => Auth::id(),
         ];
-
         return $this->create($insert_array);
     }
 

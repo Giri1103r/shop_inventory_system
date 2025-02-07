@@ -118,13 +118,13 @@ class TrainingScheduleController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // dd($row->training_status);
-                            if (($row->training_status == NEW_TRAINING_SCHEDULE || $row->training_status == TRAINING_RESCHEDULE_APPROVAL) && (in_array(ROLE_VISE_PRESIDENT, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
-                                $btn .= '<a href="' . admin_url('training_schedule/vp_approval/' . encryptId($row->id)) . '" title="Vice President Approval">
+                            if (($row->training_status == NEW_TRAINING_SCHEDULE || $row->training_status == TRAINING_RESCHEDULE_APPROVAL) && (in_array(ROLE_EHS_HEAD, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
+                                $btn .= '<a href="' . admin_url('training_schedule/ehs_approval/' . encryptId($row->id)) . '" title="EHS Head Approval">
                                             <i class="fa-solid fa-check-to-slot" aria-hidden="true" style="color: #000000;"></i>
                                          </a> ';
                             }
 
-                            if (($row->training_status == VP_APPROVE || $row->training_status == TRAINING_NOMINATION_COMPLETED) && (in_array(ROLE_TRAINER, getUserRoleId(Auth::id())) || in_array(ROLE_ADMIN, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
+                            if (($row->training_status == VP_APPROVE || $row->training_status == TRAINING_NOMINATION_COMPLETED) && (in_array(ROLE_ADMIN, getUserRoleId(Auth::id())) || in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())))) {
                                 $btn .= '<a href="' . admin_url('training_schedule/nominationProcess/' . encryptId($row->id)) . '" title="Nomination">
                                             <i class="fa fa-calendar" style="color: #0013ff;"></i>
                                          </a> ';
@@ -303,10 +303,10 @@ class TrainingScheduleController extends Controller
                 $statuslog =  $this->training_statuslog->storestatus($training->id, $training_status);
                 if ($training) {
                     $trainingSchedule = $this->training_schedule->selectOne($training->id);
-                    $vp_role = ROLE_VISE_PRESIDENT;
+                    $ehs_role = ROLE_EHS_HEAD;
 
-                    $vp_details = User::select('id', 'role', 'name', 'employee_id', 'email')
-                        ->whereRaw('FIND_IN_SET(' . $vp_role . ', role)')
+                    $ehs_details = User::select('id', 'role', 'name', 'employee_id', 'email')
+                        ->whereRaw('FIND_IN_SET(' . $ehs_role . ', role)')
                         ->get();
 
                     if (!empty($trainingSchedule)) {
@@ -315,11 +315,11 @@ class TrainingScheduleController extends Controller
                         /**
                          * Send Email Notifications
                          */
-                        if ($vp_details->isNotEmpty()) {
-                            foreach ($vp_details as $vp_detail) {
-                                if (!empty($vp_detail->email)) { // Corrected email validation
+                        if ($ehs_details->isNotEmpty()) {
+                            foreach ($ehs_details as $ehs_detail) {
+                                if (!empty($ehs_detail->email)) { // Corrected email validation
                                     $trainingArray = [
-                                        'name' => $vp_detail->name,
+                                        'name' => $ehs_detail->name,
                                         'from_date' => Displaydateformat($trainingSchedule->from_date),
                                         'to_date' => Displaydateformat($trainingSchedule->to_date),
                                         'start_time' => Displaytimeformat($trainingSchedule->start_time),
@@ -332,7 +332,7 @@ class TrainingScheduleController extends Controller
                                     ];
 
                                     // Queue email
-                                    Mail::to($vp_detail->email)->queue(new TrainingApprovalEmail($trainingArray));
+                                    Mail::to($ehs_detail->email)->queue(new TrainingApprovalEmail($trainingArray));
                                 }
                             }
                         }
@@ -340,8 +340,8 @@ class TrainingScheduleController extends Controller
                         /**
                          * Send Web Notifications
                          */
-                        $vpids = $vp_details->pluck('id')->toArray();
-                        if (!empty($vpids)) {
+                        $ehsids = $ehs_details->pluck('id')->toArray();
+                        if (!empty($ehsids)) {
                             $img = admin_url('public/assets/icons/training.png');
                             $notificationData = [
                                 'notification_type' => 2,
@@ -353,8 +353,8 @@ class TrainingScheduleController extends Controller
                                     'icon' => $img,
                                     'module' => 2,
                                 ]),
-                                'web_link' => 'training_schedule/vp_approval/' . encryptId($trainingSchedule->id),
-                                'assigned_user' => array_to_string($vpids),
+                                'web_link' => 'training_schedule/ehs_approval/' . encryptId($trainingSchedule->id),
+                                'assigned_user' => array_to_string($ehsids),
                                 'created_by' => Auth::id(),
                             ];
 
@@ -568,8 +568,8 @@ class TrainingScheduleController extends Controller
 
             $trainingAssessmentFeedback = $this->training_assessment_feedback->getempId($feedback_id);
             $training_schedule = $this->training_schedule->selectOne($training_schedule_id);
-
             $exists = $this->training_feedback->where('training_assessment_feedback_id', $feedback_id)->exists();
+            // dd($exists);
             if (!$exists) {
                 $data = [
                     'feedback_id' => $feedback_id,
@@ -615,12 +615,11 @@ class TrainingScheduleController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-
             $this->training_feedback->store();
 
             return redirect(admin_url('training_schedule/list'))->with('success', 'Your feedback has been submitted successfully.');
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             return redirect(admin_url('training_schedule/list'))->withErrors(['error' => 'Something went wrong. Please try again later!']);
         }
     }
@@ -689,7 +688,7 @@ class TrainingScheduleController extends Controller
         try {
             $trainingScheduleId = decryptId($id);
             $training_schedule = $this->training_schedule->selectOne($trainingScheduleId);
-            $trainingAssessmentList = $this->training_assessment_feedback->getAssessmentList($trainingScheduleId);
+            $trainingAssessmentList = $this->training_assessment_feedback->getAssessment($trainingScheduleId);
 
 
             $data = [
@@ -835,9 +834,8 @@ class TrainingScheduleController extends Controller
             if (Auth::check()) {
                 $training_schedule = $this->training_schedule->selectOne($id);
                 $nominationProcessList = $this->nomination_process->getNomination($training_schedule->id);
-                $trainingAssessmentList = $this->training_assessment_feedback->getAssessmentList($training_schedule->id);
+                $trainingAssessmentList = $this->training_assessment_feedback->getAssessment($training_schedule->id);
                 $rejectedlog = $this->training_statuslog->where('training_schedule_id', $training_schedule->id)->where('training_status', 3)->get();
-
                 $trainingFeedbackList = collect();
 
                 foreach ($trainingAssessmentList as $assessment) {
@@ -879,7 +877,7 @@ class TrainingScheduleController extends Controller
                     'showWorkerFeedbackButton' => $showWorkerFeedbackButton,
                 ];
 
-                if (Auth::user()->role != ROLE_TRAINER  &&  Auth::user()->role != ROLE_SUPERADMIN &&  Auth::user()->role != ROLE_ADMIN &&  Auth::user()->role != ROLE_VISE_PRESIDENT) {
+                if (Auth::user()->role != ROLE_TRAINER  &&  Auth::user()->role != ROLE_SUPERADMIN &&  Auth::user()->role != ROLE_ADMIN &&  Auth::user()->role != ROLE_EHS_HEAD) {
 
                     $trainingAssessmentList = $this->training_assessment_feedback->getAssessmentByEmp($training_schedule->id);
                     foreach ($trainingAssessmentList as $assessment) {
@@ -935,18 +933,19 @@ class TrainingScheduleController extends Controller
                             ->orWhere('training_status', 4);
                     })
                     ->first();
-                $vp_detail = $this->user->select('id', 'role', 'name', 'employee_id', 'email')->whereRaw("FIND_IN_SET(10, role) > 0")->first();
-                if (empty($vp_detail) || empty($vp_detail->name)) {
-                    $vp_detail = $this->user
-                        ->select('id', 'role', 'name', 'employee_id', 'email')
-                        ->where('role', 1)
-                        ->first();
-                }
+                // $ehs_detail = $this->user->select('id', 'role', 'name', 'employee_id', 'email')->whereRaw("FIND_IN_SET(6, role) > 0")->first();
+
+                // if (empty($ehs_detail) || empty($ehs_detail->name)) {
+                //     $ehs_detail = $this->user
+                //         ->select('id', 'role', 'name', 'employee_id', 'email')
+                //         ->where('role', 1)
+                //         ->first();
+                // }
 
                 if ($approveexists) {
                     $data = array(
                         'training_schedule' => $training_schedule,
-                        'vp_detail' => $vp_detail,
+                        // 'ehs_detail' => $ehs_detail,
                     );
                     return view('master.training_schedule.vpapproval', $data);
                 } else {
@@ -1056,7 +1055,7 @@ class TrainingScheduleController extends Controller
                                 ->get();
 
                             if ($adminDetails->isNotEmpty()) {
-                                $mailsubject = 'Training Rejected by Vice President';
+                                $mailsubject = 'Training Rejected by EHS Head';
 
                                 /**
                                  * Send Email Notification
@@ -1094,7 +1093,7 @@ class TrainingScheduleController extends Controller
                                         'notification_message' => $mailsubject,
                                         'mobile_notification' => json_encode([
                                             'title' => $mailsubject,
-                                            'message' => 'Training rejected by Vice President ' . getUsername(Auth::id()),
+                                            'message' => 'Training rejected by EHS Head ' . getUsername(Auth::id()),
                                             'icon' => $img,
                                             'module' => 2,
                                         ]),
@@ -1138,7 +1137,7 @@ class TrainingScheduleController extends Controller
                 $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
                 $employeeList = Employee::select('id', 'emp_id', 'emp_name', 'email', 'department', 'employee_status')
                     ->where('id', '!=', $training_schedule->trainer_id)
-                    ->where('user_role', '!=', 1)->where('user_role', '!=', 10)->where('user_role', '!=', 2)
+                    ->where('user_role', '!=', 1)->where('user_role', '!=', 6)->where('user_role', '!=', 2)
                     ->where('status', 1)
                     ->get();
                 $nominationProcessList = $this->nomination_process->getNomination($training_schedule->id);
@@ -1207,10 +1206,10 @@ class TrainingScheduleController extends Controller
             $statuslog =  $this->training_statuslog->storestatus($id, $training_status);
             if ($training) {
                 $trainingSchedule = $this->training_schedule->selectOne($id);
-                $vp_role = ROLE_VISE_PRESIDENT;
+                $ehs_role = ROLE_EHS_HEAD;
 
-                $vp_details = User::select('id', 'role', 'name', 'employee_id', 'email')
-                    ->whereRaw('FIND_IN_SET(' . $vp_role . ', role)')
+                $ehs_details = User::select('id', 'role', 'name', 'employee_id', 'email')
+                    ->whereRaw('FIND_IN_SET(' . $ehs_role . ', role)')
                     ->get();
 
                 if (!empty($trainingSchedule)) {
@@ -1219,11 +1218,11 @@ class TrainingScheduleController extends Controller
                     /**
                      * Send email notification
                      */
-                    if ($vp_details->isNotEmpty()) {
-                        foreach ($vp_details as $vp_detail) {
-                            if (!empty($vp_detail->email)) {
+                    if ($ehs_details->isNotEmpty()) {
+                        foreach ($ehs_details as $ehs_detail) {
+                            if (!empty($ehs_detail->email)) {
                                 $trainingArray = [
-                                    'name' => $vp_detail->name,
+                                    'name' => $ehs_detail->name,
                                     'from_date' => Displaydateformat($trainingSchedule->from_date),
                                     'to_date' => Displaydateformat($trainingSchedule->to_date),
                                     'start_time' => Displaytimeformat($trainingSchedule->start_time),
@@ -1235,7 +1234,7 @@ class TrainingScheduleController extends Controller
                                     'mail_subject' => $mailsubject,
                                 ];
 
-                                Mail::to($vp_detail->email)->queue(new TrainingApprovalEmail($trainingArray));
+                                Mail::to($ehs_detail->email)->queue(new TrainingApprovalEmail($trainingArray));
                             }
                         }
                     }
@@ -1244,8 +1243,8 @@ class TrainingScheduleController extends Controller
                     /**
                      * Send Web notification
                      */
-                    $vpids = $vp_details->pluck('id')->toArray();
-                    if (!empty($vpids)) {
+                    $ehsids = $ehs_details->pluck('id')->toArray();
+                    if (!empty($ehsids)) {
                         $img = admin_url('public/assets/icons/traning.png');
                         $notificationData = [
                             'notification_type' => 2,
@@ -1257,8 +1256,8 @@ class TrainingScheduleController extends Controller
                                 'icon' =>  $img,
                                 'module' => 2,
                             ]),
-                            'web_link' => 'training_schedule/vp_approval/' . encryptId($trainingSchedule->id),
-                            'assigned_user' => array_to_string($vpids),
+                            'web_link' => 'training_schedule/ehs_approval/' . encryptId($trainingSchedule->id),
+                            'assigned_user' => array_to_string($ehsids),
                             'created_by' => Auth::id(),
                         ];
                         notificationSave($notificationData);
@@ -1575,7 +1574,7 @@ class TrainingScheduleController extends Controller
                     return $query->whereDate('attendance_date', DBdateformat($attendanceDate));
                 })
                 ->get();
-            $trainingAssessmentList = $this->training_assessment_feedback->getAssessmentList($training_schedule->id);
+            $trainingAssessmentList = $this->training_assessment_feedback->getAssessment($training_schedule->id);
             // Initialize an empty collection for training feedback
             $trainingFeedbackList = collect();
             foreach ($trainingAssessmentList as $assessment) {

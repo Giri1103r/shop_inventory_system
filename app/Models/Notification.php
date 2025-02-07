@@ -50,7 +50,7 @@ class Notification extends Model
         /**
          * Role Based list view condition start
          */
-        if (CheckUserRole(ROLE_SUPERADMIN)) {
+        if (CheckUserRole(ROLE_SUPERADMIN)|| CheckUserRole(ROLE_ADMIN)) {
             $query->where('template_notification.trash', 'NO');
         } elseif (CheckUserRole(ROLE_TRAINER)) {
             $trainer = DB::table('users')
@@ -62,14 +62,14 @@ class Notification extends Model
                 $query->where('template_notification.assigned_user', $trainer->id)
                     ->where('template_notification.trash', 'NO');
             }
-        } elseif (Auth::user()->role == ROLE_VISE_PRESIDENT) {
-            $vp = DB::table('users')
+        } elseif (Auth::user()->role == ROLE_EHS_HEAD) {
+            $ehs = DB::table('users')
                 ->select('id')
                 ->where('employee_id', Auth::user()->employee_id)
                 ->first();
 
-            if ($vp) {
-                $query->where('template_notification.assigned_user', $vp->id)
+            if ($ehs) {
+                $query->where('template_notification.assigned_user', $ehs->id)
                     ->where('template_notification.trash', 'NO');
             }
         } elseif (Auth::user()->role == ROLE_USER) {

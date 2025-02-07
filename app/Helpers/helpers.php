@@ -70,7 +70,7 @@ if (!function_exists('Displaydateformat')) {
 
     function Displaydateformat($date)
     {
-        if ($date == '' || $date == null) {
+        if ($date == '' || $date == null || $date == '1970-01-01') {
             return '';
         }
 

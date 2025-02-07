@@ -239,7 +239,7 @@
                                         @endif
                                         <div class="row">
                                             <div class="card-header-inner">
-                                                <h4 class="text-white">Vice President Approval</h4>
+                                                <h4 class="text-white">EHS Head Approval</h4>
                                             </div>
                                         </div>
                                         @if (isset($training_schedule->approver_name))

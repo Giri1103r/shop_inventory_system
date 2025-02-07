@@ -101,6 +101,13 @@ class TrainingAssessmentFeedback extends Model
             ->where('training_assessment_feedback.training_schedule_id', $trainingScheduleId)
             ->get();
     }
+    public function getAssessment($trainingScheduleId)
+    {
+        return $this->select('training_assessment_feedback.*')
+            ->where('training_assessment_feedback.status', 1)
+            ->where('training_assessment_feedback.training_schedule_id', $trainingScheduleId)
+            ->get();
+    }
     public function getAssessmentByEmp($trainingScheduleId)
     {
         return $this->select('training_assessment_feedback.*', 'masters_employee.emp_id', 'masters_employee.login_id')

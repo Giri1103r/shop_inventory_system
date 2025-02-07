@@ -71,7 +71,7 @@
                             @if (Auth::user()->role == ROLE_SUPERADMIN ||
                                     Auth::user()->role == ROLE_TRAINER ||
                                     Auth::user()->role == ROLE_ADMIN ||
-                                    Auth::user()->role == ROLE_VISE_PRESIDENT)
+                                    Auth::user()->role == ROLE_EHS_HEAD)
                                 <div class="row">
                                     <div class="col-12">
                                         <ul class="nav nav-pills" style="padding-left: 30px;">
@@ -82,7 +82,7 @@
                                             </li>
                                             <li class="nav-item">
                                                 <a class="nav-link" href="#vise_president_approval"
-                                                    data-bs-toggle="tab">Vice President Approval
+                                                    data-bs-toggle="tab">EHS Head Approval
                                                 </a>
                                             </li>
                                             <li class="nav-item">
@@ -113,7 +113,7 @@
                                 @if (Auth::user()->role == ROLE_SUPERADMIN ||
                                         Auth::user()->role == ROLE_TRAINER ||
                                         Auth::user()->role == ROLE_ADMIN ||
-                                        Auth::user()->role == ROLE_VISE_PRESIDENT)
+                                        Auth::user()->role == ROLE_EHS_HEAD)
                                     <div class="tab-pane fade show active" id="training_schedule_details">
                                         <div class="card-body">
 
@@ -286,7 +286,7 @@
                                             @endif
                                             <div class="row">
                                                 <div class="card-header-inner">
-                                                    <h4 class="text-white">Vice President Approval</h4>
+                                                    <h4 class="text-white">EHS Head Approval</h4>
                                                 </div>
                                             </div>
                                             @if (isset($training_schedule->approver_name))
@@ -681,7 +681,7 @@
                             @if (Auth::user()->role != ROLE_SUPERADMIN &&
                                     Auth::user()->role != ROLE_TRAINER &&
                                     Auth::user()->role != ROLE_ADMIN &&
-                                    Auth::user()->role != ROLE_VISE_PRESIDENT)
+                                    Auth::user()->role != ROLE_EHS_HEAD)
                                 <div class="card-body">
 
                                     <div class="row">

@@ -125,7 +125,7 @@ class NominationProcessController extends Controller
 
             $list = Employee::select('id', 'emp_id', 'department')
                 ->where('id', '!=', $training_schedule->trainer_id)
-                ->where('user_role', '!=', 1)->where('user_role', '!=', 10)->where('user_role', '!=', 2)
+                ->where('user_role', '!=', 1)->where('user_role', '!=', 6)->where('user_role', '!=', 2)
                 ->where('status', 1)->where('department', $deptID)
                 ->get();
         } else { // Worker
@@ -140,7 +140,9 @@ class NominationProcessController extends Controller
     {
         $employee = Employee::select('id', 'emp_name', 'email', 'employee_status')
             ->where('id', $emp_id)
-            ->where('user_role', '!=', 10)
+            ->where('user_role', '!=', 6)
+            ->where('user_role', '!=', 2)
+            ->where('user_role', '!=', 1)
             ->where('status', 1)
             ->first();
 
@@ -374,8 +376,8 @@ class NominationProcessController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImporNominationProcessJob($details));
-                // dispatch((new ImporNominationProcessJob($details))->onQueue('nomination_process'));
+                // dispatch(new ImporNominationProcessJob($details));
+                dispatch((new ImporNominationProcessJob($details))->onQueue('nomination_process'));
             }
 
             $insert_data['log_id'] = $insert_id;

@@ -72,7 +72,7 @@ class TrainingSchedule extends Model
             $query->where('training_schedule.trash', 'NO');
         } elseif (CheckUserRole(ROLE_ADMIN)) {
             $query->where('training_schedule.trash', 'NO');
-        } elseif (CheckUserRole(ROLE_VISE_PRESIDENT)) {
+        } elseif (CheckUserRole(ROLE_EHS_HEAD)) {
             $query->where('training_schedule.trash', 'NO');
         } elseif (CheckUserRole(ROLE_TRAINER)) {
             $trainer = DB::table('masters_employee')
@@ -83,7 +83,7 @@ class TrainingSchedule extends Model
                 $query->where('training_schedule.trainer_id', $trainer->id)
                     ->where('training_schedule.trash', 'NO');
             }
-        } elseif (Auth::user()->role != ROLE_TRAINER || Auth::user()->role != ROLE_VISE_PRESIDENT || Auth::user()->role != ROLE_SUPERADMIN || Auth::user()->role != ROLE_ADMIN) {
+        } elseif (Auth::user()->role != ROLE_TRAINER || Auth::user()->role != ROLE_EHS_HEAD || Auth::user()->role != ROLE_SUPERADMIN || Auth::user()->role != ROLE_ADMIN) {
             $nomination = DB::table('masters_employee')
                 ->select('id', 'emp_id')
                 ->where('emp_id', Auth::user()->employee_id)
@@ -368,7 +368,7 @@ class TrainingSchedule extends Model
             $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate));
         }
 
-        if (CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_VISE_PRESIDENT)) {
+        if (CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
             // No additional restrictions for these roles
         } elseif (CheckUserRole(ROLE_TRAINER)) {
             $trainer = DB::table('masters_employee')
@@ -432,7 +432,7 @@ class TrainingSchedule extends Model
         }
 
 
-        if (CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_VISE_PRESIDENT)) {
+        if (CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
             // No additional restrictions for these roles
         } elseif (CheckUserRole(ROLE_TRAINER)) {
             $trainer = DB::table('masters_employee')
@@ -474,7 +474,7 @@ class TrainingSchedule extends Model
             $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate));
         }
 
-        if (CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_VISE_PRESIDENT)) {
+        if (CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
             // No additional restrictions for these roles
         } elseif (CheckUserRole(ROLE_TRAINER)) {
             $trainer = DB::table('masters_employee')
@@ -523,7 +523,7 @@ class TrainingSchedule extends Model
             $query->where('created_at', '<=', DBdateformat($params['to_date']));
         }
 
-        if (CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_VISE_PRESIDENT)) {
+        if (CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
             // No additional restrictions for these roles
         } elseif (CheckUserRole(ROLE_TRAINER)) {
             $trainer = DB::table('masters_employee')
@@ -629,7 +629,7 @@ class TrainingSchedule extends Model
             $query->where('training_schedule.trash', 'NO');
         } elseif (CheckUserRole(ROLE_ADMIN)) {
             $query->where('training_schedule.trash', 'NO');
-        } elseif (CheckUserRole(ROLE_VISE_PRESIDENT)) {
+        } elseif (CheckUserRole(ROLE_EHS_HEAD)) {
             $query->where('training_schedule.trash', 'NO');
         } elseif (CheckUserRole(ROLE_TRAINER)) {
             $trainer = DB::table('masters_employee')

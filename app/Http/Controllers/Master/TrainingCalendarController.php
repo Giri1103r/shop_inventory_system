@@ -83,7 +83,7 @@ class TrainingCalendarController extends Controller
 
             if (CheckUserRole(ROLE_SUPERADMIN)) {
                 $query->where('training_schedule.trash', 'NO');
-            } elseif (CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_VISE_PRESIDENT)) {
+            } elseif (CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
                 $query->where('training_schedule.trash', 'NO');
             } elseif (CheckUserRole(ROLE_TRAINER)) {
                 $trainer = DB::table('masters_employee')
