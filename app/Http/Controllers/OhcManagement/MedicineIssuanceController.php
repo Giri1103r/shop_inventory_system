@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\OhcManagement;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\Ohc\MedicineRequisitionEmail;
-use App\Mail\Ohc\MedicineRequisitionEmail as OhcMedicineRequisitionEmail;
+
+use App\Mail\Ohc\MedicineRequisitionEmail;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
 use App\Models\Master\Unit;
@@ -232,8 +232,16 @@ class MedicineIssuanceController extends Controller
                 $details =  $this->user_medicine_requisition->selectOne($id);
                 $createdby = $details->created_by;
                 $userEmail = $this->user->where('id', $createdby)->pluck('email');
-                $emailDetails = $this->user_medicine_requisition->getEmailData($id);
-               Mail::to($userEmail)->to(new MedicineRequisitionEmail($emailDetails));
+
+                if ($userEmail != '' || $userEmail != null) {
+                    $Details = $this->user_medicine_requisition->selectOne($id);
+
+                    $medicineDetails = $this->medicine_requisition->selectOne($id);
+                    $emailDetails = $Details->toArray();
+                    $emailDetails['mail_subject'] = "Medicine Issued";
+                    Mail::to($userEmail)->queue(new MedicineRequisitionEmail($emailDetails, $medicineDetails));
+                }
+
 
                 $notificationData = array(
                     'notification_type' => 4,

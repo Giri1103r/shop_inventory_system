@@ -69,9 +69,7 @@ class MedicineStockController extends Controller
                         ->editColumn('unit_id', function ($row) {
                             return $row->unit_name;
                         })
-                        ->editColumn('medicine_id', function ($row) {
-                            return $row->medicine;
-                        })
+
                         ->editColumn('created_at', function ($row) {
                             return displaydateformat($row->created_at);
                         })
@@ -81,9 +79,7 @@ class MedicineStockController extends Controller
                         ->editColumn('expire_date', function ($row) {
                             return Displaydateformat($row->expire_date);
                         })
-                        ->editColumn('hsn_number', function ($row) {
-                            return $row->hsn;
-                        })
+
                         ->editColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
@@ -92,13 +88,15 @@ class MedicineStockController extends Controller
                             // if (CheckUserPermission('edit')) {
                             $btn .= '<a href="' . admin_url('ohc/medicine-stock-inventory/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             // }
-                            // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
+                           if(( CheckUserRole(ROLE_SUPERADMIN) && $row->status == 0 || CheckUserRole(ROLE_EHS_HEAD) && $row->status == 0)){
                             $btn .= '<a href="' . admin_url('ohc/medicine-stock-inventory/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+
+                           }
 
                             return $btn;
                         })
 
-                        ->rawColumns(['action', 'created_by', 'status', 'created_at', 'medicine'])
+                        ->rawColumns(['action', 'created_by', 'status', 'created_at'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -106,7 +104,7 @@ class MedicineStockController extends Controller
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    report($ex);
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
                 }
             }
@@ -158,11 +156,12 @@ class MedicineStockController extends Controller
             }
 
             try {
-                //    dd($request->all());
-                $medicine_stock = $this->medicine_stock->store();
+                $medicineData =  decryptId($request->medicine_id);
+                $medicineDetails = $this->medicine->where('id', $medicineData)->select('medicine','hsn')->first();
+                $medicine_stock = $this->medicine_stock->store( $medicineDetails);
 
                 $medicineId = $medicine_stock->id;
-                $medicine = $this->medicine->find($medicineId);
+
 
                 $mailsubject = 'Medicine is Added';
                 $user_role = ROLE_EHS_HEAD;
@@ -195,12 +194,12 @@ class MedicineStockController extends Controller
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
-                        'message' => $medicine->medicine . ' is added to the Stock inventory submitted by ' . getUsername($medicine->created_by),
+                        'message' => $medicine_stock->medicine_id . ' is added to the Stock inventory submitted by ' . getUsername($medicine_stock->created_by),
                         'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
-                        'id' => $medicine->id,
+                        'id' => $medicine_stock->id,
                         'module' => 1,
                     )),
-                    'web_link' => admin_url('ohc/medicine-stock-inventory/approval/view/' . encryptId($medicine->id)),
+                    'web_link' => admin_url('ohc/medicine-stock-inventory/approval/view/' . encryptId($medicine_stock->id)),
                     'assigned_user' => array_to_string($userids),
                     'created_by' => Auth::id(),
                 );
@@ -209,14 +208,14 @@ class MedicineStockController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medicine-stock-inventory/list'));
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-stock-inventory/list'));
         }
@@ -229,8 +228,10 @@ class MedicineStockController extends Controller
 
 
             $medicine_stock = $this->medicine_stock->find($id);
-            $medicine =   $medicine_stock->medicine_id;
+            $medicine =   $medicine_stock->hsn_number;
             $thresholdlimit = $this->medicine->where('id', $medicine)->select('threshold_limit')->first();
+            $hsn = $this->medicine->where('id', $medicine)->select('hsn')->first();
+
             $unit = $this->unit->getunit();
             $medicine = $this->medicine->getMedicineData();
 
@@ -238,6 +239,7 @@ class MedicineStockController extends Controller
             $data = array(
                 'medicine' => $medicine,
                 'unit' => $unit,
+                'hsn'=>$hsn,
                 'thresholdlimit' => $thresholdlimit,
                 'medicine_stock' => $medicine_stock,
 
@@ -254,6 +256,7 @@ class MedicineStockController extends Controller
     {
         try {
             $id = decryptId($request->id);
+
             $rules = [
                 'unit_id' => 'required',
 
@@ -269,10 +272,11 @@ class MedicineStockController extends Controller
             }
 
             try {
+                $medicineData =  decryptId($request->medicine_id);
+                $medicineDetails = $this->medicine->where('id', $medicineData)->select('medicine','hsn')->first();
+                $medicine_stock = $this->medicine_stock->updates($id , $medicineDetails );
 
-                $medicine_stock = $this->medicine_stock->updates($id);
-                $medicinedata = $this->medicine_stock->selectone($id);
-                $mailsubject = 'Medicine is Updated';
+                $mailsubject = 'Medicine is Added';
                 $user_role = ROLE_EHS_HEAD;
 
                 $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
@@ -285,7 +289,7 @@ class MedicineStockController extends Controller
                         $email_id = $user->email;
 
                         if ($email_id != '' || $email_id != null) {
-                            $medicinedetails =  $this->medicine->selectone($id);
+                            $medicinedetails =  $this->medicine_stock->selectone($id);
                             $details  = $medicinedetails->toArray();
 
                             $details['name'] = $user->name;
@@ -303,28 +307,30 @@ class MedicineStockController extends Controller
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
-                        'message' => $medicinedata->medicine . ' is Updated to the Stock Inventory submitted by ' . getUsername($medicinedata->created_by),
+                        'message' => $medicinedetails->medicine_id . ' is added to the Stock inventory submitted by ' . getUsername($medicinedetails->updated_by),
                         'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
                         'id' => $id,
                         'module' => 1,
                     )),
-                    'web_link' => admin_url('ohc/medicine-stock-inventory/approval/view/' . encryptId($id)),
+                    'web_link' => admin_url('ohc/medicine-stock-inventory/approval/view/' . encryptId($medicinedetails->id)),
                     'assigned_user' => array_to_string($userids),
                     'created_by' => Auth::id(),
                 );
 
                 notificationSave($notificationData);
 
+
+
                 Session::flash('success', 'Your data has been updated successfully!');
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medicine-stock-inventory/list'));
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-stock-inventory/list'));
         }
@@ -407,7 +413,7 @@ class MedicineStockController extends Controller
             $action = $request->action;
             $mailsubject = ($action == 'approve') ? 'Medicine Name Has Been Approved' : 'Medicine Name Has Been Rejected';
 
-           
+
             Mail::to($email)->queue(new MedicineStockRequestEmail($details));
 
 
@@ -418,8 +424,8 @@ class MedicineStockController extends Controller
                 'mobile_notification' => json_encode([
                     'title' => $mailsubject,
                     'message' => getMedicinename($details->medicine_id) .
-                                ' has ' . ($action == 'approve' ? 'approved' : 'rejected') .
-                                ' by the EHS Head ',
+                        ' has ' . ($action == 'approve' ? 'approved' : 'rejected') .
+                        ' by the EHS Head ',
                     'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
                     'id' => $id,
                     'module' => 1,
@@ -440,9 +446,8 @@ class MedicineStockController extends Controller
 
             return redirect(admin_url('ohc/medicine-stock-inventory/list'))
                 ->with('success', 'Request has been processed successfully.');
-
         } catch (Exception $ex) {
-           report($ex);
+            report($ex);
             return redirect(admin_url('ohc/medicine-stock-inventory/list'))
                 ->with('error', 'Something went wrong, Please try again later.');
         }
@@ -519,22 +524,27 @@ class MedicineStockController extends Controller
             $header = [
                 __("common.sno"),
                 'Unit Name',
-                'Department Name',
-                'request Date',
-                'status',
-                'Created_by',
-                'Created_at'
+                'Medicine Name',
+                'Threshold Limit',
+                'HSN Number',
+                'Expire Date',
+                'Quantity',
+                'Status',
+                'Created By',
+                'Created at'
+
             ];
 
             $i = 1;
             foreach ($allData as $data) {
 
-                $export = [];
+
                 $export[] =  $i;
-                $export[] =  $data->req_id;
                 $export[] =  getUnitname($data->unit_id);
-                $export[] =  $data->medicine;
+                $export[] =  $data->medicine_id;
                 $export[] =  $data->threshold_limit;
+                $export[] =  $data->hsn_number;
+                $export[] =  Displaydateformat($data->expire_date);
                 $export[] =  $data->quantity;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
@@ -573,10 +583,12 @@ class MedicineStockController extends Controller
                 'Unit Name',
                 'Medicine Name',
                 'Threshold Limit',
+                'HSN Number',
+                'Expire Date',
                 'Quantity',
-                'status',
-                'Created_by',
-                'Created_at'
+                'Status',
+                'Created By',
+                'Created at'
             ];
 
             $data = array(

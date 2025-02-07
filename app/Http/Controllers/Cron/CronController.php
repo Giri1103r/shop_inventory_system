@@ -474,7 +474,9 @@ class CronController extends Controller
 
                     if (!empty($data)) {
 
-                        $this->ppestock->store($data);
+                         $stock = $this->ppestock->store($data);
+
+                        //  dd($stock);
                     } else {
 
                         return response()->json(['message' => 'No data found in API response.']);

@@ -28,12 +28,17 @@
                             {{ getUnitname($value->unit_id) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->medicine }}
+                            {{ $value->medicine_id }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->threshold_limit }}
                         </td>
-
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->hsn_number }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value-> }}
+                        </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->quantity }}
                         </td>

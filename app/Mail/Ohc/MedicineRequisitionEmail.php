@@ -15,27 +15,25 @@ class MedicineRequisitionEmail extends Mailable
     use Queueable,
         SerializesModels;
 
-    protected $details;
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
-    public function __construct($details)
-    {
-        $this->details = $details;
-    }
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
-    public function build()
-    {
+            private $emailDetails;
+            private $medicineDetails;
 
-        return $this->view('emails.ohc.medicine-requisition')
-            ->subject(config('app.name') . " - ".$this->details['mail_subject'])
-            ->with("details", $this->details);
-    }
+            public function __construct($emailDetails, $medicineDetails)
+            {
+                $this->emailDetails = $emailDetails;
+                $this->medicineDetails = $medicineDetails;
+
+            }
+
+            public function build()
+            {
+                return $this->view('emails.ohc.medicine-requisition')
+                    ->subject(config('app.name') . " - " . $this->emailDetails['mail_subject'])
+                    ->with([
+                        "emailDetails" => $this->emailDetails,
+                        "medicineDetails" => $this->medicineDetails
+                    ]);
+            }
+
 }

@@ -84,15 +84,19 @@ class MedicineRequisition extends Model
     {
 
         $data = $this->select(
-            'ohc_management_medicine_requisition.*','ohc_master_medicine.medicine'
+            'ohc_management_medicine_requisition.*',
+            'ohc_management_medicine_stock_inventory.medicine_id as stock_medicine_id',
+            'ohc_master_medicine.medicine'
         )
-            ->where('ohc_management_medicine_requisition.req_id', $id)
-            ->join('ohc_master_medicine','ohc_management_medicine_requisition.medicine_id','=','ohc_master_medicine.id')
-            ->get();
+        ->join('ohc_management_medicine_stock_inventory', 'ohc_management_medicine_requisition.medicine_id', '=', 'ohc_management_medicine_stock_inventory.id')
+        ->join('ohc_master_medicine', 'ohc_management_medicine_stock_inventory.medicine_id', '=', 'ohc_master_medicine.id') // Correct join condition
+        ->where('ohc_management_medicine_requisition.req_id', $id)
+        ->get();
 
-        return $data;
+    return $data;
+
     }
 
- 
+
 
 }

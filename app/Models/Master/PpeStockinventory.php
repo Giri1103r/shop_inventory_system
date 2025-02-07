@@ -115,9 +115,7 @@ class PpeStockinventory extends Model
         $updatedItemCodes = [];
 
 
-        $itemCodesWithPpeNames = PpeTypeMaster::
-            pluck('ppe_name', 'item_code')->where('status',1)
-            ->toArray();
+
 
         $groupedData = collect($data)->groupBy('ITEM_CODE');
 
@@ -127,7 +125,7 @@ class PpeStockinventory extends Model
                     'org' => $item['ORG'] ?? null,
                     'inventory_item_id' => $item['INVENTORY_ITEM_ID'] ?? null,
                     'item_code' => $item['ITEM_CODE'] ?? null,
-                    'ppe_name' => $item['PPE_NAME'] ?? $itemCodesWithPpeNames[$itemCode] ?? null,
+                    'ppe_name' => $item['PPE_NAME'] ??  null,
                     'sub' => $item['SUB'] ?? null,
                     'uom' => $item['UOM'] ?? null,
                     'quantity' => $item['QTY'] ?? null,
@@ -137,16 +135,14 @@ class PpeStockinventory extends Model
                     'updated_at' => now(),
                 ];
 
-                $this->updateOrInsert(
+                return  $this->updateOrInsert(
                     ['item_code' => $itemCode],
                     $insert_array
                 );
             }
-            $updatedItemCodes[] = $itemCode;
+
         }
-      
-        return $updatedItemCodes;
-      
+
     }
 
     public function updates($id)

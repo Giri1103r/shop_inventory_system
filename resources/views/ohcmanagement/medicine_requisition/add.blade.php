@@ -73,7 +73,23 @@
                                             </div>
 
                                         </div>
-                                      
+                                        <div class="row mt-2">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">Medicine details</h4>
+
+                                            </div>
+                                            <div
+                                                class="d-flex justify-content-end align-items-center mb-3 button-container">
+
+                                                <button class="btn btn-primary add-row" type="button" id="add-row"
+                                                    style="margin-left: 10px; width: 84px;">
+                                                    Add
+                                                </button>
+
+
+                                            </div>
+
+                                        </div>
 
                                         <div class="table-responsive">
                                             <div class="col-md-12">
@@ -135,10 +151,7 @@
                                                             </td>
                                                             <td>
                                                                 <div class="row gap-2">
-                                                                    <div class="d-flex justify-content-center align-items-center bg-primary mt-2 ml-2 text-white rounded add-row"
-                                                                        style="width: 30px; height: 30px;">
-                                                                        <i class="fa-solid fa-plus"></i>
-                                                                    </div>
+                                                                   
                                                                     <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row"
                                                                         style="width: 30px; height: 30px;">
                                                                         <i class="fa-solid fa-trash"></i>

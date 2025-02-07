@@ -126,6 +126,8 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_PLANTHEAD_REJECTED') or define('STATUS_PLANTHEAD_REJECTED', 13);
         defined('STATUS_CANCELLED') or define('STATUS_CANCELLED', 14);
         defined('STATUS_CLOSED') or define('STATUS_CLOSED', 15);
+        defined('STATUS_EHS_OFFICER_UPDATED') or define('STATUS_EHS_OFFICER_UPDATED', 16);
+
 
         // OHC Management
 

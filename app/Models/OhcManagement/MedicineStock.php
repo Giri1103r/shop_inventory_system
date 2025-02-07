@@ -38,14 +38,9 @@ class MedicineStock extends Model
         $empId = $user->employee_id;
         $query = $this->select(
             'ohc_management_medicine_stock_inventory.*',
-            'medicine_table.medicine',
-            'hsn_table.hsn',
             'masters_unit.unit_name'
         )
         ->join('masters_unit', 'ohc_management_medicine_stock_inventory.unit_id', '=', 'masters_unit.id')
-        ->join('ohc_master_medicine as medicine_table', 'ohc_management_medicine_stock_inventory.medicine_id', '=', 'medicine_table.id')
-        ->join('ohc_master_medicine as hsn_table', 'ohc_management_medicine_stock_inventory.hsn_number', '=', 'hsn_table.id')
-        ->where('medicine_table.trash', 'NO')
         ->where('masters_unit.trash', 'NO');
 
 
@@ -100,16 +95,17 @@ class MedicineStock extends Model
             'filter_records' => $total_records,
         ];
     }
-    public function store()
+    public function store( $medicineDetails)
     {
         $request = request();
 
+
         $insert_array = [
             'unit_id' => decryptId($request->unit_id),
-            'medicine_id' => decryptId($request->medicine_id),
+            'medicine_id' =>$medicineDetails['medicine'],
             'quantity' => $request->quantity,
             'threshold_limit' => $request->threshold_limit,
-            'hsn_number'=>decryptId($request->hsn_number),
+            'hsn_number'=>$medicineDetails['hsn'],
             'expire_date' =>DBdateformat($request->expire_date),
             'status'=>0,
             'approve_status'=>STATUS_OHC_MEDICINE_APPROVAL_PENDING,
@@ -119,16 +115,19 @@ class MedicineStock extends Model
         $data = $this->create($insert_array);
         return $data;
     }
-    public function updates($id)
+    public function updates($id, $medicineDetails )
     {
         $request = request();
 
-
         $update_data = [
             'unit_id' => decryptId($request->unit_id),
-            'medicine_id' => decryptId($request->medicine_id),
+            'medicine_id' =>  $medicineDetails['medicine'],
             'quantity' => $request->quantity,
-            'threshold_limit' => $request->threshold_limit_id,
+            'threshold_limit' => $request->threshold_limit ??  $request->threshold_limit_id,
+            'hsn_number'=>$medicineDetails['hsn'],
+            'expire_date' =>DBdateformat($request->expire_date),
+            'status'=>0,
+            'approve_status'=>STATUS_OHC_MEDICINE_APPROVAL_PENDING,
             'created_by' => Auth::id(),
             'updated_by' => Auth::id(),
 
@@ -189,14 +188,10 @@ class MedicineStock extends Model
         $query = $this->select(
             'ohc_management_medicine_stock_inventory.*',
             'masters_unit.unit_name',
-            'inventory1.*',
-            'inventory2.*'
+          
         )
         ->join('masters_unit', 'ohc_management_medicine_stock_inventory.unit_id', '=', 'masters_unit.id')
-        ->join('ohc_master_medicine as inventory1', 'ohc_management_medicine_stock_inventory.medicine_id', '=', 'inventory1.id')
-        ->join('ohc_master_medicine as inventory2', 'ohc_management_medicine_stock_inventory.threshold_limit', '=', 'inventory2.id')
-        ->where('inventory1.trash', 'NO')
-        ->where('inventory2.trash', 'NO')
+
         ->where('masters_unit.trash', 'NO');
 
 

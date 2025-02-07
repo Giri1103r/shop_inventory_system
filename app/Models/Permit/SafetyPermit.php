@@ -202,33 +202,40 @@ class SafetyPermit extends Model
 
             $equiment_involved[$id] = $data;
         }
-
+// Precaution Taken
         $precaution_taken = [];
-        $data = $request->precaution_taken;
-        foreach ($data as $index => $data) {
-            // Decrypt the index (workId)
-            $id = decryptId($index);
 
-            $precaution_taken[$id] = $data;
+        if (!empty($request->precaution_taken) && is_array($request->precaution_taken)) {
+            foreach ($request->precaution_taken as $index => $data) {
+
+                $id = decryptId($index);
+                $precaution_taken[$id] = $data;
+            }
         }
+
 
 
         $equipment_checklist = [];
-        $data = $request->equipment_checklist;
-        foreach ($data as $index => $data) {
-            // Decrypt the index (workId)
-            $id = decryptId($index);
+        if(!empty($request->equipment_checklist) && is_array($request->equipment_checklist)){
 
-            $equipment_checklist[$id] = $data;
+            foreach ( $request->equipment_checklist as $index => $data) {
+                // Decrypt the index (workId)
+                $id = decryptId($index);
+
+                $equipment_checklist[$id] = $data;
+            }
         }
+// Instruction
         $safework_instruction = [];
-        $data = $request->safework_instruction;
-        foreach ($data as $index => $data) {
+
+        if(!empty($request->safework_instruction) && is_array($request->safework_instruction)){
+        foreach ( $request->safework_instruction as $index => $data) {
             // Decrypt the index (workId)
             $id = decryptId($index);
 
             $safework_instruction[$id] = $data;
         }
+    }
         $protective_equip = !empty($protective_equip) ? json_encode($protective_equip, true) : null;
         $equiment_involved = !empty($equiment_involved) ? json_encode($equiment_involved, true) : null;
         $precaution_taken = !empty($precaution_taken) ? json_encode($precaution_taken, true) : null;

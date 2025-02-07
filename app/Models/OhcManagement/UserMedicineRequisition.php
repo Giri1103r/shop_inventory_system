@@ -223,11 +223,5 @@ class UserMedicineRequisition extends Model
 
     // sending the data to email
 
-    public function getEmailData($id){
-        return $this->select('ohc_management_user_medicine_requisition.*','ohc_management_medicine_requisition.*','ohc_master_medicine.medicine'
-        )
-            ->join('ohc_management_medicine_requisition.req_id', $id)
-            ->join('ohc_master_medicine','ohc_management_medicine_requisition.medicine_id','=','ohc_master_medicine.id')
-            ->get();
-    }
+  
 }

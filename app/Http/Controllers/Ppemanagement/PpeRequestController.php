@@ -884,30 +884,30 @@ class PpeRequestController extends Controller
 
             $itemcodes = $this->ppetypemaster->getppetypemaster();
 
-            foreach ($itemcodes as $code) {
-                $itemList = $code->item_code;
+            // foreach ($itemcodes as $code) {
+            //     $itemList = $code->item_code;
 
-                // API Call
-                $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetPPEInventory?TokenId=123&Orgid=86&Item={$itemList}";
-                $response = Http::get($apiUrl);
+            //     // API Call
+            //     $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetPPEInventory?TokenId=123&Orgid=86&Item={$itemList}";
+            //     $response = Http::get($apiUrl);
 
-                if ($response->successful()) {
-                    $data = $response->json();
+            //     if ($response->successful()) {
+            //         $data = $response->json();
 
-                    if (!empty($data)) {
-                      
-                        $this->ppestock->store($data);
-                    } else {
-                        Session::flash('error', 'Something went wrong. please try again after some time.');
-                        return redirect()->to(admin_url('ppe_request/list'));
-                    }
-                } else {
-                    Session::flash('error', 'Something went wrong. please try again after some time.');
-                    return redirect()->to(admin_url('ppe_request/list'));
-                }
-            }
+            //         if (!empty($data)) {
 
-           
+            //             $this->ppestock->store($data);
+            //         } else {
+            //             Session::flash('error', 'Something went wrong. please try again after some time.');
+            //             return redirect()->to(admin_url('ppe_request/list'));
+            //         }
+            //     } else {
+            //         Session::flash('error', 'Something went wrong. please try again after some time.');
+            //         return redirect()->to(admin_url('ppe_request/list'));
+            //     }
+            // }
+
+
             $this->ppestock->updateQuantity($itemId, $newQuantity);
             $this->ppestatus->storemangerstatus($updateStatus, $empDetails);
             $this->pperequest->updatestoremanager($storeStatus, $id);

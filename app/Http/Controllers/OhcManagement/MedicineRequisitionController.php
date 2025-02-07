@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\OhcManagement;
 
 use App\Http\Controllers\Controller;
-
+use App\Mail\Ohc\MedicineRequisitionEmail;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
 use App\Models\Master\Unit;
@@ -26,6 +26,7 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\OhcManagement\MedicineStock;
 use App\Models\OhcManagement\OhcStatuslog;
+use App\Models\User;
 
 class MedicineRequisitionController extends Controller
 {
@@ -37,6 +38,7 @@ class MedicineRequisitionController extends Controller
     private $medicine_requisition;
     private $medicine_stock;
     private $ohcStatus;
+    private $user;
 
     public function __construct()
     {
@@ -48,6 +50,8 @@ class MedicineRequisitionController extends Controller
         $this->unit = new Unit();
         $this->department = new Department();
         $this->ohcStatus = new OhcStatuslog();
+        $this->user = new User();
+
     }
     public function index(Request $request)
     {
@@ -162,11 +166,61 @@ class MedicineRequisitionController extends Controller
             }
 
             try {
-
+                // Store user medicine requisition
                 $user_medicine_requisition = $this->user_medicine_requisition->store();
-                $this->medicine_requisition->store($user_medicine_requisition);
-                $id =  $user_medicine_requisition->id;
+                $medicineRequisition = $this->medicine_requisition->store($user_medicine_requisition);
+                $id = $user_medicine_requisition->id;
                 $this->ohcStatus->storeMedicineRecevingdata($id);
+
+                // Email details
+                $mailsubject = 'Certified First Aider Request the Medicine';
+                $user_role = ROLE_PARAMEDICS;
+
+                // Fetch users with the specified role
+                $users = $this->user->whereRaw('FIND_IN_SET(?, role)', [$user_role])->get();
+                $userids = $users->pluck('id')->toArray();
+
+                if ($users->isNotEmpty()) {
+                    foreach ($users as $user) {
+                        $email_id = $user->email;
+
+                        if (!empty($email_id)) {
+                            $details = $this->user_medicine_requisition->selectOne($user_medicine_requisition->id);
+                            $medicineDetails = $this->medicine_requisition->selectOne($user_medicine_requisition->id);
+
+                            if ($details && $medicineDetails) {
+                                $emailDetails = $details->toArray();
+                                $emailDetails['name'] = $user->name;
+                                $emailDetails['email_id'] = $email_id;
+                                $emailDetails['mail_subject'] = $mailsubject;
+
+                                Mail::to($emailDetails['email_id'])->queue(new MedicineRequisitionEmail($emailDetails, $medicineDetails));
+                            }
+                        }
+                    }
+                }
+
+
+                /**
+                 * Send Web notification
+                 */
+
+                $notificationData = array(
+                    'notification_type' => 4,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => "Request For the Medicine by " .getUsername($user_medicine_requisition->id),
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $user_medicine_requisition->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('ohc/medicine-requisition/approval/view/' . encryptId($user_medicine_requisition->id)),
+                    'assigned_user' => array_to_string($userids),
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
