@@ -78,7 +78,7 @@ class DashboardController extends Controller
             $chartData = $this->pperequest->getRequestChartData($units, $fromDate, $toDate, $unitName);
             return view('ppemanagement.dashboard.unit_wise_pperequest', compact('chartData'));
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
             Log::error('Error loading PPE request data: ' . $ex->getMessage());
             return response()->json([
                 'error' => 'Unable to load PPE request data. ' . $ex->getMessage(),

@@ -45,7 +45,7 @@
                                                         <option value="">Select the Medicine Name</option>
                                                         @foreach ($medicine_stock as $list)
                                                             <option value="{{ encryptId($list->id) }}">
-                                                                {{ getMedicinename($list->medicine_id) }}</option>
+                                                                {{ ($list->medicine_id) }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>

@@ -16,8 +16,8 @@
 
 
                         {{-- @if (CheckUserPermission('add')) --}}
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('ohc/medicine-stock-inventory/add') }}">Add</x-button-add>
+                        <x-button-add dataId="" class="add btn btn-primary ms-1"
+                            href="{{ admin_url('ohc/medicine-stock-inventory/add') }}">Add</x-button-add>
                         {{-- @endif --}}
 
                     </div>
@@ -26,6 +26,61 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label for="unit_name" class="form-label require ">Unit
+                                                </label>
+                                                <select name="unit_id" id="unit_id"
+                                                    class="form-control form-control-sm single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select the Unit Name</option>
+                                                    @foreach ($unit as $list)
+                                                        <option value="{{ encryptId($list->id) }}">
+                                                            {{ $list->unit_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="medicine_id" class="form-label ">Medicine Name</label>
+                                            <select name="medicine_id" id="medicine_id" style="width: 100%"
+                                                class="form-control single-select">
+                                                <option value="">Select Medicine Name</option>
+
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="expire_date" class="form-label ">Expire Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="expire_date"
+                                                    id="expire_date" autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
@@ -85,62 +140,54 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
-            $(document).on('change', '#company_id', function() {
-                var company_id = $(this).val();
 
-                if (company_id) {
-                    $.ajax({
-                        url: "{{ admin_url('employee/company-ajax') }}",
-                        type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            company_id: company_id,
-                            _token: '{{ csrf_token() }}' // Include CSRF token
-                        },
-                        success: function(data) {
-                            // Populate the unit dropdown
-                            var unitOptions = '<option value="">Select Unit Name</option>';
-                            $.each(data.unit, function(index, unit) {
-                                unitOptions +=
-                                    `<option value="${unit.id}">${unit.unit_name}</option>`;
-                            });
-                            $('#unit_id').html(unitOptions);
-                        },
-                        error: function(xhr) {
-                            alert('Error fetching units. Please try again.');
-                        }
-                    });
-                } else {
-                    $('#unit_id').empty().append('<option value="">Select Unit Name</option>');
-                }
-            });
 
             $(document).on('change', '#unit_id', function() {
-                var unitId = $(this).val();
-
-                if (unitId) {
-                    $.ajax({
-                        url: "{{ admin_url('employee/ajax-list') }}/" + unitId + "/0",
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            console.log(data);
-                            var departmentOptions = '<option value="">Select Department</option>';
-                            $.each(data, function(index, department) {
-                                departmentOptions +=
-                                    `<option value="${department.id}">${department.department_name}</option>`;
-                            });
-                            $('#department_id').html(departmentOptions);
-                        },
-                        error: function(xhr) {
-                            alert('Error fetching departments. Please try again.');
+            var unitId = $(this).val();
+            if (unitId) {
+                $.ajax({
+                    url: "{{ admin_url('ohc/medicine-stock-inventory/ajax-list') }}/" + unitId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#medicine_id').empty().append(
+                            '<option value="">Select Medicine Name</option>');
+                        $.each(data, function(key, value) {
+                            $('#medicine_id').append('<option value="' + value.name + '">' + value
+                                .name + '</option>');
+                        });
+                        $('#medicine_id').trigger('change');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching medicine. Please try again.');
+                    }
+                });
+            } else {
+                $('#medicine_id').empty().append('<option value="">Select Medicine Name</option>').trigger(
+                    'change');
+            }
+        });
+            $(document).ready(function() {
+                var fromDatepicker = flatpickr("#from_date", {
+                    dateFormat: "d-m-Y",
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            var startDate = selectedDates[0];
+                            toDatepicker.set('minDate', startDate);
+                            toDatepicker.clear();
                         }
-                    });
-                } else {
-                    $('#department_id').empty().append('<option value="">Select Department</option>');
-                }
-            });
+                    }
+                });
 
+                var toDatepicker = flatpickr("#to_date", {
+                    dateFormat: "d-m-Y",
+                    maxDate: "today"
+                });
+                $('#expire_date').flatpickr({
+                    dateFormat: "d-m-Y",
+                })
+
+            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -174,14 +221,12 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.company_id = $('#company_id').val();
                             d.unit_id = $('#unit_id').val();
-                            d.department_id = $('#department_id').val();
-                            d.emp_id = $('#emp_id').val();
-                            d.emp_name = $('#emp_name').val();
-                            d.email = $('#email').val();
-                            d.employee_status = $('#employee_status').val();
+                            d.medicine_id = $('#medicine_id').val();
+                            d.from_date = $('#from_date').val();
+                            d.to_date = $('#to_date').val();
                             d.status = $('#status').val();
+                            d.expire_date = $('#expire_date').val();
                         },
 
                         error: function(xhr, error, code) {
@@ -263,28 +308,25 @@
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input')
                                             .val();
-                                        emp_id = $('#emp_id').val();
-                                        emp_name = $('#emp_name').val();
-                                        email = $('#email').val();
-                                        employee_status = $('#employee_status').val();
-                                        unit_id = $('#unit_id').val();
-                                        company_id = $('#company_id').val();
-                                        department_id = $('#department_id').val();
+                                        var unit_id = $('#unit_id').val();
+
+                                        var medicine_id = $('#medicine_id').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
+                                        var status = $('#status').val();
+                                        var expire_date = $('#expire_date').val();
 
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('employee/export/pdf') }}" +
+                                            "{{ admin_url('ohc/medicine-stock-inventory/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&emp_id=' + emp_id +
-                                            '&emp_name=' + emp_name +
-                                            '&email=' + email +
-                                            '&company_id=' + company_id +
-                                            '&department_id=' + department_id +
+                                            '&medicine_id=' + medicine_id +
                                             '&unit_id=' + unit_id +
-
-                                            '&employee_status=' + employee_status +
+                                            '&expire_date=' + expire_date +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&status=' + status
                                     } // Closing brace for action function
                                 },
@@ -294,26 +336,22 @@
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input')
                                             .val();
-                                        emp_id = $('#emp_id').val();
-                                        emp_name = $('#emp_name').val();
-                                        email = $('#email').val();
-                                        employee_status = $('#employee_status').val();
-                                        status = $('#status').val();
-                                        unit_id = $('#unit_id').val();
-                                        company_id = $('#company_id').val();
-                                        department_id = $('#department_id').val();
+                                        var unit_id = $('#unit_id').val();
+                                        var medicine_id = $('#medicine_id').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
+                                        var status = $('#status').val();
+                                        var expire_date = $('#expire_date').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('employee/export/excel') }}" +
+                                            "{{ admin_url('ohc/medicine-stock-inventory/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&emp_id=' + emp_id +
-                                            '&emp_name=' + emp_name +
-                                            '&email=' + email +
-                                            '&employee_status=' + employee_status +
-                                            '&company_id=' + company_id +
-                                            '&department_id=' + department_id +
+                                            '&medicine_id=' + medicine_id +
                                             '&unit_id=' + unit_id +
+                                            '&expire_date=' + expire_date +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&status=' + status
                                     } // Closing brace for action function
                                 }

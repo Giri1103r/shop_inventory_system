@@ -58,12 +58,9 @@ class MedicineStock extends Model
         }
         if ($request->has('medicine_id') && $request->medicine_id) {
 
-            $query = $query->where('ohc_management_medicine_stock_inventory.medicine_id', decryptId($request->medicine_id));
+            $query = $query->where('ohc_management_medicine_stock_inventory.medicine_id', $request->medicine_id);
         }
-        if ($request->has('threshold_limit_id') && $request->threshold_limit_id) {
 
-            $query = $query->where('ohc_management_medicine_stock_inventory.threshold_limit_id',$request->threshold_limit_id);
-        }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
@@ -76,16 +73,21 @@ class MedicineStock extends Model
             $query->where('ohc_management_medicine_stock_inventory.created_at', '<=', $endDate);
         }
 
+        if ($request->has('expire_date') && $request->expire_date) {
+
+            $query = $query->where('ohc_management_medicine_stock_inventory.expire_date', DBdateformat($request->expire_date));
+        }
+
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('ohc_master_first_aid_location.status', decryptId($request->status));
+            $query = $query->where('ohc_management_medicine_stock_inventory.status', decryptId($request->status));
         }
         $org_total_counts = $query->count();
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
         }
-        $query->orderBy('ohc_management_medicine_stock_inventory.id', 'DESC');
+        $query->orderBy('id', 'DESC');
         $data = $query->get();
         $total_records = $data->count();
 
@@ -186,13 +188,9 @@ class MedicineStock extends Model
 
 
         $query = $this->select(
-            'ohc_management_medicine_stock_inventory.*',
-            'masters_unit.unit_name',
-          
-        )
-        ->join('masters_unit', 'ohc_management_medicine_stock_inventory.unit_id', '=', 'masters_unit.id')
+            'ohc_management_medicine_stock_inventory.*'
+        );
 
-        ->where('masters_unit.trash', 'NO');
 
 
         if (isset($request->search) && is_array($request->search) && !empty($request->search['value'])) {
@@ -202,55 +200,7 @@ class MedicineStock extends Model
             });
         }
 
-
-        if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('ohc_management_medicine_stock_inventory.unit_id', decryptId($request->unit_id));
-        }
-
-
-        if ($request->has('medicine_id') && $request->medicine_id) {
-            $query = $query->where('ohc_management_medicine_stock_inventory.medicine_id', decryptId($request->medicine_id));
-        }
-
-
-        if ($request->has('threshold_limit_id') && $request->threshold_limit_id) {
-            $query = $query->where('ohc_management_medicine_stock_inventory.threshold_limit_id', $request->threshold_limit_id);
-        }
-
-
-        if ($request->has('from_date') || $request->has('to_date')) {
-            try {
-                if ($request->has('from_date') && !empty($request->from_date)) {
-                    $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)
-                        ->startOfDay()
-                        ->format('Y-m-d H:i:s');
-                    $query->where('ohc_management_medicine_stock_inventory.created_at', '>=', $startDate);
-                }
-
-                if ($request->has('to_date') && !empty($request->to_date)) {
-                    $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)
-                        ->endOfDay()
-                        ->format('Y-m-d H:i:s');
-                    $query->where('ohc_management_medicine_stock_inventory.created_at', '<=', $endDate);
-                }
-
-                if ($request->has('from_date') && $request->has('to_date')) {
-                    $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay();
-                    $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay();
-                    $query->whereBetween('ohc_management_medicine_stock_inventory.created_at', [$startDate, $endDate]);
-                }
-            } catch (\Exception $e) {
-                Log::error('Date parsing error: ' . $e->getMessage());
-            }
-        }
-
-
-        if ($request->has('status') && $request->status) {
-            $query = $query->where('ohc_master_first_aid_location.status', decryptId($request->status));
-        }
-
-
-        $query->orderBy('ohc_management_medicine_stock_inventory.id', 'DESC');
+        $query->orderBy('id', 'DESC');
 
 
         return $query->get();

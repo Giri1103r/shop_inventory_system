@@ -87,6 +87,45 @@
                                     </div>
 
                                 </div>
+                          @if($medicine_stock->status == 1)
+                            <div class="row">
+                                <div class="card-header-inner">
+                                    <h4 class="text-white">EHS Head Approval</h4>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="row">
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                        <div class="view_data">
+                                            {{ getUsername(isset($stockdata->created_by) ? $stockdata->created_by : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Approved Date') }}</label>
+                                        <div class="view_data">
+                                            {{ displaydateformat(isset($stockdata->created_at) ? $stockdata->created_at : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Approved Time') }}</label>
+                                        <div class="view_data">
+                                            {{ displaytimeformat(isset($stockdata->created_at) ? $stockdata->created_at : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12 form-input">
+                                        <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($stockdata->remarks) ? $stockdata->remarks : '' }}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                          
+                          @endif
+
+
                             </div>
                         </div>
                     </div>

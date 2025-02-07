@@ -37,7 +37,7 @@
                             {{ $value->hsn_number }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value-> }}
+                            {{ displaydateformat($value->expire_date) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->quantity }}

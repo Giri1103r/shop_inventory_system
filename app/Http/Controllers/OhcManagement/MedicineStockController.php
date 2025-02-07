@@ -11,6 +11,7 @@ use App\Models\OhcManagement\Master\Medicine;
 use App\Models\OhcManagement\Master\Vendor;
 use App\Models\OhcManagement\MedicineRequisition;
 use App\Models\OhcManagement\MedicineStock;
+use App\Models\OhcManagement\OhcStatuslog;
 use App\Models\OhcManagement\UserMedicineRequisition;
 use App\Models\UploadLog;
 use App\Models\User;
@@ -36,7 +37,7 @@ class MedicineStockController extends Controller
     private $medicine_requisition;
     private $medicine_stock;
     private $user;
-
+    private $ohc_status;
 
     public function __construct()
     {
@@ -48,6 +49,8 @@ class MedicineStockController extends Controller
         $this->unit = new Unit();
         $this->department = new Department();
         $this->user = new User();
+        $this->ohc_status = new OhcStatuslog();
+
     }
     public function index(Request $request)
     {
@@ -116,6 +119,7 @@ class MedicineStockController extends Controller
             'medicine' => $medicine,
             'unit' => $unit
         );
+
         return view('ohcmanagement.medicine-stock.list', $data);
     }
 
@@ -345,16 +349,19 @@ class MedicineStockController extends Controller
             }
             $medicine =    $medicine_stock->medicine_id;
             $medicineid = $this->medicine->where('id', $medicine)->select('medicine', 'hsn')->first();
+
+            $stockdata = $this->ohc_status->medicinestockdata($id);
             $unit = $this->unit->getunit();
             $data = array(
                 'medicine_stock' => $medicine_stock,
-                'medicine' => $medicineid
+                'medicine' => $medicineid,
+                'stockdata'=>$stockdata,
 
 
             );
             return view('ohcmanagement.medicine-stock.view', $data);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
         }
     }
     public function approvalview(Request $request)
@@ -373,6 +380,7 @@ class MedicineStockController extends Controller
 
 
             );
+            dd( $data);
             return view('ohcmanagement.medicine-stock.approve', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -383,7 +391,7 @@ class MedicineStockController extends Controller
     {
         try {
             $id = decryptId($request->id);
-
+// dd( $id);
             $rules = [
                 'approver_name' => 'required',
                 'remarks' => 'required',
@@ -439,7 +447,7 @@ class MedicineStockController extends Controller
 
 
             $this->medicine_stock->approvalupdate($id);
-
+            $this->ohc_status->stockupdate($id);
             if ($action == 'reject') {
                 $this->medicine->where('id', $details->medicine_id)->update(['trash' => 'YES']);
             }
@@ -573,9 +581,6 @@ class MedicineStockController extends Controller
 
             $allData = $this->medicine_stock->exportdata();
 
-            if ($allData->isEmpty()) {
-                return redirect()->back()->with('error', 'No data found');
-            }
 
             $header = [
                 __("common.sno"),

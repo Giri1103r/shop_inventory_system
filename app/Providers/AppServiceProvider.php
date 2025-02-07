@@ -143,6 +143,10 @@ class AppServiceProvider extends ServiceProvider
        defined('STATUS_OHC_PARAMEDICS_REJECTED')or define('STATUS_OHC_PARAMEDICS_REJECTED',10);
        defined('STATUS_OHC_PARAMEDICS_APPROVED')or define('STATUS_OHC_PARAMEDICS_APPROVED',11);
        defined('STATUS_OHC_STOCK_REQUEST')or define('STATUS_OHC_STOCK_REQUEST',12);
+       defined('STATUS_OHC_EHS_HEAD_APPROVED')or define('STATUS_OHC_EHS_HEAD_APPROVED',13);
+       defined('STATUS_OHC_EHS_HEAD_REJECTED')or define('STATUS_OHC_EHS_HEAD_REJECTED',14);
+
+
 
 
         View::composer('*', function ($view) {
