@@ -126,6 +126,8 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_PLANTHEAD_REJECTED') or define('STATUS_PLANTHEAD_REJECTED', 13);
         defined('STATUS_CANCELLED') or define('STATUS_CANCELLED', 14);
         defined('STATUS_CLOSED') or define('STATUS_CLOSED', 15);
+        defined('STATUS_EHS_OFFICER_UPDATED') or define('STATUS_EHS_OFFICER_UPDATED', 16);
+
 
         // OHC Management
 
@@ -137,6 +139,11 @@ class AppServiceProvider extends ServiceProvider
        defined('STATUS_OHC_L1_EHS_VERIFICATION_PENDING')or define('STATUS_OHC_L1_EHS_VERIFICATION_PENDING',3);
        defined('STATUS_OHC_EHS_HEAD_APPROVAL_PENDING')or define('STATUS_OHC_EHS_HEAD_APPROVAL_PENDING',4);
        defined('STATUS_OHC_PARAMEDIES_REQUEST')or define('STATUS_OHC_PARAMEDIES_REQUEST',8);
+       defined('STATUS_OHC_PARAMEDICS_APPROVAL_PENDING')or define('STATUS_OHC_PARAMEDICS_APPROVAL_PENDING',9);
+       defined('STATUS_OHC_PARAMEDICS_REJECTED')or define('STATUS_OHC_PARAMEDICS_REJECTED',10);
+       defined('STATUS_OHC_PARAMEDICS_APPROVED')or define('STATUS_OHC_PARAMEDICS_APPROVED',11);
+       defined('STATUS_OHC_STOCK_REQUEST')or define('STATUS_OHC_STOCK_REQUEST',12);
+
 
         View::composer('*', function ($view) {
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\OhcManagement;
 
 use App\Http\Controllers\Controller;
 
+use App\Mail\Ohc\MedicineRequisitionEmail;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
 use App\Models\Master\Unit;
@@ -12,6 +13,7 @@ use App\Models\OhcManagement\Master\Vendor;
 use App\Models\OhcManagement\UserMedicineIssuance;
 use App\Models\OhcManagement\MedicineIssuance;
 use App\Models\OhcManagement\MedicineReceiving;
+use App\Models\OhcManagement\MedicineRequisition;
 use App\Models\OhcManagement\UserMedicineRequisition;
 use App\Models\UploadLog;
 
@@ -26,6 +28,9 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\OhcManagement\MedicineStock;
+use App\Models\OhcManagement\OhcStatuslog;
+use App\Models\User;
 
 class MedicineIssuanceController extends Controller
 {
@@ -36,8 +41,11 @@ class MedicineIssuanceController extends Controller
     private $department;
     private $medicine_issuance;
     private $medicine_receiving;
-
-
+    private $medicine_stock;
+    private $ohc_status;
+    private $user_medicine_requisition;
+    private $medicine_requisition;
+    private $user;
     public function __construct()
     {
         $this->medicine = new Medicine();
@@ -45,9 +53,13 @@ class MedicineIssuanceController extends Controller
         $this->user_medicine_issuance = new UserMedicineIssuance();
         $this->medicine_issuance = new MedicineIssuance();
         $this->medicine_receiving = new MedicineReceiving();
-
+        $this->medicine_stock = new MedicineStock();
+        $this->ohc_status = new OhcStatuslog();
+        $this->user_medicine_requisition = new UserMedicineRequisition();
+        $this->medicine_requisition = new MedicineRequisition();
         $this->unit = new Unit();
         $this->department = new Department();
+        $this->user = new User();
     }
     public function index(Request $request)
     {
@@ -121,6 +133,34 @@ class MedicineIssuanceController extends Controller
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }
     }
+    public function issue(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            $unit = $this->unit->getunit();
+            $departmentList = $this->department->getdepartment();
+
+            $medicine = $this->medicine_stock->getMedicinestockdata();
+            $user_medicine_requisition = $this->user_medicine_requisition->selectOne($id);
+            // dd(   $user_medicine_requisition);
+            $medicine_requisition = $this->medicine_requisition->selectOne($id);
+
+            $data = array(
+                'medicine' => $medicine,
+                'unit' => $unit,
+                'departmentList' => $departmentList,
+                'user_medicine_requisition' => $user_medicine_requisition,
+                'medicine_requisition' => $medicine_requisition
+            );
+
+            return view('ohcmanagement.medicine_issuance.issue', $data);
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medicine-issuance/list'));
+        }
+    }
     public function store(Request $request)
     {
         try {
@@ -148,6 +188,82 @@ class MedicineIssuanceController extends Controller
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
                 report($ex);
+                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            }
+
+            return redirect(admin_url('ohc/medicine-issuance/list'));
+        } catch (Exception $ex) {
+
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medicine-issuance/list'));
+        }
+    }
+
+    public function issuestore(Request $request)
+    {
+        try {
+
+            $rules = [
+                'unit_id' => 'required',
+                'department_id' => 'required',
+                'issue_date' => 'required',
+
+            ];
+            $messages = [
+                'department_id.required' => 'Please select a Deparment.',
+                'unit_id.required' => 'Please select a unit.',
+                'issue_date.required' => 'Please select the Issued date.',
+            ];
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            try {
+
+                $user_medicine_issuance = $this->user_medicine_issuance->store();
+                $this->medicine_issuance->store($user_medicine_issuance);
+                $id = decryptId($request->id);
+                $this->user_medicine_requisition->updatestatus($id);
+
+                $mailsubject = 'Medicine Issuing to the Unit';
+
+                $details =  $this->user_medicine_requisition->selectOne($id);
+                $createdby = $details->created_by;
+                $userEmail = $this->user->where('id', $createdby)->pluck('email');
+
+                if ($userEmail != '' || $userEmail != null) {
+                    $Details = $this->user_medicine_requisition->selectOne($id);
+
+                    $medicineDetails = $this->medicine_requisition->selectOne($id);
+                    $emailDetails = $Details->toArray();
+                    $emailDetails['mail_subject'] = "Medicine Issued";
+                    Mail::to($userEmail)->queue(new MedicineRequisitionEmail($emailDetails, $medicineDetails));
+                }
+
+
+                $notificationData = array(
+                    'notification_type' => 4,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => 'Requested Medicine was issued By ' . getUsername($user_medicine_issuance->created_by),
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $user_medicine_issuance->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('ohc/medicine-requisition/list'),
+                    'assigned_user' => $createdby,
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+
+
+                Session::flash('success', 'Your data has been created successfully!');
+            } catch (Exception $ex) {
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
@@ -306,11 +422,7 @@ class MedicineIssuanceController extends Controller
             $id = decryptId($request->id);
 
             $this->medicine_issuance->deleterecord($id);
-
-
         } catch (Exception $ex) {
-
-           
         }
     }
 

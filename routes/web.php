@@ -733,6 +733,9 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/dashboard/monthwiseptw', [SafetyPermitController::class, 'monthwiseptw']);
                 Route::get('/dashboard/getpermitstatus', [SafetyPermitController::class, 'getPermitStatus']);
                 Route::post('/statusExpire', [SafetyPermitController::class, 'ExpireStatus']);
+                Route::post('/deleteworkmaninvolved/{rowId}', [SafetyPermitController::class, 'deleteworkmaninvolved']);
+
+
             });
             Route::group(['prefix' => 'ppe_exemption'], function () {
 
@@ -864,6 +867,30 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('/unique', [CertifiedFirstAiderController::class, 'Uniquecheck']);
         });
 
+
+        // Medicine Stock Data
+
+        Route::group(['prefix' => 'ohc/medicine-stock-inventory'], function () {
+            Route::get('/list', [MedicineStockController::class, 'index']);
+            Route::post('/list', [MedicineStockController::class, 'index']);
+            Route::get('/add', [MedicineStockController::class, 'add']);
+            Route::post('/add/submit', [MedicineStockController::class, 'store']);
+            Route::get('/edit/{id}', [MedicineStockController::class, 'edit']);
+            Route::post('/edit/submit', [MedicineStockController::class, 'update']);
+            Route::get('/view/{id}', [MedicineStockController::class, 'view']);
+            Route::post('/delete', [MedicineStockController::class, 'delete']);
+            Route::get('/export/excel', [MedicineStockController::class, 'exportExcel']);
+            Route::get('/export/pdf', [MedicineStockController::class, 'exportPdf']);
+            Route::post('/status', [MedicineStockController::class, 'statusChange']);
+            Route::get('/quantity', [MedicineStockController::class, 'quantity']);
+            Route::post('/threshold-limit', [MedicineStockController::class, 'thresholdlimit']);
+            Route::post('/unique', [MedicineStockController::class, 'Uniquecheck']);
+            Route::get('/ajax-list/{unit_id}', [MedicineStockController::class, 'list']);
+            Route::get('/stocklist/{medicine_id}', [MedicineStockController::class, 'stocklist']);
+            Route::get('/approval/view/{id}', [MedicineStockController::class, 'approvalview']);
+            Route::post('/requestapproval/submit/', [MedicineStockController::class, 'requestsubmit']);
+        });
+
         // Medicine Receiving
         Route::group(['prefix' => 'ohc/medicine-receiving-form'], function () {
             Route::get('/list', [MedicineReceivingController::class, 'index']);
@@ -902,6 +929,9 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('/export/excel', [MedicineRequisitionController::class, 'exportExcel']);
             Route::get('/export/pdf', [MedicineRequisitionController::class, 'exportPdf']);
             Route::post('/status', [MedicineRequisitionController::class, 'statusChange']);
+            Route::post('/quantity/{quantity_id}', [MedicineRequisitionController::class, 'quantity']);
+            Route::get('approval/view/{id}', [MedicineRequisitionController::class, 'approvalview']);
+            Route::post('approval/submit', [MedicineRequisitionController::class, 'apporvalsubmit']);
 
         });
 
@@ -919,7 +949,8 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('/status', [MedicineIssuanceController::class, 'statusChange']);
             Route::get('/quantity', [MedicineIssuanceController::class, 'quantity']);
             Route::post('/delete', [MedicineIssuanceController::class, 'delete']);
-
+            Route::get('add/{id}', [MedicineIssuanceController::class, 'issue']);
+            Route::post('/issue/submit', [MedicineIssuanceController::class, 'issuestore']);
 
 
         });
@@ -972,26 +1003,7 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('/quantity', [RoadsideFirstAidController::class, 'quantity']);
         });
 
-        Route::group(['prefix' => 'ohc/medicine-stock-inventory'], function () {
-            Route::get('/list', [MedicineStockController::class, 'index']);
-            Route::post('/list', [MedicineStockController::class, 'index']);
-            Route::get('/add', [MedicineStockController::class, 'add']);
-            Route::post('/add/submit', [MedicineStockController::class, 'store']);
-            Route::get('/edit/{id}', [MedicineStockController::class, 'edit']);
-            Route::post('/edit/submit', [MedicineStockController::class, 'update']);
-            Route::get('/view/{id}', [MedicineStockController::class, 'view']);
-            Route::post('/delete', [MedicineStockController::class, 'delete']);
-            Route::get('/export/excel', [MedicineStockController::class, 'exportExcel']);
-            Route::get('/export/pdf', [MedicineStockController::class, 'exportPdf']);
-            Route::post('/status', [MedicineStockController::class, 'statusChange']);
-            Route::get('/quantity', [MedicineStockController::class, 'quantity']);
-            Route::post('/threshold-limit', [MedicineStockController::class, 'thresholdlimit']);
-            Route::post('/unique', [MedicineStockController::class, 'Uniquecheck']);
-            Route::get('/ajax-list/{unit_id}', [MedicineStockController::class, 'list']);
-            Route::get('/stocklist/{medicine_id}', [MedicineStockController::class, 'stocklist']);
-            Route::get('/approval/view/{id}', [MedicineStockController::class, 'approvalview']);
-            Route::post('/requestapproval/submit/', [MedicineStockController::class, 'requestsubmit']);
-        });
+
 
 
         Route::group(['prefix' => 'incident/type-master'], function () {

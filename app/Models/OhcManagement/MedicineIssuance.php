@@ -31,7 +31,7 @@ class MedicineIssuance extends Model
 
             $insert_array = [
                 'reference_id' => $user_medicine_issuance->id,
-                'medicine_id' => $medicine,
+                'medicine_id' => decryptId($medicine),
                 'quantity' => $request->quantity[$index],
                 'available_quantity' => $request->available_quantity[$index],
                 'created_by' => Auth::id(),

@@ -474,7 +474,9 @@ class CronController extends Controller
 
                     if (!empty($data)) {
 
-                        $this->ppestock->store($data);
+                         $stock = $this->ppestock->store($data);
+
+                        //  dd($stock);
                     } else {
 
                         return response()->json(['message' => 'No data found in API response.']);
@@ -641,7 +643,7 @@ class CronController extends Controller
                 ->where('time_to', '<', $currentTime)
                 ->get();
 
-            Log::info("Fetched permits for expiry", ['count' => $permits->count(), 'permit_ids' => $permits->pluck('id')]);
+            // Log::info("Fetched permits for expiry", ['count' => $permits->count(), 'permit_ids' => $permits->pluck('id')]);
 
             if ($permits->isNotEmpty()) {
                 foreach ($permits as $permit) {
@@ -700,7 +702,7 @@ class CronController extends Controller
                     Log::info("Notification sent", ['permit_id' => $permit->id]);
                 }
 
-                Log::info('Expired permits updated successfully.', ['count' => $permits->count()]);
+                // Log::info('Expired permits updated successfully.', ['count' => $permits->count()]);
                 return response()->json(['message' => 'Expired permits updated successfully.']);
             } else {
                 Log::info('No permits found for expiry update.');
@@ -718,7 +720,7 @@ class CronController extends Controller
     public function permitClose()
     {
         try {
-            Log::info('PermitClose function started.');
+            // Log::info('PermitClose function started.');
 
             $currentTime = Carbon::now();
             $timeThirtyMinutesAhead = Carbon::now()->addMinutes(30);
@@ -731,7 +733,7 @@ class CronController extends Controller
                 ->whereTime('time_to', '<=', $timeThirtyMinutesAhead->toTimeString())
                 ->get();
 
-            Log::info('Fetched permits: ', ['count' => $permits->count()]);
+            // Log::info('Fetched permits: ', ['count' => $permits->count()]);
 
             $mailsubject = 'Permit is going to expire in 30 minutes';
 
@@ -771,10 +773,10 @@ class CronController extends Controller
                     );
                     notificationSave($notificationData);
 
-                    Log::info("Permit expiry email sent.", [
-                        'email' => $assignedUser->email,
-                        'permit_id' => $permit->permit_id,
-                    ]);
+                    // Log::info("Permit expiry email sent.", [
+                    //     'email' => $assignedUser->email,
+                    //     'permit_id' => $permit->permit_id,
+                    // ]);
                 } else {
                     Log::warning("No user or email found for permit.", ['permit_id' => $permit->permit_id]);
                 }

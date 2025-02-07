@@ -33,8 +33,9 @@
                                     <form method="POST" id="safetyPermitEdit"
                                         action="{{ admin_url('safetypermit/edit/submit') }}" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" name="id" id="id"
+                                        <input type="hidden" name="safetypermitid" id="id"
                                             value="{{ encryptId($safetypermit->id) }}">
+
                                         <div class="row ">
                                             <div class="col-md-3">
                                                 <div class="form-group form-input">
@@ -573,12 +574,13 @@
 
 
                                                     <div id="getprotectivechecklist-container" class="row g-3 mt-3">
+                                                        {{-- @dd($safetypermit->mapped_protective_equip) --}}
                                                         @foreach ($safetypermit->mapped_protective_equip as $job => $details)
                                                             @foreach ($details['checkpoint_names'] as $index => $checkpoint_name)
                                                                 <div
                                                                     style="flex: 1 1 calc(33% - 10px); align-items: center; gap: 5px;">
                                                                     <input type="checkbox" class="protective-checkbox"
-                                                                        name="protective_equip[{{ $job }}][]"
+                                                                        name="protective_equip[{{ encryptId($job)  }}][]"
                                                                         value="{{ $details['checkpoints'][$index] }}"
                                                                         id="checkpoint-{{ $job }}-{{ $details['checkpoints'][$index] }}"
                                                                         @if (isset($details['checkpoints'][$index]) && $details['checkpoints'][$index]) checked @endif>
@@ -655,6 +657,7 @@
                                                         </div>
                                                         <div class="col-md-5">
                                                             <div id="getequipmentinvolved-container" class="row g-3 mt-3">
+                                                                {{-- @dd($safetypermit->mapped_equiment_involved) --}}
                                                                 @if ($safetypermit->mapped_equiment_involved)
 
                                                                     @foreach ($safetypermit->mapped_equiment_involved as $job => $details)
@@ -663,7 +666,7 @@
                                                                                 style="flex: 1 1 calc(33% - 10px); display: flex; align-items: center; gap: 5px;">
                                                                                 <input type="checkbox"
                                                                                     class="equiment_involved"
-                                                                                    name="equiment_involved[{{ $job }}][]"
+                                                                                    name="equiment_involved[{{ encryptId($job) }}][]"
                                                                                     value="{{ $details['checkpoints'][$index] }}"
                                                                                     id="checkpoint-{{ $job }}-{{ $details['checkpoints'][$index] }}"
                                                                                     @if (isset($details['checkpoints'][$index]) && $details['checkpoints'][$index]) checked @endif>
@@ -704,7 +707,7 @@
                                                                         <div
                                                                             style="flex: 1 1 calc(33% - 10px); align-items: center; gap: 5px;">
                                                                             <input type="checkbox" class=""
-                                                                                name="precaution_taken[{{ $job }}][]"
+                                                                                name="precaution_taken[{{ encryptId($job) }}][]"
                                                                                 value="{{ $details['checkpoints'][$index] ?? '' }}"
                                                                                 id="checkpoint-{{ $job }}-{{ $details['checkpoints'][$index] ?? '' }}"
                                                                                 checked>
@@ -740,7 +743,7 @@
                                                                                 $details['checkpoints'][$index] ?? null;
                                                                         @endphp
                                                                         <input type="checkbox" class="equipment_checklist"
-                                                                            name="equipment_checklist[{{ $job }}][]"
+                                                                            name="equipment_checklist[{{ encryptId($job) }}][]"
                                                                             value="{{ $checkpointValue }}"
                                                                             id="checkpoint-{{ $job }}-{{ $checkpointValue }}"
                                                                             @if ($checkpointValue) checked @endif>
@@ -788,7 +791,7 @@
                                                                     <div
                                                                         style="flex: 1 1 calc(33% - 10px); align-items: center; gap: 5px;">
                                                                         <input type="checkbox" class=""
-                                                                            name="precaution_taken[{{ $job }}][]"
+                                                                            name="safework_instruction[{{ encryptId($job) }}][]"
                                                                             value="{{ $details['checkpoints'][$index] }}"
                                                                             id="checkpoint-{{ $job }}-{{ $details['checkpoints'][$index] }}"
                                                                             @if (isset($details['checkpoints'][$index]) && $details['checkpoints'][$index]) checked @endif>
@@ -959,8 +962,12 @@
                                                 </thead>
                                                 <tbody id="workman-list-entries">
                                                     @foreach ($workman as $item)
-                                                        <tr>
-                                                            <td>{{ $item->emp_id }}</td>
+                                                        <tr class="workmandata">
+                                                            <td>
+                                                                <input type="hidden" name="id" class="id"
+                                                                    value="{{ $item->id }}">
+                                                                {{ $item->emp_id }}
+                                                            </td>
                                                             <td>{{ $item->workman_name }}</td>
                                                             <td>{{ $item->workman_desig }}</td>
                                                             <td>{{ getDepartment($item->workman_dept) }}</td>
@@ -1324,9 +1331,55 @@
 
 
 
-            $(document).on("click", ".remove-entry", function() {
-                $(this).closest("tr").remove();
+
+
+            $(document).on('click', '.remove-entry', function(event) {
+                event.preventDefault(); // Prevents the form from submitting
+
+                var row = $(this).closest(".workmandata");
+                var rowId = row.find("input[name='id']").val();
+
+                if (rowId) {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: 'Do you want to delete this record?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, delete it!',
+                        cancelButtonText: 'No, keep it'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "{{ url('safetypermit/deleteworkmaninvolved') }}/" +
+                                    rowId,
+                                type: 'POST', // Use POST instead of DELETE
+                                data: {
+                                    _token: '{{ csrf_token() }}',
+                                    _method: 'POST', // Simulate DELETE method
+                                    id: rowId
+                                },
+                                success: function(response) {
+                                    if (response.status === 'success') {
+                                        row.remove();
+                                        Swal.fire('Deleted!', response.msg, 'success');
+                                    } else {
+                                        Swal.fire('Error!', response.msg, 'error');
+                                    }
+                                },
+                                error: function() {
+                                    Swal.fire('Error!',
+                                        'Something went wrong. Please try again later.',
+                                        'error');
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    $(this).closest("tr").remove();
+                }
             });
+
+
 
 
             $(document).ready(function() {

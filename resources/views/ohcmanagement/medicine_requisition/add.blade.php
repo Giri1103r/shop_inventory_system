@@ -73,71 +73,96 @@
                                             </div>
 
                                         </div>
+                                        <div class="row mt-2">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">Medicine details</h4>
+
+                                            </div>
+                                            <div
+                                                class="d-flex justify-content-end align-items-center mb-3 button-container">
+
+                                                <button class="btn btn-primary add-row" type="button" id="add-row"
+                                                    style="margin-left: 10px; width: 84px;">
+                                                    Add
+                                                </button>
+
+
+                                            </div>
+
+                                        </div>
+
                                         <div class="table-responsive">
-                                            <table class="table view_card" id="requisition_medicine">
-                                                <thead style="background-color: #0000;color:#ffff">
-                                                    <tr>
-                                                        <th>Medicine</th>
-                                                        <th>Available Quantity</th>
-                                                        <th>Quantity</th>
-                                                        <th>Remarks</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="medicine-tbody">
-                                                    <tr>
-                                                        <td>
-                                                            <div class="form-group form-input">
-                                                                <label for="medicine_id"class="require">Medicine
-                                                                    Name</label>
-                                                                <select name="medicine_id[0]" id="medicine_id"
-                                                                    class="form-control single-select" style="width: 100%">
-                                                                    <option value="">Select the Medicine Name</option>
-                                                                    @foreach ($medicine as $list)
-                                                                        <option value="{{ $list->id }}">
-                                                                            {{ getMedicinename($list->medicine_id) }}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="form-group form-input">
-                                                                <label for="quantity " class="require">Available Quantity</label>
+                                            <div class="col-md-12">
+                                                <table class="table table-bordered ">
 
-                                                                <input type="text" name="available_quantity[0]" id="available_quantity"
-                                                                    placeholder="Enter the available quantity" class="form-control" readonly>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="form-group form-input">
-                                                                <label for="quantity " class="require">Quantity</label>
+                                                    <thead class="bg-secondary" style="color: #ffff">
+                                                        <tr>
+                                                            <th>Medicine</th>
+                                                            <th>Available Quantity</th>
+                                                            <th>Quantity</th>
+                                                            <th>Remarks</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                    </thead>
 
-                                                                <input type="text" name="quantity[0]" id="quantity"
-                                                                    placeholder="Enter the quantity" class="form-control">
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="form-group form-input">
-                                                                <label for="remarks"class="require">Remarks</label>
-                                                                <textarea name="remarks[0]" id="remarks" cols="10" rows="2" class="form-control"></textarea>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="row gap-2">
-                                                                <div class="d-flex justify-content-center align-items-center bg-primary mt-2 ml-2 text-white rounded add-row"
-                                                                    style="width: 30px; height: 30px;">
-                                                                    <i class="fa-solid fa-plus"></i>
+                                                    <tbody id="medicine-tbody">
+                                                        <tr>
+                                                            <td>
+                                                                <div class="form-group form-input">
+                                                                    <label for="medicine_id" class="require">Medicine
+                                                                        Name</label>
+                                                                    <select name="medicine_id[0]" id="medicine_id"
+                                                                        class="form-control single-select" style="width: 100%">
+                                                                        <option value="">Select the Medicine Name</option>
+                                                                        @foreach ($medicine as $list)
+                                                                            <option value="{{ encryptId($list->id) }}">
+                                                                                {{ getMedicinename($list->medicine_id) }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
                                                                 </div>
-                                                                <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row"
-                                                                    style="width: 30px; height: 30px;">
-                                                                    <i class="fa-solid fa-trash"></i>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
+                                                                    <label for="available_quantity" class="require">Available
+                                                                        Quantity</label>
+                                                                    <input type="text" name="available_quantity[0]"
+                                                                        id="available_quantity" value=""
+                                                                        placeholder="Available quantity" class="form-control"
+                                                                        readonly>
                                                                 </div>
-                                                            </div>
+                                                            </td>
 
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                                                            <td>
+                                                                <div class="form-group form-input">
+                                                                    <label for="quantity" class="require">Quantity</label>
+                                                                    <input type="text" name="quantity[0]" id="quantity"
+                                                                        placeholder="Enter the quantity" class="form-control">
+                                                                    <span id="quantity-error" style=" display:none;"
+                                                                        class="text-danger">Quantity must be less
+                                                                        than available quantity.</span>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
+                                                                    <label for="remarks"class="require">Remarks</label>
+                                                                    <textarea name="remarks[0]" id="remarks" cols="10" rows="2" class="form-control"></textarea>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="row gap-2">
+                                                                   
+                                                                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row"
+                                                                        style="width: 30px; height: 30px;">
+                                                                        <i class="fa-solid fa-trash"></i>
+                                                                    </div>
+                                                                </div>
+
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                         <hr>
                                         <div class="submit-button float-end">
@@ -169,35 +194,32 @@
 
             });
         });
-        $(document).on('change', '#', function() {
-            var unitId = $(this).val();
-            if (unitId) {
-                $.ajax({
-                    url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                        $('#department_id').empty().append(
-                            '<option value="">Select Department</option>');
-                        $.each(data, function(key, value) {
-                            $('#department_id').append('<option value="' + value
-                                .id + '">' + value.name + '</option>');
-                        });
-                        $('#department_id').trigger('change.');
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching department. Please try again.');
-                    }
-                });
+        $('#medicine_id').on('change', function() {
+            var selectedOption = $(this).find(':selected');
+            var availableQuantity = selectedOption.data('available-quantity');
+
+            $('#available_quantity').val(availableQuantity);
+        });
+
+        $('#quantity').on('input', function() {
+            var availableQuantity = parseInt($('#available_quantity').val());
+            var quantity = parseInt($(this).val());
+
+
+            if (quantity > availableQuantity) {
+                $('#quantity-error').show();
+                $(this).val(availableQuantity);
             } else {
-                $('#department_id').empty().append('<option value="">Select Department</option>');
-                $('#department_id').trigger('change.');
+                $('#quantity-error').hide();
             }
         });
-        $(document).ready(function() {
 
+
+        $(document).ready(function() {
             const MAX_ROWS = 5;
             let medicine_requisition_row_count = 1;
+
+
 
             $(".add-row").click(function() {
                 var rowCount = $('#medicine-tbody tr').length;
@@ -211,15 +233,24 @@
                         <select name="medicine_id[${medicine_requisition_row_count}]" class="form-control single-select" style="width: 100%">
                             <option value="">Select the Medicine Name</option>
                             @foreach ($medicine as $list)
-                                <option value="{{ $list->id }}">{{ $list->medicine }}</option>
+                                <option value="{{ encryptId($list->id) }}" data-available-quantity="{{ $list->available_quantity }}">{{ getMedicinename($list->medicine_id) }}</option>
                             @endforeach
                         </select>
                     </div>
                 </td>
                 <td>
                     <div class="form-group form-input">
+                        <label for="quantity" class="require">Available Quantity</label>
+                        <input type="text" name="available_quantity[${medicine_requisition_row_count}]" class="form-control" readonly>
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group form-input">
                         <label for="quantity" class="require">Quantity</label>
-                        <input type="text" name="quantity[${medicine_requisition_row_count}]" placeholder="Enter the quantity" class="form-control">
+                        <input type="text" name="quantity[${medicine_requisition_row_count}]" class="form-control">
+                         <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
+
+
                     </div>
                 </td>
                 <td>
@@ -237,10 +268,10 @@
 
                     $('#medicine-tbody').append(newRow);
 
-                    // Initialize select2 for the newly added select element
+
                     $('select[name="medicine_id[' + medicine_requisition_row_count + ']"]').select2({
-                        placeholder: "Select the Medicine Name", // Optional placeholder
-                        width: '100%' // Ensuring it spans the full width
+                        placeholder: "Select the Medicine Name",
+                        width: '100%'
                     });
 
                     // Add validation rules
@@ -271,10 +302,8 @@
                         }
                     });
 
-                    // Increment the row count for the next addition
                     medicine_requisition_row_count++;
                 } else {
-                    // Display SweetAlert warning if the limit is exceeded
                     Swal.fire({
                         icon: 'warning',
                         title: 'Warning',
@@ -284,14 +313,51 @@
                 }
             });
 
+
+            $(document).on('change', 'select[name^="medicine_id"]', function() {
+                var medicine_id = $(this).val();
+                var row = $(this).closest('tr'); // Get the row of the current select
+
+                if (medicine_id) {
+                    $.ajax({
+                        url: "{{ admin_url('ohc/medicine-requisition/quantity') }}/" + medicine_id,
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function(data) {
+                            row.find('input[name^="available_quantity"]').val(data
+                                .available_quantity);
+                        },
+                        error: function() {
+                            Swal.fire('Error', 'Something went wrong. Please try again.',
+                                'error');
+                        }
+                    });
+                } else {
+                    row.find('input[name^="available_quantity"]').val('');
+                }
+            });
+
+            // Quantity validation
+            $(document).on("input", 'input[name^="quantity"]', function() {
+                var row = $(this).closest('tr'); // Get the row of the current input
+                var availableQuantity = parseInt(row.find('input[name^="available_quantity"]').val());
+                var quantity = parseInt($(this).val());
+
+                if (quantity > availableQuantity) {
+                    row.find('.quantity-error').show();
+                    $(this).val(availableQuantity);
+                } else {
+                    row.find('.quantity-error').hide();
+                }
+            });
+
+
             $(document).on("click", ".delete-row", function() {
                 var rowCount = $('#medicine-tbody tr').length;
 
-                // Check if there is more than one row
                 if (rowCount > 1) {
                     $(this).closest("tr").remove();
                 } else {
-                    // Show SweetAlert warning if there's only one row
                     Swal.fire({
                         icon: 'warning',
                         title: 'Warning',
@@ -302,35 +368,7 @@
             });
         });
 
-        $(document).on("change", "[name^='medicine_id']", function() {
-            var medicineIds = [];
-            var isDuplicate = false;
-            var currentRow = $(this).closest("tr");
-            var medicineId = $(this).val();
 
-            // Loop through all medicine_id fields to check for duplicates
-            $("[name^='medicine_id']").each(function() {
-                var otherMedicineId = $(this).val();
-                if (otherMedicineId) {
-                    if (medicineIds.includes(otherMedicineId)) {
-                        isDuplicate = true;
-                    }
-                    medicineIds.push(otherMedicineId);
-                }
-            });
-
-            // If a duplicate is found, show an alert and reset the current row's medicine field
-            if (isDuplicate) {
-                Swal.fire({
-                    icon: "error",
-                    title: "Duplicate Medicine Selection!",
-                    text: "Each Medicine must be unique across all rows.",
-                });
-                // Clear medicine selection in the current row
-                currentRow.find('select[name^="medicine_id"]').val("");
-                return;
-            }
-        });
 
 
 

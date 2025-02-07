@@ -100,6 +100,39 @@ class OhcStatuslog extends Model
         ];
         return $this->create($insert_data);
     }
+
+    // MEDICINE RECEVING DATA STORE
+
+    public function storeMedicineRecevingdata($id)
+    {
+        $request = request();
+        $insert_data = [
+            'type' => TYPE_OHC_MEDICINE_REQUISITION,
+            'reference_id' => $id,
+            'from_status' => STATUS_OHC_STOCK_REQUEST,
+            'to_status' => STATUS_OHC_PARAMEDICS_APPROVAL_PENDING,
+            'remarks' =>  $request->stock_remarks,
+            'created_by' => Auth::id(),
+        ];
+        // dd( $insert_data);
+        return $this->create($insert_data);
+    }
+
+// Paramedics Approve OR Reject
+public function paramedicsapprove($id, $data)
+{
+    $request = request();
+    $insert_data = [
+        'type' => TYPE_OHC_MEDICINE_REQUISITION,
+        'reference_id' => $id,
+        'from_status' => STATUS_OHC_PARAMEDICS_APPROVAL_PENDING,
+        'to_status' => $data['approve_status'],
+        'remarks' => $request->stock_remarks,
+        'created_by' => Auth::id(),
+    ];
+
+    return $this->create($insert_data);
+}
     // EHS Verification
     public function ehsverifydata($id)
     {
@@ -118,5 +151,21 @@ class OhcStatuslog extends Model
     public function stockopen($id)
     {
         return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICINE_RECEIVING)->where('from_status', STATUS_OHC_OPEN)->first();
+    }
+
+    // MEDICINE Requistion
+
+    public function getStockrequestdata($id)
+    {
+        return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICINE_REQUISITION)->where('from_status', STATUS_OHC_STOCK_REQUEST)->first();
+    }
+    public function getparamedicsapprovaldata($id)
+    {
+        return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICINE_REQUISITION)->where('from_status', STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)->first();
+    }
+
+    public function getmedicineopen($id)
+    {
+        return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICINE_REQUISITION)->where('from_status', STATUS_OHC_PARAMEDICS_APPROVED)->first();
     }
 }

@@ -91,23 +91,25 @@ class WorkmanInvolved extends Model
 
     public function getWorkmaninvolved($id)
     {
-        return WorkmanInvolved::where('permit_id', $id)->get();
+        return WorkmanInvolved::where('permit_id', $id)->where('trash','NO')->where('status',1)->get();
     }
 
     public function store($permit_id)
     {
         $request = request();
 
-
         $empIds = $request->input('emp_id');
         $workmanNames = $request->input('workman_name');
         $workmanDesigs = $request->input('workman_desig');
         $workmanDepts = $request->input('workman_dept');
         $natureOfJobs = $request->input('nature_of_job');
+
         if (isset($empIds)) {
 
+            $insert_array = []; // Initialize an empty array to hold all records
+
             foreach ($empIds as $index => $empId) {
-                $insert_array = array(
+                $insert_array[] = array(  // Add each record to the array
                     'permit_id' => $permit_id,
                     'emp_id' => $empId,
                     'workman_name' => $workmanNames[$index],
@@ -116,12 +118,13 @@ class WorkmanInvolved extends Model
                     'nature_of_job' => $natureOfJobs[$index],
                     'created_by' => Auth::id()
                 );
-
-                return   $this->insert($insert_array);
-                // dd($insert_array);
             }
+
+            // Insert all records at once
+            return $this->insert($insert_array);
         }
     }
+
 
 
     public function CreateExpireData($newSafetypermit, $workmanInvolved)
@@ -192,16 +195,16 @@ class WorkmanInvolved extends Model
         return $this->where('id', $id)->update($update_data);
     }
 
-    // public function deleterecord($id)
-    // {
+    public function deleterecord($id)
+    {
 
-    //     $update_data = array(
-    //         'status' => 0,
-    //         'trash' => 'YES',
-    //     );
+        $update_data = array(
+            'status' => 0,
+            'trash' => 'YES',
+        );
 
-    //     return $this->where('id', $id)->update($update_data);
-    // }
+        return $this->where('id', $id)->update($update_data);
+    }
 
     // public function exportdata()
     // {
