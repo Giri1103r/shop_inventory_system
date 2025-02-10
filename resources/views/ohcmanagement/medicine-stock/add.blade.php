@@ -78,6 +78,17 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
+                                                    <label for="pack_id" class="form-label require ">Pack</label>
+                                                    <select name="pack_id" id="pack_id"
+                                                        class="form-control form-control-sm single-select"
+                                                        style="width: 100%">
+                                                        <option value="">Select the Pack details</option>
+
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
                                                     <label for="hsn_id" class="form-label require">Expire Date</label>
                                                     <input type="text" name="expire_date" id="expire_date"
                                                         class="form-control"readonly>
@@ -89,6 +100,7 @@
                                                     <label for="quantity" class="form-label require ">Quantity</label>
                                                     <input type="text" name="quantity" id="quantity"
                                                         class="form-control">
+
                                                 </div>
                                             </div>
 
@@ -100,7 +112,7 @@
                                 <div class="submit-button float-end">
                                     <x-button-submit class="submit" id="submit"></x-button-submit>
                                     <x-button-reset class="submit"></x-button-reset>
-                                    <x-button-cancel href="{{ admin_url('ppe_exemption/list') }}"></x-button-cancel>
+                                    <x-button-cancel href="{{ admin_url('ohc/medicine-stock-inventory/list') }}"></x-button-cancel>
                                 </div>
                                 </form>
                             </div>
@@ -143,6 +155,14 @@
                                 .name + '</option>');
                         });
                         $('#medicine_id').trigger('change');
+
+                        $('#pack_id').empty().append(
+                            '<option value="">Select Pack Name</option>');
+                        $.each(data, function(key, value) {
+                            $('#pack_id').append('<option value="' + value.pack + '">' + value
+                                .pack + '</option>');
+                        });
+                        $('#pack_id').trigger('change');
                     },
                     error: function(xhr) {
                         alert('Error fetching medicine. Please try again.');
@@ -185,6 +205,8 @@
             }
         });
 
+
+
         $(function() {
 
             $.validator.addMethod(
@@ -199,47 +221,66 @@
                 rules: {
                     medicine_id: {
                         required: true,
-                      
+                        remote: {
+                            url: '{{ admin_url('ohc/medicine-stock-inventory/unique') }}',
+                            type: 'post',
+                            data: {
+                                medicine_id: function() {
+                                    return $('#medicine_id').val();
+                                },
+                                unit_id: function() {
+                                    return $('#unit_id').val();
+                                },
+                            }
+                        }
                     },
                     unit_id: {
                         required: true,
+
+                    },
+                    pack_id: {
+                        required: true,
+
                     },
                     threshold_limit: {
                         required: true,
                     },
-
                     quantity: {
                         required: true,
                         digits: true,
-
-                    },
+                        min: function() {
+                            return parseInt($('#threshold_limit').val()) + 1;
+                        }
+                    }
 
                 },
                 messages: {
                     medicine_id: {
                         required: "Please select the medicine name.",
-                        remote: "Medicine name should Be unique",
+                        remote: "Medicine name should be unique according to the unit.",
                     },
                     unit_id: {
-                        required: "Please select the Unit name .",
-                    },
+                        required: "Please select the Unit name.",
 
+                    },
+                    pack_id:{
+                        required:"Please Select the pack Details",
+                    },
                     quantity: {
                         required: "Please enter the quantity.",
                         digits: "Please enter a valid number for quantity.",
-                        min: "Quantity must be greater than 0.",
+                        min: "Quantity must be greater than the threshold limit."
                     },
-
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
                     error.addClass('invalid-feedback');
                     element.closest('.form-input').append(error);
                 },
-                highlight: function(element, errorClass, validClass) {
+                highlight: function(element) {
                     $(element).addClass('is-invalid');
                 },
-                unhighlight: function(element, errorClass, validClass) {
+                unhighlight: function(element) {
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
@@ -250,6 +291,7 @@
                     console.log("Form has " + errors + " invalid fields.");
                 },
             });
+
         });
     </script>
 @endpush

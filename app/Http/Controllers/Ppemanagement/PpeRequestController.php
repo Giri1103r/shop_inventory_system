@@ -95,9 +95,7 @@ class PpeRequestController extends Controller
                         ->editColumn('ppe_type', function ($row) {
                             return $row->ppe_type;
                         })
-                        ->editColumn('ppe_name', function ($row) {
-                            return $row->ppe_name;
-                        })
+                     
                         ->addColumn('approve_status', function ($row) {
 
                             if ($row->approve_status == STATUS_HOD_APPROVAL_PENDING) {
@@ -142,7 +140,7 @@ class PpeRequestController extends Controller
 
                             if (
                                 (
-                                    (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) && $row->approve_status == STATUS_EHS_APPROVAL_PENDING  || $row->approve_status == STATUS_EHS_APPROVED
+                                    (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) && $row->approve_status != STATUS_EHS_APPROVED && $row->approve_status == STATUS_EHS_APPROVAL_PENDING  || $row->approve_status == STATUS_EHS_APPROVED
                                 ) ||
 
                                 (

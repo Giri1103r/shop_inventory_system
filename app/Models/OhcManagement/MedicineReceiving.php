@@ -12,6 +12,8 @@ class MedicineReceiving extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
+        'pack_id',
+        'unit_id',
         'medicine_id',
         'hsn_id',
         'pack_id',
@@ -21,6 +23,7 @@ class MedicineReceiving extends Model
         'batch_number',
         'vendor_id',
         'approve_status',
+        'approved_by',
         'cron_time',
         'status',
         'trash',
@@ -41,16 +44,18 @@ class MedicineReceiving extends Model
         $query = $this->select(
             'ohc_management_medicine_receiving.*',
             'ohc_master_vendor.vendor_name',
-            'pack_medicine.pack',
-
-            'ohc_management_medicine_stock_inventory.medicine_id'
+            'medicine_stock.medicine_id',
+            'hsn_stock.hsn_number as hsn_number'
         )
-        ->join('ohc_master_vendor', 'ohc_management_medicine_receiving.vendor_id', '=', 'ohc_master_vendor.id')
-        ->join('ohc_master_medicine as pack_medicine', 'ohc_management_medicine_receiving.pack_id', '=', 'pack_medicine.id') // Alias for pack
-        ->join('ohc_management_medicine_stock_inventory', 'ohc_management_medicine_receiving.medicine_id', '=', 'ohc_management_medicine_stock_inventory.id')
-        ->where('ohc_master_vendor.trash', 'NO')
-        ->where('ohc_management_medicine_stock_inventory.trash', 'NO')
-        ->where('ohc_management_medicine_receiving.trash', 'NO');
+            ->join('ohc_master_vendor', 'ohc_management_medicine_receiving.vendor_id', '=', 'ohc_master_vendor.id')
+            ->join('ohc_management_medicine_stock_inventory as medicine_stock', 'ohc_management_medicine_receiving.medicine_id', '=', 'medicine_stock.id')
+            ->join('ohc_management_medicine_stock_inventory as hsn_stock', 'ohc_management_medicine_receiving.hsn_id', '=', 'hsn_stock.id')
+            ->where('ohc_master_vendor.trash', 'NO')
+            ->where('medicine_stock.trash', 'NO')
+            ->where('hsn_stock.trash', 'NO')
+            ->where('ohc_management_medicine_receiving.trash', 'NO');
+
+
 
         if ($request->search['value'] != null) {
             $search = $request->search['value'];
@@ -93,20 +98,22 @@ class MedicineReceiving extends Model
         ];
     }
 
-    public function store(){
+    public function store()
+    {
         $request = request();
 
         $insert_array = [
-          'medicine_id'=>decryptId($request->medicine_id),
-              'vendor_id'=>decryptId($request->vendor_id),
-              'quantity'=>$request->quantity,
-              'batch_number'=>$request->batch_number,
-              'expire_date'=>DBdateformat($request->expire_date),
-              'hsn_id'=>$request->hsn_id ,
-              'rate'=>$request->rate,
-              'pack_id'=>decryptId($request->pack_id),
-              'approve_status'=>STATUS_OHC_EHS_VERIFICATION_PENDING,
-              'created_by'=>Auth::id(),
+            'unit_id' => decryptId($request->unit_id),
+            'medicine_id' => decryptId($request->medicine_id),
+            'vendor_id' => decryptId($request->vendor_id),
+            'quantity' => $request->quantity,
+            'batch_number' => $request->batch_number,
+            'expire_date' => DBdateformat($request->expire_date),
+            'hsn_id' => $request->hsn_id,
+            'rate' => $request->rate,
+            'pack_id' => ($request->pack_id),
+            'approve_status' => STATUS_OHC_EHS_VERIFICATION_PENDING,
+            'created_by' => Auth::id(),
         ];
 
         return $this->create($insert_array);
@@ -117,15 +124,16 @@ class MedicineReceiving extends Model
         $request = request();
 
         $update_array = array(
-            'medicine_id'=>decryptId($request->medicine_id),
-            'vendor_id'=>decryptId($request->vendor_id),
-            'quantity'=>$request->quantity,
-            'batch_number'=>$request->batch_number,
-            'expire_date'=>DBdateformat($request->expire_date),
-            'hsn_id'=>$request->hsn_id ?? $request->hsn_display,
-            'rate'=>$request->rate,
-            'pack_id'=>decryptId($request->pack_id),
-            'updated_by'=>Auth::id(),
+            'unit_id' => decryptId($request->unit_id),
+            'medicine_id' => decryptId($request->medicine_id),
+            'vendor_id' => decryptId($request->vendor_id),
+            'quantity' => $request->quantity,
+            'batch_number' => $request->batch_number,
+            'expire_date' => DBdateformat($request->expire_date),
+            'hsn_id' => $request->hsn_id ?? $request->hsn_display,
+            'rate' => $request->rate,
+            'pack_id' => ($request->pack_id),
+            'updated_by' => Auth::id(),
         );
         return $this->where('id', $id)->update($update_array);
     }
@@ -145,16 +153,16 @@ class MedicineReceiving extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_management_medicine_receiving.*', 'ohc_master_vendor.vendor_name', 'inventory1.*', 'inventory2.*', 'inventory3.*','ohc_management_medicine_receiving.id As ohc_management_medicine_receiving_id')
-        ->join('ohc_master_vendor', 'ohc_management_medicine_receiving.vendor_id', '=', 'ohc_master_vendor.id')
-        ->join('ohc_master_medicine as inventory1', 'ohc_management_medicine_receiving.medicine_id', '=', 'inventory1.id')
-        ->join('ohc_master_medicine as inventory2', 'ohc_management_medicine_receiving.pack_id', '=', 'inventory2.id')
-        ->join('ohc_master_medicine as inventory3', 'ohc_management_medicine_receiving.hsn_id', '=', 'inventory3.id')
-        ->where('inventory1.trash', 'NO')
-        ->where('inventory2.trash', 'NO')
-        ->where('inventory3.trash', 'NO')
-        ->where('ohc_master_vendor.trash', 'NO')
-        ->where('ohc_management_medicine_receiving.trash', 'NO');
+        $query = $this->select('ohc_management_medicine_receiving.*', 'ohc_master_vendor.vendor_name', 'inventory1.*', 'inventory2.*', 'inventory3.*', 'ohc_management_medicine_receiving.id As ohc_management_medicine_receiving_id')
+            ->join('ohc_master_vendor', 'ohc_management_medicine_receiving.vendor_id', '=', 'ohc_master_vendor.id')
+            ->join('ohc_master_medicine as inventory1', 'ohc_management_medicine_receiving.medicine_id', '=', 'inventory1.id')
+            ->join('ohc_master_medicine as inventory2', 'ohc_management_medicine_receiving.pack_id', '=', 'inventory2.id')
+            ->join('ohc_master_medicine as inventory3', 'ohc_management_medicine_receiving.hsn_id', '=', 'inventory3.id')
+            ->where('inventory1.trash', 'NO')
+            ->where('inventory2.trash', 'NO')
+            ->where('inventory3.trash', 'NO')
+            ->where('ohc_master_vendor.trash', 'NO')
+            ->where('ohc_management_medicine_receiving.trash', 'NO');
 
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
@@ -186,21 +194,32 @@ class MedicineReceiving extends Model
         return  $query->get();
     }
 
-    public function statusupdate($id){
-        $this->where('id',$id)->update(['approve_status'=>STATUS_OHC_L1_EHS_VERIFICATION_PENDING]);
+    public function statusupdate($id, $updateStatus)
+    {
+        $this->where('id', $id)->update([
+            'approve_status' =>   $updateStatus['approve_status'],
+            'approved_by' =>  $updateStatus['approved_by']
+        ]);
     }
-    public function ehsstatus($id){
-        $this->where('id',$id)->update(['approve_status'=>STATUS_OHC_EHS_HEAD_APPROVAL_PENDING]);
+    public function ehsstatus($id)
+    {
+        $this->where('id', $id)->update([
+            'approve_status' => STATUS_OHC_EHS_HEAD_APPROVAL_PENDING,
+            'approved_by' => Auth::id()
+        ]);
 
     }
-    public function ehsheadstatus($id) {
+    public function ehsheadstatus($id,$updateStatus)
+    {
         $this->where('id', $id)->update([
-            'approve_status' => STATUS_OHC_OPEN,
+            'approve_status' => $updateStatus['approve_status'],
+            'approved_by' =>  $updateStatus['approved_by'],
             'cron_time' => Carbon::now()
         ]);
     }
 
-    public function stockupdate($id){
-        $this->where('id',$id)->update(['approve_status'=>STATUS_OHC_CLOSE]);
+    public function stockupdate($id)
+    {
+        $this->where('id', $id)->update(['approve_status' => STATUS_OHC_CLOSE]);
     }
 }

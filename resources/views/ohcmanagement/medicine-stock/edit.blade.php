@@ -31,7 +31,8 @@
                                     <form method="POST" id="MedicineStockform" enctype="multipart/form-data"
                                         action="{{ admin_url('ohc/medicine-stock-inventory/edit/submit') }}">
                                         @csrf
-                                       <input type="hidden" name="id" id="id" value={{ encryptId($medicine_stock->id)}}>
+                                        <input type="hidden" name="id" id="id"
+                                            value={{ encryptId($medicine_stock->id) }}>
                                         <hr>
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
@@ -43,7 +44,8 @@
                                                         style="width: 100%">
                                                         <option value="">Select the Unit Name</option>
                                                         @foreach ($unit as $list)
-                                                            <option value="{{ encryptId($list->id) }}"  @if ($medicine_stock->unit_id == $list->id) selected @endif>
+                                                            <option value="{{ encryptId($list->id) }}"
+                                                                @if ($medicine_stock->unit_id == $list->id) selected @endif>
                                                                 {{ $list->unit_name }}</option>
                                                         @endforeach
                                                     </select>
@@ -58,32 +60,50 @@
                                                         style="width: 100%">
                                                         <option value="">Select the Medicine Name</option>
                                                         @foreach ($medicine as $list)
-                                                        <option value="{{ encryptId($list->id) }}"
-                                                            @if ($medicine_stock->medicine_id == $list->medicine) selected @endif>
-                                                            {{ $list->medicine }}</option>
-                                                    @endforeach
+                                                            <option value="{{ encryptId($list->id) }}"
+                                                                @if ($medicine_stock->medicine_id == $list->medicine) selected @endif>
+                                                                {{ $list->medicine }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="hsn_id" class="form-label require">Threshold Limit</label>
-                                                    <input type="text" name="threshold_limit" id="threshold_limit" value="{{$medicine_stock->threshold_limit}}"
-                                                        class="form-control" readonly>
+                                                    <input type="text" name="threshold_limit" id="threshold_limit"
+                                                        value="{{ $medicine_stock->threshold_limit }}" class="form-control"
+                                                        readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="hsn_id" class="form-label require">HSN Number</label>
-                                                    <input type="text" name="hsn_number_id" id="hsn_number" value="{{($medicine_stock->hsn_number)}}"
-                                                        class="form-control" readonly>
+                                                    <input type="text" name="hsn_number_id" id="hsn_number"
+                                                        value="{{ $medicine_stock->hsn_number }}" class="form-control"
+                                                        readonly>
                                                     <input type="hidden" name="hsn_number" id="hsn_number_id">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
+                                                    <label for="pack" class="form-label require ">Pack Details</label>
+                                                    <select name="pack_id" id="pack_id"
+                                                        class="form-control form-control-sm single-select"
+                                                        style="width: 100%">
+                                                        <option value="">Select the Pack Details</option>
+                                                        @foreach ($medicine as $list)
+                                                            <option value="{{ encryptId($list->id) }}"
+                                                                @if ($medicine_stock->pack_id == $list->pack) selected @endif>
+                                                                {{ $list->pack }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
                                                     <label for="hsn_id" class="form-label require">Expire Date</label>
-                                                    <input type="text" name="expire_date" id="expire_date" value="{{displaydateformat($medicine_stock->expire_date)}}"
+                                                    <input type="text" name="expire_date" id="expire_date"
+                                                        value="{{ displaydateformat($medicine_stock->expire_date) }}"
                                                         class="form-control"readonly>
 
                                                 </div>
@@ -91,8 +111,8 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="quantity" class="form-label require ">Quantity</label>
-                                                    <input type="text" name="quantity" id="quantity" value="{{$medicine_stock->quantity}}"
-                                                        class="form-control">
+                                                    <input type="text" name="quantity" id="quantity"
+                                                        value="{{ $medicine_stock->quantity }}" class="form-control">
                                                 </div>
                                             </div>
 
@@ -147,6 +167,14 @@
                                 .name + '</option>');
                         });
                         $('#medicine_id').trigger('change');
+
+                        $('#pack_id').empty().append(
+                            '<option value="">Select Pack Name</option>');
+                        $.each(data, function(key, value) {
+                            $('#pack_id').append('<option value="' + value.pack + '">' + value
+                                .pack + '</option>');
+                        });
+                        $('#pack_id').trigger('change');
                     },
                     error: function(xhr) {
                         alert('Error fetching medicine. Please try again.');
@@ -203,6 +231,21 @@
                 rules: {
                     medicine_id: {
                         required: true,
+                        remote: {
+                            url: '{{ admin_url('ohc/medicine-stock-inventory/unique') }}',
+                            type: 'post',
+                            data: {
+                                medicine_id: function() {
+                                    return $('#medicine_id').val();
+                                },
+                                unit_id: function() {
+                                    return $('#unit_id').val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
+                                }
+                            }
+                        }
 
                     },
                     unit_id: {
@@ -211,27 +254,34 @@
                     threshold_limit: {
                         required: true,
                     },
+                    pack_id: {
+                        required: true,
 
+                    },
                     quantity: {
                         required: true,
                         digits: true,
-
+                        min: function() {
+                            return parseInt($('#threshold_limit').val()) + 1;
+                        }
                     },
 
                 },
                 messages: {
                     medicine_id: {
                         required: "Please select the medicine name.",
-                        remote: "Medicine name should Be unique",
+                        remote: "Medicine name should Be unique according to the unit",
                     },
                     unit_id: {
                         required: "Please select the Unit name .",
                     },
-
+                    pack_id:{
+                        required:"Please Select the pack Details",
+                    },
                     quantity: {
                         required: "Please enter the quantity.",
                         digits: "Please enter a valid number for quantity.",
-                        min: "Quantity must be greater than 0.",
+                        min: "Quantity must be greater than the threshold limit."
                     },
 
                 },

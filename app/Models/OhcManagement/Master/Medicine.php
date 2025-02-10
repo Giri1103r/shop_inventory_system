@@ -277,7 +277,7 @@ class Medicine extends Model
 
     public function ajaxList($unitId = '')
     {
-        $query = $this->select('id', 'medicine')->where('status', 1);
+        $query = $this->select('id', 'medicine','pack')->where('status', 1);
 
 
         if (!empty($unitId)) {
@@ -292,6 +292,7 @@ class Medicine extends Model
             $listvalue = [];
             $listvalue['id'] = encryptId($data->id);
             $listvalue['name'] = $data->medicine;
+            $listvalue['pack'] = $data->pack;
             $list[] = $listvalue;
         }
 

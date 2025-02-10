@@ -61,7 +61,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('PPE Name') }}</label>
                                         <div class="view_data">
-                                            {{ getPpename(isset($pperequest->ppe_name) ? $pperequest->ppe_name : '') }}
+                                            {{ (isset($pperequest->ppe_name) ? $pperequest->ppe_name : '') }}
                                         </div>
                                     </div>
                                     {{-- <div class="mb-3 col-md-4 form-input">

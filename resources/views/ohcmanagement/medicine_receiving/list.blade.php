@@ -168,13 +168,13 @@
         });
 
         var table = $('.datatable-list').DataTable({
-            serverSide: true,
-            searching: true,
-            ordering: true,
-            bSort: false,
-            scrollX: true,
             autoWidth: false,
             responsive: false,
+            processing: false,
+            serverSide: true,
+            searching: true,
+            scrollX: true,
+            ordering: true,
             dom: 'Bfrtip',
             layout: {
                 top2Start: 'buttons',

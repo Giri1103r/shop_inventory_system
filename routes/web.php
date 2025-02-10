@@ -901,6 +901,7 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('/edit/submit', [MedicineReceivingController::class, 'update']);
             Route::get('/view/{id}', [MedicineReceivingController::class, 'view']);
             Route::post('/delete', [MedicineReceivingController::class, 'delete']);
+            Route::get('/ajax-list/{unit_id}', [MedicineReceivingController::class, 'list']);
             Route::get('/export/excel', [MedicineReceivingController::class, 'exportExcel']);
             Route::get('/export/pdf', [MedicineReceivingController::class, 'exportPdf']);
             Route::post('/status', [MedicineReceivingController::class, 'statusChange']);

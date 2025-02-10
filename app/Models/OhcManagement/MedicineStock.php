@@ -19,6 +19,7 @@ class MedicineStock extends Model
         'quantity',
         'threshold_limit',
         'hsn_number',
+        'pack_id',
         'expire_date',
         'approve_status',
         'status',
@@ -97,7 +98,7 @@ class MedicineStock extends Model
             'filter_records' => $total_records,
         ];
     }
-    public function store( $medicineDetails)
+    public function store($medicineDetails)
     {
         $request = request();
 
@@ -109,6 +110,7 @@ class MedicineStock extends Model
             'threshold_limit' => $request->threshold_limit,
             'hsn_number'=>$medicineDetails['hsn'],
             'expire_date' =>DBdateformat($request->expire_date),
+            'pack_id' =>$request->pack_id,
             'status'=>0,
             'approve_status'=>STATUS_OHC_MEDICINE_APPROVAL_PENDING,
             'created_by' => Auth::id(),
@@ -128,6 +130,7 @@ class MedicineStock extends Model
             'threshold_limit' => $request->threshold_limit ??  $request->threshold_limit_id,
             'hsn_number'=>$medicineDetails['hsn'],
             'expire_date' =>DBdateformat($request->expire_date),
+            'pack_id' =>$request->pack_id,
             'status'=>0,
             'approve_status'=>STATUS_OHC_MEDICINE_APPROVAL_PENDING,
             'created_by' => Auth::id(),
@@ -160,24 +163,25 @@ class MedicineStock extends Model
 
         $data = $this->select(
             'ohc_management_medicine_stock_inventory.*'
-        )
+        )->where('id',$id)
 
             ->first();
         return $data;
     }
 
 
-    public function uniqueCheck($medicine_name)
+    public function UniqueCheck($medicine_id, $unit_id, )
     {
-        $medicine =  $this->where('medicine_id', $medicine_name)->exists();
 
-        return $medicine;
+        return $this->where('medicine_id', $medicine_id)->where('unit_id', $unit_id)->get();
     }
-    public function existUniqueCheck($medicine_name, $id)
+
+    public function ExistuniqueCheck($medicine_id,  $unit_id,  $id)
     {
-        return $this->where('medicine_id', $medicine_name)
-                    ->where('id', '!=', $id)
-                    ->exists();
+
+        return $this->where('medicine_id', $medicine_id)->where('unit_id', $unit_id)
+            ->where('id', '!=', $id)
+            ->get();
     }
 
 
@@ -218,16 +222,40 @@ class MedicineStock extends Model
         return false;
     }
     public function getMedicineData(){
-        return $this->where('status',1)->get();
+        return $this->where('status',1)->whereColumn('quantity','<','threshold_limit')->select('id','medicine_id','unit_id')->get();
     }
-    public function getMedicinestockdata(){
-        return $this->where('status',1)->where('trash','NO')->whereColumn('quantity','>','threshold_limit')->get();
-    }
+    // public function getMedicinestockdata(){
+    //     return $this->where('status',1)->where('trash','NO')->whereColumn('quantity','>','threshold_limit')->get();
+    // }
     public function getAvailableQuantity( $id){
         return $this->where('id',$id)->where('trash','NO')->where('status',1)->select('quantity')->first();
     }
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('ohc_management_medicine_stock_inventory'));
+    }
+
+    public function ajaxList($unitId = '')
+    {
+        $query = $this->select('id', 'medicine_id','pack_id')->where('status', 1)->whereColumn('quantity','<','threshold_limit');
+
+
+        if (!empty($unitId)) {
+            $query = $query->where(function ($q) use ($unitId) {
+                $q->where('unit_id', $unitId)->where('status', 1);
+            });
+        }
+        $datas = $query->get();
+
+        $list = [];
+        foreach ($datas as $data) {
+            $listvalue = [];
+            $listvalue['id'] = encryptId($data->id);
+            $listvalue['name'] = $data->medicine_id;
+            $listvalue['pack'] = $data->pack_id;
+            $list[] = $listvalue;
+        }
+
+        return $list;
     }
 }

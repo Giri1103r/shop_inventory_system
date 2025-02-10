@@ -87,10 +87,12 @@ class MedicineStockController extends Controller
                             $btn = '';
                             // if (CheckUserPermission('view')) {
                             $btn .= '<a href="' . admin_url('ohc/medicine-stock-inventory/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+
                             // }
                             // if (CheckUserPermission('edit')) {
                             $btn .= '<a href="' . admin_url('ohc/medicine-stock-inventory/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             // }
+
                            if(( CheckUserRole(ROLE_SUPERADMIN) && $row->status == 0 || CheckUserRole(ROLE_EHS_HEAD) && $row->status == 0)){
                             $btn .= '<a href="' . admin_url('ohc/medicine-stock-inventory/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
 
@@ -344,9 +346,11 @@ class MedicineStockController extends Controller
     {
         try {
             $id = decryptId($request->id);
+
             if (Auth::check()) {
                 $medicine_stock = $this->medicine_stock->selectOne($id);
             }
+
             $medicine =    $medicine_stock->medicine_id;
             $medicineid = $this->medicine->where('id', $medicine)->select('medicine', 'hsn')->first();
 
@@ -359,6 +363,7 @@ class MedicineStockController extends Controller
 
 
             );
+            // dd($data);
             return view('ohcmanagement.medicine-stock.view', $data);
         } catch (Exception $ex) {
             dd($ex);
@@ -413,6 +418,7 @@ class MedicineStockController extends Controller
 
             $createdby = $this->medicine_stock->where('id', $id)->value('created_by');
             $email = $this->user->where('id', $createdby)->value('email');
+            $this->ohc_status->stockupdate($id);
 
             if (!$email) {
                 return redirect()->back()->with('error', 'User email not found.');
@@ -431,7 +437,7 @@ class MedicineStockController extends Controller
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode([
                     'title' => $mailsubject,
-                    'message' => getMedicinename($details->medicine_id) .
+                    'message' => $details->medicine_id .
                         ' has ' . ($action == 'approve' ? 'approved' : 'rejected') .
                         ' by the EHS Head ',
                     'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
@@ -447,7 +453,6 @@ class MedicineStockController extends Controller
 
 
             $this->medicine_stock->approvalupdate($id);
-            $this->ohc_status->stockupdate($id);
             if ($action == 'reject') {
                 $this->medicine->where('id', $details->medicine_id)->update(['trash' => 'YES']);
             }
@@ -464,17 +469,24 @@ class MedicineStockController extends Controller
     public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {
-            $medicine_name = decryptId($request->medicine_id);
+            $unit_id = decryptId($request->unit_id);
+            $medicine = decryptId($request->medicine_id);
+            $medicine_id = $this->medicine->where('id',$medicine)->pluck('medicine')->first();
             $id = $request->id;
+            if ($id == '') {
 
-            if (empty($id)) {
-                $isUnique = !$this->medicine_stock->uniqueCheck($medicine_name);
+                $record = $this->medicine_stock->uniqueCheck($medicine_id, $unit_id);
             } else {
+
+
                 $id = decryptId($id);
-                $isUnique = !$this->medicine_stock->existUniqueCheck($medicine_name, $id);
+                $record = $this->medicine_stock->ExistuniqueCheck($medicine_id, $unit_id,$id);
             }
 
-            return Response::json($isUnique);
+            if ($record->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
         }
     }
 

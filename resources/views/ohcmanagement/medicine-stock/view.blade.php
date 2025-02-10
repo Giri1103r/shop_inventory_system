@@ -37,7 +37,7 @@
                                 <div class="row">
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('UnitName') }}</label>
+                                        <label class="form-label view_label">{{ __('Unit Name') }}</label>
                                         <div class="view_data">
                                             {{ getUnitname(isset($medicine_stock->unit_id) ? $medicine_stock->unit_id : '') }}
                                         </div>
@@ -58,6 +58,12 @@
                                         <label class="form-label view_label">{{ __('HSN Number') }}</label>
                                         <div class="view_data">
                                             {{ (isset($medicine_stock->hsn_number) ? $medicine_stock->hsn_number : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Pack Details') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($medicine_stock->pack_id) ? $medicine_stock->pack_id : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -122,7 +128,7 @@
 
                                 </div>
                             </div>
-                          
+
                           @endif
 
 

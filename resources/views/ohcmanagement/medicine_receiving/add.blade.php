@@ -34,7 +34,20 @@
 
                                         <hr>
                                         <div class="row">
-
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label for="medicine_name" class="form-label require ">Unit Name</label>
+                                                    <select name="unit_id" id="unit_id"
+                                                        class="form-control form-control-sm single-select"
+                                                        style="width: 100%">
+                                                        <option value="">Select the Unit Name</option>
+                                                        @foreach ($unit as $list)
+                                                            <option value="{{ encryptId($list->id) }}">
+                                                                {{ $list->unit_name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="medicine_name" class="form-label require ">Medicine
@@ -43,10 +56,7 @@
                                                         class="form-control form-control-sm single-select"
                                                         style="width: 100%">
                                                         <option value="">Select the Medicine Name</option>
-                                                        @foreach ($medicine_stock as $list)
-                                                            <option value="{{ encryptId($list->id) }}">
-                                                                {{ ($list->medicine_id) }}</option>
-                                                        @endforeach
+
                                                     </select>
                                                 </div>
                                             </div>
@@ -65,10 +75,7 @@
                                                         class="form-control single-select form-control-sm"
                                                         style="width: 100%">
                                                         <option value="">Select the Pack</option>
-                                                        @foreach ($medicine as $list)
-                                                            <option value="{{ encryptId($list->id) }}">{{ $list->pack }}
-                                                            </option>
-                                                        @endforeach
+
                                                     </select>
                                                 </div>
                                             </div>
@@ -185,6 +192,41 @@
 
                 $('#hsn_id').val('').prop('readonly', true);
                 $('#hsn_hidden_id').val('');
+            }
+        });
+
+        $(document).on('change', '#unit_id', function() {
+            var unitId = $(this).val();
+            if (unitId) {
+                $.ajax({
+                    url: "{{ admin_url('ohc/medicine-receiving-form/ajax-list') }}/" + unitId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#medicine_id').empty().append(
+                            '<option value="">Select Medicine Name</option>');
+                        $.each(data, function(key, value) {
+                            $('#medicine_id').append('<option value="' + value.id + '">' + value
+                                .name + '</option>');
+                        });
+                        $('#medicine_id').trigger('change');
+
+                        $('#pack_id').empty().append(
+                            '<option value="">Select Pack Details</option>');
+                        $.each(data, function(key, value) {
+                            $('#pack_id').append('<option value="' + value.pack + '">' + value
+                                .pack + '</option>');
+                        });
+                        $('#pack_id').trigger('change');
+
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching medicine. Please try again.');
+                    }
+                });
+            } else {
+                $('#medicine_id').empty().append('<option value="">Select Medicine Name</option>').trigger(
+                    'change');
             }
         });
 

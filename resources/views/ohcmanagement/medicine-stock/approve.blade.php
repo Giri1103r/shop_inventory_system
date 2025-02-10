@@ -61,6 +61,12 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Pack Details') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($medicine_stock->pack_id) ? $medicine_stock->pack_id : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Expire Date') }}</label>
                                         <div class="view_data">
                                             {{ displaydateformat(isset($medicine_stock->expire_date) ? $medicine_stock->expire_date : '') }}

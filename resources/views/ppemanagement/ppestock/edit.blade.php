@@ -78,7 +78,7 @@
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label for="ppe_name" class="form-label require">PPE Name
-                                                        </label>
+                                                    </label>
                                                     <input type="text" name="ppe_name" id="ppe_name"
                                                         class="form-control form-control-sm"
                                                         value="{{ $ppestock->ppe_name }}">
@@ -136,7 +136,6 @@
 @stop
 
 @push('script')
-
     <script>
         $(document).ready(function() {
             $('#resetform').on('click', function(e) {
@@ -152,7 +151,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex:  /^[a-zA-Z0-9]*$/
+                        regex: /^[a-zA-Z0-9]*$/
                     },
                     item_code: {
                         required: true,
@@ -166,13 +165,13 @@
                         maxlength: 30,
                         regex: /^[0-9]*$/
                     },
-                    ppe_name:{
+                    ppe_name: {
                         required: true,
                         minlength: 3,
                         maxlength: 100,
 
                     },
-                    item_name:{
+                    item_name: {
                         required: true,
                         minlength: 3,
                         maxlength: 30,
@@ -191,8 +190,9 @@
                     },
                     quantity: {
                         required: true,
-                        digits: true
-                    },
+                        number: true
+                    }
+
                     reason: {
                         required: true,
                         minlength: 3,
@@ -212,7 +212,7 @@
                         required: "Item code cannot be empty.",
                         minlength: "Item code must contain between 3 and 30 characters.",
                         maxlength: "Item code must contain between 3 and 30 characters.",
-                      
+
                     },
                     item_name: {
                         required: "Item name cannot be empty.",
@@ -246,7 +246,7 @@
                     },
                     quantity: {
                         required: "Quantity cannot be empty.",
-                        digits: "Quantity must be a positive number."
+                        number: "Quantity must be a positive number."
                     },
                     reason: {
                         required: "Item Description cannot be empty.",
