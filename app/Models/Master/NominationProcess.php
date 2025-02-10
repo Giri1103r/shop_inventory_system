@@ -190,11 +190,13 @@ class NominationProcess extends Model
                         $topic_id = $topicRecord->id ?? null;
                     }
 
-                    // Format last training attended date
                     $lastTrainingAttendedOn = null;
                     if (!empty($employeeData['last_training_attended_on']) && $employeeData['last_training_attended_on'] !== 'No Data') {
                         $lastTrainingAttendedOn = DBdateformat($employeeData['last_training_attended_on']);
+                    } else {
+                        $lastTrainingAttendedOn = null; 
                     }
+
 
                     // Prepare data for insert/update
                     $data = [
@@ -208,7 +210,7 @@ class NominationProcess extends Model
                         'last_training_attended_on' => $lastTrainingAttendedOn ?? '',
                         'topic_id' => $topic_id ?? '',
                     ];
-    dd($data);
+                    dd($data);
                     // Check if updating or inserting a new record
                     if (empty($employeeData['id'])) {
                         // Insert new record
