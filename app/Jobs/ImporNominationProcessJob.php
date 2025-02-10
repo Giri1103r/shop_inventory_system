@@ -74,7 +74,6 @@ class ImporNominationProcessJob  implements ShouldQueue
             ->update($update_array);
 
         $xlsx = SimpleXLSX::parse($this->details['path']);
-        dd($xlsx);
         $cond_error_datas = [];
 
         foreach ($xlsx->rows() as $row) {
@@ -170,9 +169,35 @@ class ImporNominationProcessJob  implements ShouldQueue
             }
 
 
+
+
+            // Validate employee existence
+            if ($emp_worker == 1) { // Employee
+                $empExist = Employee::select(
+                    'id',
+                    'emp_id',
+                    'emp_name',
+                    'email',
+                    'employee_status',
+                    'department'
+                )
+                    ->where('user_role', '!=', 1)
+                    ->where('user_role', '!=', 10)
+                    ->where('user_role', '!=', 2)
+                    ->where('status', 1)
+                    ->where('emp_id', $emp_id)
+                    ->where('id', '!=', $this->details['trainerId'])
+                    ->first();
+            } else { // Worker
+                $empExist = Work::select('id', 'emp_id', 'emp_name', 'wfemptype', 'department')
+                    ->where('status', 1)
+                    ->where('emp_id', $emp_id)
+                    ->first();
+            }
+
             // Validate department
             $deptExist = Department::select('id', 'department_name')
-                ->where('department_name', $department_id)
+                ->where('id', $empExist->department)
                 ->where('status', 1)
                 ->first();
 
@@ -180,25 +205,6 @@ class ImporNominationProcessJob  implements ShouldQueue
                 $cond_error_datas[] = ['upload_id' => $this->details['log_id'], 'line_no' => $i, 'error' => 'Invalid Department'];
                 $i++;
                 continue;
-            }
-
-            // Validate employee existence
-            if ($emp_worker == 1) { // Employee
-                $empExist = Employee::select('id', 'emp_id', 'emp_name', 'email', 'employee_status')
-                    ->where('user_role', '!=', 1)
-                    ->where('user_role', '!=', 10)
-                    ->where('user_role', '!=', 2)
-                    ->where('status', 1)
-                    ->where('department', $deptExist->id)
-                    ->where('emp_id', $emp_id)
-                    ->where('id', '!=', $this->details['trainerId'])
-                    ->first();
-            } else { // Worker
-                $empExist = Work::select('id', 'emp_id', 'emp_name', 'wfemptype')
-                    ->where('department', $deptExist->id)
-                    ->where('status', 1)
-                    ->where('emp_id', $emp_id)
-                    ->first();
             }
 
             if (!$empExist) {
@@ -221,18 +227,20 @@ class ImporNominationProcessJob  implements ShouldQueue
             }
 
             // Fetch last training details
-            $lastTraining = TrainingAttendance::select('training_masters_topic.id', 'training_masters_topic.topic_name','training_attendance.attendance_date')
+            $lastTraining = TrainingAttendance::select('training_masters_topic.id', 'training_masters_topic.topic_name', 'training_attendance.attendance_date')
                 ->leftJoin('training_masters_topic', 'training_attendance.topic_id', '=', 'training_masters_topic.id')
-                ->where('training_attendance.email', optional($empExist)->email)
+                ->where('training_attendance.emp_id',$empExist->emp_id)
                 ->where('training_attendance.attendance_status', 1)
                 ->orderBy('training_attendance.attendance_date', 'desc')
                 ->first();
+         
 
             $lastTrainingDate = optional($lastTraining)->attendance_date ?? null;
             $lastTrainingTopic = optional($lastTraining)->id ?? null;
+
             $employeeType = ($emp_worker == 1) ? ($empExist->employee_status ?? null) : ($empExist->wfemptype ?? null);
 
-       
+
             // Create nomination process
             $data = [
                 'training_schedule_id' => $this->details['trainingScheduleIid'],
@@ -246,7 +254,6 @@ class ImporNominationProcessJob  implements ShouldQueue
                 'topic_id' => $lastTrainingTopic,
                 'created_by' => $this->details['user_id'],
             ];
-            dd($empExist, $data);
             $nomination = NominationProcess::create($data);
 
             $i++;
