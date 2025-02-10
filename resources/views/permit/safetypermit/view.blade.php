@@ -638,7 +638,33 @@
 
                         </div>
                     </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="card-header-inner">
+                                <h4 class="text-white">Mandatory Notes for PPEs</h4>
+                            </div>
+                        </div>
 
+                        <div class="row">
+                            <div class="col-12 col-md-12 p-2">
+
+                                <div class="row g-3">
+                                    <div class="col-12">
+
+                                        <ol class="mb-0" style="line-height: 1.8;">
+                                            <li>Equipemnt must be of national/international
+                                                standard.
+                                            </li>
+                                            <li>Damaged/Defective equipment shall not be used.</li>
+                                            <li> Equipment should be in good working condition.</li>
+                                            <li>Non standard equipment shall not be used.</li>
+                                        </ol>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
 
 
                     <div class="card-body">
@@ -908,38 +934,38 @@
                         </div>
                     @endif
 
-                    @if ($safetypermit['permit_status'] == STATUS_CLOSED )
-                    <div class="card-body ">
-                        <div class="row">
-                            <div class="card-header-inner">
-                                <h4 class="text-white">Permit Closed</h4>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">{{ __('Closed By') }}</label>
-                                <div class="view_data">
-                                    {{ getUsername(isset($safetypermit->closed_by) ? $safetypermit->closed_by : '') }}
-                                </div>
-                            </div>
-                            <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">{{ __('Closed Date') }}</label>
-                                <div class="view_data">
-                                    {{ isset($safetypermit->closed_date) ? Displaydateformat($safetypermit->closed_date) : '' }}
-                                </div>
-                            </div>
-                            <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">{{ __('Closed Remarks') }}</label>
-                                <div class="view_data">
-                                    {{ isset($safetypermit->close_remarks) ? $safetypermit->close_remarks : '' }}
+                    @if ($safetypermit['permit_status'] == STATUS_CLOSED)
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="card-header-inner">
+                                    <h4 class="text-white">Permit Closed</h4>
                                 </div>
                             </div>
 
+                            <div class="row">
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Closed By') }}</label>
+                                    <div class="view_data">
+                                        {{ getUsername(isset($safetypermit->closed_by) ? $safetypermit->closed_by : '') }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Closed Date') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($safetypermit->closed_date) ? Displaydateformat($safetypermit->closed_date) : '' }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Closed Remarks') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($safetypermit->close_remarks) ? $safetypermit->close_remarks : '' }}
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
-                    </div>
-                @endif
-                    @if ($safetypermit['permit_status'] == STATUS_CANCELLED )
+                    @endif
+                    @if ($safetypermit['permit_status'] == STATUS_CANCELLED)
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">

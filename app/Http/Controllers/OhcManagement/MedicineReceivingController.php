@@ -188,6 +188,7 @@ class MedicineReceivingController extends Controller
 
                 $medicineData =  $this->medicine_receiving->store();
                 $id = $medicineData->id;
+                $this->ohc_status->medicinestockstore($id);
                 $mailsubject = 'Medicine Request for the Stock';
                 $user_role = ROLE_EHS_OFFICER;
 
@@ -919,6 +920,7 @@ class MedicineReceivingController extends Controller
             $stockopen = $this->ohc_status->stockopen($id);
             $medicine = $this->medicine->where('id', $id)->select('medicine', 'hsn', 'pack')->first();
             $vendor = $this->vendor->where('id', $id)->select('vendor_name')->first();
+            $medicineReceivingStockData = $this->ohc_status->medicineReceivingStockData($id);
             $data = [
                 'medicine_receiving' => $medicine_receiving,
                 'medicine' => $medicine,
@@ -927,6 +929,7 @@ class MedicineReceivingController extends Controller
                 'l1ehsverify' => $l1ehsverify,
                 'ehsheadverify' => $ehsheadverify,
                 'stockopen' => $stockopen,
+                'medicineReceivingStockData' => $medicineReceivingStockData,
                 'pagetitle' => "Medicine Receiving Stock  Details",
             ];
 

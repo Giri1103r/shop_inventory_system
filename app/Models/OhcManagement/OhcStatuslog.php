@@ -40,14 +40,32 @@ class OhcStatuslog extends Model
     }
 
     // Medicine Receiving
+    // medicine Request Store
+
+    public function medicinestockstore($id)
+    {
+        $request = request();
+        $insert_data = [
+            'type' => TYPE_OHC_MEDICINE_RECEIVING,
+            'reference_id' => $id,
+            'from_status' => STATUS_OHC_STOCK_REQUEST,
+            'to_status' =>  STATUS_OHC_EHS_VERIFICATION_PENDING ,
+            'remarks' =>  $request->remarks,
+            'created_by' => Auth::id(),
+        ];
+        // dd($insert_data );
+        return $this->create($insert_data);
+    }
     // EHS Verification
+
+
     public function medicinereceivingstatuslog($id,$updateStatus )
     {
         $request = request();
         $insert_data = [
             'type' => TYPE_OHC_MEDICINE_RECEIVING,
             'reference_id' => $id,
-            'from_status' => STATUS_OHC_PARAMEDIES_REQUEST,
+            'from_status' => STATUS_OHC_EHS_VERIFICATION_PENDING,
             'to_status' =>   $updateStatus['approve_status'] ,
             'remarks' =>  $request->remarks,
             'created_by' => Auth::id(),
@@ -152,7 +170,7 @@ class OhcStatuslog extends Model
     // EHS Verification
     public function ehsverifydata($id)
     {
-        return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICINE_RECEIVING)->where('from_status', STATUS_OHC_PARAMEDIES_REQUEST)->first();
+        return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICINE_RECEIVING)->where('from_status', STATUS_OHC_EHS_VERIFICATION_PENDING)->first();
     }
     // L1 EHS Verification
     public function ehsL1verifydata($id)

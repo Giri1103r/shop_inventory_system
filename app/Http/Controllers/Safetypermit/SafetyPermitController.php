@@ -590,7 +590,7 @@ class SafetyPermitController extends Controller
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
 
-
+dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
@@ -1288,7 +1288,7 @@ class SafetyPermitController extends Controller
                 'from_status' => $safetypermit->permit_status,
                 'to_status' => 15,
                 'is_reject' => null,
-                'remarks' => null,
+                'remarks' => $remarks,
                 'approved_by' => Auth::id(),
             );
             $this->statuslog->create($insert_array);

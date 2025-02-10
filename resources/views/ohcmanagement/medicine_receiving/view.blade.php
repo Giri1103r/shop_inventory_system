@@ -120,11 +120,38 @@
                                                 @foreach ($medicineReceivingStockData as $status_log )
 
                                                 <tr>
-                                                    <td>{{ isset($status_log['to_status']) ? $status_log['to_status'] : '-' }}
+
+                                                    <td>@if( ($status_log['from_status']) == STATUS_OHC_STOCK_REQUEST)
+                                                        <span class='badge bg-info' style='font-size: 1.0em;'>Stock Requested</span>
+                                                        @elseif( ($status_log['from_status']) == STATUS_OHC_EHS_VERIFICATION_PENDING)
+                                                        <span class='badge bg-info' style='font-size: 1.0em;'>EHS Officer Verification Pending</span>
+                                                        @elseif( ($status_log['from_status']) == STATUS_OHC_L1_EHS_VERIFICATION_PENDING)
+                                                        <span class='badge bg-info' style='font-size: 1.0em;'>L1 EHS Officer Verification Pending</span>
+                                                        @elseif( ($status_log['from_status']) == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING)
+                                                        <span class='badge bg-info' style='font-size: 1.0em;'>EHS Head Approval Pending</span>
+                                                        @elseif( ($status_log['from_status']) == STATUS_OHC_OPEN)
+                                                        <span class='badge bg-info' style='font-size: 1.0em;'>Open</span>
+                                                        @endif
                                                     </td>
-                                                    <td>{{ isset($status_log['from_status']) ? $status_log['from_status'] : '-' }}
+                                                    <td>@if(($status_log['to_status']) == STATUS_OHC_EHS_VERIFICATION_PENDING)
+                                                        <span class='badge bg-info' style='font-size: 1.0em;'>EHS Officer Verification Pending</span>
+                                                        @elseif(($status_log['to_status']) == STATUS_OHC_EHS_OFFICER_REJECTED)
+                                                        <span class='badge bg-danger' style='font-size: 1.0em;'>EHS Officer Rejected</span>
+                                                        @elseif(($status_log['to_status']) == STATUS_OHC_EHS_HEAD_APPROVED)
+                                                        <span class='badge bg-info' style='font-size: 1.0em;'>Open</span>
+                                                        @elseif(($status_log['to_status']) == STATUS_OHC_OPEN)
+                                                        <span class='badge bg-info' style='font-size: 1.0em;'>Open</span>
+                                                        @elseif(($status_log['to_status']) == STATUS_OHC_EHS_HEAD_REJECTED)
+                                                        <span class='badge bg-danger' style='font-size: 1.0em;'>EHS Head Rejected</span>
+                                                        @elseif(($status_log['to_status']) == STATUS_OHC_L1_EHS_VERIFICATION_PENDING)
+                                                        <span class='badge bg-info' style='font-size: 1.0em;'>L1 EHS Officer Verification Pending</span>
+                                                        @elseif(($status_log['to_status']) == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING)
+                                                        <span class='badge bg-info' style='font-size: 1.0em;'>EHS Head Approval Pending</span>
+                                                        @elseif(($status_log['to_status']) == STATUS_OHC_CLOSE)
+                                                        <span class='badge bg-success' style='font-size: 1.0em;'>Closed</span>
+                                                        @endif
                                                     </td>
-                                                    <td>{{ isset($status_log['approved_by']) ? getUsername($status_log['approved_by']) : '-' }}
+                                                    <td>{{ isset($status_log['created_by']) ? getUsername($status_log['created_by']) : '-' }}
                                                     </td>
                                                     <td>{{ isset($status_log['remarks']) ? $status_log['remarks'] : '-' }}
                                                     </td>
