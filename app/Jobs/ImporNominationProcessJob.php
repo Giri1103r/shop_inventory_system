@@ -246,6 +246,7 @@ class ImporNominationProcessJob  implements ShouldQueue
                 'topic_id' => $lastTrainingTopic,
                 'created_by' => $this->details['user_id'],
             ];
+            dd($empExist, $data);
             $nomination = NominationProcess::create($data);
 
             $i++;
