@@ -74,7 +74,7 @@ class ImporNominationProcessJob  implements ShouldQueue
             ->update($update_array);
 
         $xlsx = SimpleXLSX::parse($this->details['path']);
-        // dd($xlsx);
+        dd($xlsx);
         $cond_error_datas = [];
 
         foreach ($xlsx->rows() as $row) {
