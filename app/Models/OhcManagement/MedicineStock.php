@@ -222,7 +222,7 @@ class MedicineStock extends Model
         return false;
     }
     public function getMedicineData(){
-        return $this->where('status',1)->whereColumn('quantity','<','threshold_limit')->select('id','medicine_id','unit_id')->get();
+        return $this->where('status',1)->whereColumn('quantity','<','threshold_limit')->select('id','medicine_id','unit_id','pack_id')->get();
     }
     // public function getMedicinestockdata(){
     //     return $this->where('status',1)->where('trash','NO')->whereColumn('quantity','>','threshold_limit')->get();
@@ -257,5 +257,9 @@ class MedicineStock extends Model
         }
 
         return $list;
+    }
+
+    public function getPackDetails(){
+        return $this->where('status',1)->where('trash','NO')->get();
     }
 }

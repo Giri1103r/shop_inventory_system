@@ -52,7 +52,17 @@
                                             </select>
                                         </div>
 
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">Expire Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="expire_date"
+                                                    id="expire_date" autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
 
+                                        </div>
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
@@ -75,7 +85,14 @@
                                                 </div>
                                             </div>
                                         </div>
-
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="vendor_name" class="form-label ">Approve Status</label>
+                                            <select name="approve_status" id="approve_status"
+                                                class="form-control single-select form-control-sm" style="width: 100%">
+                                                <option value="">Select the approve status</option>
+                                                
+                                            </select>
+                                        </div>
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -140,7 +157,9 @@
                 dateFormat: "d-m-Y",
                 minDate: "today"
             });
-
+            $('#expire_date').flatpickr({
+                dateFormat: "d-m-Y",
+            })
             // Initialize DataTable
 
 
