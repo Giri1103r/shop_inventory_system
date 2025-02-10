@@ -84,7 +84,7 @@
 
                                                         @foreach ($medicine_stock as $list)
                                                             <option value="{{ $list->pack }}"
-                                                                @if ($medicine_receiving->pack_id == $list->pack) selected @endif></option>
+                                                                @if ($medicine_receiving->pack_id == $list->pack_id) selected @endif>{{$list->pack_id}}</option>
                                                         @endforeach
 
                                                     </select>
