@@ -207,10 +207,10 @@ class NominationProcess extends Model
                         'email' => $employeeData['email'],
                         'department_id' => $employeeData['department_id'],
                         'employee_type' => $employeeData['employee_type'],
-                        'last_training_attended_on' => $lastTrainingAttendedOn ?? '',
+                        'last_training_attended_on' => $lastTrainingAttendedOn,
                         'topic_id' => $topic_id ?? '',
                     ];
-                    dd($data);
+                    dd($data, $lastTrainingAttendedOn);
                     // Check if updating or inserting a new record
                     if (empty($employeeData['id'])) {
                         // Insert new record
