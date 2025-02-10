@@ -42,12 +42,11 @@ class MedicineReceiving extends Model
             'ohc_management_medicine_receiving.*',
             'ohc_master_vendor.vendor_name',
             'pack_medicine.pack',
-            'hsn_medicine.hsn',
+
             'ohc_management_medicine_stock_inventory.medicine_id'
         )
         ->join('ohc_master_vendor', 'ohc_management_medicine_receiving.vendor_id', '=', 'ohc_master_vendor.id')
         ->join('ohc_master_medicine as pack_medicine', 'ohc_management_medicine_receiving.pack_id', '=', 'pack_medicine.id') // Alias for pack
-        ->join('ohc_master_medicine as hsn_medicine', 'ohc_management_medicine_receiving.hsn_id', '=', 'hsn_medicine.id') // Alias for HSN
         ->join('ohc_management_medicine_stock_inventory', 'ohc_management_medicine_receiving.medicine_id', '=', 'ohc_management_medicine_stock_inventory.id')
         ->where('ohc_master_vendor.trash', 'NO')
         ->where('ohc_management_medicine_stock_inventory.trash', 'NO')

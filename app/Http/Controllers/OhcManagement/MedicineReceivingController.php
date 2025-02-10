@@ -52,14 +52,12 @@ class MedicineReceivingController extends Controller
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->editColumn('medicine_id', function ($row) {
-                            return getMedicinename($row->medicine_id);
+                            return ($row->medicine_id);
                         })
                         ->editColumn('pack_id', function ($row) {
                             return $row->pack;
                         })
-                        ->editColumn('hsn_id', function ($row) {
-                            return $row->hsn;
-                        })
+
                         ->editColumn('vendor_id', function ($row) {
                             return $row->vendor_name;
                         })
@@ -125,7 +123,7 @@ class MedicineReceivingController extends Controller
         try {
             $medicine = $this->medicine->getMedicineData();
             $medicine_stock = $this->medicine_stock->getMedicineData();
-
+// dd( $medicine_stock );
             $vendor = $this->vendor->getVendordata();
             $data = [
                 'medicine' => $medicine,
@@ -151,7 +149,7 @@ class MedicineReceivingController extends Controller
                 'quantity' => 'required',
                 'batch_number' => 'required',
                 'expire_date' => 'required',
-                'hsn_id' => 'required',
+
                 'rate' => 'required',
                 'pack_id' => 'required',
 
@@ -164,7 +162,7 @@ class MedicineReceivingController extends Controller
                 'quantity.required' => 'Quantity is required',
                 'batch_number.required' => 'Quantity is required',
                 'expire_date.required' => 'Expire Date is required',
-                'hsn_id.required' => 'HSN Numner is required',
+
                 'rate.required' => 'Rate is required',
                 'pack_id.required => Pack Details is required',
             ];

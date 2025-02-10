@@ -380,7 +380,7 @@ class MedicineStockController extends Controller
 
 
             );
-            dd( $data);
+            // dd( $data);
             return view('ohcmanagement.medicine-stock.approve', $data);
         } catch (Exception $ex) {
             report($ex);
