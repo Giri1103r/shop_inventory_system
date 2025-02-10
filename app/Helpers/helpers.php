@@ -48,7 +48,7 @@ if (!function_exists('DBdateformat')) {
 
     function DBdateformat($date)
     {
-        if ($date == '' || $date == null) {
+        if ($date == '' || $date == null || $date == '1970-01-01') {
             return '';
         }
         return date('Y-m-d', strtotime($date));
