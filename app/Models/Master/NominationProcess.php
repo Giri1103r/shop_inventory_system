@@ -183,18 +183,20 @@ class NominationProcess extends Model
 
                     // Retrieve topic ID if provided
                     $topic_id = null;
-                    if (!empty($employeeData['last_training_topic']) && $employeeData['last_training_topic'] !== 'No Data') {
+                    if (!empty($employeeData['last_training_topic']) && $employeeData['last_training_topic'] !== "No data") {
                         $topicRecord = DB::table('training_masters_topic')->select('id')
                             ->where('topic_name', $employeeData['last_training_topic'])
                             ->first();
                         $topic_id = $topicRecord->id ?? null;
                     }
 
-                    // Format last training attended date
                     $lastTrainingAttendedOn = null;
-                    if (!empty($employeeData['last_training_attended_on']) && $employeeData['last_training_attended_on'] !== 'No Data') {
+                    if (!empty($employeeData['last_training_attended_on']) && $employeeData['last_training_attended_on'] !== "No data") {
                         $lastTrainingAttendedOn = DBdateformat($employeeData['last_training_attended_on']);
+                    } else {
+                        $lastTrainingAttendedOn = null; 
                     }
+                   
 
                     // Prepare data for insert/update
                     $data = [
@@ -205,10 +207,9 @@ class NominationProcess extends Model
                         'email' => $employeeData['email'],
                         'department_id' => $employeeData['department_id'],
                         'employee_type' => $employeeData['employee_type'],
-                        'last_training_attended_on' => $lastTrainingAttendedOn ?? '',
-                        'topic_id' => $topic_id ?? '',
+                        'last_training_attended_on' => $lastTrainingAttendedOn,
+                        'topic_id' => $topic_id,
                     ];
-
                     // Check if updating or inserting a new record
                     if (empty($employeeData['id'])) {
                         // Insert new record
