@@ -208,7 +208,7 @@ class NominationProcess extends Model
                         'last_training_attended_on' => $lastTrainingAttendedOn ?? '',
                         'topic_id' => $topic_id ?? '',
                     ];
-
+    dd($data);
                     // Check if updating or inserting a new record
                     if (empty($employeeData['id'])) {
                         // Insert new record
