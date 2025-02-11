@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Discard The Expire Medicine')
+@section('title', 'Discard the Expire Medicine')
 @section('pageurl', admin_url('ohc/discard/list'))
 @section('content')
 
@@ -34,14 +34,7 @@
                                         <hr>
                                         <div class="row">
 
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Requestion ID</label>
-                                                    <input type="text" name ="req_id" id="req_id" class="form-control"
-                                                        placeholder="Requistion ID" value="{{ getsequence('requistion') }}"
-                                                        readonly>
-                                                </div>
-                                            </div>
+
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit </label>
@@ -60,10 +53,10 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Request
-                                                        Date</label>
+                                                    <label for="rate" class="form-label require ">Discard Date
+                                                        </label>
                                                     <div class="input-group date form-input custom-height">
-                                                        <input type="text" name="request_date" id="request_date"
+                                                        <input type="text" name="discard_date" id="discard_date"
                                                             class="form-control"autocomplete="off"
                                                             value="{{ date('d-m-Y ') }}" readonly>
                                                         <div class="input-group-addon input-group-text">
@@ -193,7 +186,7 @@
 @push('script')
     <script>
         // $(document).ready(function() {
-        //     var fromDatepicker = flatpickr("#request_date", {
+        //     var fromDatepicker = flatpickr("#discard_date", {
         //         dateFormat: "d-m-Y",
         //         minDate: new Date(),
 
@@ -357,7 +350,7 @@
                 if (medicine_id) {
                     $.ajax({
                         url: "{{ admin_url('ohc/discard/quantity') }}/" + medicine_id,
-                        type: 'POST',
+                        type: 'get',
                         dataType: 'json',
                         success: function(data) {
                             row.find('input[name^="available_quantity"]').val(data
@@ -429,7 +422,7 @@
                     req_id: {
                         required: true,
                     },
-                    request_date: {
+                    discard_date: {
                         required: true,
                     },
                     'medicine_id[0]': {
@@ -456,7 +449,7 @@
                     req_id: {
                         required: "Requisition ID cannot be empty.",
                     },
-                    request_date: {
+                    discard_date: {
                         required: "Please select the request date.",
                     },
                     'medicine_id[0]': {

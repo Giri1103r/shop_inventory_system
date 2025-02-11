@@ -54,6 +54,7 @@ use App\Http\Controllers\IMS\Master\HiraController;
 use App\Http\Controllers\IMS\Incident\InitialIncidentController;
 use App\Http\Controllers\IMS\Incident\AccidentReportController;
 use App\Http\Controllers\OhcManagement\MedicineFirstAidController;
+use App\Http\Controllers\OhcManagement\DiscardController;
 
 Route::get('cache', function () {
     Artisan::call('optimize:clear');
@@ -1128,6 +1129,27 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/issue/submit', [MedicineFirstAidController::class, 'issuestore']);
                 Route::get('/medicine-details/{unit_id}/{id}', [MedicineFirstAidController::class, 'medicineDetails']);
             });
+
+            // discard
+            Route::group(['prefix' => 'ohc/discard'], function () {
+                Route::get('/list', [DiscardController::class, 'index']);
+                Route::post('/list', [DiscardController::class, 'index']);
+                Route::get('/add', [DiscardController::class, 'add']);
+                Route::post('/add/submit', [DiscardController::class, 'store']);
+                Route::get('/edit/{id}', [DiscardController::class, 'edit']);
+                Route::post('/edit/submit', [DiscardController::class, 'update']);
+                Route::get('/view/{id}', [DiscardController::class, 'view']);
+                Route::post('/delete', [DiscardController::class, 'delete']);
+                Route::get('/export/excel', [DiscardController::class, 'exportExcel']);
+                Route::get('/export/pdf', [DiscardController::class, 'exportPdf']);
+                Route::post('/status', [DiscardController::class, 'statusChange']);
+                Route::get('/quantity/{quantity_id}', [DiscardController::class, 'quantity']);
+                Route::post('/delete', [DiscardController::class, 'delete']);
+                Route::get('add/{id}', [DiscardController::class, 'issue']);
+                Route::post('/issue/submit', [DiscardController::class, 'issuestore']);
+                Route::get('/medicine-details/{unit_id}/{id}', [DiscardController::class, 'medicineDetails']);
+            });
+
             Route::group(['prefix' => 'incident/type-master'], function () {
                 Route::get('/list', [IncidentTypeController::class, 'index']);
                 Route::post('/list', [IncidentTypeController::class, 'index']);
