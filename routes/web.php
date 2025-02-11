@@ -734,8 +734,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/dashboard/getpermitstatus', [SafetyPermitController::class, 'getPermitStatus']);
                 Route::post('/statusExpire', [SafetyPermitController::class, 'ExpireStatus']);
                 Route::post('/deleteworkmaninvolved/{rowId}', [SafetyPermitController::class, 'deleteworkmaninvolved']);
-
-
             });
             Route::group(['prefix' => 'ppe_exemption'], function () {
 
@@ -764,9 +762,9 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('ppe-dashboard/getExemptionstatus', [DashboardController::class, 'getExemptionstatus']);
             Route::get('ppe-dashboard/getmonthwiseRequest', [DashboardController::class, 'getmonthwiseRequest']);
             Route::get('ppe-dashboard/getmonthwiseExemption', [DashboardController::class, 'getmonthwiseExemption']);
-        });
 
-        // OHC Management
+
+             // OHC Management
 
         Route::group(['prefix' => 'ohc/medicine'], function () {
             Route::get('/list', [MedicineController::class, 'index']);
@@ -1058,6 +1056,7 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('/import/Submit', [InitialIncidentController::class, 'importSubmit']);
             Route::post('/status', [InitialIncidentController::class, 'statusChange']);
             Route::post('/unique', [InitialIncidentController::class, 'Uniquecheck']);
+        });
         });
     });
 });
