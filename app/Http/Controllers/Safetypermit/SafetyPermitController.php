@@ -104,7 +104,10 @@ class SafetyPermitController extends Controller
 
 
                         ->editColumn('status_batch', function ($row) {
-                            return  "<span class='" . $row->bg_color . "' >" . $row->status_name . "</span>";
+                            if ($row->permit_status == STATUS_PLANT_HEAD_APPROVED) {
+                                return "<span class='badge bg-success'>Plant Head Approved</span>";
+                            }
+                            return "<span class='" . $row->bg_color . "' >" . $row->status_name . "</span>";
                         })
                         ->addColumn('created_date', function ($row) {
                             return Displaydatetimeformat($row->created_at);

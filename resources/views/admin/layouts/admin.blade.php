@@ -188,7 +188,7 @@
         }
 
         body[data-leftbar-color=dark] .left-side-menu {
-            background-color: #fff !important;
+            background-color: #080808 !important;
             color: #000 !important;
         }
 
@@ -544,7 +544,7 @@
          */
 
         $(function() {
-            baseurl = "@yield('pageurl')";
+            baseurl = "@yield('title')";
             $('.sidebar-menu a').each(function() {
                 var $this = $(this);
                 if ($this.attr('href') === baseurl) {
