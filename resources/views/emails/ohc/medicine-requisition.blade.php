@@ -38,7 +38,7 @@
 
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                <b>Issuing Date</b>
+                                <b>Date</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                 valign="top"> {{ date('d-m-Y ') }}</td>

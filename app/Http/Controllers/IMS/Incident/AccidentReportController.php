@@ -21,12 +21,12 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use App\Models\IMS\Incident\InitialIncident;
+use App\Models\IMS\Incident\AccidentReport;
 
-class InitialIncidentController extends Controller
+class AccidentReportController extends Controller
 {
 
-    private $initialincident;
+    private $accident_report;
     private $unit;
     private $location;
     private $department;
@@ -37,7 +37,7 @@ class InitialIncidentController extends Controller
     public function __construct()
     {
 
-        $this->initialincident = new InitialIncident();
+        $this->accident_report = new AccidentReport();
         $this->unit = new Unit();
         $this->location = new Location();
         $this->department = new Department();
@@ -53,7 +53,7 @@ class InitialIncidentController extends Controller
 
                 try {
 
-                    $data =  $this->initialincident->list();
+                    $data =  $this->accident_report->list();
 
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
@@ -67,16 +67,6 @@ class InitialIncidentController extends Controller
                             return $text;
                         })
 
-                        ->addColumn('hazard_type', function ($row) {
-                            $hazardTypes = [
-                                1 => 'P - Physical Hazard',
-                                2 => 'C - Chemical Hazard',
-                                3 => 'B - Behavioral Hazard',
-                                4 => 'O - Other Hazard',
-                            ];
-                        
-                            return $hazardTypes[$row->hazard_type];
-                        })
                         ->addColumn('created_at', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
@@ -86,10 +76,10 @@ class InitialIncidentController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
-                                $btn = '<a href="' . admin_url('incident/hira-master/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                                $btn = '<a href="' . admin_url('incident/accidentReport/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
                             // if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('incident/hira-master/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                                $btn .= '<a href="' . admin_url('incident/accidentReport/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
 
                             return $btn;
@@ -101,14 +91,14 @@ class InitialIncidentController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    report($ex);
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
         }
         $data = array();
 
-        return view('ims.initial.incident.list', $data);
+        return view('ims.incident.accidentReport.list', $data);
     }
 
     public function Add(Request $request)
@@ -117,7 +107,7 @@ class InitialIncidentController extends Controller
         try {
 
             $data = array();
-            return view('ims.initial.incident.add', $data);
+            return view('ims.incident.accidentReport.add', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -166,7 +156,7 @@ class InitialIncidentController extends Controller
             try {
 
 
-                 $this->hira->store();
+                 $this->accident_report->store();
 
 
                 Session::flash('success', 'Your data has been created successfully!');
@@ -177,12 +167,12 @@ class InitialIncidentController extends Controller
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
-            return redirect(admin_url('incident/hira-master/list'));
+            return redirect(admin_url('incident/accidentReport/list'));
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/hira-master/list'));
+            return redirect(admin_url('incident/accidentReport/list'));
         }
     }
 
@@ -191,13 +181,13 @@ class InitialIncidentController extends Controller
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
-                $hira = $this->hira->selectOne($id);
+                $accident_report = $this->accident_report->selectOne($id);
 
                 $data = array(
-                    'hira' => $hira,
+                    'accident_report' => $accident_report,
                 );
             }
-            return view('ims.initial.incident.view', $data);
+            return view('ims.master.accident_report.view', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -209,13 +199,13 @@ class InitialIncidentController extends Controller
             $id = decryptId($request->id);
 
 
-            $hira = $this->hira->find($id);
+            $accident_report = $this->accident_report->find($id);
             $data = array(
-                'hira' => $hira,
+                'accident_report' => $accident_report,
             );
 
 
-            return view('ims.initial.incident.edit', $data);
+            return view('ims.incident.accidentReport.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
         }
@@ -262,17 +252,17 @@ class InitialIncidentController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            $this->hira->updates($id);
+            $this->accident_report->updates($id);
 
             // $vendor = $this->vendor->find($id);
             // $this->user->vendorUpdate($vendor->login_id);
 
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('incident/hira-master/list'));
+            return redirect(admin_url('incident/accidentReport/list'));
         } catch (Exception $ex) {
             dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/hira-master/list'));
+            return redirect(admin_url('incident/accidentReport/list'));
         }
     }
 
@@ -286,10 +276,10 @@ class InitialIncidentController extends Controller
             $id = $request->id;
 
             if (empty($id)) {
-                $isUnique = !$this->hira->uniqueCheck($vendor_name,$license_no);
+                $isUnique = !$this->accident_report->uniqueCheck($vendor_name,$license_no);
             } else {
                 $id = decryptId($id);
-                $isUnique = !$this->hira->existUniqueCheck($vendor_name,$license_no, $id);
+                $isUnique = !$this->accident_report->existUniqueCheck($vendor_name,$license_no, $id);
             }
 
             return Response::json($isUnique);
@@ -302,7 +292,7 @@ class InitialIncidentController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $this->hira->statuschange($id);
+            $this->accident_report->statuschange($id);
             return response()->json(['status' => 'success', 'msg' => 'Your status has changed successfully'], 200);
         } catch (Exception $ex) {
             report($ex);
@@ -317,7 +307,7 @@ class InitialIncidentController extends Controller
 
         try {
 
-            $allData = $this->hira->exportdata();
+            $allData = $this->accident_report->exportdata();
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -358,7 +348,7 @@ class InitialIncidentController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('HIRA.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('AccidentReport.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -374,7 +364,7 @@ class InitialIncidentController extends Controller
 
         try {
 
-            $allData = $this->hira->exportdata();
+            $allData = $this->accident_report->exportdata();
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -393,7 +383,7 @@ class InitialIncidentController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "HIRA Details",
+                'pagetitle' => "Accident Report Details",
             );
 
             $property = [
@@ -408,14 +398,14 @@ class InitialIncidentController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('ims.initial.incident.pdf', $data);
+            $view = view('ims.incident.accidentReport.pdf', $data);
             $html = $view->render();
 
 
 
             $mpdf->WriteHTML($html);
 
-            $filename = "HIRA.pdf";
+            $filename = "Accident Report.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 

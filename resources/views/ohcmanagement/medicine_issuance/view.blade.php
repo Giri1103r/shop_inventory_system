@@ -50,15 +50,29 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Request date') }}</label>
+                                        <label class="form-label view_label">{{ __('Issued date') }}</label>
                                         <div class="view_data">
                                             {{ displaydateformat(isset($user_medicine_issuance->issue_date) ? $user_medicine_issuance->issue_date : '') }}
                                         </div>
                                     </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Created at') }}</label>
+                                        <div class="view_data">
+                                            {{ getUsername(isset($user_medicine_issuance->created_by) ? $user_medicine_issuance->created_by : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Created Date') }}</label>
+                                        <div class="view_data">
+                                            {{ displaydateformat(isset($user_medicine_issuance->created_at) ? $user_medicine_issuance->created_at : '') }}
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table view_card ">
-                                        <thead>
+                                    <div class="col-md-12">
+                                        <table class="table table-bordered ">
+
+                                            <thead class="bg-secondary" style="color: #ffff">
                                             <tr>
                                                 <th>S.No</th>
                                                 <th>Medicine Name</th>
@@ -74,8 +88,8 @@
                                             @else
                                                 @foreach ($medicine_issuance as $data)
                                                     <tr>
-                                                        <td>{{$data->id}}</td>
-                                                        <td>{{$data->medicine}}</td>
+                                                        <td>{{ $loop->iteration }}</td>
+                                                            <td>{{ getMedicinename($data->medicine_id) }}</td>
                                                         <td>{{$data->available_quantity}}</td>
                                                         <td>{{$data->quantity}}</td>
                                                     </tr>

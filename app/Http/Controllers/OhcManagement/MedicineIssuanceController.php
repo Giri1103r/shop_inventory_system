@@ -119,8 +119,8 @@ class MedicineIssuanceController extends Controller
     public function add()
     {
         try {
-            $unit = $this->unit->getunit();
-            $medicine = $this->medicine->getMedicineData();
+            $unit = $this->unit->getuserunit();
+            $medicine = $this->medicine_stock->getMedicineIssuanceStock();
             $data = array(
                 'medicine' => $medicine,
                 'unit' => $unit
@@ -226,7 +226,7 @@ class MedicineIssuanceController extends Controller
                 $this->medicine_issuance->store($user_medicine_issuance);
                 $id = decryptId($request->id);
                 $this->user_medicine_requisition->updatestatus($id);
-
+                $this->ohc_status->updatecloseStatus($id);
                 $mailsubject = 'Medicine Issuing to the Unit';
 
                 $details =  $this->user_medicine_requisition->selectOne($id);
@@ -363,11 +363,17 @@ class MedicineIssuanceController extends Controller
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }
     }
-    // public function quantity(Request $request)
-    // {
-    //     $medicine_id = $request->medicine_id;
-    //     $medicine = $this->medicine_receiving->where('medicine_id',$medicine_id)->select('quantity')->first();
-    // }
+    public function quantity(Request $request, $quantity_id)
+    {
+        $id = ($quantity_id);
+
+
+        $availableQuantity = $this->medicine_stock->getAvailableQuantity($id);
+
+        return response()->json(
+            ['available_quantity' => $availableQuantity->quantity]
+        );
+    }
 
     public function ExportExcel(Request $request)
     {
@@ -477,5 +483,19 @@ class MedicineIssuanceController extends Controller
 
             report($ex);
         }
+    }
+
+    public function medicineDetails(Request $request, $unit_id)
+    {
+        $unit_id = decryptId($unit_id);
+        $medicineData = $this->medicine_stock->unitwisemedicineData($unit_id);
+
+
+        return response()->json($medicineData->map(function ($medicine) {
+            return [
+                'id' => $medicine->id,
+                'name' => $medicine->medicine_id,
+            ];
+        }));
     }
 }

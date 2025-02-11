@@ -31,7 +31,7 @@ class MedicineIssuance extends Model
 
             $insert_array = [
                 'reference_id' => $user_medicine_issuance->id,
-                'medicine_id' => decryptId($medicine),
+                'medicine_id' => ($medicine),
                 'quantity' => $request->quantity[$index],
                 'available_quantity' => $request->available_quantity[$index],
                 'created_by' => Auth::id(),
@@ -64,10 +64,7 @@ class MedicineIssuance extends Model
     {
 
         $data = $this->select(
-            'ohc_management_medicine_issuance.*','ohc_master_medicine.medicine'
-        )
-            ->where('ohc_management_medicine_issuance.reference_id', $id)
-            ->join('ohc_master_medicine','ohc_management_medicine_issuance.medicine_id','=','ohc_master_medicine.id')
+            'ohc_management_medicine_issuance.*')->where('reference_id',$id)
             ->get();
 
         return $data;

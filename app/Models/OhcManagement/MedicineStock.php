@@ -224,9 +224,10 @@ class MedicineStock extends Model
     public function getMedicineData(){
         return $this->where('status',1)->whereColumn('quantity','<','threshold_limit')->select('id','medicine_id','unit_id','pack_id')->get();
     }
-    // public function getMedicinestockdata(){
-    //     return $this->where('status',1)->where('trash','NO')->whereColumn('quantity','>','threshold_limit')->get();
-    // }
+    public function getMedicinestockdata(){
+        $UnitId = Auth::user()->unit_id;
+        return $this->where('status',1)->where('trash','NO')->whereColumn('quantity','>','threshold_limit')->where('unit_id',$UnitId)->get();
+    }
     public function getAvailableQuantity( $id){
         return $this->where('id',$id)->where('trash','NO')->where('status',1)->select('quantity')->first();
     }
@@ -262,4 +263,16 @@ class MedicineStock extends Model
     public function getPackDetails(){
         return $this->where('status',1)->where('trash','NO')->get();
     }
+
+    public function getMedicineIssuanceStock(){
+        $UnitId = Auth::user()->unit_id;
+        return $this->where('status',1)->where('trash','NO')->whereColumn('quantity','>','threshold_limit')->where('unit_id', '!=',$UnitId)->get();
+    }
+
+    public function unitwisemedicineData($unit_id)
+    {
+        return $this->where('status',1)->where('trash','NO')->whereColumn('quantity','>','threshold_limit')->where('unit_id',$unit_id)->get();
+    }
+
+
 }

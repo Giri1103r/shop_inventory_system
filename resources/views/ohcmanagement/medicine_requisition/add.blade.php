@@ -64,7 +64,8 @@
                                                         Date</label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="request_date" id="request_date"
-                                                            class="form-control"autocomplete="off">
+                                                            class="form-control"autocomplete="off"
+                                                            value="{{ date('d-m-Y ') }}" readonly>
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
                                                         </div>
@@ -112,11 +113,13 @@
                                                                     <label for="medicine_id" class="require">Medicine
                                                                         Name</label>
                                                                     <select name="medicine_id[0]" id="medicine_id"
-                                                                        class="form-control single-select" style="width: 100%">
-                                                                        <option value="">Select the Medicine Name</option>
+                                                                        class="form-control single-select"
+                                                                        style="width: 100%">
+                                                                        <option value="">Select the Medicine Name
+                                                                        </option>
                                                                         @foreach ($medicine as $list)
                                                                             <option value="{{ encryptId($list->id) }}">
-                                                                                {{ getMedicinename($list->medicine_id) }}
+                                                                                {{ $list->medicine_id }}
                                                                             </option>
                                                                         @endforeach
                                                                     </select>
@@ -124,12 +127,13 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-group form-input">
-                                                                    <label for="available_quantity" class="require">Available
+                                                                    <label for="available_quantity"
+                                                                        class="require">Available
                                                                         Quantity</label>
                                                                     <input type="text" name="available_quantity[0]"
                                                                         id="available_quantity" value=""
-                                                                        placeholder="Available quantity" class="form-control"
-                                                                        readonly>
+                                                                        placeholder="Available quantity"
+                                                                        class="form-control" readonly>
                                                                 </div>
                                                             </td>
 
@@ -137,7 +141,8 @@
                                                                 <div class="form-group form-input">
                                                                     <label for="quantity" class="require">Quantity</label>
                                                                     <input type="text" name="quantity[0]" id="quantity"
-                                                                        placeholder="Enter the quantity" class="form-control">
+                                                                        placeholder="Enter the quantity"
+                                                                        class="form-control">
                                                                     <span id="quantity-error" style=" display:none;"
                                                                         class="text-danger">Quantity must be less
                                                                         than available quantity.</span>
@@ -151,7 +156,7 @@
                                                             </td>
                                                             <td>
                                                                 <div class="row gap-2">
-                                                                   
+
                                                                     <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row"
                                                                         style="width: 30px; height: 30px;">
                                                                         <i class="fa-solid fa-trash"></i>
@@ -187,13 +192,13 @@
 
 @push('script')
     <script>
-        $(document).ready(function() {
-            var fromDatepicker = flatpickr("#request_date", {
-                dateFormat: "d-m-Y",
-                minDate: new Date(),
+        // $(document).ready(function() {
+        //     var fromDatepicker = flatpickr("#request_date", {
+        //         dateFormat: "d-m-Y",
+        //         minDate: new Date(),
 
-            });
-        });
+        //     });
+        // });
         $('#medicine_id').on('change', function() {
             var selectedOption = $(this).find(':selected');
             var availableQuantity = selectedOption.data('available-quantity');
@@ -233,7 +238,7 @@
                         <select name="medicine_id[${medicine_requisition_row_count}]" class="form-control single-select" style="width: 100%">
                             <option value="">Select the Medicine Name</option>
                             @foreach ($medicine as $list)
-                                <option value="{{ encryptId($list->id) }}" data-available-quantity="{{ $list->available_quantity }}">{{ getMedicinename($list->medicine_id) }}</option>
+                                <option value="{{ encryptId($list->id) }}" data-available-quantity="{{ $list->available_quantity }}">{{ $list->medicine_id }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -247,7 +252,7 @@
                 <td>
                     <div class="form-group form-input">
                         <label for="quantity" class="require">Quantity</label>
-                        <input type="text" name="quantity[${medicine_requisition_row_count}]" class="form-control">
+                        <input type="text" name="quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control">
                          <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
 
 
@@ -274,7 +279,7 @@
                         width: '100%'
                     });
 
-                    // Add validation rules
+
                     $('select[name="medicine_id[' + medicine_requisition_row_count + ']"]').rules('add', {
                         required: true,
                         messages: {
@@ -301,7 +306,7 @@
                             maxlength: 'Remarks should not exceed 600 characters',
                         }
                     });
-
+                    filterMedicineOptions();
                     medicine_requisition_row_count++;
                 } else {
                     Swal.fire({
@@ -312,6 +317,37 @@
                     });
                 }
             });
+
+            function filterMedicineOptions() {
+                let selectedValues = [];
+
+                // Collect all selected values
+                $('select[name^="medicine_id"]').each(function() {
+                    let selectedVal = $(this).val();
+                    if (selectedVal) {
+                        selectedValues.push(selectedVal);
+                    }
+                });
+
+                $('select[name^="medicine_id"]').each(function() {
+                    let currentSelect = $(this);
+                    let currentValue = currentSelect.val();
+
+                    currentSelect.find('option').each(function() {
+                        let optionValue = $(this).val();
+
+                        // Always enable all options first
+                        $(this).prop('disabled', false);
+
+                        // Disable option if it's selected in another dropdown
+                        if (selectedValues.includes(optionValue) && optionValue !== currentValue) {
+                            $(this).prop('disabled', true);
+                        }
+                    });
+                });
+            }
+
+
 
 
             $(document).on('change', 'select[name^="medicine_id"]', function() {

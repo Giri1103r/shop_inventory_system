@@ -275,4 +275,9 @@ class Unit extends Model
             $model->update(['unit_id' => $uniqueId]);
         });
     }
+
+    public function getuserunit(){
+        $id =Auth::user()->unit_id;
+        return Unit::where('trash','NO')->where('id','!=', $id  )->where('status','!=',0)->get();
+    }
 }

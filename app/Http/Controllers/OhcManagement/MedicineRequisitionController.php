@@ -28,6 +28,8 @@ use App\Models\OhcManagement\MedicineStock;
 use App\Models\OhcManagement\OhcStatuslog;
 use App\Models\User;
 
+use function Ramsey\Uuid\v1;
+
 class MedicineRequisitionController extends Controller
 {
     private $medicine;
@@ -51,7 +53,6 @@ class MedicineRequisitionController extends Controller
         $this->department = new Department();
         $this->ohcStatus = new OhcStatuslog();
         $this->user = new User();
-
     }
     public function index(Request $request)
     {
@@ -73,6 +74,12 @@ class MedicineRequisitionController extends Controller
 
                         ->addColumn('approve_status', function ($row) {
 
+                            if ($row->created_by == Auth::id()) {
+                                if ($row->approve_status == STATUS_OHC_PARAMEDICS_APPROVED) {
+                                    $text = "<span class='badge bg-info' style='font-size: 1.0em;'>Open</span>";
+                                }
+                            }
+
                             if ($row->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) {
                                 $text = "<span class='badge bg-info' style='font-size: 1.0em;'>Paramedics Approval Pending</span>";
                             } else if ($row->approve_status == STATUS_OHC_PARAMEDICS_APPROVED) {
@@ -81,8 +88,7 @@ class MedicineRequisitionController extends Controller
                                 $text = "<span class='badge bg-danger' style='font-size: 1.0em;'>Paramedics Rejected</span>";
                             } else if ($row->approve_status == STATUS_OHC_OPEN) {
                                 $text = "<span class='badge bg-info' style='font-size: 1.0em;'>Open</span>";
-                            }
-                            else if ($row->approve_status == STATUS_OHC_CLOSE) {
+                            } else if ($row->approve_status == STATUS_OHC_CLOSE) {
                                 $text = "<span class='badge bg-success' style='font-size: 1.0em;'>Close</span>";
                             }
                             return $text;
@@ -90,22 +96,33 @@ class MedicineRequisitionController extends Controller
                         ->editColumn('request_date', function ($row) {
                             return displaydateformat($row->request_date);
                         })
+                        ->editColumn('unit_id', function ($row) {
+                            return getUnitname($row->unit_id);
+                        })
+                        ->editColumn('department_id', function ($row) {
+                            return getDepartment($row->department_id);
+                        })
                         ->editColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
                             $btn .= '<a href="' . admin_url('ohc/medicine-requisition/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
                             // if (CheckUserPermission('edit')) {
-                            $btn .= '<a href="' . admin_url('ohc/medicine-requisition/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
+                            // $btn .= '<a href="' . admin_url('ohc/medicine-requisition/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             // }
-                            $btn .= '<a href="' . admin_url('ohc/medicine-requisition/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) || (checkUserRole(ROLE_PARAMEDICS) && $row->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)) {
+                                $btn .= '<a href="' . admin_url('ohc/medicine-requisition/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            }
+                            if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == STATUS_OHC_PARAMEDICS_APPROVED) || (checkUserRole(ROLE_PARAMEDICS) && $row->approve_status == STATUS_OHC_PARAMEDICS_APPROVED)) {
+                                $btn .= '<a href="' . admin_url('ohc/medicine-issuance/add/' . encryptId($row->id)) . '" class="" title="Action"><i class="fas fa-share-square " style="color: #0013ff;"></i></a> ';
+                            }
 
-                            $btn .= '<a href="' . admin_url('ohc/medicine-issuance/add/' . encryptId($row->id)) . '" class="" title="Action"><i class="fas fa-share-square " style="color: #0013ff;"></i></a> ';
 
+                            $btn .= '<a href="' . admin_url('ohc/medicine-requisition/generalpdf/' . encryptId($row->id)) . '" class="" title="PDF"> <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a> ';
                             return $btn;
                         })
 
-                        ->rawColumns(['action', 'request_date', 'approve_status'])
+                        ->rawColumns(['action', 'request_date', 'approve_status','unit_id','department_id'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -132,7 +149,7 @@ class MedicineRequisitionController extends Controller
     {
         try {
             $unit = $this->unit->getunit();
-            $medicine =$this->medicine_stock->getMedicinestockdata();
+            $medicine = $this->medicine_stock->getMedicinestockdata();
             $data = array(
                 'medicine' => $medicine,
                 'unit' => $unit
@@ -140,7 +157,7 @@ class MedicineRequisitionController extends Controller
 
             return view('ohcmanagement.medicine_requisition.add', $data);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-requisition/list'));
         }
@@ -211,7 +228,7 @@ class MedicineRequisitionController extends Controller
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
-                        'message' => "Request For the Medicine by " .getUsername($user_medicine_requisition->id),
+                        'message' => "Request For the Medicine by " . getUsername($user_medicine_requisition->created_by),
                         'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                         'id' => $user_medicine_requisition->id,
                         'module' => 1,
@@ -224,7 +241,7 @@ class MedicineRequisitionController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-            dd($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
@@ -237,73 +254,73 @@ class MedicineRequisitionController extends Controller
         }
     }
 
-    public function edit(Request $request)
-    {
-            try {
-                $id = decryptId($request->id);
+    // public function edit(Request $request)
+    // {
+    //         try {
+    //             $id = decryptId($request->id);
 
 
-                $user_medicine_requisition = $this->user_medicine_requisition->find($id);
-                $departmentList = $this->department->getdepartment();
-                $unit = $this->unit->getunit();
-                $medicine = $this->medicine->getMedicineData();
-                $medicine_requisition = $this->medicine_requisition->where('req_id', $id)->GET();
+    //             $user_medicine_requisition = $this->user_medicine_requisition->find($id);
+    //             $departmentList = $this->department->getdepartment();
+    //             $unit = $this->unit->getunit();
+    //             $medicine = $this->medicine->getMedicineData();
+    //             $medicine_requisition = $this->medicine_requisition->where('req_id', $id)->GET();
 
-                $data = array(
-                    'medicine' => $medicine,
-                    'unit' => $unit,
-                    'departmentList' => $departmentList,
-                    'user_medicine_requisition' => $user_medicine_requisition,
-                    'medicine_requisition' => $medicine_requisition
+    //             $data = array(
+    //                 'medicine' => $medicine,
+    //                 'unit' => $unit,
+    //                 'departmentList' => $departmentList,
+    //                 'user_medicine_requisition' => $user_medicine_requisition,
+    //                 'medicine_requisition' => $medicine_requisition
 
-                );
-                return view('ohcmanagement.medicine_requisition.edit', $data);
-            } catch (Exception $ex) {
-                report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-                return redirect(admin_url('ohc/medicine-requisition/list'));
-            }
+    //             );
+    //             return view('ohcmanagement.medicine_requisition.edit', $data);
+    //         } catch (Exception $ex) {
+    //             report($ex);
+    //             Session::flash('error', 'Something went wrong, Please try after sometimes!');
+    //             return redirect(admin_url('ohc/medicine-requisition/list'));
+    //         }
 
-    }
-    public function update(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-            $rules = [
-                'unit_id' => 'required',
-                'department_id' => 'required',
-                'request_date' => 'required',
+    // }
+    // public function update(Request $request)
+    // {
+    //     try {
+    //         $id = decryptId($request->id);
+    //         $rules = [
+    //             'unit_id' => 'required',
+    //             'department_id' => 'required',
+    //             'request_date' => 'required',
 
-            ];
-            $messages = [
-                'department_id.required' => 'Please select a Deparment.',
-                'unit_id.required' => 'Please select a unit.',
-                'request_date.required' => 'Please select the expiry date.',
-            ];
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
+    //         ];
+    //         $messages = [
+    //             'department_id.required' => 'Please select a Deparment.',
+    //             'unit_id.required' => 'Please select a unit.',
+    //             'request_date.required' => 'Please select the expiry date.',
+    //         ];
+    //         $validator = Validator::make($request->all(), $rules, $messages);
+    //         if ($validator->fails()) {
+    //             return redirect()->back()->withErrors($validator)->withInput();
+    //         }
 
-            try {
+    //         try {
 
-                $user_medicine_requisition = $this->user_medicine_requisition->updates($id);
-                $this->medicine_requisition->updates($id);
+    //             $user_medicine_requisition = $this->user_medicine_requisition->updates($id);
+    //             $this->medicine_requisition->updates($id);
 
-                Session::flash('success', 'Your data has been updated successfully!');
-            } catch (Exception $ex) {
-                report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            }
+    //             Session::flash('success', 'Your data has been updated successfully!');
+    //         } catch (Exception $ex) {
+    //             report($ex);
+    //             Session::flash('error', 'Something went wrong, Please try after sometimes!');
+    //         }
 
-            return redirect(admin_url('ohc/medicine-requisition/list'));
-        } catch (Exception $ex) {
+    //         return redirect(admin_url('ohc/medicine-requisition/list'));
+    //     } catch (Exception $ex) {
 
-            report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('ohc/medicine-requisition/list'));
-        }
-    }
+    //         report($ex);
+    //         Session::flash('error', 'Something went wrong, Please try after sometimes!');
+    //         return redirect(admin_url('ohc/medicine-requisition/list'));
+    //     }
+    // }
 
     public function view(Request $request)
     {
@@ -314,29 +331,30 @@ class MedicineRequisitionController extends Controller
                 $medicine_requisition = $this->medicine_requisition->selectOne($id);
             }
             $unit = $this->unit->getunit();
-            $stockrequest = $this->ohcStatus->getStockrequestdata($id);
-            $paramediciesapproval = $this->ohcStatus->getparamedicsapprovaldata($id);
-           $stockopen =  $this->ohcStatus->getmedicineopen($id);
+            $logData = $this->ohcStatus->getMedicineRequisitionLog($id);
             $data = array(
                 'user_medicine_requisition' => $user_medicine_requisition,
                 'medicine_requisition' => $medicine_requisition,
-                'stockrequest'=>$stockrequest,
-                'paramediciesapproval'=>$paramediciesapproval,
-                'stockopen'=>$stockopen,
+                'logdata' => $logData,
+
             );
             return view('ohcmanagement.medicine_requisition.view', $data);
         } catch (Exception $ex) {
         }
     }
 
-    public function approvalview(Request $request){
+    public function approvalview(Request $request)
+    {
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $user_medicine_requisition = $this->user_medicine_requisition->selectOne($id);
                 $medicine_requisition = $this->medicine_requisition->selectOne($id);
             }
-
+            if ($user_medicine_requisition->approve_status != STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) {
+                return redirect(admin_url('ohc/medicine-requisition/list'))
+                    ->with('error', 'You have already responded to this request !.');
+            }
 
             $data = array(
                 'user_medicine_requisition' => $user_medicine_requisition,
@@ -377,6 +395,75 @@ class MedicineRequisitionController extends Controller
 
             $this->user_medicine_requisition->approvereject($id, $data);
             $this->ohcStatus->paramedicsapprove($id, $data);
+            $createdBy = $this->user_medicine_requisition->where('id', $id)->pluck('created_by');
+            $user = $this->user->where('id', $createdBy)->where('status', 1)->first();
+            if ($request->action == 'approve') {
+                $mailsubject = 'Paramedics Approved the medicine';
+                $email_id = $user->email;
+
+                if (!empty($email_id)) {
+                    $details = $this->user_medicine_requisition->selectOne($id);
+                    $medicineDetails = $this->medicine_requisition->selectOne($id);
+
+                    if ($details && $medicineDetails) {
+                        $emailDetails = $details->toArray();
+                        $emailDetails['name'] = $user->name;
+                        $emailDetails['email_id'] = $email_id;
+                        $emailDetails['mail_subject'] = $mailsubject;
+
+                        Mail::to($emailDetails['email_id'])->queue(new MedicineRequisitionEmail($emailDetails, $medicineDetails));
+                    }
+                }
+                $notificationData = array(
+                    'notification_type' => 4,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => "The requested Medicine Was approved By " . getUsername($details->approved_by),
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('ohc/medicine-requisition/list' ),
+                    'assigned_user' => $details->created_by,
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+            }else{
+                $mailsubject = 'Paramedics Rejected the medicine';
+                $email_id = $user->email;
+
+                if (!empty($email_id)) {
+                    $details = $this->user_medicine_requisition->selectOne($id);
+                    $medicineDetails = $this->medicine_requisition->selectOne($id);
+
+                    if ($details && $medicineDetails) {
+                        $emailDetails = $details->toArray();
+                        $emailDetails['name'] = $user->name;
+                        $emailDetails['email_id'] = $email_id;
+                        $emailDetails['mail_subject'] = $mailsubject;
+
+                        Mail::to($emailDetails['email_id'])->queue(new MedicineRequisitionEmail($emailDetails, $medicineDetails));
+                    }
+                }
+                $notificationData = array(
+                    'notification_type' => 4,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => "The requested Medicine Was Rejected By " . getUsername($details->approved_by),
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('ohc/medicine-requisition/list' ),
+                    'assigned_user' => $details->created_by,
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+            }
 
             return redirect(admin_url('ohc/medicine-requisition/list'))
                 ->with('success', 'Request has been processed successfully.');
@@ -384,6 +471,49 @@ class MedicineRequisitionController extends Controller
             dd($ex);
             return redirect(admin_url('ohc/medicine-requisition/list'))
                 ->with('error', 'Something went wrong, Please try again later.');
+        }
+    }
+
+    // General PDF
+
+    public function generalpdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            if (Auth::check()) {
+                $user_medicine_requisition = $this->user_medicine_requisition->selectOne($id);
+                $medicine_requisition = $this->medicine_requisition->selectOne($id);
+            }
+            $logData = $this->ohcStatus->getMedicineRequisitionLog($id);
+
+            $data = [
+                'user_medicine_requisition' => $user_medicine_requisition,
+                'medicine_requisition' => $medicine_requisition,
+                'logdata' => $logData,
+                'pagetitle' => "Medicine Requisition",
+            ];
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('ohcmanagement.medicine_requisition.generalpdf', $data)->render();
+            $mpdf->WriteHTML($html);
+
+            $filename = "Medicine Receiving Stock Details.pdf";
+            return $mpdf->Output($filename, 'I');
+        } catch (Exception $ex) {
+            dd($ex);
+            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
     public function StatusChange(Request $request)
@@ -419,10 +549,11 @@ class MedicineRequisitionController extends Controller
                 'Requisition ID',
                 'Unit Name',
                 'Department Name',
-                'request Date',
-                'status',
-                'Created_by',
-                'Created_at'
+                'Request Date',
+                'From Status',
+                'To Status',
+                'Created by',
+                'Created at'
             ];
 
             $i = 1;
@@ -434,7 +565,32 @@ class MedicineRequisitionController extends Controller
                 $export[] =  getUnitname($data->unit_id);
                 $export[] =  getDepartment($data->department_id);
                 $export[] =  Displaydateformat($data->request_date);
-                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
+                if ($data->approve_status == STATUS_OHC_PARAMEDIES_REQUEST) {
+                    $export[] = 'Stock Requested ';
+                } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) {
+                    $export[] = 'Paramedics approval Pending';
+                } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVED) {
+                    $export[] = 'Paramedics approval Pending';
+                } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_REJECTED) {
+                    $export[] = 'Paramedics approval Pending';
+                } elseif ($data->approve_status == STATUS_OHC_CLOSE) {
+                    $export[] = 'Paramedics Approved';
+                }  else {
+                    $export[] = removeUnderScore(getStatus($data->approve_status));
+                }
+                if ($data->approve_status == STATUS_OHC_PARAMEDIES_REQUEST) {
+                    $export[] = 'Paramedics approval Pending ';
+                } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) {
+                    $export[] = 'Paramedics approval Pending';
+                } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVED) {
+                    $export[] = 'Paramedics Approved';
+                } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_REJECTED) {
+                    $export[] = 'Paramedics Rejected';
+                } elseif ($data->approve_status == STATUS_OHC_CLOSE) {
+                    $export[] = 'closed';
+                }  else {
+                    $export[] = removeUnderScore(getStatus($data->approve_status));
+                }
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 
@@ -470,10 +626,11 @@ class MedicineRequisitionController extends Controller
                 'Requisition ID',
                 'Unit Name',
                 'Department Name',
-                'request Date',
-                'status',
-                'Created_by',
-                'Created_at'
+                'Request Date',
+                'From Status',
+                'To Status',
+                'Created by',
+                'Created at'
             ];
 
             $data = array(
@@ -517,7 +674,25 @@ class MedicineRequisitionController extends Controller
         $availableQuantity = $this->medicine_stock->getAvailableQuantity($id);
 
         return response()->json(
-            ['available_quantity' => $availableQuantity->quantity]);
+            ['available_quantity' => $availableQuantity->quantity]
+        );
     }
+
+    public function stockdata(Request $request)
+    {
+        $name = $request->input('search');
+
+        $medicineData = $this->medicine_stock->getMedicineRequisitionStock();
+
+        $results = $medicineData->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'text' => $item->medicine_id,
+            ];
+        });
+
+        return response()->json(['results' => $results]);
+    }
+
 
 }

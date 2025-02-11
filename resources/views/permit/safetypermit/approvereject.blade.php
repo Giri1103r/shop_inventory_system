@@ -440,7 +440,32 @@
 
                         </div>
                     </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="card-header-inner">
+                                <h4 class="text-white">Mandatory Notes for PPEs</h4>
+                            </div>
+                        </div>
 
+                        <div class="row">
+                            <div class="col-12 col-md-12 p-2">
+
+                                <div class="row g-3">
+                                    <div class="col-12">
+
+                                        <ol class="mb-0" style="line-height: 1.8;">
+                                            <li>PPEs must be of national/international standard.
+                                            </li>
+                                            <li>Damaged/defective PPEs shall not be used.</li>
+                                            <li>Non-standard PPEs shall not be used.</li>
+                                            <li>PPEs must be inspected before use.</li>
+                                        </ol>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="card-header-inner">
@@ -640,7 +665,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="card-header-inner">
-                                <h4 class="text-white">Mandatory Notes for PPEs</h4>
+                                <h4 class="text-white">Mandatory Notes for Equipments</h4>
                             </div>
                         </div>
 
@@ -664,6 +689,7 @@
                             </div>
                         </div>
                     </div>
+
 
                     <div class="card-body">
                         <div class="row">
