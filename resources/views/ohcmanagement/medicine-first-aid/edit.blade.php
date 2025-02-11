@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medicine Issuance')
-@section('pageurl', admin_url('ohc/medicine-issuance/list'))
+@section('title', 'Medicine First Aid')
+@section('pageurl', admin_url('ohc/medicine-first-aid/list'))
 @section('content')
 
     <div class="clearfix"></div>
@@ -21,17 +21,17 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('ohc/medicine-issuance/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('ohc/medicine-first-aid/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body">
                                 <div class="basic-form">
                                     <form method="POST" id="MedicineRequisitionForm" enctype="multipart/form-data"
-                                        action="{{ admin_url('ohc/medicine-issuance/edit/submit') }}">
+                                        action="{{ admin_url('ohc/medicine-first-aid/edit/submit') }}">
                                         @csrf
                                         <input type="hidden" name="id" id="id"
-                                        value="{{ encryptId($user_medicine_issuance->id) }}">
+                                        value="{{ encryptId($user_medicine_first_aid->id) }}">
                                         <hr>
                                         <div class="row">
 
@@ -43,7 +43,7 @@
                                                         <option value="">Select the unit</option>
 
                                                         @foreach ($unit as $list)
-                                                            <option @if ($user_medicine_issuance->unit_id == $list->id) selected @endif
+                                                            <option @if ($user_medicine_first_aid->unit_id == $list->id) selected @endif
                                                                 value="{{ encryptId($list->id) }}">
                                                                 {{ $list->unit_name }}
                                                             </option>
@@ -59,7 +59,7 @@
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Department </option>
                                                         @foreach ($departmentList as $department)
-                                                            <option @if ($user_medicine_issuance->department_id == $department->id) selected @endif
+                                                            <option @if ($user_medicine_first_aid->department_id == $department->id) selected @endif
                                                                 value="{{ encryptId($department->id) }}">
                                                                 {{ $department->department_name }}</option>
                                                         @endforeach
@@ -73,7 +73,7 @@
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="issue_date" id="issue_date"
                                                             class="form-control"autocomplete="off"
-                                                            value="{{ displaydateformat($user_medicine_issuance->issue_date) }}"
+                                                            value="{{ displaydateformat($user_medicine_first_aid->issue_date) }}"
                                                             readonly>
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
@@ -115,7 +115,7 @@
                                                     </thead>
 
                                                     <tbody id="medicine-tbody">
-                                                        @foreach ($medicine_issuance as $key => $issuance)
+                                                        @foreach ($medicine_first_aid as $key => $issuance)
                                                             <tr>
                                                                 <td>
                                                                     <div class="form-group form-input">
@@ -186,7 +186,7 @@
                                             <x-button-submit class="submit" id="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('ohc/medicine-issuance/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('ohc/medicine-first-aid/list') }}"></x-button-cancel>
                                         </div>
                                     </form>
                                 </div>
@@ -244,7 +244,7 @@
 
             if (unitId) {
                 $.ajax({
-                    url: "{{ admin_url('ohc/medicine-issuance/medicine-details') }}/" + unitId + "/0",
+                    url: "{{ admin_url('ohc/medicine-first-aid/medicine-details') }}/" + unitId + "/0",
                     type: 'GET',
                     dataType: 'json',
                     success: function(data) {
@@ -313,7 +313,7 @@
 
         $(document).ready(function() {
 
-            let medicine_issuance_row_count = 1;
+            let medicine_first_aid_row_count = 1;
 
             $(".add-row").click(function() {
                 var rowCount = $('#medicine-tbody tr').length;
@@ -324,7 +324,7 @@
                 <td>
                     <div class="form-group form-input">
                         <label for="medicine_id" class="require">Medicine Name</label>
-                        <select name="medicine_id[${medicine_issuance_row_count}]" class="form-control single-select" style="width: 100%">
+                        <select name="medicine_id[${medicine_first_aid_row_count}]" class="form-control single-select" style="width: 100%">
                             <option value="">Select the Medicine Name</option>
 
                         </select>
@@ -333,13 +333,13 @@
                 <td>
                     <div class="form-group form-input">
                         <label for="quantity" class="require">Available Quantity</label>
-                        <input type="text" name="available_quantity[${medicine_issuance_row_count}]" class="form-control" readonly>
+                        <input type="text" name="available_quantity[${medicine_first_aid_row_count}]" class="form-control" readonly>
                     </div>
                 </td>
                 <td>
                     <div class="form-group form-input">
                         <label for="quantity" class="require">Quantity</label>
-                        <input type="text" name="quantity[${medicine_issuance_row_count}]"   placeholder="Enter the quantity" class="form-control">
+                        <input type="text" name="quantity[${medicine_first_aid_row_count}]"   placeholder="Enter the quantity" class="form-control">
                          <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
 
 
@@ -356,20 +356,20 @@
                 $('#medicine-tbody').append(newRow);
 
 
-                $('select[name="medicine_id[' + medicine_issuance_row_count + ']"]').select2({
+                $('select[name="medicine_id[' + medicine_first_aid_row_count + ']"]').select2({
                     placeholder: "Select the Medicine Name",
                     width: '100%'
                 });
 
 
-                $('select[name="medicine_id[' + medicine_issuance_row_count + ']"]').rules('add', {
+                $('select[name="medicine_id[' + medicine_first_aid_row_count + ']"]').rules('add', {
                     required: true,
                     messages: {
                         required: 'This Medicine name is required'
                     }
                 });
 
-                $('input[name="quantity[' + medicine_issuance_row_count + ']"]').rules('add', {
+                $('input[name="quantity[' + medicine_first_aid_row_count + ']"]').rules('add', {
                     required: true,
                     digits: true,
                     messages: {
@@ -381,7 +381,7 @@
                 var unitId = $('#unit_id').val();
                 if (unitId) {
                     $.ajax({
-                        url: "{{ admin_url('ohc/medicine-issuance/medicine-details') }}/" +
+                        url: "{{ admin_url('ohc/medicine-first-aid/medicine-details') }}/" +
                             unitId +
                             "/0",
                         type: 'GET',
@@ -391,7 +391,7 @@
                         }
                     });
                 }
-                medicine_issuance_row_count++;
+                medicine_first_aid_row_count++;
             });
 
 
@@ -426,7 +426,7 @@
 
                     if (selectedMedicineId) {
                         $.ajax({
-                            url: "{{ admin_url('ohc/medicine-issuance/quantity') }}/" +
+                            url: "{{ admin_url('ohc/medicine-first-aid/quantity') }}/" +
                                 selectedMedicineId,
                             type: 'get',
                             dataType: 'json',

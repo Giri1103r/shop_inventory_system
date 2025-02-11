@@ -273,6 +273,10 @@ class MedicineStock extends Model
     {
         return $this->where('status',1)->where('trash','NO')->whereColumn('quantity','>','threshold_limit')->where('unit_id',$unit_id)->get();
     }
+//
 
+public function MedicineData(){
+    return $this->where('status',1)->where('trash','NO')->get();
+}
 
 }

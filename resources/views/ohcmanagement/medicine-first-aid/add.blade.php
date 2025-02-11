@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medicine Issuance')
-@section('pageurl', admin_url('ohc/medicine-issuance/list'))
+@section('title', 'Medicine First Aid')
+@section('pageurl', admin_url('ohc/medicine-first-aid/list'))
 @section('content')
 
     <div class="clearfix"></div>
@@ -21,17 +21,16 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('ohc/medicine-issuance/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('ohc/medicine-first-aid/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body">
                                 <div class="basic-form">
                                     <form method="POST" id="MedicineRequisitionForm" enctype="multipart/form-data"
-                                        action="{{ admin_url('ohc/medicine-issuance/edit/submit') }}">
+                                        action="{{ admin_url('ohc/medicine-first-aid/add/submit') }}">
                                         @csrf
-                                        <input type="hidden" name="id" id="id"
-                                        value="{{ encryptId($user_medicine_issuance->id) }}">
+
                                         <hr>
                                         <div class="row">
 
@@ -41,14 +40,10 @@
                                                     <select name="unit_id" id="unit_id" class="form-control single-select"
                                                         style="width: 100%">
                                                         <option value="">Select the unit</option>
-
                                                         @foreach ($unit as $list)
-                                                            <option @if ($user_medicine_issuance->unit_id == $list->id) selected @endif
-                                                                value="{{ encryptId($list->id) }}">
-                                                                {{ $list->unit_name }}
-                                                            </option>
+                                                            <option value="{{ encryptId($list->id) }}">
+                                                                {{ $list->unit_name }}</option>
                                                         @endforeach
-
                                                     </select>
                                                 </div>
                                             </div>
@@ -58,11 +53,7 @@
                                                     <select name="department_id" id="department_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Department </option>
-                                                        @foreach ($departmentList as $department)
-                                                            <option @if ($user_medicine_issuance->department_id == $department->id) selected @endif
-                                                                value="{{ encryptId($department->id) }}">
-                                                                {{ $department->department_name }}</option>
-                                                        @endforeach
+
                                                     </select>
                                                 </div>
                                             </div>
@@ -73,8 +64,7 @@
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="issue_date" id="issue_date"
                                                             class="form-control"autocomplete="off"
-                                                            value="{{ displaydateformat($user_medicine_issuance->issue_date) }}"
-                                                            readonly>
+                                                            value="{{ date('d-m-Y ') }}" readonly>
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
                                                         </div>
@@ -115,68 +105,55 @@
                                                     </thead>
 
                                                     <tbody id="medicine-tbody">
-                                                        @foreach ($medicine_issuance as $key => $issuance)
-                                                            <tr>
-                                                                <td>
-                                                                    <div class="form-group form-input">
-                                                                        <label for="medicine_id" class="require">Medicine
-                                                                            Name</label>
-                                                                        <select name="medicine_id[{{ $key }}]"
-                                                                            id="medicine_id"
-                                                                            class="form-control single-select2"
-                                                                            style="width: 100%">
-                                                                            <option value="">Select the Medicine Name
-                                                                            </option>
-                                                                            @foreach ($medicine as $list)
-                                                                                <option value="{{ $list->id }}"
-                                                                                    @if ($issuance->medicine_id == $list->id) selected @endif>
-                                                                                    {{ $list->medicine_id }}
-                                                                                </option>
-                                                                            @endforeach
-                                                                        </select>
+                                                        <tr>
+                                                            <td>
+                                                                <div class="form-group form-input">
+                                                                    <label for="medicine_id" class="require">Medicine
+                                                                        Name</label>
+                                                                    <select name="medicine_id[0]" id="medicine_id"
+                                                                        class="form-control single-select"
+                                                                        style="width: 100%">
+                                                                        <option value="">Select the Medicine Name
+                                                                        </option>
+
+                                                                    </select>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
+                                                                    <label for="available_quantity"
+                                                                        class="require">Available
+                                                                        Quantity</label>
+                                                                    <input type="text" name="available_quantity[0]"
+                                                                        id="available_quantity" value=""
+                                                                        placeholder="Available quantity"
+                                                                        class="form-control" readonly>
+                                                                </div>
+                                                            </td>
+
+                                                            <td>
+                                                                <div class="form-group form-input">
+                                                                    <label for="quantity" class="require">Quantity</label>
+                                                                    <input type="text" name="quantity[0]" id="quantity"
+                                                                        placeholder="Enter the quantity"
+                                                                        class="form-control">
+                                                                    <span id="quantity-error" style=" display:none;"
+                                                                        class="text-danger">Quantity must be less
+                                                                        than available quantity.</span>
+                                                                </div>
+                                                            </td>
+
+                                                            <td>
+                                                                <div class="row gap-2">
+
+                                                                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row"
+                                                                        style="width: 30px; height: 30px;">
+                                                                        <i class="fa-solid fa-trash"></i>
                                                                     </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="form-group form-input">
-                                                                        <label for="available_quantity"
-                                                                            class="require">Available
-                                                                            Quantity</label>
-                                                                        <input type="text"
-                                                                            name="available_quantity[{{ $key }}]"
-                                                                            id="available_quantity"
-                                                                            value="{{ $issuance->available_quantity }}"
-                                                                            placeholder="Available quantity"
-                                                                            class="form-control" readonly>
-                                                                    </div>
-                                                                </td>
+                                                                </div>
 
-                                                                <td>
-                                                                    <div class="form-group form-input">
-                                                                        <label for="quantity"
-                                                                            class="require">Quantity</label>
-                                                                        <input type="text"
-                                                                            name="quantity[{{ $key }}]"
-                                                                            id="quantity" placeholder="Enter the quantity"
-                                                                            value="{{ $issuance->quantity }}"
-                                                                            class="form-control">
-                                                                        <span id="quantity-error" style=" display:none;"
-                                                                            class="text-danger">Quantity must be less
-                                                                            than available quantity.</span>
-                                                                    </div>
-                                                                </td>
-
-                                                                <td>
-                                                                    <div class="row gap-2">
-
-                                                                        <div class="d-flex justify-content-center align-items-center bg-danger mt-2 me-5 text-white rounded delete-row" style="width: 30px; height: 30px;">
-                                                                            <i class="fa-solid fa-trash"></i>
-                                                                        </div>
-                                                                    </div>
-
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
-
+                                                            </td>
+                                                        </tr>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -186,7 +163,7 @@
                                             <x-button-submit class="submit" id="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('ohc/medicine-issuance/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('ohc/medicine-first-aid/list') }}"></x-button-cancel>
                                         </div>
                                     </form>
                                 </div>
@@ -211,9 +188,7 @@
 
         //     });
         // });
-        $('.single-select2').select2({
 
-            });
         $(document).on('change', '#unit_id', function() {
             var unitId = $(this).val();
             if (unitId) {
@@ -244,7 +219,7 @@
 
             if (unitId) {
                 $.ajax({
-                    url: "{{ admin_url('ohc/medicine-issuance/medicine-details') }}/" + unitId + "/0",
+                    url: "{{ admin_url('ohc/medicine-first-aid/medicine-details') }}/" + unitId + "/0",
                     type: 'GET',
                     dataType: 'json',
                     success: function(data) {
@@ -381,8 +356,7 @@
                 var unitId = $('#unit_id').val();
                 if (unitId) {
                     $.ajax({
-                        url: "{{ admin_url('ohc/medicine-issuance/medicine-details') }}/" +
-                            unitId +
+                        url: "{{ admin_url('ohc/medicine-first-aid/medicine-details') }}/" + unitId +
                             "/0",
                         type: 'GET',
                         dataType: 'json',
@@ -426,7 +400,7 @@
 
                     if (selectedMedicineId) {
                         $.ajax({
-                            url: "{{ admin_url('ohc/medicine-issuance/quantity') }}/" +
+                            url: "{{ admin_url('ohc/medicine-first-aid/quantity') }}/" +
                                 selectedMedicineId,
                             type: 'get',
                             dataType: 'json',

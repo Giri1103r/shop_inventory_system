@@ -25,14 +25,14 @@
                                 <b>Unit</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ ($emailDetails['unit_id']) }}</td>
+                                valign="top"> {{ getUnitname($emailDetails['unit_id']) }}</td>
                         </tr>
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                                 <b>Department</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ ($emailDetails['department_id']) }}</td>
+                                valign="top"> {{ getDepartment($emailDetails['department_id']) }}</td>
                         </tr>
 
 

@@ -183,18 +183,88 @@ class MedicineIssuanceController extends Controller
             try {
 
                 $user_medicine_issuance = $this->user_medicine_issuance->store();
-                $this->medicine_issuance->store($user_medicine_issuance);
+                $medicine_issuance = $this->medicine_issuance->store($user_medicine_issuance);
+
+
+
+
+                    foreach ($medicine_issuance as $medicine) {
+
+                        $medicine_id = $medicine->medicine_id;
+                        $unitId = $user_medicine_issuance->unit_id;
+                        $issuedQuantity = $medicine->quantity;
+
+                        $this->medicine_stock
+                            ->where('id', $medicine_id)
+                            ->where('unit_id', $unitId)
+                            ->decrement('quantity', $issuedQuantity);
+                   }
+
+                // Notification and Email
+                $id =  $user_medicine_issuance->id;
+                $data = $this->user_medicine_issuance->selectOne($user_medicine_issuance->id);
+                $unitId = $data->unit_id;
+                $departmentId = $data->department_id;
+                $mailsubject = 'Medicine Issuing to Other Unit';
+                $user_role = ROLE_CERTIFIED_FIRST_AIDER;
+
+
+
+                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $unitId)->where('department_id', $departmentId)->pluck('id')->toArray();
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $unitId)->where('department_id', $departmentId)->get();
+
+
+                if (count($users) > 0) {
+                    foreach ($users as $user) {
+
+                        $email_id = $user->email;
+
+                        if ($email_id != '' || $email_id != null) {
+                            $details = $this->user_medicine_issuance->selectOne($id);
+                            $medicineDetails = $this->medicine_issuance->selectOne($id);
+                            $emailDetails = $details->toArray();
+                            $emailDetails['name'] = $user->name;
+                            $emailDetails['email_id'] = $email_id;
+                            $emailDetails['mail_subject'] = $mailsubject;
+
+                            Mail::to($emailDetails['email_id'])->queue(new MedicineRequisitionEmail($emailDetails, $medicineDetails));
+                        }
+                    }
+                }
+
+
+                /**
+                 * Send Web notification
+                 */
+
+                $notificationData = array(
+                    'notification_type' => 4,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => "The requested Medicine Was issued By " . getUsername($data->created_by),
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('ohc/medicine-issuance/list'),
+                    'assigned_user' => array_to_string($userids),
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medicine-issuance/list'));
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }
@@ -281,22 +351,23 @@ class MedicineIssuanceController extends Controller
             $id = decryptId($request->id);
 
 
-            $user_medicine_issuance = $this->user_medicine_issuance->find($id);
+            $user_medicine_issuance = $this->user_medicine_issuance->selectOne($id);
+            $departmentList=$this->department->getdepartment();
+            $medicine_issuance = $this->medicine_issuance->selectOne($id);
             $departmentList = $this->department->getdepartment();
-            $unit = $this->unit->getunit();
-            $medicine = $this->medicine->getMedicineData();
-            $medicine_issuance = $this->medicine_issuance->where('reference_id', $id)->GET();
-
+            $unit = $this->unit->getuserunit();
+            $medicine = $this->medicine_stock->getMedicineIssuanceStock();
             $data = array(
-                'medicine' => $medicine,
+              'medicine'=>$medicine,
                 'unit' => $unit,
                 'departmentList' => $departmentList,
                 'user_medicine_issuance' => $user_medicine_issuance,
                 'medicine_issuance' => $medicine_issuance
             );
+            // dd($data );
             return view('ohcmanagement.medicine_issuance.edit', $data);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }
@@ -327,16 +398,70 @@ class MedicineIssuanceController extends Controller
                 $user_medicine_issuance = $this->user_medicine_issuance->updates($id);
                 $this->medicine_issuance->updates($id);
 
+                $data = $this->user_medicine_issuance->selectOne($id);
+
+                $unitId = $data->unit_id;
+                $departmentId = $data->department_id;
+                $mailsubject = 'Medicine Issuing to Other Unit';
+                $user_role = ROLE_CERTIFIED_FIRST_AIDER;
+
+
+
+                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $unitId)->where('department_id', $departmentId)->pluck('id')->toArray();
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $unitId)->where('department_id', $departmentId)->get();
+
+
+                if (count($users) > 0) {
+                    foreach ($users as $user) {
+
+                        $email_id = $user->email;
+
+                        if ($email_id != '' || $email_id != null) {
+                            $details = $this->user_medicine_issuance->selectOne($id);
+                            $medicineDetails = $this->medicine_issuance->selectOne($id);
+                            $emailDetails = $details->toArray();
+                            $emailDetails['name'] = $user->name;
+                            $emailDetails['email_id'] = $email_id;
+                            $emailDetails['mail_subject'] = $mailsubject;
+
+                            Mail::to($emailDetails['email_id'])->queue(new MedicineRequisitionEmail($emailDetails, $medicineDetails));
+                        }
+                    }
+
+                }
+
+                $notificationData = array(
+                    'notification_type' => 4,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => "The requested Medicine Was issued By " . getUsername($data->created_by),
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('ohc/medicine-issuance/list'),
+                    'assigned_user' => array_to_string($userids),
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+                /**
+                 * Send Web notification
+                 */
+
+
+
                 Session::flash('success', 'Your data has been Updated successfully!');
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medicine-issuance/list'));
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }

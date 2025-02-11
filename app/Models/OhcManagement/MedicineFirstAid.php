@@ -5,9 +5,9 @@ namespace App\Models\OhcManagement;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-class MedicineIssuance extends Model
+class MedicineFirstAid extends Model
 {
-    protected $table = 'ohc_management_medicine_issuance';
+    protected $table = 'ohc_management_medicine_first_aid';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -67,7 +67,7 @@ class MedicineIssuance extends Model
     {
 
         $data = $this->select(
-            'ohc_management_medicine_issuance.*')->where('reference_id',$id)
+            'ohc_management_medicine_first_aid.*')->where('reference_id',$id)
             ->get();
 
         return $data;

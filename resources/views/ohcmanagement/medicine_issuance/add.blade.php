@@ -374,28 +374,50 @@
 
 
             $(document).on('change', 'select[name^="medicine_id"]', function() {
-                var medicine_id = $(this).val();
+                var selectedMedicineId = $(this).val();
                 var row = $(this).closest('tr');
+                var duplicateFound = false;
 
-                if (medicine_id) {
-                    $.ajax({
-                        url: "{{ admin_url('ohc/medicine-issuance/quantity') }}/" + medicine_id,
-                        type: 'get',
-                        dataType: 'json',
-                        success: function(data) {
-                            row.find('input[name^="available_quantity"]').val(data
-                                .available_quantity);
-                        },
-                        error: function() {
-                            Swal.fire('Error', 'Something went wrong. Please try again.',
-                                'error');
-                        }
+
+                $('select[name^="medicine_id"]').not(this).each(function() {
+                    if ($(this).val() === selectedMedicineId && selectedMedicineId !== "") {
+                        duplicateFound = true;
+                    }
+                });
+
+                if (duplicateFound) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Duplicate Medicine Selected',
+                        text: 'This medicine is already selected. Please choose a different one.',
+                        confirmButtonColor: '#3085d6'
                     });
-                } else {
+
+                    $(this).val('').trigger('change');
                     row.find('input[name^="available_quantity"]').val('');
+                    row.find('input[name^="quantity"]').val('');
+                } else {
+
+                    if (selectedMedicineId) {
+                        $.ajax({
+                            url: "{{ admin_url('ohc/medicine-issuance/quantity') }}/" +
+                                selectedMedicineId,
+                            type: 'get',
+                            dataType: 'json',
+                            success: function(data) {
+                                row.find('input[name^="available_quantity"]').val(data
+                                    .available_quantity);
+                            },
+                            error: function() {
+                                Swal.fire('Error', 'Something went wrong. Please try again.',
+                                    'error');
+                            }
+                        });
+                    } else {
+                        row.find('input[name^="available_quantity"]').val('');
+                    }
                 }
             });
-
 
             $(document).on("input", 'input[name^="quantity"]', function() {
                 var row = $(this).closest('tr'); // Get the row of the current input

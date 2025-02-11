@@ -53,6 +53,7 @@ use App\Http\Controllers\IMS\Master\IncidentTypeController;
 use App\Http\Controllers\IMS\Master\HiraController;
 use App\Http\Controllers\IMS\Incident\InitialIncidentController;
 use App\Http\Controllers\IMS\Incident\AccidentReportController;
+use App\Http\Controllers\OhcManagement\MedicineFirstAidController;
 
 Route::get('cache', function () {
     Artisan::call('optimize:clear');
@@ -1109,7 +1110,24 @@ Route::middleware(['securityheader'])->group(function () {
 
 
 
-
+            Route::group(['prefix' => 'ohc/medicine-first-aid'], function () {
+                Route::get('/list', [MedicineFirstAidController::class, 'index']);
+                Route::post('/list', [MedicineFirstAidController::class, 'index']);
+                Route::get('/add', [MedicineFirstAidController::class, 'add']);
+                Route::post('/add/submit', [MedicineFirstAidController::class, 'store']);
+                Route::get('/edit/{id}', [MedicineFirstAidController::class, 'edit']);
+                Route::post('/edit/submit', [MedicineFirstAidController::class, 'update']);
+                Route::get('/view/{id}', [MedicineFirstAidController::class, 'view']);
+                Route::post('/delete', [MedicineFirstAidController::class, 'delete']);
+                Route::get('/export/excel', [MedicineFirstAidController::class, 'exportExcel']);
+                Route::get('/export/pdf', [MedicineFirstAidController::class, 'exportPdf']);
+                Route::post('/status', [MedicineFirstAidController::class, 'statusChange']);
+                Route::get('/quantity/{quantity_id}', [MedicineFirstAidController::class, 'quantity']);
+                Route::post('/delete', [MedicineFirstAidController::class, 'delete']);
+                Route::get('add/{id}', [MedicineFirstAidController::class, 'issue']);
+                Route::post('/issue/submit', [MedicineFirstAidController::class, 'issuestore']);
+                Route::get('/medicine-details/{unit_id}/{id}', [MedicineFirstAidController::class, 'medicineDetails']);
+            });
             Route::group(['prefix' => 'incident/type-master'], function () {
                 Route::get('/list', [IncidentTypeController::class, 'index']);
                 Route::post('/list', [IncidentTypeController::class, 'index']);
