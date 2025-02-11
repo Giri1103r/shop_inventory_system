@@ -52,6 +52,7 @@ use App\Http\Controllers\Training\TrainingController;
 use App\Http\Controllers\IMS\Master\IncidentTypeController;
 use App\Http\Controllers\IMS\Master\HiraController;
 use App\Http\Controllers\IMS\Incident\InitialIncidentController;
+use App\Http\Controllers\IMS\Incident\AccidentReportController;
 
 Route::get('cache', function () {
     Artisan::call('optimize:clear');
@@ -1058,6 +1059,25 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('/import/Submit', [InitialIncidentController::class, 'importSubmit']);
             Route::post('/status', [InitialIncidentController::class, 'statusChange']);
             Route::post('/unique', [InitialIncidentController::class, 'Uniquecheck']);
+        });
+
+
+        Route::group(['prefix' => 'incident/accidentReport'], function () {
+            Route::get('/list', [AccidentReportController::class, 'index']);
+            Route::post('/list', [AccidentReportController::class, 'index']);
+            Route::get('/add', [AccidentReportController::class, 'add']);
+            Route::post('/add/submit', [AccidentReportController::class, 'store']);
+            Route::get('/edit/{id}', [AccidentReportController::class, 'edit']);
+            Route::post('/edit/submit', [AccidentReportController::class, 'update']);
+            Route::get('/view/{id}', [AccidentReportController::class, 'view']);
+            Route::post('/delete', [AccidentReportController::class, 'delete']);
+            Route::get('/export/excel', [AccidentReportController::class, 'exportExcel']);
+            Route::get('/export/pdf', [AccidentReportController::class, 'exportPdf']);
+            Route::get('/sample_download', [AccidentReportController::class, 'DownloadSample']);
+            Route::get('/import', [AccidentReportController::class, 'import']);
+            Route::post('/import/Submit', [AccidentReportController::class, 'importSubmit']);
+            Route::post('/status', [AccidentReportController::class, 'statusChange']);
+            Route::post('/unique', [AccidentReportController::class, 'Uniquecheck']);
         });
     });
 });
