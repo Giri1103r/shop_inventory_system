@@ -301,7 +301,7 @@ class SafetyPermit extends Model
     public function updates($id)
     {
         $request = request();
-//  dd($request->all());
+//  dd($request);
         $safetypermit = $this->find($id);
 
         $update_array = [];
@@ -313,7 +313,7 @@ class SafetyPermit extends Model
         $update_array['exact_location_job'] = $request->exact_location_job ?? $safetypermit->exact_location_job;
         $update_array['job_location_area'] = $request->job_location_area ?? $safetypermit->job_location_area;
         $update_array['isolationpanel_checkbox'] = $request->isolationpanel_checkbox ?? $safetypermit->isolationpanel_checkbox;
-        $update_array['isolationpanel_description'] = $request->isolationpanel_description ? $safetypermit->isolationpanel_description :null;
+        $update_array['isolationpanel_description'] = $request->isolationpanel_description ?? $safetypermit->isolationpanel_description;
 
         $update_array['sub_permit'] = is_array($request->sub_permit)
             ? implode(',', array_map('decryptId', $request->sub_permit))

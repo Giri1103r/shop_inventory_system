@@ -91,12 +91,12 @@ class MedicineReceivingController extends Controller
                             // if (CheckUserPermission('view')) {
                             $btn .= '<a href="' . admin_url('ohc/medicine-receiving-form/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
-                            // if (CheckUserPermission('edit')) {
+                            // if (CheckUserPermission('edit') && $row->approve_status != STATUS_OHC_CLOSE) {
                             $btn .= '<a href="' . admin_url('ohc/medicine-receiving-form/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             // }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
 
-                            if (checkUserRole(ROLE_SUPERADMIN) && $row->approve_status != STATUS_OHC_EHS_OFFICER_REJECTED) {
+                            if (checkUserRole(ROLE_SUPERADMIN) && $row->approve_status != STATUS_OHC_EHS_OFFICER_REJECTED && $row->approve_status != STATUS_OHC_CLOSE) {
                                 $btn .= '<a href="' . admin_url('ohc/medicine-receiving-form/medicineapproval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
@@ -188,6 +188,7 @@ class MedicineReceivingController extends Controller
 
                 $medicineData =  $this->medicine_receiving->store();
                 $id = $medicineData->id;
+                $this->ohc_status->medicinestockstore($id);
                 $mailsubject = 'Medicine Request for the Stock';
                 $user_role = ROLE_EHS_OFFICER;
 
@@ -256,9 +257,10 @@ class MedicineReceivingController extends Controller
         try {
             $id = decryptId($request->id);
 
-
+            $unit = $this->unit->getunit();
             $medicine_receiving = $this->medicine_receiving->find($id);
             $medicine = $this->medicine->getMedicineData();
+            $medicine_stock = $this->medicine_stock->getPackDetails();
             $vendor = $this->vendor->getVendordata();
             $hsn = $this->medicine->where('id', $id)->select('medicine', 'hsn', 'pack')->first();
 
@@ -266,7 +268,9 @@ class MedicineReceivingController extends Controller
                 'medicine' => $medicine,
                 'vendor' => $vendor,
                 'medicine_receiving' => $medicine_receiving,
-                'hsn' => $hsn
+                'hsn' => $hsn,
+                'unitList'=>$unit,
+                'medicine_stock'=>$medicine_stock
 
 
             ];
@@ -314,7 +318,9 @@ class MedicineReceivingController extends Controller
             }
 
             try {
-                $this->medicine_receiving->updates($id);
+
+                $hsn = $this->medicine_stock->where('hsn_number',$request->hsn_display)->pluck('id');
+                $this->medicine_receiving->updates($id,$hsn);
 
                 $mailsubject = 'Medicine Request for the Stock';
                 $user_role = ROLE_EHS_OFFICER;
@@ -919,6 +925,7 @@ class MedicineReceivingController extends Controller
             $stockopen = $this->ohc_status->stockopen($id);
             $medicine = $this->medicine->where('id', $id)->select('medicine', 'hsn', 'pack')->first();
             $vendor = $this->vendor->where('id', $id)->select('vendor_name')->first();
+            $medicineReceivingStockData = $this->ohc_status->medicineReceivingStockData($id);
             $data = [
                 'medicine_receiving' => $medicine_receiving,
                 'medicine' => $medicine,
@@ -927,6 +934,7 @@ class MedicineReceivingController extends Controller
                 'l1ehsverify' => $l1ehsverify,
                 'ehsheadverify' => $ehsheadverify,
                 'stockopen' => $stockopen,
+                'medicineReceivingStockData' => $medicineReceivingStockData,
                 'pagetitle' => "Medicine Receiving Stock  Details",
             ];
 

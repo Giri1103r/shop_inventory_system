@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                   Medicine Receiving Stock Details
+                    Medicine Receiving Stock Details
                 </td>
             </tr>
         </table>
@@ -149,8 +149,8 @@
         <table style="width:100%;">
             <tr>
                 <td
-                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;" >
-                  Medicine Details
+                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                    Medicine Details
                 </td>
             </tr>
         </table>
@@ -171,13 +171,13 @@
             <td width="50%" style="padding:5px;"><b>Pack Details</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{isset($medicine->pack) ? $medicine->pack : '' }}</td>
+                {{ isset($medicine->pack) ? $medicine->pack : '' }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Quantity</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{   isset($medicine_receiving->quantity) ? $medicine_receiving->quantity : '' }}</td>
+                {{ isset($medicine_receiving->quantity) ? $medicine_receiving->quantity : '' }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Batch Number</b></td>
@@ -195,7 +195,8 @@
             <td width="50%" style="padding:5px;"><b>Expire Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($medicine_receiving->expire_date) ? $medicine_receiving->expire_date : '') }}</td>
+                {{ Displaydateformat(isset($medicine_receiving->expire_date) ? $medicine_receiving->expire_date : '') }}
+            </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Vendor Name</b></td>
@@ -225,7 +226,8 @@
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
-                    <td style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
+                    <td
+                        style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
                         Status Logs
                     </td>
                 </tr>
@@ -244,69 +246,56 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Stock Request</td>
-                            <td>EHS Verification Pending</td>
-                            <td>{{ getUsername(isset($medicine_receiving->created_by) ? $medicine_receiving->created_by : '') }}</td>
-                            <td><p>-</p></td>
-                            <td>{{ displaydateformat(isset($medicine_receiving->created_at) ? $medicine_receiving->created_at : '') }}</td>
-                        </tr>
-                        <tr>
-                            <td>EHS Officer Verification Pending</td>
-                            <td>
-                                @if (isset($ehsverify['to_status']) && $ehsverify['to_status'] == STATUS_OHC_EHS_VERIFICATION_PENDING)
-                                   L1 EHS Officer Verification Pending
-                                @else
-                                <p>-</p>
-                                @endif
-                            </td>
-                            <td>{{ isset($ehsverify->created_by) && $ehsverify->created_by != '' ? getUsername($ehsverify->created_by) : '-' }}</td>
-                            <td>{{ isset($ehsverify->remarks) ? $ehsverify->remarks : '-' }}</td>
-                            <td>{{ isset($ehsverify->created_at) && $ehsverify->created_at != '' ? displaydateformat($ehsverify->created_at) : '-' }}</td>
-                        </tr>
-                        <tr>
-                            <td>  L1 EHS Officer Verification Pending</td>
-                            <td>
-                                @if (isset($l1ehsverify['to_status']) && $l1ehsverify['to_status'] == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING)
-                                   L1  EHS Officer Approval Pending
+                        @foreach ($medicineReceivingStockData as $status_log)
+                            <tr>
+                            <tr>
+                                <!-- From Status Column -->
+                                <td>
+                                    @if ($status_log['from_status'] == STATUS_OHC_STOCK_REQUEST)
+                                        <p style="font-size: 1.0em; ">Stock Requested</p>
+                                    @elseif($status_log['from_status'] == STATUS_OHC_EHS_VERIFICATION_PENDING)
+                                        <p style="font-size: 1.0em; ">EHS Officer Verification Pending
+                                        </p>
+                                    @elseif($status_log['from_status'] == STATUS_OHC_L1_EHS_VERIFICATION_PENDING)
+                                        <p style="font-size: 1.0em; ">L1 EHS Officer Verification Pending
+                                        </p>
+                                    @elseif($status_log['from_status'] == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING)
+                                        <p style="font-size: 1.0em; ">EHS Head Approval Pending</p>
+                                    @elseif($status_log['from_status'] == STATUS_OHC_OPEN)
+                                        <p style="font-size: 1.0em; ">Open</p>
+                                    @endif
+                                </td>
 
-                                   @else
-                                   <p>-</p>
-                                @endif
-                            </td>
-                            <td>{{ isset($l1ehsverify->created_by) && $l1ehsverify->created_by != '' ? getUsername($l1ehsverify->created_by) : '-' }}</td>
-                            <td>{{ isset($l1ehsverify->remarks) ? $l1ehsverify->remarks : '-' }}</td>
-                            <td>{{ isset($l1ehsverify->created_at) && $l1ehsverify->created_at != '' ? displaydateformat($l1ehsverify->created_at) : '-' }}</td>
-                        </tr>
-                        <tr>
-                            <td>EHS Head Approval Pending</td>
-                            <td>
-                                @if (isset($ehsheadverify['to_status']) && $ehsheadverify['to_status'] == STATUS_OHC_OPEN)
-                              Open
-                              @else
-                              <p>-</p>
-
-                                @endif
-                            </td>
-                            <td>{{ isset($ehsheadverify->created_by) && $ehsheadverify->created_by != '' ? getUsername($ehsheadverify->created_by) : '-' }}</td>
-                            <td>{{ isset($ehsheadverify->remarks) ? $ehsheadverify->remarks : '-' }}</td>
-                            <td>{{ isset($ehsheadverify->created_at) && $ehsheadverify->created_at != '' ? displaydateformat($ehsheadverify->created_at) : '-' }}</td>
-                        </tr>
-
-                        <tr>
-                            <td>Open</td>
-                            <td>
-                                @if (isset($stockopen['to_status']) && $stockopen['to_status'] == STATUS_OHC_CLOSE)
-                            Close
-
-                            @else
-                            <p>-</p>
-                                @endif
-                            </td>
-                            <td>{{ isset($stockopen->created_by) && $stockopen->created_by != '' ? getUsername($stockopen->created_by) : '-' }}</td>
-                            <td>{{ isset($stockopen->remarks) ? $stockopen->remarks : '-' }}</td>
-                            <td>{{ isset($stockopen->created_at) && $stockopen->created_at != '' ? displaydateformat($stockopen->created_at) : '-' }}</td>
-                        </tr>
+                                <!-- To Status Column -->
+                                <td>
+                                    @if ($status_log['to_status'] == STATUS_OHC_EHS_VERIFICATION_PENDING)
+                                        <p style="font-size: 1.0em; ">EHS Officer Verification Pending
+                                        </p>
+                                    @elseif($status_log['to_status'] == STATUS_OHC_EHS_OFFICER_REJECTED)
+                                        <p style="font-size: 1.0em; ">EHS Officer Rejected</p>
+                                    @elseif($status_log['to_status'] == STATUS_OHC_EHS_HEAD_APPROVED)
+                                        <p style="font-size: 1.0em; ">Open</p>
+                                    @elseif($status_log['to_status'] == STATUS_OHC_OPEN)
+                                        <p style="font-size: 1.0em; ">Open</p>
+                                    @elseif($status_log['to_status'] == STATUS_OHC_EHS_HEAD_REJECTED)
+                                        <p style="font-size: 1.0em; ">EHS Head Rejected</p>
+                                    @elseif($status_log['to_status'] == STATUS_OHC_L1_EHS_VERIFICATION_PENDING)
+                                        <p style="font-size: 1.0em; ">L1 EHS Officer Verification
+                                            Pending</p>
+                                    @elseif($status_log['to_status'] == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING)
+                                        <p style="font-size: 1.0em; ">EHS Head Approval Pending</p>
+                                    @elseif($status_log['to_status'] == STATUS_OHC_CLOSE)
+                                        <p style="font-size: 1.0em; ">Closed</p>
+                                    @endif
+                                </td>
+                                <td>{{ isset($status_log['created_by']) ? getUsername($status_log['created_by']) : '-' }}
+                                </td>
+                                <td>{{ isset($status_log['remarks']) ? $status_log['remarks'] : '-' }}
+                                </td>
+                                <td>{{ null !== Displaydateformat($status_log['created_at']) ? Displaydateformat($status_log['created_at']) : '-' }}
+                                </td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>

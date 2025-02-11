@@ -638,7 +638,33 @@
 
                         </div>
                     </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="card-header-inner">
+                                <h4 class="text-white">Mandatory Notes for PPEs</h4>
+                            </div>
+                        </div>
 
+                        <div class="row">
+                            <div class="col-12 col-md-12 p-2">
+
+                                <div class="row g-3">
+                                    <div class="col-12">
+
+                                        <ol class="mb-0" style="line-height: 1.8;">
+                                            <li>Equipemnt must be of national/international
+                                                standard.
+                                            </li>
+                                            <li>Damaged/Defective equipment shall not be used.</li>
+                                            <li> Equipment should be in good working condition.</li>
+                                            <li>Non standard equipment shall not be used.</li>
+                                        </ol>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
 
 
                     <div class="card-body">
@@ -908,38 +934,38 @@
                         </div>
                     @endif
 
-                    @if ($safetypermit['permit_status'] == STATUS_CLOSED )
-                    <div class="card-body ">
-                        <div class="row">
-                            <div class="card-header-inner">
-                                <h4 class="text-white">Permit Closed</h4>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">{{ __('Closed By') }}</label>
-                                <div class="view_data">
-                                    {{ getUsername(isset($safetypermit->closed_by) ? $safetypermit->closed_by : '') }}
-                                </div>
-                            </div>
-                            <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">{{ __('Closed Date') }}</label>
-                                <div class="view_data">
-                                    {{ isset($safetypermit->closed_date) ? Displaydateformat($safetypermit->closed_date) : '' }}
-                                </div>
-                            </div>
-                            <div class="mb-3 col-md-4 form-input">
-                                <label class="form-label view_label">{{ __('Closed Remarks') }}</label>
-                                <div class="view_data">
-                                    {{ isset($safetypermit->close_remarks) ? $safetypermit->close_remarks : '' }}
+                    @if ($safetypermit['permit_status'] == STATUS_CLOSED)
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="card-header-inner">
+                                    <h4 class="text-white">Permit Closed</h4>
                                 </div>
                             </div>
 
+                            <div class="row">
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Closed By') }}</label>
+                                    <div class="view_data">
+                                        {{ getUsername(isset($safetypermit->closed_by) ? $safetypermit->closed_by : '') }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Closed Date') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($safetypermit->closed_date) ? Displaydateformat($safetypermit->closed_date) : '' }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Closed Remarks') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($safetypermit->close_remarks) ? $safetypermit->close_remarks : '' }}
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
-                    </div>
-                @endif
-                    @if ($safetypermit['permit_status'] == STATUS_CANCELLED )
+                    @endif
+                    @if ($safetypermit['permit_status'] == STATUS_CANCELLED)
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">
@@ -999,20 +1025,27 @@
                                                 <td class="text-center" colspan="5">No data is available</td>
                                             </tr>
                                         @else
-                                            @foreach ($status_log as $status_log)
-                                                <tr>
-                                                    <td>{{ isset($status_log['to_status']) ? $status_log['to_status'] : '-' }}
-                                                    </td>
-                                                    <td>{{ isset($status_log['status_name']) ? $status_log['status_name'] : '-' }}
-                                                    </td>
-                                                    <td>{{ isset($status_log['approved_by']) ? getUsername($status_log['approved_by']) : '-' }}
-                                                    </td>
-                                                    <td>{{ isset($status_log['remarks']) ? $status_log['remarks'] : '-' }}
-                                                    </td>
-                                                    <td>{{ null !== Displaydateformat($status_log['created_at']) ? Displaydateformat($status_log['created_at']) : '-' }}
-                                                    </td>
-                                                </tr>
-                                            @endforeach
+                                        @foreach ($status_log as $status)
+                                        <tr>
+                                            <td>{{ isset($status['to_status']) ? $status['to_status'] : '-' }}</td>
+                                            <td>{{ isset($status['status_name']) ? $status['status_name'] : '-' }}</td>
+                                            <td>{{ isset($status['approved_by']) ? getUsername($status['approved_by']) : '-' }}</td>
+                                            <td>{{ isset($status['remarks']) ? $status['remarks'] : '-' }}</td>
+                                            <td>{{ null !== Displaydateformat($status['created_at']) ? Displaydateformat($status['created_at']) : '-' }}</td>
+                                        </tr>
+
+                                        @if ($status['to_status'] == 'EHS Approved')
+                                            <tr>
+                                                <td>Plant Head Approval Pending</td>
+                                                <td>Plant Head Approved</td>
+                                                <td>{{ isset($status['approved_by']) ? getUsername($status['approved_by']) : '-' }}</td>
+                                                <td>{{ isset($status['remarks']) ? $status['remarks'] : '-' }}</td>
+                                                <td>{{ null !== Displaydateformat($status['created_at']) ? Displaydateformat($status['created_at']) : '-' }}</td>
+                                            </tr>
+
+                                        @endif
+                                    @endforeach
+
                                         @endif
                                     </tbody>
                                 </table>

@@ -118,7 +118,7 @@ class MedicineReceiving extends Model
 
         return $this->create($insert_array);
     }
-    public function updates($id)
+    public function updates($id,$hsn)
     {
 
         $request = request();
@@ -130,7 +130,7 @@ class MedicineReceiving extends Model
             'quantity' => $request->quantity,
             'batch_number' => $request->batch_number,
             'expire_date' => DBdateformat($request->expire_date),
-            'hsn_id' => $request->hsn_id ?? $request->hsn_display,
+            'hsn_id' => $request->hsn_id ?? $hsn,
             'rate' => $request->rate,
             'pack_id' => ($request->pack_id),
             'updated_by' => Auth::id(),

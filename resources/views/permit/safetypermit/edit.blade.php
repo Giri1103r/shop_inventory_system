@@ -383,7 +383,7 @@
                                                             <label for= "isolationpanel_checkbox" class="form-label mb-0"
                                                                 style="margin-right: 58px;">Isolation fire panel</label>
                                                             <input type="hidden" name="isolationpanel_checkbox"
-                                                                value="0">
+                                                                value="{{$safetypermit->isolationpanel_checkbox}}">
 
                                                             <input type="checkbox" class="shutdowncheckbox"
                                                                 id="isolationpanel_checkbox"

@@ -35,7 +35,21 @@
                                             value="{{ encryptId($medicine_receiving->id) }}">
                                         <hr>
                                         <div class="row">
-
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label for="unit" class="form-label require ">Unit </label>
+                                                    <select name="unit_id" id="unit_id"
+                                                        class="form-control form-control-sm single-select"
+                                                        style="width: 100%">
+                                                        <option value="">Select the Medicine Name</option>
+                                                        @foreach ($unitList as $list)
+                                                            <option value="{{ encryptId($list->id) }}"
+                                                                @if ($medicine_receiving->unit_id == $list->id) selected @endif>
+                                                                {{ $list->unit_name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="medicine_name" class="form-label require ">Medicine
@@ -67,11 +81,12 @@
                                                         class="form-control form-control-sm single-select"
                                                         style="width: 100%">
                                                         <option value="">Select the Pack</option>
-                                                        @foreach ($medicine as $list)
-                                                            <option
-                                                                value="{{ encryptId($list->id) }}"@if ($medicine_receiving->pack_id == $list->id) selected @endif>
-                                                                {{ $list->pack }}</option>
+
+                                                        @foreach ($medicine_stock as $list)
+                                                            <option value="{{ $list->pack }}"
+                                                                @if ($medicine_receiving->pack_id == $list->pack_id) selected @endif>{{$list->pack_id}}</option>
                                                         @endforeach
+
                                                     </select>
                                                 </div>
                                             </div>
@@ -107,7 +122,8 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="vendor_name" class="form-label require ">Vendor Name</label>
+                                                    <label for="vendor_name" class="form-label require ">Vendor
+                                                        Name</label>
                                                     <select name="vendor_id" id="vendor_id"
                                                         class="form-control form-control-sm single-select"
                                                         style="width: 100%">
@@ -129,7 +145,7 @@
                                             <x-button-submit class="submit" id="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('ppe_exemption/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('ohc/medicine-receiving-form/list') }}"></x-button-cancel>
                                         </div>
                                     </form>
                                 </div>
@@ -157,6 +173,41 @@
 
             });
         });
+        $(document).on('change', '#unit_id', function() {
+            var unitId = $(this).val();
+            if (unitId) {
+                $.ajax({
+                    url: "{{ admin_url('ohc/medicine-receiving-form/ajax-list') }}/" + unitId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#medicine_id').empty().append(
+                            '<option value="">Select Medicine Name</option>');
+                        $.each(data, function(key, value) {
+                            $('#medicine_id').append('<option value="' + value.id + '">' + value
+                                .name + '</option>');
+                        });
+                        $('#medicine_id').trigger('change');
+
+                        $('#pack_id').empty().append(
+                            '<option value="">Select Pack Details</option>');
+                        $.each(data, function(key, value) {
+                            $('#pack_id').append('<option value="' + value.pack + '">' + value
+                                .pack + '</option>');
+                        });
+                        $('#pack_id').trigger('change');
+
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching medicine. Please try again.');
+                    }
+                });
+            } else {
+                $('#medicine_id').empty().append('<option value="">Select Medicine Name</option>').trigger(
+                    'change');
+            }
+        });
+
         $(document).on('change', '#medicine_id', function() {
             var medicineId = $(this).val();
             if (medicineId) {

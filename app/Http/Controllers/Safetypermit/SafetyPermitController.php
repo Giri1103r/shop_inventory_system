@@ -104,7 +104,10 @@ class SafetyPermitController extends Controller
 
 
                         ->editColumn('status_batch', function ($row) {
-                            return  "<span class='" . $row->bg_color . "' >" . $row->status_name . "</span>";
+                            if ($row->permit_status == STATUS_PLANT_HEAD_APPROVED) {
+                                return "<span class='badge bg-success'>Plant Head Approved</span>";
+                            }
+                            return "<span class='" . $row->bg_color . "' >" . $row->status_name . "</span>";
                         })
                         ->addColumn('created_date', function ($row) {
                             return Displaydatetimeformat($row->created_at);
@@ -1288,7 +1291,7 @@ class SafetyPermitController extends Controller
                 'from_status' => $safetypermit->permit_status,
                 'to_status' => 15,
                 'is_reject' => null,
-                'remarks' => null,
+                'remarks' => $remarks,
                 'approved_by' => Auth::id(),
             );
             $this->statuslog->create($insert_array);
