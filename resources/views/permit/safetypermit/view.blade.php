@@ -1025,20 +1025,27 @@
                                                 <td class="text-center" colspan="5">No data is available</td>
                                             </tr>
                                         @else
-                                            @foreach ($status_log as $status_log)
-                                                <tr>
-                                                    <td>{{ isset($status_log['to_status']) ? $status_log['to_status'] : '-' }}
-                                                    </td>
-                                                    <td>{{ isset($status_log['status_name']) ? $status_log['status_name'] : '-' }}
-                                                    </td>
-                                                    <td>{{ isset($status_log['approved_by']) ? getUsername($status_log['approved_by']) : '-' }}
-                                                    </td>
-                                                    <td>{{ isset($status_log['remarks']) ? $status_log['remarks'] : '-' }}
-                                                    </td>
-                                                    <td>{{ null !== Displaydateformat($status_log['created_at']) ? Displaydateformat($status_log['created_at']) : '-' }}
-                                                    </td>
-                                                </tr>
-                                            @endforeach
+                                        @foreach ($status_log as $status)
+                                        <tr>
+                                            <td>{{ isset($status['to_status']) ? $status['to_status'] : '-' }}</td>
+                                            <td>{{ isset($status['status_name']) ? $status['status_name'] : '-' }}</td>
+                                            <td>{{ isset($status['approved_by']) ? getUsername($status['approved_by']) : '-' }}</td>
+                                            <td>{{ isset($status['remarks']) ? $status['remarks'] : '-' }}</td>
+                                            <td>{{ null !== Displaydateformat($status['created_at']) ? Displaydateformat($status['created_at']) : '-' }}</td>
+                                        </tr>
+
+                                        @if ($status['to_status'] == 'EHS Approved')
+                                            <tr>
+                                                <td>Plant Head Approval Pending</td>
+                                                <td>Plant Head Approved</td>
+                                                <td>{{ isset($status['approved_by']) ? getUsername($status['approved_by']) : '-' }}</td>
+                                                <td>{{ isset($status['remarks']) ? $status['remarks'] : '-' }}</td>
+                                                <td>{{ null !== Displaydateformat($status['created_at']) ? Displaydateformat($status['created_at']) : '-' }}</td>
+                                            </tr>
+
+                                        @endif
+                                    @endforeach
+
                                         @endif
                                     </tbody>
                                 </table>
