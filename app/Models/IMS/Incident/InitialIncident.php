@@ -17,7 +17,7 @@ class InitialIncident extends Model
     use  HasFactory;
 
 
-    protected $table = 'ims_master_incident_type';
+    protected $table = 'ims_initial_incident';
     protected $primaryKey = 'id';
 
     protected $fillable = [

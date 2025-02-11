@@ -53,7 +53,7 @@ class InitialIncidentController extends Controller
 
                 try {
 
-                    $data =  $this->hira->list();
+                    $data =  $this->initialincident->list();
 
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
@@ -108,7 +108,7 @@ class InitialIncidentController extends Controller
         }
         $data = array();
 
-        return view('ims.master.hira.list', $data);
+        return view('ims.initial.incident.list', $data);
     }
 
     public function Add(Request $request)
@@ -117,7 +117,7 @@ class InitialIncidentController extends Controller
         try {
 
             $data = array();
-            return view('ims.master.hira.add', $data);
+            return view('ims.initial.incident.add', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -197,7 +197,7 @@ class InitialIncidentController extends Controller
                     'hira' => $hira,
                 );
             }
-            return view('ims.master.hira.view', $data);
+            return view('ims.initial.incident.view', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -215,7 +215,7 @@ class InitialIncidentController extends Controller
             );
 
 
-            return view('ims.master.hira.edit', $data);
+            return view('ims.initial.incident.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
         }
@@ -408,7 +408,7 @@ class InitialIncidentController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('ims.master.hira.pdf', $data);
+            $view = view('ims.initial.incident.pdf', $data);
             $html = $view->render();
 
 
