@@ -118,6 +118,8 @@
                                                         @foreach ($medicine_issuance as $key => $issuance)
                                                             <tr>
                                                                 <td>
+                                                                    <input type="hidden" name="encryptid" class="encryptid"
+                                                                    value="{{ $issuance->id }}">
                                                                     <div class="form-group form-input">
                                                                         <label for="medicine_id" class="require">Medicine
                                                                             Name</label>

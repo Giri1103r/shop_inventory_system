@@ -45,11 +45,11 @@ class MedicineIssuance extends Model
         return $insertedData;
     }
 
-    public function updates($id){
+    public function updates($id)
+    {
         $request = request();
 
-        foreach($request->medicine_id as $index => $medicine) {
-
+        foreach ($request->medicine_id as $index => $medicine) {
             $update_data = [
                 'reference_id' => $id,
                 'medicine_id' => $medicine,
@@ -60,9 +60,20 @@ class MedicineIssuance extends Model
             ];
 
 
-            return $this->where('reference_id', $id)->update($update_data);
+            $existingRecord = $this->where('reference_id', $id)
+                ->where('medicine_id', $medicine)
+                ->first();
+
+            if ($existingRecord) {
+
+                $existingRecord->update($update_data);
+            } else {
+             
+                $this->create($update_data);
+            }
         }
     }
+
     public function selectOne($id)
     {
 
