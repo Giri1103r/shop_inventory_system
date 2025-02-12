@@ -1,6 +1,6 @@
 
 @extends('admin.layouts.admin')
-@section('title', 'Medicine Issuance Show')
+@section('title', 'Medicine First Aid Show')
 @section('pageurl', admin_url('ohc/medicine-requisition/list'))
 
 
@@ -23,7 +23,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('ohc/medicine-issuance/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('ohc/medicine-first-aid/list') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -40,31 +40,31 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Unit') }}</label>
                                         <div class="view_data">
-                                            {{ getUnitname(isset($user_medicine_issuance->unit_id) ? $user_medicine_issuance->unit_id : '') }}
+                                            {{ getUnitname(isset($user_medicine_first_aid->unit_id) ? $user_medicine_first_aid->unit_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Department') }}</label>
                                         <div class="view_data">
-                                            {{ getDepartment(isset($user_medicine_issuance->department_id) ? $user_medicine_issuance->department_id : '') }}
+                                            {{ getDepartment(isset($user_medicine_first_aid->department_id) ? $user_medicine_first_aid->department_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Issued date') }}</label>
                                         <div class="view_data">
-                                            {{ displaydateformat(isset($user_medicine_issuance->issue_date) ? $user_medicine_issuance->issue_date : '') }}
+                                            {{ displaydateformat(isset($user_medicine_first_aid->issue_date) ? $user_medicine_first_aid->issue_date : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Created at') }}</label>
                                         <div class="view_data">
-                                            {{ getUsername(isset($user_medicine_issuance->created_by) ? $user_medicine_issuance->created_by : '') }}
+                                            {{ getUsername(isset($user_medicine_first_aid->created_by) ? $user_medicine_first_aid->created_by : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Created Date') }}</label>
                                         <div class="view_data">
-                                            {{ displaydateformat(isset($user_medicine_issuance->created_at) ? $user_medicine_issuance->created_at : '') }}
+                                            {{ displaydateformat(isset($user_medicine_first_aid->created_at) ? $user_medicine_first_aid->created_at : '') }}
                                         </div>
                                     </div>
                                 </div>
@@ -81,12 +81,12 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @if ($medicine_issuance->isEmpty())
+                                            @if ($medicine_first_aid->isEmpty())
                                                 <tr>
                                                     <td colspan="4" class="text-center">No data is available</td>
                                                 </tr>
                                             @else
-                                                @foreach ($medicine_issuance as $data)
+                                                @foreach ($medicine_first_aid as $data)
                                                     <tr>
                                                         <td>{{ $loop->iteration }}</td>
                                                             <td>{{ getMedicinename($data->medicine_id) }}</td>

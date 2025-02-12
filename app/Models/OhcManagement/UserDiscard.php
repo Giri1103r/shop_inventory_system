@@ -2,23 +2,20 @@
 
 namespace App\Models\OhcManagement;
 
-use App\Scopes\TrashScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-class UserMedicineRequisition extends Model
+class UserDiscard extends Model
 {
-    protected $table = 'ohc_management_user_medicine_requisition';
+    protected $table = 'ohc_management_discard';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'req_id',
         'unit_id',
         'department_id',
-        'request_date',
+        'discard_date',
         'status',
-        'approve_status',
         'trash',
         'created_by',
         'updated_by',
@@ -33,7 +30,7 @@ class UserMedicineRequisition extends Model
         $user = Auth::user();
         $userRole = string_to_array($user->role);
         $empId = $user->employee_id;
-        $query = $this->select('ohc_management_user_medicine_requisition.*', );
+        $query = $this->select('ohc_management_discard.*', );
 
 
         if ($request->search['value'] != null) {
@@ -44,46 +41,32 @@ class UserMedicineRequisition extends Model
         }
 
 
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
 
-        }elseif(in_array(ROLE_PARAMEDICS, $userRole)){
 
-        }
-         else {
-            $query->where('ohc_management_user_medicine_requisition.created_by',Auth::id());
-        }
 
-        if ($request->has('status') && $request->status) {
-
-            $query = $query->where('ohc_management_user_medicine_requisition.approve_status', ($request->status));
-        }
-        if ($request->has('req_id') && $request->req_id) {
-
-            $query = $query->where('ohc_management_user_medicine_requisition.req_id', $request->req_id);
-        }
         if ($request->has('unit_id') && $request->unit_id) {
 
-            $query = $query->where('ohc_management_user_medicine_requisition.unit_id', decryptId($request->unit_id));
+            $query = $query->where('ohc_management_discard.unit_id', decryptId($request->unit_id));
 
         }
-        if ($request->has('request_date') && $request->request_date) {
+        if ($request->has('discard_date') && $request->discard_date) {
 
-            $query = $query->where('ohc_management_user_medicine_requisition.request_date', DBdateformat($request->request_date));
+            $query = $query->where('ohc_management_discard.discard_date', DBdateformat($request->discard_date));
         }
         if ($request->has('department_id') && $request->department_id) {
 
-            $query = $query->where('ohc_management_user_medicine_requisition.department_id', decryptId($request->department_id));
+            $query = $query->where('ohc_management_discard.department_id', decryptId($request->department_id));
         }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('ohc_management_user_medicine_requisition.created_at', [$startDate, $endDate]);
+            $query->whereBetween('ohc_management_discard.created_at', [$startDate, $endDate]);
         } elseif ($request->has('from_date') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('ohc_management_user_medicine_requisition.created_at', '>=', $startDate);
+            $query->where('ohc_management_discard.created_at', '>=', $startDate);
         } elseif ($request->has('to_date') && !empty($request->to_date)) {
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('ohc_management_user_medicine_requisition.created_at', '<=', $endDate);
+            $query->where('ohc_management_discard.created_at', '<=', $endDate);
         }
 
 
@@ -110,7 +93,7 @@ class UserMedicineRequisition extends Model
         $insert_array = [
             'unit_id' =>Auth::user()->unit_id,
             'department_id' =>Auth::user()->department_id,
-            'request_date' => DBdateformat($request->request_date),
+            'discard_date' => DBdateformat($request->discard_date),
             'req_id' => $request->req_id,
             'approve_status'=>STATUS_OHC_PARAMEDICS_APPROVAL_PENDING,
             'created_by' => Auth::id(),
@@ -126,7 +109,7 @@ class UserMedicineRequisition extends Model
         $update_array = array(
           'unit_id' =>Auth::user()->unit_id,
             'department_id' =>Auth::user()->department_id,
-            'request_date' => DBdateformat($request->request_date),
+            'discard_date' => DBdateformat($request->discard_date),
             'req_id' => $request->req_id,
             'updated_by' => Auth::id(),
         );
@@ -138,9 +121,9 @@ class UserMedicineRequisition extends Model
     {
 
         $data = $this->select(
-            'ohc_management_user_medicine_requisition.*'
+            'ohc_management_discard.*'
         )
-            ->where('ohc_management_user_medicine_requisition.id', $id)
+            ->where('ohc_management_discard.id', $id)
             ->first();
 
         return $data;
@@ -172,7 +155,7 @@ class UserMedicineRequisition extends Model
         $userRole = string_to_array($user->role);
         $empId = $user->employee_id;
         $search = '';
-        $query = $this->select('ohc_management_user_medicine_requisition.*');
+        $query = $this->select('ohc_management_discard.*');
 
             if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
 
@@ -180,7 +163,7 @@ class UserMedicineRequisition extends Model
 
             }
              else {
-                $query->where('ohc_management_user_medicine_requisition.created_by',Auth::id());
+                $query->where('ohc_management_discard.created_by',Auth::id());
             }
 
         if ($request->search != null || $request->search != '') {
@@ -193,35 +176,35 @@ class UserMedicineRequisition extends Model
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('ohc_management_user_medicine_requisition.approve_status', ($request->status));
+            $query = $query->where('ohc_management_discard.approve_status', ($request->status));
         }
         if ($request->has('req_id') && $request->req_id) {
 
-            $query = $query->where('ohc_management_user_medicine_requisition.req_id', $request->req_id);
+            $query = $query->where('ohc_management_discard.req_id', $request->req_id);
         }
         if ($request->has('unit_id') && $request->unit_id) {
 
-            $query = $query->where('ohc_management_user_medicine_requisition.unit_id', decryptId($request->unit_id));
+            $query = $query->where('ohc_management_discard.unit_id', decryptId($request->unit_id));
 
         }
-        if ($request->has('request_date') && $request->request_date) {
+        if ($request->has('discard_date') && $request->discard_date) {
 
-            $query = $query->where('ohc_management_user_medicine_requisition.request_date', DBdateformat($request->request_date));
+            $query = $query->where('ohc_management_discard.discard_date', DBdateformat($request->discard_date));
         }
         if ($request->has('department_id') && $request->department_id) {
 
-            $query = $query->where('ohc_management_user_medicine_requisition.department_id', decryptId($request->department_id));
+            $query = $query->where('ohc_management_discard.department_id', decryptId($request->department_id));
         }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('ohc_management_user_medicine_requisition.created_at', [$startDate, $endDate]);
+            $query->whereBetween('ohc_management_discard.created_at', [$startDate, $endDate]);
         } elseif ($request->has('from_date') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('ohc_management_user_medicine_requisition.created_at', '>=', $startDate);
+            $query->where('ohc_management_discard.created_at', '>=', $startDate);
         } elseif ($request->has('to_date') && !empty($request->to_date)) {
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('ohc_management_user_medicine_requisition.created_at', '<=', $endDate);
+            $query->where('ohc_management_discard.created_at', '<=', $endDate);
         }
 
 
@@ -230,17 +213,7 @@ class UserMedicineRequisition extends Model
         return  $query->get();
     }
 
-    protected static function booted()
-    {
-        static::addGlobalScope(new TrashScope('ohc_management_user_medicine_requisition'));
-
-        static::created(function ($model) {
-
-            $uniqueId = 'REQ-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
-            $model->update(['req_id' => $uniqueId]);
-        });
-    }
-
+  
     public function approvereject($id, $data)
     {
         return $this->where('id', $id)->update(['approve_status' => $data['approve_status'],

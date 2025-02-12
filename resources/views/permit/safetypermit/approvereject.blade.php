@@ -440,7 +440,32 @@
 
                         </div>
                     </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="card-header-inner">
+                                <h4 class="text-white">Mandatory Notes for PPEs</h4>
+                            </div>
+                        </div>
 
+                        <div class="row">
+                            <div class="col-12 col-md-12 p-2">
+
+                                <div class="row g-3">
+                                    <div class="col-12">
+
+                                        <ol class="mb-0" style="line-height: 1.8;">
+                                            <li>PPEs must be of national/international standard.
+                                            </li>
+                                            <li>Damaged/defective PPEs shall not be used.</li>
+                                            <li>Non-standard PPEs shall not be used.</li>
+                                            <li>PPEs must be inspected before use.</li>
+                                        </ol>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="card-header-inner">
@@ -640,7 +665,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="card-header-inner">
-                                <h4 class="text-white">Mandatory Notes for PPEs</h4>
+                                <h4 class="text-white">Mandatory Notes for Equipments</h4>
                             </div>
                         </div>
 
@@ -664,6 +689,7 @@
                             </div>
                         </div>
                     </div>
+
 
                     <div class="card-body">
                         <div class="row">
@@ -724,6 +750,36 @@
                                 <span class="view_data">
                                     {{ $safetypermit->attendance_toolbox_talk }}
                                 </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="card-header-inner">
+                                <h4 class="text-white">Note</h4>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 col-md-12 p-2">
+
+                                <div class="row g-3">
+                                    <div class="col-12">
+
+                                        <ol class="mb-0" style="line-height: 1.8;">
+                                            <li>Work Permit is mandatory for non routine work, third party working agency & high risk Job.
+                                            </li>
+                                            <li>Work Permit is valid for 8 hours / Renewal may be extended as per unit head approval.</li>
+                                            <li>Work Permit will be canceled in case of emergency i.e Fire, weather condition, disaster etc.</li>
+                                            <li>Work permit is not valid without signature of Requestor, Verifier & Approver.</li>
+                                            <li>Safe Work procedure & method of statement must be discussed in the tool box talk.</li>
+                                            <li>Permit to be signed by (Requestor, Verifier & Approver) people not less than Site Engineer / Floor Manager.</li>
+                                            <li>Permit Safety compliance shall be discussed to all involved person in local language.</li>
+
+                                        </ol>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>

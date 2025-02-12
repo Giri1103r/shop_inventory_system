@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medicine Requisition')
-@section('pageurl', admin_url('ohc/medicine-requisition/list'))
+@section('title', 'Discard the Expire Medicine')
+@section('pageurl', admin_url('ohc/discard/list'))
 @section('content')
     @push('style')
         <style>
@@ -21,7 +21,7 @@
 
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary"
-                            href="{{ admin_url('ohc/medicine-requisition/add') }}">Add</x-button-add>
+                            href="{{ admin_url('ohc/discard/add') }}">Add</x-button-add>
                         {{-- @endif --}}
 
                     </div>
@@ -123,12 +123,11 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Requisition ID</th>
+
                                         <th>Unit Name</th>
                                         <th>Department Name</th>
-                                        <th>Request Date</th>
-                                        <th>Approve Status</th>
-                                        <th data-priority="1">Action</th>
+                                        <th>Discard Date</th>
+
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -244,7 +243,7 @@
                 bottom2End: 'paging'
             },
             ajax: {
-                url: "{{ admin_url('ohc/medicine-requisition/list') }}",
+                url: "{{ admin_url('ohc/discard/list') }}",
                 type: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -270,10 +269,7 @@
                     orderable: false,
                     searchable: false
                 },
-                {
-                    data: 'req_id',
-                    name: 'req_id'
-                },
+
                 {
                     data: 'unit_id',
                     name: 'unit_id'
@@ -283,19 +279,11 @@
                     name: 'department_id'
                 },
                 {
-                    data: 'request_date',
-                    name: 'request_date'
+                    data: 'discard_date',
+                    name: 'discard_date'
                 },
 
-                {
-                    data: 'approve_status',
-                    name: 'approve_status'
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false
-                }
+
             ],
             language: {
                 paginate: {
@@ -330,7 +318,7 @@
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
                                 window.location.href =
-                                    "{{ admin_url('ohc/medicine-requisition/export/pdf') }}" +
+                                    "{{ admin_url('ohc/discard/export/pdf') }}" +
                                     '?search=' + searchValue +
                                     '&department_id=' + department_id +
                                     '&req_id=' + req_id +
@@ -357,7 +345,7 @@
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
                                 window.location.href =
-                                    "{{ admin_url('ohc/medicine-requisition/export/excel') }}" +
+                                    "{{ admin_url('ohc/discard/export/excel') }}" +
                                     '?search=' + searchValue +
                                     '&req_id=' + req_id +
                                     '&department_id=' + department_id +
@@ -406,7 +394,7 @@
 
                 if (result.value) {
                     $.ajax({
-                        url: "{{ admin_url('ohc/medicine-requisition/status') }}",
+                        url: "{{ admin_url('ohc/discard/status') }}",
                         type: 'post',
 
                         data: {

@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medicine Requisition Approval')
-@section('pageurl', admin_url('ohc/medicine-requisition/list'))
+@section('title', 'Discard the Expire Medicine')
+@section('pageurl', admin_url('ohc/discard/list'))
 
 
 @section('content')
@@ -22,7 +22,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('ohc/medicine-requisition/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('ohc/discard/list') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -109,51 +109,62 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Paramedics Approval Pending</h4>
+                                        <h4 class="text-white">Status Logs</h4>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <form method="POST" id="ParamedicsForm"
-                                        action="{{ admin_url('ohc/medicine-requisition/approval/submit') }}">
-                                        @csrf
-                                        <input type="hidden" name="id"
-                                            value="{{ encryptId($user_medicine_requisition->id) }}">
-                                        <div class="row">
 
-                                            <div class="col-md-4 mb-3">
-                                                <div class="form-input">
-                                                    <label for="ehs_head" class="require form-label">Approver
-                                                        Name</label>
-                                                    <input type="text" name="approver_name" id="approver_name"
-                                                        class="form-control" value="{{ Auth::user()->name }}" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-3">
-                                                <div class="form-input">
-                                                    <label for="ehs_head" class="require form-label">Date</label>
-                                                    <input type="text" name="date" id="date" class="form-control"
-                                                        value="{{ date('d-m-Y H:i:s') }}" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12 mb-3">
-                                                <div class="mb-1 form-input">
-                                                    <label for="remarks" class="form-label require">Remarks</label>
-                                                    <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks" rows="3"></textarea>
-                                                    <div class="text-danger" id="remarks_error"></div>
-                                                    @error('remarks')
-                                                        <span id="remark_error" class="text-danger">{{ $message }}</span>
-                                                    @enderror
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex float-end gap-2 mx-auto">
-                                            <button type="submit" name="action" value="approve"
-                                                class="btn btn-success w-100">Approve</button>
-                                            <button type="submit" name="action" value="reject"
-                                                class="btn btn-danger w-100">reject</button>
-                                        </div>
-                                    </form>
+                                <div class="table-responsive">
+                                    <div class="col-md-12">
+                                        <table class="table table-bordered">
+                                            <thead class="bg-secondary" style="color: #ffff">
+                                                <tr>
+                                                    <th>From Status</th>
+                                                    <th>To Status</th>
+                                                    <th>Remarks</th>
+                                                    <th>Approver Name</th>
+                                                    <th>Approver Date</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                @foreach ($logdata as $log)
+                                                <tr>
+                                                    <td>
+                                                        @if($log['from_status'] == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)
+                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Paramedics Approval Pending</span>
+                                                            @elseif($log['from_status'] == STATUS_OHC_STOCK_REQUEST)
+                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Stock Requested</span>
+                                                        @elseif($log['from_status'] == STATUS_OHC_PARAMEDICS_APPROVED)
+                                                            <span class='badge bg-success' style='font-size: 1.0em;'>Paramedics Approved</span>
+                                                        @elseif($log['from_status'] == STATUS_OHC_PARAMEDICS_REJECTED)
+                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Paramedics Approval Pending</span>
+                                                        @elseif($log['from_status'] == STATUS_OHC_CLOSE)
+                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Paramedics Approved</span>
+                                                        @endif
+                                                    </td>
+
+                                                    <td>
+                                                        @if($log['to_status'] == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)
+                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Paramedics Approval Pending</span>
+                                                        @elseif($log['to_status'] == STATUS_OHC_PARAMEDICS_APPROVED)
+                                                            <span class='badge bg-success' style='font-size: 1.0em;'>Paramedics Approved</span>
+                                                        @elseif($log['to_status'] == STATUS_OHC_PARAMEDICS_REJECTED)
+                                                            <span class='badge bg-danger' style='font-size: 1.0em;'>Paramedics Rejected</span>
+                                                        @elseif($log['to_status'] == STATUS_OHC_CLOSE)
+                                                            <span class='badge bg-success' style='font-size: 1.0em;'>Close</span>
+                                                        @endif
+                                                    </td>
+
+                                                    <td>{{ isset($log['remarks']) ? $log['remarks'] : '-' }}</td>
+                                                    <td>{{ isset($log['created_by']) ? getUsername($log['created_by']) : '-' }}</td>
+                                                    <td>{{ isset($log['created_at']) ? Displaydateformat($log['created_at']) : '-' }}</td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -162,54 +173,3 @@
         </div>
 
     @stop
-
-    @push('script')
-        <script>
-            $(function() {
-                // Add custom regex rule
-                $.validator.addMethod(
-                    "regex",
-                    function(value, element, regex) {
-                        return this.optional(element) || regex.test(value);
-                    },
-                    "Invalid format."
-                );
-
-                $('#ParamedicsForm').validate({
-                    rules: {
-                        remarks: {
-                            required: true,
-                            minlength: 3,
-                            maxlength: 600,
-
-                        },
-                    },
-                    messages: {
-                        remarks: {
-                            required: "Remarks is required",
-                            minlength: "Minimum 3 characters are needed",
-                            maxlength: "Maximum Characters should not be exceed more than 600",
-                        },
-                    },
-                    errorElement: 'span',
-                    errorPlacement: function(error, element) {
-                        error.addClass('invalid-feedback');
-                        element.closest('.form-input').append(error);
-                    },
-                    highlight: function(element, errorClass, validClass) {
-                        $(element).addClass('is-invalid');
-                    },
-                    unhighlight: function(element, errorClass, validClass) {
-                        $(element).removeClass('is-invalid');
-                    },
-                    submitHandler: function(form) {
-                        form.submit();
-                    },
-                    invalidHandler: function(event, validator) {
-                        var errors = validator.numberOfInvalids();
-                        console.log("Form has " + errors + " invalid fields.");
-                    },
-                });
-            });
-        </script>
-    @endpush

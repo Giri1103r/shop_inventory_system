@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medicine Requisition')
-@section('pageurl', admin_url('ohc/medicine-requisition/list'))
+@section('title', 'Medicine First Aid')
+@section('pageurl', admin_url('ohc/medicine-first-aid/list'))
 @section('content')
     @push('style')
         <style>
@@ -21,7 +21,7 @@
 
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary"
-                            href="{{ admin_url('ohc/medicine-requisition/add') }}">Add</x-button-add>
+                            href="{{ admin_url('ohc/medicine-first-aid/add') }}">Add</x-button-add>
                         {{-- @endif --}}
 
                     </div>
@@ -31,13 +31,6 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-
-                                        <div class="col-md-3 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">Requisition ID</label>
-                                                <input type="text" name="req_id" class="form-control" id="req_id">
-                                            </div>
-                                        </div>
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label ">Unit</label>
@@ -62,17 +55,6 @@
                                             </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">Request date</label>
-                                            <div class="input-group date form-input custom-height">
-                                                <input type="text" class="form-control " name="request_date"
-                                                    id="request_date" autocomplete="off">
-                                                <div class="input-group-addon input-group-text">
-                                                    <span class="fa fa-calendar"></span>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
@@ -94,17 +76,14 @@
                                             </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label">Approve Status</label>
-                                            <select name="status" id="status" style="width: 100%" class="form-control single-select">
+                                            <label for="status" class="form-label">{{ __('common.status') }}</label>
+                                            <select name="status" id="status" style="width: 100%"
+                                                class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="9">Paramedics Approval Pending</option>
-                                                <option value="11">Paramedics Approved</option>
-                                                <option value="10">Paramedics Rejected</option>
-                                                <option value="1">Open</option>
-                                                <option value="5">Close</option>
+                                                <option value="{{ encryptId(1) }}">Active</option>
+                                                <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
-
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -119,15 +98,13 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table id="datatable-list"
-                                class="table primary-table-bordered table-bordered table-striped  nowrap w-100 mt-2 datatable-list">
+                            class="table primary-table-bordered table-bordered table-striped  nowrap w-100 mt-2 datatable-list">
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Requisition ID</th>
                                         <th>Unit Name</th>
                                         <th>Department Name</th>
-                                        <th>Request Date</th>
-                                        <th>Approve Status</th>
+                                        <th>Issue Date</th>
                                         <th data-priority="1">Action</th>
                                     </tr>
                                 </thead>
@@ -186,9 +163,7 @@
                     }
                 }
             });
-            $('#request_date').flatpickr({
-                dateFormat: "d-m-Y",
-            })
+
             var toDatepicker = flatpickr("#to_date", {
                 dateFormat: "d-m-Y",
                 minDate: "today"
@@ -221,13 +196,13 @@
         });
 
         var table = $('.datatable-list').DataTable({
-            autoWidth: true,
-            responsive: true,
-            processing: false,
             serverSide: true,
             searching: true,
-            scrollX: false,
             ordering: true,
+            bSort: false,
+            scrollX: true,
+            autoWidth: false,
+            responsive: false,
             dom: 'Bfrtip',
             layout: {
                 top2Start: 'buttons',
@@ -244,17 +219,15 @@
                 bottom2End: 'paging'
             },
             ajax: {
-                url: "{{ admin_url('ohc/medicine-requisition/list') }}",
+                url: "{{ admin_url('ohc/medicine-first-aid/list') }}",
                 type: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 data: function(d) {
                     d.unit_id = $('#unit_id').val();
-                    d.req_id = $('#req_id').val();
                     d.department_id = $('#department_id').val();
                     d.from_date = $('#from_date').val();
-                    d.request_date = $('#request_date').val();
                     d.to_date = $('#to_date').val();
                     d.status = $('#status').val();
                 },
@@ -270,10 +243,7 @@
                     orderable: false,
                     searchable: false
                 },
-                {
-                    data: 'req_id',
-                    name: 'req_id'
-                },
+
                 {
                     data: 'unit_id',
                     name: 'unit_id'
@@ -283,13 +253,8 @@
                     name: 'department_id'
                 },
                 {
-                    data: 'request_date',
-                    name: 'request_date'
-                },
-
-                {
-                    data: 'approve_status',
-                    name: 'approve_status'
+                    data: 'issue_date',
+                    name: 'issue_date'
                 },
                 {
                     data: 'action',
@@ -321,22 +286,18 @@
                             action: function(e, dt, button, config) {
                                 var searchValue = $('#datatable-list_filter input').val();
                                 var department_id = $('#department_id').val();
-                                var req_id = $('#req_id').val();
                                 var unit_id = $('#unit_id').val();
                                 var from_date = $('#from_date').val();
-                                var request_date = $('#request_date').val();
                                 var to_date = $('#to_date').val();
                                 var status = $('#status').val();
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
                                 window.location.href =
-                                    "{{ admin_url('ohc/medicine-requisition/export/pdf') }}" +
+                                    "{{ admin_url('ohc/medicine-first-aid/export/pdf') }}" +
                                     '?search=' + searchValue +
                                     '&department_id=' + department_id +
-                                    '&req_id=' + req_id +
                                     '&unit_id=' + unit_id +
                                     '&from_date=' + from_date +
-                                    '&request_date=' + request_date +
                                     '&status=' + status +
                                     '&to_date=' + to_date;
                             }
@@ -347,23 +308,19 @@
                             action: function(e, dt, button, config) {
                                 var searchValue = $('#datatable-list_filter input').val();
                                 var department_id = $('#department_id').val();
-                                var req_id = $('#req_id').val();
                                 var unit_id = $('#unit_id').val();
                                 var from_date = $('#from_date').val();
-                                var request_date = $('#request_date').val();
                                 var to_date = $('#to_date').val();
                                 var status = $('#status').val();
 
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
                                 window.location.href =
-                                    "{{ admin_url('ohc/medicine-requisition/export/excel') }}" +
+                                    "{{ admin_url('ohc/medicine-first-aid/export/excel') }}" +
                                     '?search=' + searchValue +
-                                    '&req_id=' + req_id +
                                     '&department_id=' + department_id +
                                     '&unit_id=' + unit_id +
                                     '&from_date=' + from_date +
-                                    '&request_date=' + request_date +
                                     '&status=' + status +
                                     '&to_date=' + to_date;
                             }
@@ -375,76 +332,6 @@
                     text: '{{ __('common.show') }} 10 {{ __('common.records') }}'
                 }
             ],
-        });
-
-        $(document).on('click', '.statusChange', function() {
-            var id = $(this).data('id');
-            var types = $(this).data('type');
-            if (types == 1) {
-                var title = '{{ __('Do You want to In-Activate Medicine Requisition Details') }}';
-                var text = '{{ __('common.inactive') }}';
-                var btncolor = '#dc3545'
-
-            } else {
-                var title = '{{ __('Do You want to Activate Medicine Requisition Details') }}';
-                var text = '{{ __('common.active') }}';
-                var btncolor = '#7ddc35'
-            }
-
-            Swal.fire({
-                title: title,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: text,
-                confirmButtonColor: btncolor,
-                customClass: {
-                    confirmButton: 'btn-skew',
-                    cancelButton: 'btn-skew'
-                },
-            }).then((result) => {
-
-
-                if (result.value) {
-                    $.ajax({
-                        url: "{{ admin_url('ohc/medicine-requisition/status') }}",
-                        type: 'post',
-
-                        data: {
-                            id: id,
-                            types: types
-                        },
-                        success: function(response) {
-                            const Toast = Swal.mixin({
-                                toast: true,
-                                position: 'top-right',
-                                showConfirmButton: false,
-                                timer: 3000,
-                                timerProgressBar: true,
-                                didOpen: (toast) => {
-                                    toast.addEventListener(
-                                        'mouseenter',
-                                        Swal.stopTimer)
-                                    toast.addEventListener(
-                                        'mouseleave',
-                                        Swal.resumeTimer
-                                    )
-                                }
-                            });
-                            Toast.fire({
-                                icon: 'success',
-                                title: response.msg
-                            });
-                            table.draw();
-                        },
-                        error: function(data) {
-                            $.notify(data.responseJSON.msg, "error");
-                        }
-                    });
-                } else if (result.isDenied) {
-                    Swal.fire('Something went wrong', '', 'info');
-                }
-            })
-
         });
     </script>
 @endpush

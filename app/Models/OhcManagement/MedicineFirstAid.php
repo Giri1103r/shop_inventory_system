@@ -5,9 +5,9 @@ namespace App\Models\OhcManagement;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-class MedicineIssuance extends Model
+class MedicineFirstAid extends Model
 {
-    protected $table = 'ohc_management_medicine_issuance';
+    protected $table = 'ohc_management_medicine_first_aid';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -45,11 +45,11 @@ class MedicineIssuance extends Model
         return $insertedData;
     }
 
-    public function updates($id)
-    {
+    public function updates($id){
         $request = request();
 
-        foreach ($request->medicine_id as $index => $medicine) {
+        foreach($request->medicine_id as $index => $medicine) {
+
             $update_data = [
                 'reference_id' => $id,
                 'medicine_id' => $medicine,
@@ -60,25 +60,14 @@ class MedicineIssuance extends Model
             ];
 
 
-            $existingRecord = $this->where('reference_id', $id)
-                ->where('medicine_id', $medicine)
-                ->first();
-
-            if ($existingRecord) {
-
-                $existingRecord->update($update_data);
-            } else {
-             
-                $this->create($update_data);
-            }
+            return $this->where('reference_id', $id)->update($update_data);
         }
     }
-
     public function selectOne($id)
     {
 
         $data = $this->select(
-            'ohc_management_medicine_issuance.*')->where('reference_id',$id)
+            'ohc_management_medicine_first_aid.*')->where('reference_id',$id)
             ->get();
 
         return $data;

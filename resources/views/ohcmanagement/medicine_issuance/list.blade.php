@@ -21,7 +21,7 @@
 
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary"
-                            href="{{ admin_url('ohc/prescribe-to-patient/add') }}">Add</x-button-add>
+                            href="{{ admin_url('ohc/medicine-issuance/add') }}">Add</x-button-add>
                         {{-- @endif --}}
 
                     </div>
