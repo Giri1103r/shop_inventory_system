@@ -112,11 +112,6 @@ class PpeStockinventory extends Model
 
     public function store($data)
     {
-        $updatedItemCodes = [];
-
-
-
-
         $groupedData = collect($data)->groupBy('ITEM_CODE');
 
         foreach ($groupedData as $itemCode => $items) {
@@ -130,20 +125,19 @@ class PpeStockinventory extends Model
                     'uom' => $item['UOM'] ?? null,
                     'quantity' => $item['QTY'] ?? null,
                     'item_description' => $item['ITEM_DESCRIPTION'] ?? null,
-                    'created_by' =>1,
+                    'created_by' => 1,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
 
-                return  $this->updateOrInsert(
-                    ['item_code' => $itemCode],
-                    $insert_array
-                );
-            }
 
+                $this->updateOrInsert(['item_code' => $itemCode], $insert_array);
+            }
         }
 
+        return true; 
     }
+
 
     public function updates($id)
     {
