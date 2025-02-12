@@ -1066,7 +1066,14 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/Submit', [AccidentReportController::class, 'importSubmit']);
                 Route::post('/status', [AccidentReportController::class, 'statusChange']);
                 Route::post('/unique', [AccidentReportController::class, 'Uniquecheck']);
+                Route::get('/fetchEmployeeDetails/{emp_code}', [AccidentReportController::class, 'fetchEmployeeDetails']);
+                Route::get('/investigation', [AccidentReportController::class, 'investigation']);
+                Route::get('/review/{id}', [AccidentReportController::class, 'review']);
+                Route::post('/ehs_head_review/submit', [AccidentReportController::class, 'ehsHeadReviewSubmit']);
+                Route::get('/getemployeename', [AccidentReportController::class, 'employeename']);
             });
+
+
         });
     });
 });

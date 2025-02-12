@@ -125,6 +125,21 @@ class Employee extends Model
         );
         return $datas;
     }
+
+    public function getempDetails($emp_code)
+    {
+        return $this->select(
+            'masters_employee.*',
+            'masters_department.department_name',
+            'masters_unit.unit_name'
+        )
+            ->leftJoin('masters_department', 'masters_employee.department', '=', 'masters_department.id')
+            ->leftJoin('masters_unit', 'masters_employee.unit', '=', 'masters_unit.id')
+            ->where('masters_employee.status', 1)
+            ->where('masters_employee.emp_id', $emp_code)
+            ->first();
+    }
+
     public function UniqueCheck($data)
     {
 
@@ -151,8 +166,8 @@ class Employee extends Model
                 continue;
             }
             $role = DB::table('template_user_role')
-            ->where('role_name', $item->user_role)
-            ->first();
+                ->where('role_name', $item->user_role)
+                ->first();
 
             $data = [
                 'emp_id' => $item->emp_id ?? null,
@@ -174,7 +189,7 @@ class Employee extends Model
             if ($exists) {
                 if (!empty($item->mobile_no) || $item->mobile_no != null) {
                     $data['mobile_no'] = $item->mobile_no;
-                }else{
+                } else {
                     $data['mobile_no'] = $exists->mobile_no;
                 }
                 $data['updated_at'] = now();

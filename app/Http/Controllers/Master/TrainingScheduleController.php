@@ -401,7 +401,6 @@ class TrainingScheduleController extends Controller
                     });
 
                     foreach ($nomineesWithEmail  as $nominee) {
-
                         $nomineeArray = [
                             'emp_name' => $nominee->emp_name,
                             'from_date' => Displaydateformat($nominee->from_date),

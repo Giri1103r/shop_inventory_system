@@ -26,50 +26,45 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="from_date" class="form-label">From Date</label>
+                                            <input type="text" name="from_date" id="from_date_datepicker"
+                                                class="form-control" placeholder="From Date">
+                                        </div>
+
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="to_date" class="form-label">To Date</label>
+                                            <input type="text" name="to_date" id="to_date_datepicker"
+                                                class="form-control" placeholder="To Date">
+                                        </div>
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label ">Sr. No</label>
-                                                <input type="text" name="accident_report_no" id="accident_report_no" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">Source, Situation,
-                                                    Act,Activity,Product,Services</label>
-                                                <input type="text" name="services" id="services" class=" form-control ">
+                                                <input type="text" name="accident_report_no" id="accident_report_no"
+                                                    class="form-control">
                                             </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label require">Type of Hazard</label>
-                                            <select name="hazard_type" id="hazard_type" style="width: 100%"
-                                                class="form-control single-select">
-                                                <option value="">Select Type of Hazard</option>
-                                                <option value="1">P - Physical Hazard</option>
-                                                <option value="2">C - Chemical Hazard</option>
-                                                <option value="3">B - Behavioral Hazard</option>
-                                                <option value="4">O - Other Hazard</option>
+                                            <label for="emp_code" class="form-label ">Employee Code</label>
+                                            <select name="emp_code" id="emp_code" class=" form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select Employee Code</option>
+                                                @foreach ($employeeList as $emp)
+                                                    <option value="{{ encryptId($emp->emp_id) }}">
+                                                        {{ $emp->emp_id }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">From Date</label>
-                                            <div class="input-group date form-input custom-height">
-                                                <input type="text" class="form-control " name="from_date" id="from_date"
-                                                    autocomplete="off">
-                                                <div class="input-group-addon input-group-text">
-                                                    <span class="fa fa-calendar"></span>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">To Date</label>
-                                            <div class="input-group date form-input  custom-height">
-                                                <input type="text" class="form-control " name="to_date" id="to_date"
-                                                    autocomplete="off">
-                                                <div class="input-group-addon input-group-text">
-                                                    <span class="fa fa-calendar"></span>
-                                                </div>
-                                            </div>
+                                            <label for="department_id" class="form-label ">Department</label>
+                                            <select name="department_id" id="department_id" class=" form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select Department</option>
+                                                @foreach ($departmentList as $department)
+                                                    <option value="{{ encryptId($department->id) }}">
+                                                        {{ $department->department_name }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label">{{ __('common.status') }}</label>
@@ -102,8 +97,10 @@
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
                                         <th>Sr. No</th>
-                                        <th>Source, Situation, Act,Activity, Product,Services</th>
-                                        <th>Type of Hazard</th>
+                                        <th>Date and Time</th>
+                                        <th>Employee Code</th>
+                                        <th>Unit</th>
+                                        <th>Department</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -128,22 +125,19 @@
         $(document).ready(function() {
             var firstTh = $('.datatable-list thead th:first');
             firstTh.removeClass('sorting_asc');
-        });
-        $(document).ready(function() {
-            var fromDatepicker = flatpickr("#from_date", {
+
+            flatpickr("#from_date_datepicker", {
                 dateFormat: "d-m-Y",
-                onChange: function(selectedDates) {
-                    if (selectedDates.length > 0) {
-                        var startDate = selectedDates[0];
-                        toDatepicker.set('minDate', startDate);
-                        toDatepicker.clear();
+                onChange: function(selectedDates, dateStr) {
+                    const toDatePicker = document.getElementById("to_date_datepicker")._flatpickr;
+                    if (toDatePicker) {
+                        toDatePicker.set("minDate", dateStr);
                     }
-                }
+                },
             });
 
-            var toDatepicker = flatpickr("#to_date", {
+            flatpickr("#to_date_datepicker", {
                 dateFormat: "d-m-Y",
-                minDate: "today"
             });
         });
 
@@ -180,11 +174,11 @@
                             .attr('content')
                     },
                     data: function(d) {
-                        d.sr_no = $('#sr_no').val();
-                        d.services = $('#services').val();
-                        d.hazard_type = $('#hazard_type').val();
-                        d.from_date = $('#from_date').val();
-                        d.to_date = $('#to_date').val();
+                        d.accident_report_no = $('#accident_report_no').val();
+                        d.emp_code = $('#emp_code').val();
+                        d.from_date_datepicker = $('#from_date_datepicker').val();
+                        d.to_date_datepicker = $('#to_date_datepicker').val();
+                        d.department_id = $('#department_id').val();
                         d.status = $('#status').val();
 
                     },
@@ -201,16 +195,24 @@
                         searchable: true,
                     },
                     {
-                        data: 'sr_no',
-                        name: 'sr_no'
+                        data: 'accident_report_no',
+                        name: 'accident_report_no'
                     },
                     {
-                        data: 'services',
-                        name: 'services'
+                        data: 'date_and_time',
+                        name: 'date_and_time'
                     },
                     {
-                        data: 'hazard_type',
-                        name: 'hazard_type'
+                        data: 'emp_code',
+                        name: 'emp_code'
+                    },
+                    {
+                        data: 'unit_name',
+                        name: 'unit_name'
+                    },
+                    {
+                        data: 'department_name',
+                        name: 'department_name'
                     },
                     {
                         data: 'status',
@@ -253,11 +255,11 @@
                                 text: '{{ __('common.pdf') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    var sr_no = $('#sr_no').val();
-                                    var services = $('#services').val();
-                                    var hazard_type = $('#hazard_type').val();
-                                    var from_date = $('#from_date').val();
-                                    var to_date = $('#to_date').val();
+                                    var accident_report_no = $('#accident_report_no').val();
+                                    var emp_code = $('#emp_code').val();
+                                    var from_date_datepicker = $('#from_date_datepicker').val();
+                                    var to_date_datepicker = $('#to_date_datepicker').val();
+                                    var department_id = $('#department_id').val();
                                     var status = $('#status').val();
 
                                     $(".dt-button").removeClass('processing');
@@ -265,36 +267,36 @@
                                     window.location.href =
                                         "{{ admin_url('incident/accidentReport/export/pdf') }}" +
                                         '?search=' + searchValue +
-                                        '&sr_no=' + sr_no +
-                                        '&services=' + services +
-                                        '&hazard_type=' + hazard_type +
-                                        '&from_date=' + from_date +
-                                        '&to_date=' + to_date +
+                                        '&accident_report_no=' + accident_report_no +
+                                        '&emp_code=' + emp_code +
+                                        '&from_date_datepicker=' + from_date_datepicker +
+                                        '&to_date_datepicker=' + to_date_datepicker +
+                                        '&department_id=' + department_id +
                                         '&status=' + status
                                 }
                             },
-                            {
+                            { 
                                 extend: 'excel',
                                 text: '{{ __('common.excel') }}',
                                 action: function(e, dt, button, config) {
 
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    var sr_no = $('#sr_no').val();
-                                    var services = $('#services').val();
-                                    var hazard_type = $('#hazard_type').val();
-                                    var from_date = $('#from_date').val();
-                                    var to_date = $('#to_date').val();
+                                    var accident_report_no = $('#accident_report_no').val();
+                                    var emp_code = $('#emp_code').val();
+                                    var from_date_datepicker = $('#from_date_datepicker').val();
+                                    var to_date_datepicker = $('#to_date_datepicker').val();
+                                    var department_id = $('#department_id').val();
                                     var status = $('#status').val();
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
                                         "{{ admin_url('incident/accidentReport/export/excel') }}" +
                                         '?search=' + searchValue +
-                                        '&sr_no=' + sr_no +
-                                        '&services=' + services +
-                                        '&hazard_type=' + hazard_type +
-                                        '&from_date=' + from_date +
-                                        '&to_date=' + to_date +
+                                        '&accident_report_no=' + accident_report_no +
+                                        '&emp_code=' + emp_code +
+                                        '&from_date_datepicker=' + from_date_datepicker +
+                                        '&to_date_datepicker=' + to_date_datepicker +
+                                        '&department_id=' + department_id +
                                         '&status=' + status
                                 }
                             },
@@ -331,12 +333,12 @@
                 var id = $(this).data('id');
                 var types = $(this).data('type');
                 if (types == 1) {
-                    var title = '{{ __('Do You want to In-Activate HIRA') }}';
+                    var title = '{{ __('Do You want to In-Activate') }}';
                     var text = '{{ __('common.inactive') }}';
                     var btncolor = '#dc3545'
 
                 } else {
-                    var title = '{{ __('Do You want to Activate HIRA') }}';
+                    var title = '{{ __('Do You want to Activate') }}';
                     var text = '{{ __('common.active') }}';
                     var btncolor = '#7ddc35'
                 }
@@ -404,7 +406,7 @@
                 var id = $(this).data('id');
                 var login_id = $(this).data('login_id');
 
-                var title = '{{ __('Do You want to Delete Company Details') }}';
+                var title = '{{ __('Do You want to Delete the Details') }}';
                 var text = '{{ __('common.delete') }}';
                 var btncolor = '#dc3545'
 
@@ -463,7 +465,7 @@
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Error',
-                                        text: 'Company Deletion Failed: Module Dependencies Exist.',
+                                        text: 'Deletion Failed: Module Dependencies Exist.',
                                     });
                                 } else {
                                     $.notify(data.responseJSON.msg, "error");
