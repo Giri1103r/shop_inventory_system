@@ -23,30 +23,33 @@ class MedicineIssuance extends Model
         'updated_at'
 
     ];
-    public function store($user_medicine_issuance){
+    public function store($user_medicine_issuance)
+    {
         $request = request();
 
+        $insertedData = [];
 
-        foreach($request->medicine_id as $index => $medicine) {
-
+        foreach ($request->medicine_id as $index => $medicine) {
             $insert_array = [
                 'reference_id' => $user_medicine_issuance->id,
-                'medicine_id' => decryptId($medicine),
+                'medicine_id' => $medicine,
                 'quantity' => $request->quantity[$index],
                 'available_quantity' => $request->available_quantity[$index],
                 'created_by' => Auth::id(),
             ];
 
-            // Insert the data
-            $this->create($insert_array);
+
+            $insertedData[] = $this->create($insert_array);
         }
+
+        return $insertedData;
     }
-    public function updates($id){
+
+    public function updates($id)
+    {
         $request = request();
 
-
-        foreach($request->medicine_id as $index => $medicine) {
-
+        foreach ($request->medicine_id as $index => $medicine) {
             $update_data = [
                 'reference_id' => $id,
                 'medicine_id' => $medicine,
@@ -57,17 +60,24 @@ class MedicineIssuance extends Model
             ];
 
 
-            return $this->where('reference_id', $id)->update($update_data);
+            $existingRecord = self::where('reference_id', $id)
+                ->where('medicine_id', $medicine)->where('trash','NO')
+                ->first();
+
+            if ($existingRecord) {
+                $existingRecord->update($update_data);
+            } else {
+                self::create($update_data);
+            }
         }
     }
+
+
     public function selectOne($id)
     {
 
         $data = $this->select(
-            'ohc_management_medicine_issuance.*','ohc_master_medicine.medicine'
-        )
-            ->where('ohc_management_medicine_issuance.reference_id', $id)
-            ->join('ohc_master_medicine','ohc_management_medicine_issuance.medicine_id','=','ohc_master_medicine.id')
+            'ohc_management_medicine_issuance.*')->where('reference_id',$id)->where('trash','NO')
             ->get();
 
         return $data;

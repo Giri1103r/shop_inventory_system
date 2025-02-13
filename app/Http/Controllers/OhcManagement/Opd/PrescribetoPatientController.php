@@ -1,15 +1,21 @@
 <?php
 
 namespace App\Http\Controllers\OhcManagement\Opd;
+
 use App\Http\Controllers\Controller;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
 use App\Models\Master\Unit;
+use App\Models\Master\Work;
+use App\Models\OhcManagement\Master\CertifiedFirstAider;
 use App\Models\OhcManagement\Master\Medicine;
 use App\Models\OhcManagement\Master\Vendor;
 use App\Models\OhcManagement\UserMedicineIssuance;
 use App\Models\OhcManagement\MedicineIssuance;
 use App\Models\OhcManagement\MedicineReceiving;
+use App\Models\OhcManagement\Opd\PatientStatus;
+use App\Models\OhcManagement\Opd\ReferedVechicle;
+use App\Models\OhcManagement\Opd\Suggestedby;
 use App\Models\OhcManagement\UserMedicineRequisition;
 use App\Models\UploadLog;
 
@@ -22,8 +28,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use phpseclib3\File\ASN1\Maps\CertificateIssuer;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
+
 class PrescribetoPatientController extends Controller
 {
 
@@ -34,7 +42,11 @@ class PrescribetoPatientController extends Controller
     private $department;
     private $medicine_issuance;
     private $medicine_receiving;
-
+    private $work;
+    private $employee;
+    private $suggestedBy;
+    private $refered_vechicle;
+    private $patient_status;
 
     public function __construct()
     {
@@ -43,6 +55,11 @@ class PrescribetoPatientController extends Controller
         $this->user_medicine_issuance = new UserMedicineIssuance();
         $this->medicine_issuance = new MedicineIssuance();
         $this->medicine_receiving = new MedicineReceiving();
+        $this->employee = new Employee();
+        $this->work = new Work();
+        $this->suggestedBy = new Suggestedby();
+        $this->refered_vechicle = new ReferedVechicle();
+        $this->patient_status = new PatientStatus();
 
         $this->unit = new Unit();
         $this->department = new Department();
@@ -99,24 +116,94 @@ class PrescribetoPatientController extends Controller
             'unit' => $unit
         );
 
-        return view('ohcmanagement.medicine_issuance.list', $data);
+        return view('ohcmanagement.ohc-opd.prescribe-to-patient.list', $data);
     }
 
     public function add()
     {
         try {
             $unit = $this->unit->getunit();
-            $medicine = $this->medicine->getMedicineData();
-            $data = array(
-                'medicine' => $medicine,
-                'unit' => $unit
-            );
+            $suggestedBy = $this->suggestedBy->getSuggestedBy();
+            $reffered = $this->refered_vechicle->getreffered();
+            $patientstatus = $this->patient_status->getpatientstatus();
 
-            return view('ohcmanagement.ohc-opd.prescribe-to-patient.add', $data);
+            $data = array(
+                'unit' => $unit,
+                'suggestedBy'=>$suggestedBy,
+                'reffered'=>$reffered,
+                'patientstatus'=>$patientstatus,
+
+            );
+            return view('ohcmanagement.ohc-opd.prescribe-to-patient.add',$data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('ohc/medicine-issuance/list'));
+            return redirect(admin_url('ohc/prescribe-to-patient/list'));
         }
     }
+
+    // Fetch of employee and worker name
+
+    public function fetchemployeename(Request $request)
+    {
+        $name = $request->input('search');
+
+        $employee_code = $this->employee->where('emp_id', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+        $work = $this->work->where('emp_id', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+
+        $mergedResults = $employee_code->merge($work);
+
+        return response()->json(
+            $mergedResults->map(function ($employee) {
+                return [
+                    'id' => $employee->emp_id,
+                    'text' => $employee->emp_id . ' - ' . $employee->emp_name,
+                ];
+            })
+        );
+    }
+
+    // fetching the first aiders
+
+    public function firstaider(Request $request){
+        $search = $request->input('search');
+
+        $employees = CertifiedFirstAider::where(function ($query) use ($search) {
+            $query->where('certifier_name', 'like', '%' . $search . '%')
+                ->orWhere('emp_id', 'like', '%' . $search . '%');
+        })
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+        return response()->json(
+            $employees->map(function ($employee) {
+                return [
+                    'id' => $employee->emp_id,
+                    'text' => $employee->certifier_name . ' - ' . $employee->emp_id,
+                ];
+            })
+        );
+    }
+
+    // first aider mobile number
+
+    public function firstaidernumber(Request $request)
+    {
+        $empID = $request->input('empId');
+        $employee = CertifiedFirstAider::where('emp_id', $empID)->where('trash', 'no')->where('status', 1)->first();
+        return response()->json(
+            $employee->mobile_no
+
+        );
+    }
+
 }

@@ -17,7 +17,6 @@ class MedicineRequisition extends Model
         'quantity',
         'remarks',
         'status',
-
         'trash',
         'created_by',
         'updated_by',
@@ -40,7 +39,7 @@ class MedicineRequisition extends Model
                 'created_by' => Auth::id(),
             ];
 
-            // Insert the data
+
             $this->create($insert_array);
         }
     }
@@ -83,18 +82,9 @@ class MedicineRequisition extends Model
     public function selectOne($id)
     {
 
-        $data = $this->select(
-            'ohc_management_medicine_requisition.*',
-            'ohc_management_medicine_stock_inventory.medicine_id as stock_medicine_id',
-            'ohc_master_medicine.medicine'
-        )
-        ->join('ohc_management_medicine_stock_inventory', 'ohc_management_medicine_requisition.medicine_id', '=', 'ohc_management_medicine_stock_inventory.id')
-        ->join('ohc_master_medicine', 'ohc_management_medicine_stock_inventory.medicine_id', '=', 'ohc_master_medicine.id') // Correct join condition
-        ->where('ohc_management_medicine_requisition.req_id', $id)
-        ->get();
-
-    return $data;
-
+      $data  = $this->select('ohc_management_medicine_requisition.*')->where('req_id',$id)
+->get();
+return $data;
     }
 
 

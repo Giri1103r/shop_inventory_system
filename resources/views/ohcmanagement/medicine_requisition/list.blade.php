@@ -32,99 +32,113 @@
                                 <div class="col-md-12">
                                     <div class="row">
 
-                                    <div class="col-md-3 mb-2">
-                                        <div class="form-group form-input">
-                                            <label class="form-label ">Requisition ID</label>
-                                            <input type="text" name="req_id" class="form-control" id="req_id">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 mb-2">
-                                        <div class="form-group form-input">
-                                            <label class="form-label ">Unit</label>
-                                            <select name="unit_id" id="unit_id" class="form-control single-select"
-                                                style="width: 100%">
-                                                <option value="">Select the unit</option>
-                                                @foreach ($unit as $list)
-                                                    <option value="{{ encryptId($list->id) }}">
-                                                        {{ $list->unit_name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 mb-2">
-                                        <div class="form-group form-input">
-                                            <label class="form-label ">Department</label>
-                                            <select name="department_id" id="department_id"
-                                                class=" form-control single-select" style="width: 100%">
-                                                <option value="">Select Department </option>
-
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 mb-3 form-input">
-                                        <label for="emp_name" class="form-label ">From Date</label>
-                                        <div class="input-group date form-input custom-height">
-                                            <input type="text" class="form-control " name="from_date" id="from_date"
-                                                autocomplete="off">
-                                            <div class="input-group-addon input-group-text">
-                                                <span class="fa fa-calendar"></span>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">Requisition ID</label>
+                                                <input type="text" name="req_id" class="form-control" id="req_id">
                                             </div>
                                         </div>
-
-                                    </div>
-                                    <div class="col-md-3 mb-3 form-input">
-                                        <label for="emp_name" class="form-label ">To Date</label>
-                                        <div class="input-group date form-input  custom-height">
-                                            <input type="text" class="form-control " name="to_date" id="to_date"
-                                                autocomplete="off">
-                                            <div class="input-group-addon input-group-text">
-                                                <span class="fa fa-calendar"></span>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">Unit</label>
+                                                <select name="unit_id" id="unit_id" class="form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select the unit</option>
+                                                    @foreach ($unit as $list)
+                                                        <option value="{{ encryptId($list->id) }}">
+                                                            {{ $list->unit_name }}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-3 mb-3 form-input">
-                                        <label for="status" class="form-label">{{ __('common.status') }}</label>
-                                        <select name="status" id="status" style="width: 100%"
-                                            class="form-control single-select">
-                                            <option value="">Select Status</option>
-                                            <option value="{{ encryptId(1) }}">Active</option>
-                                            <option value="{{ encryptId(0) }}">In-Active</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3 mt-3">
-                                        <x-button-search></x-button-search>
-                                        <x-button-reset></x-button-reset>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">Department</label>
+                                                <select name="department_id" id="department_id"
+                                                    class=" form-control single-select" style="width: 100%">
+                                                    <option value="">Select Department </option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">Request date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="request_date"
+                                                    id="request_date" autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="status" class="form-label">Approve Status</label>
+                                            <select name="status" id="status" style="width: 100%" class="form-control single-select">
+                                                <option value="">Select Status</option>
+                                                <option value="9">Paramedics Approval Pending</option>
+                                                <option value="11">Paramedics Approved</option>
+                                                <option value="10">Paramedics Rejected</option>
+                                                <option value="1">Open</option>
+                                                <option value="5">Close</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-3 mt-3">
+                                            <x-button-search></x-button-search>
+                                            <x-button-reset></x-button-reset>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                        </form>
+                        <hr>
                     </div>
-                    </form>
-                    <hr>
-                </div>
 
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="datatable-list"
-                        class="table primary-table-bordered table-bordered table-striped  nowrap w-100 mt-2 datatable-list">
-                            <thead class="thead-primary">
-                                <tr>
-                                    <th>{{ __('common.sno') }}</th>
-                                    <th>Requisition ID</th>
-                                    <th>Unit Name</th>
-                                    <th>Department Name</th>
-                                    <th>Request Date</th>
-                                    <th>Approve Status</th>
-                                    <th data-priority="1">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="datatable-list"
+                                class="table primary-table-bordered table-bordered table-striped  nowrap w-100 mt-2 datatable-list">
+                                <thead class="thead-primary">
+                                    <tr>
+                                        <th>{{ __('common.sno') }}</th>
+                                        <th>Requisition ID</th>
+                                        <th>Unit Name</th>
+                                        <th>Department Name</th>
+                                        <th>Request Date</th>
+                                        <th>Approve Status</th>
+                                        <th data-priority="1">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
 
+                </div>
             </div>
         </div>
-    </div>
     </div>
 @stop
 @push('script')
@@ -172,7 +186,9 @@
                     }
                 }
             });
-
+            $('#request_date').flatpickr({
+                dateFormat: "d-m-Y",
+            })
             var toDatepicker = flatpickr("#to_date", {
                 dateFormat: "d-m-Y",
                 minDate: "today"
@@ -205,13 +221,13 @@
         });
 
         var table = $('.datatable-list').DataTable({
+            autoWidth: true,
+            responsive: true,
+            processing: false,
             serverSide: true,
             searching: true,
+            scrollX: false,
             ordering: true,
-            bSort: false,
-            scrollX: true,
-            autoWidth: false,
-            responsive: false,
             dom: 'Bfrtip',
             layout: {
                 top2Start: 'buttons',
@@ -238,6 +254,7 @@
                     d.req_id = $('#req_id').val();
                     d.department_id = $('#department_id').val();
                     d.from_date = $('#from_date').val();
+                    d.request_date = $('#request_date').val();
                     d.to_date = $('#to_date').val();
                     d.status = $('#status').val();
                 },
@@ -307,6 +324,7 @@
                                 var req_id = $('#req_id').val();
                                 var unit_id = $('#unit_id').val();
                                 var from_date = $('#from_date').val();
+                                var request_date = $('#request_date').val();
                                 var to_date = $('#to_date').val();
                                 var status = $('#status').val();
                                 $(".dt-button").removeClass('processing');
@@ -318,6 +336,7 @@
                                     '&req_id=' + req_id +
                                     '&unit_id=' + unit_id +
                                     '&from_date=' + from_date +
+                                    '&request_date=' + request_date +
                                     '&status=' + status +
                                     '&to_date=' + to_date;
                             }
@@ -331,6 +350,7 @@
                                 var req_id = $('#req_id').val();
                                 var unit_id = $('#unit_id').val();
                                 var from_date = $('#from_date').val();
+                                var request_date = $('#request_date').val();
                                 var to_date = $('#to_date').val();
                                 var status = $('#status').val();
 
@@ -343,6 +363,7 @@
                                     '&department_id=' + department_id +
                                     '&unit_id=' + unit_id +
                                     '&from_date=' + from_date +
+                                    '&request_date=' + request_date +
                                     '&status=' + status +
                                     '&to_date=' + to_date;
                             }

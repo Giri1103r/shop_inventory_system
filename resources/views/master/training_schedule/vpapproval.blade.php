@@ -227,18 +227,14 @@
 
             $('#vp_approval').validate({
                 rules: {
-                    date: {
-                        required: true
-                    },
+                  
                     remark: {
                         required: true,
                         maxlength: 1000
                     }
                 },
                 messages: {
-                    date: {
-                        required: "Select a Date."
-                    },
+                  
                     remark: {
                         required: "Please provide Remark.",
                         maxlength: "Remark cannot exceed 1000 characters."

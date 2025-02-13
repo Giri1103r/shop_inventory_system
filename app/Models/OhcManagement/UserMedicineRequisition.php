@@ -42,9 +42,20 @@ class UserMedicineRequisition extends Model
                 $query->orWhere('unit_id', 'LIKE', '%' . $search . '%');
             });
         }
+
+
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+
+        }elseif(in_array(ROLE_PARAMEDICS, $userRole)){
+
+        }
+         else {
+            $query->where('ohc_management_user_medicine_requisition.created_by',Auth::id());
+        }
+
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('ohc_management_user_medicine_requisition.status', decryptId($request->status));
+            $query = $query->where('ohc_management_user_medicine_requisition.approve_status', ($request->status));
         }
         if ($request->has('req_id') && $request->req_id) {
 
@@ -53,6 +64,11 @@ class UserMedicineRequisition extends Model
         if ($request->has('unit_id') && $request->unit_id) {
 
             $query = $query->where('ohc_management_user_medicine_requisition.unit_id', decryptId($request->unit_id));
+
+        }
+        if ($request->has('request_date') && $request->request_date) {
+
+            $query = $query->where('ohc_management_user_medicine_requisition.request_date', DBdateformat($request->request_date));
         }
         if ($request->has('department_id') && $request->department_id) {
 
@@ -92,8 +108,8 @@ class UserMedicineRequisition extends Model
         $request = request();
 
         $insert_array = [
-            'unit_id' => ($request->unit_id),
-            'department_id' => ($request->department_id),
+            'unit_id' =>Auth::user()->unit_id,
+            'department_id' =>Auth::user()->department_id,
             'request_date' => DBdateformat($request->request_date),
             'req_id' => $request->req_id,
             'approve_status'=>STATUS_OHC_PARAMEDICS_APPROVAL_PENDING,
@@ -108,8 +124,8 @@ class UserMedicineRequisition extends Model
         $request = request();
 
         $update_array = array(
-            'unit_id' => decryptId($request->unit_id),
-            'department_id' => decryptId($request->department_id),
+          'unit_id' =>Auth::user()->unit_id,
+            'department_id' =>Auth::user()->department_id,
             'request_date' => DBdateformat($request->request_date),
             'req_id' => $request->req_id,
             'updated_by' => Auth::id(),
@@ -151,12 +167,21 @@ class UserMedicineRequisition extends Model
     public function exportdata()
     {
         $request = request();
+
+        $user = Auth::user();
+        $userRole = string_to_array($user->role);
+        $empId = $user->employee_id;
         $search = '';
-        $query = $this->select('ohc_management_user_medicine_requisition.*', 'masters_department.department_name', 'masters_unit.unit_name')
-            ->join('masters_department', 'ohc_management_user_medicine_requisition.department_id', '=', 'masters_department.id')
-            ->join('masters_unit', 'ohc_management_user_medicine_requisition.unit_id', '=', 'masters_unit.id')
-            ->where('masters_department.trash', 'NO')
-            ->where('masters_unit.trash', 'NO');
+        $query = $this->select('ohc_management_user_medicine_requisition.*');
+
+            if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+
+            }elseif(in_array(ROLE_PARAMEDICS, $userRole)){
+
+            }
+             else {
+                $query->where('ohc_management_user_medicine_requisition.created_by',Auth::id());
+            }
 
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
@@ -166,17 +191,22 @@ class UserMedicineRequisition extends Model
                     ->orWhere('department_id', 'LIKE', '%' . $search . '%');
             });
         }
+        if ($request->has('status') && $request->status) {
+
+            $query = $query->where('ohc_management_user_medicine_requisition.approve_status', ($request->status));
+        }
         if ($request->has('req_id') && $request->req_id) {
 
             $query = $query->where('ohc_management_user_medicine_requisition.req_id', $request->req_id);
         }
-        if ($request->has('status') && $request->status) {
-
-            $query = $query->where('ohc_management_user_medicine_requisition.status', decryptId($request->status));
-        }
         if ($request->has('unit_id') && $request->unit_id) {
 
             $query = $query->where('ohc_management_user_medicine_requisition.unit_id', decryptId($request->unit_id));
+
+        }
+        if ($request->has('request_date') && $request->request_date) {
+
+            $query = $query->where('ohc_management_user_medicine_requisition.request_date', DBdateformat($request->request_date));
         }
         if ($request->has('department_id') && $request->department_id) {
 
@@ -213,7 +243,9 @@ class UserMedicineRequisition extends Model
 
     public function approvereject($id, $data)
     {
-        return $this->where('id', $id)->update(['approve_status' => $data['approve_status']]);
+        return $this->where('id', $id)->update(['approve_status' => $data['approve_status'],
+        'approved_by'=>Auth::id(),
+    ]);
     }
     // status closed
 
@@ -223,5 +255,5 @@ class UserMedicineRequisition extends Model
 
     // sending the data to email
 
-  
+
 }

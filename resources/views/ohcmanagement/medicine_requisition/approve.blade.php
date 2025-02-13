@@ -44,13 +44,13 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Unit') }}</label>
                                         <div class="view_data">
-                                            {{ isset($user_medicine_requisition->unit_id) ? $user_medicine_requisition->unit_id : '' }}
+                                            {{ getUnitname(isset($user_medicine_requisition->unit_id) ? $user_medicine_requisition->unit_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Department') }}</label>
                                         <div class="view_data">
-                                            {{ isset($user_medicine_requisition->department_id) ? $user_medicine_requisition->department_id : '' }}
+                                            {{ getdepartment(isset($user_medicine_requisition->department_id) ? $user_medicine_requisition->department_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -95,7 +95,7 @@
                                                     @foreach ($medicine_requisition as $data)
                                                         <tr>
                                                             <td>{{ $loop->iteration }}</td>
-                                                            <td>{{ $data->medicine }}</td>
+                                                            <td>{{ getMedicinename($data->medicine_id) }}</td>
                                                             <td>{{ $data->available_quantity }}</td>
                                                             <td>{{ $data->quantity }}</td>
                                                             <td>{{ $data->remarks }}</td>
