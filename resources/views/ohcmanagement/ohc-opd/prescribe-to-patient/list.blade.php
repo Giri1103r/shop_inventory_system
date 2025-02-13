@@ -333,72 +333,85 @@
                 table.draw();
             });
 
-            $(document).on('click', '.statusChange', function() {
+            $(document).on('click', '.Close', function() {
                 var id = $(this).data('id');
-                var type = $(this).data('type');
-                var title = type == 1 ? '{{ __('Do You want to In-Activate Employee Cum Patient') }}' :
-                    '{{ __('Do You want to Activate Employee Cum Patient') }}';
-                var btnColor = type == 1 ? '#dc3545' : '#7ddc35';
+                var login_id = $(this).data('login_id');
+
+                var title = '{{ __('Do You want to Cancel the OPD Patient list' ) }}';
+                var text = '{{ __('Close') }}';
+                var btncolor = '#28a745';
 
                 Swal.fire({
                     title: title,
                     icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: type == 1 ? '{{ __('common.inactive') }}' :
-                        '{{ __('common.active') }}',
-                    confirmButtonColor: btnColor,
+                    input: 'textarea',
+                    inputPlaceholder: '{{ __('Enter your remarks here...') }}',
+                    showCloseButton: true,
+                    confirmButtonText: text,
+                    confirmButtonColor: btncolor,
                     customClass: {
-                        confirmButton: 'btn-skew',
-                        cancelButton: 'btn-skew'
+                        confirmButton: 'btn-skew'
+                    },
+                    preConfirm: (remarks) => {
+                        if (!remarks) {
+                            Swal.showValidationMessage('{{ __('Remarks are required!') }}');
+                        }
+                        return remarks;
                     }
                 }).then((result) => {
-                    if (result.value) {
+                    if (result.isConfirmed) {
+                        var remarks = result.value;
+
+
                         $.ajax({
-                            url: "{{ admin_url('ohc/prescribe-to-patient/status') }}",
-                            type: 'POST',
+                            url: "{{ admin_url('ohc/prescribe-to-patient/close') }}",
+                            type: 'post',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
                             data: {
                                 id: id,
-                                types: type
+                                login_id: login_id,
+                                remarks: remarks 
                             },
                             success: function(response) {
-                                showToast('success', response.msg);
+                                const Toast = Swal.mixin({
+                                    toast: true,
+                                    position: 'top-right',
+                                    showConfirmButton: false,
+                                    timer: 3000,
+                                    timerProgressBar: true,
+                                    didOpen: (toast) => {
+                                        toast.addEventListener('mouseenter',
+                                            Swal.stopTimer);
+                                        toast.addEventListener('mouseleave',
+                                            Swal.resumeTimer);
+                                    }
+                                });
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: response.msg
+                                });
                                 table.draw();
                             },
-                            error: function(xhr) {
-                                showToast('error', xhr.responseJSON.msg);
+                            error: function(data) {
+                                if (data.status === 406 && data.responseJSON.msg ===
+                                    'module_exits') {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Location Deletion Failed: Module Dependencies Exist.',
+                                    });
+                                } else {
+                                    $.notify(data.responseJSON.msg, "error");
+                                }
                             }
                         });
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        Swal.fire('{{ __('Action Closed') }}', '', 'info');
                     }
                 });
             });
-
-            $('#emp_name').select2({
-            ajax: {
-                url: '{{ admin_url('safetypermit/employeename') }}',
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        search: params.term
-                    };
-                },
-                processResults: function(data) {
-                    return {
-                        results: $.map(data, function(item) {
-
-                            var cleanedText = item.text.replace(/ - .*/, '').trim();
-                            return {
-                                id: cleanedText,
-                                text: cleanedText
-                            };
-                        })
-                    };
-                }
-            },
-            minimumInputLength: 1,
-            dropdownCssClass: 'form-control',
-            selectionCssClass: 'form-control'
-        });
 
         });
     </script>

@@ -499,11 +499,11 @@
                     dataType: 'json',
                     success: function(response) {
                         if (response.employee) {
-                            $('#emp_name').val(response.employee.emp_name);
-                            $('#mobile_no').val(response.employee.mobile_no).prop('disabled', false);
+                            $('#emp_name').val(response.employee.emp_name).prop('readonly', false);
+                            $('#mobile_no').val(response.employee.mobile_no).prop('readonly', false);
                             $('#department_id').val(response.departments.department_name).prop(
-                                'disabled',
-                                true);
+                                'readonly',
+                                false);
                         } else {
                             alert("No employee details found.");
                         }
@@ -546,14 +546,14 @@
                     $('.department').hide();
                     $('.unit, .company_name').show();
 
-                    $('#emp_id').val('').prop('disabled', true);
+                    $('#emp_id').val('').prop('readonly', true);
                     $('#emp_name').val('').prop('readonly', false);
                 } else {
                     $('.department').show();
                     $('.unit, .company_name').hide();
 
-                    $('#emp_id').val('').prop('disabled', false);
-                    $('#emp_name').val('').prop('disabled', true);
+                    $('#emp_id').val('').prop('readonly', false);
+                    $('#emp_name').val('').prop('readonly', true);
                 }
             });
 
@@ -635,7 +635,7 @@
                     dataType: 'json',
                     success: function(data) {
 
-                        $('#is_reffered_mobile_no').val(data).prop('disable', true);
+                        $('#is_reffered_mobile_no').val(data).prop('readonly', true);
                     },
                     error: function(xhr) {
                         alert('Error fetching mobile number. Please try again.');
@@ -643,7 +643,7 @@
                 });
             } else {
 
-                $('#is_reffered_mobile_no').val('').prop('disable', true);
+                $('#is_reffered_mobile_no').val('').prop('readonly', true);
             }
         });
 

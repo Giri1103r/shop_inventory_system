@@ -2,6 +2,7 @@
 
 namespace App\Models\OhcManagement\Opd;
 
+use App\Models\Master\Department;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,6 +28,7 @@ class PrescribetoPatient extends Model
         'cheif_complaint',
         'first_aid_treatment',
         'treatment',
+        'gender',
         'is_refered',
         'patient_status',
         'fitness_certificate',
@@ -44,7 +46,10 @@ class PrescribetoPatient extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_management_opd_patient.*');
+        $query = $this->select('ohc_management_opd_patient.*','ohc_management_opd_patient_status.patient_status','ohc_management_opd_patient_suggested_by.suggested_by')
+        ->join('ohc_management_opd_patient_status','ohc_management_opd_patient.patient_status','=','ohc_management_opd_patient_status.id')
+
+        ->join('ohc_management_opd_patient_suggested_by','ohc_management_opd_patient.suggested_by','=','ohc_management_opd_patient_suggested_by.id');
 
         // dd($query);
         $org_total =  $query;
@@ -86,39 +91,42 @@ class PrescribetoPatient extends Model
     public function store()
     {
         $request = request();
-        dd(  $request->all());
+
 
         $is_outside_employee = $request->has('is_outside_employee') ? 1 : 0;
-        $first_aid_treatment = $request->has('firs_aid_treatment') ? 1 : 0;
+        $first_aid_treatment = $request->has('first_aid_treatment') ? 1 : 0; // Fixed typo
         $is_refered = $request->has('is_refered') ? 1 : 0;
-        $vital_checkup = $request->has('is_vital_checkuprefered') ? 1 : 0;
-
+        $vital_checkup = $request->has('vital_checkup') ? 1 : 0;
+        $department = Department::where('department_name', $request->department_id)->first();
         $insert_array = [
-        'is_outside_employee'=>$is_outside_employee,
-        'unit_id'=>$request->unit_id,
-        'department_id'=>$request->department_id,
-        'company_name'=>$request->company_name,
-        'emp_id'=>$request->emp_id,
-        'emp_name'=>$request->emp_name,
-        'mobile_no'=>$request->mobile_no,
-        'time'=>$request->time,
-        'emergency_contact'=>$request->emergency_contact,
-        'address'=>$request->address,
-        'date'=>DBdateformat($request->date),
-        'vital_checkup'=>$vital_checkup,
-        'suggested_by'=>$request->suggested_by,
-        'cheif_complaint'=>$request->cheif_complaint,
-        'first_aid_treatment'=>$first_aid_treatment,
-        'treatment'=>$request->treatment,
-        'is_refered'=>$is_refered,
-        'patient_status'=>$request->patient_status,
-        'fitness_certificate'=>$request->fitness_certificate,
-        'closed_description'=>$request->closed_description,
-        'created_by'=>Auth::id(),
-         'dob'=>DBdateformat($request->dob)
+            'is_outside_employee' => $is_outside_employee,
+            'unit_id' => ($request->unit_id),
+            'department_id' =>  $department['id'],
+            'company_name' =>$request->company_name,
+            'emp_id' => $request->emp_id,
+            'gender' => $request->gender,
+            'emp_name' => $request->emp_name,
+            'mobile_no' => $request->mobile_no,
+            'time' => $request->time,
+            'emergency_contact' => $request->emergency_contact,
+            'address' => $request->address,
+            'date' => DBdateformat($request->date),
+            'vital_checkup' => $vital_checkup,
+            'suggested_by' => $request->suggested_by,
+            'cheif_complaint' => $request->cheif_complaint,
+            'first_aid_treatment' => $first_aid_treatment,
+            'treatment' => $request->treatment,
+            'is_refered' => $is_refered,
+            'patient_status' => $request->patient_status,
+            'fitness_certificate' => $request->fitness_certificate,
+            'closed_description' => $request->closed_description,
+            'created_by' => Auth::id(),
+            'dob' => DBdateformat($request->dob)
         ];
-         $insertedData = $this->create($insert_array);
-         return  $insertedData;
+
+     return $this->create($insert_array);
+
+
     }
 
 }

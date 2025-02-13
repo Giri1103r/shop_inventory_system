@@ -980,7 +980,7 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('/firstaider', [PrescribetoPatientController::class, 'firstaider']);
             Route::get('/first-aider-number', [PrescribetoPatientController::class, 'firstaidernumber']);
             Route::get('/emp-details/{emp_id}', [PrescribetoPatientController::class, 'employeedetails']);
-
+            Route::post('/close', [PrescribetoPatientController::class, 'close']);
 
         });
 
