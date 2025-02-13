@@ -82,24 +82,27 @@ class PrescribetoPatientController extends Controller
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('vital_checkup', function ($row) {
-                            $text = "<span style='color:red'>Yes<span>";
-                            if ($row->vital_checkup == 1) {
-                                $text = "<span >yes<span>";
-                            } else if ($row->vital_checkup == 0) {
-                                $text = "<span  >No<span>";
+                            if ($row->vital_checkup === null) {
+                                return "";
+                            } elseif ($row->vital_checkup == 1) {
+                                return "<span>Yes</span>";
+                            } elseif ($row->vital_checkup == 0) {
+                                return "<span>No</span>";
                             }
-                            return $text;
+                            return "";
                         })
 
                         ->addColumn('fitness_certificate', function ($row) {
-                            $text = "<span style='color:red'>Yes<span>";
-                            if ($row->fitness_certificate == 1) {
-                                $text = "<span >Required<span>";
-                            } else if ($row->fitness_certificate == 2) {
-                                $text = "<span  >Not Required<span>";
+                            if ($row->fitness_certificate === null) {
+                                return "";
+                            } elseif ($row->fitness_certificate == 1) {
+                                return "<span>Required</span>";
+                            } elseif ($row->fitness_certificate == 2) {
+                                return "<span>Not Required</span>";
                             }
-                            return $text;
+                            return "";
                         })
+
                         ->editColumn('unit_id', function ($row) {
                             return getUnitname($row->unit_id);
                         })
@@ -116,17 +119,16 @@ class PrescribetoPatientController extends Controller
                             return ($row->suggested_by);
                         })
                         ->editColumn('patient_status', function ($row) {
-                            $text = "<span class='badge bg-secondary' style='font-size: 1.0em;'>Unknown</span>"; // Default value
 
                             if ($row->patient_status == 'Open') {
-                                $text = "<span class='badge bg-info' style='font-size: 1.0em;'>Open</span>";
+                                return  "<span class='badge bg-info' style='font-size: 1.0em;'>Open</span>";
                             } elseif ($row->patient_status == 'Close') {
-                                $text = "<span class='badge bg-success' style='font-size: 1.0em;'>Close</span>";
+                                return "<span class='badge bg-success' style='font-size: 1.0em;'>Close</span>";
                             } elseif ($row->patient_status == 'Cancel') {
-                                $text = "<span class='badge bg-danger' style='font-size: 1.0em;'>Cancel</span>";
+                                return "<span class='badge bg-danger' style='font-size: 1.0em;'>Cancel</span>";
+                            } else if ($row->patient_status == null) {
+                                return "";
                             }
-
-                            return $text;
                         })
 
                         ->editColumn('action', function ($row) {
@@ -143,7 +145,7 @@ class PrescribetoPatientController extends Controller
                             return $btn;
                         })
 
-                        ->rawColumns(['action', 'date', 'vital_checkup', 'created_by' ,'patient_status','fitness_certificate'])
+                        ->rawColumns(['action', 'date', 'vital_checkup', 'created_by', 'patient_status', 'fitness_certificate'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -208,12 +210,10 @@ class PrescribetoPatientController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-// dd($request->all());
+            // dd($request->all());
             $opd_patient = $this->opd_patient->store();
 
-
             $firstaid = $this->opd_firstaid->store($opd_patient);
-
 
             $isreffered = $this->isreffered->store($opd_patient);
 
@@ -227,7 +227,31 @@ class PrescribetoPatientController extends Controller
         }
     }
 
+    // view
 
+    public function view(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $opdpatient = $this->opd_patient->selectOne($id);
+                $opd_firstaid = $this->opd_firstaid->Selectone($opdpatient->id);
+                $isreffered = $this->isreffered->selectOne($opdpatient->id);
+            }
+            $unit = $this->unit->getunit();
+            $data = array(
+                'opdpatient' => $opdpatient,
+                'opd_firstaid' => $opd_firstaid,
+                'isreffered' => $isreffered,
+
+            );
+            return view('ohcmanagement.ohc-opd.prescribe-to-patient.view', $data);
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', 'Something went wrong please try again after some time');
+            return redirect(admin_url('ohc/prescribe-to-patient/list'));
+        }
+    }
     // Fetch of employee and worker name
 
     public function fetchemployeename(Request $request)
@@ -322,10 +346,17 @@ class PrescribetoPatientController extends Controller
 
     // cancel the patient
 
-    public function close(Request $request){
-        $id = decryptId($request->id);
-        $remarks = $request->remarks;
-        $safetypermit = $this->opd_patient->find($id);
-        $this->opd_patient->close($id, $remarks);
+    public function close(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $remarks = $request->remarks;
+            $opd_patient = $this->opd_patient->find($id);
+            $this->opd_patient->close($id, $remarks);
+            return response()->json(['status' => 'success', 'msg' => __('Cancelled the OPD Patient Successfully')], 200);
+        } catch (Exception $ex) {
+
+            return response()->json(['status' => 'error', 'msg' => __('ptw.Please try After Some time')], 406);
+        }
     }
 }

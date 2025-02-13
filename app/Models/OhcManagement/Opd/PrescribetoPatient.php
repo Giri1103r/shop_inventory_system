@@ -46,10 +46,10 @@ class PrescribetoPatient extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_management_opd_patient.*','ohc_management_opd_patient_status.patient_status','ohc_management_opd_patient_suggested_by.suggested_by')
-        ->join('ohc_management_opd_patient_status','ohc_management_opd_patient.patient_status','=','ohc_management_opd_patient_status.id')
+        $query = $this->select('ohc_management_opd_patient.*', 'ohc_management_opd_patient_status.patient_status', 'ohc_management_opd_patient_suggested_by.suggested_by')
+            ->join('ohc_management_opd_patient_status', 'ohc_management_opd_patient.patient_status', '=', 'ohc_management_opd_patient_status.id')
 
-        ->join('ohc_management_opd_patient_suggested_by','ohc_management_opd_patient.suggested_by','=','ohc_management_opd_patient_suggested_by.id');
+            ->join('ohc_management_opd_patient_suggested_by', 'ohc_management_opd_patient.suggested_by', '=', 'ohc_management_opd_patient_suggested_by.id');
 
         // dd($query);
         $org_total =  $query;
@@ -102,7 +102,7 @@ class PrescribetoPatient extends Model
             'is_outside_employee' => $is_outside_employee,
             'unit_id' => ($request->unit_id),
             'department_id' =>  $department['id'],
-            'company_name' =>$request->company_name,
+            'company_name' => $request->company_name,
             'emp_id' => $request->emp_id,
             'gender' => $request->gender,
             'emp_name' => $request->emp_name,
@@ -120,13 +120,27 @@ class PrescribetoPatient extends Model
             'patient_status' => $request->patient_status,
             'fitness_certificate' => $request->fitness_certificate,
             'closed_description' => $request->closed_description,
+
             'created_by' => Auth::id(),
             'dob' => DBdateformat($request->dob)
         ];
 
-     return $this->create($insert_array);
-
-
+        return $this->create($insert_array);
     }
 
+    public function close($id, $remarks)
+    {
+        return $this->where('id', $id)->update(['cancel_remarks' => $remarks]);
+    }
+    public function Selectone($id)
+    {
+       $data =  $this->where('ohc_management_opd_patient.id', $id)
+        ->select('ohc_management_opd_patient.*', 'ohc_management_opd_patient_status.patient_status', 'ohc_management_opd_patient_suggested_by.suggested_by')
+            ->join('ohc_management_opd_patient_status', 'ohc_management_opd_patient.patient_status', '=', 'ohc_management_opd_patient_status.id')
+            ->join('ohc_management_opd_patient_suggested_by', 'ohc_management_opd_patient.suggested_by', '=', 'ohc_management_opd_patient_suggested_by.id')
+            ->where('ohc_management_opd_patient.status', 1)
+            ->where('ohc_management_opd_patient.trash', 'No')
+            ->first();
+            return $data;
+    }
 }

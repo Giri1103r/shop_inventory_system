@@ -338,7 +338,7 @@
                 var login_id = $(this).data('login_id');
 
                 var title = '{{ __('Do You want to Cancel the OPD Patient list' ) }}';
-                var text = '{{ __('Close') }}';
+                var text = '{{ __('Submit') }}';
                 var btncolor = '#28a745';
 
                 Swal.fire({
@@ -372,7 +372,7 @@
                             data: {
                                 id: id,
                                 login_id: login_id,
-                                remarks: remarks 
+                                remarks: remarks
                             },
                             success: function(response) {
                                 const Toast = Swal.mixin({

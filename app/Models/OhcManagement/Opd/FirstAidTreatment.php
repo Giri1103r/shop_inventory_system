@@ -43,4 +43,8 @@ class FirstAidTreatment extends Model
 
         return $insertedData;
     }
+
+    public function Selectone($id){
+        return $this->where('opd_id',$id)->where('status',1)->where('trash','No')->get();
+    }
 }

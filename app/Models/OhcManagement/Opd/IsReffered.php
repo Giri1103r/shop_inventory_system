@@ -27,18 +27,21 @@ class IsReffered extends Model
     {
         $request = request();
 
-            $insert_array = [
-                'opd_id' => $opd_patient->id,
-                'hospital_name' =>  $request->hospital_name,
-                'first_aider' => $request->first_aider,
-                'mobile_no' => $request->is_reffered_mobile_no,
-                'refered_by_vechicle'=> $request->vechicle,
-                'other_vechicle'=> $request->other_vechicle,
-                'created_by' => Auth::id(),
-            ];
+        $insert_array = [
+            'opd_id' => $opd_patient->id,
+            'hospital_name' =>  $request->hospital_name,
+            'first_aider' => $request->first_aider,
+            'mobile_no' => $request->is_reffered_mobile_no,
+            'refered_by_vechicle' => $request->vechicle,
+            'other_vechicle' => $request->other_vechicle,
+            'created_by' => Auth::id(),
+        ];
 
 
-           $this->create($insert_array);
-        }
+        $this->create($insert_array);
+    }
 
+    public function Selectone($id){
+        return $this->where('opd_id',$id)->where('status',1)->where('trash','No')->first();
+    }
 }
