@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'HIRA')
-@section('pageurl', admin_url('incident/hira-master/list'))
+@section('title', 'Initial Incident')
+@section('pageurl', admin_url('incident/initial-incident/list'))
 
 
 @section('content')
@@ -16,7 +16,7 @@
 
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('incident/hira-master/add') }}">Add</x-button-add>
+                            href="{{ admin_url('incident/initial-incident/add') }}">Add</x-button-add>
                         {{-- @endif --}}
 
                     </div>
@@ -32,7 +32,7 @@
                                                 <input type="text" name="sr_no" id="sr_no" class=" form-control ">
                                             </div>
                                         </div>
-                                        <div class="col-md-3 mb-2">
+                                        {{-- <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label ">Source, Situation,
                                                     Act,Activity,Product,Services</label>
@@ -79,7 +79,7 @@
                                                 <option value="{{ encryptId(1) }}">Active</option>
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
-                                        </div>
+                                        </div> --}}
 
                                         <div class="col-md-3 mb-3 d-flex align-items-end gap-2">
                                             <x-button-search class="me-2"></x-button-search>
@@ -102,8 +102,8 @@
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
                                         <th>Sr. No</th>
-                                        <th>Source, Situation, Act,Activity, Product,Services</th>
-                                        <th>Type of Hazard</th>
+                                        <th>Unit</th>
+                                        <th>Shift</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -181,11 +181,11 @@
                     },
                     data: function(d) {
                         d.sr_no = $('#sr_no').val();
-                        d.services = $('#services').val();
-                        d.hazard_type = $('#hazard_type').val();
-                        d.from_date = $('#from_date').val();
-                        d.to_date = $('#to_date').val();
-                        d.status = $('#status').val();
+                        // d.services = $('#services').val();
+                        // d.hazard_type = $('#hazard_type').val();
+                        // d.from_date = $('#from_date').val();
+                        // d.to_date = $('#to_date').val();
+                        // d.status = $('#status').val();
 
                     },
                     error: function(xhr, error, code) {
@@ -205,12 +205,12 @@
                         name: 'sr_no'
                     },
                     {
-                        data: 'services',
-                        name: 'services'
+                        data: 'unit_name',
+                        name: 'unit_name'
                     },
                     {
-                        data: 'hazard_type',
-                        name: 'hazard_type'
+                        data: 'shift',
+                        name: 'shift'
                     },
                     {
                         data: 'status',
@@ -263,7 +263,7 @@
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('incident/hira-master/export/pdf') }}" +
+                                        "{{ admin_url('incident/initial-incident/export/pdf') }}" +
                                         '?search=' + searchValue +
                                         '&sr_no=' + sr_no +
                                         '&services=' + services +
@@ -288,7 +288,7 @@
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('incident/hira-master/export/excel') }}" +
+                                        "{{ admin_url('incident/initial-incident/export/excel') }}" +
                                         '?search=' + searchValue +
                                         '&sr_no=' + sr_no +
                                         '&services=' + services +
@@ -356,7 +356,7 @@
 
                     if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('incident/hira-master/status') }}",
+                            url: "{{ admin_url('incident/initial-incident/status') }}",
                             type: 'post',
 
                             data: {
@@ -424,7 +424,7 @@
 
                     if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('incident/hira-master/delete') }}",
+                            url: "{{ admin_url('incident/initial-incident/delete') }}",
                             type: 'post',
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
