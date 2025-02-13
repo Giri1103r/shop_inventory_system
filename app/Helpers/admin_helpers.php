@@ -22,6 +22,7 @@ use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\WebPushConfig;
 use App\Models\IMS\Master\IncidentType;
 use App\Models\IMS\Master\Hira;
+use App\Models\IMS\Incident\InitialIncident;
 use App\Models\IMS\Incident\AccidentReport;
 
 
@@ -209,6 +210,11 @@ if (!function_exists('getsequence')) {
                 $count = AccidentReport::withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'ACCIDENT-' . getautogen($count);
+                break;
+            case 'incident':
+                $count = InitialIncident::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'INC-' . getautogen($count);
                 break;
             default:
                 $sequence = Str::random(5);

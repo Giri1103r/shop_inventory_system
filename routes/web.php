@@ -1107,6 +1107,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/Submit', [InitialIncidentController::class, 'importSubmit']);
                 Route::post('/status', [InitialIncidentController::class, 'statusChange']);
                 Route::post('/unique', [InitialIncidentController::class, 'Uniquecheck']);
+                Route::get('/employeename', [InitialIncidentController::class, 'employeename']);
+                Route::get('/fetchEmployeeDetails/{emp_id}', [InitialIncidentController::class, 'fetchEmployeeDetails']);
             });
 
 
