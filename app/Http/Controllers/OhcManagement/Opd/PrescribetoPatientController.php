@@ -13,7 +13,9 @@ use App\Models\OhcManagement\Master\Vendor;
 use App\Models\OhcManagement\UserMedicineIssuance;
 use App\Models\OhcManagement\MedicineIssuance;
 use App\Models\OhcManagement\MedicineReceiving;
+use App\Models\OhcManagement\MedicineStock;
 use App\Models\OhcManagement\Opd\PatientStatus;
+use App\Models\OhcManagement\Opd\PrescribetoPatient;
 use App\Models\OhcManagement\Opd\ReferedVechicle;
 use App\Models\OhcManagement\Opd\Suggestedby;
 use App\Models\OhcManagement\UserMedicineRequisition;
@@ -35,7 +37,7 @@ use Yajra\DataTables\Facades\DataTables;
 class PrescribetoPatientController extends Controller
 {
 
-    private $medicine;
+    private $medicine_stock;
     private $vendor;
     private $user_medicine_issuance;
     private $unit;
@@ -47,10 +49,11 @@ class PrescribetoPatientController extends Controller
     private $suggestedBy;
     private $refered_vechicle;
     private $patient_status;
+    private $opd_patient;
 
     public function __construct()
     {
-        $this->medicine = new Medicine();
+        $this->medicine_stock = new MedicineStock();
         $this->vendor = new Vendor();
         $this->user_medicine_issuance = new UserMedicineIssuance();
         $this->medicine_issuance = new MedicineIssuance();
@@ -60,7 +63,7 @@ class PrescribetoPatientController extends Controller
         $this->suggestedBy = new Suggestedby();
         $this->refered_vechicle = new ReferedVechicle();
         $this->patient_status = new PatientStatus();
-
+        $this->opd_patient = new PrescribetoPatient();
         $this->unit = new Unit();
         $this->department = new Department();
     }
@@ -69,7 +72,7 @@ class PrescribetoPatientController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data = $this->user_medicine_issuance->list();
+                    $data = $this->opd_patient->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->editColumn('unit_id', function ($row) {
@@ -126,18 +129,64 @@ class PrescribetoPatientController extends Controller
             $suggestedBy = $this->suggestedBy->getSuggestedBy();
             $reffered = $this->refered_vechicle->getreffered();
             $patientstatus = $this->patient_status->getpatientstatus();
-
+            $medicine  = $this->medicine_stock->getMedicinestockdata();
             $data = array(
                 'unit' => $unit,
-                'suggestedBy'=>$suggestedBy,
-                'reffered'=>$reffered,
-                'patientstatus'=>$patientstatus,
+                'suggestedBy' => $suggestedBy,
+                'reffered' => $reffered,
+                'patientstatus' => $patientstatus,
+                'medicine' => $medicine
 
             );
-            return view('ohcmanagement.ohc-opd.prescribe-to-patient.add',$data);
+            return view('ohcmanagement.ohc-opd.prescribe-to-patient.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/prescribe-to-patient/list'));
+        }
+    }
+
+
+    public function store(Request $request)
+    {
+        try {
+
+            try {
+                $rules = [
+                    'date' => 'required',
+
+                ];
+
+                $messages = [
+                    'date.required' => 'Date cannot be empty.',
+
+                ];
+
+                $validator = Validator::make($request->all(), $rules, $messages);
+
+                if ($validator->fails()) {
+                    return redirect()->back()->withErrors($validator)->withInput();
+                }
+
+                 $this->opd_patient->store();
+
+
+
+
+
+                Session::flash('success', __('Your data has been created successfully'));
+
+                return redirect(admin_url('ohc/prescribe-to-patient/list'));
+            } catch (Exception $ex) {
+
+                dd($ex);
+                Session::flash('error', 'Something went wrong Please try again after some time');
+                return redirect(admin_url('ohc/prescribe-to-patient/list'));
+            }
+        } catch (Exception $ex) {
+
+            dd($ex);
+            Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
         }
     }
@@ -171,9 +220,37 @@ class PrescribetoPatientController extends Controller
         );
     }
 
+    // fetching the employee department and mobile number
+
+    public function employeedetails($emp_id)
+    {
+        $employee = Employee::select('emp_name', 'department', 'mobile_no')
+            ->where('emp_id', $emp_id)
+            ->first();
+
+        if (!$employee) {
+            $employee = Work::select('emp_name', 'department', 'mobile_no')
+                ->where('emp_id', $emp_id)
+                ->first();
+        }
+
+        if ($employee) {
+            return response()->json([
+                'employee' => $employee,
+                'departments' => $this->department->select('department_name')->where('status', '1')->where('id', $employee->department)
+                ->first()
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Employee not found'
+            ], 404);
+        }
+    }
+
     // fetching the first aiders
 
-    public function firstaider(Request $request){
+    public function firstaider(Request $request)
+    {
         $search = $request->input('search');
 
         $employees = CertifiedFirstAider::where(function ($query) use ($search) {
@@ -205,5 +282,4 @@ class PrescribetoPatientController extends Controller
 
         );
     }
-
 }

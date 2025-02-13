@@ -161,59 +161,56 @@
         });
 
         $('#emp_id').select2({
-            ajax: {
-                url: '{{ admin_url('safetypermit/employeeid') }}',
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        search: params.term
-                    };
+                ajax: {
+                    url: '{{ admin_url('ppe_request/employeeid') }}',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.text,
+                                    text: item.text
+                                };
+                            })
+                        };
+                    }
                 },
-                processResults: function(data) {
-                    return {
-                        results: $.map(data, function(item) {
-                            return {
-                                id: item.text,
-                                text: item.text
-                            };
-                        })
-                    };
-                }
-            },
-            minimumInputLength: 1,
-            dropdownCssClass: 'form-control',
-            selectionCssClass: 'form-control'
-        });
+                minimumInputLength: 1,
+                dropdownCssClass: 'form-control',
+                selectionCssClass: 'form-control'
+            });
 
-        $('#emp_name').select2({
-            ajax: {
-                url: '{{ admin_url('safetypermit/employeename') }}',
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        search: params.term
-                    };
+            $('#emp_name').select2({
+                ajax: {
+                    url: '{{ admin_url('ppe_request/employeename') }}',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.id,
+                                    text: item.id
+                                };
+                            })
+                        };
+                    }
                 },
-                processResults: function(data) {
-                    return {
-                        results: $.map(data, function(item) {
-
-                            var cleanedText = item.text.replace(/ - .*/, '').trim();
-                            return {
-                                id: cleanedText,
-                                text: cleanedText
-                            };
-                        })
-                    };
-                }
-            },
-            minimumInputLength: 1,
-            dropdownCssClass: 'form-control',
-            selectionCssClass: 'form-control'
-        });
-
+                minimumInputLength: 1,
+                dropdownCssClass: 'form-control',
+                selectionCssClass: 'form-control'
+            });
 
         $(document).ready(function() {
             var fromDatepicker = flatpickr("#from_date", {

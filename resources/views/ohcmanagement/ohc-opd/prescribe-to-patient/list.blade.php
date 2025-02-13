@@ -91,6 +91,7 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
+
                                         <th>Employee Name</th>
                                         <th>Problem</th>
                                         <th>Gender</th>
@@ -101,11 +102,10 @@
                                         <th>Suggested By</th>
                                         <th>Treatment</th>
                                         <th>Checkup</th>
+                                        <th>Status</th>
                                         <th>Fitness Certificate</th>
+                                        <th>Created By</th>
                                         <th>Cancel Remarks</th>
-                                        <th>{{ __('common.status') }}</th>
-                                        <th>{{ __('common.created_by') }}</th>
-                                        <th>{{ __('common.created_date') }}</th>
                                         <th data-priority='1'>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -183,37 +183,63 @@
                         orderable: false,
                         searchable: false
                     },
+
                     {
                         data: 'emp_name',
                         name: 'emp_name'
                     },
                     {
-                        data: 'emp_id',
-                        name: 'emp_id'
+                        data: 'cheif_complaint',
+                        name: 'cheif_complaint'
                     },
                     {
-                        data: 'dob',
-                        name: 'dob'
+                        data: 'gender',
+                        name: 'gender'
                     },
                     {
-                        data: 'address',
-                        name: 'address'
+                        data: 'unit_id',
+                        name: 'unit_id'
                     },
                     {
-                        data: 'employee_type',
-                        name: 'employee_type'
+                        data: 'department_id',
+                        name: 'department_id'
                     },
                     {
-                        data: 'status',
-                        name: 'status'
+                        data: 'date',
+                        name: 'date'
+                    },
+                    {
+                        data: 'time',
+                        name: 'time'
+                    },
+                    {
+                        data: 'suggested_by',
+                        name: 'suggested_by'
+                    },
+                    {
+                        data: 'treatment',
+                        name: 'treatment'
+                    },
+                    {
+                        data: 'vital_checkup',
+                        name: 'vital_checkup'
+                    },
+
+                    {
+                        data: 'patient_status',
+                        name: 'patient_status'
+                    },
+                    {
+                        data: 'fitness_certificate',
+                        name: 'fitness_certificate'
                     },
                     {
                         data: 'created_by',
                         name: 'created_by'
                     },
                     {
-                        data: 'created_at',
-                        name: 'created_at'
+                        data: 'cancel_remarks',
+                        name: 'cancel_remarks'
                     },
                     {
                         data: 'action',

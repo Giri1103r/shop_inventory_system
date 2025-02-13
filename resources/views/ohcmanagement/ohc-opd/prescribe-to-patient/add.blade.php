@@ -94,7 +94,14 @@
                                                         class="form-control">
                                                 </div>
                                             </div>
-                                            <div class="col-md-3 mb-3 form-input">
+                                            <div class="col-md-4 mb-2"style="display: none;">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Company Name</label>
+                                                    <input type="text" name="company_name" id="company_name"
+                                                        class="form-control" placeholder="Company Name">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3 form-input">
                                                 <label for="dob" class="form-label ">Date Of Birth</label>
                                                 <div class="input-group date form-input  custom-height">
                                                     <input type="text" class="form-control " name="dob"
@@ -104,6 +111,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">Address</label>
@@ -114,8 +122,8 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Gender</label>
-                                                    <select name="gender" id="gender" class="form-control single-select"
-                                                        style="width: 100%">
+                                                    <select name="gender" id="gender"
+                                                        class="form-control single-select" style="width: 100%">
                                                         <option value="">select the gender</option>
                                                         <option value="Male">Male</option>
                                                         <option value="Female">Female</option>
@@ -124,26 +132,28 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-3 mb-3 form-input">
+                                            <div class="col-md-4 mb-3 form-input">
                                                 <label for="date" class="form-label ">Date</label>
-                                                <div class="input-group date form-input  custom-height">
-                                                    <input type="text" class="form-control " name="date"
+                                                <div class="input-group date form-input custom-height">
+                                                    <input type="text" class="form-control" name="date"
                                                         id="date" autocomplete="off">
                                                     <div class="input-group-addon input-group-text">
                                                         <span class="fa fa-calendar"></span>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-3 mb-3 form-input">
-                                                <label for="date" class="form-label ">Time</label>
-                                                <div class="input-group date form-input  custom-height">
-                                                    <input type="text" class="form-control " name="time"
+
+                                            <div class="col-md-4 mb-3 form-input">
+                                                <label for="time" class="form-label">Time</label>
+                                                <div class="input-group date form-input custom-height">
+                                                    <input type="text" class="form-control" name="time"
                                                         id="time" autocomplete="off">
                                                     <div class="input-group-addon input-group-text">
-                                                        <span class="fa fa-clock-o"></span>
+                                                        <span class="fas fa-clock"></span>
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Cheif Complaint</label>
@@ -174,7 +184,8 @@
                                             <div class="col-md-4 mb-2" style="display: none;">
                                                 <div class="form-group form-input">
                                                     <label for="vechicle" class="form-label require">Details</label>
-                                                    <input name="details" id="details" placeholder="Enter the Details" class="form-control">
+                                                    <input name="details" id="details" placeholder="Enter the Details"
+                                                        class="form-control">
 
                                                 </div>
                                             </div>
@@ -220,7 +231,11 @@
                                                                                 <option value="">Select the Medicine
                                                                                     Name
                                                                                 </option>
-
+                                                                                @foreach ($medicine as $list)
+                                                                                    <option
+                                                                                        value="{{ encryptId($list->id) }}">
+                                                                                        {{ $list->medicine_id }}</option>
+                                                                                @endforeach
                                                                             </select>
                                                                         </div>
                                                                     </td>
@@ -291,8 +306,8 @@
                                                     <div class="form-group form-input">
                                                         <label for="first_aider" class="form-label require">First
                                                             Aider</label>
-                                                        <select name="first_aider" id="first_aider"
-                                                            class="form-control " style="width: 100%">
+                                                        <select name="first_aider" id="first_aider" class="form-control "
+                                                            style="width: 100%">
                                                             <option value="">select the First Aider</option>
                                                         </select>
                                                     </div>
@@ -311,10 +326,11 @@
                                                         <select name="vechicle" id="vechicle"
                                                             class="form-control single-select" style="width: 100%">
                                                             <option value="">select the Vechicle</option>
-                                                            @foreach ($reffered  as $list)
-                                                            <option value="{{ $list->id }}">{{ $list->refered_vechicle }}
-                                                            </option>
-                                                        @endforeach
+                                                            @foreach ($reffered as $list)
+                                                                <option value="{{ $list->id }}">
+                                                                    {{ $list->refered_vechicle }}
+                                                                </option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
@@ -327,23 +343,25 @@
                                                         <select name="patient_status" id="patient_status"
                                                             class="form-control single-select" style="width: 100%">
                                                             <option value="">select the status</option>
-                                                            @foreach ($patientstatus  as $list)
-                                                            <option value="{{ $list->id }}">{{ $list->patient_status }}
-                                                            </option>
-                                                        @endforeach
+                                                            @foreach ($patientstatus as $list)
+                                                                <option value="{{ $list->id }}">
+                                                                    {{ $list->patient_status }}
+                                                                </option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="row close" style="display: none;">
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
-                                                            <label for="Fitness" class="require">Fitness Certificate</label>
+                                                            <label for="Fitness" class="require">Fitness
+                                                                Certificate</label>
                                                             <select name="fitness_certificate" id="fitness_certificate"
                                                                 class="form-control single-select" style="width: 100%">
                                                                 <option value="">select the Fitness certificate
                                                                 </option>
-                                                                <option value="Required">Required</option>
-                                                                <option value="Not Required">Not Required</option>
+                                                                <option value="1">Required</option>
+                                                                <option value="2">Not Required</option>
 
                                                             </select>
                                                         </div>
@@ -357,7 +375,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="row other_vechicles"style="display: none;" >
+                                                <div class="row other_vechicles"style="display: none;">
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
                                                             <label for="vechicle" class="form-label require">Reffered By
@@ -392,7 +410,117 @@
 @stop
 @push('script')
     <script>
+        // company name
+
+        $('#is_outside_worker').change(function() {
+            if ($(this).is(':checked')) {
+
+                $('.company_name').show();
+
+            } else {
+
+                $('.company_name').hide();
+            }
+        });
+        // date picker and time picker
+
+
         $(document).ready(function() {
+            var fromDatepicker = flatpickr("#date", {
+                dateFormat: "d-m-Y",
+                maxDate: new Date(),
+                defaultDate: new Date(),
+            });
+
+            var currentTime = new Date().toLocaleTimeString('en-GB', {
+                hour: '2-digit',
+                minute: '2-digit',
+
+            });
+
+            var timepicker = flatpickr("#time", {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true,
+                defaultDate: currentTime,
+                minTime: currentTime,
+            });
+
+
+        });
+
+        // date of birth
+        $(document).ready(function() {
+            var fromDobDatepicker = flatpickr("#dob", {
+                dateFormat: "d-m-Y",
+                maxDate: new Date(new Date().setFullYear(new Date().getFullYear() -
+                    18)),
+
+            });
+
+        });
+
+        // getting the employee/worker details
+        $('#emp_id').select2({
+            ajax: {
+                url: '{{ admin_url('ohc/prescribe-to-patient/fetchemployeename') }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search: params.term
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: $.map(data, function(item) {
+                            return {
+                                id: item.id,
+                                text: item.text
+                            };
+                        })
+                    };
+                }
+            },
+            minimumInputLength: 1,
+            dropdownCssClass: 'form-control',
+            selectionCssClass: 'form-control'
+        });
+
+        // department and number & emp name
+
+        $(document).on('change', '#emp_id', function() {
+            var empId = $(this).val();
+            if (empId) {
+                $.ajax({
+                    url: "{{ admin_url('ohc/prescribe-to-patient/emp-details/') }}" + empId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.employee) {
+                            $('#emp_name').val(response.employee.emp_name);
+                            $('#mobile_no').val(response.employee.mobile_no).prop('disabled', false);
+                            $('#department_id').val(response.departments.department_name).prop(
+                                'disabled',
+                                true);
+                        } else {
+                            alert("No employee details found.");
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching mobile number and department. Please try again.');
+                    }
+                });
+            } else {
+                $('#emp_name, #mobile_no, #department_id').val('').prop('disabled', true);
+            }
+        });
+
+
+
+        $(document).ready(function() {
+
             $('#is_reffered').change(function() {
                 if ($(this).is(':checked')) {
                     $('.isReffered').slideDown();
@@ -416,13 +544,19 @@
             $('#is_outside_worker').change(function() {
                 if ($(this).is(':checked')) {
                     $('.department').hide();
-                    $('.unit').show();
+                    $('.unit, .company_name').show();
 
+                    $('#emp_id').val('').prop('disabled', true);
+                    $('#emp_name').val('').prop('readonly', false);
                 } else {
                     $('.department').show();
-                    $('.unit').hide();
+                    $('.unit, .company_name').hide();
+
+                    $('#emp_id').val('').prop('disabled', false);
+                    $('#emp_name').val('').prop('disabled', true);
                 }
             });
+
 
             // suggested by
 
@@ -511,6 +645,178 @@
 
                 $('#is_reffered_mobile_no').val('').prop('disable', true);
             }
+        });
+
+        // add more for the medicine
+
+        $(document).ready(function() {
+            const MAX_ROWS = 5;
+            let opd_patient = 1;
+
+
+
+            $(".add-row").click(function() {
+                var rowCount = $('#medicine-tbody tr').length;
+
+                if (rowCount < MAX_ROWS) {
+                    var newRow = `
+            <tr>
+                <td>
+                    <div class="form-group form-input">
+                        <label for="medicine_id" class="require">Medicine Name</label>
+                        <select name="medicine_id[${opd_patient}]" class="form-control single-select" style="width: 100%">
+                            <option value="">Select the Medicine Name</option>
+                            @foreach ($medicine as $list)
+                                <option value="{{ encryptId($list->id) }}" data-available-quantity="{{ $list->available_quantity }}">{{ $list->medicine_id }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group form-input">
+                        <label for="quantity" class="require">Available Quantity</label>
+                        <input type="text" name="available_quantity[${opd_patient}]" class="form-control" readonly>
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group form-input">
+                        <label for="quantity" class="require">Quantity</label>
+                        <input type="text" name="quantity[${opd_patient}]"   placeholder="Enter the quantity" class="form-control">
+                         <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
+
+
+                    </div>
+                </td>
+
+                <td>
+                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px;">
+                        <i class="fa-solid fa-trash"></i>
+                    </div>
+                </td>
+            </tr>`;
+
+                    $('#medicine-tbody').append(newRow);
+
+
+                    $('select[name="medicine_id[' + opd_patient + ']"]').select2({
+                        placeholder: "Select the Medicine Name",
+                        width: '100%'
+                    });
+
+
+                    $('select[name="medicine_id[' + opd_patient + ']"]').rules('add', {
+                        required: true,
+                        messages: {
+                            required: 'This Medicine name is required'
+                        }
+                    });
+
+                    $('input[name="quantity[' + opd_patient + ']"]').rules('add', {
+                        required: true,
+                        digits: true,
+                        messages: {
+                            required: 'Quantity is required',
+                            digits: 'Quantity must be numeric',
+                        }
+                    });
+
+
+                    filterMedicineOptions();
+                    opd_patient++;
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Warning',
+                        text: 'Your request has exceeded the limit.',
+                        confirmButtonColor: '#3085d6'
+                    });
+                }
+            });
+
+            function filterMedicineOptions() {
+                let selectedValues = [];
+
+
+                $('select[name^="medicine_id"]').each(function() {
+                    let selectedVal = $(this).val();
+                    if (selectedVal) {
+                        selectedValues.push(selectedVal);
+                    }
+                });
+
+                $('select[name^="medicine_id"]').each(function() {
+                    let currentSelect = $(this);
+                    let currentValue = currentSelect.val();
+
+                    currentSelect.find('option').each(function() {
+                        let optionValue = $(this).val();
+
+                        // Always enable all options first
+                        $(this).prop('disabled', false);
+
+                        // Disable option if it's selected in another dropdown
+                        if (selectedValues.includes(optionValue) && optionValue !== currentValue) {
+                            $(this).prop('disabled', true);
+                        }
+                    });
+                });
+            }
+
+
+
+
+            $(document).on('change', 'select[name^="medicine_id"]', function() {
+                var medicine_id = $(this).val();
+                var row = $(this).closest('tr'); // Get the row of the current select
+
+                if (medicine_id) {
+                    $.ajax({
+                        url: "{{ admin_url('ohc/discard/quantity') }}/" + medicine_id,
+                        type: 'get',
+                        dataType: 'json',
+                        success: function(data) {
+                            row.find('input[name^="available_quantity"]').val(data
+                                .available_quantity);
+                        },
+                        error: function() {
+                            Swal.fire('Error', 'Something went wrong. Please try again.',
+                                'error');
+                        }
+                    });
+                } else {
+                    row.find('input[name^="available_quantity"]').val('');
+                }
+            });
+
+            // Quantity validation
+            $(document).on("input", 'input[name^="quantity"]', function() {
+                var row = $(this).closest('tr'); // Get the row of the current input
+                var availableQuantity = parseInt(row.find('input[name^="available_quantity"]').val());
+                var quantity = parseInt($(this).val());
+
+                if (quantity > availableQuantity) {
+                    row.find('.quantity-error').show();
+                    $(this).val(availableQuantity);
+                } else {
+                    row.find('.quantity-error').hide();
+                }
+            });
+
+
+            $(document).on("click", ".delete-row", function() {
+                var rowCount = $('#medicine-tbody tr').length;
+
+                if (rowCount > 1) {
+                    $(this).closest("tr").remove();
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Warning',
+                        text: 'At least one row is required.',
+                        confirmButtonColor: '#3085d6'
+                    });
+                }
+            });
         });
     </script>
 @endpush

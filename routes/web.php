@@ -678,6 +678,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/storemanger/issued', [PpeRequestController::class, 'storemanagerapproval']);
                 Route::get('/fetchEmployeeDetails/{emp_id}', [PpeRequestController::class, 'fetchEmployeeDetails']);
                 Route::get('/employeeid', [PpeRequestController::class, 'employeeid']);
+                Route::get('/employee', [PpeRequestController::class, 'employee']);
+                Route::get('/employeename', [PpeRequestController::class, 'employeename']);
             });
 
             Route::group(['prefix' => 'ppe_stock_inventory'], function () {
@@ -977,6 +979,7 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('/fetchemployeename', [PrescribetoPatientController::class, 'fetchemployeename']);
             Route::get('/firstaider', [PrescribetoPatientController::class, 'firstaider']);
             Route::get('/first-aider-number', [PrescribetoPatientController::class, 'firstaidernumber']);
+            Route::get('/emp-details/{emp_id}', [PrescribetoPatientController::class, 'employeedetails']);
 
 
         });
