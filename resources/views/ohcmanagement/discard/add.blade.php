@@ -46,9 +46,12 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Department </label>
-                                                    <input type="text" name ="department_id" id="department_id"
-                                                        class="form-control" placeholder="Enter the Department Name"
-                                                        value="{{ getDepartment(Auth::user()->department_id) }}" readonly>
+                                                    <select name="department_id" id="department_id" class="form-control single-select" style="width: 100%">
+                                                        <option value="">Select the department</option>
+                                                        @foreach ($departmentList as $list)
+                                                             <option value="{{encryptId($list->id)}}">{{$list->department_name}}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -58,7 +61,7 @@
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="discard_date" id="discard_date"
                                                             class="form-control"autocomplete="off"
-                                                            value="{{ date('d-m-Y ') }}" readonly>
+                                                            readonly>
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
                                                         </div>
@@ -185,13 +188,13 @@
 
 @push('script')
     <script>
-        // $(document).ready(function() {
-        //     var fromDatepicker = flatpickr("#discard_date", {
-        //         dateFormat: "d-m-Y",
-        //         minDate: new Date(),
+        $(document).ready(function() {
+            var fromDatepicker = flatpickr("#discard_date", {
+                dateFormat: "d-m-Y",
+                maxDate: new Date(),
 
-        //     });
-        // });
+            });
+        });
         $('#medicine_id').on('change', function() {
             var selectedOption = $(this).find(':selected');
             var availableQuantity = selectedOption.data('available-quantity');

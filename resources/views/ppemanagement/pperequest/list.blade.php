@@ -135,7 +135,7 @@
 
             $('#emp_id').select2({
                 ajax: {
-                    url: '{{ admin_url('safetypermit/employeeid') }}',
+                    url: '{{ admin_url('ppe_request/employeeid') }}',
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
@@ -161,7 +161,7 @@
 
             $('#emp_name').select2({
                 ajax: {
-                    url: '{{ admin_url('safetypermit/employeename') }}',
+                    url: '{{ admin_url('ppe_request/employeename') }}',
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
@@ -172,11 +172,9 @@
                     processResults: function(data) {
                         return {
                             results: $.map(data, function(item) {
-
-                                var cleanedText = item.text.replace(/ - .*/, '').trim();
                                 return {
-                                    id: cleanedText,
-                                    text: cleanedText
+                                    id: item.id,
+                                    text: item.id
                                 };
                             })
                         };

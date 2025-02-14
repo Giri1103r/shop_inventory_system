@@ -196,13 +196,13 @@
         });
 
         var table = $('.datatable-list').DataTable({
+            autoWidth: true,
+            responsive: true,
+            processing: false,
             serverSide: true,
             searching: true,
+            scrollX: false,
             ordering: true,
-            bSort: false,
-            scrollX: true,
-            autoWidth: false,
-            responsive: false,
             dom: 'Bfrtip',
             layout: {
                 top2Start: 'buttons',

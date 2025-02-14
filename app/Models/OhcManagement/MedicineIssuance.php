@@ -60,25 +60,24 @@ class MedicineIssuance extends Model
             ];
 
 
-            $existingRecord = $this->where('reference_id', $id)
-                ->where('medicine_id', $medicine)
+            $existingRecord = self::where('reference_id', $id)
+                ->where('medicine_id', $medicine)->where('trash','NO')
                 ->first();
 
             if ($existingRecord) {
-
                 $existingRecord->update($update_data);
             } else {
-             
-                $this->create($update_data);
+                self::create($update_data);
             }
         }
     }
+
 
     public function selectOne($id)
     {
 
         $data = $this->select(
-            'ohc_management_medicine_issuance.*')->where('reference_id',$id)
+            'ohc_management_medicine_issuance.*')->where('reference_id',$id)->where('trash','NO')
             ->get();
 
         return $data;

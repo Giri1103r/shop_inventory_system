@@ -75,7 +75,10 @@ class DiscardController extends Controller
 
 
                         ->editColumn('discard_date', function ($row) {
-                            return displaydateformat($row->request_date);
+                            return displaydateformat($row->discard_date);
+                        })
+                        ->editColumn('medicine_id', function ($row) {
+                            return getMedicinename($row->medicine_id);
                         })
                         ->editColumn('unit_id', function ($row) {
                             return getUnitname($row->unit_id);
@@ -86,24 +89,13 @@ class DiscardController extends Controller
                         ->editColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
-                            $btn .= '<a href="' . admin_url('ohc/discard/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn .= '<a href="' . admin_url('ohc/discard/view/' . encryptId($row->discard_id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
-                            // if (CheckUserPermission('edit')) {
-                            // $btn .= '<a href="' . admin_url('ohc/discard/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
-                            // }
-                            if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) || (checkUserRole(ROLE_PARAMEDICS) && $row->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)) {
-                                $btn .= '<a href="' . admin_url('ohc/discard/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
-                            }
-                            if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == STATUS_OHC_PARAMEDICS_APPROVED) || (checkUserRole(ROLE_PARAMEDICS) && $row->approve_status == STATUS_OHC_PARAMEDICS_APPROVED)) {
-                                $btn .= '<a href="' . admin_url('ohc/medicine-issuance/add/' . encryptId($row->id)) . '" class="" title="Action"><i class="fas fa-share-square " style="color: #0013ff;"></i></a> ';
-                            }
 
-
-                            $btn .= '<a href="' . admin_url('ohc/discard/generalpdf/' . encryptId($row->id)) . '" class="" title="PDF"> <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a> ';
-                            return $btn;
+                           return $btn;
                         })
 
-                        ->rawColumns(['action', 'request_date', 'approve_status','unit_id','department_id'])
+                        ->rawColumns(['action', 'discard_date', 'approve_status','unit_id','department_id','medicine_id'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -111,7 +103,7 @@ class DiscardController extends Controller
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    report($ex);
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
                 }
             }
@@ -131,9 +123,11 @@ class DiscardController extends Controller
         try {
             $unit = $this->unit->getunit();
             $medicine = $this->medicine_stock->getMedicinestockdata();
+            $departmentList = $this->department->getunitwiseDepartment();
             $data = array(
                 'medicine' => $medicine,
-                'unit' => $unit
+                'unit' => $unit,
+                'departmentList'=>$departmentList
             );
 
             return view('ohcmanagement.discard.add', $data);
@@ -150,13 +144,13 @@ class DiscardController extends Controller
             $rules = [
                 'unit_id' => 'required',
                 'department_id' => 'required',
-                'request_date' => 'required',
+                'discard_date' => 'required',
 
             ];
             $messages = [
                 'department_id.required' => 'Please select a Deparment.',
                 'unit_id.required' => 'Please select a unit.',
-                'request_date.required' => 'Please select the expiry date.',
+                'discard_date.required' => 'Please select the expiry date.',
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
@@ -409,12 +403,12 @@ class DiscardController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Requisition ID',
                 'Unit Name',
                 'Department Name',
-                'Request Date',
-                'From Status',
-                'To Status',
+                'Medicine Name',
+                'Quantity',
+                'Remarks',
+                'Discard Date',
                 'Created by',
                 'Created at'
             ];
@@ -424,36 +418,12 @@ class DiscardController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->req_id;
                 $export[] =  getUnitname($data->unit_id);
                 $export[] =  getDepartment($data->department_id);
-                $export[] =  Displaydateformat($data->request_date);
-                if ($data->approve_status == STATUS_OHC_PARAMEDIES_REQUEST) {
-                    $export[] = 'Stock Requested ';
-                } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) {
-                    $export[] = 'Paramedics approval Pending';
-                } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVED) {
-                    $export[] = 'Paramedics approval Pending';
-                } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_REJECTED) {
-                    $export[] = 'Paramedics approval Pending';
-                } elseif ($data->approve_status == STATUS_OHC_CLOSE) {
-                    $export[] = 'Paramedics Approved';
-                }  else {
-                    $export[] = removeUnderScore(getStatus($data->approve_status));
-                }
-                if ($data->approve_status == STATUS_OHC_PARAMEDIES_REQUEST) {
-                    $export[] = 'Paramedics approval Pending ';
-                } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) {
-                    $export[] = 'Paramedics approval Pending';
-                } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVED) {
-                    $export[] = 'Paramedics Approved';
-                } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_REJECTED) {
-                    $export[] = 'Paramedics Rejected';
-                } elseif ($data->approve_status == STATUS_OHC_CLOSE) {
-                    $export[] = 'closed';
-                }  else {
-                    $export[] = removeUnderScore(getStatus($data->approve_status));
-                }
+                $export[] =  getMedicinename($data->medicine_id);
+                $export[] =$data->quantity;
+                $export[] =$data->remarks;
+                $export[] = Displaydateformat($data->discard_date);;
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 
@@ -462,7 +432,7 @@ class DiscardController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Medicine Requisition.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Expired Medicines.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -486,12 +456,12 @@ class DiscardController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Requisition ID',
                 'Unit Name',
                 'Department Name',
-                'Request Date',
-                'From Status',
-                'To Status',
+                'Medicine Name',
+                'Quantity',
+                'Remarks',
+                'Discard Date',
                 'Created by',
                 'Created at'
             ];
@@ -499,7 +469,7 @@ class DiscardController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Medicine Requisition",
+                'pagetitle' => "Expired Medicines",
             );
 
             $property = [
@@ -521,7 +491,7 @@ class DiscardController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Medicine Requisition.pdf";
+            $filename = "Expired Medicines.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 

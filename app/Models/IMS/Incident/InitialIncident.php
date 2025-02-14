@@ -21,9 +21,21 @@ class InitialIncident extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'incident_type_id',
-        'incident_type_name',
-        'short_name',
+        'sr_no',
+        'incident_date_time',
+        'unit_id',
+        'shift',
+        'location_id',
+        'exact_location',
+        'iir_type',
+        'reported_name',
+        'designation',
+        'department',
+        'employee_code',
+        'time_of_reporting',
+        'reporting_media',
+        'reporting_media_others',
+        'brief_description',
         'status',
         'trash',
         'created_by',
@@ -41,7 +53,7 @@ class InitialIncident extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ims_master_incident_type.*');
+        $query = $this->select('ims_initial_incident.*');
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -118,11 +130,29 @@ class InitialIncident extends Model
     public function store()
     {
         $request = request();
+        if (is_array($request->reporting_media)) {
+            $reporting_media = implode(',', array_map(function ($item) {
+                return decryptId($item);
+            }, $request->reporting_media));
+        } else {
 
+            $reporting_media = decryptId($request->reporting_media);
+        }
         $insert_array = array(
-            'incident_type_id' => $request->incident_type_id,
-            'incident_type_name' => $request->incident_type_name,
-            'short_name' => $request->short_name,
+            'incident_date_time' => DBdatetimeformat($request->incident_date_time),
+            'unit_id' => decryptId($request->unit_id),
+            'shift' => $request->shift,
+            'location_id' => decryptId($request->location_id),
+            'exact_location' => $request->exact_location,
+            'iir_type' => $request->iir_type,
+            'reported_name' => decryptId($request->reported_name),
+            'designation' => $request->designation,
+            'department' => $request->department,
+            'employee_code' => $request->employee_code,
+            'time_of_reporting' => $request->time_of_reporting,
+            'reporting_media' => $reporting_media,
+            'reporting_media_others' => $request->reporting_media_others,
+            'brief_description' => $request->brief_description,
             'created_by' => Auth::id()
         );
         return $this->create($insert_array);
@@ -134,9 +164,19 @@ class InitialIncident extends Model
         $request = request();
 
         $update_array = array(
-            'incident_type_id' => $request->incident_type_id,
-            'incident_type_name' => $request->incident_type_name,
-            'short_name' => $request->short_name,
+          'incident_date_time' => $request->incident_date_time,
+            'unit_id' => $request->unit_id,
+            'shift' => $request->shift,
+            'location_id' => $request->location_id,
+            'exact_location' => $request->exact_location,
+            'iir_type' => $request->iir_type,
+            'reported_name' => $request->reported_name,
+            'designation' => $request->designation,
+            'department' => $request->department,
+            'employee_code' => $request->employee_code,
+            'time_of_reporting' => $request->time_of_reporting,
+            'reporting_media' => $request->reporting_media,
+            'brief_description' => $request->brief_description,
             'updated_by' => Auth::id()
         );
         return $this->where('id', $id)->update($update_array);
@@ -175,7 +215,7 @@ class InitialIncident extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ims_master_incident_type.*');
+        $query = $this->select('ims_initial_incident.*');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -220,25 +260,27 @@ class InitialIncident extends Model
     {
 
         $data = $this->select(
-            'ims_master_incident_type.*'
+            'ims_initial_incident.*','masters_employee.emp_name as reported_by','masters_department.department_name as reported_department','ims_initial_incident_evidence_upload.file_path'
         )
-            ->where('ims_master_incident_type.id', $id)
+            ->where('ims_initial_incident.id', $id)
+           ->leftJoin('masters_employee', 'masters_employee.id', '=', 'ims_initial_incident.reported_name')
+           ->leftJoin('masters_department', 'masters_department.id', '=', 'ims_initial_incident.department')
+           ->leftJoin('ims_initial_incident_evidence_upload', 'ims_initial_incident_evidence_upload.incident_id', '=', 'ims_initial_incident.id')
             ->first();
 
         return $data;
     }
 
-
-
-
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('ims_master_incident_type'));
+        static::addGlobalScope(new TrashScope('ims_initial_incident'));
 
         static::created(function ($model) {
 
-            $uniqueId = 'INC-TYPE-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
-            $model->update(['incident_type_id' => $uniqueId]);
+            $uniqueId = 'INCIDENT-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
+            $model->update(['sr_no' => $uniqueId]);
         });
     }
+
+
 }

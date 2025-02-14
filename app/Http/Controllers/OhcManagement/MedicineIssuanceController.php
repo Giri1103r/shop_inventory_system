@@ -85,7 +85,7 @@ class MedicineIssuanceController extends Controller
                             $btn .= '<a href="' . admin_url('ohc/medicine-issuance/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
                             // if (CheckUserPermission('edit')) {
-                            $btn .= '<a href="' . admin_url('ohc/medicine-issuance/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
+                            // $btn .= '<a href="' . admin_url('ohc/medicine-issuance/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             // }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
 
@@ -547,15 +547,17 @@ class MedicineIssuanceController extends Controller
         }
     }
 
-    public function delete(Request $request)
+    public function delete(Request $request,$id)
     {
         try {
-            $id = decryptId($request->id);
 
             $this->medicine_issuance->deleterecord($id);
+            return response()->json(['status' => 'success', 'msg' => 'Deleted successfully'], 200);
         } catch (Exception $ex) {
+            return response()->json(['status' => 'error', 'msg' => 'Something went wrong'], 200);
         }
     }
+
 
     public function ExportPdf(Request $request)
     {

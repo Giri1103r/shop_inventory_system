@@ -457,32 +457,22 @@ class CronController extends Controller
     public function storeItem()
     {
         try {
-
             $itemcodes = $this->ppetypemaster->getppetypemaster();
 
-            foreach ($itemcodes as $code) {
-                $itemList = $code->item_code;
-
-
+            foreach ($itemcodes as $itemList) {
                 $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetPPEInventory?TokenId=123&Orgid=86&Item={$itemList}";
-
 
                 $response = Http::get($apiUrl);
 
                 if ($response->successful()) {
                     $data = $response->json();
 
-                    if (!empty($data)) {
-
-                         $stock = $this->ppestock->store($data);
-
-                        //  dd($stock);
+                    if ($data && is_array($data)) {
+                        $this->ppestock->store($data);
                     } else {
-
                         return response()->json(['message' => 'No data found in API response.']);
                     }
                 } else {
-
                     return response()->json([
                         'message' => 'Failed to fetch data from API.',
                         'status' => $response->status(),
@@ -490,10 +480,8 @@ class CronController extends Controller
                 }
             }
 
-
             return response()->json(['message' => 'Data saved successfully.']);
         } catch (Exception $ex) {
-
             report($ex);
             return response()->json([
                 'message' => 'An error occurred.',
@@ -501,6 +489,7 @@ class CronController extends Controller
             ]);
         }
     }
+
 
     public function stockrequest()
     {
@@ -572,7 +561,7 @@ class CronController extends Controller
             $eighthoursAhead = Carbon::now()->addHour(8);
             $data = MedicineReceiving::where('approve_status', STATUS_OHC_OPEN)
                 ->where('status', 1)
-                ->where('cron_time','<',$eighthoursAhead->toTimeString())
+                ->where('cron_time', '<', $eighthoursAhead->toTimeString())
                 ->get();
 
 

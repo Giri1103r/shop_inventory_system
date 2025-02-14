@@ -86,7 +86,7 @@ class MedicineFirstAidController extends Controller
                             $btn .= '<a href="' . admin_url('ohc/medicine-first-aid/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
                             // if (CheckUserPermission('edit')) {
-                            $btn .= '<a href="' . admin_url('ohc/medicine-first-aid/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
+                            // $btn .= '<a href="' . admin_url('ohc/medicine-first-aid/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             // }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
 
@@ -121,10 +121,12 @@ class MedicineFirstAidController extends Controller
     {
         try {
             $unit = $this->unit->getuserunit();
-            $medicine = $this->medicine_stock->getMedicineIssuanceStock();
+            $departmentList = $this->department->getunitwiseDepartment();
+            $medicine = $this->medicine_stock->getMedicinestockdata();
             $data = array(
                 'medicine' => $medicine,
-                'unit' => $unit
+                'unit' => $unit,
+                'departmentList' => $departmentList
             );
 
             return view('ohcmanagement.medicine-first-aid.add', $data);
@@ -158,7 +160,17 @@ class MedicineFirstAidController extends Controller
 
                 $user_medicine_first_aid = $this->user_medicine_first_aid->store();
                 $medicine_first_aid = $this->medicine_first_aid->store($user_medicine_first_aid);
+                foreach ($medicine_first_aid as $medicine) {
 
+                    $medicine_id = $medicine->medicine_id;
+                    $unitId = $user_medicine_first_aid->unit_id;
+                    $issuedQuantity = $medicine->quantity;
+
+                    $this->medicine_stock
+                        ->where('id', $medicine_id)
+                        ->where('unit_id', $unitId)
+                        ->decrement('quantity', $issuedQuantity);
+               }
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
@@ -176,76 +188,76 @@ class MedicineFirstAidController extends Controller
     }
 
 
-    public function edit(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
+    // public function edit(Request $request)
+    // {
+    //     try {
+    //         $id = decryptId($request->id);
 
 
-            $user_medicine_first_aid = $this->user_medicine_first_aid->selectOne($id);
-            $departmentList=$this->department->getdepartment();
-            $medicine_first_aid = $this->medicine_first_aid->selectOne($id);
-            $departmentList = $this->department->getdepartment();
-            $unit = $this->unit->getuserunit();
-            $medicine = $this->medicine_stock->getMedicineIssuanceStock();
-            $data = array(
-              'medicine'=>$medicine,
-                'unit' => $unit,
-                'departmentList' => $departmentList,
-                'user_medicine_first_aid' => $user_medicine_first_aid,
-                'medicine_first_aid' => $medicine_first_aid
-            );
-            // dd($data );
-            return view('ohcmanagement.medicine-first-aid.edit', $data);
-        } catch (Exception $ex) {
-            dd($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('ohc/medicine-first-aid/list'));
-        }
-    }
+    //         $user_medicine_first_aid = $this->user_medicine_first_aid->selectOne($id);
+    //         $departmentList = $this->department->getdepartment();
+    //         $medicine_first_aid = $this->medicine_first_aid->selectOne($id);
+    //         $departmentList = $this->department->getdepartment();
+    //         $unit = $this->unit->getuserunit();
+    //         $medicine = $this->medicine_stock->getMedicineIssuanceStock();
+    //         $data = array(
+    //             'medicine' => $medicine,
+    //             'unit' => $unit,
+    //             'departmentList' => $departmentList,
+    //             'user_medicine_first_aid' => $user_medicine_first_aid,
+    //             'medicine_first_aid' => $medicine_first_aid
+    //         );
+    //         // dd($data );
+    //         return view('ohcmanagement.medicine-first-aid.edit', $data);
+    //     } catch (Exception $ex) {
+    //         dd($ex);
+    //         Session::flash('error', 'Something went wrong, Please try after sometimes!');
+    //         return redirect(admin_url('ohc/medicine-first-aid/list'));
+    //     }
+    // }
 
-    public function update(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-            $rules = [
-                'unit_id' => 'required',
-                'department_id' => 'required',
-                'issue_date' => 'required',
+    // public function update(Request $request)
+    // {
+    //     try {
+    //         $id = decryptId($request->id);
+    //         $rules = [
+    //             'unit_id' => 'required',
+    //             'department_id' => 'required',
+    //             'issue_date' => 'required',
 
-            ];
-            $messages = [
-                'department_id.required' => 'Please select a Deparment.',
-                'unit_id.required' => 'Please select a unit.',
-                'issue_date.required' => 'Please select the Issued date.',
-            ];
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
+    //         ];
+    //         $messages = [
+    //             'department_id.required' => 'Please select a Deparment.',
+    //             'unit_id.required' => 'Please select a unit.',
+    //             'issue_date.required' => 'Please select the Issued date.',
+    //         ];
+    //         $validator = Validator::make($request->all(), $rules, $messages);
+    //         if ($validator->fails()) {
+    //             return redirect()->back()->withErrors($validator)->withInput();
+    //         }
 
-            try {
+    //         try {
 
-                $user_medicine_first_aid = $this->user_medicine_first_aid->updates($id);
-                $this->medicine_first_aid->updates($id);
-
-           
+    //             $user_medicine_first_aid = $this->user_medicine_first_aid->updates($id);
+    //             $this->medicine_first_aid->updates($id);
 
 
-                Session::flash('success', 'Your data has been Updated successfully!');
-            } catch (Exception $ex) {
-                dd($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            }
 
-            return redirect(admin_url('ohc/medicine-first-aid/list'));
-        } catch (Exception $ex) {
 
-            dd($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('ohc/medicine-first-aid/list'));
-        }
-    }
+    //             Session::flash('success', 'Your data has been Updated successfully!');
+    //         } catch (Exception $ex) {
+    //             dd($ex);
+    //             Session::flash('error', 'Something went wrong, Please try after sometimes!');
+    //         }
+
+    //         return redirect(admin_url('ohc/medicine-first-aid/list'));
+    //     } catch (Exception $ex) {
+
+    //         dd($ex);
+    //         Session::flash('error', 'Something went wrong, Please try after sometimes!');
+    //         return redirect(admin_url('ohc/medicine-first-aid/list'));
+    //     }
+    // }
 
     public function view(Request $request)
     {
@@ -271,7 +283,6 @@ class MedicineFirstAidController extends Controller
     public function quantity(Request $request, $quantity_id)
     {
         $id = ($quantity_id);
-
 
         $availableQuantity = $this->medicine_stock->getAvailableQuantity($id);
 
@@ -327,10 +338,10 @@ class MedicineFirstAidController extends Controller
         }
     }
 
-    public function delete(Request $request)
+    public function delete(Request $request, $id)
     {
         try {
-            $id = decryptId($request->id);
+
 
             $this->medicine_first_aid->deleterecord($id);
         } catch (Exception $ex) {
