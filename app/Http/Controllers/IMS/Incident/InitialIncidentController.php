@@ -25,6 +25,7 @@ use Illuminate\Support\Str;
 use App\Models\IMS\Incident\InitialIncident;
 use App\Models\IMS\Incident\IntialIncidentEvidencefile;
 use App\Models\IMS\Master\IncidentType;
+use App\Models\IMS\Incident\EHSReview;
 
 class InitialIncidentController extends Controller
 {
@@ -37,6 +38,7 @@ class InitialIncidentController extends Controller
     private $employee;
     private $user;
     private $uploadlog;
+    private $ehs_review;
     private $department;
 
 
@@ -53,6 +55,7 @@ class InitialIncidentController extends Controller
         $this->department = new Department();
         $this->user = new User();
         $this->uploadlog = new UploadLog();
+        $this->ehs_review = new EHSReview();
     }
 
 
@@ -78,6 +81,11 @@ class InitialIncidentController extends Controller
                             return $text;
                         })
 
+                       
+                        ->editColumn('status_batch', function ($row) {
+                           
+                            return "<span class='" . $row->bg_color . "' >" . $row->status_name . "</span>";
+                        })
                         ->addColumn('unit_name', function ($row) {
                             return getUnitname($row->unit_id);
                         })
@@ -95,10 +103,12 @@ class InitialIncidentController extends Controller
                             // if (CheckUserPermission('edit')) {
                             $btn .= '<a href="' . admin_url('incident/initial-incident/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
-
+                            if ($row->incident_status == 1) {
+                                $btn .= '<a href="' . admin_url('incident/initial-incident/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
+                            }
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status','status_batch'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -168,6 +178,7 @@ class InitialIncidentController extends Controller
             ]);
         }
     }
+
     public function Store(Request $request)
     {
         try {
@@ -259,8 +270,6 @@ class InitialIncidentController extends Controller
 
             $initialincident = $this->initialincident->selectOne($id);
             $initialincidentevidence = $this->initialincidentevidence->selectOne($id);
-
-            // dd($initialincidentevidence);
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
             $incTypeList  = $this->inctype->select('id', 'incident_type_name')->where('status', '1')->get();
@@ -325,7 +334,7 @@ class InitialIncidentController extends Controller
 
 
             $initialincident =   $this->initialincident->updates($id);
-            $this->initialincidentevidence->store($initialincident);
+            $this->initialincidentevidence->updates($id);
 
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
@@ -336,7 +345,99 @@ class InitialIncidentController extends Controller
         }
     }
 
+    public function deleteEvidence($evidenceid)
+    {
+        $id = $evidenceid;
+        $this->initialincidentevidence->deleterecord($evidenceid);
+        return response()->json(['success' => true, 'message' => 'Evidence deleted successfully.']);
+    }
 
+
+    public function review(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $incident_report = $this->initialincident->selectOne($id);
+                $initialincidentevidence = $this->initialincidentevidence->selectOne($id);
+
+                $mediaOptions = [
+                    1 => 'Phone',
+                    2 => 'Walkie Talkie',
+                    3 => 'Extension',
+                    4 => 'Others',
+                ];
+
+                $selectedMedia = isset($incident_report->reporting_media)
+                    ? explode(',', $incident_report->reporting_media)
+                    : [];
+
+                $displayMedia = array_map(function ($media) use ($mediaOptions) {
+                    return $mediaOptions[$media] ?? $media;
+                }, $selectedMedia);
+
+                $data = array(
+                    'incident_report' => $incident_report,
+                    'displayMedia' => $displayMedia,
+                    'initialincidentevidence' => $initialincidentevidence,
+                );
+            }
+            return view('ims.initial.incident.review', $data);
+        } catch (Exception $ex) {
+            dd($ex);
+        }
+    }
+
+    public function teamMembers(Request $request)
+    {
+        $name = $request->input('search');
+
+        $employees = Employee::select('id', 'emp_id', 'emp_name')
+            ->where(function ($query) use ($name) {
+                $query->where('emp_name', 'like', '%' . $name . '%')
+                    ->orWhere('emp_id', 'like', '%' . $name . '%');
+            })
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+        return response()->json(
+            $employees->map(function ($employee) {
+                return [
+                    'id' => encryptId($employee->id),
+                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+                ];
+            })
+        );
+    }
+
+    public function ehsHeadReviewSubmit(Request $request)
+    {
+        try {
+            $rules = [
+                'remark' => 'required',
+            ];
+            $messages = [
+                'remark.required' => 'Please provide a remark.',
+            ];
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            $ehsReview = $this->ehs_review->store();
+            $incident_status = STATUS_INVESTIGATION_PENDING;
+            $incident_id = $ehsReview->inicdent_report_id;
+            $incident = $this->initialincident->updateStatus($incident_id, $incident_status);
+
+            Session::flash('success', 'Your data has been updated successfully!');
+            return redirect(admin_url('incident/initial-incident/list'));
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/initial-incident/list'));
+        }
+    }
 
     public function Uniquecheck(Request $request)
     {

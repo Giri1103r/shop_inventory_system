@@ -1109,6 +1109,11 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/unique', [InitialIncidentController::class, 'Uniquecheck']);
                 Route::get('/employeename', [InitialIncidentController::class, 'employeename']);
                 Route::get('/fetchEmployeeDetails/{emp_id}', [InitialIncidentController::class, 'fetchEmployeeDetails']);
+                Route::post('/deleteEvidence/{id}', [InitialIncidentController::class, 'deleteEvidence']);
+                Route::get('/review/{id}', [InitialIncidentController::class, 'review']);
+                Route::post('/ehs_head_review/submit', [InitialIncidentController::class, 'ehsHeadReviewSubmit']);
+                Route::get('/teamMembers', [InitialIncidentController::class, 'teamMembers']);
+
             });
 
 
@@ -1129,7 +1134,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/status', [AccidentReportController::class, 'statusChange']);
                 Route::post('/unique', [AccidentReportController::class, 'Uniquecheck']);
                 Route::get('/fetchEmployeeDetails/{emp_code}', [AccidentReportController::class, 'fetchEmployeeDetails']);
-                Route::get('/investigation', [AccidentReportController::class, 'investigation']);
+                Route::get('/investigation/{accident_id}', [AccidentReportController::class, 'investigation']);
+                Route::post('/investigation/submit', [AccidentReportController::class, 'investigationSubmit']);
                 Route::get('/review/{id}', [AccidentReportController::class, 'review']);
                 Route::post('/ehs_head_review/submit', [AccidentReportController::class, 'ehsHeadReviewSubmit']);
                 Route::get('/getemployeename', [AccidentReportController::class, 'employeename']);

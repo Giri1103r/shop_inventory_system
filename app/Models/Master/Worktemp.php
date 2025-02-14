@@ -72,6 +72,8 @@ class Worktemp extends Model
             foreach ($chunk as $item) {
                 $cleanUnit = isset($item['Unit']) ? str_replace(["\r", "\n"], '', trim($item['Unit'])) : null;
 
+                $status = isset($item['Status']) ? ($item['Status'] ? 1 : 0) : null;
+   dd($item['Status'],$status);
                 $valuesToInsertOrUpdate = [
                     'emp_name' => isset($item['EmpName']) ? $item['EmpName'] : null,
                     'gender' => isset($item['Gender']) ? $item['Gender'] : null,
@@ -85,7 +87,7 @@ class Worktemp extends Model
                     'unit' => $cleanUnit,
                     'department' => isset($item['Dept']) ? $item['Dept'] : null,
                     'designation' => isset($item['Designation']) ? $item['Designation'] : null,
-                    'status' => isset($item['Status']) ? $item['Status'] : null,
+                    'status' => $status,
                     'wfemptype' => isset($item['WfEmpType']) ? $item['WfEmpType'] : null,
                     'skill' => isset($item['Skill']) ? $item['Skill'] : null,
                     'upload_status' => 0,

@@ -22,6 +22,7 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Models\IMS\Incident\EHSReview;
 use App\Models\IMS\Incident\AccidentReport;
 
 class AccidentReportController extends Controller
@@ -32,6 +33,7 @@ class AccidentReportController extends Controller
     private $location;
     private $department;
     private $user;
+    private $ehs_review;
     private $employee;
     private $uploadlog;
 
@@ -41,6 +43,7 @@ class AccidentReportController extends Controller
 
 
         $this->employee = new Employee();
+        $this->ehs_review = new EHSReview();
         $this->accident_report = new AccidentReport();
         $this->unit = new Unit();
         $this->location = new Location();
@@ -91,7 +94,7 @@ class AccidentReportController extends Controller
                             if ($row->accident_status == 1) {
                                 $btn .= '<a href="' . admin_url('incident/accidentReport/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
                             }
-                            if ($row->accident_status == 3) {
+                            if ($row->accident_status == 2) {
                                 $btn .= '<a href="' . admin_url('incident/accidentReport/investigation/' . encryptId($row->id)) . '" class=" " title="Investigation"><i class="fa fa-search" style="color: #000000;"></i> ';
                             }
 
@@ -348,6 +351,7 @@ class AccidentReportController extends Controller
             return redirect(admin_url('incident/accidentReport/list'));
         }
     }
+
     public function employeename(Request $request)
     {
         $name = $request->input('search');
@@ -389,29 +393,49 @@ class AccidentReportController extends Controller
             dd($ex);
         }
     }
-
-    public function investigation(Request $request)
+    public function ehsHeadReviewSubmit(Request $request)
     {
         try {
-            $id = decryptId($request->id);
-            $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
-            $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
-            $employeeList  = $this->employee->select('id', 'emp_id')->where('status', '1')->get();
-            $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
+            $rules = [
+                'remark' => 'required',
+            ];
+            $messages = [
+                'remark.required' => 'Please provide a remark.',
+            ];
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
 
-            $accident_report = $this->accident_report->find($id);
+            $ehsReview = $this->ehs_review->store();
+            $accident_status = 2;
+              $accidentReportId = $ehsReview->accident_report_id;
+            $accident = $this->accident_report->updateStatus($accidentReportId, $accident_status);
+
+            Session::flash('success', 'Your data has been updated successfully!');
+            return redirect(admin_url('incident/accidentReport/list'));
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/accidentReport/list'));
+        }
+    }
+
+    public function investigation(Request $request , $accident_id)
+    {
+        try {
+            $accidentId = decryptId($accident_id);
+            $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
+
             $data = array(
+                'accidentId' => $accidentId,
                 'departmentList' => $departmentList,
-                'unitList' => $unitList,
-                'employeeList' => $employeeList,
-                'accident_report' => $accident_report,
-                'locationList' => $locationList,
 
             );
 
-            return view('ims.incident.accidentReport.edit', $data);
+            return view('ims.incident.accidentReport.investigation', $data);
         } catch (Exception $error) {
-            report($error->getMessage());
+            dd($error->getMessage());
         }
     }
 

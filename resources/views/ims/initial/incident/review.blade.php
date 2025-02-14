@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Accident Report Review')
-@section('pageurl', admin_url('incident/accidentReport/list'))
+@section('title', 'Initial Incident Review')
+@section('pageurl', admin_url('incident/initial-incident/list'))
 
 
 @section('content')
@@ -21,7 +21,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('incident/accidentReport/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('incident/initial-incident/list') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -31,7 +31,7 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Accident Report Details</h4>
+                                        <h4 class="text-white">Incident Report Details</h4>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -39,88 +39,115 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Sr. No</label>
                                         <div class="view_data">
-                                            {{ $accident_report->accident_report_no }}
+                                            {{ $incident_report->sr_no }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Date and Time</label>
                                         <div class="view_data">
-                                            {{ Displaydatetimeformat($accident_report->date_and_time) }}
+                                            {{ Displaydatetimeformat($incident_report->incident_date_time) }}
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Employee Code</label>
+                                        <label class="form-label view_label">Unit</label>
                                         <div class="view_data">
-                                            {{ $accident_report->emp_code }}
+                                            {{ getUsername($incident_report->unit_id) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Unit</label>
+                                        <label class="form-label require">Shift</label>
                                         <div class="view_data">
-                                            {{ $accident_report->unit_name }}
+                                            {{ $incident_report->shift }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label require">Location</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->location_id }}
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">IIR Type</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->iir_type }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Incident Reported By</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Name</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->reported_by }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Designation</label>
                                         <div class="view_data">
-                                            {{ $accident_report->designation }}
+                                            {{ $incident_report->designation }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Department</label>
                                         <div class="view_data">
-                                            {{ $accident_report->department_name }}
+                                            {{ $incident_report->reported_department }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Shift</label>
+                                        <label class="form-label view_label">Employee Code</label>
                                         <div class="view_data">
-                                            {{ $accident_report->shift }}
+                                            {{ $incident_report->employee_code }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Accident Location</label>
+                                        <label class="form-label view_label">Time of reporting</label>
                                         <div class="view_data">
-                                            {{ $accident_report->location_name }}
+                                            {{ $incident_report->time_of_reporting }}
                                         </div>
                                     </div>
+
+
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Exact Location</label>
+                                        <label class="form-label view_label">Reporting Media</label>
                                         <div class="view_data">
-                                            {{ $accident_report->exact_location }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Address of the injured person</label>
-                                        <div class="view_data">
-                                            {{ $accident_report->address_of_the_injuredperson }}
+                                            {{ implode(', ', $displayMedia) }}
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('common.created_by') }}</label>
+                                        <label class="form-label require">Brief Description</label>
                                         <div class="view_data">
-                                            {{ getusername($accident_report->created_by) }}
+                                            {{ $incident_report->brief_description }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('common.created_date') }}</label>
-                                        <div class="view_data">
-                                            {{ displayDateformat($accident_report->created_at) }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('common.status') }}</label>
-                                        <div class="view_data">
-                                            @if ($accident_report->status == 1)
-                                                {{ __('common.active') }}
-                                            @else
-                                                {{ __('common.inactive') }}
-                                            @endif
 
-                                        </div>
+                                    <div class="col-md-12 mb-3">
+                                        <label class="form-label">Existing Evidence</label>
+                                        @if (!$initialincidentevidence->isEmpty())
+                                            <div class="row">
+                                                @foreach ($initialincidentevidence as $key => $evidence)
+                                                    <div class="col-md-3 col-sm-6 mb-2">
+                                                        <div class="existing-evidence text-center">
+                                                            <a href="{{ asset($evidence->file_path) }}" target="_blank">
+                                                                <img src="{{ asset($evidence->file_path) }}" alt="Evidence"
+                                                                    class="img-fluid rounded shadow"
+                                                                    style="max-width: 20%; height: auto;">
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @endif
                                     </div>
+
                                 </div>
                             </div>
                             <div class="card-body ">
@@ -132,12 +159,12 @@
                                 </div>
                                 <div class="basic-form">
                                     <form method="POST" id="ehs_head_review"
-                                        action="{{ admin_url('incident/accidentReport/ehs_head_review/submit') }}"
+                                        action="{{ admin_url('incident/initial-incident/ehs_head_review/submit') }}"
                                         enctype="multipart/form-data">
                                         @csrf
                                         <div class="row">
-                                            <input type="hidden" class="form-control" name="accident_report_id" id="accident_report_id"
-                                                value="{{ encryptId($accident_report->id) }}">
+                                            <input type="hidden" class="form-control" name="incident_id" id="incident_id"
+                                                value="{{ encryptId($incident_report->id) }}">
 
                                             <input type="hidden" name="reviewer_emp_id" id="reviewer_emp_id"
                                                 class="form-control" value="{{ Auth::user()->employee_id ?? '' }}">
@@ -158,13 +185,14 @@
                                                         value="{{ todaydate() }}">
                                                 </div>
                                             </div>
-
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label for="team_id" class="form-label require">Assign Team
                                                         members</label>
-                                                    <select name="team_member[]" id="team_id" class="form-control team_name" multiple="multiple" style="width: 100%">
-                                                        <option value="">Select Team Members</option>
+                                                    <select name="team_member[]" id="team_id"
+                                                        class="form-control team_name" style="width: 100%" multiple>
+                                                        <option value="">Select Team members</option>
+
                                                     </select>
                                                 </div>
                                             </div>
@@ -182,7 +210,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('incident/accidentReport/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('incident/initial-incident/list') }}"></x-button-cancel>
                                         </div>
                                     </form>
 
@@ -210,14 +238,13 @@
                 allowClear: true,
                 closeOnSelect: false,
                 ajax: {
-                    url: "{{ url('incident/accidentReport/getemployeename') }}", 
+                    url: "{{ admin_url('incident/initial-incident/teamMembers') }}",
                     type: "GET",
                     dataType: "json",
                     delay: 250,
                     data: function(params) {
                         return {
-                            search: params.term, 
-                            _token: "{{ csrf_token() }}" 
+                            search: params.term // Search query
                         };
                     },
                     processResults: function(data) {
@@ -230,14 +257,16 @@
                             })
                         };
                     },
-                    cache: true,
                     error: function(xhr, textStatus, errorThrown) {
                         console.log("Error in AJAX request:", textStatus, errorThrown);
                     }
                 },
-                minimumInputLength: 1,
+                minimumInputLength: 3,
                 width: '100%',
+                dropdownCssClass: 'form-control',
+                selectionCssClass: 'form-control'
             });
+
             // $('#team_id').select2({
             //     placeholder: "Select Team members",
             //     allowClear: true,
