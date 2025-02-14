@@ -78,6 +78,11 @@ class InitialIncidentController extends Controller
                             return $text;
                         })
 
+                       
+                        ->editColumn('status_batch', function ($row) {
+                           
+                            return "<span class='" . $row->bg_color . "' >" . $row->status_name . "</span>";
+                        })
                         ->addColumn('unit_name', function ($row) {
                             return getUnitname($row->unit_id);
                         })
@@ -95,10 +100,12 @@ class InitialIncidentController extends Controller
                             // if (CheckUserPermission('edit')) {
                             $btn .= '<a href="' . admin_url('incident/initial-incident/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
-
+                            if ($row->incident_status == 1) {
+                                $btn .= '<a href="' . admin_url('incident/initial-incident/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
+                            }
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status','status_batch'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -168,6 +175,7 @@ class InitialIncidentController extends Controller
             ]);
         }
     }
+
     public function Store(Request $request)
     {
         try {
@@ -325,7 +333,7 @@ class InitialIncidentController extends Controller
 
 
             $initialincident =   $this->initialincident->updates($id);
-            $this->initialincidentevidence->store($initialincident);
+            $this->initialincidentevidence->updates($id);
 
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
@@ -336,7 +344,51 @@ class InitialIncidentController extends Controller
         }
     }
 
+    public function deleteEvidence($evidenceid)
+    {
+        $id = $evidenceid;
+        $this->initialincidentevidence->deleterecord($evidenceid);
+        return response()->json(['success' => true, 'message' => 'Evidence deleted successfully.']);
+    }
 
+
+    public function review(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $incident_report = $this->initialincident->selectOne($id);
+                $initialincidentevidence = $this->initialincidentevidence->selectOne($id);
+                // $employeeList  = $this->employee->select('id', 'emp_id', 'emp_name')->where('status', '1')->get();
+
+                $mediaOptions = [
+                    1 => 'Phone',
+                    2 => 'Walkie Talkie',
+                    3 => 'Extension',
+                    4 => 'Others',
+                ];
+
+                // Convert stored values into readable labels
+                $selectedMedia = isset($incident_report->reporting_media)
+                    ? explode(',', $incident_report->reporting_media)
+                    : [];
+
+                $displayMedia = array_map(function ($media) use ($mediaOptions) {
+                    return $mediaOptions[$media] ?? $media; // Default to the number if not found
+                }, $selectedMedia);
+
+                $data = array(
+                    // 'employeeList' => $employeeList,
+                    'incident_report' => $incident_report,
+                    'displayMedia' => $displayMedia,
+                    'initialincidentevidence' => $initialincidentevidence,
+                );
+            }
+            return view('ims.initial.incident.review', $data);
+        } catch (Exception $ex) {
+            dd($ex);
+        }
+    }
 
     public function Uniquecheck(Request $request)
     {

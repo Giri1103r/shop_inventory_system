@@ -49,28 +49,27 @@ class IntialIncidentEvidencefile extends Model
     {
         $request = request();
         $initialIncidentEvidence = $request->file('evidence');
-    // dd($initialIncidentEvidence);
         \Log::info('Uploaded Files:', ['files' => $initialIncidentEvidence]);
         $this->where('incident_id', $initialincident->id)->update(['trash' => 'YES']);
         if (!empty($initialIncidentEvidence)) {
             foreach ($initialIncidentEvidence as $groupIndex => $siteImageGroup) {
                 foreach ($siteImageGroup as $index => $siteImage) {
                     if ($siteImage) {
-                        $uploadPath = 'public/uploads/initial/incident/approve/' . $initialincident->id;
-                        $folderPath = 'public/uploads/initial/incident/approve/' . $initialincident->id;
-    
+                        $uploadPath = 'public/uploads/initial/incident/' . $initialincident->id;
+                        $folderPath = 'public/uploads/initial/incident/' . $initialincident->id;
+
                         if (!File::exists($folderPath)) {
                             File::makeDirectory($folderPath, 0755, true);
                         }
-    
+
                         $filenewname = time() . Str::random(10) . '.' . $siteImage->getClientOriginalExtension();
                         $fileName = $siteImage->getClientOriginalName();
                         $fileSize = $siteImage->getSize();
                         $fileExt = $siteImage->getClientOriginalExtension();
 
                         $siteImage->move($folderPath, $filenewname);
-    
-                        $path = 'public/uploads/incident/approve/' . $initialincident->id . "/" . $filenewname;
+
+                        $path = 'public/uploads/initial/incident/' . $initialincident->id . "/" . $filenewname;
                         $userId = Auth::id();
 
                         $insertData = [
@@ -82,19 +81,90 @@ class IntialIncidentEvidencefile extends Model
                             'file_extension' => $fileExt,
                             'created_by' => $userId,
                         ];
-    
+
                         $this->create($insertData);
-    
+
                         \Log::info("File saved: " . $filenewname);
                     } else {
                         \Log::warning("Uploaded data is not a valid file: " . json_encode($siteImage));
                     }
                 }
             }
-        } 
+        }
+    }
+
+
+    public function updates($id)
+    {
+        $request = request();
+        $initialIncidentEvidence = $request->file('evidence');
+    // dd($id);
+        \Log::info('Uploaded Files:', ['files' => $initialIncidentEvidence]);
+    
+        if (!empty($initialIncidentEvidence)) {
+            foreach ($initialIncidentEvidence as $siteImage) {
+                if ($siteImage) {
+                    $folderPath = 'public/uploads/initial/incident/' . $id;
+    
+                    if (!File::exists($folderPath)) {
+                        File::makeDirectory($folderPath, 0755, true);
+                    }
+    
+                    $filenewname = time() . Str::random(10) . '.' . $siteImage->getClientOriginalExtension();
+                    $fileName = $siteImage->getClientOriginalName();
+                    $fileSize = $siteImage->getSize();
+                    $fileExt = $siteImage->getClientOriginalExtension();
+
+                    $siteImage->move($folderPath, $filenewname);
+
+                    $filePath = 'public/uploads/initial/incident/' . $id . "/" . $filenewname;
+                    $userId = Auth::id();
+    
+                    $existingEvidence = $this->where('incident_id', $id)
+                        ->where('file_orgname', $fileName)
+                        ->first();
+    
+                    if ($existingEvidence) {
+                        $existingEvidence->update([
+                            'file_name' => $filenewname,
+                            'file_path' => $filePath,
+                            'file_size' => $fileSize,
+                            'file_extension' => $fileExt,
+                            'updated_by' => $userId,
+                        ]);
+                        \Log::info("File updated: " . $filenewname);
+                    } else {
+                        $this->create([
+                            'incident_id' => $id,
+                            'file_name' => $filenewname,
+                            'file_orgname' => $fileName,
+                            'file_path' => $filePath,
+                            'file_size' => $fileSize,
+                            'file_extension' => $fileExt,
+                            'created_by' => $userId,
+                        ]);
+                        \Log::info("New file added: " . $filenewname);
+                    }
+                } else {
+                    \Log::warning("Invalid file upload: " . json_encode($siteImage));
+                }
+            }
+        }
     }
     
-    
+
+    public function deleterecord($id)
+    {
+
+        $update_data = array(
+            'status' => 0,
+            'trash' => 'YES',
+        );
+
+        return $this->where('id', $id)->update($update_data);
+    }
+
+
     public function selectOne($id)
     {
 
@@ -107,7 +177,7 @@ class IntialIncidentEvidencefile extends Model
         return $data;
     }
 
-    
+
 
     protected static function booted()
     {
