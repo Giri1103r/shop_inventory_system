@@ -17,7 +17,7 @@ class AccidentReport extends Model
     use  HasFactory;
 
 
-    protected $table = 'ims_incident_accident_report';
+    protected $table = 'ims_initial_accident_report';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -49,11 +49,11 @@ class AccidentReport extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ims_incident_accident_report.*', 'masters_unit.unit_name', 'masters_employee.emp_id', 'masters_department.department_name',  'masters_location.location_name');
-        $query = $query->leftJoin('masters_unit', 'ims_incident_accident_report.unit_id', '=', 'masters_unit.id');
-        $query = $query->leftJoin('masters_employee', 'ims_incident_accident_report.emp_code', '=', 'masters_employee.emp_id');
-        $query = $query->leftJoin('masters_department', 'ims_incident_accident_report.department_id', '=', 'masters_department.id');
-        $query = $query->leftJoin('masters_location', 'ims_incident_accident_report.location_id', '=', 'masters_location.id');
+        $query = $this->select('ims_initial_accident_report.*', 'masters_unit.unit_name', 'masters_employee.emp_id', 'masters_department.department_name',  'masters_location.location_name');
+        $query = $query->leftJoin('masters_unit', 'ims_initial_accident_report.unit_id', '=', 'masters_unit.id');
+        $query = $query->leftJoin('masters_employee', 'ims_initial_accident_report.emp_code', '=', 'masters_employee.emp_id');
+        $query = $query->leftJoin('masters_department', 'ims_initial_accident_report.department_id', '=', 'masters_department.id');
+        $query = $query->leftJoin('masters_location', 'ims_initial_accident_report.location_id', '=', 'masters_location.id');
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -73,30 +73,30 @@ class AccidentReport extends Model
             $query = $query->where('accident_report_no',  $request->accident_report_no);
         }
         if ($request->has('emp_code') && $request->emp_code) {
-            $query = $query->where('ims_incident_accident_report.emp_code', decryptId($request->emp_code));
+            $query = $query->where('ims_initial_accident_report.emp_code', decryptId($request->emp_code));
         }
         if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('ims_incident_accident_report.unit_id', decryptId($request->unit_id));
+            $query = $query->where('ims_initial_accident_report.unit_id', decryptId($request->unit_id));
         }
         if ($request->has('department_id') && $request->department_id) {
-            $query = $query->where('ims_incident_accident_report.department_id', decryptId($request->department_id));
+            $query = $query->where('ims_initial_accident_report.department_id', decryptId($request->department_id));
         }
         if ($request->has('location_id') && $request->location_id) {
-            $query = $query->where('ims_incident_accident_report.location_id', decryptId($request->location_id));
+            $query = $query->where('ims_initial_accident_report.location_id', decryptId($request->location_id));
         }
         if ($request->has('from_date') && $request->from_date) {
             $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay();
-            $query = $query->where('ims_incident_accident_report.created_at', '>=', $fromDate);
+            $query = $query->where('ims_initial_accident_report.created_at', '>=', $fromDate);
         }
 
         if ($request->has('to_date') && $request->to_date) {
             $toDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay();
-            $query = $query->where('ims_incident_accident_report.created_at', '<=', $toDate);
+            $query = $query->where('ims_initial_accident_report.created_at', '<=', $toDate);
         }
 
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('ims_incident_accident_report.status', decryptId($request->status));
+            $query = $query->where('ims_initial_accident_report.status', decryptId($request->status));
         }
 
 
@@ -194,11 +194,11 @@ class AccidentReport extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ims_incident_accident_report.*', 'masters_unit.unit_name', 'masters_employee.emp_id', 'masters_department.department_name',  'masters_location.location_name');
-        $query = $query->leftJoin('masters_unit', 'ims_incident_accident_report.unit_id', '=', 'masters_unit.id');
-        $query = $query->leftJoin('masters_employee', 'ims_incident_accident_report.emp_code', '=', 'masters_employee.emp_id');
-        $query = $query->leftJoin('masters_department', 'ims_incident_accident_report.department_id', '=', 'masters_department.id');
-        $query = $query->leftJoin('masters_location', 'ims_incident_accident_report.location_id', '=', 'masters_location.id');
+        $query = $this->select('ims_initial_accident_report.*', 'masters_unit.unit_name', 'masters_employee.emp_id', 'masters_department.department_name',  'masters_location.location_name');
+        $query = $query->leftJoin('masters_unit', 'ims_initial_accident_report.unit_id', '=', 'masters_unit.id');
+        $query = $query->leftJoin('masters_employee', 'ims_initial_accident_report.emp_code', '=', 'masters_employee.emp_id');
+        $query = $query->leftJoin('masters_department', 'ims_initial_accident_report.department_id', '=', 'masters_department.id');
+        $query = $query->leftJoin('masters_location', 'ims_initial_accident_report.location_id', '=', 'masters_location.id');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -214,30 +214,30 @@ class AccidentReport extends Model
             $query = $query->where('accident_report_no',  $request->accident_report_no);
         }
         if ($request->has('emp_code') && $request->emp_code) {
-            $query = $query->where('ims_incident_accident_report.emp_code', decryptId($request->emp_code));
+            $query = $query->where('ims_initial_accident_report.emp_code', decryptId($request->emp_code));
         }
         if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('ims_incident_accident_report.unit_id', decryptId($request->unit_id));
+            $query = $query->where('ims_initial_accident_report.unit_id', decryptId($request->unit_id));
         }
         if ($request->has('department_id') && $request->department_id) {
-            $query = $query->where('ims_incident_accident_report.department_id', decryptId($request->department_id));
+            $query = $query->where('ims_initial_accident_report.department_id', decryptId($request->department_id));
         }
         if ($request->has('location_id') && $request->location_id) {
-            $query = $query->where('ims_incident_accident_report.location_id', decryptId($request->location_id));
+            $query = $query->where('ims_initial_accident_report.location_id', decryptId($request->location_id));
         }
         if ($request->has('from_date') && $request->from_date) {
             $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay();
-            $query = $query->where('ims_incident_accident_report.created_at', '>=', $fromDate);
+            $query = $query->where('ims_initial_accident_report.created_at', '>=', $fromDate);
         }
 
         if ($request->has('to_date') && $request->to_date) {
             $toDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay();
-            $query = $query->where('ims_incident_accident_report.created_at', '<=', $toDate);
+            $query = $query->where('ims_initial_accident_report.created_at', '<=', $toDate);
         }
 
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('ims_incident_accident_report.status', decryptId($request->status));
+            $query = $query->where('ims_initial_accident_report.status', decryptId($request->status));
         }
 
         $query->orderBy('id', 'DESC');
@@ -248,22 +248,33 @@ class AccidentReport extends Model
     public function selectOne($id)
     {
 
-        $data = $this->select('ims_incident_accident_report.*', 'masters_unit.unit_name', 'masters_employee.emp_id', 'masters_department.department_name',  'masters_location.location_name')->leftJoin('masters_unit', 'ims_incident_accident_report.unit_id', '=', 'masters_unit.id')
-            ->leftJoin('masters_employee', 'ims_incident_accident_report.emp_code', '=', 'masters_employee.emp_id')
-            ->leftJoin('masters_department', 'ims_incident_accident_report.department_id', '=', 'masters_department.id')
-            ->leftJoin('masters_location', 'ims_incident_accident_report.location_id', '=', 'masters_location.id')
-            ->where('ims_incident_accident_report.id', $id)
+        $data = $this->select('ims_initial_accident_report.*', 'masters_unit.unit_name', 'masters_employee.emp_id', 'masters_department.department_name',  'masters_location.location_name')->leftJoin('masters_unit', 'ims_initial_accident_report.unit_id', '=', 'masters_unit.id')
+            ->leftJoin('masters_employee', 'ims_initial_accident_report.emp_code', '=', 'masters_employee.emp_id')
+            ->leftJoin('masters_department', 'ims_initial_accident_report.department_id', '=', 'masters_department.id')
+            ->leftJoin('masters_location', 'ims_initial_accident_report.location_id', '=', 'masters_location.id')
+            ->where('ims_initial_accident_report.id', $id)
             ->first();
 
         return $data;
     }
 
 
+    public function updateStatus($accidentReportId, $accident_status)
+    {
+        $request = request();
+
+        $update_array = array(
+            'accident_status' => $accident_status,
+            'updated_by' => Auth::id(),
+            'updated_at' => now(),
+        );
+        return $this->where('id', $accidentReportId)->update($update_array);
+    }
 
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('ims_incident_accident_report'));
+        static::addGlobalScope(new TrashScope('ims_initial_accident_report'));
 
         static::created(function ($model) {
 
