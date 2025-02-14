@@ -176,6 +176,7 @@ class Employee extends Model
                 'email' => $item->email ?? null,
                 'joining_date' => $item->joining_date ? DBdatetimeformat($item->joining_date) : null,
                 'user_role' => $role->id ?? null,
+                'designation' => $item->designation ?? null,
                 'employee_status' => $item->employee_status ?? null,
                 'reporting_manager' => $item->reporting_manager ?? null,
                 'status' => 1,
