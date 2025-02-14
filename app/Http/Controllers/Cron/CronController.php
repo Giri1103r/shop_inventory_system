@@ -380,7 +380,7 @@ class CronController extends Controller
     {
 
         try {
-            $emp_temp = EmployeeTemp::select('*')->where('upload_status', '0')->get();
+            $emp_temp = EmployeeTemp::select('*')->where('upload_status', '0')->where('status',1)->get();
             if (!empty($emp_temp)) {
 
                 $employee = $this->employee->store($emp_temp);
