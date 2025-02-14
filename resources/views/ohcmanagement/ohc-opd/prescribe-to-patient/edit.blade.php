@@ -82,7 +82,9 @@
                                                         style="width: 100%">
                                                         <option value="">Select the unit</option>
                                                         @foreach ($unit as $list)
-                                                            <option value="{{ encryptId($list->id) }}">
+                                                            <option value="{{ encryptId($list->id) }}" @if ($list->id == $opdpatient->unit_id) selected
+
+                                                            @endif>
                                                                 {{ $list->unit_name }}</option>
                                                         @endforeach
                                                     </select>
@@ -135,14 +137,10 @@
                                                     <select name="gender" id="gender"
                                                         class="form-control single-select" style="width: 100%">
                                                         <option value="">select the gender</option>
-                                                        <option value="Male"
-                                                            @if ($opdpatient === 'Male') selected @endif>Male</option>
-                                                        <option value="Female"
-                                                            @if ($opdpatient === 'Female') selected @endif>Female
-                                                        </option>
-                                                        <option value="Others"
-                                                            @if ($opdpatient === 'Others') selected @endif>Others
-                                                        </option>
+                                                        <option value="Male" {{ $opdpatient === 'Male' ? 'selected' : '' }}>Male</option>
+                                                        <option value="Female" {{ $opdpatient === 'Female' ? 'selected' : '' }}>Female</option>
+                                                        <option value="Others" {{ $opdpatient === 'Others' ? 'selected' : '' }}>Others</option>
+
 
                                                     </select>
                                                 </div>
@@ -204,7 +202,7 @@
                                             <div class="col-md-4 mb-2" style="display: none;">
                                                 <div class="form-group form-input">
                                                     <label for="vechicle" class="form-label require">Details</label>
-                                                    <input name="details" id="details" placeholder="Enter the Details" value="{{$opdpatient->suggested}}"
+                                                    <input name="details" id="details" placeholder="Enter the Details" value="{{$opdpatient->suggested_details}}"
                                                         class="form-control">
 
                                                 </div>

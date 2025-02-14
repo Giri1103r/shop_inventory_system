@@ -142,4 +142,6 @@ class PrescribetoPatient extends Model
             ->first();
         return $data;
     }
+
+   
 }

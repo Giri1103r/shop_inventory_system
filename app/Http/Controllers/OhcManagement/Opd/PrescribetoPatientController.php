@@ -142,6 +142,8 @@ class PrescribetoPatientController extends Controller
                             // }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
 
+                            $btn .= '<a href="' . admin_url('ohc/prescribe-to-patient/generalpdf/' . encryptId($row->id)) . '" class="" title="PDF"> <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a> ';
+
                             $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="Close" title="Cancel" style="color: #e21e23;margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
                             return $btn;
                         })
@@ -409,5 +411,38 @@ class PrescribetoPatientController extends Controller
         } catch (Exception $ex) {
             return response()->json(['status' => 'error', 'msg' => 'Something went wrong'], 200);
         }
+    }
+
+    public function medicineslip(Request $request){
+        $id = decryptId($request->id);
+        if (Auth::check()) {
+            $opdpatient = $this->opd_patient->selectOne($id);
+            $opd_firstaid = $this->opd_firstaid->Selectone($opdpatient->id);
+            $isreffered = $this->isreffered->selectOne($opdpatient->id);
+        }
+        $data = [
+            'opdpatient' => $opdpatient,
+            'opd_firstaid' => $opd_firstaid,
+            'isreffered' => $isreffered,
+            'pagetitle' => "Medicine Slip",
+        ];
+
+        $property = [
+            'tempDir' => 'public/pdf/temp/',
+            'mode' => 'c',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 10,
+
+        ];
+
+        $mpdf = new \Mpdf\Mpdf($property);
+        $mpdf->setAutoTopMargin = 'stretch';
+
+        $html = view('ohcmanagement.ohc-opd.prescribe-to-patient.medicineslip', $data)->render();
+        $mpdf->WriteHTML($html);
+
+        $filename = "Medicine Slip .pdf";
+        return $mpdf->Output($filename, 'I');
     }
 }
