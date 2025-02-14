@@ -1113,7 +1113,9 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/review/{id}', [InitialIncidentController::class, 'review']);
                 Route::post('/ehs_head_review/submit', [InitialIncidentController::class, 'ehsHeadReviewSubmit']);
                 Route::get('/teamMembers', [InitialIncidentController::class, 'teamMembers']);
-
+                Route::get('/investigation/{incident_id}', [InitialIncidentController::class, 'investigation']);
+                Route::post('/investigation/submit', [InitialIncidentController::class, 'investigationSubmit']);
+                Route::get('/gethiradetails/{hira_id}', [InitialIncidentController::class, 'gethiradetails']);
             });
 
 

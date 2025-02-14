@@ -25,6 +25,7 @@ use Illuminate\Support\Str;
 use App\Models\IMS\Incident\InitialIncident;
 use App\Models\IMS\Incident\IntialIncidentEvidencefile;
 use App\Models\IMS\Master\IncidentType;
+use App\Models\IMS\Master\Hira;
 use App\Models\IMS\Incident\EHSReview;
 
 class InitialIncidentController extends Controller
@@ -40,6 +41,7 @@ class InitialIncidentController extends Controller
     private $uploadlog;
     private $ehs_review;
     private $department;
+    private $hira;
 
 
 
@@ -56,6 +58,7 @@ class InitialIncidentController extends Controller
         $this->user = new User();
         $this->uploadlog = new UploadLog();
         $this->ehs_review = new EHSReview();
+        $this->hira = new Hira();
     }
 
 
@@ -106,6 +109,11 @@ class InitialIncidentController extends Controller
                             if ($row->incident_status == 1) {
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
                             }
+
+                            if ($row->incident_status == 2) {
+                                $btn .= '<a href="' . admin_url('incident/initial-incident/investigation/' . encryptId($row->id)) . '" class=" " title="Investigation"><i class="fa fa-search" style="color: #000000;"></i> ';
+                            }
+
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status','status_batch'])
@@ -425,6 +433,57 @@ class InitialIncidentController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
+            $ehsReview = $this->ehs_review->store();
+            $incident_status = STATUS_INVESTIGATION_PENDING;
+            $incident_id = $ehsReview->inicdent_report_id;
+            $incident = $this->initialincident->updateStatus($incident_id, $incident_status);
+
+            Session::flash('success', 'Your data has been updated successfully!');
+            return redirect(admin_url('incident/initial-incident/list'));
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/initial-incident/list'));
+        }
+    }
+
+
+    public function investigation(Request $request , $incident_id)
+    {
+        try {
+            $incidentId = decryptId($incident_id);
+            $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
+            $hiraList  = $this->hira->select('id', 'services')->where('status', '1')->get();
+
+            $data = array(
+                'incidentId' => $incidentId,
+                'departmentList' => $departmentList,
+                'hiraList' => $hiraList,
+
+            );
+
+            return view('ims.initial.incident.investigation', $data);
+        } catch (Exception $error) {
+            dd($error->getMessage());
+        }
+    }
+
+    public function gethiradetails($hira_id)
+    {
+        $hira_id = decryptId($hira_id);
+        $hira = Hira::select('services', 'likelihood', 'risk_levels', 'department', 'designation')
+            ->where('id', $hira_id)
+            ->first();
+        if ($hira) {
+            return response()->json([
+                'hira' => $hira,
+            ]);
+        }
+    }
+    public function investigationSubmit(Request $request)
+    {
+        try {
+          
             $ehsReview = $this->ehs_review->store();
             $incident_status = STATUS_INVESTIGATION_PENDING;
             $incident_id = $ehsReview->inicdent_report_id;

@@ -402,7 +402,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 50,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                        pattern:/^[a-zA-Z0-9\s\-_'"().]*$/,
                     },
                     email: {
                         required: true,
