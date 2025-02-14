@@ -22,5 +22,7 @@ class Suggestedby extends Model
     public function getSuggestedBy(){
         return $this->where('trash','NO')->where('status',1)->get();
     }
-
+   public function getsuggestedname(){
+    return $this->where('trash','NO')->where('status',1)->first();
+   }
 }

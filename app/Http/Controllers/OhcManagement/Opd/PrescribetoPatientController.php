@@ -34,6 +34,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use phpseclib3\File\ASN1\Maps\CertificateIssuer;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use Symfony\Component\Console\Completion\Suggestion;
 use Yajra\DataTables\Facades\DataTables;
 
 class PrescribetoPatientController extends Controller
@@ -227,12 +228,50 @@ class PrescribetoPatientController extends Controller
         }
     }
 
+    //edit
+    public function edit(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $opdpatient = $this->opd_patient->selectOne($id);
+                $opd_firstaid = $this->opd_firstaid->Selectone($id);
+                $isreffered = $this->isreffered->selectOne($id);
+            }
+            $unit = $this->unit->getunit();
+            $suggestedBy = $this->suggestedBy->getSuggestedBy();
+            $reffered = $this->refered_vechicle->getreffered();
+            $patientstatus = $this->patient_status->getpatientstatus();
+            $medicine  = $this->medicine_stock->getMedicinestockdata();
+           $suggestedname = $this->suggestedBy-> getsuggestedname();
+            $data = array(
+                'unit' => $unit,
+                'suggestedBy' => $suggestedBy,
+                'reffered' => $reffered,
+                'patientstatus' => $patientstatus,
+                'medicine' => $medicine,
+                'opdpatient' => $opdpatient,
+                'opd_firstaid' => $opd_firstaid,
+                'isreffered' => $isreffered,
+
+            );
+            // dd( $data);
+            return view('ohcmanagement.ohc-opd.prescribe-to-patient.edit', $data);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/prescribe-to-patient/list'));
+        }
+    }
+
+
     // view
 
     public function view(Request $request)
     {
         try {
             $id = decryptId($request->id);
+
             if (Auth::check()) {
                 $opdpatient = $this->opd_patient->selectOne($id);
                 $opd_firstaid = $this->opd_firstaid->Selectone($opdpatient->id);
@@ -245,6 +284,7 @@ class PrescribetoPatientController extends Controller
                 'isreffered' => $isreffered,
 
             );
+
             return view('ohcmanagement.ohc-opd.prescribe-to-patient.view', $data);
         } catch (Exception $ex) {
             dd($ex);
@@ -357,6 +397,17 @@ class PrescribetoPatientController extends Controller
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => __('ptw.Please try After Some time')], 406);
+        }
+    }
+
+    public function delete(Request $request,$id)
+    {
+        try {
+
+            $this->opd_firstaid->deleterecord($id);
+            return response()->json(['status' => 'success', 'msg' => 'Deleted successfully'], 200);
+        } catch (Exception $ex) {
+            return response()->json(['status' => 'error', 'msg' => 'Something went wrong'], 200);
         }
     }
 }

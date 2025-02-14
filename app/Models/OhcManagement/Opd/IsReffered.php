@@ -10,7 +10,7 @@ class IsReffered extends Model
     protected $table = 'ohc_management_opd_patient_is_refered';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'opd_id  ',
+        'opd_id',
         'hospital_name',
         'first_aider',
         'mobile_no',
@@ -38,7 +38,7 @@ class IsReffered extends Model
         ];
 
 
-        $this->create($insert_array);
+       return $this->create($insert_array);
     }
 
     public function Selectone($id){
