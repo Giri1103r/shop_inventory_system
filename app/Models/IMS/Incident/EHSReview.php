@@ -51,7 +51,7 @@ class EHSReview extends Model
         $commaSeparatedTeamMembers = implode(',', $decryptedTeamMemberIds);
 
         $insert_array = array(
-            'inicdent_report_id' =>  decryptId($request->inicdent_report_id) ?? null,
+            'inicdent_report_id' =>  decryptId($request->incident_id) ?? null,
             'accident_report_id' =>  decryptId($request->accident_report_id) ?? null,
             'fire_inicdent_report_id' =>  decryptId($request->fire_inicdent_report_id) ?? null,
             'date' => DBdateformat($request->date),
@@ -61,6 +61,8 @@ class EHSReview extends Model
             'remark' => $request->remark,
             'created_by' => Auth::id()
         );
+
+        // dd($insert_array);
         return $this->create($insert_array);
     }
 }

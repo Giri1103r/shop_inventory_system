@@ -1111,6 +1111,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/fetchEmployeeDetails/{emp_id}', [InitialIncidentController::class, 'fetchEmployeeDetails']);
                 Route::post('/deleteEvidence/{id}', [InitialIncidentController::class, 'deleteEvidence']);
                 Route::get('/review/{id}', [InitialIncidentController::class, 'review']);
+                Route::post('/ehs_head_review/submit', [InitialIncidentController::class, 'ehsHeadReviewSubmit']);
+                Route::get('/teamMembers', [InitialIncidentController::class, 'teamMembers']);
 
             });
 

@@ -291,6 +291,18 @@ class InitialIncident extends Model
         return $data;
     }
 
+
+    public function updateStatus($incident_Id, $incident_status)
+    {
+        $request = request();
+
+        $update_array = array(
+            'incident_status' => $incident_status,
+            'updated_by' => Auth::id(),
+            'updated_at' => now(),
+        );
+        return $this->where('id', $incident_Id)->update($update_array);
+    }
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('ims_initial_incident'));
