@@ -306,14 +306,18 @@
 
             $('#existingHira').on('click', function() {
                 $('#existingdiv').show();
-                $('#hiraDetails').hide(); 
+                $('#hiraDetails').hide();
             });
 
             $('#newHira').on('click', function() {
                 $('#existingdiv').hide();
                 $('#hiraDetails').hide();
             });
-            $('#hira_id').on('change', function() {
+
+            // Fetch HIRA details when an option is selected
+            $('#hira_id').on('change', function(event) {
+                event.stopPropagation(); // Prevent modal from closing
+
                 var hiraId = $(this).val();
                 if (hiraId) {
                     $.ajax({
@@ -321,10 +325,10 @@
                         type: "GET",
                         dataType: "json",
                         success: function(data) {
-                            if (data) {
-                                $('#service').text(data.services);
-                                $('#likelihood').text(data.likelihood);
-                                $('#riskLevel').text(data.risk_levels);
+                            if (data.hira) {
+                                $('#service').text(data.hira.services);
+                                $('#likelihood').text(data.hira.likelihood);
+                                $('#riskLevel').text(data.hira.risk_levels);
 
                                 $('#hiraDetails').show();
                             } else {
@@ -336,6 +340,7 @@
                     $('#hiraDetails').hide();
                 }
             });
+
             $('#cancelHira').on('click', function() {
                 $('input[name="hira"]').prop('checked', false);
                 $('#hiraModal').modal('hide');
@@ -343,6 +348,7 @@
                 $('#hiraDetails').hide();
             });
         });
+
         $(document).ready(function() {
 
             flatpickr("#target_date", {

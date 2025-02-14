@@ -470,7 +470,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 50,
-                        regex: /^[a-zA-Z ]{2,}$/,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
                     },
                     unit: {
                         required: true,
@@ -565,7 +565,7 @@
                         required: "{{ __('Designation is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
                         maxlength: "Maximum Characters should not exceed 50",
-                        regex: "{{ __('Designation accepts only alphabets') }}",
+                        regex: "{{ __('Designation accepts only alphanumeric') }}",
                     }
                 },
                 errorElement: 'span',
