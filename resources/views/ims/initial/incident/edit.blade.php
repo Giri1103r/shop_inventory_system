@@ -31,7 +31,8 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="initialIncidentedit"
-                                        action="{{ admin_url('incident/initial-incident/edit/submit') }}">
+                                        action="{{ admin_url('incident/initial-incident/edit/submit') }}"
+                                        enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" name="id" id="id"
                                             value="{{ encryptId($initialincident->id) }}">
@@ -129,11 +130,11 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Name</label>
                                                     <div class="col-sm-6" style="width: 100%">
-
                                                         <select name="reported_name" id="reported_name"
                                                             class="form-control reported_name">
-                                                            <option value="">{{ $initialincident->reported_by }}
-                                                            </option>
+                                                            <option value="">Select Name</option>
+                                                            <option value="{{ $initialincident->reported_name }}" selected>
+                                                                {{ $initialincident->reported_by }}</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -150,8 +151,9 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Department</label>
                                                     <select name="department" class="form-control department">
-                                                        <option value="">{{ $initialincident->reported_department }}
-                                                        </option>
+                                                        <option value="">Select Department</option>
+                                                        <option value="{{ $initialincident->department }}" selected>
+                                                            {{ $initialincident->reported_department }}</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -249,27 +251,42 @@
                                                     </button>
                                                 </div>
 
-                                                <div class="col-md-4 mb-3 file-upload-block" id="file-upload-0">
-                                                    <label for="evidence_0" class="form-label require">Evidence</label>
-                                                    <input type="file"
-                                                        class="form-control validate-file-accept validate-file-required"
-                                                        name="evidence[0][]" id="evidence_0" multiple>
-                                                    <div class="text-danger"></div>
-                                                    <small>Allowed file types: png, jpeg , jpg, pdf, doc, mp4</small>
-                                                    <div class="preview-container mt-2 d-flex flex-wrap gap-2"
-                                                        id="preview-container-0"></div>
+                                                @if (!$initialincidentevidence->isEmpty())
+                                                    @foreach ($initialincidentevidence as $key => $evidence)
+                                                        <div class="col-md-4 mb-3 file-upload-block"
+                                                            id="existing-file-{{ $key }}">
+                                                            <label class="form-label">Existing Evidence</label>
+                                                            <div class="existing-evidence">
+                                                                <a href="{{ asset($evidence->file_path) }}"
+                                                                    target="_blank">
+                                                                    <img src="{{ asset($evidence->file_path) }}"
+                                                                        alt="Evidence" style="max-width: 20%;">
+                                                                </a>
+                                                            </div>
+                                                            {{-- @dd($evidence->id) --}}
+                                                            <input type="hidden" name="existing_files[]"
+                                                                value="{{ $evidence->id }}">
+                                                            <button type="button"
+                                                                class="btn btn-danger btn-sm remove-existing-file"
+                                                                data-id="{{ $evidence->id }}">
+                                                                <i class="fas fa-trash"></i> Remove
+                                                            </button>
 
-                                                    @foreach ($initialincidentevidence as $evidence)
-                                                        <div>
-                                                            <a href="{{ asset($evidence->file_path) }}"
-                                                                target="_blank">
-                                                                <img src="{{ asset($evidence->file_path) }}"
-                                                                    alt="Signature" style="max-width: 50%;">
-                                                            </a>
                                                         </div>
                                                     @endforeach
+                                                @endif
+
+                                                <div class="col-md-4 mb-3 file-upload-block" id="file-upload-0">
+                                                    <label for="evidence_0" class="form-label require">Evidence</label>
+                                                    <input type="file" class="form-control " name="evidence[]"
+                                                        id="evidence_0" multiple>
+                                                    <div class="text-danger"></div>
+                                                    <small>Allowed file types: png, jpeg, jpg, pdf, doc, mp4</small>
+                                                    <div class="preview-container mt-2 d-flex flex-wrap gap-2"
+                                                        id="preview-container-0"></div>
                                                 </div>
                                             </div>
+
 
                                         </div>
                                         <hr>
@@ -332,38 +349,67 @@
                 return;
             }
 
-            // Create the new file upload block
             let newFileUploadBlock = `
-                <div class="col-md-4 mb-3 file-upload-block" id="file-upload-${currentFileUploads}">
-                    <label for="evidence_${currentFileUploads}" class="form-label require">Evidence</label>
-                    <input type="file" class="form-control validate-file-accept validate-file-required"
-                        name="evidence[${currentFileUploads}][]" id="evidence_${currentFileUploads}" multiple>
-                    <div class="text-danger"></div>
-                    <small>Allowed file types: png, jpeg , jpg, pdf, doc, mp4</small>
-                    <button type="button" class="btn btn-danger btn-sm remove-upload-block">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    <div class="preview-container mt-2 d-flex flex-wrap gap-2" id="preview-container-${currentFileUploads}"></div>
-                </div>
-            `;
+        <div class="col-md-4 mb-3 file-upload-block" id="file-upload-${currentFileUploads}">
+            <label for="evidence_${currentFileUploads}" class="form-label require">Evidence</label>
+            <input type="file" class="form-control "
+                name="evidence[]" id="evidence_${currentFileUploads}" multiple>
+            <div class="text-danger"></div>
+            <small>Allowed file types: png, jpeg, jpg, pdf, doc, mp4</small>
+            <button type="button" class="btn btn-danger btn-sm remove-upload-block">
+                <i class="fas fa-trash"></i>
+            </button>
+            <div class="preview-container mt-2 d-flex flex-wrap gap-2" id="preview-container-${currentFileUploads}"></div>
+        </div>
+    `;
 
-            // Append new block
             $('#file-upload-container').append(newFileUploadBlock);
-
-            // Revalidate the new file input after it's added
-            $('#evidence_' + currentFileUploads).rules("add", {
-                required: true,
-                extension: "png|jpeg|jpg|pdf|doc|mp4",
-                messages: {
-                    required: "This field is required.",
-                    extension: "Allowed file types: png, jpeg, jpg, pdf, doc, mp4",
-                }
-            });
         });
 
-        // Handling file input validation for dynamic removal of blocks (if applicable)
+        // Remove dynamically added file fields
         $(document).on('click', '.remove-upload-block', function() {
             $(this).closest('.file-upload-block').remove();
+        });
+
+        // Handle removing existing files
+        $(document).on('click', '.remove-existing-file', function() {
+            let fileId = $(this).data('id');
+            
+            let fileBlock = $(this).closest('.file-upload-block');
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to recover this file!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        // alert(fileId);
+                        url: "{{ admin_url('incident/initial-incident/deleteEvidence') }}/" +
+                            fileId,
+                        type: "POST",
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                fileBlock.remove(); // Remove from UI
+                                Swal.fire("Deleted!", response.message, "success");
+                            } else {
+                                Swal.fire("Error!", response.message, "error");
+                            }
+                        },
+                        error: function() {
+                            Swal.fire("Oops!", "Something went wrong. Please try again.",
+                                "error");
+                        }
+                    });
+                }
+            });
         });
 
 
@@ -491,7 +537,7 @@
         });
 
         $(function() {
-            $('#incidentAdd').validate({
+            $('#initialIncidentedit').validate({
                 rules: {
                     incident_date_time: {
                         required: true,
@@ -542,11 +588,11 @@
                         maxlength: 2000,
                         pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
                     },
-                    'evidence[]': {
-                        required: true,
-                        // extension: "png|jpeg|jpg|pdf|doc|mp4"
-                        imageFormat: true
-                    },
+                    // 'evidence[]': {
+                    //     required: true,
+                    //     // extension: "png|jpeg|jpg|pdf|doc|mp4"
+                    //     imageFormat: true
+                    // },
                 },
                 messages: {
                     incident_date_time: {
@@ -598,10 +644,10 @@
                         maxlength: "Brief Description Required must be exactly 2000 characters.",
                         pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
                     },
-                    'evidence[]': {
-                        required: "Evidence is required",
-                        imageFormat: "Invalid file type"
-                    }
+                    // 'evidence[]': {
+                    //     required: "Evidence is required",
+                    //     imageFormat: "Invalid file type"
+                    // }
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {

@@ -104,6 +104,7 @@
                                         <th>Sr. No</th>
                                         <th>Unit</th>
                                         <th>Shift</th>
+                                        <th>Approve Status</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -211,6 +212,10 @@
                     {
                         data: 'shift',
                         name: 'shift'
+                    },
+                    {
+                        data: 'status_batch',
+                        name: 'status_batch'
                     },
                     {
                         data: 'status',

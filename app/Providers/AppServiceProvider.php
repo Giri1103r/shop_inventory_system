@@ -149,6 +149,10 @@ class AppServiceProvider extends ServiceProvider
 
 
 
+       // IMS Incident
+
+       defined('STATUS_INCIDENT_REPORT')or define('STATUS_INCIDENT_REPORT', 1);
+
         View::composer('*', function ($view) {
 
             /**

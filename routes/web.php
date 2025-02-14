@@ -1109,6 +1109,9 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/unique', [InitialIncidentController::class, 'Uniquecheck']);
                 Route::get('/employeename', [InitialIncidentController::class, 'employeename']);
                 Route::get('/fetchEmployeeDetails/{emp_id}', [InitialIncidentController::class, 'fetchEmployeeDetails']);
+                Route::post('/deleteEvidence/{id}', [InitialIncidentController::class, 'deleteEvidence']);
+                Route::get('/review/{id}', [InitialIncidentController::class, 'review']);
+
             });
 
 
