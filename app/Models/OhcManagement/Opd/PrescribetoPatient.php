@@ -25,6 +25,7 @@ class PrescribetoPatient extends Model
         'date',
         'vital_checkup',
         'suggested_by',
+        'suggested_details',
         'cheif_complaint',
         'first_aid_treatment',
         'treatment',
@@ -120,7 +121,7 @@ class PrescribetoPatient extends Model
             'patient_status' => $request->patient_status,
             'fitness_certificate' => $request->fitness_certificate,
             'closed_description' => $request->closed_description,
-
+            'suggested_details' => $request->details,
             'created_by' => Auth::id(),
             'dob' => DBdateformat($request->dob)
         ];
@@ -134,13 +135,13 @@ class PrescribetoPatient extends Model
     }
     public function Selectone($id)
     {
-       $data =  $this->where('ohc_management_opd_patient.id', $id)
-        ->select('ohc_management_opd_patient.*', 'ohc_management_opd_patient_status.patient_status', 'ohc_management_opd_patient_suggested_by.suggested_by')
-            ->join('ohc_management_opd_patient_status', 'ohc_management_opd_patient.patient_status', '=', 'ohc_management_opd_patient_status.id')
-            ->join('ohc_management_opd_patient_suggested_by', 'ohc_management_opd_patient.suggested_by', '=', 'ohc_management_opd_patient_suggested_by.id')
+        $data =  $this->where('ohc_management_opd_patient.id', $id)
+            ->select('ohc_management_opd_patient.*')
             ->where('ohc_management_opd_patient.status', 1)
             ->where('ohc_management_opd_patient.trash', 'No')
             ->first();
-            return $data;
+        return $data;
     }
+
+   
 }

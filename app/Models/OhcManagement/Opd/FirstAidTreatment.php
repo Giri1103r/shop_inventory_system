@@ -10,7 +10,7 @@ class FirstAidTreatment extends Model
     protected $table = 'ohc_management_opd_patient_first_aid';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'opd_id  ',
+        'opd_id',
         'medicine_id',
         'quantity',
         'available_quantity',
@@ -46,5 +46,15 @@ class FirstAidTreatment extends Model
 
     public function Selectone($id){
         return $this->where('opd_id',$id)->where('status',1)->where('trash','No')->get();
+    }
+    public function deleterecord($id)
+    {
+
+        $update_data = array(
+            'status' => 0,
+            'trash' => 'YES',
+        );
+
+        return $this->where('id', $id)->update($update_data);
     }
 }

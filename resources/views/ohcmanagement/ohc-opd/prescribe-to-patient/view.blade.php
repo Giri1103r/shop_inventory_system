@@ -229,7 +229,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Vechicle') }}</label>
                                         <div class="view_data">
-                                            {{ isset($isreffered->refered_by_vechicle) ? $isreffered->refered_by_vechicle : '' }}
+                                            {{ isset($isreffered->refered_vechicle) ? $isreffered->refered_vechicle : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
