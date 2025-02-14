@@ -136,7 +136,7 @@
                                         enctype="multipart/form-data">
                                         @csrf
                                         <div class="row">
-                                            <input type="hidden" class="form-control" name="id" id="id"
+                                            <input type="hidden" class="form-control" name="accident_report_id" id="accident_report_id"
                                                 value="{{ encryptId($accident_report->id) }}">
 
                                             <input type="hidden" name="reviewer_emp_id" id="reviewer_emp_id"
@@ -158,14 +158,12 @@
                                                         value="{{ todaydate() }}">
                                                 </div>
                                             </div>
+
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label for="team_id" class="form-label require">Assign Team
-                                                        members</label>
-                                                    <select name="team_id[]" id="team_id" class="form-control team_name"
-                                                        style="width: 100%" multiple>
-                                                        <option value="">Select Team members</option>
-
+                                                    <label for="team_id" class="form-label require">Name of the Witness</label>
+                                                    <select name="team_member[]" id="team_id" class="form-control team_name" multiple="multiple" style="width: 100%">
+                                                        <option value="">Select Team Members</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -211,13 +209,14 @@
                 allowClear: true,
                 closeOnSelect: false,
                 ajax: {
-                    url: "{{ admin_url('incident/accidentReport/getemployeename') }}",
+                    url: "{{ url('incident/accidentReport/getemployeename') }}", 
                     type: "GET",
                     dataType: "json",
                     delay: 250,
                     data: function(params) {
                         return {
-                            search: params.term // Search query
+                            search: params.term, 
+                            _token: "{{ csrf_token() }}" 
                         };
                     },
                     processResults: function(data) {
@@ -230,16 +229,14 @@
                             })
                         };
                     },
+                    cache: true,
                     error: function(xhr, textStatus, errorThrown) {
                         console.log("Error in AJAX request:", textStatus, errorThrown);
                     }
                 },
-                minimumInputLength: 3,
+                minimumInputLength: 1,
                 width: '100%',
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
             });
-
             // $('#team_id').select2({
             //     placeholder: "Select Team members",
             //     allowClear: true,

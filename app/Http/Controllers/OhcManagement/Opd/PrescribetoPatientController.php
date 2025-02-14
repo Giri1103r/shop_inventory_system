@@ -13,7 +13,11 @@ use App\Models\OhcManagement\Master\Vendor;
 use App\Models\OhcManagement\UserMedicineIssuance;
 use App\Models\OhcManagement\MedicineIssuance;
 use App\Models\OhcManagement\MedicineReceiving;
+use App\Models\OhcManagement\MedicineStock;
+use App\Models\OhcManagement\Opd\FirstAidTreatment;
+use App\Models\OhcManagement\Opd\IsReffered;
 use App\Models\OhcManagement\Opd\PatientStatus;
+use App\Models\OhcManagement\Opd\PrescribetoPatient;
 use App\Models\OhcManagement\Opd\ReferedVechicle;
 use App\Models\OhcManagement\Opd\Suggestedby;
 use App\Models\OhcManagement\UserMedicineRequisition;
@@ -35,7 +39,7 @@ use Yajra\DataTables\Facades\DataTables;
 class PrescribetoPatientController extends Controller
 {
 
-    private $medicine;
+    private $medicine_stock;
     private $vendor;
     private $user_medicine_issuance;
     private $unit;
@@ -47,10 +51,13 @@ class PrescribetoPatientController extends Controller
     private $suggestedBy;
     private $refered_vechicle;
     private $patient_status;
+    private $opd_patient;
+    private $opd_firstaid;
+    private $isreffered;
 
     public function __construct()
     {
-        $this->medicine = new Medicine();
+        $this->medicine_stock = new MedicineStock();
         $this->vendor = new Vendor();
         $this->user_medicine_issuance = new UserMedicineIssuance();
         $this->medicine_issuance = new MedicineIssuance();
@@ -60,7 +67,9 @@ class PrescribetoPatientController extends Controller
         $this->suggestedBy = new Suggestedby();
         $this->refered_vechicle = new ReferedVechicle();
         $this->patient_status = new PatientStatus();
-
+        $this->opd_patient = new PrescribetoPatient();
+        $this->opd_firstaid = new FirstAidTreatment();
+        $this->isreffered = new IsReffered();
         $this->unit = new Unit();
         $this->department = new Department();
     }
@@ -69,19 +78,59 @@ class PrescribetoPatientController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data = $this->user_medicine_issuance->list();
+                    $data = $this->opd_patient->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
-                        ->editColumn('unit_id', function ($row) {
-                            return $row->unit_name;
-                        })
-                        ->editColumn('department_id', function ($row) {
-                            return $row->department_name;
+                        ->addColumn('vital_checkup', function ($row) {
+                            if ($row->vital_checkup === null) {
+                                return "";
+                            } elseif ($row->vital_checkup == 1) {
+                                return "<span>Yes</span>";
+                            } elseif ($row->vital_checkup == 0) {
+                                return "<span>No</span>";
+                            }
+                            return "";
                         })
 
-                        ->editColumn('issue_date', function ($row) {
-                            return displaydateformat($row->issue_date);
+                        ->addColumn('fitness_certificate', function ($row) {
+                            if ($row->fitness_certificate === null) {
+                                return "";
+                            } elseif ($row->fitness_certificate == 1) {
+                                return "<span>Required</span>";
+                            } elseif ($row->fitness_certificate == 2) {
+                                return "<span>Not Required</span>";
+                            }
+                            return "";
                         })
+
+                        ->editColumn('unit_id', function ($row) {
+                            return getUnitname($row->unit_id);
+                        })
+                        ->editColumn('department_id', function ($row) {
+                            return getDepartment($row->department_id);
+                        })
+                        ->editColumn('created_by', function ($row) {
+                            return getUsername($row->created_by);
+                        })
+                        ->editColumn('date', function ($row) {
+                            return displaydateformat($row->date);
+                        })
+                        ->editColumn('suggested_by', function ($row) {
+                            return ($row->suggested_by);
+                        })
+                        ->editColumn('patient_status', function ($row) {
+
+                            if ($row->patient_status == 'Open') {
+                                return  "<span class='badge bg-info' style='font-size: 1.0em;'>Open</span>";
+                            } elseif ($row->patient_status == 'Close') {
+                                return "<span class='badge bg-success' style='font-size: 1.0em;'>Close</span>";
+                            } elseif ($row->patient_status == 'Cancel') {
+                                return "<span class='badge bg-danger' style='font-size: 1.0em;'>Cancel</span>";
+                            } else if ($row->patient_status == null) {
+                                return "";
+                            }
+                        })
+
                         ->editColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
@@ -92,11 +141,11 @@ class PrescribetoPatientController extends Controller
                             // }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
 
-
+                            $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="Close" title="Cancel" style="color: #e21e23;margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
                             return $btn;
                         })
 
-                        ->rawColumns(['action', 'request_date'])
+                        ->rawColumns(['action', 'date', 'vital_checkup', 'created_by', 'patient_status', 'fitness_certificate'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -126,15 +175,16 @@ class PrescribetoPatientController extends Controller
             $suggestedBy = $this->suggestedBy->getSuggestedBy();
             $reffered = $this->refered_vechicle->getreffered();
             $patientstatus = $this->patient_status->getpatientstatus();
-
+            $medicine  = $this->medicine_stock->getMedicinestockdata();
             $data = array(
                 'unit' => $unit,
-                'suggestedBy'=>$suggestedBy,
-                'reffered'=>$reffered,
-                'patientstatus'=>$patientstatus,
+                'suggestedBy' => $suggestedBy,
+                'reffered' => $reffered,
+                'patientstatus' => $patientstatus,
+                'medicine' => $medicine
 
             );
-            return view('ohcmanagement.ohc-opd.prescribe-to-patient.add',$data);
+            return view('ohcmanagement.ohc-opd.prescribe-to-patient.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -142,6 +192,66 @@ class PrescribetoPatientController extends Controller
         }
     }
 
+
+    public function store(Request $request)
+    {
+        try {
+            $rules = [
+                'date' => 'required',
+            ];
+
+            $messages = [
+                'date.required' => 'Date cannot be empty.',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            // dd($request->all());
+            $opd_patient = $this->opd_patient->store();
+
+            $firstaid = $this->opd_firstaid->store($opd_patient);
+
+            $isreffered = $this->isreffered->store($opd_patient);
+
+            Session::flash('success', __('Your data has been created successfully'));
+
+            return redirect(admin_url('ohc/prescribe-to-patient/list'));
+        } catch (Exception $ex) {
+            dd($ex);  // Debugging
+            Session::flash('error', 'Something went wrong. Please try again after some time');
+            return redirect(admin_url('ohc/prescribe-to-patient/list'));
+        }
+    }
+
+    // view
+
+    public function view(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $opdpatient = $this->opd_patient->selectOne($id);
+                $opd_firstaid = $this->opd_firstaid->Selectone($opdpatient->id);
+                $isreffered = $this->isreffered->selectOne($opdpatient->id);
+            }
+            $unit = $this->unit->getunit();
+            $data = array(
+                'opdpatient' => $opdpatient,
+                'opd_firstaid' => $opd_firstaid,
+                'isreffered' => $isreffered,
+
+            );
+            return view('ohcmanagement.ohc-opd.prescribe-to-patient.view', $data);
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', 'Something went wrong please try again after some time');
+            return redirect(admin_url('ohc/prescribe-to-patient/list'));
+        }
+    }
     // Fetch of employee and worker name
 
     public function fetchemployeename(Request $request)
@@ -171,9 +281,37 @@ class PrescribetoPatientController extends Controller
         );
     }
 
+    // fetching the employee department and mobile number
+
+    public function employeedetails($emp_id)
+    {
+        $employee = Employee::select('emp_name', 'department', 'mobile_no')
+            ->where('emp_id', $emp_id)
+            ->first();
+
+        if (!$employee) {
+            $employee = Work::select('emp_name', 'department', 'mobile_no')
+                ->where('emp_id', $emp_id)
+                ->first();
+        }
+
+        if ($employee) {
+            return response()->json([
+                'employee' => $employee,
+                'departments' => $this->department->select('department_name')->where('status', '1')->where('id', $employee->department)
+                    ->first()
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Employee not found'
+            ], 404);
+        }
+    }
+
     // fetching the first aiders
 
-    public function firstaider(Request $request){
+    public function firstaider(Request $request)
+    {
         $search = $request->input('search');
 
         $employees = CertifiedFirstAider::where(function ($query) use ($search) {
@@ -206,4 +344,19 @@ class PrescribetoPatientController extends Controller
         );
     }
 
+    // cancel the patient
+
+    public function close(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $remarks = $request->remarks;
+            $opd_patient = $this->opd_patient->find($id);
+            $this->opd_patient->close($id, $remarks);
+            return response()->json(['status' => 'success', 'msg' => __('Cancelled the OPD Patient Successfully')], 200);
+        } catch (Exception $ex) {
+
+            return response()->json(['status' => 'error', 'msg' => __('ptw.Please try After Some time')], 406);
+        }
+    }
 }
