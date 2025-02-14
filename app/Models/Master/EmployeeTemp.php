@@ -93,6 +93,9 @@ class EmployeeTemp extends Model
                     ]);
                     continue; 
                 }
+                $status = isset($item['Emp_Active']) ? ($item['Emp_Active'] ? 1 : 0) : null;
+
+
                 $valuesToInsertOrUpdate = [
                     'emp_id' => isset($item['pk_Emp_Code']) ? $item['pk_Emp_Code'] : null,
                     'emp_name' => isset($item['Emp_Name']) ? $item['Emp_Name'] : null,
@@ -100,7 +103,7 @@ class EmployeeTemp extends Model
                     'user_role' => isset($item['Emp_Rolename']) ? $item['Emp_Rolename'] : null,
                     'mobile_no' => isset($item['Emp_PersonalPhoneNo']) ? $item['Emp_PersonalPhoneNo'] : null,
                     'joining_date' => !empty($item['Emp_JoiningDate']) ? DBdatetimeformat($item['Emp_JoiningDate']) : null,
-                    'status' => isset($item['Emp_Active']) ? $item['Emp_Active'] : null,
+                    'status' => $status,
                     'employee_status' => isset($item['Emp_Status']) ? $item['Emp_Status'] : null,
                     'email' => isset($item['Emp_OfficialMail']) ? $item['Emp_OfficialMail'] : null,
                     'reporting_manager' => isset($item['Emp_FirstApprover']) ? $item['Emp_FirstApprover'] : null,
