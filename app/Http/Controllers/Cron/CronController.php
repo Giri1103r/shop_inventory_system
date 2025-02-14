@@ -262,7 +262,7 @@ class CronController extends Controller
     {
 
         try {
-            $worktemp = Worktemp::select('*')->where('upload_status', '0')->get();
+            $worktemp = Worktemp::select('*')->where('upload_status', '0')->where('status',1)->get();
 
 
             if (!empty($worktemp)) {
