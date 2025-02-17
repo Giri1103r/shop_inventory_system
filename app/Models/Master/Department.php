@@ -316,4 +316,9 @@ class Department extends Model
             $model->update(['department_id' => $uniqueId]);
         });
     }
+
+    public function getunitwiseDepartment(){
+        $unitId = Auth::user()->unit_id;
+        return $this->where('unit_id',$unitId)->where('trash','NO')->get();
+    }
 }

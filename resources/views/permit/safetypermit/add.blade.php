@@ -746,7 +746,7 @@
                                             </div>
 
                                         </div>
-                                        <p class="fw-bold fs-5 mt-3">Mandatory Notes for PPEs</span>
+                                        <p class="fw-bold fs-5 mt-3">Mandatory Notes for Equipments</span>
                                         </p>
                                         <div class="row" style="background: #d6f5e0b0;">
                                             <div class="col-12 col-md-12 p-2">

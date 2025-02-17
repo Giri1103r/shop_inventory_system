@@ -248,14 +248,15 @@ class NominationProcess extends Model
             'training_schedule.venue_id',
             'training_schedule.start_time',
             'training_schedule.end_time',
+            'training_schedule.topic_id',
             'training_masters_venue.name_of_the_conference_hall'
         )
             ->leftJoin('masters_work', 'training_nomination_process.employee_id', '=', 'masters_work.id')
             ->leftJoin('masters_employee', 'training_nomination_process.employee_id', '=', 'masters_employee.id')
             ->leftJoin('masters_department', 'training_nomination_process.department_id', '=', 'masters_department.id')
-            ->leftJoin('training_masters_topic', 'training_nomination_process.topic_id', '=', 'training_masters_topic.id')
             ->leftJoin('training_schedule', 'training_nomination_process.training_schedule_id', '=', 'training_schedule.id')
             ->leftJoin('training_masters_venue', 'training_schedule.venue_id', '=', 'training_masters_venue.id')
+            ->leftJoin('training_masters_topic', 'training_schedule.topic_id', '=', 'training_masters_topic.id')
             ->where('training_nomination_process.training_schedule_id', $training_schedule)
             ->get();
     }

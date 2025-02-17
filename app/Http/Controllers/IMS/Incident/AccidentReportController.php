@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 
+use App\Models\Master\Employee;
 use App\Models\Master\Unit;
 use App\Models\Master\Location;
 use App\Models\Master\Department;
@@ -21,6 +22,7 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Models\IMS\Incident\EHSReview;
 use App\Models\IMS\Incident\AccidentReport;
 
 class AccidentReportController extends Controller
@@ -31,12 +33,17 @@ class AccidentReportController extends Controller
     private $location;
     private $department;
     private $user;
+    private $ehs_review;
+    private $employee;
     private $uploadlog;
 
 
     public function __construct()
     {
 
+
+        $this->employee = new Employee();
+        $this->ehs_review = new EHSReview();
         $this->accident_report = new AccidentReport();
         $this->unit = new Unit();
         $this->location = new Location();
@@ -54,7 +61,6 @@ class AccidentReportController extends Controller
                 try {
 
                     $data =  $this->accident_report->list();
-
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -67,6 +73,9 @@ class AccidentReportController extends Controller
                             return $text;
                         })
 
+                        ->addColumn('date_and_time', function ($row) {
+                            return Displaydatetimeformat($row->date_and_time);
+                        })
                         ->addColumn('created_at', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
@@ -76,15 +85,22 @@ class AccidentReportController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
-                                $btn = '<a href="' . admin_url('incident/accidentReport/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('incident/accidentReport/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
                             // if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('incident/accidentReport/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            $btn .= '<a href="' . admin_url('incident/accidentReport/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
+
+                            if ($row->accident_status == 1) {
+                                $btn .= '<a href="' . admin_url('incident/accidentReport/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
+                            }
+                            if ($row->accident_status == 2) {
+                                $btn .= '<a href="' . admin_url('incident/accidentReport/investigation/' . encryptId($row->id)) . '" class=" " title="Investigation"><i class="fa fa-search" style="color: #000000;"></i> ';
+                            }
 
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['action', 'date_and_time', 'created_date', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -96,20 +112,50 @@ class AccidentReportController extends Controller
                 }
             }
         }
-        $data = array();
+        $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
+        // $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
+        $employeeList  = $this->employee->select('id', 'emp_id')->whereRaw('FIND_IN_SET(' . ROLE_ADMIN . ', user_role)')->where('status', '1')->get();
+
+        $data = array(
+            'departmentList' => $departmentList,
+            // 'unitList' => $unitList,
+            'employeeList' => $employeeList,
+        );
 
         return view('ims.incident.accidentReport.list', $data);
+    }
+    public function fetchEmployeeDetails($emp_code)
+    {
+        $employee = $this->employee->getempDetails($emp_code);
+        if (!$employee) {
+            return response()->json(['error' => 'Employee not found.'], 404);
+        }
+
+        return response()->json([
+            'employee' => [
+                'designation' => $employee->designation_name ?? '',
+                'unit_name' => $employee->unit_name ?? '',
+                'department_name' => $employee->department_name ?? '',
+            ],
+        ]);
     }
 
     public function Add(Request $request)
     {
 
         try {
+            $employeeList  = $this->employee->select('id', 'emp_id')->where('status', '1')->get();
+            $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
+            $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
 
-            $data = array();
+            $data = array(
+                'locationList' => $locationList,
+                'employeeList' => $employeeList,
+                'unitList' => $unitList,
+            );
             return view('ims.incident.accidentReport.add', $data);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
         }
     }
 
@@ -118,36 +164,26 @@ class AccidentReportController extends Controller
         try {
 
             $rules = [
-
-                'services' => 'required',
-                'narration' => 'required',
-                'hazard_description' => 'required',
-                'hazard_type' => 'required',
-                'severity' => 'required',
-                'risk_consequence' => 'required',
-                'likelihood' => 'required',
-                'risk_levels' => 'required',
-                'current_controls' => 'required',
-                'type_controls' => 'required',
-                'legal_req' => 'required',
-                'risk_rating' => 'required',
+                'date_and_time' => 'required',
+                'unit_id' => 'required',
+                'shift' => 'required',
+                'location_id' => 'required',
+                'designation' => 'required',
+                'department_id' => 'required',
+                'emp_code' => 'required',
+                'address_of_the_injuredperson' => 'required',
             ];
             $messages = [
-
-                'services.required' => 'Please enter Source, Situation, Act,Activity, Product,Services',
-                'narration.required' => 'Please enter Narration',
-                'hazard_description.required' => 'Please enter Hazard Description',
-                'hazard_type.required' => 'Please enter Type of Hazard',
-                'severity.required' => 'Please enter Severity',
-                'risk_consequence.required' => 'Please enter Risk/Consequence',
-                'likelihood.required' => 'Please enter Likelihood',
-                'risk_levels.required' => 'Please enter Risk Levels',
-                'current_controls.required' => 'Please enter Current Controls',
-                'type_controls.required' => 'Please enter Type of Controls',
-                'legal_req.required' => 'Please enter Legal Requirements',
-                'risk_rating.required' => 'Please enter Risk Ratings',
-
+                'date_and_time.required' => 'Please enter the date and time of the accident.',
+                'unit_id.required' => 'Unit is required.',
+                'shift.required' => 'Shift is required.',
+                'location_id.required' => 'Location is required.',
+                'designation.required' => 'Designation is required.',
+                'department_id.required' => 'Department is required.',
+                'emp_code.required' => 'Employee Code is required.',
+                'address_of_the_injuredperson.required' => 'Address of the injured person is required.',
             ];
+
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
@@ -155,10 +191,67 @@ class AccidentReportController extends Controller
 
             try {
 
+                $accident_report =  $this->accident_report->store();
+                if ($accident_report) {
+                    $accidentReport = $this->accident_report->selectOne($accident_report->id);
+                    $ehs_head_role = ROLE_EHS_HEAD;
 
-                 $this->accident_report->store();
+                    $ehs_details = User::select('id', 'role', 'name', 'employee_id', 'email')
+                        ->whereRaw('FIND_IN_SET(' . $ehs_head_role . ', role)')
+                        ->get();
 
+                    if (!empty($accidentReport)) {
+                        $mailsubject = 'New Initial Accident Report';
 
+                        /**
+                         * Send Email Notifications
+                         */
+                        if ($ehs_details->isNotEmpty()) {
+                            foreach ($ehs_details as $ehs_detail) {
+                                if (!empty($ehs_detail->email)) {
+                                    $accidentReportArray = [
+                                        'name' => $ehs_detail->name,
+                                        'accident_report_no' => $accidentReport->accident_report_no,
+                                        'date_and_time' => Displaydatetimeformat($accidentReport->date_and_time),
+                                        'emp_code' => $accidentReport->emp_code,
+                                        'unit' => $accidentReport->unit_name,
+                                        'department' => $accidentReport->department_name,
+                                        'location' => $accidentReport->location_name,
+                                        'mail_subject' => $mailsubject,
+                                    ];
+
+                                    // Queue email
+                                    Mail::to($ehs_detail->email)->queue(new TrainingApprovalEmail($accidentReportArray));
+                                }
+                            }
+                        }
+
+                        /**
+                         * Send Web Notifications
+                         */
+                        $ehsids = $ehs_details->pluck('id')->toArray();
+                        if (!empty($ehsids)) {
+                            $img = admin_url('public/assets/icons/training.png');
+                            $notificationData = [
+                                'notification_type' => 2,
+                                'module_type' => 2,
+                                'notification_message' => $mailsubject,
+                                'mobile_notification' => json_encode([
+                                    'title' => $mailsubject,
+                                    'message' => 'A new training schedule has been created by ' . getUsername($accidentReport->created_by),
+                                    'icon' => $img,
+                                    'module' => 2,
+                                ]),
+                                'web_link' => 'tincident/accidentReport/view/' . encryptId($accidentReport->id),
+                                'assigned_user' => array_to_string($ehsids),
+                                'created_by' => Auth::id(),
+                            ];
+
+                            // Save notification
+                            notificationSave($notificationData);
+                        }
+                    }
+                }
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
 
@@ -187,9 +280,9 @@ class AccidentReportController extends Controller
                     'accident_report' => $accident_report,
                 );
             }
-            return view('ims.master.accident_report.view', $data);
+            return view('ims.incident.accidentReport.view', $data);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
         }
     }
 
@@ -197,13 +290,20 @@ class AccidentReportController extends Controller
     {
         try {
             $id = decryptId($request->id);
-
+            $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
+            $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
+            $employeeList  = $this->employee->select('id', 'emp_id')->where('status', '1')->get();
+            $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
 
             $accident_report = $this->accident_report->find($id);
             $data = array(
+                'departmentList' => $departmentList,
+                'unitList' => $unitList,
+                'employeeList' => $employeeList,
                 'accident_report' => $accident_report,
-            );
+                'locationList' => $locationList,
 
+            );
 
             return view('ims.incident.accidentReport.edit', $data);
         } catch (Exception $error) {
@@ -216,46 +316,32 @@ class AccidentReportController extends Controller
         try {
             $id = decryptId($request->id);
             $rules = [
-
-                'services' => 'required',
-                'narration' => 'required',
-                'hazard_description' => 'required',
-                'hazard_type' => 'required',
-                'severity' => 'required',
-                'risk_consequence' => 'required',
-                'likelihood' => 'required',
-                'risk_levels' => 'required',
-                'current_controls' => 'required',
-                'type_controls' => 'required',
-                'legal_req' => 'required',
-                'risk_rating' => 'required',
+                'date_and_time' => 'required',
+                'unit_id' => 'required',
+                'shift' => 'required',
+                'location_id' => 'required',
+                'designation' => 'required',
+                'department_id' => 'required',
+                'emp_code' => 'required',
+                'address_of_the_injuredperson' => 'required',
             ];
             $messages = [
-
-                'services.required' => 'Please enter Source, Situation, Act,Activity, Product,Services',
-                'narration.required' => 'Please enter Narration',
-                'hazard_description.required' => 'Please enter Hazard Description',
-                'hazard_type.required' => 'Please enter Type of Hazard',
-                'severity.required' => 'Please enter Severity',
-                'risk_consequence.required' => 'Please enter Risk/Consequence',
-                'likelihood.required' => 'Please enter Likelihood',
-                'risk_levels.required' => 'Please enter Risk Levels',
-                'current_controls.required' => 'Please enter Current Controls',
-                'type_controls.required' => 'Please enter Type of Controls',
-                'legal_req.required' => 'Please enter Legal Requirements',
-                'risk_rating.required' => 'Please enter Risk Ratings',
-
+                'date_and_time.required' => 'Please enter the date and time of the accident.',
+                'unit_id.required' => 'Unit is required.',
+                'shift.required' => 'Shift is required.',
+                'location_id.required' => 'Location is required.',
+                'designation.required' => 'Designation is required.',
+                'department_id.required' => 'Department is required.',
+                'emp_code.required' => 'Employee Code is required.',
+                'address_of_the_injuredperson.required' => 'Address of the injured person is required.',
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
-                dd($validator->errors());
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
             $this->accident_report->updates($id);
 
-            // $vendor = $this->vendor->find($id);
-            // $this->user->vendorUpdate($vendor->login_id);
 
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/accidentReport/list'));
@@ -266,6 +352,92 @@ class AccidentReportController extends Controller
         }
     }
 
+    public function employeename(Request $request)
+    {
+        $name = $request->input('search');
+
+        $employees = Employee::select('id', 'emp_id', 'emp_name')
+            ->where(function ($query) use ($name) {
+                $query->where('emp_name', 'like', '%' . $name . '%')
+                    ->orWhere('emp_id', 'like', '%' . $name . '%');
+            })
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+        return response()->json(
+            $employees->map(function ($employee) {
+                return [
+                    'id' => encryptId($employee->id),
+                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+                ];
+            })
+        );
+    }
+
+    public function review(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $accident_report = $this->accident_report->selectOne($id);
+                $employeeList  = $this->employee->select('id', 'emp_id', 'emp_name')->where('status', '1')->get();
+
+                $data = array(
+                    'employeeList' => $employeeList,
+                    'accident_report' => $accident_report,
+                );
+            }
+            return view('ims.incident.accidentReport.review', $data);
+        } catch (Exception $ex) {
+            dd($ex);
+        }
+    }
+    public function ehsHeadReviewSubmit(Request $request)
+    {
+        try {
+            $rules = [
+                'remark' => 'required',
+            ];
+            $messages = [
+                'remark.required' => 'Please provide a remark.',
+            ];
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            $ehsReview = $this->ehs_review->store();
+            $accident_status = 2;
+              $accidentReportId = $ehsReview->accident_report_id;
+            $accident = $this->accident_report->updateStatus($accidentReportId, $accident_status);
+
+            Session::flash('success', 'Your data has been updated successfully!');
+            return redirect(admin_url('incident/accidentReport/list'));
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/accidentReport/list'));
+        }
+    }
+
+    public function investigation(Request $request , $accident_id)
+    {
+        try {
+            $accidentId = decryptId($accident_id);
+            $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
+
+            $data = array(
+                'accidentId' => $accidentId,
+                'departmentList' => $departmentList,
+
+            );
+
+            return view('ims.incident.accidentReport.investigation', $data);
+        } catch (Exception $error) {
+            dd($error->getMessage());
+        }
+    }
 
 
     public function Uniquecheck(Request $request)
@@ -276,10 +448,10 @@ class AccidentReportController extends Controller
             $id = $request->id;
 
             if (empty($id)) {
-                $isUnique = !$this->accident_report->uniqueCheck($vendor_name,$license_no);
+                $isUnique = !$this->accident_report->uniqueCheck($vendor_name, $license_no);
             } else {
                 $id = decryptId($id);
-                $isUnique = !$this->accident_report->existUniqueCheck($vendor_name,$license_no, $id);
+                $isUnique = !$this->accident_report->existUniqueCheck($vendor_name, $license_no, $id);
             }
 
             return Response::json($isUnique);
@@ -330,13 +502,13 @@ class AccidentReportController extends Controller
                 $export[] =  $i;
                 $export[] =  $data->sr_no;
                 $export[] =  $data->services;
-                if($data->hazard_type == 1){
+                if ($data->hazard_type == 1) {
                     $export[] = 'P - Physical Hazard';
-                }elseif($data->hazard_type == 2){
+                } elseif ($data->hazard_type == 2) {
                     $export[] = 'C - Chemical Hazard';
-                }elseif($data->hazard_type == 3){
+                } elseif ($data->hazard_type == 3) {
                     $export[] = 'B - Behavioral Hazard';
-                }elseif($data->hazard_type == 4){
+                } elseif ($data->hazard_type == 4) {
                     $export[] = 'O - Other Hazard';
                 }
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';

@@ -32,12 +32,7 @@
                                 <div class="col-md-12">
                                     <div class="row">
 
-                                        <div class="col-md-3 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">Requisition ID</label>
-                                                <input type="text" name="req_id" class="form-control" id="req_id">
-                                            </div>
-                                        </div>
+
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label ">Unit</label>
@@ -51,27 +46,8 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">Department</label>
-                                                <select name="department_id" id="department_id"
-                                                    class=" form-control single-select" style="width: 100%">
-                                                    <option value="">Select Department </option>
 
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">Request date</label>
-                                            <div class="input-group date form-input custom-height">
-                                                <input type="text" class="form-control " name="request_date"
-                                                    id="request_date" autocomplete="off">
-                                                <div class="input-group-addon input-group-text">
-                                                    <span class="fa fa-calendar"></span>
-                                                </div>
-                                            </div>
 
-                                        </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
                                             <div class="input-group date form-input custom-height">
@@ -93,17 +69,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label">Approve Status</label>
-                                            <select name="status" id="status" style="width: 100%" class="form-control single-select">
-                                                <option value="">Select Status</option>
-                                                <option value="9">Paramedics Approval Pending</option>
-                                                <option value="11">Paramedics Approved</option>
-                                                <option value="10">Paramedics Rejected</option>
-                                                <option value="1">Open</option>
-                                                <option value="5">Close</option>
-                                            </select>
-                                        </div>
+
 
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
@@ -124,10 +90,12 @@
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
 
-                                        <th>Unit Name</th>
-                                        <th>Department Name</th>
+                                        <th>Unit </th>
+                                        <th>Department</th>
+                                        <th>Medicine</th>
+                                        <th>Quantity</th>
+                                        <th>Remarks</th>
                                         <th>Discard Date</th>
-
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -250,12 +218,9 @@
                 },
                 data: function(d) {
                     d.unit_id = $('#unit_id').val();
-                    d.req_id = $('#req_id').val();
-                    d.department_id = $('#department_id').val();
                     d.from_date = $('#from_date').val();
-                    d.request_date = $('#request_date').val();
                     d.to_date = $('#to_date').val();
-                    d.status = $('#status').val();
+
                 },
                 error: function(xhr, error, code) {
                     if (xhr.status === 419) {
@@ -279,10 +244,21 @@
                     name: 'department_id'
                 },
                 {
+                    data: 'medicine_id',
+                    name: 'medicine_id'
+                },
+                {
+                    data: 'quantity',
+                    name: 'quantity'
+                },
+                {
+                    data: 'remarks',
+                    name: 'remarks'
+                },
+                {
                     data: 'discard_date',
                     name: 'discard_date'
                 },
-
 
             ],
             language: {
@@ -308,24 +284,17 @@
                             text: '{{ __('common.pdf') }}',
                             action: function(e, dt, button, config) {
                                 var searchValue = $('#datatable-list_filter input').val();
-                                var department_id = $('#department_id').val();
-                                var req_id = $('#req_id').val();
                                 var unit_id = $('#unit_id').val();
                                 var from_date = $('#from_date').val();
-                                var request_date = $('#request_date').val();
                                 var to_date = $('#to_date').val();
-                                var status = $('#status').val();
+
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
                                 window.location.href =
                                     "{{ admin_url('ohc/discard/export/pdf') }}" +
                                     '?search=' + searchValue +
-                                    '&department_id=' + department_id +
-                                    '&req_id=' + req_id +
                                     '&unit_id=' + unit_id +
                                     '&from_date=' + from_date +
-                                    '&request_date=' + request_date +
-                                    '&status=' + status +
                                     '&to_date=' + to_date;
                             }
                         },
@@ -334,25 +303,17 @@
                             text: '{{ __('common.excel') }}',
                             action: function(e, dt, button, config) {
                                 var searchValue = $('#datatable-list_filter input').val();
-                                var department_id = $('#department_id').val();
-                                var req_id = $('#req_id').val();
                                 var unit_id = $('#unit_id').val();
                                 var from_date = $('#from_date').val();
-                                var request_date = $('#request_date').val();
                                 var to_date = $('#to_date').val();
-                                var status = $('#status').val();
 
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
                                 window.location.href =
                                     "{{ admin_url('ohc/discard/export/excel') }}" +
                                     '?search=' + searchValue +
-                                    '&req_id=' + req_id +
-                                    '&department_id=' + department_id +
                                     '&unit_id=' + unit_id +
                                     '&from_date=' + from_date +
-                                    '&request_date=' + request_date +
-                                    '&status=' + status +
                                     '&to_date=' + to_date;
                             }
                         }
@@ -365,74 +326,74 @@
             ],
         });
 
-        $(document).on('click', '.statusChange', function() {
-            var id = $(this).data('id');
-            var types = $(this).data('type');
-            if (types == 1) {
-                var title = '{{ __('Do You want to In-Activate Medicine Requisition Details') }}';
-                var text = '{{ __('common.inactive') }}';
-                var btncolor = '#dc3545'
+        // $(document).on('click', '.statusChange', function() {
+        //     var id = $(this).data('id');
+        //     var types = $(this).data('type');
+        //     if (types == 1) {
+        //         var title = '{{ __('Do You want to In-Activate Medicine Requisition Details') }}';
+        //         var text = '{{ __('common.inactive') }}';
+        //         var btncolor = '#dc3545'
 
-            } else {
-                var title = '{{ __('Do You want to Activate Medicine Requisition Details') }}';
-                var text = '{{ __('common.active') }}';
-                var btncolor = '#7ddc35'
-            }
+        //     } else {
+        //         var title = '{{ __('Do You want to Activate Medicine Requisition Details') }}';
+        //         var text = '{{ __('common.active') }}';
+        //         var btncolor = '#7ddc35'
+        //     }
 
-            Swal.fire({
-                title: title,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: text,
-                confirmButtonColor: btncolor,
-                customClass: {
-                    confirmButton: 'btn-skew',
-                    cancelButton: 'btn-skew'
-                },
-            }).then((result) => {
+        //     Swal.fire({
+        //         title: title,
+        //         icon: 'warning',
+        //         showCancelButton: true,
+        //         confirmButtonText: text,
+        //         confirmButtonColor: btncolor,
+        //         customClass: {
+        //             confirmButton: 'btn-skew',
+        //             cancelButton: 'btn-skew'
+        //         },
+        //     }).then((result) => {
 
 
-                if (result.value) {
-                    $.ajax({
-                        url: "{{ admin_url('ohc/discard/status') }}",
-                        type: 'post',
+        //         if (result.value) {
+        //             $.ajax({
+        //                 url: "{{ admin_url('ohc/discard/status') }}",
+        //                 type: 'post',
 
-                        data: {
-                            id: id,
-                            types: types
-                        },
-                        success: function(response) {
-                            const Toast = Swal.mixin({
-                                toast: true,
-                                position: 'top-right',
-                                showConfirmButton: false,
-                                timer: 3000,
-                                timerProgressBar: true,
-                                didOpen: (toast) => {
-                                    toast.addEventListener(
-                                        'mouseenter',
-                                        Swal.stopTimer)
-                                    toast.addEventListener(
-                                        'mouseleave',
-                                        Swal.resumeTimer
-                                    )
-                                }
-                            });
-                            Toast.fire({
-                                icon: 'success',
-                                title: response.msg
-                            });
-                            table.draw();
-                        },
-                        error: function(data) {
-                            $.notify(data.responseJSON.msg, "error");
-                        }
-                    });
-                } else if (result.isDenied) {
-                    Swal.fire('Something went wrong', '', 'info');
-                }
-            })
+        //                 data: {
+        //                     id: id,
+        //                     types: types
+        //                 },
+        //                 success: function(response) {
+        //                     const Toast = Swal.mixin({
+        //                         toast: true,
+        //                         position: 'top-right',
+        //                         showConfirmButton: false,
+        //                         timer: 3000,
+        //                         timerProgressBar: true,
+        //                         didOpen: (toast) => {
+        //                             toast.addEventListener(
+        //                                 'mouseenter',
+        //                                 Swal.stopTimer)
+        //                             toast.addEventListener(
+        //                                 'mouseleave',
+        //                                 Swal.resumeTimer
+        //                             )
+        //                         }
+        //                     });
+        //                     Toast.fire({
+        //                         icon: 'success',
+        //                         title: response.msg
+        //                     });
+        //                     table.draw();
+        //                 },
+        //                 error: function(data) {
+        //                     $.notify(data.responseJSON.msg, "error");
+        //                 }
+        //             });
+        //         } else if (result.isDenied) {
+        //             Swal.fire('Something went wrong', '', 'info');
+        //         }
+        //     })
 
-        });
+        // });
     </script>
 @endpush

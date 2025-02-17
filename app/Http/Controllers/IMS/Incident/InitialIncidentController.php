@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Master\Unit;
 use App\Models\Master\Location;
 use App\Models\Master\Department;
+use App\Models\Master\Employee;
 use App\Models\User;
 use App\Models\UploadLog;
 use App\Jobs\ImportvendorJob;
@@ -22,27 +23,42 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Models\IMS\Incident\InitialIncident;
+use App\Models\IMS\Incident\IntialIncidentEvidencefile;
+use App\Models\IMS\Master\IncidentType;
+use App\Models\IMS\Master\Hira;
+use App\Models\IMS\Incident\EHSReview;
 
 class InitialIncidentController extends Controller
 {
 
     private $initialincident;
+    private $initialincidentevidence;
     private $unit;
     private $location;
-    private $department;
+    private $inctype;
+    private $employee;
     private $user;
     private $uploadlog;
+    private $ehs_review;
+    private $department;
+    private $hira;
+
 
 
     public function __construct()
     {
 
         $this->initialincident = new InitialIncident();
+        $this->initialincidentevidence = new IntialIncidentEvidencefile();
+        $this->inctype = new IncidentType();
         $this->unit = new Unit();
         $this->location = new Location();
+        $this->employee = new Employee();
         $this->department = new Department();
         $this->user = new User();
         $this->uploadlog = new UploadLog();
+        $this->ehs_review = new EHSReview();
+        $this->hira = new Hira();
     }
 
 
@@ -54,6 +70,7 @@ class InitialIncidentController extends Controller
                 try {
 
                     $data =  $this->initialincident->list();
+
 
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
@@ -67,15 +84,13 @@ class InitialIncidentController extends Controller
                             return $text;
                         })
 
-                        ->addColumn('hazard_type', function ($row) {
-                            $hazardTypes = [
-                                1 => 'P - Physical Hazard',
-                                2 => 'C - Chemical Hazard',
-                                3 => 'B - Behavioral Hazard',
-                                4 => 'O - Other Hazard',
-                            ];
-                        
-                            return $hazardTypes[$row->hazard_type];
+                       
+                        ->editColumn('status_batch', function ($row) {
+                           
+                            return "<span class='" . $row->bg_color . "' >" . $row->status_name . "</span>";
+                        })
+                        ->addColumn('unit_name', function ($row) {
+                            return getUnitname($row->unit_id);
                         })
                         ->addColumn('created_at', function ($row) {
                             return Displaydateformat($row->created_at);
@@ -86,21 +101,30 @@ class InitialIncidentController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
-                                $btn = '<a href="' . admin_url('incident/hira-master/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('incident/initial-incident/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
                             // if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('incident/hira-master/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            $btn .= '<a href="' . admin_url('incident/initial-incident/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
+                            if ($row->incident_status == 1) {
+                                $btn .= '<a href="' . admin_url('incident/initial-incident/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
+                            }
+
+                            if ($row->incident_status == 2) {
+                                $btn .= '<a href="' . admin_url('incident/initial-incident/investigation/' . encryptId($row->id)) . '" class=" " title="Investigation"><i class="fa fa-search" style="color: #000000;"></i> ';
+                            }
 
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status','status_batch'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
+
+                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -115,11 +139,51 @@ class InitialIncidentController extends Controller
     {
 
         try {
-
-            $data = array();
+            $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
+            $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
+            $incTypeList  = $this->inctype->select('id', 'incident_type_name')->where('status', '1')->get();
+            $data = array(
+                'unitList' => $unitList,
+                'locationList' => $locationList,
+                'incTypeList' => $incTypeList,
+            );
             return view('ims.initial.incident.add', $data);
         } catch (Exception $ex) {
             report($ex);
+        }
+    }
+    public function employeename(Request $request)
+    {
+        $name = $request->input('search');
+
+        $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
+            ->orWhere('emp_id', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+
+        return response()->json(
+            $employees->map(function ($employee) {
+                return [
+                    'id' => encryptId($employee->id),
+                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+                ];
+            })
+        );
+    }
+
+    public function fetchEmployeeDetails($emp_id)
+    {
+        $emp_id = decryptId($emp_id);
+        $employee = Employee::select('emp_name', 'emp_id', 'email', 'department', 'designation')
+            ->where('id', $emp_id)
+            ->first();
+        if ($employee) {
+            return response()->json([
+                'employee' => $employee,
+                'departments' => $this->department->select('id', 'department_name')->where('status', '1')->get()
+            ]);
         }
     }
 
@@ -129,33 +193,35 @@ class InitialIncidentController extends Controller
 
             $rules = [
 
-                'services' => 'required',
-                'narration' => 'required',
-                'hazard_description' => 'required',
-                'hazard_type' => 'required',
-                'severity' => 'required',
-                'risk_consequence' => 'required',
-                'likelihood' => 'required',
-                'risk_levels' => 'required',
-                'current_controls' => 'required',
-                'type_controls' => 'required',
-                'legal_req' => 'required',
-                'risk_rating' => 'required',
+                'incident_date_time' => 'required',
+                'unit_id' => 'required',
+                'shift' => 'required',
+                'location_id' => 'required',
+                'exact_location' => 'required',
+                'iir_type' => 'required',
+                'reported_name' => 'required',
+                'designation' => 'required',
+                'department' => 'required',
+                'employee_code' => 'required',
+                'time_of_reporting' => 'required',
+                'reporting_media' => 'required',
+                'brief_description' => 'required',
             ];
             $messages = [
 
-                'services.required' => 'Please enter Source, Situation, Act,Activity, Product,Services',
-                'narration.required' => 'Please enter Narration',
-                'hazard_description.required' => 'Please enter Hazard Description',
-                'hazard_type.required' => 'Please enter Type of Hazard',
-                'severity.required' => 'Please enter Severity',
-                'risk_consequence.required' => 'Please enter Risk/Consequence',
-                'likelihood.required' => 'Please enter Likelihood',
-                'risk_levels.required' => 'Please enter Risk Levels',
-                'current_controls.required' => 'Please enter Current Controls',
-                'type_controls.required' => 'Please enter Type of Controls',
-                'legal_req.required' => 'Please enter Legal Requirements',
-                'risk_rating.required' => 'Please enter Risk Ratings',
+                'incident_date_time.required' => 'Please enter Date and Time',
+                'unit_id.required' => 'Please enter Unit',
+                'shift.required' => 'Please enter Shift',
+                'location_id.required' => 'Please enter Location',
+                'exact_location.required' => 'Please enter Exact Location',
+                'iir_type.required' => 'Please enter IIR Type',
+                'reported_name.required' => 'Please enter Name',
+                'designation.required' => 'Please enter Designation',
+                'department.required' => 'Please enter Department',
+                'employee_code.required' => 'Please enter Employee Code',
+                'time_of_reporting.required' => 'Please enter Time of reporting',
+                'reporting_media.required' => 'Please enter Reporting Media',
+                'brief_description.required' => 'Please enter Brief Description',
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -166,7 +232,8 @@ class InitialIncidentController extends Controller
             try {
 
 
-                 $this->hira->store();
+                $initialincident =   $this->initialincident->store();
+                $this->initialincidentevidence->store($initialincident);
 
 
                 Session::flash('success', 'Your data has been created successfully!');
@@ -177,12 +244,12 @@ class InitialIncidentController extends Controller
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
-            return redirect(admin_url('incident/hira-master/list'));
+            return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/hira-master/list'));
+            return redirect(admin_url('incident/initial-incident/list'));
         }
     }
 
@@ -191,7 +258,7 @@ class InitialIncidentController extends Controller
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
-                $hira = $this->hira->selectOne($id);
+                $hira = $this->initialincident->selectOne($id);
 
                 $data = array(
                     'hira' => $hira,
@@ -209,14 +276,23 @@ class InitialIncidentController extends Controller
             $id = decryptId($request->id);
 
 
-            $hira = $this->hira->find($id);
+            $initialincident = $this->initialincident->selectOne($id);
+            $initialincidentevidence = $this->initialincidentevidence->selectOne($id);
+            $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
+            $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
+            $incTypeList  = $this->inctype->select('id', 'incident_type_name')->where('status', '1')->get();
             $data = array(
-                'hira' => $hira,
+                'unitList' => $unitList,
+                'locationList' => $locationList,
+                'incTypeList' => $incTypeList,
+                'initialincident' => $initialincident,
+                'initialincidentevidence' => $initialincidentevidence,
             );
 
 
             return view('ims.initial.incident.edit', $data);
         } catch (Exception $error) {
+            dd($error);
             report($error->getMessage());
         }
     }
@@ -227,33 +303,35 @@ class InitialIncidentController extends Controller
             $id = decryptId($request->id);
             $rules = [
 
-                'services' => 'required',
-                'narration' => 'required',
-                'hazard_description' => 'required',
-                'hazard_type' => 'required',
-                'severity' => 'required',
-                'risk_consequence' => 'required',
-                'likelihood' => 'required',
-                'risk_levels' => 'required',
-                'current_controls' => 'required',
-                'type_controls' => 'required',
-                'legal_req' => 'required',
-                'risk_rating' => 'required',
+                'incident_date_time' => 'required',
+                'unit_id' => 'required',
+                'shift' => 'required',
+                'location_id' => 'required',
+                'exact_location' => 'required',
+                'iir_type' => 'required',
+                'reported_name' => 'required',
+                'designation' => 'required',
+                'department' => 'required',
+                'employee_code' => 'required',
+                'time_of_reporting' => 'required',
+                'reporting_media' => 'required',
+                'brief_description' => 'required',
             ];
             $messages = [
 
-                'services.required' => 'Please enter Source, Situation, Act,Activity, Product,Services',
-                'narration.required' => 'Please enter Narration',
-                'hazard_description.required' => 'Please enter Hazard Description',
-                'hazard_type.required' => 'Please enter Type of Hazard',
-                'severity.required' => 'Please enter Severity',
-                'risk_consequence.required' => 'Please enter Risk/Consequence',
-                'likelihood.required' => 'Please enter Likelihood',
-                'risk_levels.required' => 'Please enter Risk Levels',
-                'current_controls.required' => 'Please enter Current Controls',
-                'type_controls.required' => 'Please enter Type of Controls',
-                'legal_req.required' => 'Please enter Legal Requirements',
-                'risk_rating.required' => 'Please enter Risk Ratings',
+                'incident_date_time.required' => 'Please enter Date and Time',
+                'unit_id.required' => 'Please enter Unit',
+                'shift.required' => 'Please enter Shift',
+                'location_id.required' => 'Please enter Location',
+                'exact_location.required' => 'Please enter Exact Location',
+                'iir_type.required' => 'Please enter IIR Type',
+                'reported_name.required' => 'Please enter Name',
+                'designation.required' => 'Please enter Designation',
+                'department.required' => 'Please enter Department',
+                'employee_code.required' => 'Please enter Employee Code',
+                'time_of_reporting.required' => 'Please enter Time of reporting',
+                'reporting_media.required' => 'Please enter Reporting Media',
+                'brief_description.required' => 'Please enter Brief Description',
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -262,21 +340,163 @@ class InitialIncidentController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            $this->hira->updates($id);
 
-            // $vendor = $this->vendor->find($id);
-            // $this->user->vendorUpdate($vendor->login_id);
+            $initialincident =   $this->initialincident->updates($id);
+            $this->initialincidentevidence->updates($id);
 
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('incident/hira-master/list'));
+            return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
             dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/hira-master/list'));
+            return redirect(admin_url('incident/initial-incident/list'));
+        }
+    }
+
+    public function deleteEvidence($evidenceid)
+    {
+        $id = $evidenceid;
+        $this->initialincidentevidence->deleterecord($evidenceid);
+        return response()->json(['success' => true, 'message' => 'Evidence deleted successfully.']);
+    }
+
+
+    public function review(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $incident_report = $this->initialincident->selectOne($id);
+                $initialincidentevidence = $this->initialincidentevidence->selectOne($id);
+
+                $mediaOptions = [
+                    1 => 'Phone',
+                    2 => 'Walkie Talkie',
+                    3 => 'Extension',
+                    4 => 'Others',
+                ];
+
+                $selectedMedia = isset($incident_report->reporting_media)
+                    ? explode(',', $incident_report->reporting_media)
+                    : [];
+
+                $displayMedia = array_map(function ($media) use ($mediaOptions) {
+                    return $mediaOptions[$media] ?? $media;
+                }, $selectedMedia);
+
+                $data = array(
+                    'incident_report' => $incident_report,
+                    'displayMedia' => $displayMedia,
+                    'initialincidentevidence' => $initialincidentevidence,
+                );
+            }
+            return view('ims.initial.incident.review', $data);
+        } catch (Exception $ex) {
+            dd($ex);
+        }
+    }
+
+    public function teamMembers(Request $request)
+    {
+        $name = $request->input('search');
+
+        $employees = Employee::select('id', 'emp_id', 'emp_name')
+            ->where(function ($query) use ($name) {
+                $query->where('emp_name', 'like', '%' . $name . '%')
+                    ->orWhere('emp_id', 'like', '%' . $name . '%');
+            })
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+        return response()->json(
+            $employees->map(function ($employee) {
+                return [
+                    'id' => encryptId($employee->id),
+                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+                ];
+            })
+        );
+    }
+
+    public function ehsHeadReviewSubmit(Request $request)
+    {
+        try {
+            $rules = [
+                'remark' => 'required',
+            ];
+            $messages = [
+                'remark.required' => 'Please provide a remark.',
+            ];
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            $ehsReview = $this->ehs_review->store();
+            $incident_status = STATUS_INVESTIGATION_PENDING;
+            $incident_id = $ehsReview->inicdent_report_id;
+            $incident = $this->initialincident->updateStatus($incident_id, $incident_status);
+
+            Session::flash('success', 'Your data has been updated successfully!');
+            return redirect(admin_url('incident/initial-incident/list'));
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/initial-incident/list'));
         }
     }
 
 
+    public function investigation(Request $request , $incident_id)
+    {
+        try {
+            $incidentId = decryptId($incident_id);
+            $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
+            $hiraList  = $this->hira->select('id', 'services')->where('status', '1')->get();
+
+            $data = array(
+                'incidentId' => $incidentId,
+                'departmentList' => $departmentList,
+                'hiraList' => $hiraList,
+
+            );
+
+            return view('ims.initial.incident.investigation', $data);
+        } catch (Exception $error) {
+            dd($error->getMessage());
+        }
+    }
+
+    public function gethiradetails($hira_id)
+    {
+        $hira_id = decryptId($hira_id);
+        $hira = Hira::select('services', 'likelihood', 'risk_levels', 'department', 'designation')
+            ->where('id', $hira_id)
+            ->first();
+        if ($hira) {
+            return response()->json([
+                'hira' => $hira,
+            ]);
+        }
+    }
+    public function investigationSubmit(Request $request)
+    {
+        try {
+          
+            $ehsReview = $this->ehs_review->store();
+            $incident_status = STATUS_INVESTIGATION_PENDING;
+            $incident_id = $ehsReview->inicdent_report_id;
+            $incident = $this->initialincident->updateStatus($incident_id, $incident_status);
+
+            Session::flash('success', 'Your data has been updated successfully!');
+            return redirect(admin_url('incident/initial-incident/list'));
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/initial-incident/list'));
+        }
+    }
 
     public function Uniquecheck(Request $request)
     {
@@ -286,10 +506,10 @@ class InitialIncidentController extends Controller
             $id = $request->id;
 
             if (empty($id)) {
-                $isUnique = !$this->hira->uniqueCheck($vendor_name,$license_no);
+                $isUnique = !$this->hira->uniqueCheck($vendor_name, $license_no);
             } else {
                 $id = decryptId($id);
-                $isUnique = !$this->hira->existUniqueCheck($vendor_name,$license_no, $id);
+                $isUnique = !$this->hira->existUniqueCheck($vendor_name, $license_no, $id);
             }
 
             return Response::json($isUnique);
@@ -340,13 +560,13 @@ class InitialIncidentController extends Controller
                 $export[] =  $i;
                 $export[] =  $data->sr_no;
                 $export[] =  $data->services;
-                if($data->hazard_type == 1){
+                if ($data->hazard_type == 1) {
                     $export[] = 'P - Physical Hazard';
-                }elseif($data->hazard_type == 2){
+                } elseif ($data->hazard_type == 2) {
                     $export[] = 'C - Chemical Hazard';
-                }elseif($data->hazard_type == 3){
+                } elseif ($data->hazard_type == 3) {
                     $export[] = 'B - Behavioral Hazard';
-                }elseif($data->hazard_type == 4){
+                } elseif ($data->hazard_type == 4) {
                     $export[] = 'O - Other Hazard';
                 }
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';

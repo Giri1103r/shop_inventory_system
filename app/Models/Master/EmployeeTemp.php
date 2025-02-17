@@ -71,7 +71,6 @@ class EmployeeTemp extends Model
         $insertArray = [];
 
         $chunks = array_chunk($data['Result'], $batchSize);
-
         foreach ($chunks as $chunk) {
             foreach ($chunk as $item) {
                    
@@ -93,6 +92,14 @@ class EmployeeTemp extends Model
                     ]);
                     continue; 
                 }
+
+                $designation = DB::table('masters_designation')
+                ->where('des_code', $item['fk_Emp_DesCode'])
+                ->value('designation_name') ?? null;
+            
+                $status = isset($item['Emp_Active']) ? ($item['Emp_Active'] ? 1 : 0) : null;
+
+
                 $valuesToInsertOrUpdate = [
                     'emp_id' => isset($item['pk_Emp_Code']) ? $item['pk_Emp_Code'] : null,
                     'emp_name' => isset($item['Emp_Name']) ? $item['Emp_Name'] : null,
@@ -100,7 +107,8 @@ class EmployeeTemp extends Model
                     'user_role' => isset($item['Emp_Rolename']) ? $item['Emp_Rolename'] : null,
                     'mobile_no' => isset($item['Emp_PersonalPhoneNo']) ? $item['Emp_PersonalPhoneNo'] : null,
                     'joining_date' => !empty($item['Emp_JoiningDate']) ? DBdatetimeformat($item['Emp_JoiningDate']) : null,
-                    'status' => isset($item['Emp_Active']) ? $item['Emp_Active'] : null,
+                    'designation' => $designation,
+                    'status' => $status,
                     'employee_status' => isset($item['Emp_Status']) ? $item['Emp_Status'] : null,
                     'email' => isset($item['Emp_OfficialMail']) ? $item['Emp_OfficialMail'] : null,
                     'reporting_manager' => isset($item['Emp_FirstApprover']) ? $item['Emp_FirstApprover'] : null,
@@ -108,6 +116,7 @@ class EmployeeTemp extends Model
                     'error_status' => 0,
                     'error_remarks' => null,
                 ];
+               
 
                 $exists = $this->where('emp_id', $item['pk_Emp_Code'])->exists();
 
@@ -121,6 +130,7 @@ class EmployeeTemp extends Model
                     ['emp_id' => $item['pk_Emp_Code']],
                     $valuesToInsertOrUpdate
                 );
+
             }
         }
         return response()->json(['message' => 'Data processed successfully.']);

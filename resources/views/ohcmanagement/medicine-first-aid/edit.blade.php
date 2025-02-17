@@ -31,7 +31,7 @@
                                         action="{{ admin_url('ohc/medicine-first-aid/edit/submit') }}">
                                         @csrf
                                         <input type="hidden" name="id" id="id"
-                                        value="{{ encryptId($user_medicine_first_aid->id) }}">
+                                            value="{{ encryptId($user_medicine_first_aid->id) }}">
                                         <hr>
                                         <div class="row">
 
@@ -118,6 +118,8 @@
                                                         @foreach ($medicine_first_aid as $key => $issuance)
                                                             <tr>
                                                                 <td>
+                                                                    <input type="hidden" name="encryptid" class="encryptid"
+                                                                    value="{{ $issuance->id }}">
                                                                     <div class="form-group form-input">
                                                                         <label for="medicine_id" class="require">Medicine
                                                                             Name</label>
@@ -168,7 +170,8 @@
                                                                 <td>
                                                                     <div class="row gap-2">
 
-                                                                        <div class="d-flex justify-content-center align-items-center bg-danger mt-2 me-5 text-white rounded delete-row" style="width: 30px; height: 30px;">
+                                                                        <div class="d-flex justify-content-center align-items-center bg-danger mt-2 me-5 text-white rounded delete-row"
+                                                                            style="width: 30px; height: 30px;">
                                                                             <i class="fa-solid fa-trash"></i>
                                                                         </div>
                                                                     </div>
@@ -211,9 +214,56 @@
 
         //     });
         // });
+
+        $(document).on('click', '.delete-row', function(event) {
+            event.preventDefault(); // Prevents the form from submitting
+
+            var row = $(this).closest(".medicinedetails");
+            var rowId = row.find("input[name='encryptid']").val();
+
+            if (rowId) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'Do you want to delete this record?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'No, keep it'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ url('ohc/medicine-issuance/delete') }}/" +
+                                rowId,
+                            type: 'POST', // Use POST instead of DELETE
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                _method: 'POST', // Simulate DELETE method
+                                id: rowId
+                            },
+                            success: function(response) {
+                                if (response.status === 'success') {
+                                    row.remove();
+                                    Swal.fire('Deleted!', response.msg, 'success');
+                                } else {
+                                    Swal.fire('Error!', response.msg, 'error');
+                                }
+                            },
+                            error: function() {
+                                Swal.fire('Error!',
+                                    'Something went wrong. Please try again later.',
+                                    'error');
+                            }
+                        });
+                    }
+                });
+            } else {
+                $(this).closest("tr").remove();
+            }
+        });
+
         $('.single-select2').select2({
 
-            });
+        });
         $(document).on('change', '#unit_id', function() {
             var unitId = $(this).val();
             if (unitId) {

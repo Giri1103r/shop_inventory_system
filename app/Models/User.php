@@ -155,6 +155,7 @@ class User extends Authenticatable
                 'role' => $item['user_role'],
                 'user_type' => 1,
                 'employee_id' => $item['emp_id'],
+                'designation_id' => $item['designation'],
                 'username' => $item['emp_id'],
                 'password' => Hash::make("User@" . trim($item['emp_id'])),
                 'mobile' => $item['mobile_no'],

@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'HIRA Edit')
-@section('pageurl', admin_url('incident/hira-master/list'))
+@section('pageurl', admin_url('incident/initial-incident/list'))
 
 
 @section('content')
@@ -23,258 +23,267 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('incident/hira-master/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('incident/initial-incident/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="hiraedit"
-                                        action="{{ admin_url('incident/hira-master/edit/submit') }}">
+                                    <form method="POST" id="initialIncidentedit"
+                                        action="{{ admin_url('incident/initial-incident/edit/submit') }}"
+                                        enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" name="id" id="id"
-                                            value="{{ encryptId($hira->id) }}">
+                                            value="{{ encryptId($initialincident->id) }}">
 
                                         <div class="row">
                                             <div class="col-md-4 mb-2 ">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Sr. No</label>
                                                     <input type="text" name ="sr_no" id="sr_no" class="form-control"
-                                                        placeholder="Incident Type ID" value="{{ $hira->sr_no }}">
+                                                        placeholder="Incident Type ID"
+                                                        value="{{ $initialincident->sr_no }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Source, Situation, Act,Activity,
-                                                        Product,Services</label>
-                                                    <input type="text" name="services" id="services"
+                                                    <label class="form-label require">Date and Time</label>
+                                                    <input type="text" name="incident_date_time" id="incident_date_time"
                                                         class="form-control"
-                                                        placeholder="Source, Situation, Act,Activity, Product,Services"
-                                                        value="{{ $hira->services }}">
+                                                        value = "{{ $initialincident->incident_date_time }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label for="status" class="form-label require">Narration</label>
-                                                    <select name="narration" id="narration"
-                                                        class="form-control single-select" style="width: 100%">
-                                                        <option value="">Select Narration</option>
-                                                        <option value="1"
-                                                            {{ $hira->narration && $hira->narration == 1 ? 'selected' : '' }}>
-                                                            R - Routine Activity</option>
-                                                        <option value="2"
-                                                            {{ $hira->narration && $hira->narration == 2 ? 'selected' : '' }}>
-                                                            NR - Non-routine Activity</option>
-                                                        <option value="3"
-                                                            {{ $hira->narration && $hira->narration == 3 ? 'selected' : '' }}>
-                                                            E - Emergency</option>
-                                                    </select>
+                                                    <label class="form-label require">Unit</label>
+                                                    <select name="unit_id" id="unit_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Unit</option>
+                                                        @foreach ($unitList as $unit)
+                                                            <option value="{{ encryptId($unit->id) }}"
+                                                                @if ($unit->id == $initialincident->unit_id) selected @endif>
+                                                                {{ $unit->unit_name }}
+                                                        @endforeach
 
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Hazard Description</label>
-                                                    <input type="text" name="hazard_description" id="hazard_description"
-                                                        class="form-control" placeholder="Hazard Description"
-                                                        value="{{ $hira->hazard_description }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label for="status" class="form-label require">Type of Hazard</label>
-                                                    <select name="hazard_type" id="hazard_type"
-                                                        class="form-control single-select" style="width: 100%">
-                                                        <option
-                                                            value="1"{{ $hira->hazard_type && $hira->hazard_type == 1 ? 'selected' : '' }}>
-                                                            P - Physical Hazard</option>
-                                                        <option
-                                                            value="2"{{ $hira->hazard_type && $hira->hazard_type == 2 ? 'selected' : '' }}>
-                                                            C - Chemical Hazard</option>
-                                                        <option
-                                                            value="3"{{ $hira->hazard_type && $hira->hazard_type == 3 ? 'selected' : '' }}>
-                                                            B - Behavioral Hazard</option>
-                                                        <option
-                                                            value="4"{{ $hira->hazard_type && $hira->hazard_type == 4 ? 'selected' : '' }}>
-                                                            O - Other Hazard</option>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label for="status" class="form-label require">Severity</label>
-                                                    <select name="severity" id="severity" style="width: 100%"
-                                                        class="form-control single-select">
-                                                        <option value="">Select Severity</option>
-                                                        <option
-                                                            value="1"{{ $hira->severity && $hira->severity == 1 ? 'selected' : '' }}>
-                                                            1</option>
-                                                        <option
-                                                            value="2"{{ $hira->severity && $hira->severity == 2 ? 'selected' : '' }}>
-                                                            2</option>
-                                                        <option
-                                                            value="3"{{ $hira->severity && $hira->severity == 3 ? 'selected' : '' }}>
-                                                            3</option>
-                                                        <option
-                                                            value="4"{{ $hira->severity && $hira->severity == 4 ? 'selected' : '' }}>
-                                                            4</option>
-                                                        <option
-                                                            value="5"{{ $hira->severity && $hira->severity == 5 ? 'selected' : '' }}>
-                                                            5</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Risk/Consequence</label>
-                                                    <input type="text" name="risk_consequence" id="risk_consequence"
-                                                        class="form-control" placeholder="Risk/Consequence"
-                                                        value="{{ $hira->risk_consequence }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label for="status" class="form-label require">Likelihood</label>
-                                                    <select name="likelihood" id="likelihood" style="width: 100%"
-                                                        class="form-control single-select">
-                                                        <option value="">Select Likelihood</option>
-                                                        <option
-                                                        value="1"{{ $hira->likelihood && $hira->likelihood == 1 ? 'selected' : '' }}>
-                                                        1</option>
-                                                    <option
-                                                        value="2"{{ $hira->likelihood && $hira->likelihood == 2 ? 'selected' : '' }}>
-                                                        2</option>
-                                                    <option
-                                                        value="3"{{ $hira->likelihood && $hira->likelihood == 3 ? 'selected' : '' }}>
-                                                        3</option>
-                                                    <option
-                                                        value="4"{{ $hira->likelihood && $hira->likelihood == 4 ? 'selected' : '' }}>
-                                                        4</option>
-                                                    <option
-                                                        value="5"{{ $hira->likelihood && $hira->likelihood == 5 ? 'selected' : '' }}>
-                                                        5</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label for="status" class="form-label require">Risk Levels</label>
-                                                    <select name="risk_levels" id="risk_levels" style="width: 100%"
-                                                        class="form-control single-select">
-                                                        <option value="">Select Risk Levels</option>
-                                                        <option
-                                                        value="1"{{ $hira->risk_levels && $hira->risk_levels == 1 ? 'selected' : '' }}>
-                                                        1 to 9</option>
-                                                    <option
-                                                        value="2"{{ $hira->risk_levels && $hira->risk_levels == 2 ? 'selected' : '' }}>
-                                                        10 to 16</option>
-                                                    <option
-                                                        value="3"{{ $hira->risk_levels && $hira->risk_levels == 3 ? 'selected' : '' }}>
-                                                        17 to 25</option>
-                                                    <option
-                                                        value="4"{{ $hira->risk_levels && $hira->risk_levels == 4 ? 'selected' : '' }}>
-                                                        Legal</option>
-                                                    </select>
+                                                    <label class="form-label require">Shift</label>
+                                                    <input type="text" name="shift" id="shift" class="form-control"
+                                                        value = "{{ $initialincident->shift }}">
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Current Controls</label>
-                                                    <input type="text" name="current_controls" id="current_controls"
-                                                        class="form-control" placeholder="Current Controls"
-                                                        value="{{ $hira->current_controls }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Type of Controls</label>
-                                                    <select name="type_controls" id="type_controls" style="width: 100%"
-                                                        class="form-control single-select">
-                                                        <option value="">Select Type of Controls</option>
-                                                        <option
-                                                        value="1"{{ $hira->type_controls && $hira->type_controls == 1 ? 'selected' : '' }}>
-                                                        EL - Elimination</option>
-                                                    <option
-                                                        value="2"{{ $hira->type_controls && $hira->type_controls == 2 ? 'selected' : '' }}>
-                                                        S - Substitution</option>
-                                                    <option
-                                                        value="3"{{ $hira->type_controls && $hira->type_controls == 3 ? 'selected' : '' }}>
-                                                        EC- Engineering control</option>
-                                                    <option
-                                                        value="4"{{ $hira->type_controls && $hira->type_controls == 4 ? 'selected' : '' }}>
-                                                        A - Administrative Control</option>
-                                                    <option
-                                                        value="5"{{ $hira->type_controls && $hira->type_controls == 5 ? 'selected' : '' }}>
-                                                        P - PPE</option>
+                                                    <label class="form-label require">Location</label>
+                                                    <select name="location_id" id="location_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Location</option>
+                                                        @foreach ($locationList as $location)
+                                                            <option value="{{ encryptId($location->id) }}"
+                                                                @if ($location->id == $initialincident->location_id) selected @endif>
+                                                                {{ $location->location_name }}
+                                                        @endforeach
+
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Legal Requirements</label>
-                                                    <select name="legal_req" id="legal_req" style="width: 100%"
-                                                        class="form-control single-select">
-                                                        <option value="">Select Legal Requirements</option>
-                                                        <option
-                                                        value="1"{{ $hira->legal_req && $hira->legal_req == 1 ? 'selected' : '' }}>
-                                                        L - Applicable</option>
-                                                    <option
-                                                        value="2"{{ $hira->legal_req && $hira->legal_req == 2 ? 'selected' : '' }}>
-                                                        NA - Not Applicable</option>
+                                                    <label class="form-label require">Exact Location</label>
+                                                    <input type="text" name="exact_location" id="exact_location"
+                                                        class="form-control" placeholder="Exact Location"
+                                                        value = "{{ $initialincident->exact_location }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mt-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">IIR Type</label>
+                                                    @foreach ($incTypeList as $incType)
+                                                        <div class="form-check">
+                                                            <input type="radio" name="iir_type"
+                                                                id="iir_type_{{ $incType->id }}" class="form-check-input"
+                                                                value="{{ $incType->id }}"
+                                                                @if (isset($initialincident) && $initialincident->iir_type == $incType->id) checked @endif>
+                                                            <label class="form-check-label"
+                                                                for="iir_type_{{ $incType->id }}">
+                                                                {{ $incType->incident_type_name }}
+                                                            </label>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row mt-3">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">Incident Reported By</h4>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Name</label>
+                                                    <div class="col-sm-6" style="width: 100%">
+                                                        <select name="reported_name" id="reported_name"
+                                                            class="form-control reported_name">
+                                                            <option value="">Select Name</option>
+                                                            <option value="{{ $initialincident->reported_name }}" selected>
+                                                                {{ $initialincident->reported_by }}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Designation</label>
+                                                    <input type="text" name="designation"
+                                                        class="form-control designation" placeholder="Designation"
+                                                        value = "{{ $initialincident->designation }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Department</label>
+                                                    <select name="department" class="form-control department">
+                                                        <option value="">Select Department</option>
+                                                        <option value="{{ $initialincident->department }}" selected>
+                                                            {{ $initialincident->reported_department }}</option>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Risk Ratings</label>
-                                                    <select name="risk_rating" id="risk_rating" style="width: 100%"
-                                                        class="form-control single-select">
-                                                        <option value="">Select Risk Ratings</option>
-                                                        <option
-                                                        value="1"{{ $hira->risk_rating && $hira->risk_rating == 1 ? 'selected' : '' }}>
-                                                        Low (when RPN is 1 to 9)</option>
-                                                    <option
-                                                        value="2"{{ $hira->risk_rating && $hira->risk_rating == 2 ? 'selected' : '' }}>
-                                                        Medium (when RPN is 10 to 16)</option>
-                                                    <option
-                                                        value="3"{{ $hira->risk_rating && $hira->risk_rating == 3 ? 'selected' : '' }}>
-                                                        High (when RPN is 17 to 25)</option>
-                                                    </select>
+                                                    <label class="form-label require">Employee Code</label>
+                                                    <input type="text" name="employee_code"
+                                                        class="form-control employee_code" placeholder="Employee Code"
+                                                        readonly value = "{{ $initialincident->employee_code }}">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Time of reporting</label>
+                                                    <input type="text" name="time_of_reporting"
+                                                        id = "time_of_reporting" class="form-control time_of_reporting"
+                                                        placeholder="Time of reporting"
+                                                        value = "{{ $initialincident->time_of_reporting }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">Additional control Measures Required</label>
-                                                    <input type="text" name="additionl_control" id="additionl_control"
-                                                        class="form-control"
-                                                        placeholder="Additional controlMeasures Required"
-                                                        value="{{ $hira->additionl_control }}">
+                                                    <label class="form-label require">Reporting Media</label>
+
+                                                    @php
+                                                        $selectedMedia = isset($initialincident->reporting_media)
+                                                            ? explode(',', $initialincident->reporting_media)
+                                                            : [];
+
+                                                    @endphp
+
+                                                    <div class="form-check">
+                                                        <input type="checkbox" name="reporting_media[]"
+                                                            id="reporting_media_phone" class="form-check-input"
+                                                            value="1"
+                                                            @if (in_array('1', $selectedMedia)) checked @endif>
+                                                        <label class="form-check-label"
+                                                            for="reporting_media_phone">Phone</label>
+                                                    </div>
+
+                                                    <div class="form-check">
+                                                        <input type="checkbox" name="reporting_media[]"
+                                                            id="reporting_media_walkietalkie" class="form-check-input"
+                                                            value="2"
+                                                            @if (in_array('2', $selectedMedia)) checked @endif>
+                                                        <label class="form-check-label"
+                                                            for="reporting_media_walkietalkie">Walkie Talkie</label>
+                                                    </div>
+
+                                                    <div class="form-check">
+                                                        <input type="checkbox" name="reporting_media[]"
+                                                            id="reporting_media_extension" class="form-check-input"
+                                                            value="3"
+                                                            @if (in_array('3', $selectedMedia)) checked @endif>
+                                                        <label class="form-check-label"
+                                                            for="reporting_media_extension">Extension</label>
+                                                    </div>
+
+                                                    <div class="form-check">
+                                                        <input type="checkbox" name="reporting_media[]"
+                                                            id="reporting_media_others" class="form-check-input"
+                                                            value="4"
+                                                            @if (in_array('4', $selectedMedia)) checked @endif>
+                                                        <label class="form-check-label"
+                                                            for="reporting_media_others">Others</label>
+                                                    </div>
+
+                                                    <div class="text-danger"></div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+
+
+                                            <div class="col-md-4" id = "reporting_media_othersdiv" style="display: none">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">Nature of Change</label>
-                                                    <input type="text" name="nature_change" id="nature_change"
-                                                        class="form-control" placeholder="Nature of Change"
-                                                        value="{{ $hira->nature_change }}">
+                                                    <label class="form-label">Others</label>
+                                                    <input type="text" name="reporting_media_othersdesc"
+                                                        id = "reporting_media_othersdesc"
+                                                        class="form-control reporting_media_othersdesc"
+                                                        value = "{{ $initialincident->reporting_media_others }}">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-12">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">Implement of Change</label>
-                                                    <input type="text" name="implement_change" id="implement_change"
-                                                        class="form-control" placeholder="Implement of Change"
-                                                        value="{{ $hira->implement_change }}">
+                                                    <label class="form-label require">Brief Description</label>
+                                                    <textarea type="text" name="brief_description" id = "brief_description" class="form-control brief_description"
+                                                        placeholder="">{{ $initialincident->brief_description }}</textarea>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">Control of Change</label>
-                                                    <input type="text" name="control_change" id="control_change"
-                                                        class="form-control" placeholder="Control of Change"
-                                                        value="{{ $hira->control_change }}">
+                                            <div id="file-upload-container" class="row mt-3">
+                                                <div class="col-12 mb-3">
+                                                    <button class="btn btn-primary addmorebutton" type="button"
+                                                        id="dynamic-add-more">
+                                                        Add
+                                                    </button>
+                                                </div>
+
+                                                @if (!$initialincidentevidence->isEmpty())
+                                                    @foreach ($initialincidentevidence as $key => $evidence)
+                                                        <div class="col-md-4 mb-3 file-upload-block"
+                                                            id="existing-file-{{ $key }}">
+                                                            <label class="form-label">Existing Evidence</label>
+                                                            <div class="existing-evidence">
+                                                                <a href="{{ asset($evidence->file_path) }}"
+                                                                    target="_blank">
+                                                                    <img src="{{ asset($evidence->file_path) }}"
+                                                                        alt="Evidence" style="max-width: 20%;">
+                                                                </a>
+                                                            </div>
+                                                            {{-- @dd($evidence->id) --}}
+                                                            <input type="hidden" name="existing_files[]"
+                                                                value="{{ $evidence->id }}">
+                                                            <button type="button"
+                                                                class="btn btn-danger btn-sm remove-existing-file"
+                                                                data-id="{{ $evidence->id }}">
+                                                                <i class="fas fa-trash"></i> Remove
+                                                            </button>
+
+                                                        </div>
+                                                    @endforeach
+                                                @endif
+
+                                                <div class="col-md-4 mb-3 file-upload-block" id="file-upload-0">
+                                                    <label for="evidence_0" class="form-label require">Evidence</label>
+                                                    <input type="file" class="form-control " name="evidence[]"
+                                                        id="evidence_0" multiple>
+                                                    <div class="text-danger"></div>
+                                                    <small>Allowed file types: png, jpeg, jpg, pdf, doc, mp4</small>
+                                                    <div class="preview-container mt-2 d-flex flex-wrap gap-2"
+                                                        id="preview-container-0"></div>
                                                 </div>
                                             </div>
 
@@ -285,7 +294,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('incident/hira-master/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('incident/initial-incident/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -297,7 +306,7 @@
                 </div>
             </div>
         </div>
-        </form>
+
     </div>
 
 @stop
@@ -310,162 +319,368 @@
                 location.reload();
             });
         });
-        $(function() {
-            $('#hiraedit').validate({
-                rules: {
-                    services: {
-                        required: true,
-                        minlength: 2,
-                        maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
-                    },
 
-                    narration: {
+        flatpickr("#incident_date_time", {
+            enableTime: true,
+            dateFormat: "d-m-Y H:i",
+            time_24hr: true,
+            maxDate: new Date()
+        });
+
+        flatpickr("#time_of_reporting", {
+            enableTime: true,
+            noCalendar: true, // Disables the date selection
+            dateFormat: "H:i", // Format to show only hours and minutes
+            time_24hr: true // Uses 24-hour format
+        });
+
+
+        const maxUploads = 5;
+
+        $('#dynamic-add-more').on('click', function() {
+            let currentFileUploads = $('.file-upload-block').length;
+
+            if (currentFileUploads >= maxUploads) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Sorry!',
+                    text: 'Maximum 5 records only.',
+                });
+                return;
+            }
+
+            let newFileUploadBlock = `
+        <div class="col-md-4 mb-3 file-upload-block" id="file-upload-${currentFileUploads}">
+            <label for="evidence_${currentFileUploads}" class="form-label require">Evidence</label>
+            <input type="file" class="form-control "
+                name="evidence[]" id="evidence_${currentFileUploads}" multiple>
+            <div class="text-danger"></div>
+            <small>Allowed file types: png, jpeg, jpg, pdf, doc, mp4</small>
+            <button type="button" class="btn btn-danger btn-sm remove-upload-block">
+                <i class="fas fa-trash"></i>
+            </button>
+            <div class="preview-container mt-2 d-flex flex-wrap gap-2" id="preview-container-${currentFileUploads}"></div>
+        </div>
+    `;
+
+            $('#file-upload-container').append(newFileUploadBlock);
+        });
+
+        // Remove dynamically added file fields
+        $(document).on('click', '.remove-upload-block', function() {
+            $(this).closest('.file-upload-block').remove();
+        });
+
+        // Handle removing existing files
+        $(document).on('click', '.remove-existing-file', function() {
+            let fileId = $(this).data('id');
+            
+            let fileBlock = $(this).closest('.file-upload-block');
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to recover this file!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        // alert(fileId);
+                        url: "{{ admin_url('incident/initial-incident/deleteEvidence') }}/" +
+                            fileId,
+                        type: "POST",
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                fileBlock.remove(); // Remove from UI
+                                Swal.fire("Deleted!", response.message, "success");
+                            } else {
+                                Swal.fire("Error!", response.message, "error");
+                            }
+                        },
+                        error: function() {
+                            Swal.fire("Oops!", "Something went wrong. Please try again.",
+                                "error");
+                        }
+                    });
+                }
+            });
+        });
+
+
+
+        $(document).on('change', 'input[type="file"]', function(event) {
+            let input = $(this);
+            let fileInputId = input.attr('id').split('_')[2];
+            let previewContainer = $('#preview-container-' + fileInputId);
+
+            previewContainer.html("");
+
+            let files = event.target.files;
+            if (files.length > 0) {
+                Array.from(files).forEach(file => {
+                    if (file.type.startsWith("image/")) {
+                        let reader = new FileReader();
+                        reader.onload = function(e) {
+                            let img = $("<img>").attr("src", e.target.result)
+                                .addClass("img-thumbnail")
+                                .css({
+                                    width: "100px",
+                                    height: "100px",
+                                    objectFit: "cover",
+                                    marginRight: "5px"
+                                });
+
+                            previewContainer.append(img);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        });
+
+
+        $('#reporting_media_others').on('change', function() {
+            if ($(this).is(':checked')) {
+                $('#reporting_media_othersdiv').show();
+            } else {
+                $('#reporting_media_othersdiv').hide();
+            }
+        });
+        $('.reported_name').select2({
+            ajax: {
+                url: "{{ admin_url('incident/initial-incident/employeename') }}",
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search: params.term
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: $.map(data, function(item) {
+                            return {
+                                id: item.id,
+                                text: item.text
+                            };
+                        })
+                    };
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.log("Error in AJAX request:", textStatus, errorThrown);
+                }
+            },
+            minimumInputLength: 3,
+            dropdownCssClass: 'form-control',
+            selectionCssClass: 'form-control'
+        });
+
+
+        $(document).on("change", ".reported_name", function() {
+            var emp_id = $(this).val();
+            var currentRow = $(this).closest(".row");
+
+            if (emp_id) {
+                $.ajax({
+                    url: "{{ url('incident/initial-incident/fetchEmployeeDetails') }}/" + emp_id,
+                    type: "GET",
+                    success: function(data) {
+                        if (data.employee) {
+                            currentRow.find('.employee_code').val(data.employee.emp_id);
+                            currentRow.find('.designation').val(data.employee.designation);
+
+                            var departmentDropdown = currentRow.find('.department');
+                            departmentDropdown.empty();
+                            departmentDropdown.append('<option value="">Select Department</option>');
+
+                            if (data.departments && data.departments.length > 0) {
+                                data.departments.forEach(function(department) {
+                                    var selected = data.employee.department == department.id ?
+                                        "selected" : "";
+                                    departmentDropdown.append(
+                                        `<option value="${department.id}" ${selected}>${department.department_name}</option>`
+                                    );
+                                });
+                            } else {
+                                departmentDropdown.append(
+                                    '<option value="">No departments available</option>');
+                            }
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: "Employee data could not be fetched.",
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "An error occurred while fetching employee details.",
+                        });
+                    }
+                });
+            } else {
+                currentRow.find('.employee_code').val("");
+                currentRow.find('.designation').val("");
+                var departmentDropdown = currentRow.find('.department');
+                departmentDropdown.empty();
+                departmentDropdown.append('<option value="">Select Department</option>');
+            }
+        });
+
+        $(function() {
+            $('#initialIncidentedit').validate({
+                rules: {
+                    incident_date_time: {
                         required: true,
                     },
-                    hazard_description: {
+                    unit_id: {
+                        required: true,
+                    },
+                    shift: {
                         required: true,
                         minlength: 2,
                         maxlength: 2000,
                         pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
                     },
-                    hazard_type: {
+                    location_id: {
                         required: true,
                     },
-                    severity: {
-                        required: true,
-                    },
-                    risk_consequence: {
+                    exact_location: {
                         required: true,
                         minlength: 2,
                         maxlength: 2000,
                         pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
                     },
-                    likelihood: {
+                    iir_type: {
                         required: true,
                     },
-                    risk_levels: {
+                    reported_name: {
                         required: true,
                     },
-                    current_controls: {
+                    designation: {
+                        required: true,
+                    },
+                    department: {
+                        required: true,
+                    },
+                    employee_code: {
+                        required: true,
+                    },
+                    time_of_reporting: {
+                        required: true,
+                    },
+                    'reporting_media[]': {
+                        required: true,
+                        minlength: 1,
+                    },
+                    brief_description: {
                         required: true,
                         minlength: 2,
                         maxlength: 2000,
                         pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
                     },
-                    type_controls: {
-                        required: true,
-                    },
-                    legal_req: {
-                        required: true,
-                    },
-                    risk_rating: {
-                        required: true,
-                    },
-                    additionl_control: {
-                        minlength: 2,
-                        maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
-                    },
-                    nature_change: {
-                        minlength: 2,
-                        maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
-                    },
-                    implement_change: {
-                        minlength: 2,
-                        maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
-                    },
-                    control_change: {
-                        minlength: 2,
-                        maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
-                    },
+                    // 'evidence[]': {
+                    //     required: true,
+                    //     // extension: "png|jpeg|jpg|pdf|doc|mp4"
+                    //     imageFormat: true
+                    // },
                 },
                 messages: {
-                    services: {
-                        required: "Source, Situation, Act,Activity, Product,Services is required.",
-                        minlength: "Incident Short Name must be exactly 2 characters.",
-                        maxlength: "Incident Short Name must be exactly 2000 characters.",
+                    incident_date_time: {
+                        required: "Date and Time is required.",
+                    },
+                    unit_id: {
+                        required: "Unit is required.",
+                    },
+                    shift: {
+                        required: "Shift is required.",
+                        minlength: "Brief Description Required must be exactly 2 characters.",
+                        maxlength: "Brief Description Required must be exactly 2000 characters.",
                         pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
                     },
-                    narration: {
-                        required: "Narration is required.",
+                    location_id: {
+                        required: "Location is required.",
                     },
-                    hazard_description: {
-                        required: "Hazard Description is required.",
-                    },
-                    hazard_type: {
-                        required: "Type of Hazard is required.",
-                    },
-                    severity: {
-                        required: "Severity is required.",
-                    },
-                    risk_consequence: {
-                        required: "Risk/Consequence is required.",
-                    },
-                    likelihood: {
-                        required: "Likelihood is required.",
-                    },
-                    risk_levels: {
-                        required: "Risk Levels is required.",
-                    },
-                    current_controls: {
-                        required: "Current Controls is required.",
-                    },
-                    type_controls: {
-                        required: "Type of Controls is required.",
-                    },
-                    legal_req: {
-                        required: "Legal Requirements is required.",
-                    },
-                    risk_rating: {
-                        required: "Risk Ratings is required.",
-                    },
-                    additionl_control: {
-                        minlength: "Additional control Measures Required must be exactly 2 characters.",
-                        maxlength: "Additional control Measures Required must be exactly 2000 characters.",
+                    exact_location: {
+                        required: "Exact Location is required.",
+                        minlength: "Brief Description Required must be exactly 2 characters.",
+                        maxlength: "Brief Description Required must be exactly 2000 characters.",
                         pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
                     },
-                    nature_change: {
-                        minlength: "Nature of Change must be exactly 2 characters.",
-                        maxlength: "Nature of Change must be exactly 2000 characters.",
+                    iir_type: {
+                        required: "IIR Type is required.",
+                    },
+                    reported_name: {
+                        required: "Name is required.",
+                    },
+                    designation: {
+                        required: "Designation is required.",
+                    },
+                    department: {
+                        required: "Department is required.",
+                    },
+                    employee_code: {
+                        required: "Employee Code is required.",
+                    },
+                    time_of_reporting: {
+                        required: "Time of reporting is required.",
+                    },
+                    'reporting_media[]': {
+                        required: "At least one Reporting Media is required.",
+                        minlength: "At least one Reporting Media must be selected.",
+                    },
+                    brief_description: {
+                        required: "Brief Description is required.",
+                        minlength: "Brief Description Required must be exactly 2 characters.",
+                        maxlength: "Brief Description Required must be exactly 2000 characters.",
                         pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
                     },
-                    implement_change: {
-                        minlength: "Implement of Change must be exactly 2 characters.",
-                        maxlength: "Implement of Change must be exactly 2000 characters.",
-                        pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
-                    },
-                    control_change: {
-                        minlength: "Control of Change must be exactly 2 characters.",
-                        maxlength: "Control of Change must be exactly 2000 characters.",
-                        pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
-                    },
+                    // 'evidence[]': {
+                    //     required: "Evidence is required",
+                    //     imageFormat: "Invalid file type"
+                    // }
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
                     error.addClass('invalid-feedback');
-                    element.closest('.form-input').append(error);
+
+                    // Handle error placement for checkboxes
+                    if (element.attr("name") === "reporting_media[]") {
+                        element.closest('.form-input').find('.text-danger').html(error);
+                    } else {
+                        element.closest('.form-input').append(error);
+                    }
                 },
-                highlight: function(element, errorClass, validClass) {
+                highlight: function(element) {
                     $(element).addClass('is-invalid');
                 },
-                unhighlight: function(element, errorClass, validClass) {
+                unhighlight: function(element) {
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
                     form.submit();
-
                 },
                 invalidHandler: function(event, validator) {
                     var errors = validator.numberOfInvalids();
-                    validator.errorList.forEach(function(error) {
-
-                    });
-                }
+                    if (errors) {
+                        console.log(`There are ${errors} validation errors.`);
+                        validator.errorList.forEach(function(error) {
+                            console.log(
+                                `Field: ${error.element.name}, Error: ${error.message}`);
+                        });
+                    }
+                },
             });
+
         });
     </script>
 @endpush

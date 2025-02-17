@@ -24,47 +24,26 @@
                         <td style='padding: 7px;border: 0.5px solid;text-align:center'>
                             {{ $i }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->req_id }}
-                        </td>
+
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getUnitname($value->unit_id) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getDepartment($value->department_id) }}
                         </td>
-
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->request_date) }}
+                            {{ getMedicineName($value->medicine_id) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            @if ($value->approve_status ==STATUS_OHC_PARAMEDIES_REQUEST)
-                            <p>{{ 'Stock Requested' }}</p>
-                        @elseif($value->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)
-                            <p>{{ 'Stock Requested' }}</p>
-                        @elseif($value->approve_status == STATUS_OHC_PARAMEDICS_APPROVED)
-                            <p>{{ 'Paramedics Approval Pending' }}</p>
-                        @elseif($value->approve_status == STATUS_OHC_PARAMEDICS_REJECTED)
-                            <p>{{ 'Paramedics Approval Pending' }}</p>
-                        @elseif($value->approve_status == STATUS_OHC_CLOSE)
-                            <p>{{ 'Paramedics Approved' }}</p>
-
-                        @endif
+                            {{ ($value->quantity) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            @if ($value->approve_status ==STATUS_OHC_PARAMEDIES_REQUEST)
-                            <p>{{ 'Paramedics Approval Pending' }}</p>
-                        @elseif($value->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)
-                            <p>{{ 'Paramedics Approval Pending' }}</p>
-                        @elseif($value->approve_status == STATUS_OHC_PARAMEDICS_APPROVED)
-                            <p>{{ 'Paramedics Approved' }}</p>
-                        @elseif($value->approve_status == STATUS_OHC_PARAMEDICS_REJECTED)
-                            <p>{{ 'Paramedics Rejected' }}</p>
-                        @elseif($value->approve_status == STATUS_OHC_CLOSE)
-                            <p>{{ 'Close' }}</p>
-
-                        @endif
+                            {{ ($value->remarks) }}
                         </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ displaydateformat($value->discard_date) }}
+                        </td>
+
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
                         </td>

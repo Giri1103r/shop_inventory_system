@@ -34,26 +34,22 @@
                                         <hr>
                                         <div class="row">
 
-                                            <div class="col-md-4 mb-2">
+                                            <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Unit</label>
-                                                    <select name="unit_id" id="unit_id" class="form-control single-select"
-                                                        style="width: 100%">
-                                                        <option value="">Select the unit</option>
-                                                        @foreach ($unit as $list)
-                                                            <option value="{{ encryptId($list->id) }}">
-                                                                {{ $list->unit_name }}</option>
-                                                        @endforeach
-                                                    </select>
+                                                    <label class="form-label require">Unit </label>
+                                                    <input type="text" name ="unit_id" id="unit_id"
+                                                        class="form-control" placeholder="Enter the Unit Name"
+                                                        value="{{ getUnitname(Auth::user()->unit_id) }}" readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
+                                            <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Department</label>
-                                                    <select name="department_id" id="department_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Department </option>
-
+                                                    <label class="form-label require">Department </label>
+                                                    <select name="department_id" id="department_id" class="form-control single-select" style="width: 100%">
+                                                        <option value="">Select the department</option>
+                                                        @foreach ($departmentList as $list)
+                                                             <option value="{{encryptId($list->id)}}">{{$list->department_name}}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -115,7 +111,11 @@
                                                                         style="width: 100%">
                                                                         <option value="">Select the Medicine Name
                                                                         </option>
-
+                                                                        @foreach ($medicine as $list)
+                                                                        <option value="{{ ($list->id) }}">
+                                                                            {{ $list->medicine_id }}
+                                                                        </option>
+                                                                    @endforeach
                                                                     </select>
                                                                 </div>
                                                             </td>
@@ -301,7 +301,9 @@
                         <label for="medicine_id" class="require">Medicine Name</label>
                         <select name="medicine_id[${medicine_issuance_row_count}]" class="form-control single-select" style="width: 100%">
                             <option value="">Select the Medicine Name</option>
-
+ @foreach ($medicine as $list)
+                                <option value="{{ ($list->id) }}" data-available-quantity="{{ $list->available_quantity }}">{{ $list->medicine_id }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </td>
