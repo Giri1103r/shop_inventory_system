@@ -32,7 +32,7 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="opdpatient"
-                                        action="{{ admin_url('ohc/prescribe-to-patient/add/submit') }}">
+                                        action="{{ admin_url('ohc/prescribe-to-patient/edit/submit') }}">
                                         @csrf
                                         <input type="hidden" name="id" id="id"
                                             value="{{ encryptId($opdpatient->id) }}">
@@ -82,9 +82,8 @@
                                                         style="width: 100%">
                                                         <option value="">Select the unit</option>
                                                         @foreach ($unit as $list)
-                                                            <option value="{{ encryptId($list->id) }}" @if ($list->id == $opdpatient->unit_id) selected
-
-                                                            @endif>
+                                                            <option value="{{ encryptId($list->id) }}"
+                                                                @if ($list->id == $opdpatient->unit_id) selected @endif>
                                                                 {{ $list->unit_name }}</option>
                                                         @endforeach
                                                     </select>
@@ -99,12 +98,12 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Emergency Contact</label>
+                                                    <label class="form-label ">Emergency Contact</label>
                                                     <input type="text" name="emergency_contact" id="emergency_contact"
                                                         value="{{ $opdpatient->emergency_contact }}" class="form-control">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2"style="display: none;">
+                                            <div class="col-md-4 mb-2 company_name"style="display: none;">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company Name</label>
                                                     <input type="text" name="company_name" id="company_name"
@@ -137,9 +136,15 @@
                                                     <select name="gender" id="gender"
                                                         class="form-control single-select" style="width: 100%">
                                                         <option value="">select the gender</option>
-                                                        <option value="Male" {{ $opdpatient === 'Male' ? 'selected' : '' }}>Male</option>
-                                                        <option value="Female" {{ $opdpatient === 'Female' ? 'selected' : '' }}>Female</option>
-                                                        <option value="Others" {{ $opdpatient === 'Others' ? 'selected' : '' }}>Others</option>
+                                                        <option value="Male"
+                                                            {{ $opdpatient->gender === 'Male' ? 'selected' : '' }}>Male
+                                                        </option>
+                                                        <option value="Female"
+                                                            {{ $opdpatient->gender === 'Female' ? 'selected' : '' }}>Female
+                                                        </option>
+                                                        <option value="Other"
+                                                            {{ $opdpatient->gender === 'Other' ? 'selected' : '' }}>Other
+                                                        </option>
 
 
                                                     </select>
@@ -172,7 +177,7 @@
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Cheif Complaint</label>
-                                                    <textarea name="cheif_complaint" id="cheif_complaints" cols="30" rows="5" class="form-control">{{ $opdpatient->cheif_complaint }}"</textarea>
+                                                    <textarea name="cheif_complaint" id="cheif_complaint" cols="30" rows="5" class="form-control">{{ $opdpatient->cheif_complaint }}"</textarea>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -202,7 +207,8 @@
                                             <div class="col-md-4 mb-2" style="display: none;">
                                                 <div class="form-group form-input">
                                                     <label for="vechicle" class="form-label require">Details</label>
-                                                    <input name="details" id="details" placeholder="Enter the Details" value="{{$opdpatient->suggested_details}}"
+                                                    <input name="details" id="details" placeholder="Enter the Details"
+                                                        value="{{ $opdpatient->suggested_details }}"
                                                         class="form-control">
 
                                                 </div>
@@ -233,6 +239,7 @@
                                                                     <th>Medicine</th>
                                                                     <th>Available Quantity</th>
                                                                     <th>Quantity</th>
+                                                                    <th>Remarks</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -297,7 +304,13 @@
                                                                                     than available quantity.</span>
                                                                             </div>
                                                                         </td>
-
+                                                                        <td>
+                                                                            <div class="form-group form-input">
+                                                                                <label for="remarks"
+                                                                                    class="require">Remarks</label>
+                                                                                <textarea name="remarks[{{ $key }}]" id="remarks" cols="10" rows="2" class="form-control">{{ $firstaid->remarks }}</textarea>
+                                                                            </div>
+                                                                        </td>
                                                                         <td>
                                                                             <div class="row gap-2">
                                                                                 <div class="d-flex justify-content-center align-items-center bg-primary mt-2 ml-2 text-white rounded add-row"
@@ -425,7 +438,8 @@
                                                             <label for="vechicle" class="form-label require">Reffered By
                                                                 other Vechicle</label>
                                                             <input name="other_vechicle" id="vechicle"
-                                                              value="{{ $isreffered->other_vechicle }}"   class="form-control">
+                                                                value="{{ $isreffered->other_vechicle }}"
+                                                                class="form-control">
 
                                                         </div>
                                                     </div>
@@ -536,7 +550,7 @@
             // Set selected value if available
             var empId = '{{ $opdpatient->emp_id ?? '' }}';
             var empName = '{{ $opdpatient->emp_id ?? '' }}';
-
+            var phoneNum = '{{ $opdpatient->mobile_no ?? '' }}'
             if (empId && empName) {
                 var newOption = new Option(empName, empId, true, true);
                 $('#emp_id').append(newOption).trigger('change');
@@ -608,6 +622,21 @@
                 }
             });
 
+            // is checked the worker id
+
+            if ($('#is_outside_worker').is(':checked')) {
+                $('.department').hide();
+                $('.unit, .company_name').show();
+
+                $('#emp_id').val('').prop('disabled', true);
+                $('#emp_name').val('').prop('readonly', false);
+            } else {
+                $('.department').show();
+                $('.unit, .company_name').hide();
+
+                $('#emp_id').val('').prop('disabled', false);
+                $('#emp_name').val('').prop('readonly', true);
+            }
             // unit and department
 
             $('#is_outside_worker').change(function() {
@@ -615,13 +644,13 @@
                     $('.department').hide();
                     $('.unit, .company_name').show();
 
-                    $('#emp_id').val('').prop('readonly', true);
+                    $('#emp_id').val('').prop('disabled', true);
                     $('#emp_name').val('').prop('readonly', false);
                 } else {
                     $('.department').show();
                     $('.unit, .company_name').hide();
 
-                    $('#emp_id').val('').prop('readonly', false);
+                    $('#emp_id').val('').prop('disabled', false);
                     $('#emp_name').val('').prop('readonly', true);
                 }
             });
@@ -785,93 +814,96 @@
 
         // add more for the medicine
 
+        // add more for the medicine
+
         $(document).ready(function() {
-            const MAX_ROWS = 5;
+
             let opd_patient = 1;
-
-
 
             $(".add-row").click(function() {
                 var rowCount = $('#medicine-tbody tr').length;
 
-                if (rowCount < MAX_ROWS) {
-                    var newRow = `
-            <tr>
-                <td>
-                    <div class="form-group form-input">
-                        <label for="medicine_id" class="require">Medicine Name</label>
-                        <select name="medicine_id[${opd_patient}]" class="form-control single-select" style="width: 100%">
-                            <option value="">Select the Medicine Name</option>
-                            @foreach ($medicine as $list)
-                                <option value="{{ encryptId($list->id) }}" data-available-quantity="{{ $list->available_quantity }}">{{ $list->medicine_id }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </td>
-                <td>
-                    <div class="form-group form-input">
-                        <label for="quantity" class="require">Available Quantity</label>
-                        <input type="text" name="available_quantity[${opd_patient}]" class="form-control" readonly>
-                    </div>
-                </td>
-                <td>
-                    <div class="form-group form-input">
-                        <label for="quantity" class="require">Quantity</label>
-                        <input type="text" name="quantity[${opd_patient}]"   placeholder="Enter the quantity" class="form-control">
-                         <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
+                var newRow = `
+                    <tr>
+                        <td>
+                        <div class="form-group form-input">
+                            <label for="medicine_id" class="require">Medicine Name</label>
+                            <select name="medicine_id[${opd_patient}]" class="form-control single-select" style="width: 100%">
+                                <option value="">Select the Medicine Name</option>
+                                @foreach ($medicine as $list)
+                                    <option value="{{ $list->id }}" data-available-quantity="{{ $list->available_quantity }}">{{ $list->medicine_id }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        </td>
+                        <td>
+                        <div class="form-group form-input">
+                            <label for="quantity" class="require">Available Quantity</label>
+                            <input type="text" name="available_quantity[${opd_patient}]" class="form-control" readonly>
+                        </div>
+                        </td>
+                        <td>
+                        <div class="form-group form-input">
+                            <label for="quantity" class="require">Quantity</label>
+                            <input type="text" name="quantity[${opd_patient}]" placeholder="Enter the quantity" class="form-control">
+                            <span id="quantity-error" style="display:none;" class="text-danger quantity-error">Quantity must be less than available quantity.</span>
+                        </div>
+                        </td>
+                        <td>
+                        <div class="form-group form-input">
+                            <label for="remarks" class="require">Remarks</label>
+                            <textarea name="remarks[${opd_patient}]" cols="10" rows="2" class="form-control"></textarea>
+                        </div>
+                        </td>
+                        <td>
+                        <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px;">
+                            <i class="fa-solid fa-trash"></i>
+                        </div>
+                        </td>
+                    </tr>`;
 
+                $('#medicine-tbody').append(newRow);
 
-                    </div>
-                </td>
+                let newMedicineSelect = $('select[name="medicine_id[' + opd_patient + ']"]');
+                let newQuantityInput = $('input[name="quantity[' + opd_patient + ']"]');
+                let newRemarksInput = $('textarea[name="remarks[' + opd_patient + ']"]');
 
-                <td>
-                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px;">
-                        <i class="fa-solid fa-trash"></i>
-                    </div>
-                </td>
-            </tr>`;
+                // Initialize select2 for new row
+                newMedicineSelect.select2({
+                    placeholder: "Select the Medicine Name",
+                    width: '100%'
+                });
 
-                    $('#medicine-tbody').append(newRow);
+                // Add validation rules for newly added row
+                newMedicineSelect.rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'This Medicine name is required'
+                    }
+                });
 
+                newQuantityInput.rules('add', {
+                    required: true,
+                    digits: true,
+                    messages: {
+                        required: 'Quantity is required',
+                        digits: 'Quantity must be numeric',
+                    }
+                });
 
-                    $('select[name="medicine_id[' + opd_patient + ']"]').select2({
-                        placeholder: "Select the Medicine Name",
-                        width: '100%'
-                    });
+                newRemarksInput.rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Remarks is required',
+                    }
+                });
 
-
-                    $('select[name="medicine_id[' + opd_patient + ']"]').rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'This Medicine name is required'
-                        }
-                    });
-
-                    $('input[name="quantity[' + opd_patient + ']"]').rules('add', {
-                        required: true,
-                        digits: true,
-                        messages: {
-                            required: 'Quantity is required',
-                            digits: 'Quantity must be numeric',
-                        }
-                    });
-
-
-                    filterMedicineOptions();
-                    opd_patient++;
-                } else {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Warning',
-                        text: 'Your request has exceeded the limit.',
-                        confirmButtonColor: '#3085d6'
-                    });
-                }
+                filterMedicineOptions();
+                opd_patient++;
             });
 
             function filterMedicineOptions() {
                 let selectedValues = [];
-
 
                 $('select[name^="medicine_id"]').each(function() {
                     let selectedVal = $(this).val();
@@ -886,11 +918,8 @@
 
                     currentSelect.find('option').each(function() {
                         let optionValue = $(this).val();
-
-                        // Always enable all options first
                         $(this).prop('disabled', false);
 
-                        // Disable option if it's selected in another dropdown
                         if (selectedValues.includes(optionValue) && optionValue !== currentValue) {
                             $(this).prop('disabled', true);
                         }
@@ -898,12 +927,9 @@
                 });
             }
 
-
-
-
             $(document).on('change', 'select[name^="medicine_id"]', function() {
                 var medicine_id = $(this).val();
-                var row = $(this).closest('tr'); // Get the row of the current select
+                var row = $(this).closest('tr');
 
                 if (medicine_id) {
                     $.ajax({
@@ -924,9 +950,8 @@
                 }
             });
 
-            // Quantity validation
             $(document).on("input", 'input[name^="quantity"]', function() {
-                var row = $(this).closest('tr'); // Get the row of the current input
+                var row = $(this).closest('tr');
                 var availableQuantity = parseInt(row.find('input[name^="available_quantity"]').val());
                 var quantity = parseInt($(this).val());
 
@@ -937,7 +962,6 @@
                     row.find('.quantity-error').hide();
                 }
             });
-
 
             $(document).on("click", ".delete-row", function() {
                 var rowCount = $('#medicine-tbody tr').length;
@@ -952,6 +976,240 @@
                         confirmButtonColor: '#3085d6'
                     });
                 }
+            });
+        });
+
+
+        // validation
+
+        $(function() {
+            $.validator.addMethod(
+                "regex",
+                function(value, element, regex) {
+                    return this.optional(element) || regex.test(value);
+                },
+                "Invalid format."
+            );
+
+            $('#opdpatient').validate({
+                rules: {
+                    emp_name: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30
+                    },
+                    unit_id: {
+                        required: function() {
+                            return $('#is_outside_worker').is(':checked');
+                        },
+
+                    },
+                    company_name: {
+                        required: function() {
+                            return $('#is_outside_worker').is(':checked');
+                        },
+
+                    },
+                    dob: {
+                        required: true,
+                    },
+                    mobile_no: {
+                        required: true,
+                    },
+                    suggested_by: {
+                        required: true,
+                    },
+                    date: {
+                        required: true,
+                    },
+                    time: {
+                        required: true,
+                    },
+                    gender: {
+                        required: true,
+                    },
+                    chief_complaint: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 600,
+                    },
+                    address: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 600,
+                    },
+                    treatment: {
+                        required: function() {
+                            return $('#first_aid_treatment').is(':checked');
+                        },
+                        minlength: 3,
+                        maxlength: 100
+                    },
+                    'medicine_id[0]': {
+                        required: function() {
+                            return $('#first_aid_treatment').is(':checked');
+                        }
+                    },
+                    'quantity[0]': {
+                        required: function() {
+                            return $('#first_aid_treatment').is(':checked');
+                        }
+                    },
+                    'remarks[0]': {
+                        required: function() {
+                            return $('#first_aid_treatment').is(':checked');
+                        },
+                        minlength: 3,
+                        maxlength: 600
+                    },
+                    details: {
+                        required: function() {
+                            return $('#suggested_by').val() == '3';
+                        },
+                        minlength: 3,
+                        maxlength: 100
+                    },
+                    hospital_name: {
+                        required: function() {
+                            return $('#is_reffered').is(':checked');
+                        },
+                        minlength: 3,
+                        maxlength: 100
+                    },
+                    first_aider: {
+                        required: function() {
+                            return $('#is_reffered').is(':checked');
+                        }
+                    },
+                    is_reffered_mobile_no: {
+                        required: function() {
+                            return $('#is_reffered').is(':checked');
+                        }
+                    },
+                    vechicle: {
+                        required: function() {
+                            return $('#is_reffered').is(':checked');
+                        }
+                    },
+                    patient_status: {
+                        required: function() {
+                            return $('#is_reffered').is(':checked');
+                        }
+                    },
+                    fitness_certificate: {
+                        required: function() {
+                            return $('#patient_status').val() ==
+                                '2';
+                        }
+                    },
+                    close_description: {
+                        required: function() {
+                            return $('#patient_status').val() ==
+                                '2';
+                        },
+                        minlength: 3,
+                        maxlength: 600
+                    },
+                    other_vechicle: {
+                        required: function() {
+                            return $('#vechicle').val() ==
+                                '3';
+                        },
+                        minlength: 3,
+                        maxlength: 100
+                    }
+                },
+                messages: {
+                    emp_name: {
+                        required: "Please enter employee name.",
+                    },
+                    company_name: {
+                        required: "Please enter Company name.",
+                    },
+                    unit_id: {
+                        required: "Please enter Unit Name.",
+                    },
+                    dob: {
+                        required: "Please enter the date of birth.",
+                    },
+                    details: {
+                        required: "Please enter the details.",
+                        minlength: "Details must be at least 3 characters.",
+                        maxlength: "Details must not exceed 100 characters.",
+                    },
+                    date: {
+                        required: "Please select the date.",
+                    },
+                    suggested_by: {
+                        required: "Please select the Suggested By.",
+                    },
+                    mobile_no: {
+                        required: "Please enter the Mobile Number.",
+                    },
+                    time: {
+                        required: "Please select the time.",
+                    },
+                    gender: {
+                        required: "Please select the gender.",
+                    },
+                    chief_complaint: {
+                        required: 'Chief Complaint is required',
+                        minlength: 'Minimum 3 characters are required',
+                        maxlength: 'Chief Complaint should not exceed 600 characters',
+                    },
+                    address: {
+                        required: 'Address is required',
+                        minlength: 'Minimum 3 characters are required',
+                        maxlength: 'Address should not exceed 600 characters',
+                    },
+                    treatment: {
+                        required: "Please enter treatment details .",
+                        minlength: "Treatment must be at least 3 characters.",
+                        maxlength: "Treatment must not exceed 100 characters.",
+                    },
+                    'medicine_id[0]': {
+                        required: "Please select a medicine .",
+                    },
+                    'quantity[0]': {
+                        required: "Please enter the quantity .",
+                    },
+                    'remarks[0]': {
+                        required: "Please enter remarks .",
+                        minlength: "remarks must be at least 3 characters.",
+                        maxlength: "remarks must not exceed 100 characters.",
+                    },
+                    fitness_certificate: {
+                        required: "Fitness Certificate is required .",
+                    },
+                    close_description: {
+                        required: "Close Description is required .",
+                        minlength: "Close Description must be at least 3 characters.",
+                        maxlength: "Close Description must not exceed 600 characters.",
+                    },
+                    other_vechicle: {
+                        required: "Other Vechicle is required .",
+                        minlength: "Other Vechicle must be at least 3 characters.",
+                        maxlength: "Other Vechicle must not exceed 100 characters.",
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log("Form has " + errors + " invalid fields.");
+                },
             });
         });
     </script>

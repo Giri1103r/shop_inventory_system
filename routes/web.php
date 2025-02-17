@@ -970,11 +970,20 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/edit/{id}', [PrescribetoPatientController::class, 'edit']);
                 Route::post('/edit/submit', [PrescribetoPatientController::class, 'update']);
                 Route::get('/view/{id}', [PrescribetoPatientController::class, 'view']);
-                Route::post('/delete', [PrescribetoPatientController::class, 'delete']);
+                Route::get('/view/{id}', [PrescribetoPatientController::class, 'view']);
+                Route::get('/generalpdf/{id}', [PrescribetoPatientController::class, 'medicineslip']);
+                Route::get('/fetchemployeename', [PrescribetoPatientController::class, 'fetchemployeename']);
+                Route::get('/emp-details/{emp_id}', [PrescribetoPatientController::class, 'employeedetails']);
+                Route::get('/first-aider-number', [PrescribetoPatientController::class, 'firstaidernumber']);
+                Route::get('/firstaider', [PrescribetoPatientController::class, 'firstaider']);
+                Route::post('/delete/{id}', [PrescribetoPatientController::class, 'delete']);
+                Route::post('/close', [PrescribetoPatientController::class, 'close']);
                 Route::get('/export/excel', [PrescribetoPatientController::class, 'exportExcel']);
                 Route::get('/export/pdf', [PrescribetoPatientController::class, 'exportPdf']);
                 Route::post('/status', [PrescribetoPatientController::class, 'statusChange']);
                 Route::get('/quantity', [PrescribetoPatientController::class, 'quantity']);
+                Route::get('/employeename', [PrescribetoPatientController::class, 'employeename']);
+
             });
 
             Route::group(['prefix' => 'ohc/first-aid'], function () {

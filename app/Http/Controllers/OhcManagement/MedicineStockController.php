@@ -417,6 +417,7 @@ class MedicineStockController extends Controller
             }
 
             $details = $this->medicine_stock->selectOne($id);
+
             if (!$details) {
                 return redirect()->back()->with('error', 'Invalid request.');
             }

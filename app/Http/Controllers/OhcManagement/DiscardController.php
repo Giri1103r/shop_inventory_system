@@ -501,7 +501,7 @@ class DiscardController extends Controller
 
     public function quantity(Request $request, $quantity_id)
     {
-        $id = decryptId($quantity_id);
+        $id = ($quantity_id);
 
 
         $availableQuantity = $this->medicine_stock->getAvailableQuantity($id);

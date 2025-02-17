@@ -1493,6 +1493,48 @@ if (!function_exists('getMonth')) {
             }
         }
     }
+    if (!function_exists('getSuggestedBy')) {
+
+        function getSuggestedBy($userid)
+        {
+
+            $suggested_by = DB::table('ohc_management_opd_patient_suggested_by')->select('suggested_by')->where('id', $userid)->where('status', 1)->where('trash', 'NO')->first();
+
+            if ($suggested_by == null) {
+                return '';
+            } else {
+                return $suggested_by->suggested_by;
+            }
+        }
+    }
+    if (!function_exists('getPatientStatus')) {
+
+        function getPatientStatus($userid)
+        {
+
+            $patient_status = DB::table('ohc_management_opd_patient_status')->select('patient_status')->where('id', $userid)->where('status', 1)->where('trash', 'NO')->first();
+
+            if ($patient_status == null) {
+                return '';
+            } else {
+                return $patient_status->patient_status;
+            }
+        }
+    }
+    if (!function_exists('getReferedVechicle')) {
+
+        function getReferedVechicle($userid)
+        {
+
+            $refered_vechicle = DB::table('ohc_management_opd_patient_refered_vechicle')->select('refered_vechicle')->where('id', $userid)->where('status', 1)->where('trash', 'NO')->first();
+
+            if ($refered_vechicle == null) {
+                return '';
+            } else {
+                return $refered_vechicle->refered_vechicle;
+            }
+        }
+    }
     function removeUnderScore($string)
     {
         return Str::replace('_', " ", $string);

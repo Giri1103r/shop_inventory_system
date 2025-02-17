@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'OPD Patient')
-@section('pageurl', admin_url('ohc/prescribe-to-patient/list'))
+@section('title', 'First Aid')
+@section('pageurl', admin_url('ohc/first-aid/list'))
 
 
 @section('content')
@@ -18,7 +18,7 @@
 
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('ohc/prescribe-to-patient/add') }}">Add</x-button-add>
+                            href="{{ admin_url('ohc/first-aid/add') }}">Add</x-button-add>
                         {{-- @endif --}}
 
                     </div>
@@ -59,7 +59,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
+                                        {{-- <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label">{{ __('Patient Status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
@@ -70,7 +70,7 @@
                                                     </option>
                                                 @endforeach
                                             </select>
-                                        </div>
+                                        </div> --}}
 
                                         <div class="col-md-3 mb-3 d-flex align-items-end gap-2">
                                             <x-button-search class="me-2"></x-button-search>
@@ -95,20 +95,14 @@
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
 
+                                        <th>Employee Code</th>
                                         <th>Employee Name</th>
-                                        <th>Problem</th>
-                                        <th>Gender</th>
-                                        <th>Unit</th>
-                                        <th>Department</th>
-                                        <th>Date</th>
-                                        <th>Time</th>
-                                        <th>Suggested By</th>
-                                        <th>Treatment</th>
-                                        <th>Checkup</th>
-                                        <th>Status</th>
-                                        <th>Fitness Certificate</th>
-                                        <th>Created By</th>
-                                        <th>Cancel Remarks</th>
+                                        <th>Date of Incident</th>
+                                        <th>Time Of Incident</th>
+                                        <th>Treatment Start Time</th>
+                                        <th>Treatment End Time</th>
+                                        <th>First Aider Name</th>
+                                        <th data-priority='2'>{{ __('common.created_by') }}</th>
                                         <th data-priority='1'>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -152,7 +146,7 @@
 
         $('#emp_name').select2({
             ajax: {
-                url: '{{ admin_url('ohc/prescribe-to-patient/employeename') }}',
+                url: '{{ admin_url('ohc/first-aid/employeename') }}',
                 dataType: 'json',
                 delay: 250,
                 data: function(params) {
@@ -186,7 +180,7 @@
                 ordering: true,
                 dom: 'Bfrtip',
                 ajax: {
-                    url: "{{ admin_url('ohc/prescribe-to-patient/list') }}",
+                    url: "{{ admin_url('ohc/first-aid/list') }}",
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -212,62 +206,39 @@
                     },
 
                     {
+                        data: 'emp_id',
+                        name: 'emp_id'
+                    },
+                    {
                         data: 'emp_name',
                         name: 'emp_name'
                     },
                     {
-                        data: 'cheif_complaint',
-                        name: 'cheif_complaint'
+                        data: 'date_of_incident',
+                        name: 'date_of_incident'
                     },
                     {
-                        data: 'gender',
-                        name: 'gender'
+                        data: 'time_of_incident',
+                        name: 'time_of_incident'
                     },
                     {
-                        data: 'unit_id',
-                        name: 'unit_id'
+                        data: 'treatment_start_time',
+                        name: 'treatment_start_time'
                     },
                     {
-                        data: 'department_id',
-                        name: 'department_id'
+                        data: 'treatment_end_time',
+                        name: 'treatment_end_time'
                     },
                     {
-                        data: 'date',
-                        name: 'date'
-                    },
-                    {
-                        data: 'time',
-                        name: 'time'
-                    },
-                    {
-                        data: 'suggested_by',
-                        name: 'suggested_by'
-                    },
-                    {
-                        data: 'treatment',
-                        name: 'treatment'
-                    },
-                    {
-                        data: 'vital_checkup',
-                        name: 'vital_checkup'
+                        data: 'first_aider_name',
+                        name: 'first_aider_name'
                     },
 
-                    {
-                        data: 'patient_status',
-                        name: 'patient_status'
-                    },
-                    {
-                        data: 'fitness_certificate',
-                        name: 'fitness_certificate'
-                    },
                     {
                         data: 'created_by',
                         name: 'created_by'
                     },
-                    {
-                        data: 'cancel_remarks',
-                        name: 'cancel_remarks'
-                    },
+
                     {
                         data: 'action',
                         name: 'action',
@@ -303,7 +274,7 @@
                                     var to_date = $('#to_date').val();
                                     var status = $('#status').val();
                                     window.location.href =
-                                        "{{ admin_url('ohc/prescribe-to-patient/export/pdf') }}?search=" +
+                                        "{{ admin_url('ohc/first-aid/export/pdf') }}?search=" +
                                         searchValue +
                                         '&emp_name=' + emp_name +
                                         '&from_date=' + from_date +
@@ -321,7 +292,7 @@
                                     var to_date = $('#to_date').val();
                                     var status = $('#status').val();
                                     window.location.href =
-                                        "{{ admin_url('ohc/prescribe-to-patient/export/excel') }}?search=" +
+                                        "{{ admin_url('ohc/first-aid/export/excel') }}?search=" +
                                         searchValue +
                                         '&emp_name=' + emp_name +
                                         '&from_date=' + from_date +
@@ -392,7 +363,7 @@
 
 
                         $.ajax({
-                            url: "{{ admin_url('ohc/prescribe-to-patient/close') }}",
+                            url: "{{ admin_url('ohc/first-aid/close') }}",
                             type: 'post',
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

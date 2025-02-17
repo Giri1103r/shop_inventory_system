@@ -61,34 +61,14 @@ class InventoryController extends Controller
                         })
 
 
-                        ->editColumn('discard_date', function ($row) {
-                            return displaydateformat($row->request_date);
+                        ->editColumn('medicine_id', function ($row) {
+                            return getMedicinename($row->medicine_id);
                         })
                         ->editColumn('unit_id', function ($row) {
                             return getUnitname($row->unit_id);
                         })
-                        ->editColumn('department_id', function ($row) {
-                            return getDepartment($row->department_id);
-                        })
-                        ->editColumn('action', function ($row) {
-                            $btn = '';
-                            // if (CheckUserPermission('view')) {
-                            $btn .= '<a href="' . admin_url('ohc/discard/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            // }
-                            // if (CheckUserPermission('edit')) {
-                            // $btn .= '<a href="' . admin_url('ohc/discard/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
-                            // }
-                            if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) || (checkUserRole(ROLE_PARAMEDICS) && $row->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)) {
-                                $btn .= '<a href="' . admin_url('ohc/discard/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
-                            }
-                            if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == STATUS_OHC_PARAMEDICS_APPROVED) || (checkUserRole(ROLE_PARAMEDICS) && $row->approve_status == STATUS_OHC_PARAMEDICS_APPROVED)) {
-                                $btn .= '<a href="' . admin_url('ohc/medicine-issuance/add/' . encryptId($row->id)) . '" class="" title="Action"><i class="fas fa-share-square " style="color: #0013ff;"></i></a> ';
-                            }
 
-
-                            $btn .= '<a href="' . admin_url('ohc/discard/generalpdf/' . encryptId($row->id)) . '" class="" title="PDF"> <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a> ';
-                            return $btn;
-                        })
+                       
 
                         ->rawColumns(['action', 'request_date', 'approve_status','unit_id','department_id'])
                         ->setFilteredRecords($data['filter_records'])

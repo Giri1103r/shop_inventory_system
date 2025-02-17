@@ -16,6 +16,7 @@ use App\Models\OhcManagement\MedicineReceiving;
 use App\Models\OhcManagement\MedicineRequisition;
 use App\Models\OhcManagement\UserMedicineRequisition;
 use App\Models\UploadLog;
+use App\Models\OhcManagement\Report\Inventory;
 
 use Carbon\Carbon;
 use Exception;
@@ -47,6 +48,7 @@ class MedicineFirstAidController extends Controller
     private $user_medicine_requisition;
     private $medicine_requisition;
     private $user;
+    private $inventory;
     public function __construct()
     {
         $this->medicine = new Medicine();
@@ -61,6 +63,7 @@ class MedicineFirstAidController extends Controller
         $this->unit = new Unit();
         $this->department = new Department();
         $this->user = new User();
+        $this->inventory = new Inventory();
     }
     public function index(Request $request)
     {
@@ -140,17 +143,20 @@ class MedicineFirstAidController extends Controller
     public function store(Request $request)
     {
         try {
+
             $rules = [
                 'unit_id' => 'required',
                 'department_id' => 'required',
                 'issue_date' => 'required',
-
             ];
+
             $messages = [
-                'department_id.required' => 'Please select a Deparment.',
+                'department_id.required' => 'Please select a Department.',
                 'unit_id.required' => 'Please select a unit.',
                 'issue_date.required' => 'Please select the Issued date.',
             ];
+
+
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
@@ -160,32 +166,57 @@ class MedicineFirstAidController extends Controller
 
                 $user_medicine_first_aid = $this->user_medicine_first_aid->store();
                 $medicine_first_aid = $this->medicine_first_aid->store($user_medicine_first_aid);
-                foreach ($medicine_first_aid as $medicine) {
 
+
+                foreach ($medicine_first_aid as $medicine) {
                     $medicine_id = $medicine->medicine_id;
                     $unitId = $user_medicine_first_aid->unit_id;
                     $issuedQuantity = $medicine->quantity;
 
-                    $this->medicine_stock
+
+                    $medicine_stock = $this->medicine_stock
                         ->where('id', $medicine_id)
                         ->where('unit_id', $unitId)
-                        ->decrement('quantity', $issuedQuantity);
-               }
+                        ->first();
+
+                    if ($medicine_stock) {
+                        $medicine_stock->decrement('quantity', $issuedQuantity);
+                    }
+
+
+                    $inventory = $this->inventory
+                        ->where('medicine_id', $medicine_id)
+                        ->where('unit_id', $unitId)
+                        ->first();
+
+                    if ($inventory) {
+                        $inventory->update(['total_first_aid' => $issuedQuantity]);
+                        $inventory->decrement('balance', $issuedQuantity);
+                    }
+                }
+
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+             report($ex);
+
+
+                Session::flash('error', 'Something went wrong, Please try again later!');
             }
 
+           
             return redirect(admin_url('ohc/medicine-first-aid/list'));
+
         } catch (Exception $ex) {
 
-            dd($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+
+            Session::flash('error', 'Something went wrong, Please try again later!');
+
+
             return redirect(admin_url('ohc/medicine-first-aid/list'));
         }
     }
+
 
 
     // public function edit(Request $request)

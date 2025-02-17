@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Models\OhcManagement\Report;
+
+use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Database\Eloquent\Model;
@@ -73,16 +75,31 @@ class Inventory extends Model
         $request = request();
         $insert_array = [
             'unit_id'=>$details->unit_id,
-            'medicine_id'=>$details->medicine,
-            'total_purchase'=>0,
+            'medicine_id'=>$details->id,
+            'total_purchase'=>$details->quantity,
             'total_issue'=>0,
             'total_received'=>0,
             'total_first_aid'=>0,
             'total_prescribe'=>0,
-            'balance'=>0,
+            'balance'=>$details->quantity,
             'created_by'=>Auth::id(),
         ];
         return $this->create($insert_array);
 
+    }
+
+    public function storepurchasedata($details)
+    {
+      return $this->where('unit_id',$details->unit_id)->where('medicine_id',$details->medicine_id)->update(['total_purchase'=> $details->quantity]);
+    }
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('ohc_report_inventory'));
+
+        // static::created(function ($model) {
+
+        //     $uniqueId = 'CMP-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
+        //     $model->update(['company_id' => $uniqueId]);
+        // });
     }
 }

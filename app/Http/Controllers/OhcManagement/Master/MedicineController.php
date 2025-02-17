@@ -165,7 +165,7 @@ class MedicineController extends Controller
                 $data =  $this->medicine->store();
                 $id =  $data->id;
                 $details = $this->medicine->selectOne($id);
-                $this->inventory->store($details);
+                // $this->inventory->store($details);
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
