@@ -27,6 +27,8 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\OhcManagement\Report\Inventory;
+
 
 class MedicineStockController extends Controller
 {
@@ -38,6 +40,7 @@ class MedicineStockController extends Controller
     private $medicine_stock;
     private $user;
     private $ohc_status;
+    private $inventory;
 
     public function __construct()
     {
@@ -50,6 +53,8 @@ class MedicineStockController extends Controller
         $this->department = new Department();
         $this->user = new User();
         $this->ohc_status = new OhcStatuslog();
+        $this->inventory = new Inventory();
+
 
     }
     public function index(Request $request)
@@ -419,6 +424,7 @@ class MedicineStockController extends Controller
             $createdby = $this->medicine_stock->where('id', $id)->value('created_by');
             $email = $this->user->where('id', $createdby)->value('email');
             $this->ohc_status->stockupdate($id);
+            $this->inventory->store($details);
 
             if (!$email) {
                 return redirect()->back()->with('error', 'User email not found.');

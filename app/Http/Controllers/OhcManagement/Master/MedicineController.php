@@ -26,6 +26,7 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Models\OhcManagement\Report\Inventory;
 
 class MedicineController extends Controller
 {
@@ -37,6 +38,7 @@ class MedicineController extends Controller
     private $user;
     private $uploadlog;
     private $ohc_statuslog;
+    private $inventory;
 
 
     public function __construct()
@@ -49,6 +51,7 @@ class MedicineController extends Controller
         $this->user = new User();
         $this->uploadlog = new UploadLog();
         $this->ohc_statuslog = new OhcStatuslog();
+        $this->inventory = new Inventory();
     }
 
 
@@ -89,7 +92,7 @@ class MedicineController extends Controller
                             // if (CheckUserPermission('view')) {
                             $btn = '<a href="' . admin_url('ohc/medicine/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
-                            if (CheckUserPermission('edit') ) {
+                            if (CheckUserPermission('edit')) {
                                 $btn .= '<a href="' . admin_url('ohc/medicine/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
 
@@ -160,19 +163,20 @@ class MedicineController extends Controller
             try {
 
                 $data =  $this->medicine->store();
-
-
+                $id =  $data->id;
+                $details = $this->medicine->selectOne($id);
+                $this->inventory->store($details);
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medicine/list'));
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine/list'));
         }
