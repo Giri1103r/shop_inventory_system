@@ -30,14 +30,16 @@
                                     <div class="row">
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">Emp Name</label>
-                                            <select name="emp_name" id="emp_name" class="form-control form-control-sm"
-                                                style="width: 100%">
-                                                <option value="">Select the Employee Name</option>
-                                            </select>
+                                            <label for="emp_name" class="form-label ">Injured Person Name</label>
+                                            <input type="text" name="emp_name" class="form-control" id="emp_name">
                                         </div>
 
-
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="location_of_incident" class="form-label ">Location of
+                                                Incident</label>
+                                            <input type="text" name="location_of_incident" class="form-control"
+                                                id="location_of_incident">
+                                        </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
                                             <div class="input-group date form-input custom-height">
@@ -59,19 +61,15 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {{-- <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label">{{ __('Patient Status') }}</label>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="status" class="form-label">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                @foreach ($patientstatus as $list)
-                                                    <option value="{{ $list->id }}">
-                                                        {{ $list->patient_status }}
-                                                    </option>
-                                                @endforeach
+                                                <option value="{{ encryptId(1) }}">Active</option>
+                                                <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
-                                        </div> --}}
-
+                                        </div>
                                         <div class="col-md-3 mb-3 d-flex align-items-end gap-2">
                                             <x-button-search class="me-2"></x-button-search>
                                             <x-button-reset class="ms-1"></x-button-reset>
@@ -95,13 +93,13 @@
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
 
-                                        <th>Employee Code</th>
-                                        <th>Employee Name</th>
+                                        <th>Injured Person Name</th>
+                                        <th>Location of Incident</th>
                                         <th>Date of Incident</th>
                                         <th>Time Of Incident</th>
-                                        <th>Treatment Start Time</th>
-                                        <th>Treatment End Time</th>
+                                        <th>Person Condition</th>
                                         <th>First Aider Name</th>
+                                        <th data-priority='3'>{{ __('common.status') }}</th>
                                         <th data-priority='2'>{{ __('common.created_by') }}</th>
                                         <th data-priority='1'>{{ __('common.action') }}</th>
                                     </tr>
@@ -144,31 +142,7 @@
             });
         });
 
-        $('#emp_name').select2({
-            ajax: {
-                url: '{{ admin_url('ohc/roadside-first-aid/employeename') }}',
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        search: params.term
-                    };
-                },
-                processResults: function(data) {
-                    return {
-                        results: $.map(data, function(item) {
-                            return {
-                                id: item.id,
-                                text: item.text
-                            };
-                        })
-                    };
-                }
-            },
-            minimumInputLength: 1,
-            dropdownCssClass: 'form-control',
-            selectionCssClass: 'form-control'
-        });
+
         $(function() {
             /* Initialize DataTable */
             var table = $('.datatable-list').DataTable({
@@ -190,6 +164,7 @@
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
                         d.status = $('#status').val();
+                        d.location_of_incident = $('#location_of_incident').val();
 
                     },
                     error: function(xhr) {
@@ -206,12 +181,12 @@
                     },
 
                     {
-                        data: 'emp_id',
-                        name: 'emp_id'
+                        data: 'name',
+                        name: 'name'
                     },
                     {
-                        data: 'emp_name',
-                        name: 'emp_name'
+                        data: 'location_of_incident',
+                        name: 'location_of_incident'
                     },
                     {
                         data: 'date_of_incident',
@@ -222,18 +197,17 @@
                         name: 'time_of_incident'
                     },
                     {
-                        data: 'treatment_start_time',
-                        name: 'treatment_start_time'
-                    },
-                    {
-                        data: 'treatment_end_time',
-                        name: 'treatment_end_time'
+                        data: 'person_condtion',
+                        name: 'person_condtion'
                     },
                     {
                         data: 'first_aider_name',
                         name: 'first_aider_name'
                     },
-
+                    {
+                        data: 'status',
+                        name: 'status'
+                    },
                     {
                         data: 'created_by',
                         name: 'created_by'
@@ -273,12 +247,15 @@
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
                                     var status = $('#status').val();
+                                    var location_of_incident = $('#location_of_incident').val();
+
                                     window.location.href =
                                         "{{ admin_url('ohc/roadside-first-aid/export/pdf') }}?search=" +
                                         searchValue +
                                         '&emp_name=' + emp_name +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
+                                        '&location_of_incident=' + location_of_incident +
                                         '&status=' + status
                                 }
                             },
@@ -290,12 +267,14 @@
                                     var emp_name = $('#emp_name').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
+                                    var location_of_incident = $('#location_of_incident').val();
                                     var status = $('#status').val();
                                     window.location.href =
                                         "{{ admin_url('ohc/roadside-first-aid/export/excel') }}?search=" +
                                         searchValue +
                                         '&emp_name=' + emp_name +
                                         '&from_date=' + from_date +
+                                        '&location_of_incident=' + location_of_incident +
                                         '&to_date=' + to_date +
                                         '&status=' + status
                                 }
@@ -332,46 +311,42 @@
                 table.draw();
             });
 
-            $(document).on('click', '.Close', function() {
+            /* Status Change */
+            $(document).on('click', '.statusChange', function() {
                 var id = $(this).data('id');
-                var login_id = $(this).data('login_id');
+                var types = $(this).data('type');
+                if (types == 1) {
+                    var title = '{{ __('Do You want to In-Activate Road Side First Aid') }}';
+                    var text = '{{ __('common.inactive') }}';
+                    var btncolor = '#dc3545'
 
-                var title = '{{ __('Do You want to Cancel the OPD Patient list') }}';
-                var text = '{{ __('Submit') }}';
-                var btncolor = '#28a745';
+                } else {
+                    var title = '{{ __('Do You want to Activate Road Side First Aid') }}';
+                    var text = '{{ __('common.active') }}';
+                    var btncolor = '#7ddc35'
+                }
 
                 Swal.fire({
                     title: title,
                     icon: 'warning',
-                    input: 'textarea',
-                    inputPlaceholder: '{{ __('Enter your remarks here...') }}',
-                    showCloseButton: true,
+                    showCancelButton: true,
                     confirmButtonText: text,
                     confirmButtonColor: btncolor,
                     customClass: {
-                        confirmButton: 'btn-skew'
+                        confirmButton: 'btn-skew',
+                        cancelButton: 'btn-skew'
                     },
-                    preConfirm: (remarks) => {
-                        if (!remarks) {
-                            Swal.showValidationMessage('{{ __('Remarks are required!') }}');
-                        }
-                        return remarks;
-                    }
                 }).then((result) => {
-                    if (result.isConfirmed) {
-                        var remarks = result.value;
 
 
+                    if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('ohc/roadside-first-aid/close') }}",
+                            url: "{{ admin_url('ohc/roadside-first-aid/status') }}",
                             type: 'post',
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
+
                             data: {
                                 id: id,
-                                login_id: login_id,
-                                remarks: remarks
+                                types: types
                             },
                             success: function(response) {
                                 const Toast = Swal.mixin({
@@ -381,10 +356,13 @@
                                     timer: 3000,
                                     timerProgressBar: true,
                                     didOpen: (toast) => {
-                                        toast.addEventListener('mouseenter',
-                                            Swal.stopTimer);
-                                        toast.addEventListener('mouseleave',
-                                            Swal.resumeTimer);
+                                        toast.addEventListener(
+                                            'mouseenter',
+                                            Swal.stopTimer)
+                                        toast.addEventListener(
+                                            'mouseleave',
+                                            Swal.resumeTimer
+                                        )
                                     }
                                 });
                                 Toast.fire({
@@ -394,22 +372,14 @@
                                 table.draw();
                             },
                             error: function(data) {
-                                if (data.status === 406 && data.responseJSON.msg ===
-                                    'module_exits') {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error',
-                                        text: 'Location Deletion Failed: Module Dependencies Exist.',
-                                    });
-                                } else {
-                                    $.notify(data.responseJSON.msg, "error");
-                                }
+                                $.notify(data.responseJSON.msg, "error");
                             }
                         });
-                    } else if (result.dismiss === Swal.DismissReason.cancel) {
-                        Swal.fire('{{ __('Action Closed') }}', '', 'info');
+                    } else if (result.isDenied) {
+                        Swal.fire('Something went wrong', '', 'info');
                     }
-                });
+                })
+
             });
 
         });

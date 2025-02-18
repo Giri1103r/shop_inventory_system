@@ -6,22 +6,24 @@ namespace App\Models\OhcManagement\Opd;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+
 class RoadsideFirstAid extends Model
 {
     protected $table = 'ohc_opd_roadside_first_aid';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'emp_id',
-        'emp_name',
+        'name',
         'date_of_incident',
+        'location_of_incident',
         'time_of_incident',
-        'treatment_provided',
-        'treatment_start_time',
-        'treatment_end_time',
+        'person_condtion',
+        'first_aid_provided',
         'first_aider_name',
-        'follow_up_required',
-        'referred_to',
+        'transport_to_medical_facility',
+        'first_aider_name',
+        'transport_method',
+        'incident_report_filled',
         'remarks',
         'status',
         'trash',
@@ -35,7 +37,9 @@ class RoadsideFirstAid extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_opd_first_aid.*');
+        $query = $this->select('ohc_opd_roadside_first_aid.*', 'ohc_opd_injured_condition.injured_condtion')
+            ->leftjoin('ohc_opd_injured_condition', 'ohc_opd_roadside_first_aid.person_condtion', '=', 'ohc_opd_injured_condition.id')
+            ->where('ohc_opd_roadside_first_aid.trash', 'NO');
 
 
         $org_total =  $query;
@@ -52,21 +56,26 @@ class RoadsideFirstAid extends Model
         }
 
         if ($request->has('emp_name') && $request->emp_name) {
-            $query = $query->where('ohc_opd_first_aid.emp_name', 'LIKE', '%' . $request->emp_name . '%');
+            $query = $query->where('ohc_opd_roadside_first_aid.name', 'LIKE', '%' . $request->emp_name . '%');
         }
-
+        if ($request->has('location_of_incident') && $request->location_of_incident) {
+            $query = $query->where('ohc_opd_roadside_first_aid.location_of_incident', 'LIKE', '%' . $request->location_of_incident . '%');
+        }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('ohc_opd_first_aid.created_at', [$startDate, $endDate]);
+            $query->whereBetween('ohc_opd_roadside_first_aid.created_at', [$startDate, $endDate]);
         } elseif ($request->has('from_date') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('ohc_opd_first_aid.created_at', '>=', $startDate);
+            $query->where('ohc_opd_roadside_first_aid.created_at', '>=', $startDate);
         } elseif ($request->has('to_date') && !empty($request->to_date)) {
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('ohc_opd_first_aid.created_at', '<=', $endDate);
+            $query->where('ohc_opd_roadside_first_aid.created_at', '<=', $endDate);
         }
+        if ($request->has('status') && $request->status) {
 
+            $query = $query->where('ohc_opd_roadside_first_aid.status', decryptId($request->status));
+        }
 
         $data_count = $query;
         $total_records = $data_count->count();
@@ -92,16 +101,17 @@ class RoadsideFirstAid extends Model
         $request = request();
 
         $insert_array = [
-            'emp_id' => $request->emp_id,
-            'emp_name' => $request->emp_name,
+
+            'name' => $request->emp_name,
             'date_of_incident' => DBdateformat($request->date_of_incident),
+            'location_of_incident' => $request->location_of_incident,
             'time_of_incident' => $request->time_of_incident,
-            'treatment_provided' => $request->treatment_provided,
-            'treatment_start_time' => $request->treatment_start_time,
-            'treatment_end_time' => $request->treatment_end_time,
+            'person_condtion' => $request->person_condtion,
+            'transport_to_medical_facility' => $request->transport_to_medical_facility,
+            'first_aid_provided' => $request->first_aid_provided,
             'first_aider_name' => $request->first_aider_name,
-            'follow_up_required' => $request->follow_up,
-            'referred_to' => $request->hospital_name,
+            'transport_method' => $request->transport_method,
+            'incident_report_filled' => $request->incident_report_filled,
             'remarks' => $request->remarks,
             'created_by' => Auth::id(),
         ];
@@ -113,33 +123,101 @@ class RoadsideFirstAid extends Model
         $request = request();
 
         $update_array = [
-            'emp_id' => $request->emp_id,
-            'emp_name' => $request->emp_name,
-            'date_of_incident' => $request->date_of_incident,
+            'name' => $request->emp_name,
+            'date_of_incident' => DBdateformat($request->date_of_incident),
+            'location_of_incident' => $request->location_of_incident,
             'time_of_incident' => $request->time_of_incident,
-            'treatment_provided' => $request->treatment_provided,
-            'treatment_start_time' => $request->treatment_start_time,
-            'treatment_end_time' => $request->treatment_end_time,
+            'person_condtion' => $request->person_condtion,
+            'transport_to_medical_facility' => $request->transport_to_medical_facility,
+            'first_aid_provided' => $request->first_aid_provided,
             'first_aider_name' => $request->first_aider_name,
-            'follow_up_required' => $request->follow_up,
-            'referred_to' => $request->hospital_name,
+            'transport_method' => $request->transport_method,
+            'incident_report_filled' => $request->incident_report_filled,
             'remarks' => $request->remarks,
             'created_by' => Auth::id(),
             'updated_by' => Auth::id(),
 
         ];
-        return $this->where('id',$id)->update($update_array);
+        return $this->where('id', $id)->update($update_array);
     }
 
     public function Selectone($id)
     {
-        $data =  $this->where('ohc_opd_first_aid.id', $id)
-            ->select('ohc_opd_first_aid.*')
-            ->where('ohc_opd_first_aid.status', 1)
-            ->where('ohc_opd_first_aid.trash', 'No')
+        $data =  $this->where('ohc_opd_roadside_first_aid.id', $id)
+            ->select('ohc_opd_roadside_first_aid.*')
+
+            ->where('ohc_opd_roadside_first_aid.trash', 'No')
             ->first();
         return $data;
     }
 
+    public function UniqueCheck($data)
+    {
 
+        return $this->where('name',  $data)->get();
+    }
+
+    public function ExistuniqueCheck($data, $id)
+    {
+        return $this->where('name',  $data)
+            ->where('id', '!=', $id)
+            ->get();
+    }
+    public function statuschange($id)
+    {
+        $request = request();
+
+        $type = $request->types;
+        if ($type == 1) {
+            $update_data = array(
+                'status' => 0,
+            );
+        } else {
+            $update_data = array(
+                'status' => 1,
+            );
+        }
+
+        return $this->where('id', $id)->update($update_data);
+    }
+    public function exportdata()
+    {
+        $request = request();
+        $search = '';
+        $query = $this->select('ohc_opd_roadside_first_aid.*');
+        if ($request->search != null || $request->search != '') {
+            $search = $request->search;
+
+            $query =  $query->Where(function ($query) use ($search) {
+                $query->orWhere('emp_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('emp_name', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        if ($request->has('emp_name') && $request->emp_name) {
+            $query = $query->where('ohc_opd_roadside_first_aid.name', 'LIKE', '%' . $request->emp_name . '%');
+        }
+
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('ohc_opd_roadside_first_aid.created_at', [$startDate, $endDate]);
+        } elseif ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('ohc_opd_roadside_first_aid.created_at', '>=', $startDate);
+        } elseif ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('ohc_opd_roadside_first_aid.created_at', '<=', $endDate);
+        }
+        if ($request->has('location_of_incident') && $request->location_of_incident) {
+            $query = $query->where('ohc_opd_roadside_first_aid.location_of_incident', 'LIKE', '%' . $request->location_of_incident . '%');
+        }
+        if ($request->has('status') && $request->status) {
+
+            $query = $query->where('ohc_opd_roadside_first_aid.status', decryptId($request->status));
+        }
+        $query->orderBy('id', 'DESC');
+
+        return  $query->get();
+    }
 }

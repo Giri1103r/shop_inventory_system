@@ -30,13 +30,17 @@
                                     <div class="row">
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">Emp Name</label>
-                                            <select name="emp_name" id="emp_name" class="form-control form-control-sm"
+                                            <label for="emp_id" class="form-label ">Emp Id</label>
+                                            <select name="emp_id" id="emp_id" class="form-control form-control-sm"
                                                 style="width: 100%">
                                                 <option value="">Select the Employee Name</option>
                                             </select>
                                         </div>
-
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_id" class="form-label ">Emp Name</label>
+                                            <input type="text" class="form-control" name="emp_name" id="emp_name"
+                                                readonly>
+                                        </div>
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
@@ -59,19 +63,16 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {{-- <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label">{{ __('Patient Status') }}</label>
+
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="status" class="form-label">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                @foreach ($patientstatus as $list)
-                                                    <option value="{{ $list->id }}">
-                                                        {{ $list->patient_status }}
-                                                    </option>
-                                                @endforeach
+                                                <option value="{{ encryptId(1) }}">Active</option>
+                                                <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
-                                        </div> --}}
-
+                                        </div>
                                         <div class="col-md-3 mb-3 d-flex align-items-end gap-2">
                                             <x-button-search class="me-2"></x-button-search>
                                             <x-button-reset class="ms-1"></x-button-reset>
@@ -102,6 +103,7 @@
                                         <th>Treatment Start Time</th>
                                         <th>Treatment End Time</th>
                                         <th>First Aider Name</th>
+                                        <th data-priority='3'>{{ __('common.status') }}</th>
                                         <th data-priority='2'>{{ __('common.created_by') }}</th>
                                         <th data-priority='1'>{{ __('common.action') }}</th>
                                     </tr>
@@ -140,11 +142,11 @@
 
             var toDatepicker = flatpickr("#to_date", {
                 dateFormat: "d-m-Y",
-                minDate: "today"
+
             });
         });
 
-        $('#emp_name').select2({
+        $('#emp_id').select2({
             ajax: {
                 url: '{{ admin_url('ohc/first-aid/employeename') }}',
                 dataType: 'json',
@@ -169,6 +171,30 @@
             dropdownCssClass: 'form-control',
             selectionCssClass: 'form-control'
         });
+
+        $(document).on('change', '#emp_id', function() {
+            var empId = $(this).val();
+            if (empId) {
+                $.ajax({
+                    url: "{{ admin_url('ohc/first-aid/emp-details/') }}" + empId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.employee) {
+                            $('#emp_name').val(response.employee.emp_name).prop('readonly', false);
+
+                        } else {
+                            alert("No employee details found.");
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching . Please try again.');
+                    }
+                });
+            } else {
+                $('#emp_name').val('').prop('disabled', true);
+            }
+        });
         $(function() {
             /* Initialize DataTable */
             var table = $('.datatable-list').DataTable({
@@ -189,8 +215,8 @@
                         d.emp_name = $('#emp_name').val();
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
+                        d.emp_id = $('#emp_id').val();
                         d.status = $('#status').val();
-
                     },
                     error: function(xhr) {
                         if (xhr.status === 419) {
@@ -233,7 +259,10 @@
                         data: 'first_aider_name',
                         name: 'first_aider_name'
                     },
-
+                    {
+                        data: 'status',
+                        name: 'status'
+                    },
                     {
                         data: 'created_by',
                         name: 'created_by'
@@ -272,6 +301,7 @@
                                     var emp_name = $('#emp_name').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
+                                    var emp_id = $('#emp_id').val();
                                     var status = $('#status').val();
                                     window.location.href =
                                         "{{ admin_url('ohc/first-aid/export/pdf') }}?search=" +
@@ -279,6 +309,7 @@
                                         '&emp_name=' + emp_name +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
+                                        '&emp_id=' + emp_id+
                                         '&status=' + status
                                 }
                             },
@@ -290,6 +321,7 @@
                                     var emp_name = $('#emp_name').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
+                                    var emp_id = $('#emp_id').val();
                                     var status = $('#status').val();
                                     window.location.href =
                                         "{{ admin_url('ohc/first-aid/export/excel') }}?search=" +
@@ -297,6 +329,7 @@
                                         '&emp_name=' + emp_name +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
+                                        '&emp_id=' + emp_id+
                                         '&status=' + status
                                 }
                             }
@@ -332,46 +365,42 @@
                 table.draw();
             });
 
-            $(document).on('click', '.Close', function() {
+           /* Status Change */
+           $(document).on('click', '.statusChange', function() {
                 var id = $(this).data('id');
-                var login_id = $(this).data('login_id');
+                var types = $(this).data('type');
+                if (types == 1) {
+                    var title = '{{ __('Do You want to In-Activate First Aid') }}';
+                    var text = '{{ __('common.inactive') }}';
+                    var btncolor = '#dc3545'
 
-                var title = '{{ __('Do You want to Cancel the OPD Patient list') }}';
-                var text = '{{ __('Submit') }}';
-                var btncolor = '#28a745';
+                } else {
+                    var title = '{{ __('Do You want to Activate First Aid') }}';
+                    var text = '{{ __('common.active') }}';
+                    var btncolor = '#7ddc35'
+                }
 
                 Swal.fire({
                     title: title,
                     icon: 'warning',
-                    input: 'textarea',
-                    inputPlaceholder: '{{ __('Enter your remarks here...') }}',
-                    showCloseButton: true,
+                    showCancelButton: true,
                     confirmButtonText: text,
                     confirmButtonColor: btncolor,
                     customClass: {
-                        confirmButton: 'btn-skew'
+                        confirmButton: 'btn-skew',
+                        cancelButton: 'btn-skew'
                     },
-                    preConfirm: (remarks) => {
-                        if (!remarks) {
-                            Swal.showValidationMessage('{{ __('Remarks are required!') }}');
-                        }
-                        return remarks;
-                    }
                 }).then((result) => {
-                    if (result.isConfirmed) {
-                        var remarks = result.value;
 
 
+                    if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('ohc/first-aid/close') }}",
+                            url: "{{ admin_url('ohc/first-aid/status') }}",
                             type: 'post',
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
+
                             data: {
                                 id: id,
-                                login_id: login_id,
-                                remarks: remarks
+                                types: types
                             },
                             success: function(response) {
                                 const Toast = Swal.mixin({
@@ -381,10 +410,13 @@
                                     timer: 3000,
                                     timerProgressBar: true,
                                     didOpen: (toast) => {
-                                        toast.addEventListener('mouseenter',
-                                            Swal.stopTimer);
-                                        toast.addEventListener('mouseleave',
-                                            Swal.resumeTimer);
+                                        toast.addEventListener(
+                                            'mouseenter',
+                                            Swal.stopTimer)
+                                        toast.addEventListener(
+                                            'mouseleave',
+                                            Swal.resumeTimer
+                                        )
                                     }
                                 });
                                 Toast.fire({
@@ -394,24 +426,15 @@
                                 table.draw();
                             },
                             error: function(data) {
-                                if (data.status === 406 && data.responseJSON.msg ===
-                                    'module_exits') {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error',
-                                        text: 'Location Deletion Failed: Module Dependencies Exist.',
-                                    });
-                                } else {
-                                    $.notify(data.responseJSON.msg, "error");
-                                }
+                                $.notify(data.responseJSON.msg, "error");
                             }
                         });
-                    } else if (result.dismiss === Swal.DismissReason.cancel) {
-                        Swal.fire('{{ __('Action Closed') }}', '', 'info');
+                    } else if (result.isDenied) {
+                        Swal.fire('Something went wrong', '', 'info');
                     }
-                });
-            });
+                })
 
+            });
         });
     </script>
 @endpush

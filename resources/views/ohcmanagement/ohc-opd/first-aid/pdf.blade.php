@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'OPD Patient')
+@section('title', 'First Aid')
 @section('content')
 
     <div style="width:100%;">
@@ -25,54 +25,54 @@
                             {{ $i }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->emp_id }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->emp_name }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->cheif_complaint }}
+                            {{ displaydateformat($value->date_of_incident )}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->gender }}
+                            {{ $value->time_of_incident }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getUnitname($value->unit_id) }}
+                            {{ $value->treatment_provided }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getDepartment($value->department_id) }}
+                            {{ ($value->treatment_start_time) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->date) }}
+                            {{ ($value->treatment_end_time) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ ($value->first_aider_name) }}
                         </td>
 
+
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->time }}
+                            @php
+                                $follow_up_required = $value->follow_up_required == 1 ? 'Yes' : 'NO';
+                            @endphp
+                            {{ $follow_up_required }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getSuggestedBy($value->suggested_by) }}
+                            {{ ($value->referred_to) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->treatment }}
+                            {{ $value->remarks }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php
-                                $vital_checkup = $value->vital_checkup == 1 ? 'Yes' : 'NO';
+                                $status = $value->status == 1 ? 'Active' : 'In-Active';
                             @endphp
-                            {{ $vital_checkup }}
+                            {{ $status }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getPatientStatus($value->patient_status) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            @php
-                                $fitness_certificate = $value->fitness_certificate == 1 ? 'Required' : 'Not Required';
-                            @endphp
-                            {{ $fitness_certificate }}
-                        </td>
-
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->cancel_remarks }}
+                            {{ displaydateformat($value->created_at) }}
                         </td>
                     </tr>
                     @php

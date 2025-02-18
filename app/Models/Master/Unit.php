@@ -280,4 +280,8 @@ class Unit extends Model
         $id =Auth::user()->unit_id;
         return Unit::where('trash','NO')->where('id','!=', $id)->where('status','!=',0)->get();
     }
+
+    public function getUnitcount(){
+        return $this->where('status', 1)->where('trash', 'NO')->pluck('id');
+    }
 }

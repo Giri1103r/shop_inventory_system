@@ -791,7 +791,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/unique', [MedicineController::class, 'Uniquecheck']);
                 Route::post('/hsn-unique', [MedicineController::class, 'hsnNumber']);
                 Route::get('/approval/view/{id}', [MedicineController::class, 'approval']);
-                Route::post('/approval/submit/', [MedicineController::class, 'approvalsubmit']);
+                Route::post('/approval/submit', [MedicineController::class, 'approvalsubmit']);
             });
 
             Route::group(['prefix' => 'ohc/vendor'], function () {
@@ -999,6 +999,10 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/export/pdf', [FirstAidController::class, 'exportPdf']);
                 Route::post('/status', [FirstAidController::class, 'statusChange']);
                 Route::get('/quantity', [FirstAidController::class, 'quantity']);
+                Route::get('/employeename', [FirstAidController::class, 'employeename']);
+                Route::get('/emp-details/{emp_id}', [FirstAidController::class, 'employeedetails']);
+
+
             });
 
             Route::group(['prefix' => 'ohc/roadside-first-aid'], function () {
@@ -1014,6 +1018,10 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/export/pdf', [RoadsideFirstAidController::class, 'exportPdf']);
                 Route::post('/status', [RoadsideFirstAidController::class, 'statusChange']);
                 Route::get('/quantity', [RoadsideFirstAidController::class, 'quantity']);
+                Route::post('/unique', [RoadsideFirstAidController::class, 'Uniquecheck']);
+                Route::get('/generalpdf/{id}', [RoadsideFirstAidController::class, 'incidentreport']);
+
+
             });
             Route::group(['prefix' => 'ohc/roadside-first-aid'], function () {
                 Route::get('/list', [RoadsideFirstAidController::class, 'index']);

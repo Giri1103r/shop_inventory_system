@@ -32,10 +32,10 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="firstaid"
-                                        action="{{ admin_url('ohc/first-aid/add/submit') }}">
+                                        action="{{ admin_url('ohc/first-aid/edit/submit') }}">
                                         @csrf
                                         <input type="hidden" name="id" class="id" id="id"
-                                            value="{{ encryptId() }}">
+                                            value="{{ encryptId($opd_first_aid->id) }}">
                                         <div class="row">
 
                                             <div class="col-md-4 mb-2">
@@ -147,15 +147,16 @@
                                                     <select name="follow_up" id="follow_up"
                                                         class="form-select single-select" style="width:100%">
                                                         <option value="">Select the Option</option>
-
-                                                        {{ $opd_first_aid->follow_up_required == 1 ? 'selected' : '' }}>
-                                                        Yes</option>
+                                                        <option value="1"
+                                                            {{ $opd_first_aid->follow_up_required == 1 ? 'selected' : '' }}>
+                                                            Yes</option>
                                                         <option value="2"
                                                             {{ $opd_first_aid->follow_up_required == 2 ? 'selected' : '' }}>
-                                                            NO</option>
+                                                            No</option>
                                                     </select>
                                                 </div>
                                             </div>
+
                                             <div class="col-md-4 hospital_name " style="display: none ">
                                                 <div class="form-group form-input">
                                                     <label for="follow" class="form-label require">Refered To</label>
@@ -196,19 +197,63 @@
         // follow up required
 
         $(document).ready(function() {
+            var fromDatepicker = flatpickr("#date_of_incident", {
+                dateFormat: "d-m-Y",
+                maxDate: new Date(),
 
+            });
+            // time
+            var currentTime = new Date().toLocaleTimeString('en-GB', {
+                hour: '2-digit',
+                minute: '2-digit',
+
+            });
+
+            var timepicker = flatpickr("#time_of_incident", {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true,
+
+                minTime: currentTime,
+            });
+
+            // treatment start and time
+
+            let startPicker = flatpickr("#treatment_start_time", {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                defaultDate: "{{$opd_first_aid->treatment_start_time }}",
+                time_24hr: false,
+                onChange: function(selectedDates, dateStr) {
+                    endPicker.set("minTime", dateStr);
+                }
+            });
+
+            let endPicker = flatpickr("#treatment_end_time", {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                defaultDate: "{{$opd_first_aid->treatment_end_time }}",
+                time_24hr: false,
+            });
 
             // follow up required
-
-            $('#follow_up').change(function() {
-                var selectedValue = $(this).val();
-
+            function toggleDetailsField() {
+                var selectedValue = $('#follow_up').val();
                 if (selectedValue == '1') {
                     $('.hospital_name').show();
                 } else {
                     $('.hospital_name').hide();
                 }
-            });
+            }
+            toggleDetailsField();
+
+
+            $('#follow_up').change(toggleDetailsField);
+
+
         });
         // getting the employee/worker details
         $('#emp_id').select2({

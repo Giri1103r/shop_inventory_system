@@ -34,208 +34,106 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">OPD Patient List</h4>
+                                        <h4 class="text-white">First Aid</h4>
                                     </div>
                                 </div>
                                 <div class="row">
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Is Outside Worker') }}</label>
+                                        <label class="form-label view_label">{{ __('Employee Id') }}</label>
                                         <div class="view_data">
-                                            @if ($opdpatient->is_outside_employee == 1)
-                                                <b><i class="fa-solid fa-check"
-                                                        style="color: #267709; width: 15px;"></i></b>
-                                            @else
-                                            <b><i class="fa fa-times"
-                                                style="color: #ee0a0a; width: 15px;"></i></b>
-                                            @endif
+                                            {{ isset($opd_first_aid->emp_id) ? $opd_first_aid->emp_id : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Employee Name') }}</label>
                                         <div class="view_data">
-                                            {{ isset($opdpatient->emp_name) ? $opdpatient->emp_name : '' }}
+                                            {{ isset($opd_first_aid->emp_name) ? $opd_first_aid->emp_name : '' }}
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Date of Incident') }}</label>
+                                        <div class="view_data">
+                                            {{ displaydateformat(isset($opd_first_aid->date_of_incident) ? $opd_first_aid->date_of_incident : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Employee Id') }}</label>
+                                        <label class="form-label view_label">{{ __('Time of Incident') }}</label>
                                         <div class="view_data">
-                                            {{ isset($opdpatient->emp_id) ? $opdpatient->emp_id : '' }}
+                                            {{ (isset($opd_first_aid->time_of_incident) ? $opd_first_aid->time_of_incident : '') }}
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 col-md-8 form-input">
+                                        <label class="form-label view_label">{{ __('Treatment Provided') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($opd_first_aid->treatment_provided) ? $opd_first_aid->treatment_provided : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Unit') }}</label>
+                                        <label class="form-label view_label">{{ __('Treatment start Time') }}</label>
                                         <div class="view_data">
-                                            {{ getUnitname(isset($opdpatient->unit_id) ? $opdpatient->unit_id : '') }}
+                                            {{ isset($opd_first_aid->treatment_start_time) ? $opd_first_aid->treatment_start_time : '' }}
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Treatment end Time') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($opd_first_aid->treatment_end_time) ? $opd_first_aid->treatment_end_time : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Department') }}</label>
+                                        <label class="form-label view_label">{{ __('First Aider Name') }}</label>
                                         <div class="view_data">
-                                            {{ getDepartment(isset($opdpatient->department_id) ? $opdpatient->department_id : '') }}
+                                            {{ (isset($opd_first_aid->first_aider_name) ? $opd_first_aid->first_aider_name : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Mobile Number') }}</label>
+                                        <label class="form-label view_label">{{ __('Follow up Required') }}</label>
                                         <div class="view_data">
-                                            {{ isset($opdpatient->mobile_no) ? $opdpatient->mobile_no : '' }}
+                                            @if ( $opd_first_aid->follow_up_required == 1)
+                                                {{ __('Yes') }}
+                                            @else
+                                                {{ __('No') }}
+                                            @endif
+
+                                        </div>
+
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Refered To ') }}</label>
+                                        <div class="view_data">
+                                            {{ (isset($opd_first_aid->referred_to) ? $opd_first_aid->referred_to : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Emergency Contact') }}</label>
+                                        <label class="form-label view_label">{{ __('Status') }}</label>
                                         <div class="view_data">
-                                            {{ isset($opdpatient->emergency_contact) ? $opdpatient->emergency_contact : '' }}
+                                            @if ($opd_first_aid->status == 1)
+                                                {{ __('Active') }}
+                                            @else
+                                                {{ __('In-active') }}
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Created By') }}</label>
+                                        <div class="view_data">
+                                            {{getUsername(isset($opd_first_aid->created_by) ? $opd_first_aid->created_by : '')  }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Created Date') }}</label>
+                                        <div class="view_data">
+                                            {{ displaydateformat(isset($opd_first_aid->created_at) ? $opd_first_aid->created_at : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-8 form-input">
-                                        <label class="form-label view_label">{{ __('Address') }}</label>
+                                        <label class="form-label view_label">{{ __('Remarks ') }}</label>
                                         <div class="view_data">
-                                            {{ isset($opdpatient->address) ? $opdpatient->address : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Date of birth') }}</label>
-                                        <div class="view_data">
-                                            {{ displaydateformat(isset($opdpatient->dob) ? $opdpatient->dob : '') }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Gender') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($opdpatient->gender) ? $opdpatient->gender : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Date ') }}</label>
-                                        <div class="view_data">
-                                            {{ displaydateformat(isset($opdpatient->date) ? $opdpatient->date : '') }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Time ') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($opdpatient->time) ? $opdpatient->time : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-8 form-input">
-                                        <label class="form-label view_label">{{ __('Cheif Complaint ') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($opdpatient->cheif_complaint) ? $opdpatient->cheif_complaint : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Vital Check Up') }}</label>
-                                        <div class="view_data">
-                                            @if ($opdpatient->vital_checkup == 1)
-                                                <b><i class="fa-solid fa-check"
-                                                        style="color: #267709; width: 15px;"></i></b>
-                                            @else
-                                            <b><i class="fa fa-times"
-                                                style="color: #ee0a0a; width: 15px;"></i></b>
-                                            @endif
-                                        </div>
-
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Suggested By') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($opdpatient->suggested_by) ? $opdpatient->suggested_by : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('First Aid Treatment') }}</label>
-                                        <div class="view_data">
-                                            @if ($opdpatient->first_aid_treatment== 1)
-                                                <b><i class="fa-solid fa-check"
-                                                        style="color: #267709; width: 15px;"></i></b>
-                                            @else
-                                            <b><i class="fa fa-times"
-                                                style="color: #ee0a0a; width: 15px;"></i></b>
-                                            @endif
-                                        </div>
-
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Treatment') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($opdpatient->treatment) ? $opdpatient->treatment : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="table-responsive">
-                                        <div class="col-md-12">
-                                            <table class="table table-bordered ">
-
-                                                <thead class="bg-secondary" style="color: #ffff">
-                                                    <tr>
-                                                        <th>S.No</th>
-                                                        <th>Medicine Name</th>
-                                                        <th>Available Quantity</th>
-                                                        <th>Quantity</th>
-                                                        <th>Remarks</th>
-                                                    </tr>
-                                                </thead>
-
-                                                <tbody>
-                                                    @if ($opd_firstaid->isEmpty())
-                                                        <tr>
-                                                            <td colspan="5" class="text-center">No data available</td>
-                                                        </tr>
-                                                    @else
-                                                        @foreach ($opd_firstaid as $data)
-                                                            <tr>
-                                                                <td>{{ $loop->iteration }}</td>
-                                                                <td>{{ getMedicinename($data->medicine_id) }}</td>
-                                                                <td>{{ $data->available_quantity }}</td>
-                                                                <td>{{ $data->quantity }}</td>
-                                                                <td>{{ $data->remarks }}</td>
-                                                            </tr>
-                                                        @endforeach
-                                                    @endif
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Is Reffered') }}</label>
-                                        <div class="view_data">
-                                            @if ($opdpatient->is_refered== 1)
-                                                <b><i class="fa-solid fa-check"
-                                                        style="color: #267709; width: 15px;"></i></b>
-                                            @else
-                                            <b><i class="fa fa-times"
-                                                style="color: #ee0a0a; width: 15px;"></i></b>
-                                            @endif
-                                        </div>
-
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Hospital Name') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($isreffered->hospital_name) ? $isreffered->hospital_name : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('First Aiders') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($isreffered->first_aider) ? $isreffered->first_aider : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('First Aider Mobile number') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($isreffered->mobile_no) ? $isreffered->mobile_no : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Vechicle') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($isreffered->refered_vechicle) ? $isreffered->refered_vechicle : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Patient Status') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($opdpatient->patient_status) ? $opdpatient->patient_status : '' }}
+                                            {{ isset($opd_first_aid->remarks) ? $opd_first_aid->remarks : '' }}
                                         </div>
                                     </div>
                                 </div>
@@ -245,7 +143,5 @@
                 </div>
             </div>
         </div>
-        </form>
     </div>
-
 @stop

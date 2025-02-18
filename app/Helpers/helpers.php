@@ -1535,6 +1535,20 @@ if (!function_exists('getMonth')) {
             }
         }
     }
+    if (!function_exists('getPersonalCondition')) {
+
+        function getPersonalCondition($userid)
+        {
+
+            $injured_condtion = DB::table('ohc_opd_injured_condition')->select('injured_condtion')->where('id', $userid)->where('status', 1)->where('trash', 'NO')->first();
+
+            if ($injured_condtion == null) {
+                return '';
+            } else {
+                return $injured_condtion->injured_condtion;
+            }
+        }
+    }
     function removeUnderScore($string)
     {
         return Str::replace('_', " ", $string);

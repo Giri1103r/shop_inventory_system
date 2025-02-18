@@ -107,7 +107,53 @@
                                 </div>
 
 
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Status Logs</h4>
+                                    </div>
+                                </div>
 
+                                <div class="table-responsive">
+                                    <div class="col-md-12">
+                                        <table class="table table-bordered">
+                                            <thead class="bg-secondary" style="color: #ffff">
+                                                <tr>
+                                                    <th>From Status</th>
+                                                    <th>To Status</th>
+                                                    <th>Remarks</th>
+                                                    <th>Approver Name</th>
+                                                    <th>Approver Date</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                @foreach ($logdata as $log)
+                                                <tr>
+                                                    <td>
+                                                        @if($log['from_status'] == STATUS_OHC_MEDICINE_REQUEST)
+                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Medicine Request</span>
+                                                            @elseif($log['from_status'] == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING)
+                                                            <span class='badge bg-info' style='font-size: 1.0em;'>EHS Head Apporval Pending</span>
+                                                            @endif
+                                                    </td>
+
+                                                    <td>
+                                                        @if($log['to_status'] == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING)
+                                                            <span class='badge bg-info' style='font-size: 1.0em;'>EHS Head Apporval Pending</span>
+                                                        @elseif($log['to_status'] == STATUS_OHC_EHS_HEAD_APPROVED)
+                                                            <span class='badge bg-success' style='font-size: 1.0em;'>EHS Head Approved</span>
+                                                        @endif
+                                                    </td>
+
+                                                    <td>{{ isset($log['remarks']) ? $log['remarks'] : '-' }}</td>
+                                                    <td>{{ isset($log['created_by']) ? getUsername($log['created_by']) : '-' }}</td>
+                                                    <td>{{ isset($log['created_at']) ? Displaydateformat($log['created_at']) : '-' }}</td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
 
 
                             </div>

@@ -401,7 +401,7 @@ class MedicineStockController extends Controller
     {
         try {
             $id = decryptId($request->id);
-// dd( $id);
+
             $rules = [
                 'approver_name' => 'required',
                 'remarks' => 'required',

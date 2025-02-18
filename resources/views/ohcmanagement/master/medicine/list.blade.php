@@ -112,7 +112,6 @@
                                         <th>Medicine Name</th>
                                         <th>Pack</th>
                                         <th>HSN Number</th>
-                                        <th>Unit</th>
                                         <th>ThresholdLimit</th>
                                         <th>Expire Date</th>
                                         <th>{{ __('common.status') }}</th>
@@ -227,10 +226,6 @@
                     {
                         data: 'hsn',
                         name: 'hsn'
-                    },
-                    {
-                        data: 'unit_id',
-                        name: 'unit_id'
                     },
                     {
                         data: 'threshold_limit',

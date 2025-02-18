@@ -68,21 +68,6 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Unit</label>
-                                                    <select name="unit_id" id="unit_id" class="form-select single-select"
-                                                        style="width: 100%">
-                                                        <option value="">Select the unit</option>
-                                                        @foreach ($unit as $list)
-                                                        <option value="{{$list->id}}">{{$list->unit_name}}</option>
-                                                    @endforeach
-                                                    </select>
-                                                    @error('unit_id')
-                                                        <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
                                                     <label class="form-label require">Threshold Limit</label>
                                                     <input type="text" name="threshold_limit" id="threshold_limit"
                                                         class="form-control" placeholder="Enter the threshold limit">
@@ -174,9 +159,9 @@
                                 medicine_name: function() {
                                     return $('#medicine').val();
                                 },
-                                unit_id: function() {
-                                    return $('#unit_id').val();
-                                },
+                                // unit_id: function() {
+                                //     return $('#unit_id').val();
+                                // },
                             },
                         },
                     },
@@ -190,15 +175,15 @@
                         minlength: 3,
                         maxlength: 30,
                         regex: /^[a-zA-Z0-9\s\-]*$/,
-                        remote: {
-                            url: '{{ admin_url('ohc/medicine/hsn-unique') }}',
-                            type: 'post',
-                            data: {
-                                hsn: function() {
-                                    return $('#hsn').val();
-                                }
-                            }
-                        }
+                        // remote: {
+                        //     url: '{{ admin_url('ohc/medicine/hsn-unique') }}',
+                        //     type: 'post',
+                        //     data: {
+                        //         hsn: function() {
+                        //             return $('#hsn').val();
+                        //         }
+                        //     }
+                        // }
                     },
                     unit_id: {
                         required: true,
@@ -221,7 +206,7 @@
                         minlength: "Medicine name must be at least 3 characters.",
                         maxlength: "Medicine name cannot exceed 100 characters.",
                         regex: "Medicine name contains invalid characters.",
-                        remote: "This Medicine Name should be unique according to the unit.",
+                        remote: "This Medicine Name should be unique .",
                     },
                     pack: {
                         required: "Pack details Cannot be empty.",

@@ -31,7 +31,7 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="firstaid"
+                                    <form method="POST" id="roadsidefirstaid"
                                         action="{{ admin_url('ohc/roadside-first-aid/add/submit') }}">
                                         @csrf
 
@@ -40,14 +40,14 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Person Injured Name</label>
-                                                    <input type="text" name="person_name" id="personname_"
-                                                    class="form-control" placeholder="Injured Person Name" >
+                                                    <input type="text" name="emp_name" id="emp_name"
+                                                        class="form-control" placeholder="Injured Person Name">
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4 mb-2 department">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Date Of incident</label>
+                                                    <label class="form-label require">Date of incident</label>
 
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="date_of_incident" id="date_of_incident"
@@ -76,21 +76,24 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Location of Incident</label>
-                                                    <input type="text" name="person_name" id="personname_"
-                                                    class="form-control" placeholder="Injured Person Name" >
+                                                    <input type="text" name="location_of_incident"
+                                                        id="location_of_incident" class="form-control"
+                                                        placeholder="Location of the incident">
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="Fitness" class="require">Injured Person's Condition
-                                                        </label>
-                                                    <select name="fitness_certificate" id="fitness_certificate"
+                                                    </label>
+                                                    <select name="person_condtion" id="person_condtion"
                                                         class="form-control single-select" style="width: 100%">
                                                         <option value="">select the condition
                                                         </option>
-
-
+                                                        @foreach ($injuredCondition as $list)
+                                                            <option value="{{ $list->id }}">
+                                                                {{ $list->injured_condtion }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -98,7 +101,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label">First Aid Provided</label>
                                                     <input type="text" name="first_aid_provided" id="first_aid_provided"
-                                                    class="form-control" placeholder="First Aid Provided" >
+                                                        class="form-control" placeholder="First Aid Provided">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -116,17 +119,19 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Transport to Medical
                                                         Facility</label>
-                                                    <select name="transport_medical_facility" id="transport_medical_facility"
-                                                        class="form-select single-select" style="width:100%">
+                                                    <select name="transport_to_medical_facility"
+                                                        id="transport_to_medical_facility" class="form-select single-select"
+                                                        style="width:100%">
                                                         <option value="">Select the Option</option>
                                                         <option value="1">Yes</option>
                                                         <option value="2">NO</option>
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4" >
+                                            <div class="col-md-4 transport_method" style="display: none">
                                                 <div class="form-group form-input">
-                                                    <label for="follow" class="form-label require">Transport Method</label>
+                                                    <label for="follow" class="form-label require">Transport
+                                                        Method</label>
                                                     <input type="text" name="transport_method" class="form-control"
                                                         id="transport_method">
                                                 </div>
@@ -217,69 +222,17 @@
             });
             // follow up required
 
-            $('#follow_up').change(function() {
+            $('#transport_to_medical_facility').change(function() {
                 var selectedValue = $(this).val();
 
                 if (selectedValue == '1') {
-                    $('.hospital_name').show();
+                    $('.transport_method').show();
                 } else {
-                    $('.hospital_name').hide();
+                    $('.transport_method').hide();
                 }
             });
         });
-        // getting the employee/worker details
-        $('#emp_id').select2({
-            ajax: {
-                url: '{{ admin_url('ohc/prescribe-to-patient/fetchemployeename') }}',
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        search: params.term
-                    };
-                },
-                processResults: function(data) {
-                    return {
-                        results: $.map(data, function(item) {
-                            return {
-                                id: item.id,
-                                text: item.text
-                            };
-                        })
-                    };
-                }
-            },
-            minimumInputLength: 1,
-            dropdownCssClass: 'form-control',
-            selectionCssClass: 'form-control'
-        });
 
-        // department and number & emp name
-
-        $(document).on('change', '#emp_id', function() {
-            var empId = $(this).val();
-            if (empId) {
-                $.ajax({
-                    url: "{{ admin_url('ohc/prescribe-to-patient/emp-details/') }}" + empId,
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.employee) {
-                            $('#emp_name').val(response.employee.emp_name).prop('readonly', false);
-
-                        } else {
-                            alert("No employee details found.");
-                        }
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching mobile number and department. Please try again.');
-                    }
-                });
-            } else {
-                $('#emp_name, #mobile_no, #department_id').val('').prop('disabled', true);
-            }
-        });
-        // first aider
 
         $('#first_aider_name').select2({
             ajax: {
@@ -317,13 +270,21 @@
                 "Invalid format."
             );
 
-            $('#firstaid').validate({
+            $('#roadsidefirstaid').validate({
                 rules: {
                     emp_name: {
                         required: true,
-                    },
-                    emp_id: {
-                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
+                        remote: {
+                            url: '{{ admin_url('ohc/roadside-first-aid/unique') }}',
+                            type: 'post',
+                            data: {
+                                emp_name: function() {
+                                    return $('#emp_name').val();
+                                }
+                            }
+                        }
                     },
                     date_of_incident: {
                         required: true,
@@ -331,24 +292,29 @@
                     time_of_incident: {
                         required: true,
                     },
-                    treatment_provided: {
+                    location_of_incident: {
                         required: true,
                     },
-                    treatment_start_time: {
+                    incident_report_filled: {
                         required: true,
                     },
-                    treatment_end_time: {
+                    first_aid_provided: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 20
+                    },
+                    person_condtion: {
+                        required: true,
+                    },
+                    transport_to_medical_facility: {
                         required: true,
                     },
                     first_aider_name: {
                         required: true,
                     },
-                    follow_up: {
-                        required: true,
-                    },
-                    hospital_name: {
+                    transport_method: {
                         required: function() {
-                            return $('#follow_up').val() == '1';
+                            return $('#transport_to_medical_facility').val() == '1';
                         },
                         minlength: 3,
                         maxlength: 100
@@ -356,37 +322,42 @@
                 },
                 messages: {
                     emp_name: {
-                        required: "Employee name is required.",
-                    },
-                    emp_id: {
-                        required: "Employee ID is required.",
+                        required: "Injured person Name is required.",
+                        minlength: "Injured person Name must be at least 3 characters.",
+                        maxlength: "Injured person Name must not exceed 30 characters.",
+                        remote: "Injured Person Name should be Unique",
                     },
                     date_of_incident: {
-                        required: "Date of incident is required.",
+                        required: "Please select the date of the incident."
                     },
                     time_of_incident: {
-                        required: "Time of incident is required.",
+                        required: "Please enter the time of the incident."
                     },
-                    treatment_provided: {
-                        required: "Please specify the treatment provided.",
+                    location_of_incident: {
+                        required: "Please provide the location of the incident."
                     },
-                    treatment_start_time: {
-                        required: "Treatment start time is required.",
+                    incident_report_filled: {
+                        required: "Please specify if the incident report is filled."
                     },
-                    treatment_end_time: {
-                        required: "Treatment end time is required.",
+                    first_aid_provided: {
+                        required: "Please specify the first aid provided.",
+                        minlength: "First aid description must be at least 3 characters.",
+                        maxlength: "First aid description must not exceed 20 characters."
+                    },
+                    person_condtion: {
+                        required: "Please specify the person's condition."
+                    },
+                    transport_to_medical_facility: {
+                        required: "Please indicate if transport to a medical facility was required."
                     },
                     first_aider_name: {
-                        required: "First aider's name is required.",
+                        required: "Please enter the first aider's name."
                     },
-                    follow_up: {
-                        required: "Please specify if a follow-up is needed.",
-                    },
-                    hospital_name: {
-                        required: "Hospital name is required if follow-up is needed.",
-                        minlength: "Hospital name must be at least 3 characters long.",
-                        maxlength: "Hospital name must not exceed 100 characters.",
-                    },
+                    transport_method: {
+                        required: "Please specify the transport method.",
+                        minlength: "Transport method must be at least 3 characters.",
+                        maxlength: "Transport method must not exceed 100 characters."
+                    }
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
@@ -407,6 +378,7 @@
                     console.log("Form has " + errors + " invalid fields.");
                 },
             });
+
         });
     </script>
 @endpush

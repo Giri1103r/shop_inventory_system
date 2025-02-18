@@ -20,6 +20,7 @@ class Inventory extends Model
         'total_first_aid',
         'total_prescribe',
         'total_received',
+        'threshold_limit',
         'balance',
         'status',
         'trash',
@@ -71,21 +72,27 @@ class Inventory extends Model
         return $datas;
     }
 
-    public function store($details){
-        $request = request();
-        $insert_array = [
-            'unit_id'=>$details->unit_id,
-            'medicine_id'=>$details->id,
-            'total_purchase'=>$details->quantity,
-            'total_issue'=>0,
-            'total_received'=>0,
-            'total_first_aid'=>0,
-            'total_prescribe'=>0,
-            'balance'=>$details->quantity,
-            'created_by'=>Auth::id(),
-        ];
-        return $this->create($insert_array);
+    public function store($details, $unitIds) {
+        $insert_array = [];
 
+        foreach ($unitIds as $unitId) {
+            $insert_array[] = [
+                'unit_id' => $unitId,
+                'medicine_id' => $details->id,
+                'total_purchase' => 0,
+                'total_issue' => 0,
+                'total_received' => 0,
+                'total_first_aid' => 0,
+                'total_prescribe' => 0,
+                'balance' => 0,
+                'threshold_limit' => $details->threshold_limit,
+                'created_by' => Auth::id(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        return $this->insert($insert_array);
     }
 
     public function storepurchasedata($details)

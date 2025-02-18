@@ -25,54 +25,57 @@
                             {{ $i }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->emp_name }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->cheif_complaint }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->gender }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getUnitname($value->unit_id) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getDepartment($value->department_id) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->date) }}
+                            {{ $value->name }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->time }}
+                            {{ displaydateformat($value->date_of_incident) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getSuggestedBy($value->suggested_by) }}
+                            {{ $value->time_of_incident }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->treatment }}
+                            {{ $value->location_of_incident }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            @php
-                                $vital_checkup = $value->vital_checkup == 1 ? 'Yes' : 'NO';
-                            @endphp
-                            {{ $vital_checkup }}
+                            {{ getPersonalCondition($value->person_condtion) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getPatientStatus($value->patient_status) }}
+                            {{ $value->first_aid_provided }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php
-                                $fitness_certificate = $value->fitness_certificate == 1 ? 'Required' : 'Not Required';
+                                $transport_to_medical_facility =
+                                    $value->transport_to_medical_facility == 1 ? 'Yes' : 'NO';
                             @endphp
-                            {{ $fitness_certificate }}
+                            {{ $transport_to_medical_facility }}
                         </td>
-
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->first_aider_name }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->transport_method }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            @php
+                                $incident_report_filled = $value->incident_report_filled == 1 ? 'Yes' : 'NO';
+                            @endphp
+                            {{ $incident_report_filled }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->remarks }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            @php
+                                $status = $value->status == 1 ? 'Active' : 'In-active';
+                            @endphp
+                            {{ $status }}
+                        </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->cancel_remarks }}
+                            {{ displaydateformat($value->created_at) }}
                         </td>
                     </tr>
                     @php
