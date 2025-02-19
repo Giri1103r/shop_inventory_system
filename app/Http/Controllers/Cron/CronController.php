@@ -29,6 +29,7 @@ use App\Models\Permit\SafetyPermit;
 use App\Models\Master\PpeExemption;
 use App\Mail\EmployeeRegisterEmail;
 use App\Mail\Ohc\MedicineRequestEmail;
+use App\Mail\Ohc\MedicineStockEmail;
 use App\Mail\Ohc\MedicineStockRequestEmail;
 use App\Mail\PermitExpiryEmail;
 use App\Mail\SafetyPermitEmail;
@@ -501,7 +502,7 @@ class CronController extends Controller
                 ->get();
 
             $ids = $medicinestock->pluck('medicine_id')->toArray();
-            $data=  $medicinestock->pluck('medicine_id')->toArray();
+
             $mailsubject = 'Medicine Stock Request';
             $user_role = ROLE_PARAMEDICS;
 
@@ -515,6 +516,8 @@ class CronController extends Controller
                     if (!empty($email_id)) {
                         foreach ($ids as $medicineId) {
                             $medicinedetails = $this->medicine->selectone($medicineId);
+                            $dataArray = Inventory::where('unit_id', 1)->where('medicine_id', $medicineId)->first();
+                            $data =  $dataArray->toArray();
                             $details  = $medicinedetails->toArray();
 
                             $details['name'] = $user->name;
@@ -522,7 +525,7 @@ class CronController extends Controller
                             $details['mail_subject'] = $mailsubject;
                             // $details['request_link'] = admin_url('ohc/medicine-stock-inventory/list');
 
-                            Mail::to($details['email_id'])->queue(new MedicineRequestEmail($details));
+                            Mail::to($details['email_id'])->queue(new MedicineStockEmail($details, $data));
 
 
 

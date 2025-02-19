@@ -109,4 +109,8 @@ class Inventory extends Model
         //     $model->update(['company_id' => $uniqueId]);
         // });
     }
+
+    public function getmedicinedata(){
+        return $this->where('unit_id',1)->where('status',1)->whereColumn('balance','<','threshold_limit')->get();
+    }
 }

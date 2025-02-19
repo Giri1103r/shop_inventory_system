@@ -49,7 +49,7 @@ class PpeRequest extends Model
             ->join('masters_department', 'ppe_pperequest.department', '=', 'masters_department.id')
 
             ->join('ppe_stock_inventory as inventory2', 'ppe_pperequest.item_code', '=', 'inventory2.id')
-           
+
             ->where('inventory2.trash', 'NO')
             ->where('masters_department.trash', 'NO')
             ->where('ppe_pperequest.trash', 'NO');
@@ -239,7 +239,7 @@ class PpeRequest extends Model
 
     public function getrequestemail($empId)
     {
-        return User::where('employee_id', $empId)->pluck('email')->first();
+        return User::where('id', $empId)->pluck('email')->first();
     }
 
     public function getdepartmenthod($departmentId)
