@@ -1470,12 +1470,12 @@ if (!function_exists('getMonth')) {
         function getMedicinename($userid)
         {
 
-            $medicine = DB::table('ohc_management_medicine_stock_inventory')->select('medicine_id')->where('id', $userid)->first();
+            $medicine = DB::table('ohc_master_medicine')->select('medicine')->where('id', $userid)->first();
 
             if ($medicine == null) {
                 return '';
             } else {
-                return $medicine->medicine_id;
+                return $medicine->medicine;
             }
         }
     }

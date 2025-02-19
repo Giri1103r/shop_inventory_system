@@ -14,9 +14,7 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
-                        @if (CheckUserPermission('import'))
-                            <x-button-import href="{{ admin_url('company/import') }}"></x-button-import>
-                        @endif
+
 
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
@@ -146,12 +144,13 @@
         $(function() {
             /* Initialize DataTable */
             var table = $('.datatable-list').DataTable({
-                autoWidth: false,
-                responsive: true,
+                autoWidth: true,
+                responsive: false,
                 processing: true,
                 serverSide: true,
                 searching: true,
                 ordering: true,
+                scrollX:true,
                 dom: 'Bfrtip',
                 ajax: {
                     url: "{{ admin_url('ohc/employee-cum-patient/list') }}",

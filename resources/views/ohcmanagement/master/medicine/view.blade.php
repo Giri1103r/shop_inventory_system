@@ -52,12 +52,12 @@
                                             {{ isset($medicine->hsn) ? $medicine->hsn : '' }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
+                                    {{-- <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Unit') }}</label>
                                         <div class="view_data">
                                             {{ getUnitname(isset($medicine->unit_id) ? $medicine->unit_id : '') }}
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Threshold Limit') }}</label>
                                         <div class="view_data">

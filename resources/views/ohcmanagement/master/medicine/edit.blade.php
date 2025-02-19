@@ -184,18 +184,18 @@
                         minlength: 3,
                         maxlength: 30,
                         regex: /^[a-zA-Z0-9\s\-]*$/,
-                        // remote: {
-                        //     url: '{{ admin_url('ohc/medicine/hsn-unique') }}',
-                        //     type: 'post',
-                        //     data: {
-                        //         hsn: function() {
-                        //             return $('#hsn').val();
-                        //         },
-                        //         id: function() {
-                        //             return $('#id').val();
-                        //         }
-                        //     }
-                        // }
+                        remote: {
+                            url: '{{ admin_url('ohc/medicine/hsn-unique') }}',
+                            type: 'post',
+                            data: {
+                                hsn: function() {
+                                    return $('#hsn').val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
+                                }
+                            }
+                        }
                     },
                     unit_id: {
                         required: true,

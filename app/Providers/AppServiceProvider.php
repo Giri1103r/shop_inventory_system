@@ -135,8 +135,8 @@ class AppServiceProvider extends ServiceProvider
 
         defined('STATUS_OHC_MEDICINE_REQUEST')or define('STATUS_OHC_MEDICINE_REQUEST', 1);
         defined('STATUS_OHC_EHS_HEAD_APPROVAL_PENDING')or define('STATUS_OHC_EHS_HEAD_APPROVAL_PENDING', 2);
-        defined('STATUS_OHC_EHS_HEAD_APPROVED')or define('STATUS_OHC_EHS_HEAD_APPROVED',2);
-        defined('STATUS_OHC_EHS_HEAD_REJECTED')or define('STATUS_OHC_EHS_HEAD_REJECTED',3);
+        defined('STATUS_OHC_EHS_HEAD_APPROVED')or define('STATUS_OHC_EHS_HEAD_APPROVED',3);
+        defined('STATUS_OHC_EHS_HEAD_REJECTED')or define('STATUS_OHC_EHS_HEAD_REJECTED',4);
 
     //    defined('STATUS_OHC_MEDICINE_APPROVAL_PENDING')or define('STATUS_OHC_MEDICINE_APPROVAL_PENDING', 6);
     //    defined('STATUS_OHC_OPEN')or define('STATUS_OHC_OPEN', 1);

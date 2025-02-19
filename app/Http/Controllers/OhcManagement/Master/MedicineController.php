@@ -91,7 +91,7 @@ class MedicineController extends Controller
                             // if (CheckUserPermission('view')) {
                             $btn = '<a href="' . admin_url('ohc/medicine/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
-                            if (CheckUserPermission('edit')) {
+                            if (CheckUserPermission('edit') && $row->status == 0) {
                                 $btn .= '<a href="' . admin_url('ohc/medicine/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
                             if ((CheckUserRole(ROLE_SUPERADMIN) && $row->status == 0 || CheckUserRole(ROLE_EHS_HEAD) && $row->status == 0)) {
@@ -275,7 +275,7 @@ class MedicineController extends Controller
 
                 $validator = Validator::make($request->all(), $rules, $messages);
                 if ($validator->fails()) {
-                  
+
                     return redirect()->back()->withErrors($validator)->withInput();
                 }
                 try {
