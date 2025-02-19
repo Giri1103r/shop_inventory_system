@@ -917,9 +917,11 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('requestapproval/submit', [MedicineReceivingController::class, 'requestsubmit']);
                 Route::post('ehsapproval/submit', [MedicineReceivingController::class, 'ehssubmit']);
                 Route::post('ehsheadapproval/submit', [MedicineReceivingController::class, 'ehsheadsubmit']);
-                Route::post('stockapproval/submit', [MedicineReceivingController::class, 'stockclosesubmit']);
+                // Route::post('stockapproval/submit', [MedicineReceivingController::class, 'stockclosesubmit']);
                 Route::get('generalpdf/{id}', [MedicineReceivingController::class, 'generalpdf']);
                 Route::post('/checkExistmedicineId', [MedicineReceivingController::class, 'checkExistmedicineId']);
+                Route::post('/close', [MedicineReceivingController::class, 'stockclosesubmit']);
+
             });
             // Medicine Requistion
             Route::group(['prefix' => 'ohc/medicine-requisition'], function () {
