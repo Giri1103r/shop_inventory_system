@@ -436,19 +436,20 @@ class MedicineIssuanceController extends Controller
 
             try {
 
-                $user_medicine_issuance = $this->user_medicine_issuance->updates($id);
-                $updatedMedicines = $this->medicine_issuance->updates($id);
+                 $this->user_medicine_issuance->updates($id);
+                $updatedMedicines = $this->medicine_issuance->updates($id)['updated'];
+                $user_medicine_issuance = $this->user_medicine_issuance->selectOne($id);
 
 
                 $existingMedicines = $this->medicinelog->getquantity($id);
 
 
                 foreach ($updatedMedicines as $updatedMedicine) {
-                    $medicine_id = $updatedMedicine['medicine_id'];
-                    $newQuantity = $updatedMedicine['quantity'];
+                    $medicine_id = $updatedMedicine->medicine_id;
+                    $newQuantity = $updatedMedicine->quantity;
 
 
-                    $existingMedicine = collect($existingMedicines)->firstWhere('medicine_id', $medicine_id)->where('type',TYPE_OHC_ISSUANCE);
+                    $existingMedicine = collect($existingMedicines)->firstWhere('medicine_id', $medicine_id);
 
                     if ($existingMedicine) {
                         $oldQuantity = $existingMedicine['quantity'];
@@ -479,46 +480,45 @@ class MedicineIssuanceController extends Controller
 
                 // Fetch user and department details for notifications
                 $data = $this->user_medicine_issuance->selectOne($id);
-                $unitId = $data->unit_id;
-                $departmentId = $data->department_id;
-                $mailsubject = 'Medicine Issuing to Other Unit';
-                $user_role = ROLE_EHS_OFFICER;
 
-                // Fetch all EHS Officers for notification
-                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
-                $userids = $users->pluck('id')->toArray();
+                // $mailsubject = 'Medicine Issuing to Other Unit';
+                // $user_role = ROLE_EHS_OFFICER;
 
-                // Send email notifications to all users
-                foreach ($users as $user) {
-                    if (!empty($user->email)) {
-                        $details = $this->user_medicine_issuance->selectOne($id);
-                        $medicineDetails = $this->medicine_issuance->selectOne($id);
-                        $emailDetails = $details->toArray();
-                        $emailDetails['name'] = $user->name;
-                        $emailDetails['email_id'] = $user->email;
-                        $emailDetails['mail_subject'] = $mailsubject;
+                // // Fetch all EHS Officers for notification
+                // $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+                // $userids = $users->pluck('id')->toArray();
 
-                        Mail::to($user->email)->queue(new MedicineRequisitionEmail($emailDetails, $medicineDetails));
-                    }
-                }
+                // // Send email notifications to all users
+                // foreach ($users as $user) {
+                //     if (!empty($user->email)) {
+                //         $details = $this->user_medicine_issuance->selectOne($id);
+                //         $medicineDetails = $this->medicine_issuance->selectOne($id);
+                //         $emailDetails = $details->toArray();
+                //         $emailDetails['name'] = $user->name;
+                //         $emailDetails['email_id'] = $user->email;
+                //         $emailDetails['mail_subject'] = $mailsubject;
 
-                // Prepare and send web notification
-                $notificationData = [
-                    'notification_type' => 4,
-                    'module_type' => 1,
-                    'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode([
-                        'title' => $mailsubject,
-                        'message' => "The requested Medicine was issued by " . getUsername($data->created_by),
-                        'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
-                        'id' => $id,
-                        'module' => 1,
-                    ]),
-                    'web_link' => admin_url('ohc/medicine-issuance/list'),
-                    'assigned_user' => array_to_string($userids),
-                    'created_by' => Auth::id(),
-                ];
-                notificationSave($notificationData);
+                //         Mail::to($user->email)->queue(new MedicineRequisitionEmail($emailDetails, $medicineDetails));
+                //     }
+                // }
+
+                // // Prepare and send web notification
+                // $notificationData = [
+                //     'notification_type' => 4,
+                //     'module_type' => 1,
+                //     'notification_message' => $mailsubject,
+                //     'mobile_notification' => json_encode([
+                //         'title' => $mailsubject,
+                //         'message' => "The requested Medicine was issued by " . getUsername($data->created_by),
+                //         'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                //         'id' => $id,
+                //         'module' => 1,
+                //     ]),
+                //     'web_link' => admin_url('ohc/medicine-issuance/list'),
+                //     'assigned_user' => array_to_string($userids),
+                //     'created_by' => Auth::id(),
+                // ];
+                // notificationSave($notificationData);
 
                 Session::flash('success', 'Your data has been updated successfully!');
             } catch (Exception $ex) {

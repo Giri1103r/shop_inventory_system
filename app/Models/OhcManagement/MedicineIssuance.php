@@ -48,7 +48,7 @@ class MedicineIssuance extends Model
     public function updates($id)
     {
         $request = request();
-        $updatedRecords = []; 
+        $updatedRecords = [];
         $createdRecords = [];
 
         foreach ($request->medicine_id as $index => $medicine) {
@@ -68,7 +68,7 @@ class MedicineIssuance extends Model
 
             if ($existingRecord) {
                 $existingRecord->update($update_data);
-                $updatedRecords[] = $existingRecord->fresh(); // Get updated record
+                $updatedRecords[] = $existingRecord->fresh(); 
             } else {
                 $createdRecords[] = self::create($update_data);
             }
