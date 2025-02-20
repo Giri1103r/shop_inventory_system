@@ -163,7 +163,7 @@
                                         enctype="multipart/form-data">
                                         @csrf
                                         <div class="row">
-                                            <input type="hidden" class="form-control" name="id" id="id"
+                                            <input type="hidden" class="form-control" name="incident_id" id="incident_id"
                                                 value="{{ encryptId($incident_report->id) }}">
 
                                             <input type="hidden" name="reviewer_emp_id" id="reviewer_emp_id"
@@ -189,7 +189,7 @@
                                                 <div class="form-group form-input">
                                                     <label for="team_id" class="form-label require">Assign Team
                                                         members</label>
-                                                    <select name="team_id[]" id="team_id"
+                                                    <select name="team_member[]" id="team_id"
                                                         class="form-control team_name" style="width: 100%" multiple>
                                                         <option value="">Select Team members</option>
 
@@ -238,7 +238,7 @@
                 allowClear: true,
                 closeOnSelect: false,
                 ajax: {
-                    url: "{{ admin_url('incident/initial-incident/getemployeename') }}",
+                    url: "{{ admin_url('incident/initial-incident/teamMembers') }}",
                     type: "GET",
                     dataType: "json",
                     delay: 250,

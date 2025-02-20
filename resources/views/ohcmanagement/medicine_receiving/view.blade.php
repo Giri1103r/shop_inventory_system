@@ -125,9 +125,17 @@
                                                         <span class='badge bg-info' style='font-size: 1.0em;'>Stock Requested</span>
                                                         @elseif( ($status_log['from_status']) == STATUS_OHC_EHS_VERIFICATION_PENDING)
                                                         <span class='badge bg-info' style='font-size: 1.0em;'>EHS Officer Verification Pending</span>
+                                                        @elseif( ($status_log['from_status']) == STATUS_OHC_EHS_VERIFIED)
+                                                        <span class='badge bg-success' style='font-size: 1.0em;'>EHS Officer Verified</span>
+                                                        @elseif( ($status_log['from_status']) == STATUS_OHC_L1_EHS_VERIFIED)
+                                                        <span class='badge bg-success' style='font-size: 1.0em;'> L1 EHS Officer Verified</span>
+                                                        @elseif( ($status_log['from_status']) == STATUS_OHC_EHS_REJECTED)
+                                                        <span class='badge bg-danger' style='font-size: 1.0em;'>EHS Officer Rejected</span>
+                                                        @elseif( ($status_log['from_status']) == STATUS_OHC_AGM_APPROVED)
+                                                        <span class='badge bg-success' style='font-size: 1.0em;'>EHS Head Approved</span>
                                                         @elseif( ($status_log['from_status']) == STATUS_OHC_L1_EHS_VERIFICATION_PENDING)
                                                         <span class='badge bg-info' style='font-size: 1.0em;'>L1 EHS Officer Verification Pending</span>
-                                                        @elseif( ($status_log['from_status']) == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING)
+                                                        @elseif( ($status_log['from_status']) == STATUS_OHC_AGM_APPROVAL_PENDING)
                                                         <span class='badge bg-info' style='font-size: 1.0em;'>EHS Head Approval Pending</span>
                                                         @elseif( ($status_log['from_status']) == STATUS_OHC_OPEN)
                                                         <span class='badge bg-info' style='font-size: 1.0em;'>Open</span>
@@ -135,17 +143,21 @@
                                                     </td>
                                                     <td>@if(($status_log['to_status']) == STATUS_OHC_EHS_VERIFICATION_PENDING)
                                                         <span class='badge bg-info' style='font-size: 1.0em;'>EHS Officer Verification Pending</span>
-                                                        @elseif(($status_log['to_status']) == STATUS_OHC_EHS_OFFICER_REJECTED)
+                                                        @elseif(($status_log['to_status']) == STATUS_OHC_EHS_VERIFIED)
+                                                        <span class='badge bg-success' style='font-size: 1.0em;'>EHS Officer Verified</span>
+                                                        @elseif(($status_log['to_status']) == STATUS_OHC_EHS_REJECTED)
                                                         <span class='badge bg-danger' style='font-size: 1.0em;'>EHS Officer Rejected</span>
-                                                        @elseif(($status_log['to_status']) == STATUS_OHC_EHS_HEAD_APPROVED)
-                                                        <span class='badge bg-info' style='font-size: 1.0em;'>Open</span>
+                                                        @elseif( ($status_log['to_status']) == STATUS_OHC_L1_EHS_VERIFIED)
+                                                        <span class='badge bg-success' style='font-size: 1.0em;'> L1 EHS Officer Verified</span>
+                                                        @elseif(($status_log['to_status']) == STATUS_OHC_AGM_APPROVED)
+                                                        <span class='badge bg-info' style='font-size: 1.0em;'>EHS Head Approved</span>
                                                         @elseif(($status_log['to_status']) == STATUS_OHC_OPEN)
                                                         <span class='badge bg-info' style='font-size: 1.0em;'>Open</span>
-                                                        @elseif(($status_log['to_status']) == STATUS_OHC_EHS_HEAD_REJECTED)
+                                                        @elseif(($status_log['to_status']) == STATUS_OHC_AGM_REJECTED)
                                                         <span class='badge bg-danger' style='font-size: 1.0em;'>EHS Head Rejected</span>
                                                         @elseif(($status_log['to_status']) == STATUS_OHC_L1_EHS_VERIFICATION_PENDING)
                                                         <span class='badge bg-info' style='font-size: 1.0em;'>L1 EHS Officer Verification Pending</span>
-                                                        @elseif(($status_log['to_status']) == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING)
+                                                        @elseif(($status_log['to_status']) == STATUS_OHC_AGM_APPROVAL_PENDING)
                                                         <span class='badge bg-info' style='font-size: 1.0em;'>EHS Head Approval Pending</span>
                                                         @elseif(($status_log['to_status']) == STATUS_OHC_CLOSE)
                                                         <span class='badge bg-success' style='font-size: 1.0em;'>Closed</span>

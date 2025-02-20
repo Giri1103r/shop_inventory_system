@@ -90,7 +90,7 @@
                                             <select name="approve_status" id="approve_status"
                                                 class="form-control single-select form-control-sm" style="width: 100%">
                                                 <option value="">Select the approve status</option>
-                                                
+
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -343,5 +343,85 @@
                 }
             ],
         });
+
+        $(document).on('click', '.stockClose', function() {
+                var id = $(this).data('id');
+                var login_id = $(this).data('login_id');
+
+                var title = '{{ __('Do You want to Close Stock Request') }}';
+                var text = '{{ __('Close') }}';
+                var btncolor = '#28a745';
+
+                Swal.fire({
+                    title: title,
+                    icon: 'warning',
+                    input: 'textarea', // Add a textarea for remarks
+                    inputPlaceholder: '{{ __('Enter your remarks here...') }}',
+                    showCloseButton: true,
+                    confirmButtonText: text,
+                    confirmButtonColor: btncolor,
+                    customClass: {
+                        confirmButton: 'btn-skew'
+                    },
+                    preConfirm: (remarks) => {
+                        if (!remarks) {
+                            Swal.showValidationMessage('{{ __('Remarks are required!') }}');
+                        }
+                        return remarks; // Return the input value
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var remarks = result.value;
+
+                        // Proceed with AJAX request
+                        $.ajax({
+                            url: "{{ admin_url('ohc/medicine-receiving-form/close') }}",
+                            type: 'post',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            data: {
+                                id: id,
+                                login_id: login_id,
+                                remarks: remarks // Pass remarks to the server
+                            },
+                            success: function(response) {
+                                const Toast = Swal.mixin({
+                                    toast: true,
+                                    position: 'top-right',
+                                    showConfirmButton: false,
+                                    timer: 3000,
+                                    timerProgressBar: true,
+                                    didOpen: (toast) => {
+                                        toast.addEventListener('mouseenter',
+                                            Swal.stopTimer);
+                                        toast.addEventListener('mouseleave',
+                                            Swal.resumeTimer);
+                                    }
+                                });
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: response.msg
+                                });
+                                table.draw();
+                            },
+                            error: function(data) {
+                                if (data.status === 406 && data.responseJSON.msg ===
+                                    'module_exits') {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Location Deletion Failed: Module Dependencies Exist.',
+                                    });
+                                } else {
+                                    $.notify(data.responseJSON.msg, "error");
+                                }
+                            }
+                        });
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        Swal.fire('{{ __('Action Closed') }}', '', 'info');
+                    }
+                });
+            });
     </script>
 @endpush

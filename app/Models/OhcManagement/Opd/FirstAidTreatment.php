@@ -10,10 +10,11 @@ class FirstAidTreatment extends Model
     protected $table = 'ohc_management_opd_patient_first_aid';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'opd_id  ',
+        'opd_id',
         'medicine_id',
         'quantity',
         'available_quantity',
+        'remarks',
         'status',
         'trash',
         'created_by',
@@ -34,6 +35,7 @@ class FirstAidTreatment extends Model
                 'medicine_id' => decryptId($medicine),
                 'quantity' => $request->quantity[$index],
                 'available_quantity' => $request->available_quantity[$index],
+                'remarks' => $request->remarks[$index],
                 'created_by' => Auth::id(),
             ];
 
@@ -44,7 +46,45 @@ class FirstAidTreatment extends Model
         return $insertedData;
     }
 
+    public function updates($id)
+    {
+        $request = request();
+
+        foreach ($request->medicine_id as $index => $medicine) {
+            $update_data = [
+                'opd_id' => $id,
+                'medicine_id' => ($medicine),
+                'quantity' => $request->quantity[$index],
+                'available_quantity' => $request->available_quantity[$index],
+                'remarks' => $request->remarks[$index],
+                'created_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+            ];
+
+
+            $existingRecord = self::where('opd_id', $id)
+                ->where('medicine_id', $medicine)->where('trash','NO')
+                ->first();
+
+            if ($existingRecord) {
+                $existingRecord->update($update_data);
+            } else {
+                self::create($update_data);
+            }
+        }
+    }
+
     public function Selectone($id){
         return $this->where('opd_id',$id)->where('status',1)->where('trash','No')->get();
+    }
+    public function deleterecord($id)
+    {
+
+        $update_data = array(
+            'status' => 0,
+            'trash' => 'YES',
+        );
+
+        return $this->where('id', $id)->update($update_data);
     }
 }

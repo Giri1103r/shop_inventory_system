@@ -35,6 +35,7 @@ class EmployeecumPatientController extends Controller
     private $user;
     private $uploadlog;
     private $employee;
+    private $work;
 
     public function __construct()
     {
@@ -46,6 +47,8 @@ class EmployeecumPatientController extends Controller
         $this->user = new User();
         $this->uploadlog = new UploadLog();
         $this->employee = new Employee();
+        $this->work = new Work();
+
     }
 
 
@@ -75,6 +78,9 @@ class EmployeecumPatientController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
+                        ->addColumn('dob', function ($row) {
+                            return  Displaydateformat($row->dob);
+                        })
                         ->addColumn('employee_type', function ($row) {
                             return $row->employee_type_name;
                         })
@@ -89,7 +95,7 @@ class EmployeecumPatientController extends Controller
 
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status','dob'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -142,6 +148,7 @@ class EmployeecumPatientController extends Controller
 
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
+                dd($validator->error());
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
@@ -153,14 +160,14 @@ class EmployeecumPatientController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/employee-cum-patient/list'));
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/employee-cum-patient/list'));
         }
@@ -226,6 +233,7 @@ class EmployeecumPatientController extends Controller
 
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
+
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
@@ -408,33 +416,55 @@ class EmployeecumPatientController extends Controller
 
     public function employeeid(Request $request)
     {
-        $search = $request->input('search');
+        $name = $request->input('search');
 
-        $employees = Work::where(function ($query) use ($search) {
-            $query->where('emp_name', 'like', '%' . $search . '%')
-                ->orWhere('emp_id', 'like', '%' . $search . '%');
-        })
+        $employee_code = $this->employee->where('emp_id', 'like', '%' . $name . '%')
             ->where('status', 1)
             ->limit(10)
             ->get();
 
+        $work = $this->work->where('emp_id', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+
+        $mergedResults = $employee_code->merge($work);
+
         return response()->json(
-            $employees->map(function ($employee) {
+            $mergedResults->map(function ($employee) {
                 return [
                     'id' => $employee->emp_id,
-                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+                    'text' => $employee->emp_id . ' - ' . $employee->emp_name,
                 ];
             })
         );
     }
     public function employeename(Request $request)
     {
-        $empID = $request->input('empId');
-        $employee = Work::where('emp_id', $empID)->where('trash', 'no')->where('status', 1)->first();
-        return response()->json(
-            $employee->emp_name
+        $emp_id = $request->input('empId');
 
-        );
+        $employee = Employee::select('emp_name')
+            ->where('emp_id', $emp_id)
+            ->first();
+
+        if (!$employee) {
+            $employee = Work::select('emp_name')
+                ->where('emp_id', $emp_id)
+                ->first();
+        }
+
+        if ($employee) {
+            return response()->json([
+                'employee' => $employee,
+
+
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Employee not found'
+            ], 404);
+        }
     }
 
     public function DownloadSample(Request $request)

@@ -161,7 +161,8 @@
 
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label for="team_id" class="form-label require">Name of the Witness</label>
+                                                    <label for="team_id" class="form-label require">Assign Team
+                                                        members</label>
                                                     <select name="team_member[]" id="team_id" class="form-control team_name" multiple="multiple" style="width: 100%">
                                                         <option value="">Select Team Members</option>
                                                     </select>

@@ -155,6 +155,7 @@ class User extends Authenticatable
                 'role' => $item['user_role'],
                 'user_type' => 1,
                 'employee_id' => $item['emp_id'],
+                'designation_id' => $item['designation'],
                 'username' => $item['emp_id'],
                 'password' => Hash::make("User@" . trim($item['emp_id'])),
                 'mobile' => $item['mobile_no'],
@@ -267,7 +268,7 @@ class User extends Authenticatable
 
     public function finduseremail($empId)
     {
-        return User::where('employee_id', $empId)
+        return User::where('id', $empId)
             ->pluck('email')
             ->first();
     }
@@ -315,12 +316,12 @@ class User extends Authenticatable
 
     public function getrequestId($empId)
     {
-        return User::where('employee_id', $empId)->pluck('id')->toArray();
+        return User::where('id', $empId)->pluck('id')->toArray();
     }
 
     public function getrequestEmail($empId)
     {
-        return User::where('employee_id', $empId)->pluck('email')->first();
+        return User::where('id', $empId)->pluck('email')->first();
     }
     public function exportdata()
     {

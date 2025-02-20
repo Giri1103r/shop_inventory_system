@@ -10,7 +10,7 @@ class IsReffered extends Model
     protected $table = 'ohc_management_opd_patient_is_refered';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'opd_id  ',
+        'opd_id',
         'hospital_name',
         'first_aider',
         'mobile_no',
@@ -38,9 +38,25 @@ class IsReffered extends Model
         ];
 
 
-        $this->create($insert_array);
+       return $this->create($insert_array);
     }
+    public function updates($id)
+    {
 
+        $request = request();
+
+        $update_array = array(
+            'opd_id' => $id,
+            'hospital_name' =>  $request->hospital_name,
+            'first_aider' => $request->first_aider,
+            'mobile_no' => $request->is_reffered_mobile_no,
+            'refered_by_vechicle' => $request->vechicle,
+            'other_vechicle' => $request->other_vechicle,
+            'created_by' => Auth::id(),
+            'updated_by' => Auth::id()
+        );
+        return $this->where('id', $id)->update($update_array);
+    }
     public function Selectone($id){
         return $this->where('opd_id',$id)->where('status',1)->where('trash','No')->first();
     }

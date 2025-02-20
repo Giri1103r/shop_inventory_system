@@ -149,6 +149,19 @@ class Notification extends Model
                     ->where('notification_type', 3)
                     ->where('template_notification.trash', 'NO');
             }
+        }elseif (Auth::user()->role == ROLE_STORE_MANAGER) {
+            $nomination = DB::table('users')
+                ->select('id')
+                ->where('employee_id', Auth::user()->employee_id)
+                ->first();
+
+            if ($nomination) {
+                $assignedUserId = $nomination->id;
+
+                $query->whereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserId])
+                    ->where('notification_type', 1)
+                    ->where('template_notification.trash', 'NO');
+            }
         }
 
         /**

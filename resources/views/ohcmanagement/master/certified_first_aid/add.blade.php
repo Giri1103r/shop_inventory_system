@@ -180,21 +180,25 @@
                         empId: empId
                     },
                     dataType: 'json',
-                    success: function(data) {
-
-                        $('#certifier_name').val(data).prop('disable', true);
+                    success: function(response) {
+                        if (response.employee) {
+                            $('#certifier_name').val(response.employee.emp_name).prop('readonly', true);
+                        } else {
+                            $('#certifier_name').val('').prop('readonly', true);
+                        }
                     },
                     error: function(xhr) {
                         alert('Error fetching employee name. Please try again.');
                     }
                 });
             } else {
-
-                $('#certifier_name').val('').prop('disable', true);
+                $('#certifier_name').val('').prop('readonly', true);
             }
         });
+
+
         $(function() {
-           
+
             $('#CertifiedFirstAiderAdd').validate({
                 rules: {
                     unit_id: {

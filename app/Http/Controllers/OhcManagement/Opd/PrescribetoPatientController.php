@@ -22,6 +22,7 @@ use App\Models\OhcManagement\Opd\ReferedVechicle;
 use App\Models\OhcManagement\Opd\Suggestedby;
 use App\Models\OhcManagement\UserMedicineRequisition;
 use App\Models\UploadLog;
+use App\Models\OhcManagement\Report\Inventory;
 
 use Carbon\Carbon;
 use Exception;
@@ -34,6 +35,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use phpseclib3\File\ASN1\Maps\CertificateIssuer;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use Symfony\Component\Console\Completion\Suggestion;
 use Yajra\DataTables\Facades\DataTables;
 
 class PrescribetoPatientController extends Controller
@@ -54,6 +56,7 @@ class PrescribetoPatientController extends Controller
     private $opd_patient;
     private $opd_firstaid;
     private $isreffered;
+    private $inventory;
 
     public function __construct()
     {
@@ -72,6 +75,7 @@ class PrescribetoPatientController extends Controller
         $this->isreffered = new IsReffered();
         $this->unit = new Unit();
         $this->department = new Department();
+        $this->inventory = new Inventory();
     }
     public function index(Request $request)
     {
@@ -141,6 +145,8 @@ class PrescribetoPatientController extends Controller
                             // }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
 
+                            $btn .= '<a href="' . admin_url('ohc/prescribe-to-patient/generalpdf/' . encryptId($row->id)) . '" class="" title="PDF"> <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a> ';
+
                             $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="Close" title="Cancel" style="color: #e21e23;margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
                             return $btn;
                         })
@@ -158,9 +164,11 @@ class PrescribetoPatientController extends Controller
                 }
             }
         }
+        $patientstatus = $this->patient_status->getpatientstatus();
 
         $unit = $this->unit->getunit();
         $data = array(
+            'patientstatus' => $patientstatus,
 
             'unit' => $unit
         );
@@ -210,12 +218,38 @@ class PrescribetoPatientController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            // dd($request->all());
             $opd_patient = $this->opd_patient->store();
 
             $firstaid = $this->opd_firstaid->store($opd_patient);
 
             $isreffered = $this->isreffered->store($opd_patient);
+
+            foreach ($firstaid as $medicine) {
+                $medicine_id = $medicine->medicine_id;
+                $unitId = Auth::user()->unit_id;
+                $issuedQuantity = $medicine->quantity;
+
+
+                $medicine_stock = $this->medicine_stock
+                    ->where('id', $medicine_id)
+                    ->where('unit_id', $unitId)
+                    ->first();
+
+                if ($medicine_stock) {
+                    $medicine_stock->decrement('quantity', $issuedQuantity);
+                }
+
+
+                $inventory = $this->inventory
+                    ->where('medicine_id', $medicine_id)
+                    ->where('unit_id', $unitId)
+                    ->first();
+
+                if ($inventory) {
+                    $inventory->update(['total_prescribe' => $issuedQuantity]);
+                    $inventory->decrement('balance', $issuedQuantity);
+                }
+            }
 
             Session::flash('success', __('Your data has been created successfully'));
 
@@ -227,12 +261,50 @@ class PrescribetoPatientController extends Controller
         }
     }
 
+    //edit
+    public function edit(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $opdpatient = $this->opd_patient->selectOne($id);
+                $opd_firstaid = $this->opd_firstaid->Selectone($id);
+                $isreffered = $this->isreffered->selectOne($id);
+            }
+            $unit = $this->unit->getunit();
+            $suggestedBy = $this->suggestedBy->getSuggestedBy();
+            $reffered = $this->refered_vechicle->getreffered();
+            $patientstatus = $this->patient_status->getpatientstatus();
+            $medicine  = $this->medicine_stock->getMedicinestockdata();
+            $suggestedname = $this->suggestedBy->getsuggestedname();
+            $data = array(
+                'unit' => $unit,
+                'suggestedBy' => $suggestedBy,
+                'reffered' => $reffered,
+                'patientstatus' => $patientstatus,
+                'medicine' => $medicine,
+                'opdpatient' => $opdpatient,
+                'opd_firstaid' => $opd_firstaid,
+                'isreffered' => $isreffered,
+
+            );
+            // dd( $data);
+            return view('ohcmanagement.ohc-opd.prescribe-to-patient.edit', $data);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/prescribe-to-patient/list'));
+        }
+    }
+
+
     // view
 
     public function view(Request $request)
     {
         try {
             $id = decryptId($request->id);
+
             if (Auth::check()) {
                 $opdpatient = $this->opd_patient->selectOne($id);
                 $opd_firstaid = $this->opd_firstaid->Selectone($opdpatient->id);
@@ -245,6 +317,7 @@ class PrescribetoPatientController extends Controller
                 'isreffered' => $isreffered,
 
             );
+
             return view('ohcmanagement.ohc-opd.prescribe-to-patient.view', $data);
         } catch (Exception $ex) {
             dd($ex);
@@ -252,6 +325,176 @@ class PrescribetoPatientController extends Controller
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
         }
     }
+
+    //
+    public function update(Request $request)
+    {
+        $id = decryptId($request->id);
+        try {
+            $rules = [
+                'date' => 'required',
+            ];
+
+            $messages = [
+                'date.required' => 'Date cannot be empty.',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            $opd_patient = $this->opd_patient->updates($id);
+
+            $firstaid = $this->opd_firstaid->updates($id);
+
+            $isreffered = $this->isreffered->updates($id);
+
+
+
+            Session::flash('success', __('Your data has been created successfully'));
+
+            return redirect(admin_url('ohc/prescribe-to-patient/list'));
+        } catch (Exception $ex) {
+            dd($ex);  // Debugging
+            Session::flash('error', 'Something went wrong. Please try again after some time');
+            return redirect(admin_url('ohc/prescribe-to-patient/list'));
+        }
+    }
+
+    // export pdf
+    public function exportExcel()
+    { {
+
+            try {
+
+                $allData = $this->opd_patient->exportdata();
+
+                if ($allData->isEmpty()) {
+                    return redirect()->back()->with('error', 'No data found');
+                }
+
+                $header = [
+                    __("common.sno"),
+
+                    'Employee Name',
+                    'Problem',
+                    'Gender',
+                    'Unit',
+                    'Department',
+                    'Date',
+                    'Time',
+                    'Suggested By',
+                    'Treatment',
+                    'Check Up',
+                    'Patient Status',
+                    'Fitness Certificate',
+                    __("common.created_by"),
+                    'Cancel Remarks',
+                ];
+
+                $i = 1;
+                foreach ($allData as $data) {
+
+                    $export = [];
+                    $export[] =  $i;
+                    $export[] = $data->emp_name;
+                    $export[] = $data->cheif_complaint;
+                    $export[] = $data->gender;
+                    $export[] =  getUnitname($data->unit_id);
+                    $export[] =  getDepartment($data->department_id);
+                    $export[] = displaydateformat($data->date);
+                    $export[] = ($data->time);
+                    $export[] = getSuggestedBy($data->suggested_by);
+                    $export[] = ($data->treatment);
+                    $export[] =  $data->vital_checkup == 1 ? 'Yes' : 'No';
+                    $export[] = getPatientStatus($data->patient_status);
+                    $export[] =  $data->fitness_certificate == 1 ? 'Required' : 'Not Required';
+                    $export[] =  getusername($data->created_by);
+                    $export[] =  ($data->cancel_remarks);
+
+
+                    $exportData[] = $export;
+
+                    $i++;
+                }
+
+                $writer = SimpleExcelWriter::streamDownload('opd patient .xlsx')
+                    ->addHeader($header)
+                    ->addRows(
+                        $exportData
+                    );
+            } catch (Exception $ex) {
+
+                dd($ex);
+            }
+        }
+    }
+
+    // Export pdf
+    public function ExportPdf(Request $request)
+    {
+
+        try {
+
+            $allData = $this->opd_patient->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                'Employee Name',
+                'Problem',
+                'Gender',
+                'Unit',
+                'Department',
+                'Date',
+                'Time',
+                'Suggested By',
+                'Treatment',
+                'Check Up',
+                'Patient Status',
+                'Fitness Certificate',
+                __("common.created_by"),
+                'Cancel Remarks',
+            ];
+
+            $data = array(
+                'header' => $header,
+                'content' => $allData,
+                'pagetitle' => "OPD Patient List",
+            );
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $view = view('ohcmanagement.ohc-opd.prescribe-to-patient.pdf', $data);
+            $html = $view->render();
+
+
+
+            $mpdf->WriteHTML($html);
+
+            $filename = "OPD Patient.pdf";
+            $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+
+            dd($ex);
+        }
+    }
+
     // Fetch of employee and worker name
 
     public function fetchemployeename(Request $request)
@@ -325,7 +568,7 @@ class PrescribetoPatientController extends Controller
         return response()->json(
             $employees->map(function ($employee) {
                 return [
-                    'id' => $employee->emp_id,
+                    'id' => $employee->certifier_name,
                     'text' => $employee->certifier_name . ' - ' . $employee->emp_id,
                 ];
             })
@@ -337,7 +580,7 @@ class PrescribetoPatientController extends Controller
     public function firstaidernumber(Request $request)
     {
         $empID = $request->input('empId');
-        $employee = CertifiedFirstAider::where('emp_id', $empID)->where('trash', 'no')->where('status', 1)->first();
+        $employee = CertifiedFirstAider::where('certifier_name', $empID)->where('trash', 'no')->where('status', 1)->first();
         return response()->json(
             $employee->mobile_no
 
@@ -358,5 +601,77 @@ class PrescribetoPatientController extends Controller
 
             return response()->json(['status' => 'error', 'msg' => __('ptw.Please try After Some time')], 406);
         }
+    }
+
+    public function delete(Request $request, $id)
+    {
+        try {
+
+            $this->opd_firstaid->deleterecord($id);
+            return response()->json(['status' => 'success', 'msg' => 'Deleted successfully'], 200);
+        } catch (Exception $ex) {
+            return response()->json(['status' => 'error', 'msg' => 'Something went wrong'], 200);
+        }
+    }
+
+    public function medicineslip(Request $request)
+    {
+        $id = decryptId($request->id);
+
+        if (Auth::check()) {
+            $opdpatient = $this->opd_patient->selectOne($id);
+            $opd_firstaid = $this->opd_firstaid->Selectone($opdpatient->id);
+            $isreffered = $this->isreffered->selectOne($opdpatient->id);
+        }
+        $data = [
+            'opdpatient' => $opdpatient,
+            'opd_firstaid' => $opd_firstaid,
+            'isreffered' => $isreffered,
+            'pagetitle' => "Medicine Slip",
+        ];
+
+        $property = [
+            'tempDir' => 'public/pdf/temp/',
+            'mode' => 'c',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 10,
+
+        ];
+
+        $mpdf = new \Mpdf\Mpdf($property);
+        $mpdf->setAutoTopMargin = 'stretch';
+
+        $html = view('ohcmanagement.ohc-opd.prescribe-to-patient.medicineslip', $data)->render();
+        $mpdf->WriteHTML($html);
+
+        $filename = "Medicine Slip .pdf";
+        return $mpdf->Output($filename, 'I');
+    }
+
+    public function employeename(Request $request){
+        $name = $request->input('search');
+
+        $employee_code = $this->employee->where('emp_id', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+        $work = $this->work->where('emp_id', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+
+        $mergedResults = $employee_code->merge($work);
+
+        return response()->json(
+            $mergedResults->map(function ($employee) {
+                return [
+                    'id' => $employee->emp_name,
+                    'text' => $employee->emp_id . ' - ' . $employee->emp_name,
+                ];
+            })
+        );
     }
 }

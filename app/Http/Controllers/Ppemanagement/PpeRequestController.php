@@ -346,7 +346,10 @@ class PpeRequestController extends Controller
                     'approve_link' => url('ppe_request/hodapproval/view/' . encryptID($id)),
                     'reject_link' => url('ppe_request/hodapproval/view/' . encryptID($id))
                 ];
-                Mail::to($hod)->queue(new PpeRequestRequestorEmail($details));
+                if(!empty($hod)){
+                    Mail::to($hod)->queue(new PpeRequestRequestorEmail($details));
+                }
+
 
                 // Notification
                 $message = 'New PPE Request';
@@ -561,13 +564,15 @@ class PpeRequestController extends Controller
             ];
 
             $ehsofficer = $this->user->findEhsofficer();
-            $empId = $empDetails->emp_id;
+            $empId = $empDetails->created_by;
             $requestor = $this->user->finduseremail($empId);
 
             if ($action == 'approve') {
                 foreach ($ehsofficer as $officer) {
                     $officer_email = $officer->email;
+                    if (!empty($officer_email)) {
                     Mail::to($officer_email)->queue(new PpeRequestHodApprovalEmail($details));
+                    }
                 }
 
                 $message = 'New PPE Request';
@@ -592,7 +597,11 @@ class PpeRequestController extends Controller
 
                 notificationSave($notificationData);
             } else {
-                Mail::to($requestor)->queue(new PpeRejectRequestEmail($details));
+                if(!empty($requestor))
+                {
+                    Mail::to($requestor)->queue(new PpeRejectRequestEmail($details));
+                }
+
 
                 $message = 'New PPE Request';
                 $requestorId = $this->user->getrequestId($empId);
@@ -678,6 +687,7 @@ class PpeRequestController extends Controller
         }
 
         $id = decryptId($request->id);
+
         $remarks = $request->input('remarks');
         $approved_at = $request->input('date');
         $action = $request->input('action');
@@ -685,11 +695,14 @@ class PpeRequestController extends Controller
 
         $dateTime = Carbon::createFromFormat('d-m-Y H:i:s', $approved_at);
         try {
-            $empDetails = $this->pperequest->find($id);
-            $empId = $empDetails->emp_id;
+            $empDetails = $this->pperequest->where('id', $id)->first();
+            $empId = $empDetails->created_by;
             $departmentId = $empDetails->department;
             $hod = $this->user->findDepartmenthod($departmentId);
-            $storemanager = $this->user->findStoremanager();
+            // $storemanager = $this->user->findStoremanager();
+            $user_role = ROLE_STORE_MANAGER;
+            $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
+            $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
             $updateEhsData = [
                 'remarks' => $remarks,
                 'approved_at' =>  $dateTime,
@@ -714,11 +727,16 @@ class PpeRequestController extends Controller
 
 
 
+
             $requestor = $this->user->getrequestEmail($empId);
             $recipients = array_filter([$requestor, $hod]);
 
             if ($action == 'approve') {
-                Mail::to($recipients)->queue(new PpeEhsRequestEmail($details));
+
+                if(!empty($recipients)){
+                    Mail::to($recipients)->queue(new PpeEhsRequestEmail($details));
+                }
+
 
 
                 $Storedetails = [
@@ -730,9 +748,21 @@ class PpeRequestController extends Controller
                     'approved_by' => $empDetails->approved_by,
                     'approve_link' => admin_url('ppe_request/ehsapproval/view/' . encryptId($id)),
                 ];
-
                 if ($action == 'approve') {
-                    Mail::to($storemanager)->queue(new PpeRequestStoremanagerEmail($Storedetails));
+                    // if(!empty($storemanager)){
+                    //     Mail::to($storemanager)->queue(new PpeRequestStoremanagerEmail($Storedetails));
+                    // }
+                    if (count($users) > 0) {
+                        foreach ($users as $user) {
+                            $email_id = $user->email;
+                            if ($email_id != '' || $email_id != null) {
+                                Mail::to($email_id)->queue(new PpeRequestStoremanagerEmail($Storedetails));
+
+                            }
+                        }
+
+                    }
+
                     $id = $empDetails->id;
                     $message = 'New PPE Request';
                     $storemanagerId = $this->user->getStoreManagerId();
@@ -786,7 +816,11 @@ class PpeRequestController extends Controller
 
                 notificationSave($notificationData);
             } else {
-                Mail::to($recipients)->queue(new PpeRequestEhsRejectEmail($details));
+                if(!empty($recipients)){
+                    Mail::to($recipients)->queue(new PpeRequestEhsRejectEmail($details));
+                }
+
+
 
                 $id = $empDetails->id;
                 $message = 'New PPE Request';
@@ -819,7 +853,7 @@ class PpeRequestController extends Controller
             Session::flash('success', 'PPE Request has successfully responded');
             return redirect()->to(admin_url('ppe_request/list'));
         } catch (Exception $ex) {
-            report($ex);
+           report($ex);
 
             Session::flash('error', 'Something went wrong, Please try after some time!');
             return redirect()->to(admin_url('ppe_request/list'));

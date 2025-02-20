@@ -181,12 +181,13 @@
 
             // Initialize DataTable
             var table = $('.datatable-list').DataTable({
-                autoWidth: false,
-                responsive: true,
+                autoWidth: true,
+                responsive: false,
                 processing: true,
                 serverSide: true,
                 searching: true,
                 ordering: true,
+                scrollX:true,
                 dom: 'Bfrtip',
                 ajax: {
                     url: "{{ admin_url('ohc/first-aid-location/list') }}",

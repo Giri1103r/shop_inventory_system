@@ -75,12 +75,10 @@
                                                     <select name="emp_id" class="form-control " id="emp_id"
                                                         style="width: 100%">
                                                         <option value="">Select the Employee ID</option>
-                                                        @foreach ($employeeList as $employee)
-                                                            <option value="{{ $employee->emp_id }}"
-                                                                @if ($employee->emp_id == $certifiedfirstaider->emp_id) selected @endif>
-                                                                {{ $employee->emp_name }} - {{ $employee->emp_id }}
-                                                            </option>
-                                                        @endforeach
+                                                        @if (isset($certifiedfirstaider->emp_id) && isset($certifiedfirstaider->emp_id))
+                                                                <option value="{{ $certifiedfirstaider->emp_id }}" selected>
+                                                                    {{ $certifiedfirstaider->emp_id }}</option>
+                                                            @endif
                                                     </select>
                                                 </div>
                                             </div>
@@ -222,17 +220,19 @@
                         empId: empId
                     },
                     dataType: 'json',
-                    success: function(data) {
-
-                        $('#certifier_name').val(data).prop('disable', true);
+                    success: function(response) {
+                        if (response.employee) {
+                            $('#certifier_name').val(response.employee.emp_name).prop('readonly', true);
+                        } else {
+                            $('#certifier_name').val('').prop('readonly', true);
+                        }
                     },
                     error: function(xhr) {
                         alert('Error fetching employee name. Please try again.');
                     }
                 });
             } else {
-
-                $('#certifier_name').val('').prop('disable', true);
+                $('#certifier_name').val('').prop('readonly', true);
             }
         });
 

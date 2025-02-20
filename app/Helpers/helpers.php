@@ -1470,12 +1470,12 @@ if (!function_exists('getMonth')) {
         function getMedicinename($userid)
         {
 
-            $medicine = DB::table('ohc_management_medicine_stock_inventory')->select('medicine_id')->where('id', $userid)->first();
+            $medicine = DB::table('ohc_master_medicine')->select('medicine')->where('id', $userid)->first();
 
             if ($medicine == null) {
                 return '';
             } else {
-                return $medicine->medicine_id;
+                return $medicine->medicine;
             }
         }
     }
@@ -1484,12 +1484,68 @@ if (!function_exists('getMonth')) {
         function gethsn($userid)
         {
 
-            $hsn = DB::table('ohc_management_medicine_stock_inventory')->select('hsn_number')->where('id', $userid)->first();
+            $hsn = DB::table('ohc_master_medicine')->select('hsn')->where('id', $userid)->first();
 
             if ($hsn == null) {
                 return '';
             } else {
                 return $hsn->hsn;
+            }
+        }
+    }
+    if (!function_exists('getSuggestedBy')) {
+
+        function getSuggestedBy($userid)
+        {
+
+            $suggested_by = DB::table('ohc_management_opd_patient_suggested_by')->select('suggested_by')->where('id', $userid)->where('status', 1)->where('trash', 'NO')->first();
+
+            if ($suggested_by == null) {
+                return '';
+            } else {
+                return $suggested_by->suggested_by;
+            }
+        }
+    }
+    if (!function_exists('getPatientStatus')) {
+
+        function getPatientStatus($userid)
+        {
+
+            $patient_status = DB::table('ohc_management_opd_patient_status')->select('patient_status')->where('id', $userid)->where('status', 1)->where('trash', 'NO')->first();
+
+            if ($patient_status == null) {
+                return '';
+            } else {
+                return $patient_status->patient_status;
+            }
+        }
+    }
+    if (!function_exists('getReferedVechicle')) {
+
+        function getReferedVechicle($userid)
+        {
+
+            $refered_vechicle = DB::table('ohc_management_opd_patient_refered_vechicle')->select('refered_vechicle')->where('id', $userid)->where('status', 1)->where('trash', 'NO')->first();
+
+            if ($refered_vechicle == null) {
+                return '';
+            } else {
+                return $refered_vechicle->refered_vechicle;
+            }
+        }
+    }
+    if (!function_exists('getPersonalCondition')) {
+
+        function getPersonalCondition($userid)
+        {
+
+            $injured_condtion = DB::table('ohc_opd_injured_condition')->select('injured_condtion')->where('id', $userid)->where('status', 1)->where('trash', 'NO')->first();
+
+            if ($injured_condtion == null) {
+                return '';
+            } else {
+                return $injured_condtion->injured_condtion;
             }
         }
     }

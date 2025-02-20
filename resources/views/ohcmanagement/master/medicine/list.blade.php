@@ -112,7 +112,6 @@
                                         <th>Medicine Name</th>
                                         <th>Pack</th>
                                         <th>HSN Number</th>
-                                        <th>Unit</th>
                                         <th>ThresholdLimit</th>
                                         <th>Expire Date</th>
                                         <th>{{ __('common.status') }}</th>
@@ -166,12 +165,13 @@
         $(function() {
             /* Datatable */
             var table = $('.datatable-list').DataTable({
-                autoWidth: false,
-                responsive: true,
+                autoWidth: true,
+                responsive: false,
                 processing: false,
                 serverSide: true,
                 searching: true,
                 ordering: true,
+                scrollX:true,
                 dom: 'Bfrtip',
                 layout: {
                     top2Start: 'buttons',
@@ -227,10 +227,6 @@
                     {
                         data: 'hsn',
                         name: 'hsn'
-                    },
-                    {
-                        data: 'unit_id',
-                        name: 'unit_id'
                     },
                     {
                         data: 'threshold_limit',
@@ -358,75 +354,75 @@
             });
 
             /* Status Change */
-            $(document).on('click', '.statusChange', function() {
-                var id = $(this).data('id');
-                var types = $(this).data('type');
-                if (types == 1) {
-                    var title = '{{ __('Do You want to In-Activate Medicine Details') }}';
-                    var text = '{{ __('common.inactive') }}';
-                    var btncolor = '#dc3545'
+            // $(document).on('click', '.statusChange', function() {
+            //     var id = $(this).data('id');
+            //     var types = $(this).data('type');
+            //     if (types == 1) {
+            //         var title = '{{ __('Do You want to In-Activate Medicine Details') }}';
+            //         var text = '{{ __('common.inactive') }}';
+            //         var btncolor = '#dc3545'
 
-                } else {
-                    var title = '{{ __('Do You want to Activate Medicine Details') }}';
-                    var text = '{{ __('common.active') }}';
-                    var btncolor = '#7ddc35'
-                }
+            //     } else {
+            //         var title = '{{ __('Do You want to Activate Medicine Details') }}';
+            //         var text = '{{ __('common.active') }}';
+            //         var btncolor = '#7ddc35'
+            //     }
 
-                Swal.fire({
-                    title: title,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: text,
-                    confirmButtonColor: btncolor,
-                    customClass: {
-                        confirmButton: 'btn-skew',
-                        cancelButton: 'btn-skew'
-                    },
-                }).then((result) => {
+            //     Swal.fire({
+            //         title: title,
+            //         icon: 'warning',
+            //         showCancelButton: true,
+            //         confirmButtonText: text,
+            //         confirmButtonColor: btncolor,
+            //         customClass: {
+            //             confirmButton: 'btn-skew',
+            //             cancelButton: 'btn-skew'
+            //         },
+            //     }).then((result) => {
 
 
-                    if (result.value) {
-                        $.ajax({
-                            url: "{{ admin_url('ohc/medicine/status') }}",
-                            type: 'post',
+            //         if (result.value) {
+            //             $.ajax({
+            //                 url: "{{ admin_url('ohc/medicine/status') }}",
+            //                 type: 'post',
 
-                            data: {
-                                id: id,
-                                types: types
-                            },
-                            success: function(response) {
-                                const Toast = Swal.mixin({
-                                    toast: true,
-                                    position: 'top-right',
-                                    showConfirmButton: false,
-                                    timer: 3000,
-                                    timerProgressBar: true,
-                                    didOpen: (toast) => {
-                                        toast.addEventListener(
-                                            'mouseenter',
-                                            Swal.stopTimer)
-                                        toast.addEventListener(
-                                            'mouseleave',
-                                            Swal.resumeTimer
-                                        )
-                                    }
-                                });
-                                Toast.fire({
-                                    icon: 'success',
-                                    title: response.msg
-                                });
-                                table.draw();
-                            },
-                            error: function(data) {
-                                $.notify(data.responseJSON.msg, "error");
-                            }
-                        });
-                    } else if (result.isDenied) {
-                        Swal.fire('Something went wrong', '', 'info');
-                    }
-                })
+            //                 data: {
+            //                     id: id,
+            //                     types: types
+            //                 },
+            //                 success: function(response) {
+            //                     const Toast = Swal.mixin({
+            //                         toast: true,
+            //                         position: 'top-right',
+            //                         showConfirmButton: false,
+            //                         timer: 3000,
+            //                         timerProgressBar: true,
+            //                         didOpen: (toast) => {
+            //                             toast.addEventListener(
+            //                                 'mouseenter',
+            //                                 Swal.stopTimer)
+            //                             toast.addEventListener(
+            //                                 'mouseleave',
+            //                                 Swal.resumeTimer
+            //                             )
+            //                         }
+            //                     });
+            //                     Toast.fire({
+            //                         icon: 'success',
+            //                         title: response.msg
+            //                     });
+            //                     table.draw();
+            //                 },
+            //                 error: function(data) {
+            //                     $.notify(data.responseJSON.msg, "error");
+            //                 }
+            //             });
+            //         } else if (result.isDenied) {
+            //             Swal.fire('Something went wrong', '', 'info');
+            //         }
+            //     })
 
-            });
+            // });
 
 
             /* Delete Record */

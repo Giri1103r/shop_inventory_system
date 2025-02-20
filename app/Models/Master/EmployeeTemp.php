@@ -71,7 +71,6 @@ class EmployeeTemp extends Model
         $insertArray = [];
 
         $chunks = array_chunk($data['Result'], $batchSize);
-
         foreach ($chunks as $chunk) {
             foreach ($chunk as $item) {
                    
@@ -93,6 +92,11 @@ class EmployeeTemp extends Model
                     ]);
                     continue; 
                 }
+
+                $designation = DB::table('masters_designation')
+                ->where('des_code', $item['fk_Emp_DesCode'])
+                ->value('designation_name') ?? null;
+            
                 $status = isset($item['Emp_Active']) ? ($item['Emp_Active'] ? 1 : 0) : null;
 
 
@@ -103,6 +107,7 @@ class EmployeeTemp extends Model
                     'user_role' => isset($item['Emp_Rolename']) ? $item['Emp_Rolename'] : null,
                     'mobile_no' => isset($item['Emp_PersonalPhoneNo']) ? $item['Emp_PersonalPhoneNo'] : null,
                     'joining_date' => !empty($item['Emp_JoiningDate']) ? DBdatetimeformat($item['Emp_JoiningDate']) : null,
+                    'designation' => $designation,
                     'status' => $status,
                     'employee_status' => isset($item['Emp_Status']) ? $item['Emp_Status'] : null,
                     'email' => isset($item['Emp_OfficialMail']) ? $item['Emp_OfficialMail'] : null,
@@ -111,6 +116,7 @@ class EmployeeTemp extends Model
                     'error_status' => 0,
                     'error_remarks' => null,
                 ];
+               
 
                 $exists = $this->where('emp_id', $item['pk_Emp_Code'])->exists();
 
@@ -124,6 +130,7 @@ class EmployeeTemp extends Model
                     ['emp_id' => $item['pk_Emp_Code']],
                     $valuesToInsertOrUpdate
                 );
+
             }
         }
         return response()->json(['message' => 'Data processed successfully.']);
