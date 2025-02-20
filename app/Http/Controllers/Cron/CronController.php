@@ -560,69 +560,72 @@ class CronController extends Controller
         }
     }
 
-    // public function stockupdate()
-    // {
-    //     try {
-    //         $eighthoursAhead = Carbon::now()->addHour(8);
-    //         $data = MedicineReceiving::where('approve_status', STATUS_OHC_OPEN)
-    //             ->where('status', 1)
-    //             ->where('cron_time', '<', $eighthoursAhead->toTimeString())
-    //             ->get();
+    public function stockupdate()
+    {
+        try {
+            $eighthoursAhead = Carbon::now()->addHour(8);
+            $data = MedicineReceiving::where('approve_status', STATUS_OHC_OPEN)
+                ->where('status', 1)
+                ->where('cron_time', '<', $eighthoursAhead->toTimeString())
+                ->get();
 
 
-    //         if ($data->isEmpty()) {
-    //             return response()->json(['message' => 'No pending stock updates.']);
-    //         }
+            if ($data->isEmpty()) {
+                return response()->json(['message' => 'No pending stock updates.']);
+            }
 
-    //         $ehsofficer = $this->user->findEhsofficer();
-    //         $ehsEmail = $ehsofficer->pluck('email')->toArray();
-    //         $EhsId = $this->user->assigneduser($ehsofficer);
+            $ehsofficer = $this->user->findEhsofficer();
+            $ehsEmail = $ehsofficer->pluck('email')->toArray();
+            $EhsId = $this->user->assigneduser($ehsofficer);
 
-    //         $ehshead = $this->user->findEhsHead();
-    //         $ehsHeadEmail = $ehshead->pluck('email')->toArray();
-    //         $EhsHeadId = $ehshead->pluck('id')->toArray();
+            $ehshead = $this->user->findEhsHead();
+            $ehsHeadEmail = $ehshead->pluck('email')->toArray();
+            $EhsHeadId = $ehshead->pluck('id')->toArray();
 
-    //         $message = 'Stock Update for the Medicine';
+            $message = 'Stock Update for the Medicine';
 
-    //         foreach ($data as $medicine) {
-    //             $medicineDetails = $this->medicine_receiving->SelectOne($medicine->id);
+            foreach ($data as $medicine) {
+                $medicineDetails = $this->medicine_receiving->SelectOne($medicine->id);
 
-    //             $crontime = $this->medicine_receiving->update(['cron_time' => Carbon::now()]);
-    //             $medicineDetails['mail_subject'] = "Stock Update Alert";
-    //             $medicineDetails['medicine_name'] = getMedicinename($medicine->medicine_id);
-
-
-    //             $recipients = array_merge($ehsEmail, $ehsHeadEmail);
-    //             Mail::to($recipients)->queue(new MedicineStockRequestEmail($medicineDetails));
+                $crontime = $this->medicine_receiving->update(['cron_time' => Carbon::now()]);
+                $medicineDetails['mail_subject'] = "Stock Update Alert";
+                $medicineDetails['medicine_name'] = getMedicinename($medicine->medicine_id);
 
 
-    //             $notificationData = [
-    //                 'notification_type' => 4,
-    //                 'module_type' => 1,
-    //                 'notification_message' => $message,
-    //                 'mobile_notification' => json_encode([
-    //                     'title' => $message,
-    //                     'message' => "{$medicineDetails['medicine_name']} has not been updated. The status is still open.",
-    //                     'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
-    //                     'module' => 1,
-    //                     'style' => 'font-size: 1rem;'
-    //                 ]),
-    //                 'web_link' => url('ohc/medicine-receiving-form/list'),
-    //                 'assigned_user' => array_to_string(array_merge($EhsId, $EhsHeadId)),
-    //                 'created_by' => 1,
-    //             ];
+                $recipients = array_merge($ehsEmail, $ehsHeadEmail);
+                if(!empty($recipients)){
+                    Mail::to($recipients)->queue(new MedicineStockRequestEmail($medicineDetails));
+                }
 
-    //             notificationSave($notificationData);
-    //         }
 
-    //         return response()->json(['message' => 'Emails and notifications sent successfully.']);
-    //     } catch (Exception $ex) {
-    //         return response()->json([
-    //             'message' => 'An error occurred.',
-    //             'error' => $ex->getMessage(),
-    //         ]);
-    //     }
-    // }
+
+                $notificationData = [
+                    'notification_type' => 4,
+                    'module_type' => 1,
+                    'notification_message' => $message,
+                    'mobile_notification' => json_encode([
+                        'title' => $message,
+                        'message' => "{$medicineDetails['medicine_name']} has not been updated. The status is still open.",
+                        'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                        'module' => 1,
+                        'style' => 'font-size: 1rem;'
+                    ]),
+                    'web_link' => url('ohc/medicine-receiving-form/list'),
+                    'assigned_user' => array_to_string(array_merge($EhsId, $EhsHeadId)),
+                    'created_by' => 1,
+                ];
+
+                notificationSave($notificationData);
+            }
+
+            return response()->json(['message' => 'Emails and notifications sent successfully.']);
+        } catch (Exception $ex) {
+            return response()->json([
+                'message' => 'An error occurred.',
+                'error' => $ex->getMessage(),
+            ]);
+        }
+    }
 
 
 

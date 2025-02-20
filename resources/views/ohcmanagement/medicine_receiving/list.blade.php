@@ -90,6 +90,11 @@
                                             <select name="approve_status" id="approve_status"
                                                 class="form-control single-select form-control-sm" style="width: 100%">
                                                 <option value="">Select the approve status</option>
+                                                <option value="2">EHS Officer verification Pending</option>
+                                                <option value="5">L1 EHS verification Pending</option>
+                                                <option value="8">EHS Head Approval Pending</option>
+                                                <option value="11">Open</option>
+                                                <option value="12">Close</option>
 
                                             </select>
                                         </div>
@@ -220,6 +225,7 @@
                     d.vendor_id = $('#vendor_id').val();
                     d.from_date = $('#from_date').val();
                     d.to_date = $('#to_date').val();
+                    d.approve_status = $('#approve_status').val();
                 },
                 error: function(xhr, error, code) {
                     if (xhr.status === 419) {
@@ -302,6 +308,8 @@
                                 var vendor_id = $('#vendor_id').val();
                                 var from_date = $('#from_date').val();
                                 var to_date = $('#to_date').val();
+                                var approve_status = $('#approve_status').val();
+
 
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
@@ -311,6 +319,7 @@
                                     '&medicine_id=' + medicine_id +
                                     '&vendor_id=' + vendor_id +
                                     '&from_date=' + from_date +
+                                    '&approve_status=' + approve_status +
                                     '&to_date=' + to_date;
                             }
                         },
@@ -322,7 +331,9 @@
                                 var medicine_id = $('#medicine_id').val();
                                 var vendor_id = $('#vendor_id').val();
                                 var from_date = $('#from_date').val();
+                                var approve_status = $('#approve_status').val();
                                 var to_date = $('#to_date').val();
+
 
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
@@ -332,6 +343,7 @@
                                     '&medicine_id=' + medicine_id +
                                     '&vendor_id=' + vendor_id +
                                     '&from_date=' + from_date +
+                                    '&approve_status=' + approve_status +
                                     '&to_date=' + to_date;
                             }
                         }
@@ -345,83 +357,82 @@
         });
 
         $(document).on('click', '.stockClose', function() {
-                var id = $(this).data('id');
-                var login_id = $(this).data('login_id');
+            var id = $(this).data('id');
+            var login_id = $(this).data('login_id');
 
-                var title = '{{ __('Do You want to Close Stock Request') }}';
-                var text = '{{ __('Close') }}';
-                var btncolor = '#28a745';
+            var title = "Do you want to close the stock request?";
+            var text = "Close";
+            var btncolor = "#28a745";
 
-                Swal.fire({
-                    title: title,
-                    icon: 'warning',
-                    input: 'textarea', // Add a textarea for remarks
-                    inputPlaceholder: '{{ __('Enter your remarks here...') }}',
-                    showCloseButton: true,
-                    confirmButtonText: text,
-                    confirmButtonColor: btncolor,
-                    customClass: {
-                        confirmButton: 'btn-skew'
-                    },
-                    preConfirm: (remarks) => {
-                        if (!remarks) {
-                            Swal.showValidationMessage('{{ __('Remarks are required!') }}');
-                        }
-                        return remarks; // Return the input value
+            Swal.fire({
+                title: title,
+                icon: "warning",
+                input: "textarea",
+                inputPlaceholder: "Enter your remarks here...",
+                showCloseButton: true,
+                confirmButtonText: text,
+                confirmButtonColor: btncolor,
+                customClass: {
+                    confirmButton: "btn-skew"
+                },
+                preConfirm: (remarks) => {
+                    if (!remarks || remarks.trim() === "") {
+                        Swal.showValidationMessage("Remarks are required!");
+                        return false;
                     }
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        var remarks = result.value;
+                    return remarks.trim();
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var remarks = result.value;
 
-                        // Proceed with AJAX request
-                        $.ajax({
-                            url: "{{ admin_url('ohc/medicine-receiving-form/close') }}",
-                            type: 'post',
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            data: {
-                                id: id,
-                                login_id: login_id,
-                                remarks: remarks // Pass remarks to the server
-                            },
-                            success: function(response) {
-                                const Toast = Swal.mixin({
-                                    toast: true,
-                                    position: 'top-right',
-                                    showConfirmButton: false,
-                                    timer: 3000,
-                                    timerProgressBar: true,
-                                    didOpen: (toast) => {
-                                        toast.addEventListener('mouseenter',
-                                            Swal.stopTimer);
-                                        toast.addEventListener('mouseleave',
-                                            Swal.resumeTimer);
-                                    }
-                                });
-                                Toast.fire({
-                                    icon: 'success',
-                                    title: response.msg
-                                });
-                                table.draw();
-                            },
-                            error: function(data) {
-                                if (data.status === 406 && data.responseJSON.msg ===
-                                    'module_exits') {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error',
-                                        text: 'Location Deletion Failed: Module Dependencies Exist.',
-                                    });
-                                } else {
-                                    $.notify(data.responseJSON.msg, "error");
-                                }
+                    // Proceed with AJAX request
+                    $.ajax({
+                        url: "{{ url('ohc/medicine-receiving-form/close') }}",
+                        type: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+                        },
+                        data: {
+                            id: id,
+                            login_id: login_id,
+                            remarks: remarks
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: "success",
+                                title: response.msg ||
+                                    "Stock request closed successfully!",
+                                toast: true,
+                                position: "top-right",
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true
+                            });
+                            table.draw();
+                        },
+                        error: function(xhr) {
+                            let errorMessage = "Something went wrong!";
+
+                            // Check if responseJSON exists and contains a 'msg'
+                            if (xhr.responseJSON && xhr.responseJSON.msg) {
+                                errorMessage = xhr.responseJSON.msg;
+                            } else if (xhr.status === 419) {
+                                errorMessage = "Session expired. Please refresh and try again.";
+                            } else if (xhr.status === 500) {
+                                errorMessage =
+                                    "Internal Server Error. Please check the server logs.";
                             }
-                        });
-                    } else if (result.dismiss === Swal.DismissReason.cancel) {
-                        Swal.fire('{{ __('Action Closed') }}', '', 'info');
-                    }
-                });
+
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: errorMessage
+                            });
+                        }
+                    });
+                }
             });
+        });
     </script>
 @endpush

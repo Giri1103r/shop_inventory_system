@@ -32,7 +32,7 @@ class MedicineIssuance extends Model
         foreach ($request->medicine_id as $index => $medicine) {
             $insert_array = [
                 'reference_id' => $user_medicine_issuance->id,
-                'medicine_id' => $medicine,
+                'medicine_id' => decryptId($medicine),
                 'quantity' => $request->quantity[$index],
                 'available_quantity' => $request->available_quantity[$index],
                 'created_by' => Auth::id(),
@@ -48,6 +48,8 @@ class MedicineIssuance extends Model
     public function updates($id)
     {
         $request = request();
+        $updatedRecords = []; 
+        $createdRecords = [];
 
         foreach ($request->medicine_id as $index => $medicine) {
             $update_data = [
@@ -59,18 +61,25 @@ class MedicineIssuance extends Model
                 'updated_by' => Auth::id(),
             ];
 
-
             $existingRecord = self::where('reference_id', $id)
-                ->where('medicine_id', $medicine)->where('trash','NO')
+                ->where('medicine_id', $medicine)
+                ->where('trash', 'NO')
                 ->first();
 
             if ($existingRecord) {
                 $existingRecord->update($update_data);
+                $updatedRecords[] = $existingRecord->fresh(); // Get updated record
             } else {
-                self::create($update_data);
+                $createdRecords[] = self::create($update_data);
             }
         }
+
+        return [
+            'updated' => $updatedRecords,
+            'created' => $createdRecords
+        ];
     }
+
 
 
     public function selectOne($id)

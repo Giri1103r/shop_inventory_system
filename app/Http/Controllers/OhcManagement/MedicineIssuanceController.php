@@ -31,6 +31,9 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\OhcManagement\MedicineStock;
 use App\Models\OhcManagement\OhcStatuslog;
 use App\Models\User;
+use App\Models\OhcManagement\Report\Inventory;
+use App\Models\OhcManagement\Status\CreatorLog;
+use App\Models\OhcManagement\Status\MedicineLog;
 
 class MedicineIssuanceController extends Controller
 {
@@ -46,6 +49,10 @@ class MedicineIssuanceController extends Controller
     private $user_medicine_requisition;
     private $medicine_requisition;
     private $user;
+    private $inventory;
+    private $creatorlog;
+    private $medicinelog;
+
     public function __construct()
     {
         $this->medicine = new Medicine();
@@ -60,6 +67,9 @@ class MedicineIssuanceController extends Controller
         $this->unit = new Unit();
         $this->department = new Department();
         $this->user = new User();
+        $this->inventory = new Inventory();
+        $this->creatorlog = new CreatorLog();
+        $this->medicinelog = new MedicineLog();
     }
     public function index(Request $request)
     {
@@ -85,7 +95,7 @@ class MedicineIssuanceController extends Controller
                             $btn .= '<a href="' . admin_url('ohc/medicine-issuance/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
                             // if (CheckUserPermission('edit')) {
-                            // $btn .= '<a href="' . admin_url('ohc/medicine-issuance/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
+                            $btn .= '<a href="' . admin_url('ohc/medicine-issuance/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             // }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
 
@@ -120,7 +130,7 @@ class MedicineIssuanceController extends Controller
     {
         try {
             $unit = $this->unit->getuserunit();
-            $medicine = $this->medicine_stock->getMedicineIssuanceStock();
+            $medicine = $this->inventory->getstockdata();
             $data = array(
                 'medicine' => $medicine,
                 'unit' => $unit
@@ -141,7 +151,7 @@ class MedicineIssuanceController extends Controller
             $unit = $this->unit->getunit();
             $departmentList = $this->department->getdepartment();
 
-            $medicine = $this->medicine_stock->getMedicinestockdata();
+            $medicine = $this->inventory->getstockdata();
             $user_medicine_requisition = $this->user_medicine_requisition->selectOne($id);
             // dd(   $user_medicine_requisition);
             $medicine_requisition = $this->medicine_requisition->selectOne($id);
@@ -186,19 +196,37 @@ class MedicineIssuanceController extends Controller
                 $medicine_issuance = $this->medicine_issuance->store($user_medicine_issuance);
 
 
+                foreach ($medicine_issuance as $medicine) {
+
+                    $medicine_id = $medicine->medicine_id;
+                    $unitId = $user_medicine_issuance->unit_id;
+                    $issuedQuantity = $medicine->quantity;
+                    $data = $this->inventory
+                        ->where('medicine_id', $medicine_id)
+                        ->where('unit_id', $unitId)
+                        ->first();
+                    $this->inventory
+                        ->where('medicine_id', $medicine_id)
+                        ->where('unit_id', 1)
+                        ->decrement('balance', $issuedQuantity);
+                        $this->inventory
+                        ->where('medicine_id', $medicine_id)
+                        ->where('unit_id', 1)
+                        ->increment('total_issue', $issuedQuantity);
+                    $this->inventory
+                        ->where('medicine_id', $medicine_id)
+                        ->where('unit_id',  $unitId)
+                        ->increment('total_purchase', $issuedQuantity);
+                        $this->inventory
+                        ->where('medicine_id', $medicine_id)
+                        ->where('unit_id',  $unitId)
+                        ->increment('balance', $issuedQuantity);
+                }
+                // $creatorlog =  $this->creatorlog->store($user_medicine_issuance , $data );
+                $this->medicinelog->store($user_medicine_issuance, $user_medicine_issuance);
+                // medicine log
 
 
-                    foreach ($medicine_issuance as $medicine) {
-
-                        $medicine_id = $medicine->medicine_id;
-                        $unitId = $user_medicine_issuance->unit_id;
-                        $issuedQuantity = $medicine->quantity;
-
-                        $this->medicine_stock
-                            ->where('id', $medicine_id)
-                            ->where('unit_id', $unitId)
-                            ->decrement('quantity', $issuedQuantity);
-                   }
 
                 // Notification and Email
                 $id =  $user_medicine_issuance->id;
@@ -206,12 +234,12 @@ class MedicineIssuanceController extends Controller
                 $unitId = $data->unit_id;
                 $departmentId = $data->department_id;
                 $mailsubject = 'Medicine Issuing to Other Unit';
-                $user_role = ROLE_CERTIFIED_FIRST_AIDER;
+                $user_role = ROLE_EHS_OFFICER;
 
 
 
-                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $unitId)->where('department_id', $departmentId)->pluck('id')->toArray();
-                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $unitId)->where('department_id', $departmentId)->get();
+                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
 
 
                 if (count($users) > 0) {
@@ -243,7 +271,7 @@ class MedicineIssuanceController extends Controller
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
-                        'message' => "The requested Medicine Was issued By " . getUsername($data->created_by),
+                        'message' => "The  Medicine Was issued By " . getUsername($data->created_by),
                         'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                         'id' => $id,
                         'module' => 1,
@@ -292,11 +320,22 @@ class MedicineIssuanceController extends Controller
 
             try {
 
-                $user_medicine_issuance = $this->user_medicine_issuance->store();
-                $this->medicine_issuance->store($user_medicine_issuance);
                 $id = decryptId($request->id);
+                $user_medicine_requisition = $this->user_medicine_requisition->selectOne($id);
+                // issue store
+                $user_medicine_issuance = $this->user_medicine_issuance->issuestore($user_medicine_requisition);
+                $medicineissuance =  $user_medicine_issuance->id;
+
+                $issuance =  $this->medicine_issuance->store($user_medicine_issuance);
+                $medicinedata =  $this->medicine_issuance->where('reference_id', $medicineissuance)->get();
+                // requisition status update
+
                 $this->user_medicine_requisition->updatestatus($id);
                 $this->ohc_status->updatecloseStatus($id);
+
+                // stock update
+                $this->inventory->issuestockupdate($user_medicine_issuance, $medicinedata);
+                // notification
                 $mailsubject = 'Medicine Issuing to the Unit';
 
                 $details =  $this->user_medicine_requisition->selectOne($id);
@@ -340,7 +379,7 @@ class MedicineIssuanceController extends Controller
             return redirect(admin_url('ohc/medicine-issuance/list'));
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }
@@ -352,13 +391,13 @@ class MedicineIssuanceController extends Controller
 
 
             $user_medicine_issuance = $this->user_medicine_issuance->selectOne($id);
-            $departmentList=$this->department->getdepartment();
+            $departmentList = $this->department->getdepartment();
             $medicine_issuance = $this->medicine_issuance->selectOne($id);
             $departmentList = $this->department->getdepartment();
             $unit = $this->unit->getuserunit();
-            $medicine = $this->medicine_stock->getMedicineIssuanceStock();
+            $medicine =  $this->inventory->getstockdata();
             $data = array(
-              'medicine'=>$medicine,
+                'medicine' => $medicine,
                 'unit' => $unit,
                 'departmentList' => $departmentList,
                 'user_medicine_issuance' => $user_medicine_issuance,
@@ -377,17 +416,19 @@ class MedicineIssuanceController extends Controller
     {
         try {
             $id = decryptId($request->id);
+
+            // Validation rules
             $rules = [
                 'unit_id' => 'required',
                 'department_id' => 'required',
                 'issue_date' => 'required',
-
             ];
             $messages = [
-                'department_id.required' => 'Please select a Deparment.',
+                'department_id.required' => 'Please select a Department.',
                 'unit_id.required' => 'Please select a unit.',
                 'issue_date.required' => 'Please select the Issued date.',
             ];
+
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
@@ -396,76 +437,104 @@ class MedicineIssuanceController extends Controller
             try {
 
                 $user_medicine_issuance = $this->user_medicine_issuance->updates($id);
-                $this->medicine_issuance->updates($id);
+                $updatedMedicines = $this->medicine_issuance->updates($id);
 
+
+                $existingMedicines = $this->medicinelog->getquantity($id);
+
+
+                foreach ($updatedMedicines as $updatedMedicine) {
+                    $medicine_id = $updatedMedicine['medicine_id'];
+                    $newQuantity = $updatedMedicine['quantity'];
+
+
+                    $existingMedicine = collect($existingMedicines)->firstWhere('medicine_id', $medicine_id)->where('type',TYPE_OHC_ISSUANCE);
+
+                    if ($existingMedicine) {
+                        $oldQuantity = $existingMedicine['quantity'];
+
+                        if ($newQuantity < $oldQuantity) {
+                            $difference = $oldQuantity - $newQuantity;
+                            $this->inventory->where('unit_id', $user_medicine_issuance->unit_id )
+                                ->where('medicine_id', $medicine_id)
+                                ->decrement('total_issue', $difference);
+
+                            $this->inventory->where('unit_id', $user_medicine_issuance->unit_id )
+                                ->where('medicine_id', $updatedMedicine['medicine_id'])
+                                ->increment('balance', $difference);
+                        }
+
+                        elseif ($newQuantity > $oldQuantity) {
+                            $difference = $newQuantity - $oldQuantity;
+                            $this->inventory
+                                ->where('medicine_id', $medicine_id)
+                                ->increment('total_issue', $difference);
+
+                            $this->inventory
+                                ->where('medicine_id', $updatedMedicine['medicine_id'])
+                                ->decrement('balance', $difference);
+                        }
+                    }
+                }
+
+                // Fetch user and department details for notifications
                 $data = $this->user_medicine_issuance->selectOne($id);
-
                 $unitId = $data->unit_id;
                 $departmentId = $data->department_id;
                 $mailsubject = 'Medicine Issuing to Other Unit';
-                $user_role = ROLE_CERTIFIED_FIRST_AIDER;
+                $user_role = ROLE_EHS_OFFICER;
 
+                // Fetch all EHS Officers for notification
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+                $userids = $users->pluck('id')->toArray();
 
+                // Send email notifications to all users
+                foreach ($users as $user) {
+                    if (!empty($user->email)) {
+                        $details = $this->user_medicine_issuance->selectOne($id);
+                        $medicineDetails = $this->medicine_issuance->selectOne($id);
+                        $emailDetails = $details->toArray();
+                        $emailDetails['name'] = $user->name;
+                        $emailDetails['email_id'] = $user->email;
+                        $emailDetails['mail_subject'] = $mailsubject;
 
-                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $unitId)->where('department_id', $departmentId)->pluck('id')->toArray();
-                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $unitId)->where('department_id', $departmentId)->get();
-
-
-                if (count($users) > 0) {
-                    foreach ($users as $user) {
-
-                        $email_id = $user->email;
-
-                        if ($email_id != '' || $email_id != null) {
-                            $details = $this->user_medicine_issuance->selectOne($id);
-                            $medicineDetails = $this->medicine_issuance->selectOne($id);
-                            $emailDetails = $details->toArray();
-                            $emailDetails['name'] = $user->name;
-                            $emailDetails['email_id'] = $email_id;
-                            $emailDetails['mail_subject'] = $mailsubject;
-
-                            Mail::to($emailDetails['email_id'])->queue(new MedicineRequisitionEmail($emailDetails, $medicineDetails));
-                        }
+                        Mail::to($user->email)->queue(new MedicineRequisitionEmail($emailDetails, $medicineDetails));
                     }
-
                 }
 
-                $notificationData = array(
+                // Prepare and send web notification
+                $notificationData = [
                     'notification_type' => 4,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
+                    'mobile_notification' => json_encode([
                         'title' => $mailsubject,
-                        'message' => "The requested Medicine Was issued By " . getUsername($data->created_by),
-                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'message' => "The requested Medicine was issued by " . getUsername($data->created_by),
+                        'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
                         'id' => $id,
                         'module' => 1,
-                    )),
-                    'web_link' =>  admin_url('ohc/medicine-issuance/list'),
+                    ]),
+                    'web_link' => admin_url('ohc/medicine-issuance/list'),
                     'assigned_user' => array_to_string($userids),
                     'created_by' => Auth::id(),
-                );
+                ];
                 notificationSave($notificationData);
-                /**
-                 * Send Web notification
-                 */
 
-
-
-                Session::flash('success', 'Your data has been Updated successfully!');
+                Session::flash('success', 'Your data has been updated successfully!');
             } catch (Exception $ex) {
                 dd($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error', 'Something went wrong, please try again later!');
+                return redirect()->back();
             }
 
             return redirect(admin_url('ohc/medicine-issuance/list'));
         } catch (Exception $ex) {
-
             dd($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', 'Something went wrong, please try again later!');
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }
     }
+
 
     public function view(Request $request)
     {
@@ -490,13 +559,12 @@ class MedicineIssuanceController extends Controller
     }
     public function quantity(Request $request, $quantity_id)
     {
-        $id = ($quantity_id);
+        $id = decryptId($quantity_id);
 
-
-        $availableQuantity = $this->medicine_stock->getAvailableQuantity($id);
+        $availableQuantity = $this->inventory->getAvailableQuantity($id);
 
         return response()->json(
-            ['available_quantity' => $availableQuantity->quantity]
+            ['available_quantity' => $availableQuantity->balance]
         );
     }
 
@@ -547,7 +615,7 @@ class MedicineIssuanceController extends Controller
         }
     }
 
-    public function delete(Request $request,$id)
+    public function delete(Request $request, $id)
     {
         try {
 

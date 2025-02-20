@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Discard The Expire Medicine')
-@section('pageurl', admin_url('ohc/discard/list'))
+@section('title', 'Medicine Requisition Add')
+@section('pageurl', admin_url('ohc/medicine-requisition/list'))
 @section('content')
 
     <div class="clearfix"></div>
@@ -21,14 +21,14 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('ohc/discard/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('ohc/medicine-requisition/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body">
                                 <div class="basic-form">
                                     <form method="POST" id="MedicineRequisitionForm" enctype="multipart/form-data"
-                                        action="{{ admin_url('ohc/discard/add/submit') }}">
+                                        action="{{ admin_url('ohc/medicine-requisition/add/submit') }}">
                                         @csrf
 
                                         <hr>
@@ -118,8 +118,9 @@
                                                                         <option value="">Select the Medicine Name
                                                                         </option>
                                                                         @foreach ($medicine as $list)
-                                                                            <option value="{{ encryptId($list->id) }}">
-                                                                                {{ $list->medicine_id }}
+                                                                            <option
+                                                                                value="{{ encryptId($list->medicine_id) }}">
+                                                                                {{ getMedicinename($list->medicine_id) }}
                                                                             </option>
                                                                         @endforeach
                                                                     </select>
@@ -174,7 +175,7 @@
                                             <x-button-submit class="submit" id="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('ohc/discard/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('ohc/medicine-requisition/list') }}"></x-button-cancel>
                                         </div>
                                     </form>
                                 </div>
@@ -238,8 +239,10 @@
                         <select name="medicine_id[${medicine_requisition_row_count}]" class="form-control single-select" style="width: 100%">
                             <option value="">Select the Medicine Name</option>
                             @foreach ($medicine as $list)
-                                <option value="{{ encryptId($list->id) }}" data-available-quantity="{{ $list->available_quantity }}">{{ $list->medicine_id }}</option>
-                            @endforeach
+                                                                            <option value="{{ encryptId($list->medicine_id) }}">
+                                                                                {{ getMedicinename($list->medicine_id) }}
+                                                                            </option>
+                                                                        @endforeach
                         </select>
                     </div>
                 </td>
@@ -356,8 +359,8 @@
 
                 if (medicine_id) {
                     $.ajax({
-                        url: "{{ admin_url('ohc/discard/quantity') }}/" + medicine_id,
-                        type: 'POST',
+                        url: "{{ admin_url('ohc/medicine-requisition/quantity') }}/" + medicine_id,
+                        type: 'GET',
                         dataType: 'json',
                         success: function(data) {
                             row.find('input[name^="available_quantity"]').val(data

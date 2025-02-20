@@ -105,6 +105,7 @@ class AppServiceProvider extends ServiceProvider
         defined('TYPE_OHC_MEDICINE_RECEIVING') or define('TYPE_OHC_MEDICINE_RECEIVING', 4);
         defined('TYPE_OHC_MEDICINE_REQUISITION') or define('TYPE_OHC_MEDICINE_REQUISITION', 5);
         defined('TYPE_OHC_MEDICINE_STOCK') or define('TYPE_OHC_MEDICINE_STOCK', 6);
+        defined('TYPE_OHC_ISSUANCE') or define('TYPE_OHC_ISSUANCE', 7);
 
 
         defined('CHEMICAL_DEPARTMENT') or define('CHEMICAL_DEPARTMENT', 53);
@@ -133,33 +134,39 @@ class AppServiceProvider extends ServiceProvider
 
         // Medicine Approval
 
-        defined('STATUS_OHC_MEDICINE_REQUEST')or define('STATUS_OHC_MEDICINE_REQUEST', 1);
-        defined('STATUS_OHC_EHS_HEAD_APPROVAL_PENDING')or define('STATUS_OHC_EHS_HEAD_APPROVAL_PENDING', 2);
-        defined('STATUS_OHC_EHS_HEAD_APPROVED')or define('STATUS_OHC_EHS_HEAD_APPROVED',3);
-        defined('STATUS_OHC_EHS_HEAD_REJECTED')or define('STATUS_OHC_EHS_HEAD_REJECTED',4);
+        defined('STATUS_OHC_MEDICINE_REQUEST') or define('STATUS_OHC_MEDICINE_REQUEST', 1);
+        defined('STATUS_OHC_EHS_HEAD_APPROVAL_PENDING') or define('STATUS_OHC_EHS_HEAD_APPROVAL_PENDING', 2);
+        defined('STATUS_OHC_EHS_HEAD_APPROVED') or define('STATUS_OHC_EHS_HEAD_APPROVED', 3);
+        defined('STATUS_OHC_EHS_HEAD_REJECTED') or define('STATUS_OHC_EHS_HEAD_REJECTED', 4);
 
         // medicine receiving approval
 
-        defined('STATUS_OHC_STOCK_REQUEST')or define('STATUS_OHC_STOCK_REQUEST',1);
-        defined('STATUS_OHC_EHS_VERIFICATION_PENDING')or define('STATUS_OHC_EHS_VERIFICATION_PENDING',2);
-        defined('STATUS_OHC_EHS_VERIFIED')or define('STATUS_OHC_EHS_VERIFIED',3);
-        defined('STATUS_OHC_EHS_REJECTED')or define('STATUS_OHC_EHS_REJECTED',4);
-        defined('STATUS_OHC_L1_EHS_VERIFICATION_PENDING')or define('STATUS_OHC_L1_EHS_VERIFICATION_PENDING',5);
-        defined('STATUS_OHC_L1_EHS_VERIFIED')or define('STATUS_OHC_L1_EHS_VERIFIED',6);
-        defined('STATUS_OHC_L1_EHS_REJECTED')or define('STATUS_OHC_L1_EHS_REJECTED',7);
-        defined('STATUS_OHC_AGM_APPROVAL_PENDING')or define('STATUS_OHC_AGM_APPROVAL_PENDING',8);
-        defined('STATUS_OHC_AGM_APPROVED')or define('STATUS_OHC_AGM_APPROVED',9);
-        defined('STATUS_OHC_AGM_REJECTED')or define('STATUS_OHC_AGM_REJECTED',10);
-        defined('STATUS_OHC_OPEN')or define('STATUS_OHC_OPEN',11);
-        defined('STATUS_OHC_CLOSE')or define('STATUS_OHC_CLOSE',12);
+        defined('STATUS_OHC_STOCK_REQUEST') or define('STATUS_OHC_STOCK_REQUEST', 1);
+        defined('STATUS_OHC_EHS_VERIFICATION_PENDING') or define('STATUS_OHC_EHS_VERIFICATION_PENDING', 2);
+        defined('STATUS_OHC_EHS_VERIFIED') or define('STATUS_OHC_EHS_VERIFIED', 3);
+        defined('STATUS_OHC_EHS_REJECTED') or define('STATUS_OHC_EHS_REJECTED', 4);
+        defined('STATUS_OHC_L1_EHS_VERIFICATION_PENDING') or define('STATUS_OHC_L1_EHS_VERIFICATION_PENDING', 5);
+        defined('STATUS_OHC_L1_EHS_VERIFIED') or define('STATUS_OHC_L1_EHS_VERIFIED', 6);
+        defined('STATUS_OHC_L1_EHS_REJECTED') or define('STATUS_OHC_L1_EHS_REJECTED', 7);
+        defined('STATUS_OHC_AGM_APPROVAL_PENDING') or define('STATUS_OHC_AGM_APPROVAL_PENDING', 8);
+        defined('STATUS_OHC_AGM_APPROVED') or define('STATUS_OHC_AGM_APPROVED', 9);
+        defined('STATUS_OHC_AGM_REJECTED') or define('STATUS_OHC_AGM_REJECTED', 10);
+        defined('STATUS_OHC_OPEN') or define('STATUS_OHC_OPEN', 11);
+        defined('STATUS_OHC_CLOSE') or define('STATUS_OHC_CLOSE', 12);
 
-   
+        // Requisition status
+        defined('STATUS_OHC_REQUISITION_STOCK_REQUEST') or define('STATUS_OHC_REQUISITION_STOCK_REQUEST', 1);
+        defined('STATUS_OHC_PARAMEDICS_APPROVAL_PENDING') or define('STATUS_OHC_PARAMEDICS_APPROVAL_PENDING', 2);
+        defined('STATUS_OHC_PARAMEDICS_APPROVED') or define('STATUS_OHC_PARAMEDICS_APPROVED', 3);
+        defined('STATUS_OHC_PARAMEDICS_REJECTED') or define('STATUS_OHC_PARAMEDICS_REJECTED', 4);
+        defined('STATUS_OHC_REQUISITION_OPEN') or define('STATUS_OHC_REQUISITION_OPEN', 5);
+        defined('STATUS_OHC_REQUISITION_CLOSE') or define('STATUS_OHC_REQUISITION_CLOSE', 6);
 
 
-       // IMS Incident
+        // IMS Incident
 
-       defined('STATUS_INCIDENT_REPORT')or define('STATUS_INCIDENT_REPORT', 1);
-       defined('STATUS_INVESTIGATION_PENDING')or define('STATUS_INVESTIGATION_PENDING', 2);
+        defined('STATUS_INCIDENT_REPORT') or define('STATUS_INCIDENT_REPORT', 1);
+        defined('STATUS_INVESTIGATION_PENDING') or define('STATUS_INVESTIGATION_PENDING', 2);
 
         View::composer('*', function ($view) {
 
