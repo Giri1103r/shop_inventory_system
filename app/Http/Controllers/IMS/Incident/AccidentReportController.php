@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 
+use App\Models\Master\Work;
 use App\Models\Master\Employee;
 use App\Models\Master\Unit;
 use App\Models\Master\Location;
@@ -352,6 +353,103 @@ class AccidentReportController extends Controller
         }
     }
 
+    public function fetchEmployeeOrWorkerList($type)
+    {
+        if ($type == encryptId(1)) { // Employee
+            $name = request()->input('search');
+            $employees = Employee::select('id', 'emp_id', 'emp_name')
+                ->where(function ($query) use ($name) {
+                    $query->where('emp_name', 'like', '%' . $name . '%')
+                        ->orWhere('emp_id', 'like', '%' . $name . '%');
+                })
+                ->where('status', 1)
+                ->limit(10)
+                ->get();
+
+            return response()->json(
+                $employees->map(function ($employee) {
+                    return [
+                        'id' => encryptId($employee->id),
+                        'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+                    ];
+                })
+            );
+        } elseif ($type == encryptId(2)) { // Worker
+            $name = request()->input('search');
+            $workers = Work::select('id', 'emp_id', 'emp_name')
+                ->where(function ($query) use ($name) {
+                    $query->where('emp_name', 'like', '%' . $name . '%')
+                        ->orWhere('emp_id', 'like', '%' . $name . '%');
+                })
+                ->where('status', 1)
+                ->limit(10)
+                ->get();
+            return response()->json(
+                $workers->map(function ($worker) {
+                    return [
+                        'id' => encryptId($worker->id),
+                        'text' => $worker->emp_name . ' - ' . $worker->emp_id,
+                    ];
+                })
+            );
+        }
+    }
+    public function fetchPersonDetails($id, $type)
+    {
+        if ($type == encryptId(1)) { // Employee
+            $empId = decryptId($id);
+            $employee = Employee::select(
+                'masters_employee.id as employee_id',  // Alias to prevent ambiguity
+                'masters_employee.emp_id',
+                'masters_employee.emp_name',
+                'masters_employee.designation',
+                'masters_department.department_name'
+            )
+                ->leftJoin('masters_department', 'masters_employee.department', '=', 'masters_department.id')
+                ->where('masters_employee.status', 1)
+                ->where('masters_employee.id', $empId)
+                ->where('masters_employee.trash', 'NO')  // Ensure this condition is correctly applied
+                ->first();
+
+            if (!$employee) {
+                return response()->json(['error' => 'Employee not found.'], 404);
+            }
+
+            return response()->json([
+                'employee' => [
+                    'designation' => $employee->designation ?? '',
+                    'department_name' => $employee->department_name ?? '',
+                ],
+            ]);
+        } elseif ($type == encryptId(2)) { // Worker
+            $workerId = decryptId($id);
+            $worker = Work::select(
+                'masters_work.id as worker_id',  // Alias to prevent ambiguity
+                'masters_work.emp_id',
+                'masters_work.emp_name',
+                'masters_work.designation',
+                'masters_department.department_name'
+            )
+                ->leftJoin('masters_department', 'masters_work.department', '=', 'masters_department.id')
+                ->where('masters_work.status', 1)
+                ->where('masters_work.id', $workerId)
+                ->where('masters_work.trash', 'NO')  // Ensure this condition is correctly applied
+                ->first();
+
+            if (!$worker) {
+                return response()->json(['error' => 'Worker not found.'], 404);
+            }
+
+            return response()->json([
+                'worker' => [
+                    'designation' => $worker->designation ?? '',
+                    'department_name' => $worker->department_name ?? '',
+                ],
+            ]);
+        }
+    }
+
+
     public function employeename(Request $request)
     {
         $name = $request->input('search');
@@ -409,7 +507,7 @@ class AccidentReportController extends Controller
 
             $ehsReview = $this->ehs_review->store();
             $accident_status = 2;
-              $accidentReportId = $ehsReview->accident_report_id;
+            $accidentReportId = $ehsReview->accident_report_id;
             $accident = $this->accident_report->updateStatus($accidentReportId, $accident_status);
 
             Session::flash('success', 'Your data has been updated successfully!');
@@ -421,7 +519,7 @@ class AccidentReportController extends Controller
         }
     }
 
-    public function investigation(Request $request , $accident_id)
+    public function investigation(Request $request, $accident_id)
     {
         try {
             $accidentId = decryptId($accident_id);
