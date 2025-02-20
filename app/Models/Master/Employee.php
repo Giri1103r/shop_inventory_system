@@ -126,6 +126,7 @@ class Employee extends Model
         return $datas;
     }
 
+
     public function getempDetails($emp_code)
     {
         return $this->select(

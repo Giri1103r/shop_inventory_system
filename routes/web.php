@@ -1137,6 +1137,9 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/review/{id}', [AccidentReportController::class, 'review']);
                 Route::post('/ehs_head_review/submit', [AccidentReportController::class, 'ehsHeadReviewSubmit']);
                 Route::get('/getemployeename', [AccidentReportController::class, 'employeename']);
+                Route::get('/fetchPersonDetails/{id}/{type}', [AccidentReportController::class, 'fetchPersonDetails']);
+                Route::get('/fetchEmployeeOrWorkerList/{type}', [AccidentReportController::class, 'fetchEmployeeOrWorkerList']);
+
             });
 
 
