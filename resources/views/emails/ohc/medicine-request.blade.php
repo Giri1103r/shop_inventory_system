@@ -20,13 +20,7 @@
                             <b>Medicine Request</b>
                         </td>
                     </tr>
-                    <tr>
-                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>Unit</b>
-                        </td>
-                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ getUnitname($details['unit_id']) }}</td>
-                    </tr>
+                  
                     <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                             <b>Medicine Name</b>

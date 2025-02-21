@@ -114,8 +114,8 @@
                                                                         <option value="">Select the Medicine Name
                                                                         </option>
                                                                         @foreach ($medicine as $list)
-                                                                            <option value="{{ encryptId($list->id) }}">
-                                                                                {{ $list->medicine_id }}
+                                                                            <option value="{{ encryptId($list->medicine_id) }}">
+                                                                                {{ getMedicinename($list->medicine_id) }}
                                                                             </option>
                                                                         @endforeach
                                                                     </select>

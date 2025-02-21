@@ -28,6 +28,7 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\OhcManagement\MedicineStock;
 use App\Models\OhcManagement\OhcStatuslog;
+use App\Models\OhcManagement\Report\Inventory;
 use App\Models\OhcManagement\UserDiscard;
 use App\Models\User;
 
@@ -42,6 +43,7 @@ class DiscardController extends Controller
     private $medicine_stock;
     private $ohcStatus;
     private $user;
+    private $inventory;
 
     public function __construct()
     {
@@ -54,6 +56,7 @@ class DiscardController extends Controller
         $this->department = new Department();
         $this->ohcStatus = new OhcStatuslog();
         $this->user = new User();
+        $this->inventory = new Inventory();
     }
     public function index(Request $request)
     {
@@ -122,7 +125,7 @@ class DiscardController extends Controller
     {
         try {
             $unit = $this->unit->getunit();
-            $medicine = $this->medicine_stock->getMedicinestockdata();
+            $medicine = $this->inventory->getmedicineUnitwise();
             $departmentList = $this->department->getunitwiseDepartment();
             $data = array(
                 'medicine' => $medicine,
@@ -160,8 +163,24 @@ class DiscardController extends Controller
             try {
                 // Store user medicine requisition
                 $user_discard = $this->user_discard->store();
-                $medicineRequisition = $this->discard->store($user_discard);
+                $medicine = $this->discard->store($user_discard);
+                $user_discard_id = $this->user_discard->selectOne( $user_discard->id);
+                $discard = $this->discard->selectOne($user_discard->id);
+                foreach ($discard as $medicine) {
+                    $medicine_id = $medicine->medicine_id;
+                    $unitId = $user_discard_id->unit_id;
+                    $issuedQuantity = $medicine->quantity;
 
+
+                    $inventory = $this->inventory
+                        ->where('medicine_id', $medicine_id)
+                        ->where('unit_id', $unitId)
+                        ->first();
+
+                    if ($inventory) {
+                        $inventory->decrement('balance', $issuedQuantity);
+                    }
+                }
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
@@ -200,179 +219,11 @@ class DiscardController extends Controller
         }
     }
 
-    public function approvalview(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-            if (Auth::check()) {
-                $user_discard = $this->user_discard->selectOne($id);
-                $discard = $this->discard->selectOne($id);
-            }
-            if ($user_discard->approve_status != STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) {
-                return redirect(admin_url('ohc/discard/list'))
-                    ->with('error', 'You have already responded to this request !.');
-            }
 
-            $data = array(
-                'user_discard' => $user_discard,
-                'discard' => $discard,
-            );
-
-            return view('ohcmanagement.discard.approve', $data);
-        } catch (Exception $ex) {
-        }
-    }
-    public function apporvalsubmit(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-
-            $rules = [
-                'approver_name' => 'required',
-                'remarks' => 'required',
-            ];
-            $messages = [
-                'approver_name.required' => 'Approver name is required.',
-                'remarks.required' => 'Remarks are required.',
-            ];
-
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-            if ($request->action == 'approve') {
-                $data = [
-                    'approve_status' => STATUS_OHC_PARAMEDICS_APPROVED,
-                ];
-            } else {
-                $data = [
-                    'approve_status' => STATUS_OHC_PARAMEDICS_REJECTED,
-                ];
-            }
-
-            $this->user_discard->approvereject($id, $data);
-            $this->ohcStatus->paramedicsapprove($id, $data);
-            $createdBy = $this->user_discard->where('id', $id)->pluck('created_by');
-            $user = $this->user->where('id', $createdBy)->where('status', 1)->first();
-            if ($request->action == 'approve') {
-                $mailsubject = 'Paramedics Approved the medicine';
-                $email_id = $user->email;
-
-                if (!empty($email_id)) {
-                    $details = $this->user_discard->selectOne($id);
-                    $medicineDetails = $this->discard->selectOne($id);
-
-                    if ($details && $medicineDetails) {
-                        $emailDetails = $details->toArray();
-                        $emailDetails['name'] = $user->name;
-                        $emailDetails['email_id'] = $email_id;
-                        $emailDetails['mail_subject'] = $mailsubject;
-
-                        Mail::to($emailDetails['email_id'])->queue(new MedicineRequisitionEmail($emailDetails, $medicineDetails));
-                    }
-                }
-                $notificationData = array(
-                    'notification_type' => 4,
-                    'module_type' => 1,
-                    'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
-                        'message' => "The requested Medicine Was approved By " . getUsername($details->approved_by),
-                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                        'id' => $id,
-                        'module' => 1,
-                    )),
-                    'web_link' =>  admin_url('ohc/discard/list' ),
-                    'assigned_user' => $details->created_by,
-                    'created_by' => Auth::id(),
-                );
-                notificationSave($notificationData);
-            }else{
-                $mailsubject = 'Paramedics Rejected the medicine';
-                $email_id = $user->email;
-
-                if (!empty($email_id)) {
-                    $details = $this->user_discard->selectOne($id);
-                    $medicineDetails = $this->discard->selectOne($id);
-
-                    if ($details && $medicineDetails) {
-                        $emailDetails = $details->toArray();
-                        $emailDetails['name'] = $user->name;
-                        $emailDetails['email_id'] = $email_id;
-                        $emailDetails['mail_subject'] = $mailsubject;
-
-                        Mail::to($emailDetails['email_id'])->queue(new MedicineRequisitionEmail($emailDetails, $medicineDetails));
-                    }
-                }
-                $notificationData = array(
-                    'notification_type' => 4,
-                    'module_type' => 1,
-                    'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
-                        'message' => "The requested Medicine Was Rejected By " . getUsername($details->approved_by),
-                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                        'id' => $id,
-                        'module' => 1,
-                    )),
-                    'web_link' =>  admin_url('ohc/discard/list' ),
-                    'assigned_user' => $details->created_by,
-                    'created_by' => Auth::id(),
-                );
-                notificationSave($notificationData);
-            }
-
-            return redirect(admin_url('ohc/discard/list'))
-                ->with('success', 'Request has been processed successfully.');
-        } catch (Exception $ex) {
-            dd($ex);
-            return redirect(admin_url('ohc/discard/list'))
-                ->with('error', 'Something went wrong, Please try again later.');
-        }
-    }
 
     // General PDF
 
-    public function generalpdf(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
 
-            if (Auth::check()) {
-                $user_discard = $this->user_discard->selectOne($id);
-                $discard = $this->discard->selectOne($id);
-            }
-            $logData = $this->ohcStatus->getMedicineRequisitionLog($id);
-
-            $data = [
-                'user_discard' => $user_discard,
-                'discard' => $discard,
-                'logdata' => $logData,
-                'pagetitle' => "Medicine Requisition",
-            ];
-
-            $property = [
-                'tempDir' => 'public/pdf/temp/',
-                'mode' => 'c',
-                'margin_left' => 10,
-                'margin_right' => 10,
-                'margin_top' => 10,
-
-            ];
-
-            $mpdf = new \Mpdf\Mpdf($property);
-            $mpdf->setAutoTopMargin = 'stretch';
-
-            $html = view('ohcmanagement.discard.generalpdf', $data)->render();
-            $mpdf->WriteHTML($html);
-
-            $filename = "Medicine Receiving Stock Details.pdf";
-            return $mpdf->Output($filename, 'I');
-        } catch (Exception $ex) {
-            dd($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
-        }
-    }
     public function StatusChange(Request $request)
     {
 
@@ -504,10 +355,10 @@ class DiscardController extends Controller
         $id = decryptId($quantity_id);
 
 
-        $availableQuantity = $this->medicine_stock->getAvailableQuantity($id);
+        $availableQuantity = $this->inventory->getunitwiseAvailableQuantity($id);
 
         return response()->json(
-            ['available_quantity' => $availableQuantity->quantity]
+            ['available_quantity' => $availableQuantity->balance]
         );
     }
 

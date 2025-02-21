@@ -44,17 +44,15 @@ class MedicineReceiving extends Model
         $query = $this->select(
             'ohc_management_medicine_receiving.*',
             'ohc_master_vendor.vendor_name',
-            'medicine_stock.medicine_id',
-            'hsn_stock.hsn_number as hsn_number'
+            'ohc_master_medicine.pack',
         )
             ->join('ohc_master_vendor', 'ohc_management_medicine_receiving.vendor_id', '=', 'ohc_master_vendor.id')
-            ->join('ohc_management_medicine_stock_inventory as medicine_stock', 'ohc_management_medicine_receiving.medicine_id', '=', 'medicine_stock.id')
-            ->join('ohc_management_medicine_stock_inventory as hsn_stock', 'ohc_management_medicine_receiving.hsn_id', '=', 'hsn_stock.id')
-            ->where('ohc_master_vendor.trash', 'NO')
-            ->where('medicine_stock.trash', 'NO')
-            ->where('hsn_stock.trash', 'NO')
-            ->where('ohc_management_medicine_receiving.trash', 'NO');
-
+            ->join('ohc_master_medicine', 'ohc_management_medicine_receiving.pack_id', '=', 'ohc_master_medicine.id')
+            ->where([
+                ['ohc_master_medicine.trash', '=', 'NO'],
+                ['ohc_master_vendor.trash', '=', 'NO'],
+                ['ohc_management_medicine_receiving.trash', '=', 'NO']
+            ]);
 
 
         if ($request->search['value'] != null) {
@@ -69,6 +67,7 @@ class MedicineReceiving extends Model
         if ($request->has('vendor_id') && $request->vendor_id) {
             $query = $query->where('ohc_management_medicine_receiving.vendor_id', 'LIKE', '%' . $request->vendor_id . '%');
         }
+
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
@@ -80,7 +79,9 @@ class MedicineReceiving extends Model
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
             $query->where('ohc_management_medicine_receiving.created_at', '<=', $endDate);
         }
-
+        if ($request->has('approve_status') && $request->approve_status) {
+            $query = $query->where('ohc_management_medicine_receiving.approve_status', 'LIKE', '%' . $request->approve_status . '%');
+        }
 
         $org_total_counts = $query->count();
 
@@ -103,7 +104,7 @@ class MedicineReceiving extends Model
         $request = request();
 
         $insert_array = [
-            'unit_id' => decryptId($request->unit_id),
+            // 'unit_id' => decryptId($request->unit_id),
             'medicine_id' => decryptId($request->medicine_id),
             'vendor_id' => decryptId($request->vendor_id),
             'quantity' => $request->quantity,
@@ -111,14 +112,15 @@ class MedicineReceiving extends Model
             'expire_date' => DBdateformat($request->expire_date),
             'hsn_id' => $request->hsn_id,
             'rate' => $request->rate,
-            'pack_id' => ($request->pack_id),
+            'pack_id' => decryptId($request->pack_id),
             'approve_status' => STATUS_OHC_EHS_VERIFICATION_PENDING,
             'created_by' => Auth::id(),
+
         ];
 
         return $this->create($insert_array);
     }
-    public function updates($id,$hsn)
+    public function updates($id, $hsn)
     {
 
         $request = request();
@@ -149,77 +151,157 @@ class MedicineReceiving extends Model
         return $data;
     }
 
+
+
     public function exportdata()
     {
         $request = request();
-        $search = '';
-        $query = $this->select('ohc_management_medicine_receiving.*', 'ohc_master_vendor.vendor_name', 'inventory1.*', 'inventory2.*', 'inventory3.*', 'ohc_management_medicine_receiving.id As ohc_management_medicine_receiving_id')
+
+        $query = $this->select(
+            'ohc_management_medicine_receiving.*',
+            'ohc_master_vendor.vendor_name',
+            'ohc_master_medicine.pack',
+        )
             ->join('ohc_master_vendor', 'ohc_management_medicine_receiving.vendor_id', '=', 'ohc_master_vendor.id')
-            ->join('ohc_master_medicine as inventory1', 'ohc_management_medicine_receiving.medicine_id', '=', 'inventory1.id')
-            ->join('ohc_master_medicine as inventory2', 'ohc_management_medicine_receiving.pack_id', '=', 'inventory2.id')
-            ->join('ohc_master_medicine as inventory3', 'ohc_management_medicine_receiving.hsn_id', '=', 'inventory3.id')
-            ->where('inventory1.trash', 'NO')
-            ->where('inventory2.trash', 'NO')
-            ->where('inventory3.trash', 'NO')
-            ->where('ohc_master_vendor.trash', 'NO')
-            ->where('ohc_management_medicine_receiving.trash', 'NO');
+            ->join('ohc_master_medicine', 'ohc_management_medicine_receiving.pack_id', '=', 'ohc_master_medicine.id')
+            ->where([
+                ['ohc_master_medicine.trash', '=', 'NO'],
+                ['ohc_master_vendor.trash', '=', 'NO'],
+                ['ohc_management_medicine_receiving.trash', '=', 'NO']
+            ]);
 
-        if ($request->search != null || $request->search != '') {
+        if (!empty($request->search)) {
             $search = $request->search;
-
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhere('medicine_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('vendor_id', 'LIKE', '%' . $search . '%');
+            $query->where(function ($q) use ($search) {
+                $q->where('ohc_management_medicine_receiving.medicine_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_management_medicine_receiving.vendor_id', 'LIKE', '%' . $search . '%');
             });
         }
-        if ($request->has('medicine_id') && $request->medicine_id) {
-            $query = $query->where('ohc_management_medicine_receiving.medicine_id', 'LIKE', '%' . $request->medicine_id . '%');
+
+        // Additional filters
+        if ($request->filled('approve_status')) {
+            $query->where('ohc_management_medicine_receiving.approve_status', 'LIKE', '%' . $request->approve_status . '%');
         }
-        if ($request->has('vendor_id') && $request->vendor_id) {
-            $query = $query->where('ohc_management_medicine_receiving.vendor_id', 'LIKE', '%' . $request->vendor_id . '%');
+        if ($request->filled('medicine_id')) {
+            $query->where('ohc_management_medicine_receiving.medicine_id', 'LIKE', '%' . $request->medicine_id . '%');
         }
-        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
-            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+        if ($request->filled('vendor_id')) {
+            $query->where('ohc_management_medicine_receiving.vendor_id', 'LIKE', '%' . $request->vendor_id . '%');
+        }
+
+        // Date range filter
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $startDate = Carbon::parse($request->from_date)->startOfDay();
+            $endDate = Carbon::parse($request->to_date)->endOfDay();
             $query->whereBetween('ohc_management_medicine_receiving.created_at', [$startDate, $endDate]);
-        } elseif ($request->has('from_date') && !empty($request->from_date)) {
-            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+        } elseif ($request->filled('from_date')) {
+            $startDate = Carbon::parse($request->from_date)->startOfDay();
             $query->where('ohc_management_medicine_receiving.created_at', '>=', $startDate);
-        } elseif ($request->has('to_date') && !empty($request->to_date)) {
-            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+        } elseif ($request->filled('to_date')) {
+            $endDate = Carbon::parse($request->to_date)->endOfDay();
             $query->where('ohc_management_medicine_receiving.created_at', '<=', $endDate);
         }
-        $query->orderBy('ohc_management_medicine_receiving.id', 'DESC');
 
-        return  $query->get();
+        return $query->orderByDesc('id')->get();
     }
 
-    public function statusupdate($id, $updateStatus)
+
+    public function ehsverifcationstatus($id, $ehsverifydata)
     {
         $this->where('id', $id)->update([
-            'approve_status' =>   $updateStatus['approve_status'],
-            'approved_by' =>  $updateStatus['approved_by']
+            'approve_status' =>   $ehsverifydata['approve_status'],
+            'approved_by' => Auth::id(),
+
         ]);
     }
-    public function ehsstatus($id)
+    public function l1ehsstatus($id, $ehsverifydata)
     {
         $this->where('id', $id)->update([
-            'approve_status' => STATUS_OHC_EHS_HEAD_APPROVAL_PENDING,
+            'approve_status' => $ehsverifydata['approve_status'],
             'approved_by' => Auth::id()
         ]);
-
     }
-    public function ehsheadstatus($id,$updateStatus)
+    public function ehsheadstatus($id, $updateStatus)
     {
         $this->where('id', $id)->update([
             'approve_status' => $updateStatus['approve_status'],
-            'approved_by' =>  $updateStatus['approved_by'],
+            'approved_by' =>  Auth::id(),
             'cron_time' => Carbon::now()
         ]);
     }
 
     public function stockupdate($id)
     {
-        $this->where('id', $id)->update(['approve_status' => STATUS_OHC_CLOSE]);
+        $this->where('id', $id)->update([
+            'approve_status' => STATUS_OHC_CLOSE,
+            'approved_by' =>  Auth::id(),
+        ]);
+    }
+
+
+    // Expire medicine list
+
+
+    public function Expirelist()
+    {
+        $request = request();
+        $user = Auth::user();
+        $query = $this->select('ohc_management_medicine_receiving.*')->where('approve_status', STATUS_OHC_CLOSE);
+
+        if ($request->search['value'] != null) {
+            $search = $request->search['value'];
+            $query->where(function ($query) use ($search) {
+                $query->orWhere('medicine_id', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        if ($request->has('medicine_id') && $request->medicine_id) {
+            $query->where('ohc_management_medicine_receiving.medicine_id', 'LIKE', '%' . $request->medicine_id . '%');
+        }
+
+        // Apply ORDER BY conditionally
+
+
+        $org_total_counts = $query->count();
+
+        if ($request->length != -1) {
+            $query->offset($request->start)->limit($request->length);
+        }
+        $query->orderBy('id', 'DESC');
+
+        $data = $query->get();
+        $total_records = $data->count();
+
+        return [
+            'data' => $data,
+            'total_records' => $org_total_counts,
+            'filter_records' => $total_records,
+        ];
+    }
+
+
+
+    public function expireexportdata()
+    {
+        $request = request();
+
+        $query = $this->select(
+            'ohc_management_medicine_receiving.*',
+
+        )->where('approve_status', STATUS_OHC_CLOSE);
+
+        if (!empty($request->search)) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('ohc_management_medicine_receiving.medicine_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_management_medicine_receiving.vendor_id', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        if ($request->filled('medicine_id')) {
+            $query->where('ohc_management_medicine_receiving.medicine_id', 'LIKE', '%' . $request->medicine_id . '%');
+        }
+
+        return $query->orderByDesc('id')->get();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models\OhcManagement;
 
+use App\Models\OhcManagement\Report\Inventory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -32,7 +33,7 @@ class MedicineFirstAid extends Model
         foreach ($request->medicine_id as $index => $medicine) {
             $insert_array = [
                 'reference_id' => $user_medicine_issuance->id,
-                'medicine_id' => ($medicine),
+                'medicine_id' => decryptId($medicine),
                 'quantity' => $request->quantity[$index],
                 'available_quantity' => $request->available_quantity[$index],
                 'created_by' => Auth::id(),
@@ -45,32 +46,56 @@ class MedicineFirstAid extends Model
         return $insertedData;
     }
 
-    public function updates($id)
+    public function updates($id, $user_medicine_first_aid)
     {
         $request = request();
 
-        foreach ($request->medicine_id as $index => $medicine) {
+        foreach ($request->medicine_id as $index => $medicine_id) {
+            $unitId = $user_medicine_first_aid->unit_id;
+
+            // Fetch inventory data
+            $inventory = Inventory::where('medicine_id', $medicine_id)
+                ->where('unit_id', $unitId)
+                ->first();
+
+            $availableQuantity = $inventory ? $inventory->balance : 0;
+
+            // Prepare data for update or insert
             $update_data = [
                 'reference_id' => $id,
-                'medicine_id' => $medicine,
+                'medicine_id' => $medicine_id,
                 'quantity' => $request->quantity[$index],
-                'available_quantity' => $request->available_quantity[$index],
+                'available_quantity' => $availableQuantity,
                 'created_by' => Auth::id(),
                 'updated_by' => Auth::id(),
             ];
 
-
+            // Check if record exists
             $existingRecord = self::where('reference_id', $id)
-                ->where('medicine_id', $medicine)->where('trash','NO')
+                ->where('medicine_id', $medicine_id)
+                ->where('trash', 'NO')
                 ->first();
 
             if ($existingRecord) {
+                // Update the existing record
                 $existingRecord->update($update_data);
             } else {
+                // Update inventory before creating a new record
+                Inventory::where('medicine_id', $medicine_id)
+                    ->where('unit_id', $unitId)
+                    ->increment('total_first_aid', $request->quantity[$index]);
+
+                Inventory::where('medicine_id', $medicine_id)
+                    ->where('unit_id', $unitId)
+                    ->decrement('balance', $request->quantity[$index]);
+
+                // Create a new record
                 self::create($update_data);
             }
         }
     }
+
+
     public function selectOne($id)
     {
 
@@ -81,7 +106,7 @@ class MedicineFirstAid extends Model
         return $data;
     }
 
-    public function deleterecord($id)
+    public function deleterecord($ids)
     {
 
         $update_data = array(
@@ -89,6 +114,16 @@ class MedicineFirstAid extends Model
             'trash' => 'YES',
         );
 
-        return $this->where('id', $id)->update($update_data);
+        return $this->where('id', $ids)->update($update_data);
+    }
+
+    public function firstdata($ids)
+    {
+
+        $data = $this->select(
+            'ohc_management_medicine_first_aid.*')->where('id',$ids)->where('trash','NO')
+            ->first();
+
+        return $data;
     }
 }

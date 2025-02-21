@@ -91,7 +91,8 @@
                                         <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
-                                            <x-button-cancel href="{{ admin_url('company/list') }}"></x-button-cancel>
+                                            <x-button-cancel
+                                                href="{{ admin_url('ohc/employee-cum-patient/list') }}"></x-button-cancel>
                                         </div>
                                     </form>
                                 </div>
@@ -180,19 +181,22 @@
                         empId: empId
                     },
                     dataType: 'json',
-                    success: function(data) {
-
-                        $('#emp_name').val(data).prop('disable', true);
+                    success: function(response) {
+                        if (response.employee) {
+                            $('#emp_name').val(response.employee.emp_name).prop('readonly', true);
+                        } else {
+                            $('#emp_name').val('').prop('readonly', true);
+                        }
                     },
                     error: function(xhr) {
                         alert('Error fetching employee name. Please try again.');
                     }
                 });
             } else {
-
-                $('#emp_name').val('').prop('disable', true);
+                $('#emp_name').val('').prop('readonly', true);
             }
         });
+
 
 
         $(function() {
@@ -218,7 +222,7 @@
                         required: true,
                     },
                     emp_id: {
-                        required:true,
+                        required: true,
                         remote: {
                             url: '{{ admin_url('ohc/employee-cum-patient/unique') }}',
                             type: 'post',
@@ -238,7 +242,7 @@
                 messages: {
                     emp_name: {
                         required: "Employee name is required.",
-                        remote:"Employee Name already Exist",
+                        remote: "Employee Name already Exist",
                     },
                     employee_type: {
                         required: "Please select an employee type.",
@@ -248,7 +252,7 @@
                     },
                     emp_id: {
                         required: "Employee ID is required .",
-                        remote:"Employee ID already Exist",
+                        remote: "Employee ID already Exist",
                     },
                     address: {
                         required: "Address is required.",

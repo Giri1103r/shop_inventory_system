@@ -130,10 +130,10 @@
                                                 @foreach ($logdata as $log)
                                                 <tr>
                                                     <td>
-                                                        @if($log['from_status'] == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)
-                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Paramedics Approval Pending</span>
-                                                            @elseif($log['from_status'] == STATUS_OHC_STOCK_REQUEST)
+                                                        @if($log['from_status'] == STATUS_OHC_STOCK_REQUEST)
                                                             <span class='badge bg-info' style='font-size: 1.0em;'>Stock Requested</span>
+                                                            @elseif($log['from_status'] == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)
+                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Paramedics Approval Pending</span>
                                                         @elseif($log['from_status'] == STATUS_OHC_PARAMEDICS_APPROVED)
                                                             <span class='badge bg-success' style='font-size: 1.0em;'>Paramedics Approved</span>
                                                         @elseif($log['from_status'] == STATUS_OHC_PARAMEDICS_REJECTED)

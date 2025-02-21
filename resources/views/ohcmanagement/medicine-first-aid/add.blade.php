@@ -45,10 +45,12 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Department </label>
-                                                    <select name="department_id" id="department_id" class="form-control single-select" style="width: 100%">
+                                                    <select name="department_id" id="department_id"
+                                                        class="form-control single-select" style="width: 100%">
                                                         <option value="">Select the department</option>
                                                         @foreach ($departmentList as $list)
-                                                             <option value="{{encryptId($list->id)}}">{{$list->department_name}}</option>
+                                                            <option value="{{ encryptId($list->id) }}">
+                                                                {{ $list->department_name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -112,10 +114,11 @@
                                                                         <option value="">Select the Medicine Name
                                                                         </option>
                                                                         @foreach ($medicine as $list)
-                                                                        <option value="{{ ($list->id) }}">
-                                                                            {{ $list->medicine_id }}
-                                                                        </option>
-                                                                    @endforeach
+                                                                            <option
+                                                                                value="{{ encryptId($list->medicine_id) }}">
+                                                                                {{ getMedicinename($list->medicine_id) }}
+                                                                            </option>
+                                                                        @endforeach
                                                                     </select>
                                                                 </div>
                                                             </td>
@@ -214,53 +217,8 @@
                 $('#department_id').trigger('change.');
             }
         });
-        $(document).on('change', '#unit_id', function() {
-            var unitId = $(this).val();
+     
 
-            if (unitId) {
-                $.ajax({
-                    url: "{{ admin_url('ohc/medicine-first-aid/medicine-details') }}/" + unitId + "/0",
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                        updateMedicineDropdowns(data);
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching medicine. Please try again.');
-                    }
-                });
-            } else {
-                clearMedicineDropdowns();
-            }
-        });
-
-        function updateMedicineDropdowns(data) {
-            $('select[name^="medicine_id"]').each(function() {
-                var $select = $(this);
-                var selectedValue = $select.val();
-
-                // Clear and add new options
-                $select.empty().append('<option value="">Select Medicine Name</option>');
-                $.each(data, function(key, value) {
-                    $select.append('<option value="' + value.id + '">' + value.name + '</option>');
-                });
-
-                // Reset selected value if it exists in the new list
-                if ($select.find('option[value="' + selectedValue + '"]').length) {
-                    $select.val(selectedValue);
-                } else {
-                    $select.val(''); // Clear if the old value isn't in the new options
-                }
-
-                $select.trigger('change'); // Trigger change event to update dependent fields
-            });
-        }
-
-        function clearMedicineDropdowns() {
-            $('select[name^="medicine_id"]').each(function() {
-                $(this).empty().append('<option value="">Select Medicine Name</option>').trigger('change');
-            });
-        }
 
 
 
@@ -288,7 +246,7 @@
 
         $(document).ready(function() {
 
-            let medicine_issuance_row_count = 1;
+            let rowcount = 1;
 
             $(".add-row").click(function() {
                 var rowCount = $('#medicine-tbody tr').length;
@@ -299,24 +257,26 @@
                 <td>
                     <div class="form-group form-input">
                         <label for="medicine_id" class="require">Medicine Name</label>
-                        <select name="medicine_id[${medicine_issuance_row_count}]" class="form-control single-select" style="width: 100%">
+                        <select name="medicine_id[${rowcount}]" class="form-control single-select" style="width: 100%">
                             <option value="">Select the Medicine Name</option>
- @foreach ($medicine as $list)
-                                <option value="{{ ($list->id) }}" data-available-quantity="{{ $list->available_quantity }}">{{ $list->medicine_id }}</option>
-                            @endforeach
+                                    @foreach ($medicine as $list)
+                                                                        <option value="{{ encryptId($list->medicine_id) }}">
+                                                                            {{ getMedicinename($list->medicine_id) }}
+                                                                        </option>
+                                                                    @endforeach
                         </select>
                     </div>
                 </td>
                 <td>
                     <div class="form-group form-input">
                         <label for="quantity" class="require">Available Quantity</label>
-                        <input type="text" name="available_quantity[${medicine_issuance_row_count}]" class="form-control" readonly>
+                        <input type="text" name="available_quantity[${rowcount}]" class="form-control" readonly>
                     </div>
                 </td>
                 <td>
                     <div class="form-group form-input">
                         <label for="quantity" class="require">Quantity</label>
-                        <input type="text" name="quantity[${medicine_issuance_row_count}]"   placeholder="Enter the quantity" class="form-control">
+                        <input type="text" name="quantity[${rowcount}]"   placeholder="Enter the quantity" class="form-control">
                          <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
 
 
@@ -333,20 +293,20 @@
                 $('#medicine-tbody').append(newRow);
 
 
-                $('select[name="medicine_id[' + medicine_issuance_row_count + ']"]').select2({
+                $('select[name="medicine_id[' + rowcount + ']"]').select2({
                     placeholder: "Select the Medicine Name",
                     width: '100%'
                 });
 
 
-                $('select[name="medicine_id[' + medicine_issuance_row_count + ']"]').rules('add', {
+                $('select[name="medicine_id[' + rowcount + ']"]').rules('add', {
                     required: true,
                     messages: {
                         required: 'This Medicine name is required'
                     }
                 });
 
-                $('input[name="quantity[' + medicine_issuance_row_count + ']"]').rules('add', {
+                $('input[name="quantity[' + rowcount + ']"]').rules('add', {
                     required: true,
                     digits: true,
                     messages: {
@@ -355,19 +315,7 @@
                     }
                 });
 
-                var unitId = $('#unit_id').val();
-                if (unitId) {
-                    $.ajax({
-                        url: "{{ admin_url('ohc/medicine-first-aid/medicine-details') }}/" + unitId +
-                            "/0",
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            updateMedicineDropdowns(data);
-                        }
-                    });
-                }
-                medicine_issuance_row_count++;
+                rowcount++;
             });
 
 
@@ -380,9 +328,9 @@
                 var row = $(this).closest('tr');
                 var duplicateFound = false;
 
-
-                $('select[name^="medicine_id"]').not(this).each(function() {
-                    if ($(this).val() === selectedMedicineId && selectedMedicineId !== "") {
+                $('select[name^="medicine_id"]').each(function() {
+                    if ($(this).val() === selectedMedicineId && $(this).attr('name') !== row.find(
+                            'select[name^="medicine_id"]').attr('name')) {
                         duplicateFound = true;
                     }
                 });
@@ -399,7 +347,6 @@
                     row.find('input[name^="available_quantity"]').val('');
                     row.find('input[name^="quantity"]').val('');
                 } else {
-
                     if (selectedMedicineId) {
                         $.ajax({
                             url: "{{ admin_url('ohc/medicine-first-aid/quantity') }}/" +
@@ -420,6 +367,7 @@
                     }
                 }
             });
+
 
             $(document).on("input", 'input[name^="quantity"]', function() {
                 var row = $(this).closest('tr'); // Get the row of the current input

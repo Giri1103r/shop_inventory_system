@@ -235,7 +235,10 @@ class PpeExemptionController extends Controller
 
                 foreach ($ehsofficer as $officer) {
                     $officer_email = getUseremail($officer->id);
-                    Mail::to($officer_email)->queue(new PpeExemptionRequestorEmail($details));
+                    if($officer_email != '' || $officer_email != null){
+                        Mail::to($officer_email)->queue(new PpeExemptionRequestorEmail($details));
+                    }
+
                 }
 
                 // Notification
@@ -459,14 +462,17 @@ class PpeExemptionController extends Controller
                 'unit' => $emp_details->unit,
                 'approved_by' => Auth::id(),
             ];
-            $empId = $emp_details->emp_id;
+            $empId = $emp_details->created_by;
             $requestor = $this->pperequest->getrequestemail($empId);
             $hod = $this->pperequest->getdepartmenthod($departmentId);
 
 
             if ($action == 'approve') {
                 $recipients = array_filter([$requestor, $hod]);
-                Mail::to($recipients)->queue(new PpeExemptionEmail($details));
+                if(!empty( $recipients )){
+                    Mail::to($recipients)->queue(new PpeExemptionEmail($details));
+                }
+
 
                 $message = 'New PPE Exemption Request';
                 $hodId = $this->user->getdepartmenthodId($departmentId);
@@ -494,7 +500,10 @@ class PpeExemptionController extends Controller
 
             } else {
                 $recipients = array_filter([$requestor, $hod]);
-                Mail::to($recipients)->queue(new PpeExemptionRejectEmail($details));
+                if( $recipients){
+                    Mail::to($recipients)->queue(new PpeExemptionRejectEmail($details));
+                }
+
                 $message = 'New PPE Exemption Request';
                 $hodId = $this->user->getdepartmenthodId($departmentId);
                 $requestorId = $this->user->getrequestId($empId);

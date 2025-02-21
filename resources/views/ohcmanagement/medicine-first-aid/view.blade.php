@@ -31,7 +31,7 @@
                             <div class="card-body ">
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Medicine Issuance</h4>
+                                        <h4 class="text-white">Medicine First Aid</h4>
                                     </div>
                                 </div>
 

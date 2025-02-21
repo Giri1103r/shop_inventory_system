@@ -106,7 +106,7 @@ class UserMedicineFirstAid extends Model
         $request = request();
 
         $update_array = array(
-            'unit_id' => decryptId($request->unit_id),
+            'unit_id' => Auth::user()->unit_id,
             'department_id' => decryptId($request->department_id),
             'issue_date' => DBdateformat($request->issue_date),
             'created_by' => Auth::id(),

@@ -138,7 +138,7 @@
         $(function() {
             /* Datatable */
             var table = $('.datatable-list').DataTable({
-                autoWidth: false,
+                autoWidth: true,
                 responsive: true,
                 processing: false,
                 serverSide: true,

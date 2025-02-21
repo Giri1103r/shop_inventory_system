@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Employee Cum Patient PDF')
+@section('title', 'OPD Patient')
 @section('content')
 
     <div style="width:100%;">
@@ -28,29 +28,51 @@
                             {{ $value->emp_name }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getEmployeeType($value->employee_type)}}
+                            {{ $value->cheif_complaint }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->dob }}
+                            {{ $value->gender }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->address}}
+                            {{ getUnitname($value->unit_id) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getDepartment($value->department_id) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ displaydateformat($value->date) }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->time }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getSuggestedBy($value->suggested_by) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->treatment }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
                             @php
-                                $status = $value->status == 1 ? 'Active' : 'In-Active';
+                                $vital_checkup = $value->vital_checkup == 1 ? 'Yes' : 'NO';
                             @endphp
-                            {{ $status }}
+                            {{ $vital_checkup }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getPatientStatus($value->patient_status) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            @php
+                                $fitness_certificate = $value->fitness_certificate == 1 ? 'Required' : 'Not Required';
+                            @endphp
+                            {{ $fitness_certificate }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
                         </td>
-
-
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydateformat($value->created_at) }}
+                            {{ $value->cancel_remarks }}
                         </td>
                     </tr>
                     @php

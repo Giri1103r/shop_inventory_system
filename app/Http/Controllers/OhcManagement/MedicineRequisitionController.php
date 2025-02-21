@@ -26,6 +26,7 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\OhcManagement\MedicineStock;
 use App\Models\OhcManagement\OhcStatuslog;
+use App\Models\OhcManagement\Report\Inventory;
 use App\Models\User;
 
 use function Ramsey\Uuid\v1;
@@ -41,6 +42,7 @@ class MedicineRequisitionController extends Controller
     private $medicine_stock;
     private $ohcStatus;
     private $user;
+    private $inventory;
 
     public function __construct()
     {
@@ -53,6 +55,8 @@ class MedicineRequisitionController extends Controller
         $this->department = new Department();
         $this->ohcStatus = new OhcStatuslog();
         $this->user = new User();
+        $this->inventory = new Inventory();
+
     }
     public function index(Request $request)
     {
@@ -148,8 +152,8 @@ class MedicineRequisitionController extends Controller
     public function add()
     {
         try {
-            $unit = $this->unit->getunit();
-            $medicine = $this->medicine_stock->getMedicinestockdata();
+            $unit = $this->unit->getuserunit();
+            $medicine = $this->inventory->getstockdata();
             $data = array(
                 'medicine' => $medicine,
                 'unit' => $unit
@@ -565,7 +569,7 @@ class MedicineRequisitionController extends Controller
                 $export[] =  getUnitname($data->unit_id);
                 $export[] =  getDepartment($data->department_id);
                 $export[] =  Displaydateformat($data->request_date);
-                if ($data->approve_status == STATUS_OHC_PARAMEDIES_REQUEST) {
+                if ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) {
                     $export[] = 'Stock Requested ';
                 } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) {
                     $export[] = 'Paramedics approval Pending';
@@ -574,15 +578,13 @@ class MedicineRequisitionController extends Controller
                 } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_REJECTED) {
                     $export[] = 'Paramedics approval Pending';
                 } elseif ($data->approve_status == STATUS_OHC_CLOSE) {
-                    $export[] = 'Paramedics Approved';
+                    $export[] = 'Open';
                 }  else {
                     $export[] = removeUnderScore(getStatus($data->approve_status));
                 }
-                if ($data->approve_status == STATUS_OHC_PARAMEDIES_REQUEST) {
+                if ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) {
                     $export[] = 'Paramedics approval Pending ';
-                } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) {
-                    $export[] = 'Paramedics approval Pending';
-                } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVED) {
+                }  elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVED) {
                     $export[] = 'Paramedics Approved';
                 } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_REJECTED) {
                     $export[] = 'Paramedics Rejected';
@@ -662,7 +664,7 @@ class MedicineRequisitionController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
         }
     }
 
@@ -671,10 +673,10 @@ class MedicineRequisitionController extends Controller
         $id = decryptId($quantity_id);
 
 
-        $availableQuantity = $this->medicine_stock->getAvailableQuantity($id);
+        $availableQuantity = $this->inventory->getAvailableQuantity($id);
 
         return response()->json(
-            ['available_quantity' => $availableQuantity->quantity]
+            ['available_quantity' => $availableQuantity->balance]
         );
     }
 

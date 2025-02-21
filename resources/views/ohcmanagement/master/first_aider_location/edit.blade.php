@@ -80,11 +80,10 @@
                                                     <select name="station_master" id="station_master" class=" form-control"
                                                         style="width: 100%">
                                                         <option value="">Select the person</option>
-                                                        @foreach ($employeeList as $employee)
-                                                        <option @if ($firstaidlocation->station_master == $employee->id) selected @endif
-                                                            value="{{ $employee->id }}">
-                                                            {{ $employee->emp_name }}</option>
-                                                    @endforeach
+                                                        @if (isset($firstaidlocation->station_master) && isset($firstaidlocation->station_master))
+                                                        <option value="{{ $firstaidlocation->station_master }}" selected>
+                                                            {{ $firstaidlocation->station_master }}</option>
+                                                    @endif
                                                     </select>
                                                 </div>
                                             </div>
@@ -96,9 +95,6 @@
                                                         placeholder="Station Number">
                                                 </div>
                                             </div>
-
-
-
                                         </div>
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
@@ -130,7 +126,7 @@
         });
         $('#station_master').select2({
             ajax: {
-                url: '{{ admin_url('safetypermit/employeename') }}',
+                url: '{{ admin_url('ohc/first-aid-location/employeename') }}',
                 dataType: 'json',
                 delay: 250,
                 data: function(params) {

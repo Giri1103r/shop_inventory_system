@@ -3,6 +3,7 @@
 namespace App\Models\OhcManagement\Opd;
 
 use App\Models\Master\Department;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -66,7 +67,25 @@ class PrescribetoPatient extends Model
             });
         }
 
+        if ($request->has('emp_name') && $request->emp_name) {
+            $query = $query->where('ohc_management_opd_patient.emp_name', 'LIKE', '%' . $request->emp_name . '%');
+        }
 
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('ohc_management_opd_patient.created_at', [$startDate, $endDate]);
+        } elseif ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('ohc_management_opd_patient.created_at', '>=', $startDate);
+        } elseif ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('ohc_management_opd_patient.created_at', '<=', $endDate);
+        }
+        if ($request->has('status') && $request->status) {
+
+            $query = $query->where('ohc_management_opd_patient.patient_status', ($request->status));
+        }
 
         $data_count = $query;
         $total_records = $data_count->count();
@@ -92,17 +111,12 @@ class PrescribetoPatient extends Model
     public function store()
     {
         $request = request();
-
-
-        $is_outside_employee = $request->has('is_outside_employee') ? 1 : 0;
-        $first_aid_treatment = $request->has('first_aid_treatment') ? 1 : 0; // Fixed typo
-        $is_refered = $request->has('is_refered') ? 1 : 0;
-        $vital_checkup = $request->has('vital_checkup') ? 1 : 0;
         $department = Department::where('department_name', $request->department_id)->first();
+        // Prepare data for insertion
         $insert_array = [
-            'is_outside_employee' => $is_outside_employee,
-            'unit_id' => ($request->unit_id),
-            'department_id' =>  $department['id'],
+            'is_outside_employee' => $request->has('is_outside_worker') ? 1 : 0,
+            'unit_id' => decryptId($request->unit_id),
+           'department_id' => isset($department) ? $department->id : null,
             'company_name' => $request->company_name,
             'emp_id' => $request->emp_id,
             'gender' => $request->gender,
@@ -112,12 +126,12 @@ class PrescribetoPatient extends Model
             'emergency_contact' => $request->emergency_contact,
             'address' => $request->address,
             'date' => DBdateformat($request->date),
-            'vital_checkup' => $vital_checkup,
+            'vital_checkup' => $request->has('vital_checkup') ? 1 : 0,
             'suggested_by' => $request->suggested_by,
             'cheif_complaint' => $request->cheif_complaint,
-            'first_aid_treatment' => $first_aid_treatment,
+            'first_aid_treatment' => $request->has('first_aid_treatment') ? 1 : 0,
             'treatment' => $request->treatment,
-            'is_refered' => $is_refered,
+            'is_refered' => $request->has('is_reffered') ? 1 : 0,
             'patient_status' => $request->patient_status,
             'fitness_certificate' => $request->fitness_certificate,
             'closed_description' => $request->closed_description,
@@ -125,13 +139,52 @@ class PrescribetoPatient extends Model
             'created_by' => Auth::id(),
             'dob' => DBdateformat($request->dob)
         ];
-
         return $this->create($insert_array);
     }
 
+    public function updates($id)
+    {
+        $request = request();
+        $department = Department::where('department_name', $request->department_id)->first();
+
+        $update_array = array(
+            'is_outside_employee' => $request->has('is_outside_worker') ? 1 : 0,
+            'unit_id' => decryptId($request->unit_id),
+            'department_id' => isset($department) ? $department->id : null,
+            'company_name' => $request->company_name,
+            'emp_id' => $request->emp_id,
+            'gender' => $request->gender,
+            'emp_name' => $request->emp_name,
+            'mobile_no' => $request->mobile_no,
+            'time' => $request->time,
+            'emergency_contact' => $request->emergency_contact,
+            'address' => $request->address,
+            'date' => DBdateformat($request->date),
+            'vital_checkup' => $request->has('vital_checkup') ? 1 : 0,
+            'suggested_by' => $request->suggested_by,
+            'cheif_complaint' => $request->cheif_complaint,
+            'first_aid_treatment' => $request->has('first_aid_treatment') ? 1 : 0,
+            'treatment' => $request->treatment,
+            'is_refered' => $request->has('is_reffered') ? 1 : 0,
+            'patient_status' => $request->patient_status,
+            'fitness_certificate' => $request->fitness_certificate,
+            'closed_description' => $request->closed_description,
+            'suggested_details' => $request->details,
+            'created_by' => Auth::id(),
+            'dob' => DBdateformat($request->dob),
+            'updated_by' => Auth::id()
+        );
+        return $this->where('id', $id)->update($update_array);
+    }
+
+
+
     public function close($id, $remarks)
     {
-        return $this->where('id', $id)->update(['cancel_remarks' => $remarks]);
+        return $this->where('id', $id)->update([
+            'cancel_remarks' => $remarks,
+            'patient_status' => 3
+        ]);
     }
     public function Selectone($id)
     {
@@ -143,5 +196,44 @@ class PrescribetoPatient extends Model
         return $data;
     }
 
-   
+    public function exportdata()
+    {
+        $request = request();
+        $search = '';
+
+        $query = $this->select(
+            'ohc_management_opd_patient.*');
+
+        // Check if search exists to prevent undefined array errors
+        if (!empty($request->search) && !empty($request->search['value'])) {
+            $search = $request->search['value'];
+
+            $query->where(function ($query) use ($search) {
+                $query->orWhere('ohc_management_opd_patient.emp_name', 'LIKE', '%' . $search . '%');
+            });
+        }
+        if ($request->has('emp_name') && $request->emp_name) {
+            $query = $query->where('ohc_management_opd_patient.emp_name', 'LIKE', '%' . $request->emp_name . '%');
+        }
+
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('ohc_management_opd_patient.created_at', [$startDate, $endDate]);
+        } elseif ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('ohc_management_opd_patient.created_at', '>=', $startDate);
+        } elseif ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('ohc_management_opd_patient.created_at', '<=', $endDate);
+        }
+        if ($request->has('status') && $request->status) {
+
+            $query = $query->where('ohc_management_opd_patient.patient_status', ($request->status));
+        }
+        $query->orderBy('ohc_management_opd_patient.id', 'DESC');
+
+        return $query->get(); // Ensure this returns a Collection, not null
+    }
+
 }

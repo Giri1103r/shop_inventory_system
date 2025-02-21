@@ -45,9 +45,7 @@ class Medicine extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_master_medicine.*', 'masters_unit.unit_name')
-            ->join('masters_unit', 'ohc_master_medicine.unit_id', '=', 'masters_unit.id')
-            ->where('masters_unit.trash', 'NO');
+        $query = $this->select('ohc_master_medicine.*');
 
         // dd($query);
         $org_total =  $query;
@@ -66,9 +64,6 @@ class Medicine extends Model
 
         if ($request->has('medicine') && $request->medicine) {
             $query = $query->where('medicine', 'LIKE', '%' . $request->medicine . '%');
-        }
-        if ($request->has('unit') && $request->unit) {
-            $query = $query->where('ohc_master_medicine.unit_id', 'LIKE', '%' . $request->unit . '%');
         }
         if ($request->has('expire_date') && $request->expire_date) {
             $query = $query->where('ohc_master_medicine.expiry_date', 'LIKE', '%' . DBdateformat($request->expire_date) . '%');
@@ -141,11 +136,12 @@ class Medicine extends Model
             'pack' => $request->pack,
             'hsn' => $request->hsn,
             'threshold_limit' => $request->threshold_limit,
-            'unit_id' => $request->unit_id,
+            // 'unit_id' => $request->unit_id,
             'expiry_date' =>  DBdateformat($request->expire_date),
             'remarks' => $request->remarks,
+            'approve_status'=>STATUS_OHC_EHS_HEAD_APPROVAL_PENDING,
             'created_by' => Auth::id(),
-            'status' => 1,
+            'status' => 0,
         );
         return $this->create($insert_array);
     }
@@ -160,27 +156,18 @@ class Medicine extends Model
             'pack' => $request->pack,
             'hsn' => $request->hsn,
             'threshold_limit' => $request->threshold_limit,
-            'unit_id' => $request->unit_id,
+            // 'unit_id' => $request->unit_id,
             'expiry_date' => DBdateformat($request->expire_date),
             'remarks' => $request->remarks,
-            'updated_by' => Auth::id()
+            'updated_by' => Auth::id(),
+            'approve_status'=>STATUS_OHC_EHS_HEAD_APPROVAL_PENDING,
+            'status' => 0,
         );
 
         return $this->where('id', $id)->update($update_array);
     }
 
-    public function approvalupdate($id)
-    {
-        $request = request();
 
-        if ($request->action == 'approve') {
-            return $this->where('id', $id)->update(['status' => 1, 'approve_status' => STATUS_OHC_CLOSE]);
-        } elseif ($request->action == 'reject') {
-            return $this->where('id', $id)->update(['trash' => 'YES', 'approve_status' => STATUS_OHC_CLOSE]);
-        }
-
-        return false;
-    }
 
     public function statuschange($id)
     {
@@ -302,6 +289,29 @@ class Medicine extends Model
     public function stocklist($medicineid)
     {
        return $this->where('id',$medicineid)->where('status',1)->first();
+    }
+
+    // stock update approval
+
+    public function approval($id, $updateData)
+    {
+        $request = request();
+
+        if ($request->action == 'approve') {
+            return $this->where('id', $id)->update([
+                'approve_status' => $updateData['approve_status'],
+                'approver_name' => Auth::id(),
+                'status' => 1
+            ]);
+        } elseif ($request->action == 'reject') {
+            return $this->where('id', $id)->update([
+                'trash' => 'YES',
+                'approver_name' => Auth::id(),
+                'approve_status' => $updateData['approve_status']
+            ]);
+        }
+
+
     }
 
     protected static function booted()

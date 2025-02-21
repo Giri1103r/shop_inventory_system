@@ -60,12 +60,15 @@
                                             </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label">{{ __('common.status') }}</label>
+                                            <label for="status" class="form-label">{{ __('Patient Status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
+                                                @foreach ($patientstatus as $list)
+                                                    <option value="{{ $list->id }}">
+                                                        {{ $list->patient_status }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
 
@@ -147,7 +150,31 @@
             });
         });
 
-
+        $('#emp_name').select2({
+            ajax: {
+                url: '{{ admin_url('ohc/prescribe-to-patient/employeename') }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search: params.term
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: $.map(data, function(item) {
+                            return {
+                                id: item.id,
+                                text: item.text
+                            };
+                        })
+                    };
+                }
+            },
+            minimumInputLength: 1,
+            dropdownCssClass: 'form-control',
+            selectionCssClass: 'form-control'
+        });
         $(function() {
             /* Initialize DataTable */
             var table = $('.datatable-list').DataTable({
@@ -277,7 +304,7 @@
                                     var status = $('#status').val();
                                     window.location.href =
                                         "{{ admin_url('ohc/prescribe-to-patient/export/pdf') }}?search=" +
-                                        searchValue+
+                                        searchValue +
                                         '&emp_name=' + emp_name +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
@@ -295,7 +322,7 @@
                                     var status = $('#status').val();
                                     window.location.href =
                                         "{{ admin_url('ohc/prescribe-to-patient/export/excel') }}?search=" +
-                                        searchValue+
+                                        searchValue +
                                         '&emp_name=' + emp_name +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
@@ -310,6 +337,7 @@
                     }
                 ]
             });
+
             function showToast(icon, message) {
                 const Toast = Swal.mixin({
                     toast: true,
@@ -337,7 +365,7 @@
                 var id = $(this).data('id');
                 var login_id = $(this).data('login_id');
 
-                var title = '{{ __('Do You want to Cancel the OPD Patient list' ) }}';
+                var title = '{{ __('Do You want to Cancel the OPD Patient list') }}';
                 var text = '{{ __('Submit') }}';
                 var btncolor = '#28a745';
 

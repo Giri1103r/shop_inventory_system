@@ -119,7 +119,7 @@
                                                             <tr class="medicinedetails">
                                                                 <td>
                                                                     <input type="hidden" name="encryptid" class="encryptid"
-                                                                        value="{{ $issuance->id }}">
+                                                                        value="{{ encryptId($issuance->id) }}">
                                                                     <div class="form-group form-input">
                                                                         <label for="medicine_id" class="require">Medicine
                                                                             Name</label>
@@ -130,9 +130,9 @@
                                                                             <option value="">Select the Medicine Name
                                                                             </option>
                                                                             @foreach ($medicine as $list)
-                                                                                <option value="{{ $list->id }}"
-                                                                                    @if ($issuance->medicine_id == $list->id) selected @endif>
-                                                                                    {{ $list->medicine_id }}
+                                                                                <option value="{{ $list->medicine_id }}"
+                                                                                    @if ($issuance->medicine_id == $list->medicine_id) selected @endif>
+                                                                                    {{ getMedicinename($list->medicine_id) }}
                                                                                 </option>
                                                                             @endforeach
                                                                         </select>
@@ -288,53 +288,7 @@
                 $('#department_id').trigger('change.');
             }
         });
-        $(document).on('change', '#unit_id', function() {
-            var unitId = $(this).val();
 
-            if (unitId) {
-                $.ajax({
-                    url: "{{ admin_url('ohc/medicine-issuance/medicine-details') }}/" + unitId + "/0",
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                        updateMedicineDropdowns(data);
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching medicine. Please try again.');
-                    }
-                });
-            } else {
-                clearMedicineDropdowns();
-            }
-        });
-
-        function updateMedicineDropdowns(data) {
-            $('select[name^="medicine_id"]').each(function() {
-                var $select = $(this);
-                var selectedValue = $select.val();
-
-                // Clear and add new options
-                $select.empty().append('<option value="">Select Medicine Name</option>');
-                $.each(data, function(key, value) {
-                    $select.append('<option value="' + value.id + '">' + value.name + '</option>');
-                });
-
-                // Reset selected value if it exists in the new list
-                if ($select.find('option[value="' + selectedValue + '"]').length) {
-                    $select.val(selectedValue);
-                } else {
-                    $select.val(''); // Clear if the old value isn't in the new options
-                }
-
-                $select.trigger('change'); // Trigger change event to update dependent fields
-            });
-        }
-
-        function clearMedicineDropdowns() {
-            $('select[name^="medicine_id"]').each(function() {
-                $(this).empty().append('<option value="">Select Medicine Name</option>').trigger('change');
-            });
-        }
 
 
 
@@ -362,7 +316,7 @@
 
         $(document).ready(function() {
 
-            let medicine_issuance_row_count = 1;
+            let medicine_issuance_row_count = 0;
 
             $(".add-row").click(function() {
                 var rowCount = $('#medicine-tbody tr').length;
@@ -375,7 +329,11 @@
                         <label for="medicine_id" class="require">Medicine Name</label>
                         <select name="medicine_id[${medicine_issuance_row_count}]" class="form-control single-select" style="width: 100%">
                             <option value="">Select the Medicine Name</option>
-
+                                     @foreach ($medicine as $list)
+                                         <option value="{{ ($list->medicine_id) }}">
+                                                {{ getMedicinename($list->medicine_id) }}
+                                         </option>
+                                    @endforeach
                         </select>
                     </div>
                 </td>
@@ -427,19 +385,7 @@
                     }
                 });
 
-                var unitId = $('#unit_id').val();
-                if (unitId) {
-                    $.ajax({
-                        url: "{{ admin_url('ohc/medicine-issuance/medicine-details') }}/" +
-                            unitId +
-                            "/0",
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            updateMedicineDropdowns(data);
-                        }
-                    });
-                }
+               
                 medicine_issuance_row_count++;
             });
 
@@ -475,7 +421,7 @@
 
                     if (selectedMedicineId) {
                         $.ajax({
-                            url: "{{ admin_url('ohc/medicine-issuance/quantity') }}/" +
+                            url: "{{ admin_url('ohc/medicine-issuance/editquantity') }}/" +
                                 selectedMedicineId,
                             type: 'get',
                             dataType: 'json',

@@ -99,6 +99,19 @@ class UserMedicineIssuance extends Model
 
         return $this->create($insert_array);
     }
+    public function issuestore($user_medicine_requisition)
+    {
+        $request = request();
+
+        $insert_array = [
+            'unit_id' =>   $user_medicine_requisition->unit_id,
+            'department_id' =>  $user_medicine_requisition->department_id,
+            'issue_date' => DBdateformat($request->issue_date),
+            'created_by' => Auth::id(),
+        ];
+
+        return $this->create($insert_array);
+    }
     public function updates($id)
     {
 

@@ -140,8 +140,8 @@
                                             <div class="d-flex float-end gap-2 mx-auto">
                                                 <button type="submit" name="action" value="approve"
                                                     class="btn btn-success w-100">Verify</button>
-                                                <button type="submit" name="action" value="reject"
-                                                    class="btn btn-danger w-100">Reject</button>
+                                                {{-- <button type="submit" name="action" value="reject"
+                                                    class="btn btn-danger w-100">Reject</button> --}}
                                             </div>
                                         </form>
                                     </div>
@@ -151,7 +151,7 @@
                             {{-- View of the EHS Verification --}}
                             @if (
                                 $medicine_receiving->approve_status == STATUS_OHC_L1_EHS_VERIFICATION_PENDING ||
-                                    $medicine_receiving->approve_status == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING ||
+                                    $medicine_receiving->approve_status == STATUS_OHC_AGM_APPROVAL_PENDING ||
                                     $medicine_receiving->approve_status == STATUS_OHC_OPEN)
                                 <div class="row">
                                     <div class="card-header-inner">
@@ -235,17 +235,17 @@
                                             </div>
                                             <div class="d-flex float-end gap-2 mx-auto">
                                                 <button type="submit" name="action" value="approve"
-                                                    class="btn btn-success w-100">Forward</button>
+                                                    class="btn btn-success w-100">Approve</button>
                                                 {{-- <button type="submit" name="action" value="reject"
                                         class="btn btn-danger w-100">reject</button> --}}
-                                            </div>
+                                             </div>
                                         </form>
                                     </div>
                                 @endif
                             </div>
                             <div>
                                 @if (
-                                    $medicine_receiving->approve_status == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING ||
+                                    $medicine_receiving->approve_status == STATUS_OHC_AGM_APPROVAL_PENDING ||
                                         $medicine_receiving->approve_status == STATUS_OHC_OPEN)
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -284,7 +284,7 @@
                                 @endif
                             </div>
                             <div>
-                                @if ($medicine_receiving->approve_status == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING)
+                                @if ($medicine_receiving->approve_status == STATUS_OHC_AGM_APPROVAL_PENDING)
                                     <div class="row">
                                         <div class="card-header-inner">
                                             <h4 class="text-white"> EHS Head Approval </h4>
@@ -331,15 +331,15 @@
                                             <div class="d-flex float-end gap-2 mx-auto">
                                                 <button type="submit" name="action" value="approve"
                                                     class="btn btn-success w-100">Approve</button>
-                                                <button type="submit" name="action" value="reject"
-                                                    class="btn btn-danger w-100">Reject</button>
+                                                {{-- <button type="submit" name="action" value="reject"
+                                                    class="btn btn-danger w-100">Reject</button> --}}
                                             </div>
                                         </form>
                                     </div>
                                 @endif
                             </div>
 
-                            <div>
+                            {{-- <div>
                                 @if ($medicine_receiving->approve_status == STATUS_OHC_OPEN)
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -376,8 +376,8 @@
                                         </div>
                                     </div>
                                 @endif
-                            </div>
-                            <div>
+                            </div> --}}
+                            {{-- <div>
                                 @if ($medicine_receiving->approve_status == STATUS_OHC_OPEN)
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -430,7 +430,7 @@
                                         </form>
                                     </div>
                                 @endif
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                 </div>

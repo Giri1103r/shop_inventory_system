@@ -33,6 +33,7 @@ class FirstAidLocationController extends Controller
     private $user;
     private $uploadlog;
     private $employee;
+    private $work;
 
 
 
@@ -46,6 +47,7 @@ class FirstAidLocationController extends Controller
         $this->user = new User();
         $this->uploadlog = new UploadLog();
         $this->employee = new Employee();
+        $this->work = new Work();
 
     }
 
@@ -280,7 +282,7 @@ class FirstAidLocationController extends Controller
             $id = decryptId($request->id);
 
             $this->firstaidlocation->statuschange($id);
-           
+
 
             return response()->json(['status' => 'success', 'msg' => 'Your Status has changed Successfully'], 200);
         } catch (Exception $ex) {
@@ -402,21 +404,26 @@ class FirstAidLocationController extends Controller
 
     public function employeename(Request $request)
     {
-        $search = $request->input('search');
+        $name = $request->input('search');
 
-        $employees = Work::where(function ($query) use ($search) {
-            $query->where('emp_name', 'like', '%' . $search . '%')
-                ->orWhere('emp_id', 'like', '%' . $search . '%');
-        })
+        $employee_code = $this->employee->where('emp_id', 'like', '%' . $name . '%')
             ->where('status', 1)
             ->limit(10)
             ->get();
 
+        $work = $this->work->where('emp_id', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+
+        $mergedResults = $employee_code->merge($work);
+
         return response()->json(
-            $employees->map(function ($employee) {
+            $mergedResults->map(function ($employee) {
                 return [
-                    'id' => $employee->emp_id,
-                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+                    'id' => $employee->emp_name,
+                    'text' => $employee->emp_id . ' - ' . $employee->emp_name,
                 ];
             })
         );

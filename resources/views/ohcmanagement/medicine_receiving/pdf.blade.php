@@ -48,7 +48,33 @@
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->vendor_name }}
                         </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            @if ($value->approve_status ==STATUS_OHC_EHS_VERIFICATION_PENDING)
+                            <p>{{ 'Stock Requested' }}</p>
+                        @elseif($value->approve_status == STATUS_OHC_L1_EHS_VERIFICATION_PENDING)
+                            <p>{{ 'EHS Officer Verification Pending' }}</p>
+                        @elseif($value->approve_status == STATUS_OHC_AGM_APPROVAL_PENDING)
+                            <p>{{ 'L1 EHS Officer Verification Pending' }}</p>
+                        @elseif($value->approve_status == STATUS_OHC_OPEN)
+                            <p>{{ 'EHS Head Approval Pending' }}</p>
+                        @elseif($value->approve_status == STATUS_OHC_CLOSE)
+                            <p>{{ 'Open' }}</p>
 
+                        @endif
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            @if ($value->approve_status ==STATUS_OHC_EHS_VERIFICATION_PENDING)
+                            <p>{{ 'EHS Officer Verification Pending' }}</p>
+                        @elseif($value->approve_status == STATUS_OHC_L1_EHS_VERIFICATION_PENDING)
+                            <p>{{ 'L1 EHS Officer Verification Pending' }}</p>
+                        @elseif($value->approve_status == STATUS_OHC_AGM_APPROVAL_PENDING)
+                            <p>{{ 'EHS Head Approval Pending' }}</p>
+                        @elseif($value->approve_status == STATUS_OHC_OPEN)
+                            <p>{{ 'Open' }}</p>
+                        @elseif($value->approve_status == STATUS_OHC_CLOSE)
+                            <p>{{ 'Close' }}</p>
+
+                        @endif
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
                         </td>
