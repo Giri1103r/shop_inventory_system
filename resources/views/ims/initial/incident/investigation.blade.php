@@ -64,6 +64,162 @@
         .slider.round:before {
             border-radius: 50%;
         }
+
+        .modal-dialog {
+            max-width: 600px;
+            width: 100%;
+            /* Removed height to avoid fixed height issues */
+            margin: 0 auto;
+        }
+
+        .modal-content {
+            overflow: visible;
+            /* Ensure that the modal content is fully visible */
+        }
+
+        #existingdiv {
+            display: none;
+            /* Hide dropdown initially, show it on button click */
+        }
+
+        #hira_id {
+            width: 100%;
+            /* Ensure dropdown takes up the full width */
+        }
+
+        .fishbone-container {
+            display: inline-grid;
+            grid-template-columns: repeat(4, auto);
+            grid-template-rows: auto .2em auto;
+            padding-left: 2em;
+            font-family: Arial;
+            --bone-color: #85A0B2;
+            --yellow: #FDBE22;
+            --green: #69E982;
+            --blue: #5CB2FB;
+
+            .cause {
+                display: flex;
+                flex-direction: column;
+                transform: skew(20deg);
+                transform-origin: bottom;
+                margin-left: .8em;
+            }
+
+            .rootcause {
+                text-align: center;
+                position: relative;
+                left: 100%;
+                transform: translateX(-50%) skewX(-20deg);
+                font-size: 1.5em;
+                color: #fff;
+                padding: .2em;
+                border-radius: .2em;
+
+                &.yellow {
+                    background-color: var(--yellow);
+                }
+
+                &.green {
+                    background-color: var(--green);
+                }
+
+                &.blue {
+                    background-color: var(--blue);
+                }
+            }
+
+            .subcause {
+                flex-grow: 1;
+                border-right: .2em solid var(--bone-color);
+                padding-bottom: .75em;
+                padding-top: .75em
+            }
+
+            .stat {
+                text-align: right;
+                padding-right: 3em;
+                position: relative;
+                transform: skewX(-20deg);
+                line-height: 1.5em;
+                font-size: 1em;
+            }
+
+            .stat:before {
+                content: '';
+                display: block;
+                background-color: var(--bone-color);
+                position: absolute;
+                width: 3em;
+                height: .2em;
+                right: 0;
+                top: 50%;
+                transform: translate(.2em, -50%);
+            }
+
+            .line {
+                grid-column-start: 1;
+                grid-column-end: 4;
+                background-color: var(--bone-color);
+
+                ~.cause {
+                    transform: skewX(-20deg);
+                    transform-origin: top;
+                }
+
+                ~.cause .rootcause {
+                    transform: translateX(-50%) skewX(20deg);
+                }
+
+                ~.cause .stat {
+                    transform: skewX(20deg);
+                }
+            }
+
+            .defect-spacer-top {
+                grid-column-start: 4;
+                grid-column-end: 4;
+                grid-row-start: 1;
+                grid-row-end: 2;
+            }
+
+            .defect {
+                grid-column-start: 4;
+                grid-column-end: 4;
+                grid-row-start: 2;
+                grid-row-end: 3;
+            }
+
+            .defect-spacer-bottom {
+                grid-column-start: 4;
+                grid-column-end: 4;
+                grid-row-start: 3;
+                grid-row-end: 4;
+            }
+
+            .defect-text {
+                position: relative;
+                top: 50%;
+                transform: translateY(-50%);
+                padding: 1em;
+                margin-left: .5em;
+                background-color: var(--bone-color);
+                border-radius: .5em;
+                color: #fff;
+                text-align: center;
+            }
+
+            .subcause .stat {
+                margin-bottom: 15px;
+                /* Adjust the spacing between input fields */
+            }
+
+            .subcause {
+                margin-bottom: 20px;
+                /* Add spacing between rows of input fields */
+            }
+
+        }
     </style>
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -87,20 +243,147 @@
                                     <x-button-back href="{{ admin_url('incident/initial-incident/list') }}"></x-button-back>
                                 </div>
                             </div>
+                            <div class="card-body ">
 
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Incident Report Details</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Sr. No</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->sr_no ?? null}}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Date and Time</label>
+                                        <div class="view_data">
+                                            {{ Displaydatetimeformat($incident_report->incident_date_time) }}
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Unit</label>
+                                        <div class="view_data">
+                                            {{ getUsername($incident_report->unit_id) }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label require">Shift</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->shift }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label require">Location</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->location_id }}
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">IIR Type</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->iir_type }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Incident Reported By</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Name</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->reported_by }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Designation</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->designation }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Department</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->reported_department }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Employee Code</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->employee_code }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Time of reporting</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->time_of_reporting }}
+                                        </div>
+                                    </div>
+
+
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Reporting Media</label>
+                                        <div class="view_data">
+                                            {{ implode(', ', $displayMedia) }}
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label require">Brief Description</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->brief_description }}
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12 mb-3">
+                                        <label class="form-label">Existing Evidence</label>
+                                        @if (!$initialincidentevidence->isEmpty())
+                                            <div class="row">
+                                                @foreach ($initialincidentevidence as $key => $evidence)
+                                                    <div class="col-md-3 col-sm-6 mb-2">
+                                                        <div class="existing-evidence text-center">
+                                                            <a href="{{ asset($evidence->file_path) }}" target="_blank">
+                                                                <img src="{{ asset($evidence->file_path) }}" alt="Evidence"
+                                                                    class="img-fluid rounded shadow"
+                                                                    style="max-width: 20%; height: auto;">
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                </div>
+                            </div>
                             <div class="card-body">
-
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Investigation</h4>
+                                    </div>
+                                </div>
                                 <div class="basic-form">
-                                    <form method="POST" id="accidentinvestigation"
+                                    <form method="POST" id="incidentinvestigation"
                                         action="{{ admin_url('incident/initial-incident/investigation/submit') }}">
                                         @csrf
                                         <input type="hidden" name="incident_id" id="incident_id"
                                             value="{{ encryptId($incidentId) }}">
+
                                         <div class="row">
 
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label for="team_id" class="form-label">Name of the
+                                                    <label for="witness_id" class="form-label">Name of the
                                                         Witness</label>
                                                     <select name="witness_id" id="witness_id" class="form-control witness"
                                                         style="width: 100%">
@@ -110,116 +393,77 @@
                                             </div>
                                             <div class="col-md-4 mt-3">
                                                 <div class="form-group form-input">
-                                                    <label for="is_damaged" class="form-label require">Was anything
+                                                    <label for="anything_damaged" class="form-label require">Was anything
                                                         damaged?</label><br>
-                                                    <input type="checkbox" id="Man" name="is_damaged" value="1">
+                                                    <input type="checkbox" id="Man" name="anything_damaged"
+                                                        value="1">
                                                     <label for="Man">Man</label>
-                                                    <input type="checkbox" id="Machine" name="is_damaged" value="2">
+                                                    <input type="checkbox" id="Machine" name="anything_damaged"
+                                                        value="2">
                                                     <label for="Machine">Machine</label><br>
-                                                    <input type="checkbox" id="Materials" name="is_damaged" value="3">
+                                                    <input type="checkbox" id="Materials" name="anything_damaged"
+                                                        value="3">
                                                     <label for="Materials"> Materials</label>
-                                                    <input type="checkbox" id="NA" name="is_damaged" value="4">
+                                                    <input type="checkbox" id="NA" name="anything_damaged"
+                                                        value="4">
                                                     <label for="NA"> NA</label><br>
                                                 </div>
                                             </div>
 
-
                                             <div class="col-md-4 mt-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">HIRA</label>
-                                                    <label class="switch">
-                                                        <input type="checkbox" name="hira">
-                                                        <span class="slider round"></span>
-                                                    </label>
 
                                                 </div>
+                                                <x-button-add dataId="{{ $incidentId ?? '' }}"
+                                                    class="add popupwindow btn btn-primary"
+                                                    href="{{ admin_url('incident/initial-incident/existingHira/' . ($incidentId ?? '')) }}">
+                                                    Add
+                                                </x-button-add>
                                             </div>
 
-                                            <!-- Modal -->
                                             <div class="modal fade" id="hiraModal" tabindex="-1"
                                                 aria-labelledby="hiraModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog">
+                                                <div class="modal-dialog modal-lg">
                                                     <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="hiraModalLabel">HIRA</h5>
-                                                            <button type="button" class="close" data-dismiss="modal"
-                                                                aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
+
                                                         <div class="modal-body">
-                                                            <div class="d-flex justify-content-left my-3">
-                                                                <button type="button" class="btn btn-primary mx-2"
-                                                                    id="newHira">New</button>
-                                                                <button type="button" class="btn btn-secondary mx-2"
-                                                                    id="existingHira">Existing</button>
-                                                            </div>
-
-                                                            <!-- Existing HIRA Selection -->
-                                                            <div class="row" id="existingdiv" style="display: none;">
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group form-input">
-                                                                        <label class="form-label require">HIRA</label>
-                                                                        <select name="hira_id" id="hira_id"
-                                                                            class="form-control single-select"
-                                                                            style="width: 100%">
-                                                                            <option value="">Select HIRA</option>
-                                                                            @foreach ($hiraList as $hira)
-                                                                                <option value="{{ encryptId($hira->id) }}">
-                                                                                    {{ $hira->services }}</option>
-                                                                            @endforeach
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                            <!-- Display HIRA Details -->
-                                                            <div id="hiraDetails" class="mt-3" style="display: none;">
-                                                                <h5>HIRA Details</h5>
-                                                                <table class="table table-bordered">
-                                                                    <tr>
-                                                                        <th>Service</th>
-                                                                        <td id="service"></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Likelihood</th>
-                                                                        <td id="likelihood"></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Risk Level</th>
-                                                                        <td id="riskLevel"></td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-danger"
-                                                                id="cancelHira">Cancel</button>
-                                                            <button type="button" class="btn btn-success"
-                                                                id="confirmHira">Confirm</button>
+                                                            <p>Loading...</p>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
 
-
-
                                             <div class="col-md-4 mt-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">MOC</label>
-                                                    <label class="switch">
-                                                        <input type="checkbox" name="moc">
-                                                        <span class="slider round"></span>
-                                                    </label>
-                                                </div>
 
+                                                </div>
+                                                <x-button-add dataId="{{ $incidentId ?? '' }}"
+                                                    class="add popupwindow btn btn-primary"
+                                                    href="{{ admin_url('incident/initial-incident/existingMOC/' . ($incidentId ?? '')) }}">
+                                                    Add
+                                                </x-button-add>
+                                            </div>
+
+
+                                            <div class="modal fade" id="mocModal" tabindex="-1"
+                                                aria-labelledby="mocModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg">
+                                                    <div class="modal-content">
+
+                                                        <div class="modal-body">
+                                                            <p>Loading...</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="col-md-4 mt-2">
                                                 <div class="form-group form-input">
                                                     <label for="root_cause_analysis" class="form-label">Possible Root
                                                         Cause
                                                         Analysis (PRCA)</label>
-                                                    <select name="root_cause_analysis" id="root_cause_analysis"
+                                                    <select name="root_cause" id="root_cause_analysis"
                                                         style="width: 100%" class="form-control single-select">
                                                         <option value="">Select PRCA</option>
                                                         <option value="1">Why - Why Analysis</option>
@@ -271,7 +515,232 @@
 
                                                 </div>
                                             </div>
+
                                         </div>
+
+                                        <div class="row mt-3" style="display: none;">
+                                            <div class="card p-3">
+                                                <div
+                                                    class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                                                    <h4 class="text-dark mb-0">Why Why Analysis</h4>
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-success addwhywhyanalysis">
+                                                        ➕ Add More
+                                                    </button>
+                                                </div>
+
+                                                <!-- Table -->
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered whywhyanalysis text-center">
+                                                        <thead class="table-dark">
+                                                            <tr>
+                                                                <th>Why 1</th>
+                                                                <th></th>
+                                                                <th>Why 2</th>
+                                                                <th></th>
+                                                                <th>Why 3</th>
+                                                                <th></th>
+                                                                <th>Why 4</th>
+                                                                <th></th>
+                                                                <th>Why 5</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="whywhyanalysisBody">
+                                                            <tr id="RowwhywhyanalysisView0">
+                                                                <td><input type="text"
+                                                                        name="whywhyanalysis[0][whywhyanalysis_first]"
+                                                                        class="form-control"></td>
+                                                                <td><i class="fas fa-arrow-right text-primary"></i></td>
+                                                                <td><input type="text"
+                                                                        name="whywhyanalysis[0][whywhyanalysis_second]"
+                                                                        class="form-control"></td>
+                                                                <td><i class="fas fa-arrow-right text-primary"></i></td>
+                                                                <td><input type="text"
+                                                                        name="whywhyanalysis[0][whywhyanalysis_third]"
+                                                                        class="form-control"></td>
+                                                                <td><i class="fas fa-arrow-right text-primary"></i></td>
+                                                                <td><input type="text"
+                                                                        name="whywhyanalysis[0][whywhyanalysis_forth]"
+                                                                        class="form-control"></td>
+                                                                <td><i class="fas fa-arrow-right text-primary"></i></td>
+                                                                <td><input type="text"
+                                                                        name="whywhyanalysis[0][whywhyanalysis_fifth]"
+                                                                        class="form-control"></td>
+                                                                <td><button type="button"
+                                                                        class="btn btn-sm btn-danger removewhywhyanalysisRow">🗑
+                                                                        Remove</button></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row m-5 p-3" style="display: none;">
+                                            <div class="fishbone-container " style="text-align: center;">
+                                                <!-- Mensch -->
+                                                <div class="cause">
+                                                    <div class="rootcause blue">
+                                                        <input type="text" class="form-control" placeholder="Enter value">
+                                                    </div>
+                                                    <div class="subcause">
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat " placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                        
+                                                <!-- Maschine -->
+                                                <div class="cause">
+                                                    <div class="rootcause green">
+                                                        <input type="text" class="form-control" placeholder="Enter value">
+                                                    </div>
+                                                    <div class="subcause">
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                        
+                                                <!-- Milieu -->
+                                                <div class="cause">
+                                                    <div class="rootcause yellow">
+                                                        <input type="text" class="form-control" placeholder="Enter value">
+                                                    </div>
+                                                    <div class="subcause">
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        
+                                                    </div>
+                                                </div>
+                                        
+                                                <!-- Divider Line -->
+                                                <div class="line"></div>
+                                        
+                                                <!-- Messung -->
+                                                <div class="cause">
+                                                    <div class="subcause">
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                    </div>
+                                                    <div class="rootcause blue">
+                                                        <input type="text" class="form-control" placeholder="Enter value">
+                                                    </div>
+                                                </div>
+                                        
+                                                <!-- Material -->
+                                                <div class="cause">
+                                                    <div class="subcause">
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    <div class="rootcause green">
+                                                        <input type="text" class="form-control" placeholder="Enter value">
+                                                    </div>
+                                                    
+                                                </div>
+                                        
+                                                <!-- Methoden -->
+                                                <div class="cause">
+                                                    <div class="subcause">
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                        <div class="stat">
+                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                        </div>
+                                                    </div>
+                                                    <div class="rootcause yellow">
+                                                        <input type="text" class="form-control" placeholder="Enter value">
+                                                    </div>
+                                                </div>
+                                        
+                                                <!-- Defect Section -->
+                                                <div class="defect-spacer-top"></div>
+                                                <div class="defect">
+                                                    <div class="defect-text">
+                                                        <input type="text" class="form-control" placeholder="Enter value">
+                                                    </div>
+                                                </div>
+                                                <div class="defect-spacer-bottom"></div>
+                                            </div>
+                                        </div>
+                                        
+
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
@@ -279,7 +748,6 @@
                                             <x-button-cancel
                                                 href="{{ admin_url('incident/initial-incident/list') }}"></x-button-cancel>
                                         </div>
-
                                     </form>
                                 </div>
 
@@ -296,60 +764,111 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+        // html2canvas(document.querySelector(".fishbone-container")).then(canvas => {
+        //     document.body.appendChild(canvas)
+        // });
         $(document).ready(function() {
-            // Show modal when HIRA checkbox is clicked
-            $('input[name="hira"]').on('change', function() {
-                if ($(this).is(':checked')) {
-                    $('#hiraModal').modal('show');
-                }
+
+            $("#root_cause_analysis").change(function () {
+            if ($(this).val() == "1") {
+                $(".row.mt-3").show(); // Show the Why Why Analysis section
+            } else {
+                $(".row.mt-3").hide(); // Hide it when another option is selected
+            }
+        });
+            let whywhyanalysisIndex = {{ count($incident_investigation_draft['whywhyanalysis'] ?? []) ?: 1 }};
+
+            function updateRootCauseAnalysis() {
+                const values = $(".whywhyanalysis_fifth").map(function() {
+                    return $(this).val().trim();
+                }).get().filter(value => value !== "");
+                $("#root_cause_analysis").val(values.join("\n"));
+            }
+
+            $(".addwhywhyanalysis").on("click", function() {
+                const newRow = `
+            <tr id="RowwhywhyanalysisView${whywhyanalysisIndex}">
+                <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_first]" class="form-control"></td>
+                <td><i class="fas fa-arrow-right text-primary"></i></td>
+                <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_second]" class="form-control"></td>
+                <td><i class="fas fa-arrow-right text-primary"></i></td>
+                <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_third]" class="form-control"></td>
+                <td><i class="fas fa-arrow-right text-primary"></i></td>
+                <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_forth]" class="form-control"></td>
+                <td><i class="fas fa-arrow-right text-primary"></i></td>
+                <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_fifth]" class="form-control whywhyanalysis_fifth"></td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-danger removewhywhyanalysisRow">
+                        🗑 Remove
+                    </button>
+                </td>
+            </tr>
+        `;
+
+                $("#whywhyanalysisBody").append(newRow);
+                whywhyanalysisIndex++;
+                updateRootCauseAnalysis();
             });
 
-            $('#existingHira').on('click', function() {
-                $('#existingdiv').show();
-                $('#hiraDetails').hide();
-            });
+            $(document).on("click", ".removewhywhyanalysisRow", function() {
+                const rowCount = $("#whywhyanalysisBody tr").length;
+                if (rowCount > 1) {
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "Do you really want to delete this row?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Yes, delete it!",
+                        cancelButtonText: "Cancel"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $(this).closest("tr").fadeOut(300, function() {
+                                $(this).remove();
+                                updateRootCauseAnalysis();
+                            });
 
-            $('#newHira').on('click', function() {
-                $('#existingdiv').hide();
-                $('#hiraDetails').hide();
-            });
-
-            // Fetch HIRA details when an option is selected
-            $('#hira_id').on('change', function(event) {
-                event.stopPropagation(); // Prevent modal from closing
-
-                var hiraId = $(this).val();
-                if (hiraId) {
-                    $.ajax({
-                        url: "{{ url('incident/initial-incident/gethiradetails') }}/" + hiraId,
-                        type: "GET",
-                        dataType: "json",
-                        success: function(data) {
-                            if (data.hira) {
-                                $('#service').text(data.hira.services);
-                                $('#likelihood').text(data.hira.likelihood);
-                                $('#riskLevel').text(data.hira.risk_levels);
-
-                                $('#hiraDetails').show();
-                            } else {
-                                $('#hiraDetails').hide();
-                            }
+                            Swal.fire("Deleted!", "The row has been deleted.", "success");
                         }
                     });
                 } else {
-                    $('#hiraDetails').hide();
+                    Swal.fire("Warning!", "At least one row is required!", "error");
                 }
             });
 
-            $('#cancelHira').on('click', function() {
-                $('input[name="hira"]').prop('checked', false);
-                $('#hiraModal').modal('hide');
-                $('#existingdiv').hide();
-                $('#hiraDetails').hide();
+            $(document).on("input", ".whywhyanalysis_fifth", function() {
+                updateRootCauseAnalysis();
             });
         });
 
         $(document).ready(function() {
+            $(document).on('click', '.popupwindow', function(e) {
+                e.preventDefault();
+                var href = $(this).attr('href');
+
+                if (href.includes("existingHira")) {
+                    $('#hiraModal .modal-body').html('<p>Loading...</p>');
+                    $('#hiraModal').modal('show');
+
+                    $.get(href, function(response) {
+                        $('#hiraModal .modal-body').html(response);
+                    }).fail(function() {
+                        $('#hiraModal .modal-body').html('<p>Error loading content.</p>');
+                    });
+
+                } else if (href.includes("existingMOC")) {
+                    $('#mocModal .modal-body').html('<p>Loading...</p>');
+                    $('#mocModal').modal('show');
+
+                    $.get(href, function(response) {
+                        $('#mocModal .modal-body').html(response);
+                    }).fail(function() {
+                        $('#mocModal .modal-body').html('<p>Error loading content.</p>');
+                    });
+                }
+            });
+
 
             flatpickr("#target_date", {
                 dateFormat: "d-m-Y",
@@ -363,7 +882,7 @@
 
             $('#responsible_person_id').select2({
                 ajax: {
-                    url: "{{ url('incident/initial-incident/getemployeename') }}",
+                    url: "{{ url('incident/initial-incident/employeename') }}",
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
@@ -391,7 +910,7 @@
             });
             $('#witness_id').select2({
                 ajax: {
-                    url: "{{ url('incident/initial-incident/getemployeename') }}",
+                    url: "{{ url('incident/initial-incident/employeename') }}",
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
@@ -495,64 +1014,44 @@
                 }
             });
             $(function() {
-                $('#accidentinvestigation').validate({
+                $('#incidentinvestigation').validate({
                     rules: {
-                        date_and_time: {
+
+                        anything_damaged: {
                             required: true,
                         },
-                        unit_id: {
+                        // root_cause_analysis: {
+                        //     required: true,
+                        // },
+                        corrective_preventive_action: {
                             required: true,
                         },
-                        shift: {
+                        responsible_person_id: {
                             required: true,
                         },
-                        location_id: {
+                        target_date: {
                             required: true,
                         },
-                        designation: {
-                            required: true,
-                        },
-                        department_id: {
-                            required: true,
-                        },
-                        emp_code: {
-                            required: true,
-                        },
-                        address_of_the_injuredperson: {
-                            required: true,
-                            minlength: 3,
-                            maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-\_\'\"()\n\r]+$/,
-                        },
+
                     },
                     messages: {
-                        date_and_time: {
-                            required: "Date and Time is required.",
+
+                        anything_damaged: {
+                            required: "Was anything damaged is required.",
                         },
-                        unit_id: {
-                            required: "Unit is required.",
+                        // root_cause_analysis: {
+                        //     required: "Possible Root Cause Analysis (PRCA) is required.",
+                        // },
+                        corrective_preventive_action: {
+                            required: "Recommended Corrective & Preventive Action is required.",
                         },
-                        shift: {
-                            required: "Shift is required.",
+                        responsible_person_id: {
+                            required: "Responsible Person is required.",
                         },
-                        location_id: {
-                            required: "Accident Location is required.",
+                        target_date: {
+                            required: "Target Date is required.",
                         },
-                        designation: {
-                            required: "Designation is required.",
-                        },
-                        department_id: {
-                            required: "Department is required.",
-                        },
-                        emp_code: {
-                            required: "Employee Code is required.",
-                        },
-                        address_of_the_injuredperson: {
-                            required: "Address of the injured person is required.",
-                            minlength: "Minimum 3 characters required.",
-                            maxlength: "Maximum 2000 characters allowed.",
-                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
-                        },
+
                     },
 
                     errorElement: 'span',

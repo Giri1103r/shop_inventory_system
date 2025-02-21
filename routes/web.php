@@ -1115,8 +1115,14 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/ehs_head_review/submit', [InitialIncidentController::class, 'ehsHeadReviewSubmit']);
                 Route::get('/teamMembers', [InitialIncidentController::class, 'teamMembers']);
                 Route::get('/investigation/{incident_id}', [InitialIncidentController::class, 'investigation']);
+                Route::post('/savehira', [InitialIncidentController::class, 'saveHira']);
                 Route::post('/investigation/submit', [InitialIncidentController::class, 'investigationSubmit']);
                 Route::get('/gethiradetails/{hira_id}', [InitialIncidentController::class, 'gethiradetails']);
+                Route::get('/existingHira/{incident_id}', [InitialIncidentController::class, 'existingHira']);
+                Route::get('/existingMOC/{incident_id}', [InitialIncidentController::class, 'existingMOC']);
+                Route::get('/riskAnalysis/{incident_id}', [InitialIncidentController::class, 'riskAnalysis']);
+                Route::post('/riskAnalysis/submit', [InitialIncidentController::class, 'riskAnalysisSubmit']);
+                Route::post('/ehs_head_verify/submit', [InitialIncidentController::class, 'ehsHeadVerifySubmit']);
             });
 
 
