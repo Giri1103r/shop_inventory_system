@@ -108,8 +108,8 @@ class UserMedicineRequisition extends Model
         $request = request();
 
         $insert_array = [
-            'unit_id' =>Auth::user()->unit_id,
-            'department_id' =>Auth::user()->department_id,
+            'unit_id' =>decryptId($request->unit_id),
+            'department_id' =>decryptId($request->department_id),
             'request_date' => DBdateformat($request->request_date),
             'req_id' => $request->req_id,
             'approve_status'=>STATUS_OHC_PARAMEDICS_APPROVAL_PENDING,

@@ -152,7 +152,7 @@ class MedicineRequisitionController extends Controller
     public function add()
     {
         try {
-            $unit = $this->unit->getunit();
+            $unit = $this->unit->getuserunit();
             $medicine = $this->inventory->getstockdata();
             $data = array(
                 'medicine' => $medicine,

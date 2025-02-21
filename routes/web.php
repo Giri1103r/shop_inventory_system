@@ -56,7 +56,8 @@ use App\Http\Controllers\IMS\Incident\AccidentReportController;
 use App\Http\Controllers\OhcManagement\MedicineFirstAidController;
 use App\Http\Controllers\OhcManagement\DiscardController;
 use App\Http\Controllers\OhcManagement\Report\InventoryController;
-
+use App\Http\Controllers\OhcManagement\Report\MedicineExpireController;
+use App\Http\Controllers\OhcManagement\Report\MonthlyInventoryController;
 
 Route::get('cache', function () {
     Artisan::call('optimize:clear');
@@ -956,7 +957,9 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/export/pdf', [MedicineIssuanceController::class, 'exportPdf']);
                 Route::post('/status', [MedicineIssuanceController::class, 'statusChange']);
                 Route::get('/quantity/{quantity_id}', [MedicineIssuanceController::class, 'quantity']);
-                Route::post('/delete', [MedicineIssuanceController::class, 'delete']);
+                Route::get('/editquantity/{quantity_id}', [MedicineIssuanceController::class, 'editquantity']);
+
+                Route::post('/delete/{id}', [MedicineIssuanceController::class, 'delete']);
                 Route::get('add/{id}', [MedicineIssuanceController::class, 'issue']);
                 Route::post('/issue/submit', [MedicineIssuanceController::class, 'issuestore']);
                 Route::get('/medicine-details/{unit_id}/{id}', [MedicineIssuanceController::class, 'medicineDetails']);
@@ -1059,6 +1062,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('add/{id}', [MedicineFirstAidController::class, 'issue']);
                 Route::post('/issue/submit', [MedicineFirstAidController::class, 'issuestore']);
                 Route::post('/delete/{row_id}', [MedicineFirstAidController::class, 'delete']);
+                Route::get('/editquantity/{quantity_id}', [MedicineFirstAidController::class, 'editquantity']);
+
                 Route::get('/medicine-details/{unit_id}/{id}', [MedicineFirstAidController::class, 'medicineDetails']);
             });
 
@@ -1086,6 +1091,17 @@ Route::middleware(['securityheader'])->group(function () {
             Route::group(['prefix' => 'ohc/inventory-tabular-view'], function () {
                 Route::get('/list', [InventoryController::class, 'index']);
                 Route::post('/list', [InventoryController::class, 'index']);
+            });
+
+            Route::group(['prefix' => 'ohc/medicine-expire-report'], function () {
+                Route::get('/list', [MedicineExpireController::class, 'index']);
+                Route::post('/list', [MedicineExpireController::class, 'index']);
+                Route::get('/export/excel', [MedicineExpireController::class, 'exportExcel']);
+                Route::get('/export/pdf', [MedicineExpireController::class, 'exportPdf']);
+            });
+            Route::group(['prefix' => 'ohc/monthly-inventory'], function () {
+                Route::get('/list', [MonthlyInventoryController::class, 'index']);
+                Route::post('/list', [MonthlyInventoryController::class, 'index']);
             });
             Route::group(['prefix' => 'incident/type-master'], function () {
                 Route::get('/list', [IncidentTypeController::class, 'index']);

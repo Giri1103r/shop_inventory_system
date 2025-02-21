@@ -119,7 +119,7 @@
                                                             <tr class="medicinedetails">
                                                                 <td>
                                                                     <input type="hidden" name="encryptid" class="encryptid"
-                                                                        value="{{ $issuance->id }}">
+                                                                        value="{{ encryptId($issuance->id) }}">
                                                                     <div class="form-group form-input">
                                                                         <label for="medicine_id" class="require">Medicine
                                                                             Name</label>
@@ -316,7 +316,7 @@
 
         $(document).ready(function() {
 
-            let medicine_issuance_row_count = 1;
+            let medicine_issuance_row_count = 0;
 
             $(".add-row").click(function() {
                 var rowCount = $('#medicine-tbody tr').length;
@@ -330,7 +330,7 @@
                         <select name="medicine_id[${medicine_issuance_row_count}]" class="form-control single-select" style="width: 100%">
                             <option value="">Select the Medicine Name</option>
                                      @foreach ($medicine as $list)
-                                         <option value="{{ encryptId($list->medicine_id) }}">
+                                         <option value="{{ ($list->medicine_id) }}">
                                                 {{ getMedicinename($list->medicine_id) }}
                                          </option>
                                     @endforeach
@@ -385,19 +385,7 @@
                     }
                 });
 
-                var unitId = $('#unit_id').val();
-                if (unitId) {
-                    $.ajax({
-                        url: "{{ admin_url('ohc/medicine-issuance/medicine-details') }}/" +
-                            unitId +
-                            "/0",
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            updateMedicineDropdowns(data);
-                        }
-                    });
-                }
+               
                 medicine_issuance_row_count++;
             });
 
@@ -433,7 +421,7 @@
 
                     if (selectedMedicineId) {
                         $.ajax({
-                            url: "{{ admin_url('ohc/medicine-issuance/quantity') }}/" +
+                            url: "{{ admin_url('ohc/medicine-issuance/editquantity') }}/" +
                                 selectedMedicineId,
                             type: 'get',
                             dataType: 'json',

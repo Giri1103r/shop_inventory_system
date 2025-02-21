@@ -46,13 +46,13 @@ class MedicineReceiving extends Model
             'ohc_master_vendor.vendor_name',
             'ohc_master_medicine.pack',
         )
-        ->join('ohc_master_vendor', 'ohc_management_medicine_receiving.vendor_id', '=', 'ohc_master_vendor.id')
-        ->join('ohc_master_medicine', 'ohc_management_medicine_receiving.pack_id', '=', 'ohc_master_medicine.id')
-        ->where([
-            ['ohc_master_medicine.trash', '=', 'NO'],
-            ['ohc_master_vendor.trash', '=', 'NO'],
-            ['ohc_management_medicine_receiving.trash', '=', 'NO']
-        ]);
+            ->join('ohc_master_vendor', 'ohc_management_medicine_receiving.vendor_id', '=', 'ohc_master_vendor.id')
+            ->join('ohc_master_medicine', 'ohc_management_medicine_receiving.pack_id', '=', 'ohc_master_medicine.id')
+            ->where([
+                ['ohc_master_medicine.trash', '=', 'NO'],
+                ['ohc_master_vendor.trash', '=', 'NO'],
+                ['ohc_management_medicine_receiving.trash', '=', 'NO']
+            ]);
 
 
         if ($request->search['value'] != null) {
@@ -115,12 +115,12 @@ class MedicineReceiving extends Model
             'pack_id' => decryptId($request->pack_id),
             'approve_status' => STATUS_OHC_EHS_VERIFICATION_PENDING,
             'created_by' => Auth::id(),
-           
+
         ];
 
         return $this->create($insert_array);
     }
-    public function updates($id,$hsn)
+    public function updates($id, $hsn)
     {
 
         $request = request();
@@ -158,10 +158,10 @@ class MedicineReceiving extends Model
         $request = request();
 
         $query = $this->select(
-                'ohc_management_medicine_receiving.*',
-                'ohc_master_vendor.vendor_name',
-                'ohc_master_medicine.pack',
-            )
+            'ohc_management_medicine_receiving.*',
+            'ohc_master_vendor.vendor_name',
+            'ohc_master_medicine.pack',
+        )
             ->join('ohc_master_vendor', 'ohc_management_medicine_receiving.vendor_id', '=', 'ohc_master_vendor.id')
             ->join('ohc_master_medicine', 'ohc_management_medicine_receiving.pack_id', '=', 'ohc_master_medicine.id')
             ->where([
@@ -174,7 +174,7 @@ class MedicineReceiving extends Model
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('ohc_management_medicine_receiving.medicine_id', 'LIKE', '%' . $search . '%')
-                  ->orWhere('ohc_management_medicine_receiving.vendor_id', 'LIKE', '%' . $search . '%');
+                    ->orWhere('ohc_management_medicine_receiving.vendor_id', 'LIKE', '%' . $search . '%');
             });
         }
 
@@ -217,12 +217,11 @@ class MedicineReceiving extends Model
     public function l1ehsstatus($id, $ehsverifydata)
     {
         $this->where('id', $id)->update([
-            'approve_status' =>$ehsverifydata['approve_status'],
+            'approve_status' => $ehsverifydata['approve_status'],
             'approved_by' => Auth::id()
         ]);
-
     }
-    public function ehsheadstatus($id,$updateStatus)
+    public function ehsheadstatus($id, $updateStatus)
     {
         $this->where('id', $id)->update([
             'approve_status' => $updateStatus['approve_status'],
@@ -233,7 +232,76 @@ class MedicineReceiving extends Model
 
     public function stockupdate($id)
     {
-        $this->where('id', $id)->update(['approve_status' => STATUS_OHC_CLOSE,
-        'approved_by' =>  Auth::id(),]);
+        $this->where('id', $id)->update([
+            'approve_status' => STATUS_OHC_CLOSE,
+            'approved_by' =>  Auth::id(),
+        ]);
+    }
+
+
+    // Expire medicine list
+
+
+    public function Expirelist()
+    {
+        $request = request();
+        $user = Auth::user();
+        $query = $this->select('ohc_management_medicine_receiving.*')->where('approve_status', STATUS_OHC_CLOSE);
+
+        if ($request->search['value'] != null) {
+            $search = $request->search['value'];
+            $query->where(function ($query) use ($search) {
+                $query->orWhere('medicine_id', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        if ($request->has('medicine_id') && $request->medicine_id) {
+            $query->where('ohc_management_medicine_receiving.medicine_id', 'LIKE', '%' . $request->medicine_id . '%');
+        }
+
+        // Apply ORDER BY conditionally
+
+
+        $org_total_counts = $query->count();
+
+        if ($request->length != -1) {
+            $query->offset($request->start)->limit($request->length);
+        }
+        $query->orderBy('id', 'DESC');
+
+        $data = $query->get();
+        $total_records = $data->count();
+
+        return [
+            'data' => $data,
+            'total_records' => $org_total_counts,
+            'filter_records' => $total_records,
+        ];
+    }
+
+
+
+    public function expireexportdata()
+    {
+        $request = request();
+
+        $query = $this->select(
+            'ohc_management_medicine_receiving.*',
+
+        )->where('approve_status', STATUS_OHC_CLOSE);
+
+        if (!empty($request->search)) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('ohc_management_medicine_receiving.medicine_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_management_medicine_receiving.vendor_id', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        if ($request->filled('medicine_id')) {
+            $query->where('ohc_management_medicine_receiving.medicine_id', 'LIKE', '%' . $request->medicine_id . '%');
+        }
+
+        return $query->orderByDesc('id')->get();
     }
 }

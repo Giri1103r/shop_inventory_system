@@ -209,7 +209,7 @@ class MedicineIssuanceController extends Controller
                         ->where('medicine_id', $medicine_id)
                         ->where('unit_id', 1)
                         ->decrement('balance', $issuedQuantity);
-                        $this->inventory
+                    $this->inventory
                         ->where('medicine_id', $medicine_id)
                         ->where('unit_id', 1)
                         ->increment('total_issue', $issuedQuantity);
@@ -217,7 +217,7 @@ class MedicineIssuanceController extends Controller
                         ->where('medicine_id', $medicine_id)
                         ->where('unit_id',  $unitId)
                         ->increment('total_purchase', $issuedQuantity);
-                        $this->inventory
+                    $this->inventory
                         ->where('medicine_id', $medicine_id)
                         ->where('unit_id',  $unitId)
                         ->increment('balance', $issuedQuantity);
@@ -436,89 +436,131 @@ class MedicineIssuanceController extends Controller
 
             try {
 
-                 $this->user_medicine_issuance->updates($id);
-                $updatedMedicines = $this->medicine_issuance->updates($id)['updated'];
+
                 $user_medicine_issuance = $this->user_medicine_issuance->selectOne($id);
+                $medicine_issuance = $this->medicine_issuance->selectOne($id);
+
+                foreach ($request->medicine_id as $index => $medicine_id) {
+                    $medicine_record = $medicine_issuance->where('medicine_id', $medicine_id)->first();
 
 
-                $existingMedicines = $this->medicinelog->getquantity($id);
+                    if ($medicine_record) {
+                        $oldquantity = $medicine_record->quantity;
+                        $newquantity = $request->quantity[$index];
 
+                        if ($oldquantity > $newquantity) {
+                            $difference = $oldquantity - $newquantity;
 
-                foreach ($updatedMedicines as $updatedMedicine) {
-                    $medicine_id = $updatedMedicine->medicine_id;
-                    $newQuantity = $updatedMedicine->quantity;
-
-
-                    $existingMedicine = collect($existingMedicines)->firstWhere('medicine_id', $medicine_id);
-
-                    if ($existingMedicine) {
-                        $oldQuantity = $existingMedicine['quantity'];
-
-                        if ($newQuantity < $oldQuantity) {
-                            $difference = $oldQuantity - $newQuantity;
-                            $this->inventory->where('unit_id', $user_medicine_issuance->unit_id )
-                                ->where('medicine_id', $medicine_id)
-                                ->decrement('total_issue', $difference);
-
-                            $this->inventory->where('unit_id', $user_medicine_issuance->unit_id )
-                                ->where('medicine_id', $updatedMedicine['medicine_id'])
-                                ->increment('balance', $difference);
-                        }
-
-                        elseif ($newQuantity > $oldQuantity) {
-                            $difference = $newQuantity - $oldQuantity;
                             $this->inventory
                                 ->where('medicine_id', $medicine_id)
+                                ->where('unit_id', $user_medicine_issuance->unit_id)
+                                ->decrement('total_purchase', $difference);
+
+                            $this->inventory
+                                ->where('medicine_id', $medicine_id)
+                                ->where('unit_id', $user_medicine_issuance->unit_id)
+                                ->decrement('balance', $difference);
+                                $this->inventory
+                                ->where('medicine_id', $medicine_id)
+                                ->where('unit_id', 1)
+                                ->decrement('total_issue', $difference);
+
+                            $this->inventory
+                                ->where('medicine_id', $medicine_id)
+                                ->where('unit_id', 1)
+                                ->decrement('balance', $difference);
+                        } elseif ($oldquantity < $newquantity) {
+                            $difference = $newquantity - $oldquantity;
+
+                            $this->inventory
+                                ->where('medicine_id', $medicine_id)
+                                ->where('unit_id', $user_medicine_issuance->unit_id)
+                                ->increment('total_purchase', $difference);
+
+                            $this->inventory
+                                ->where('medicine_id', $medicine_id)
+                                ->where('unit_id', $user_medicine_issuance->unit_id)
+                                ->increment('balance', $difference);
+                                $this->inventory
+                                ->where('medicine_id', $medicine_id)
+                                ->where('unit_id', 1)
                                 ->increment('total_issue', $difference);
 
                             $this->inventory
-                                ->where('medicine_id', $updatedMedicine['medicine_id'])
-                                ->decrement('balance', $difference);
+                                ->where('medicine_id', $medicine_id)
+                                ->where('unit_id', 1)
+                                ->increment('balance', $difference);
+                        }
+                    } else {
+                        foreach ($request->medicine_id as $index =>  $encrypt_medicine_id) {
+                            $medicine_id = ($encrypt_medicine_id);
+
+                            $unitId = $user_medicine_issuance->unit_id;
+                            $issuedQuantity =  $request->quantity[$index];
+                            $data = $this->inventory
+                                ->where('medicine_id', $medicine_id)
+                                ->where('unit_id', $unitId)
+                                ->first();
+                            $this->inventory
+                                ->where('medicine_id', $medicine_id)
+                                ->where('unit_id', 1)
+                                ->decrement('balance', $issuedQuantity);
+                            $this->inventory
+                                ->where('medicine_id', $medicine_id)
+                                ->where('unit_id', 1)
+                                ->increment('total_issue', $issuedQuantity);
+                            $this->inventory
+                                ->where('medicine_id', $medicine_id)
+                                ->where('unit_id',  $unitId)
+                                ->increment('total_purchase', $issuedQuantity);
+                            $this->inventory
+                                ->where('medicine_id', $medicine_id)
+                                ->where('unit_id',  $unitId)
+                                ->increment('balance', $issuedQuantity);
                         }
                     }
                 }
 
-                // Fetch user and department details for notifications
-                $data = $this->user_medicine_issuance->selectOne($id);
+                $this->user_medicine_issuance->updates($id);
+                $updatedMedicines = $this->medicine_issuance->updates($id);
+                $mailsubject = 'Medicine Issuing to Other Unit';
+                $user_role = ROLE_EHS_OFFICER;
 
-                // $mailsubject = 'Medicine Issuing to Other Unit';
-                // $user_role = ROLE_EHS_OFFICER;
+                // Fetch all EHS Officers for notification
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+                $userids = $users->pluck('id')->toArray();
 
-                // // Fetch all EHS Officers for notification
-                // $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
-                // $userids = $users->pluck('id')->toArray();
+                // Send email notifications to all users
+                foreach ($users as $user) {
+                    if (!empty($user->email)) {
+                        $details = $this->user_medicine_issuance->selectOne($id);
+                        $medicineDetails = $this->medicine_issuance->selectOne($id);
+                        $emailDetails = $details->toArray();
+                        $emailDetails['name'] = $user->name;
+                        $emailDetails['email_id'] = $user->email;
+                        $emailDetails['mail_subject'] = $mailsubject;
 
-                // // Send email notifications to all users
-                // foreach ($users as $user) {
-                //     if (!empty($user->email)) {
-                //         $details = $this->user_medicine_issuance->selectOne($id);
-                //         $medicineDetails = $this->medicine_issuance->selectOne($id);
-                //         $emailDetails = $details->toArray();
-                //         $emailDetails['name'] = $user->name;
-                //         $emailDetails['email_id'] = $user->email;
-                //         $emailDetails['mail_subject'] = $mailsubject;
+                        Mail::to($user->email)->queue(new MedicineRequisitionEmail($emailDetails, $medicineDetails));
+                    }
+                }
 
-                //         Mail::to($user->email)->queue(new MedicineRequisitionEmail($emailDetails, $medicineDetails));
-                //     }
-                // }
-
-                // // Prepare and send web notification
-                // $notificationData = [
-                //     'notification_type' => 4,
-                //     'module_type' => 1,
-                //     'notification_message' => $mailsubject,
-                //     'mobile_notification' => json_encode([
-                //         'title' => $mailsubject,
-                //         'message' => "The requested Medicine was issued by " . getUsername($data->created_by),
-                //         'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
-                //         'id' => $id,
-                //         'module' => 1,
-                //     ]),
-                //     'web_link' => admin_url('ohc/medicine-issuance/list'),
-                //     'assigned_user' => array_to_string($userids),
-                //     'created_by' => Auth::id(),
-                // ];
-                // notificationSave($notificationData);
+                // Prepare and send web notification
+                $notificationData = [
+                    'notification_type' => 4,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode([
+                        'title' => $mailsubject,
+                        'message' => "The requested Medicine was issued by " . getUsername($user_medicine_issuance->created_by),
+                        'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $id,
+                        'module' => 1,
+                    ]),
+                    'web_link' => admin_url('ohc/medicine-issuance/list'),
+                    'assigned_user' => array_to_string($userids),
+                    'created_by' => Auth::id(),
+                ];
+                notificationSave($notificationData);
 
                 Session::flash('success', 'Your data has been updated successfully!');
             } catch (Exception $ex) {
@@ -618,10 +660,31 @@ class MedicineIssuanceController extends Controller
     public function delete(Request $request, $id)
     {
         try {
+            $ids = decryptId($id);
 
-            $this->medicine_issuance->deleterecord($id);
+            $data =    $this->medicine_issuance->firstdata($ids);
+
+            $referenceId =   $data->reference_id;
+            $user_medicine_issuance = $this->user_medicine_issuance->selectOne($referenceId);
+            $this->inventory->where('unit_id', 1)
+                ->where('medicine_id', $data->medicine_id)
+                ->decrement('total_issue', $data->quantity);
+
+            $this->inventory->where('unit_id', 1)
+                ->where('medicine_id', $data->medicine_id)
+                ->decrement('balance', $data->quantity);
+
+            $this->inventory->where('unit_id', $user_medicine_issuance->unit_id)
+                ->where('medicine_id', $data->medicine_id)
+                ->decrement('total_purchase', $data->quantity);
+
+            $this->inventory->where('unit_id', $user_medicine_issuance->unit_id)
+                ->where('medicine_id', $data->medicine_id)
+                ->decrement('balance', $data->quantity);
+            $this->medicine_issuance->deleterecord($ids);
             return response()->json(['status' => 'success', 'msg' => 'Deleted successfully'], 200);
         } catch (Exception $ex) {
+            dd($ex);
             return response()->json(['status' => 'error', 'msg' => 'Something went wrong'], 200);
         }
     }
@@ -692,5 +755,16 @@ class MedicineIssuanceController extends Controller
                 'name' => $medicine->medicine_id,
             ];
         }));
+    }
+
+    public function editquantity(Request $request, $quantity_id)
+    {
+        $id = ($quantity_id);
+
+        $availableQuantity = $this->inventory->getAvailableQuantity($id);
+
+        return response()->json(
+            ['available_quantity' => $availableQuantity->balance]
+        );
     }
 }
