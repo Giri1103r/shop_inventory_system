@@ -141,7 +141,7 @@ class YearlyInventoryController extends Controller
             $drawing->setCoordinates('A1');
             $drawing->setOffsetX(5);
             $drawing->setOffsetY(5);
-            $drawing->setWidth(60); 
+            $drawing->setWidth(60);
             $drawing->setHeight(60);
             $drawing->setWorksheet($sheet);
 

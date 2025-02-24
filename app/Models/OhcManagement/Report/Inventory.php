@@ -41,7 +41,7 @@ class Inventory extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_report_inventory.*');
+        $query = $this->select('ohc_report_inventory.*') ->where('unit_id', Auth::user()->unit_id);
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
