@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\OhcManagement\Opd;
 
 use App\Http\Controllers\Controller;
+use App\Mail\Ohc\PatientEmail;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
 use App\Models\Master\Unit;
@@ -23,7 +24,7 @@ use App\Models\OhcManagement\Opd\Suggestedby;
 use App\Models\OhcManagement\UserMedicineRequisition;
 use App\Models\UploadLog;
 use App\Models\OhcManagement\Report\Inventory;
-
+use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Http;
@@ -122,7 +123,7 @@ class PrescribetoPatientController extends Controller
                         ->editColumn('suggested_by', function ($row) {
                             return ($row->suggested_by);
                         })
-                        ->editColumn('patient_status', function ($row) {
+                        ->editColumn('patientStatus', function ($row) {
 
                             if ($row->patient_status == 'Open') {
                                 return  "<span class='badge bg-info' style='font-size: 1.0em;'>Open</span>";
@@ -144,14 +145,16 @@ class PrescribetoPatientController extends Controller
                             $btn .= '<a href="' . admin_url('ohc/prescribe-to-patient/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             // }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
-
+                            if ($row->patientStatus !== 3) {
                             $btn .= '<a href="' . admin_url('ohc/prescribe-to-patient/generalpdf/' . encryptId($row->id)) . '" class="" title="PDF"> <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a> ';
-
+                            }
+                            if ($row->patientStatus !== 3) {
                             $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="Close" title="Cancel" style="color: #e21e23;margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
-                            return $btn;
+                            }
+                              return $btn;
                         })
 
-                        ->rawColumns(['action', 'date', 'vital_checkup', 'created_by', 'patient_status', 'fitness_certificate'])
+                        ->rawColumns(['action', 'date', 'vital_checkup', 'created_by', 'patientStatus', 'fitness_certificate'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -183,7 +186,7 @@ class PrescribetoPatientController extends Controller
             $suggestedBy = $this->suggestedBy->getSuggestedBy();
             $reffered = $this->refered_vechicle->getreffered();
             $patientstatus = $this->patient_status->getpatientstatus();
-            $medicine  = $this->medicine_stock->getMedicinestockdata();
+            $medicine  = $this->inventory->getmedicineUnitwise();
             $data = array(
                 'unit' => $unit,
                 'suggestedBy' => $suggestedBy,
@@ -224,21 +227,63 @@ class PrescribetoPatientController extends Controller
 
             $isreffered = $this->isreffered->store($opd_patient);
 
+            $id =  $opd_patient->id;
+            $opdpatient = $this->opd_patient->selectOne($id);
+
+
+            // mail notification
+            $user_role = ROLE_EHS_OFFICER;
+            $mailsubject = 'OPD of the Patient is Submitted';
+            $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
+            $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+
+            if ($users->isNotEmpty()) {
+                foreach ($users as $user) {
+                    $email_id = $user->email;
+
+                    if (!empty($email_id)) {
+                        $opdpatient = $this->opd_patient->selectOne($id);
+                        $medicineDetails = $this->opd_firstaid->selectOne($id);
+                        $isreffered = $this->isreffered->selectOne($id);
+
+                        $hospitaldetails = $isreffered ? $isreffered->toArray() : [];
+                        $emailDetails = $opdpatient ? $opdpatient->toArray() : [];
+
+                        if (!empty($emailDetails) && !empty($medicineDetails) && !empty($hospitaldetails)) {
+                            $emailDetails['name'] = $user->name;
+                            $emailDetails['email_id'] = $email_id;
+                            $emailDetails['mail_subject'] = $mailsubject;
+
+                            Mail::to($emailDetails['email_id'])
+                                ->queue(new PatientEmail($emailDetails, $medicineDetails, $hospitaldetails));
+                        }
+                    }
+                }
+            }
+
+            // Web notification
+            $notificationData = [
+                'notification_type' => 4,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode([
+                    'title' => $mailsubject,
+                    'message' => "OPD Patient List Submitted by " . getUsername($opdpatient->created_by),
+                    'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $opdpatient->id,
+                    'module' => 1,
+                ]),
+                'web_link' => admin_url('ohc/prescribe-to-patient/list'),
+                'assigned_user' => array_to_string($userids),
+                'created_by' => Auth::id(),
+            ];
+            notificationSave($notificationData);
+
+
             foreach ($firstaid as $medicine) {
                 $medicine_id = $medicine->medicine_id;
                 $unitId = Auth::user()->unit_id;
                 $issuedQuantity = $medicine->quantity;
-
-
-                $medicine_stock = $this->medicine_stock
-                    ->where('id', $medicine_id)
-                    ->where('unit_id', $unitId)
-                    ->first();
-
-                if ($medicine_stock) {
-                    $medicine_stock->decrement('quantity', $issuedQuantity);
-                }
-
 
                 $inventory = $this->inventory
                     ->where('medicine_id', $medicine_id)
@@ -246,10 +291,12 @@ class PrescribetoPatientController extends Controller
                     ->first();
 
                 if ($inventory) {
-                    $inventory->update(['total_prescribe' => $issuedQuantity]);
+                    $inventory->increment('total_prescribe', $issuedQuantity);
                     $inventory->decrement('balance', $issuedQuantity);
+                    $inventory->decrement('total_purchase', $issuedQuantity);
                 }
             }
+
 
             Session::flash('success', __('Your data has been created successfully'));
 
@@ -275,7 +322,7 @@ class PrescribetoPatientController extends Controller
             $suggestedBy = $this->suggestedBy->getSuggestedBy();
             $reffered = $this->refered_vechicle->getreffered();
             $patientstatus = $this->patient_status->getpatientstatus();
-            $medicine  = $this->medicine_stock->getMedicinestockdata();
+            $medicine  = $this->inventory->getmedicineUnitwise();
             $suggestedname = $this->suggestedBy->getsuggestedname();
             $data = array(
                 'unit' => $unit,
@@ -345,14 +392,52 @@ class PrescribetoPatientController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
+
+
+            $user_opd_patient = $this->opd_patient->selectOne($id);
+            $user_opd_firstaid = $this->opd_firstaid->selectOne($id);
+            foreach ($request->medicine_id as $index => $medicine_id) {
+                $medicineRecord = $user_opd_firstaid->where('medicine_id', $medicine_id)->where('opd_id', $id)->first();
+
+                if (!$medicineRecord) {
+
+                    continue;
+                }
+
+                $newQuantity = $request->quantity[$index];
+                $oldquantity = $medicineRecord->quantity;
+
+                if ($oldquantity > $newQuantity) {
+                    $difference = $oldquantity - $newQuantity;
+
+                    $this->inventory
+                        ->where('medicine_id', $medicine_id)
+                        ->where('unit_id', Auth::user()->unit_id)
+                        ->decrement('total_prescribe', $difference);
+
+                    $this->inventory
+                        ->where('medicine_id', $medicine_id)
+                        ->where('unit_id', Auth::user()->unit_id)
+                        ->increment('balance', $difference);
+                } elseif ($oldquantity < $newQuantity) {
+                    $difference = $newQuantity - $oldquantity;
+
+                    $this->inventory
+                        ->where('medicine_id', $medicine_id)
+                        ->where('unit_id', Auth::user()->unit_id)
+                        ->increment('total_prescribe', $difference);
+
+                    $this->inventory
+                        ->where('medicine_id', $medicine_id)
+                        ->where('unit_id', Auth::user()->unit_id)
+                        ->decrement('balance', $difference);
+                }
+            }
             $opd_patient = $this->opd_patient->updates($id);
 
             $firstaid = $this->opd_firstaid->updates($id);
 
             $isreffered = $this->isreffered->updates($id);
-
-
-
             Session::flash('success', __('Your data has been created successfully'));
 
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
@@ -606,8 +691,22 @@ class PrescribetoPatientController extends Controller
     public function delete(Request $request, $id)
     {
         try {
+            $ids = decryptId($id);
+            $data =    $this->opd_firstaid->firstdata($ids);
 
-            $this->opd_firstaid->deleterecord($id);
+            $referenceId =   $data->reference_id;
+            $user_opd_firstaid = $this->opd_patient->selectOne($referenceId);
+
+            $this->inventory->where('unit_id', Auth::user()->unit_id
+            )
+                ->where('medicine_id', $data->medicine_id)
+                ->decrement('total_prescribe', $data->quantity);
+
+            $this->inventory->where('unit_id', Auth::user()->unit_id
+            )
+                ->where('medicine_id', $data->medicine_id)
+                ->increment('balance', $data->quantity);
+            $this->opd_firstaid->deleterecord($ids);
             return response()->json(['status' => 'success', 'msg' => 'Deleted successfully'], 200);
         } catch (Exception $ex) {
             return response()->json(['status' => 'error', 'msg' => 'Something went wrong'], 200);
@@ -649,7 +748,8 @@ class PrescribetoPatientController extends Controller
         return $mpdf->Output($filename, 'I');
     }
 
-    public function employeename(Request $request){
+    public function employeename(Request $request)
+    {
         $name = $request->input('search');
 
         $employee_code = $this->employee->where('emp_id', 'like', '%' . $name . '%')

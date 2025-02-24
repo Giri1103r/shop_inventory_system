@@ -52,7 +52,7 @@ class MedicineIssuance extends Model
         foreach ($request->medicine_id as $index => $medicine) {
             $update_data = [
                 'reference_id' => $id,
-                'medicine_id' =>( $medicine),
+                'medicine_id' => ($medicine),
                 'quantity' => $request->quantity[$index],
                 'available_quantity' => $request->available_quantity[$index],
                 'created_by' => Auth::id(),
@@ -61,7 +61,7 @@ class MedicineIssuance extends Model
 
 
             $existingRecord = self::where('reference_id', $id)
-                ->where('medicine_id', $medicine)->where('trash','NO')
+                ->where('medicine_id', $medicine)->where('trash', 'NO')
                 ->first();
 
             if ($existingRecord) {
@@ -77,13 +77,14 @@ class MedicineIssuance extends Model
     {
 
         $data = $this->select(
-            'ohc_management_medicine_issuance.*')->where('reference_id',$id)->where('trash','NO')
+            'ohc_management_medicine_issuance.*'
+        )->where('reference_id', $id)->where('trash', 'NO')
             ->get();
 
         return $data;
     }
 
-    public function deleterecord( $ids)
+    public function deleterecord($ids)
     {
 
         $update_data = array(
@@ -98,10 +99,33 @@ class MedicineIssuance extends Model
     {
 
         $data = $this->select(
-            'ohc_management_medicine_issuance.*')->where('id',$id)->where('trash','NO')
+            'ohc_management_medicine_issuance.*'
+        )->where('id', $id)->where('trash', 'NO')
             ->first();
 
         return $data;
     }
 
+
+
+    public function getissuedDate($selectedYear, $selectedMonth, $ids)
+    {
+        return $this
+            ->join('ohc_master_medicine', 'ohc_management_medicine_issuance.medicine_id', '=', 'ohc_master_medicine.id')
+            ->whereIn('reference_id', $ids)
+            ->whereYear('ohc_management_medicine_issuance.created_at', $selectedYear)
+            ->whereMonth('ohc_management_medicine_issuance.created_at', $selectedMonth)
+            ->select('ohc_master_medicine.medicine as medicine_name', 'ohc_management_medicine_issuance.created_at', 'quantity')
+            ->get();
+    }
+
+    public function getYearlyissuedDate($selectedYear, $ids)
+    {
+        return $this
+            ->join('ohc_master_medicine', 'ohc_management_medicine_issuance.medicine_id', '=', 'ohc_master_medicine.id')
+            ->whereIn('reference_id', $ids)
+            ->whereYear('ohc_management_medicine_issuance.created_at', $selectedYear)
+            ->select('ohc_master_medicine.medicine as medicine_name', 'ohc_management_medicine_issuance.created_at', 'quantity')
+            ->get();
+    }
 }

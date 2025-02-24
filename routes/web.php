@@ -58,6 +58,7 @@ use App\Http\Controllers\OhcManagement\DiscardController;
 use App\Http\Controllers\OhcManagement\Report\InventoryController;
 use App\Http\Controllers\OhcManagement\Report\MedicineExpireController;
 use App\Http\Controllers\OhcManagement\Report\MonthlyInventoryController;
+use App\Http\Controllers\OhcManagement\Report\YearlyInventoryController;
 
 Route::get('cache', function () {
     Artisan::call('optimize:clear');
@@ -113,8 +114,10 @@ Route::get('cron/master/employee/temp-details', [CronController::class, 'employe
 Route::get('cron/master/employee_save', [CronController::class, 'EmployeeSave']);
 Route::get('permit_expiry', [CronController::class, 'permitExpiry']);
 Route::get('permit_close', [CronController::class, 'permitClose']);
+
 Route::get('stockrequest', [CronController::class, 'stockrequest']);
 Route::get('stockupdate', [CronController::class, 'stockupdate']);
+Route::get('prevoiusmonthstock', [CronController::class, 'prevoiusmonthstock']);
 
 Route::get('test', [TestController::class,  'index']);
 
@@ -1102,6 +1105,18 @@ Route::middleware(['securityheader'])->group(function () {
             Route::group(['prefix' => 'ohc/monthly-inventory'], function () {
                 Route::get('/list', [MonthlyInventoryController::class, 'index']);
                 Route::post('/list', [MonthlyInventoryController::class, 'index']);
+                Route::get('/medicinereport', [MonthlyInventoryController::class, 'medicinereport']);
+                Route::get('/exportexcel', [MonthlyInventoryController::class, 'exportexcel']);
+
+
+            });
+            Route::group(['prefix' => 'ohc/yearly-inventory-report'], function () {
+                Route::get('/list', [YearlyInventoryController::class, 'index']);
+                Route::post('/list', [YearlyInventoryController::class, 'index']);
+                Route::get('/medicinereport', [YearlyInventoryController::class, 'medicinereport']);
+                Route::get('/exportexcel', [YearlyInventoryController::class, 'exportexcel']);
+
+
             });
             Route::group(['prefix' => 'incident/type-master'], function () {
                 Route::get('/list', [IncidentTypeController::class, 'index']);

@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Monthly Inventory Report')
-@section('pageurl', admin_url('ohc/monthly-inventory/list'))
+@section('title', 'Yearly Inventory Report')
+@section('pageurl', admin_url('ohc/yearly-inventory-report/list'))
 @section('content')
     @push('style')
         <style>
@@ -46,19 +46,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3 mb-3 form-input">
-                                <label for="emp_name" class="form-label ">Month</label>
-                                <div class="input-group date form-input  custom-height">
-                                    <input type="text" class="form-control " name="month" id="month"
-                                        autocomplete="off">
-                                    <div class="input-group-addon input-group-text">
-                                        <span class="fa fa-calendar"></span>
-                                    </div>
-                                </div>
-                            </div>
+
                             <div class="col-md-3 d-flex mt-3 align-items-center gap-2">
                                 <button class="btn btn-primary" name="search" id="search">Search</button>
-                                  <a href="{{url('ohc/monthly-inventory/exportexcel')}}" class="btn btn-secondary" id="exportexcel">Export Excel</a>
+                                <a href="{{url('ohc/yearly-inventory-report/exportexcel')}}" class="btn btn-secondary" id="exportexcel">Export Excel</a>
                             </div>
 
                         </div>
@@ -66,13 +57,14 @@
                         <div id="dataDiv" class="table-responsive" style="display: none;">
                             <table class="table table-bordered table-responsive" id="tableToExport" style="width:100%;"
                                 border="0">
-                                <tr style="font-size: 19px; background-color:red; color:rgb(0, 0, 0) ">
+                                <tr style="font-size: 19px; background-color:red; color:rgb(10, 1, 1) ">
                                     <td colspan="5"><img src="{{ url('public/assets/images/logo-dark.png') }}" style="background-color: white"  alt=""></td>
+
                                     <td colspan="70" align="center">
                                         <center>
-                                            <b>Occupational Health Center Inventory Record <br>
+                                            <b>Medical Treatment Slip<br>
                                                 PN International Pvt Ltd. <br>
-                                                <span class="selectedMonthYear"></span>
+
                                             </b>
                                         </center>
 
@@ -90,10 +82,7 @@
     @push('script')
         <script>
             $(document).ready(function() {
-                var fromDatepicker = flatpickr("#month", {
-                    dateFormat: "m",
 
-                });
 
                 var toDatepicker = flatpickr("#year", {
                     dateFormat: "Y",
@@ -106,138 +95,112 @@
             ];
             $("#search").click(function() {
                 var selectedUnit = $("#unit_id").val();
-                var selectedMonth = $("#month").val();
                 var selectedYear = $("#year").val();
 
-                if (selectedUnit && selectedMonth && selectedYear) {
+                if (selectedUnit && selectedYear) {
                     $.ajax({
-                        url: "{{ url('ohc/monthly-inventory/medicinereport') }}",
+                        url: "{{ url('ohc/yearly-inventory-report/medicinereport') }}",
                         method: "GET",
                         data: {
                             unit_id: selectedUnit,
-                            month: selectedMonth,
                             year: selectedYear,
                         },
                         success: function(response) {
 
                             if (response.inventory && Array.isArray(response.inventory)) {
-                                $(".selectedMonthYear").text(monthNames[parseInt(selectedMonth) - 1] + " " +
+                                $(".selectedMonthYear").text(monthNames[parseInt(selectedYear) - 1] + " " +
                                     selectedYear);
                                 $("#dataDiv").show();
-                                fillMonthDays(response.inventory, selectedMonth, selectedYear, response
+                                fillMonthDays(response.inventory, selectedYear, response
                                     .receiving, response.issuing);
                             } else {
-                                Swal.fire({
-                                    icon: 'warning',
-                                    title: 'Warning',
-                                    text: 'No data is fetch from the filter.',
-                                    confirmButtonColor: '#3085d6'
-                                });
+                                alert("No data found for the selected filters.");
                             }
                         },
                         error: function(xhr, status, error) {
                             console.log("AJAX Error:", error);
-                            Swal.fire({
-                                icon: 'warning',
-                                title: 'Warning',
-                                text: 'Fail to fetch data please try again after sometime.',
-                                confirmButtonColor: '#3085d6'
-                            });
+                            alert("Failed to fetch data. Please try again.");
                         },
                     });
                 } else {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Warning',
-                        text: 'Please select the Unit, Month and Year.',
+                        text: 'Please select the Unit,Year.',
                         confirmButtonColor: '#3085d6'
                     });
                 }
             });
 
 
-            function fillMonthDays(inventoryData, month, year, receivingData, issueData) {
-                let daysInMonth = new Date(year, month, 0).getDate();
-
+            function fillMonthDays(inventoryData, year, receivingData, issueData) {
                 let headerRow1 = `<tr style="font-size: 15px; background-color: #e1acc9; color:black">
-        <td colspan="2">Month: <span class="selectedMonthYear">${$(".selectedMonthYear").text()}</span></td>
-        <td colspan="${daysInMonth}"><center><b>Purchased Medicine Quantity (Date Wise)</b></center></td>
-        <td></td>
-        <td colspan="${daysInMonth}"><center><b>Issued Medicine Quantity (Date Wise)</b></center></td>
-        <td colspan="4"><center><b>Grant</b></center></td>
-    </tr>`;
+                    <td colspan="2">Year: <span class="selectedMonthYear">${year}</span></td>
+                    <td colspan="12"><center><b>Material Available (Month Wise)</b></center></td>
+                    <td colspan="12"><center><b>Issued Medicine Quantity (Month Wise)</b></center></td>
+                    <td colspan="4"><center><b>Grant</b></center></td>
+                 </tr>`;
 
                 let headerRow2 = `<tr style="font-size: 14px; background-color: #7ecfa1; color: black">
-        <td>ID</td>
-        <td>Name of Item</td>`;
+                    <td>ID</td>
+                    <td>Name of Item</td>`;
 
-                for (let day = 1; day <= daysInMonth; day++) {
-                    headerRow2 += `<td>${day}</td>`;
-                }
+                // Adding Month Headers (Short Names) for Purchase and Issue Data
+                const monthNamesShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-                headerRow2 += `<td>Name of Item</td>`;
+                monthNamesShort.forEach(month => {
+                    headerRow2 += `<td>${month}</td>`;
+                });
 
-                for (let day = 1; day <= daysInMonth; day++) {
-                    headerRow2 += `<td>${day}</td>`;
-                }
+                monthNamesShort.forEach(month => {
+                    headerRow2 += `<td>${month}</td>`;
+                });
 
-                headerRow2 += `<td>Purchase Total</td>
-                   <td>Issue Total</td>
-                   <td>Previous Month</td>
-                   <td>Balance</td>
-               </tr>`;
+                headerRow2 += `<td>Total Purchase</td>
+                    <td>Total Issue</td>
+                    <td>Balance</td>
+                    </tr>`;
 
                 let tableBody = "";
                 let idCounter = 1;
 
                 inventoryData.forEach((item) => {
-                    let purchaseData = new Array(daysInMonth).fill("");
-                    let issueQuantities = new Array(daysInMonth).fill("");
+                    let purchaseData = new Array(12).fill(0);
+                    let issueQuantities = new Array(12).fill(0);
 
-                    // Process received (purchased) medicine
+                    // Process received medicines
                     receivingData.forEach((received) => {
                         if (received.medicine_name === item.medicine_name) {
                             let approvedDate = new Date(received.approved_date);
-                            if (!isNaN(approvedDate.getTime())) {
-                                let dayIndex = approvedDate.getUTCDate() - 1; // Fix timezone issue
-                                let monthIndex = approvedDate.getUTCMonth() + 1;
-
-                                if (monthIndex === parseInt(month) && approvedDate.getUTCFullYear() ===
-                                    parseInt(year)) {
-                                    purchaseData[dayIndex] = received.quantity || 0;
-                                }
+                            if (!isNaN(approvedDate.getTime()) && approvedDate.getUTCFullYear() === parseInt(
+                                    year)) {
+                                let monthIndex = approvedDate
+                                    .getUTCMonth(); // 0-based month index (Jan = 0, Dec = 11)
+                                purchaseData[monthIndex] += received.quantity || 0;
                             }
                         }
                     });
 
-                    // Process issued medicine
-                    issueData.flat().forEach((
-                        issued) => { // Flatten issueData (since allIssuances is an array of arrays)
+                    // Process issued medicines
+                    issueData.flat().forEach((issued) => {
                         if (issued.medicine_name === item.medicine_name) {
                             let issuedDate = new Date(issued.created_at);
-                            if (!isNaN(issuedDate.getTime())) {
-                                let dayIndex = issuedDate.getUTCDate() - 1;
-                                let monthIndex = issuedDate.getUTCMonth() + 1;
-
-                                if (monthIndex === parseInt(month) && issuedDate.getUTCFullYear() === parseInt(
-                                        year)) {
-                                    issueQuantities[dayIndex] = issued.quantity || 0;
-                                }
+                            if (!isNaN(issuedDate.getTime()) && issuedDate.getUTCFullYear() === parseInt(
+                                    year)) {
+                                let monthIndex = issuedDate.getUTCMonth();
+                                issueQuantities[monthIndex] += issued.quantity || 0;
                             }
                         }
                     });
 
-                    // Add row data
                     tableBody += `<tr>
             <td>${idCounter++}</td>
             <td>${item.medicine_name}</td>
-            ${purchaseData.map(qty => `<td>${qty || ""}</td>`).join("")}
-            <td>${item.medicine_name}</td>
-            ${issueQuantities.map(qty => `<td>${qty || ""}</td>`).join("")}
-            <td>${item.total_purchase}</td>
-            <td>${item.total_issue}</td>
-            <td>${item.previous_month_total}</td>
-            <td>${item.balance}</td>
+            ${purchaseData.map(qty => `<td>${qty !== 0 ? qty : ""}</td>`).join("")}
+            ${issueQuantities.map(qty => `<td>${qty !== 0 ? qty : ""}</td>`).join("")}
+            <td>${item.total_purchase ? item.total_purchase : ""}</td>
+            <td>${item.total_issue ? item.total_issue : ""}</td>
+            <td>${item.balance ? item.balance : ""}</td>
         </tr>`;
                 });
 

@@ -6,6 +6,7 @@ use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Inventory extends Model
 {
@@ -21,6 +22,7 @@ class Inventory extends Model
         'total_prescribe',
         'total_received',
         'threshold_limit',
+        'previous_month_total',
         'balance',
         'status',
         'trash',
@@ -157,13 +159,67 @@ class Inventory extends Model
         }
     }
 
-    public function getmedicineUnitwise(){
+    public function getmedicineUnitwise()
+    {
         return $this->where('unit_id', Auth::user()->unit_id)->where('status', 1)->get();
     }
     public function getunitwiseAvailableQuantity($id)
     {
         return $this->where('medicine_id', $id)->where('trash', 'NO')->where('unit_id', Auth::user()->unit_id)->select('balance')->first();
     }
+
+    public function getMonthlyInventoryReport($selectedUnit, $selectedMonth, $selectedYear)
+    {
+        return $this->when($selectedUnit, function ($query) use ($selectedUnit) {
+                return $query->where('ohc_report_inventory.unit_id', $selectedUnit);
+            })
+            ->when($selectedMonth && $selectedYear, function ($query) use ($selectedMonth, $selectedYear) {
+                return $query->whereMonth('ohc_report_inventory.created_at', $selectedMonth)
+                    ->whereYear('ohc_report_inventory.created_at', $selectedYear);
+            })
+            ->join('ohc_master_medicine', 'ohc_report_inventory.medicine_id', '=', 'ohc_master_medicine.id')
+            ->select(
+                'ohc_master_medicine.medicine as medicine_name',
+                'balance',
+                'previous_month_total',
+                'total_purchase',
+                'total_issue'
+            )
+            ->groupBy(
+                'ohc_master_medicine.medicine',
+                'balance',
+                'previous_month_total',
+                'total_purchase',
+                'total_issue'
+            )
+            ->get();
+    }
+
+    public function getyearlyinventoryreport($selectedUnit, $selectedYear)
+    {
+        return $this->when($selectedUnit, function ($query) use ($selectedUnit) {
+                return $query->where('ohc_report_inventory.unit_id', $selectedUnit);
+            })
+            ->when($selectedYear, function ($query) use ($selectedYear) {
+                return $query->whereYear('ohc_report_inventory.created_at', $selectedYear); // FIXED
+            })
+            ->join('ohc_master_medicine', 'ohc_report_inventory.medicine_id', '=', 'ohc_master_medicine.id')
+            ->select(
+                'ohc_master_medicine.medicine as medicine_name',
+                'balance',
+                'total_purchase',
+                'total_issue'
+            )
+            ->groupBy(
+                'ohc_master_medicine.medicine',
+                'balance',
+                'total_purchase',
+                'total_issue'
+            )
+            ->get();
+    }
+
+
 
     // public function firstaidstockupdate(){
     //     $request -

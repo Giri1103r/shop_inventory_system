@@ -304,4 +304,23 @@ class MedicineReceiving extends Model
 
         return $query->orderByDesc('id')->get();
     }
+
+    public function getPurchaseddate($selectedYear, $selectedMonth)
+    {
+        return $this->where('ohc_management_medicine_receiving.approve_status', STATUS_OHC_CLOSE)
+        ->join('ohc_master_medicine', 'ohc_management_medicine_receiving.medicine_id', '=', 'ohc_master_medicine.id')
+            ->whereYear('approved_date', $selectedYear)
+            ->whereMonth('approved_date', $selectedMonth)
+            ->select('ohc_master_medicine.medicine as medicine_name', 'approved_date', 'quantity')
+            ->get();
+    }
+
+    public function getYearlyPurchaseddate($selectedYear)
+    {
+        return $this->where('ohc_management_medicine_receiving.approve_status', STATUS_OHC_CLOSE)
+        ->join('ohc_master_medicine', 'ohc_management_medicine_receiving.medicine_id', '=', 'ohc_master_medicine.id')
+            ->whereYear('approved_date', $selectedYear)
+            ->select('ohc_master_medicine.medicine as medicine_name', 'approved_date', 'quantity')
+            ->get();
+    }
 }

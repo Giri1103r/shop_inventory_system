@@ -139,7 +139,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Suggested By') }}</label>
                                         <div class="view_data">
-                                            {{ isset($opdpatient->suggested_by) ? $opdpatient->suggested_by : '' }}
+                                            {{ getSuggestedBy(isset($opdpatient->suggested_by) ? $opdpatient->suggested_by : '' )}}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -235,7 +235,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Patient Status') }}</label>
                                         <div class="view_data">
-                                            {{ isset($opdpatient->patient_status) ? $opdpatient->patient_status : '' }}
+                                            {{ getPatientStatus(isset($opdpatient->patient_status) ? $opdpatient->patient_status : '') }}
                                         </div>
                                     </div>
                                 </div>
