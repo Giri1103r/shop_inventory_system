@@ -127,6 +127,19 @@ class Employee extends Model
     }
 
 
+    public function fetchempDetails($emp_id)
+    {
+        return $this->select(
+            'masters_employee.*',
+            'masters_department.department_name',
+            'masters_unit.unit_name'
+        )
+            ->leftJoin('masters_department', 'masters_employee.department', '=', 'masters_department.id')
+            ->leftJoin('masters_unit', 'masters_employee.unit', '=', 'masters_unit.id')
+            ->where('masters_employee.status', 1)
+            ->where('masters_employee.id', $emp_id)
+            ->first();
+    }
     public function getempDetails($emp_code)
     {
         return $this->select(

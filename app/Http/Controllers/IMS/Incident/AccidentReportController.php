@@ -23,12 +23,14 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Models\IMS\Incident\AccidentBodyParts;
 use App\Models\IMS\Incident\EHSReview;
 use App\Models\IMS\Incident\AccidentReport;
 
 class AccidentReportController extends Controller
 {
 
+    private $accident_body_parts;
     private $accident_report;
     private $unit;
     private $location;
@@ -43,6 +45,7 @@ class AccidentReportController extends Controller
     {
 
 
+        $this->accident_body_parts = new AccidentBodyParts();
         $this->employee = new Employee();
         $this->ehs_review = new EHSReview();
         $this->accident_report = new AccidentReport();
@@ -125,7 +128,21 @@ class AccidentReportController extends Controller
 
         return view('ims.incident.accidentReport.list', $data);
     }
-    public function fetchEmployeeDetails($emp_code)
+    public function getEmployeeDetails($emp_id)
+    {
+        $id = decryptId($emp_id);
+        $employee = $this->employee->fetchempDetails($id);
+        if (!$employee) {
+            return response()->json(['error' => 'Employee not found.'], 404);
+        }
+        return response()->json([
+            'employee' => [
+                'designation' => $employee->designation ?? '',
+                'department_name' => $employee->department_name ?? '',
+            ],
+        ]);
+    }
+    public function fetchEmployeeDetails(Request $request, $emp_code)
     {
         $employee = $this->employee->getempDetails($emp_code);
         if (!$employee) {
@@ -164,34 +181,34 @@ class AccidentReportController extends Controller
     {
         try {
 
-            $rules = [
-                'date_and_time' => 'required',
-                'unit_id' => 'required',
-                'shift' => 'required',
-                'location_id' => 'required',
-                'designation' => 'required',
-                'department_id' => 'required',
-                'emp_code' => 'required',
-                'address_of_the_injuredperson' => 'required',
-            ];
-            $messages = [
-                'date_and_time.required' => 'Please enter the date and time of the accident.',
-                'unit_id.required' => 'Unit is required.',
-                'shift.required' => 'Shift is required.',
-                'location_id.required' => 'Location is required.',
-                'designation.required' => 'Designation is required.',
-                'department_id.required' => 'Department is required.',
-                'emp_code.required' => 'Employee Code is required.',
-                'address_of_the_injuredperson.required' => 'Address of the injured person is required.',
-            ];
+            // $rules = [
+            //     'date_and_time' => 'required',
+            //     'unit_id' => 'required',
+            //     'shift' => 'required',
+            //     'location_id' => 'required',
+            //     'designation' => 'required',
+            //     'department_id' => 'required',
+            //     'emp_code' => 'required',
+            //     'address_of_the_injuredperson' => 'required',
+            // ];
+            // $messages = [
+            //     'date_and_time.required' => 'Please enter the date and time of the accident.',
+            //     'unit_id.required' => 'Unit is required.',
+            //     'shift.required' => 'Shift is required.',
+            //     'location_id.required' => 'Location is required.',
+            //     'designation.required' => 'Designation is required.',
+            //     'department_id.required' => 'Department is required.',
+            //     'emp_code.required' => 'Employee Code is required.',
+            //     'address_of_the_injuredperson.required' => 'Address of the injured person is required.',
+            // ];
 
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
+            // $validator = Validator::make($request->all(), $rules, $messages);
+            // if ($validator->fails()) {
+            //     return redirect()->back()->withErrors($validator)->withInput();
+            // }
 
             try {
-
+                    dd($request);
                 $accident_report =  $this->accident_report->store();
                 if ($accident_report) {
                     $accidentReport = $this->accident_report->selectOne($accident_report->id);
@@ -453,7 +470,7 @@ class AccidentReportController extends Controller
     public function employeename(Request $request)
     {
         $name = $request->input('search');
-
+        
         $employees = Employee::select('id', 'emp_id', 'emp_name')
             ->where(function ($query) use ($name) {
                 $query->where('emp_name', 'like', '%' . $name . '%')
@@ -682,7 +699,15 @@ class AccidentReportController extends Controller
             report($ex);
         }
     }
-
+    public function addInjury(Request $request)
+    {
+        try {
+            $addInjury = $this->accident_body_parts->addInjury();
+            return $addInjury;
+        } catch (Exception $ex) {
+            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+        }
+    }
     public function DownloadSample(Request $request)
     {
 

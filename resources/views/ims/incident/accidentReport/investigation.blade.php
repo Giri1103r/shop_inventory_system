@@ -147,126 +147,135 @@
                                             value="{{ encryptId($accidentId) }}">
                                         <div class="card-body">
                                             <div class="row">
-                                                <div class="card-header-inner">
-                                                    <h4 class="text-white">Injured Person Details </h4>
+                                                <div class="card-header-inner d-flex justify-content-between">
+                                                    <a class="text-white card-link">Injured Person Details</a>
+                                                    <div class="btn btn-warning btn-sm addMoreInjuryDetails">Add</div>
                                                 </div>
                                             </div>
 
-                                            <div class="row">
-                                                <div class="col-md-4 form-input">
-                                                    <label for="" class="form-label require">Injury Person
-                                                        Type</label>
-                                                    <select class="form-control require single-select selectInjPersontype"
-                                                        name="injury_person[0][injury_person_type]" style="width: 100%"
-                                                        id="RowInjTypedata_0">
-                                                        <option value="">Select Person Type</option>
-                                                        <option value="{{ encryptId('1') }}">Employee</option>
-                                                        <option value="{{ encryptId('2') }}">Worker</option>
-                                                        <option value="{{ encryptId('3') }}">Others</option>
-                                                    </select>
-                                                </div>
-                                                <!-- Injury Person Name (Text Inputs) -->
-                                                <div class="col-md-4 form-input" id="injuryPersonTextContainer">
-                                                    <label class="form-label require">Injury Person Name</label>
-                                                    <input type="text" class="form-control injuryPersonNamerequire"
-                                                        name="injury_person[0][injury_person_name]"  id="RowInjothersdata__0"
-                                                        placeholder="Enter Injury Person Name">
-                                                </div>
-                                                <!-- Injury Person Name (Dropdown) -->
-                                                <div class="col-md-4 form-input d-none" id="injuryPersonDropdownContainer">
-                                                    <label class="form-label require">Injury Person Name</label>
-                                                    <select class="form-control require injuryPersonName single-select"
-                                                        style="width: 100%" name="injury_person[0][injury_person_id]"
-                                                        id="RowInjEmpdata_0">
-                                                        <option value="" disabled selected>Select Injury Person Name
-                                                        </option>
-                                                    </select>
-                                                </div>
-
-
-
-                                                <!-- Designation -->
-                                                <div class="col-md-4 form-input">
-                                                    <label class="form-label">Injury Person Designation</label>
-                                                    <input type="text" name="injury_person[0][injury_person_designation]"
-                                                        class="form-control InjPerDest" id="InjPerDest_0">
-                                                </div>
-
-                                                <!-- Department -->
-                                                <div class="col-md-4 form-input d-none" id="injuryPersonDepttexxt">
-                                                    <label class="form-label">Injury Person Department</label>
-                                                    <input type="text" name="injury_person[0][injury_person_department]"
-                                                        class="form-control InjPerDept" id="InjPerDept_0">
-                                                </div>
-
-                                                <!-- Department Dropdown for Others -->
-                                                <div class="col-md-4 form-input " id="injuryPersonDeptDropdown">
-                                                    <label class="form-label">Injury Person Department</label>
-                                                    <select class="form-control single-select"
-                                                        name="injury_person[0][injury_person_department_other]"
-                                                        style="width: 100%">
-                                                        <option value="">Select Department</option>
-                                                        @foreach ($departmentList as $department)
-                                                            <option value="{{ $department->id }}">
-                                                                {{ $department->department_name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group form-input">
-                                                        <label for="nature_of_injury" class="form-label">Nature of
-                                                            Injury</label>
-                                                        <select name="nature_of_injury" id="nature_of_injury_0"
-                                                            style="width: 100%" class="form-control single-select">
-                                                            <option value="">Nature of Injury</option>
-                                                            <option value="1">Major</option>
-                                                            <option value="2">Minor</option>
+                                            <div class="injury-details-templat">
+                                                <div class="row injury-append" style="margin-top: 20px;">
+                                                    <div class="col-md-4 form-input">
+                                                        <label for="" class="form-label require">Injury Person
+                                                            Type</label>
+                                                        <select
+                                                            class="form-control require single-select selectInjPersontype"
+                                                            name="injury_person[0][injury_person_type]" alt="0"
+                                                            style="width: 100%" id="RowInjTypedata_0">
+                                                            <option value="">Select Person Type</option>
+                                                            <option value="{{ encryptId('1') }}">Employee</option>
+                                                            <option value="{{ encryptId('2') }}">Worker</option>
+                                                            <option value="{{ encryptId('3') }}">Others</option>
                                                         </select>
                                                     </div>
-                                                </div>
+                                                    <!-- Injury Person Name (Text Inputs) -->
+                                                    <div class="col-md-4 form-input" id="injuryPersonTextContainer_0">
+                                                        <label class="form-label require">Injury Person Name</label>
+                                                        <input type="text" class="form-control injuryPersonName require"
+                                                            name="injury_person[0][injury_person_id]" alt="0"
+                                                            id="RowInjothersdata_0" placeholder="Enter Injury Person Name">
+                                                    </div>
+                                                    <!-- Injury Person Name (Dropdown) -->
+                                                    <div class="col-md-4 form-input d-none"
+                                                        id="injuryPersonDropdownContainer_0">
+                                                        <label class="form-label require">Injury Person Name</label>
+                                                        <select alt="0"
+                                                            class="form-control require injuryPersonName single-select"
+                                                            style="width: 100%" name="injury_person[0][injury_person_id]"
+                                                            id="RowInjEmpdata_0">
+                                                            <option value="" disabled selected>Select Injury Person
+                                                                Name
+                                                            </option>
+                                                        </select>
+                                                    </div>
 
-                                                <div class="col-md-2 form-input">
-                                                    <label for="inputFirstName" class="form-label require">Location of the
-                                                        Injury</label>
-                                                    <br>
-                                                    <span class="input-group-addon injury-btn btn btn-info" data-id="0"
-                                                        data-injid="0" attr_emp="" alt="0"><i class="fa fa-male"
-                                                            aria-hidden="true"></i></span>
-                                                </div>
-                                                <div class="col-md-2 text-right">
-                                                    <button type="button" class="btn btn-danger btn-sm removeInjuryDetails"
-                                                        style="margin-top: 35px;">Remove</button>
+
+
+                                                    <!-- Designation -->
+                                                    <div class="col-md-4 form-input">
+                                                        <label class="form-label">Injury Person
+                                                            Designation</label>
+                                                        <input type="text" alt="0"
+                                                            name="injury_person[0][injury_person_designation]"
+                                                            class="form-control InjPerDest" id="InjPerDest_0">
+                                                    </div>
+
+                                                    <!-- Department -->
+                                                    <div class="col-md-4 form-input d-none" id="injuryPersonDepttexxt_0">
+                                                        <label class="form-label">Injury Person
+                                                            Department</label>
+                                                        <input type="text" alt="0"
+                                                            name="injury_person[0][injury_person_department_id]"
+                                                            class="form-control InjPerDept" id="InjPerDept_0">
+                                                    </div>
+
+                                                    <!-- Department Dropdown for Others -->
+                                                    <div class="col-md-4 form-input" id="injuryPersonDeptDropdown_0">
+                                                        <label class="form-label">Injury Person Department</label>
+                                                        <select alt="0" class="form-control single-select"
+                                                            name="injury_person[0][injury_person_department_id]"
+                                                            style="width: 100%">
+                                                            <option value="">Select Department</option>
+                                                            @foreach ($departmentList as $department)
+                                                                <option value="{{ $department->id }}">
+                                                                    {{ $department->department_name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group form-input">
+                                                            <label for="nature_of_injury" class="form-label">Nature of
+                                                                Injury</label>
+                                                            <select alt="0" name="nature_of_injury"
+                                                                id="nature_of_injury_0" style="width: 100%"
+                                                                class="form-control single-select">
+                                                                <option value="">Nature of Injury</option>
+                                                                <option value="{{ encryptId('1') }}">Major</option>
+                                                                <option value="{{ encryptId('2') }}">Minor</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-2 form-input">
+                                                        <label for="inputFirstName" class="form-label require">Location of
+                                                            the
+                                                            Injury</label>
+                                                        <br>
+                                                        <span class="input-group-addon injury-btn btn btn-info"
+                                                            data-id="0" data-injid="0" attr_emp=""
+                                                            alt="0"><i class="fa fa-male"
+                                                                aria-hidden="true"></i></span>
+                                                    </div>
+                                                    <div class="col-md-2 text-right">
+                                                        <button type="button"
+                                                            class="btn btn-danger btn-sm removeInjuryDetails"
+                                                            style="margin-top: 35px;">Remove</button>
+                                                    </div>
                                                 </div>
                                             </div>
+
                                         </div>
+
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="card-header-inner">
-                                                    <h4 class="text-white">Training Schedule</h4>
+                                                    <h4 class="text-white">Investigation</h4>
                                                 </div>
                                             </div>
 
                                             <div class="row">
+
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
-                                                        <label for="team_id" class="form-label require">Name of the
+                                                        <label for="witness_id" class="form-label require">Name of the
                                                             Witness</label>
-                                                        <select name="witness_id" id="witness_id"
-                                                            class="form-control witness" style="width: 100%">
+                                                        <select name="witness_id[]" id="witness_id"
+                                                            class="form-control witness_id" multiple="multiple"
+                                                            style="width: 100%">
                                                             <option value="">Select Name of the Witness</option>
                                                         </select>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="card-header-inner">
-                                                    <h4 class="text-white">Training Schedule</h4>
-                                                </div>
-                                            </div>
-
-                                            <div class="row">
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
                                                         <label for="emp_code" class="form-label require">Employee
@@ -302,7 +311,8 @@
 
                                                 <div class="col-md-4 mt-3">
                                                     <div class="form-group form-input">
-                                                        <label for="is_damaged" class="form-label require">Was anything
+                                                        <label for="is_damaged" class="form-label require">Was
+                                                            anything
                                                             damaged?</label><br>
                                                         <input type="checkbox" id="Man" name="is_damaged"
                                                             value="1">
@@ -342,7 +352,8 @@
                                                 </div>
                                                 <div class="col-md-4 mt-2">
                                                     <div class="form-group form-input">
-                                                        <label for="root_cause_analysis" class="form-label">Possible Root
+                                                        <label for="root_cause_analysis" class="form-label">Possible
+                                                            Root
                                                             Cause
                                                             Analysis (PRCA)</label>
                                                         <select name="root_cause_analysis" id="root_cause_analysis"
@@ -457,7 +468,6 @@
                     <!-- invetigation form start-->
 
                     <form id="injuryform" autocomplete="off" enctype="multipart/form-data">
-
                         <input type="hidden" name="body_prim_id" id="body_prim_id" value="">
                         <input type="hidden" name="injury_id" id="injury_id" value="">
                         <input type="hidden" name="bodypartimage" id="bodypartimage">
@@ -485,130 +495,131 @@
                                                         </div>
                                                         <!--Male total parts-->
                                                         <script type="text/template" id="tmp-male">
-                                                                <div class="img-wrap male">
-                                                <div class="canvas">
-                                                <canvas id='image1_canvas'></canvas>
-                                                <canvas id='image1_canvas_marked'></canvas>
-                                                </div>
-                                                <img src="{{ admin_url('public/assets/images/human_body_parts/male/full.png') }}"  usemap='#imgmap_1' class='imgmap_1' title='imgmap1' alt='imgmap1' id='img-imgmap1' />
-                                                <map id='imgmap1' name='imgmap_1' data-type='total' data-map="total">
-                                                <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-face')"  title="1. Head" data-map="one"  shape="poly" coords="63,45,72,43,80,43,85,47,88,51,88,57,88,61,90,63,90,67,87,70,85,71,85,74,85,77,82,79,80,81,76,81,64,81,62,80,61,74,60,72,58,70,57,67,57,62,57,58,57,54,59,50,59,48" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()"  title="2. Neck" data-map="Two" shape="poly" coords="62,82,82,81,81,91,63,90" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="3. Left Shoulder Front" data-map="three"  shape="poly" coords="62,88,73,91,72,107,28,108,34,99,42,96,49,96,57,94,59,93" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="4. Right shoulder Front" data-map="four"   shape="poly" coords="72,90,82,90,85,93,91,96,95,96,100,96,107,99,112,101,115,104,116,108,72,108" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="5. Left Arm Front" data-map="five"  shape="poly" coords="28,108,48,107,46,110,43,118,43,129,41,150,26,146,27,129" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="6. Right Arm Front" data-map="six"  shape="poly" coords="100,107,116,108,119,114,119,120,120,125,120,131,121,138,122,146,105,150,103,125,102,117,102,113" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="7. Left Elbow Front" data-map="seven"  shape="poly" coords="26,145,40,150,40,157,39,164,22,156,24,151" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="8. Right Elbow Front " data-map="eight"  shape="poly" coords="104,149,122,146,122,150,125,156,125,159,106,161" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="9. Left Forearm Front" data-map="nine"  shape="poly" coords="21,155,39,163,36,172,33,179,28,192,25,195,17,190,18,181,19,174,19,167" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="10. Right Forearm Front" data-map="ten"  shape="poly" coords="107,161,124,158,126,164,126,169,126,174,127,184,128,191,121,195,111,178" />
-                                                <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-hand-right')" title="11. Right Hand " data-map="eleven"  shape="poly" coords="16,193,25,196,27,205,24,212,24,220,20,223,18,224,15,226,12,225,9,222,10,212,9,207,6,207,5,203,11,196" />
-                                                <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-hand-left')" title="12. Left Hand" data-map="twelve"  shape="poly" coords="119,194,129,190,132,193,136,196,140,201,141,204,140,206,136,204,136,209,136,215,135,221,132,224,126,224,122,219,120,210" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="13. Left Chest" data-map="thirteen"  shape="poly" coords="46,108,44,115,43,125,43,135,72,135,71,108" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="14. Right Chest" data-map="fourteen"  shape="poly" coords="72,107,102,109,101,135,72,137" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="15. Stomach" data-map="fifteen"  shape="poly" coords="43,135,102,135,101,143,99,145,98,150,98,155,97,160,97,166,73,166,49,166,48,150" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="16. Left Hip" data-map="sixteen"  shape="poly" coords="48,166,72,166,72,189,45,189,48,173" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="17. Right Hip" data-map="seventeen"  shape="poly" coords="72,166,97,166,97,173,101,180,101,189,72,190" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="18. Pubis" data-map="eighteen"  shape="poly" coords="43,189,101,189,103,210,75,213,70,214,42,210,43,198" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="19. Left Thigh" data-map="nineteen"  shape="poly" coords="74,214,103,210,103,226,103,237,102,243,100,248,96,257,78,259,75,239" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="20. Right Thigh" data-map="twenty"  shape="poly" coords="49,259,66,259,69,253,69,247,69,239,69,230,71,215,42,211,42,235" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="21. Left Knee" data-map="twentyone"  shape="poly" coords="79,258,97,258,94,268,92,274,86,276,81,276" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="22. Right Knee" data-map="twentytwo"  shape="poly" coords="49,259,67,259,66,265,64,269,62,273,60,275,57,277,52,265" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="23. Left Leg "  data-map="twentythree"  shape="poly" coords="81,267,87,277,91,277,93,271,96,277,99,284,99,292,96,302,93,314,90,326,81,326,77,302,77,292" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="24. Right Leg " data-map="twentyfour"  shape="poly" coords="59,276,67,264,68,277,68,284,69,291,69,297,69,305,69,314,68,321,67,326,57,326,53,314,50,300,48,286,49,278,52,274,51,266,51,262" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="25. Left Ankle" data-map="twentyfive"  shape="poly" coords="56,326,67,326,67,343,55,341,58,334" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="26. Right Ankle" data-map="twentysix"  shape="poly" coords="80,327,89,327,92,345,80,343,78,345" />
-                                                <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-foot-left')" title="27. Left foot" data-map="twentyseven"  shape="poly" coords="79,342,91,342,98,350,100,354,99,357,85,357,78,357,78,353,76,350" />
-                                                <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-foot-right')" title="28. Right Foot" data-map="twentyeight"  shape="poly" coords="54,342,66,342,69,353,69,356,58,356,47,356" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="29. Back Skull" data-map="twentynine"  shape="poly" coords="199,77,196,77,196,73,196,70,198,67,197,63,199,57,201,54,205,51,209,50,214,50,219,51,224,54,227,59,227,64,227,67,229,71,228,75,225,79,223,84,218,86,210,86,202,86" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="30. Back Neck" data-map="thirty"  shape="poly" coords="201,85,209,87,219,87,221,97,202,97" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="31. Left Shoulder Back" data-map="thirtyone"  shape="poly" coords="201,96,212,96,212,121,167,122,166,118,170,110,176,106,183,102,193,102" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="32. Right Shoulder Back" data-map="thirtytwo"  shape="poly" coords="211,96,222,96,226,100,234,102,240,103,246,105,253,109,256,115,256,121,212,121" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="33. Left Arm Back" data-map="thirtythree"  shape="poly" coords="167,120,184,121,182,128,184,143,179,163,163,156,168,136" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="34. Right Arm back" data-map="thirtyfour"  shape="poly" coords="241,121,257,122,261,156,245,163,239,145" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="35. Left Elbow back" data-map="thirtyfive"  shape="poly" coords="164,156,181,162,177,174,161,166" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="36. Right Elbow back" data-map="thirtysix"  shape="poly" coords="244,161,261,155,264,162,264,166,248,171,245,168" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="37. Left Arm Back " data-map="thirtyseven"  shape="poly" coords="161,164,177,174,167,198,157,194,160,185,159,174" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="38. Right Arm Back" data-map="thirtyeight"  shape="poly" coords="247,170,263,164,265,185,267,192,267,195,257,198,251,182,247,174" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="39. Upper Back " data-map="thirtynine"  shape="poly" coords="183,122,242,121,242,128,241,136,241,143,239,147,238,153,237,155,187,156,184,148,181,129" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="40. Lower Back"   data-map="forty"  shape="poly" coords="187,154,237,154,237,175,240,188,186,187,187,176" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="41. Left Buttock"  data-map="fortyone"  shape="poly" coords="185,188,211,188,213,212,209,215,208,218,181,217,183,202,184,199,184,195" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="42. Right Buttock"  data-map="fortytwo" shape="poly" coords="211,213,211,188,239,188,241,194,241,198,242,202,243,208,241,215,242,218,216,219" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="43. Left Arm String"  data-map="fortythree" shape="poly" coords="182,217,208,217,209,254,208,258,189,257,184,247,183,234,182,228" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="44. Right Arm String"  data-map="fortyfour" shape="poly" coords="213,218,242,218,241,230,241,243,236,256,217,256" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="45. Left Knee Back"  data-map="forty-five" shape="poly" coords="189,257,207,257,206,268,206,276,208,282,189,282,191,274,192,265" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="46. Right Knee Back"  data-map="fortysix" shape="poly" coords="215,257,237,257,233,263,232,270,232,277,234,282,218,281,218,275,219,264" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="47. Left Calf"  shape="poly" data-map="fortyseven" coords="189,282,207,282,208,288,209,295,209,304,207,312,206,325,195,326,193,316,189,301,188,293,187,286" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="48. Right Calf"  shape="poly"  data-map="fortyeight" coords="217,282,235,282,237,291,235,301,232,313,228,326,218,325,215,304,215,295" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="49. Left Ankle"  shape="poly"  data-map="fortynine" coords="195,324,206,323,207,336,198,336,196,335" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="50. Right Ankle"  shape="poly" data-map="fifty" coords="195,324,206,323,207,336,198,336,196,335" />
-                                                </map>
-                                                </div></script>
+                                                                 
+                                                                    <div class="img-wrap male">
+                                                    <div class="canvas">
+                                                    <canvas id='image1_canvas'></canvas>
+                                                    <canvas id='image1_canvas_marked'></canvas>
+                                                    </div>
+                                                    <img src="{{ admin_url('public/assets/images/human_body_parts/male/full.png') }}"  usemap='#imgmap_1' class='imgmap_1' title='imgmap1' alt='imgmap1' id='img-imgmap1' />
+                                                    <map id='imgmap1' name='imgmap_1' data-type='total' data-map="total">
+                                                    <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-face')"  title="1. Head" data-map="one"  shape="poly" coords="63,45,72,43,80,43,85,47,88,51,88,57,88,61,90,63,90,67,87,70,85,71,85,74,85,77,82,79,80,81,76,81,64,81,62,80,61,74,60,72,58,70,57,67,57,62,57,58,57,54,59,50,59,48" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()"  title="2. Neck" data-map="Two" shape="poly" coords="62,82,82,81,81,91,63,90" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="3. Left Shoulder Front" data-map="three"  shape="poly" coords="62,88,73,91,72,107,28,108,34,99,42,96,49,96,57,94,59,93" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="4. Right shoulder Front" data-map="four"   shape="poly" coords="72,90,82,90,85,93,91,96,95,96,100,96,107,99,112,101,115,104,116,108,72,108" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="5. Left Arm Front" data-map="five"  shape="poly" coords="28,108,48,107,46,110,43,118,43,129,41,150,26,146,27,129" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="6. Right Arm Front" data-map="six"  shape="poly" coords="100,107,116,108,119,114,119,120,120,125,120,131,121,138,122,146,105,150,103,125,102,117,102,113" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="7. Left Elbow Front" data-map="seven"  shape="poly" coords="26,145,40,150,40,157,39,164,22,156,24,151" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="8. Right Elbow Front " data-map="eight"  shape="poly" coords="104,149,122,146,122,150,125,156,125,159,106,161" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="9. Left Forearm Front" data-map="nine"  shape="poly" coords="21,155,39,163,36,172,33,179,28,192,25,195,17,190,18,181,19,174,19,167" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="10. Right Forearm Front" data-map="ten"  shape="poly" coords="107,161,124,158,126,164,126,169,126,174,127,184,128,191,121,195,111,178" />
+                                                    <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-hand-right')" title="11. Right Hand " data-map="eleven"  shape="poly" coords="16,193,25,196,27,205,24,212,24,220,20,223,18,224,15,226,12,225,9,222,10,212,9,207,6,207,5,203,11,196" />
+                                                    <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-hand-left')" title="12. Left Hand" data-map="twelve"  shape="poly" coords="119,194,129,190,132,193,136,196,140,201,141,204,140,206,136,204,136,209,136,215,135,221,132,224,126,224,122,219,120,210" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="13. Left Chest" data-map="thirteen"  shape="poly" coords="46,108,44,115,43,125,43,135,72,135,71,108" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="14. Right Chest" data-map="fourteen"  shape="poly" coords="72,107,102,109,101,135,72,137" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="15. Stomach" data-map="fifteen"  shape="poly" coords="43,135,102,135,101,143,99,145,98,150,98,155,97,160,97,166,73,166,49,166,48,150" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="16. Left Hip" data-map="sixteen"  shape="poly" coords="48,166,72,166,72,189,45,189,48,173" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="17. Right Hip" data-map="seventeen"  shape="poly" coords="72,166,97,166,97,173,101,180,101,189,72,190" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="18. Pubis" data-map="eighteen"  shape="poly" coords="43,189,101,189,103,210,75,213,70,214,42,210,43,198" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="19. Left Thigh" data-map="nineteen"  shape="poly" coords="74,214,103,210,103,226,103,237,102,243,100,248,96,257,78,259,75,239" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="20. Right Thigh" data-map="twenty"  shape="poly" coords="49,259,66,259,69,253,69,247,69,239,69,230,71,215,42,211,42,235" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="21. Left Knee" data-map="twentyone"  shape="poly" coords="79,258,97,258,94,268,92,274,86,276,81,276" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="22. Right Knee" data-map="twentytwo"  shape="poly" coords="49,259,67,259,66,265,64,269,62,273,60,275,57,277,52,265" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="23. Left Leg "  data-map="twentythree"  shape="poly" coords="81,267,87,277,91,277,93,271,96,277,99,284,99,292,96,302,93,314,90,326,81,326,77,302,77,292" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="24. Right Leg " data-map="twentyfour"  shape="poly" coords="59,276,67,264,68,277,68,284,69,291,69,297,69,305,69,314,68,321,67,326,57,326,53,314,50,300,48,286,49,278,52,274,51,266,51,262" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="25. Left Ankle" data-map="twentyfive"  shape="poly" coords="56,326,67,326,67,343,55,341,58,334" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="26. Right Ankle" data-map="twentysix"  shape="poly" coords="80,327,89,327,92,345,80,343,78,345" />
+                                                    <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-foot-left')" title="27. Left foot" data-map="twentyseven"  shape="poly" coords="79,342,91,342,98,350,100,354,99,357,85,357,78,357,78,353,76,350" />
+                                                    <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-foot-right')" title="28. Right Foot" data-map="twentyeight"  shape="poly" coords="54,342,66,342,69,353,69,356,58,356,47,356" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="29. Back Skull" data-map="twentynine"  shape="poly" coords="199,77,196,77,196,73,196,70,198,67,197,63,199,57,201,54,205,51,209,50,214,50,219,51,224,54,227,59,227,64,227,67,229,71,228,75,225,79,223,84,218,86,210,86,202,86" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="30. Back Neck" data-map="thirty"  shape="poly" coords="201,85,209,87,219,87,221,97,202,97" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="31. Left Shoulder Back" data-map="thirtyone"  shape="poly" coords="201,96,212,96,212,121,167,122,166,118,170,110,176,106,183,102,193,102" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="32. Right Shoulder Back" data-map="thirtytwo"  shape="poly" coords="211,96,222,96,226,100,234,102,240,103,246,105,253,109,256,115,256,121,212,121" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="33. Left Arm Back" data-map="thirtythree"  shape="poly" coords="167,120,184,121,182,128,184,143,179,163,163,156,168,136" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="34. Right Arm back" data-map="thirtyfour"  shape="poly" coords="241,121,257,122,261,156,245,163,239,145" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="35. Left Elbow back" data-map="thirtyfive"  shape="poly" coords="164,156,181,162,177,174,161,166" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="36. Right Elbow back" data-map="thirtysix"  shape="poly" coords="244,161,261,155,264,162,264,166,248,171,245,168" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="37. Left Arm Back " data-map="thirtyseven"  shape="poly" coords="161,164,177,174,167,198,157,194,160,185,159,174" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="38. Right Arm Back" data-map="thirtyeight"  shape="poly" coords="247,170,263,164,265,185,267,192,267,195,257,198,251,182,247,174" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="39. Upper Back " data-map="thirtynine"  shape="poly" coords="183,122,242,121,242,128,241,136,241,143,239,147,238,153,237,155,187,156,184,148,181,129" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="40. Lower Back"   data-map="forty"  shape="poly" coords="187,154,237,154,237,175,240,188,186,187,187,176" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="41. Left Buttock"  data-map="fortyone"  shape="poly" coords="185,188,211,188,213,212,209,215,208,218,181,217,183,202,184,199,184,195" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="42. Right Buttock"  data-map="fortytwo" shape="poly" coords="211,213,211,188,239,188,241,194,241,198,242,202,243,208,241,215,242,218,216,219" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="43. Left Arm String"  data-map="fortythree" shape="poly" coords="182,217,208,217,209,254,208,258,189,257,184,247,183,234,182,228" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="44. Right Arm String"  data-map="fortyfour" shape="poly" coords="213,218,242,218,241,230,241,243,236,256,217,256" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="45. Left Knee Back"  data-map="forty-five" shape="poly" coords="189,257,207,257,206,268,206,276,208,282,189,282,191,274,192,265" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="46. Right Knee Back"  data-map="fortysix" shape="poly" coords="215,257,237,257,233,263,232,270,232,277,234,282,218,281,218,275,219,264" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="47. Left Calf"  shape="poly" data-map="fortyseven" coords="189,282,207,282,208,288,209,295,209,304,207,312,206,325,195,326,193,316,189,301,188,293,187,286" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="48. Right Calf"  shape="poly"  data-map="fortyeight" coords="217,282,235,282,237,291,235,301,232,313,228,326,218,325,215,304,215,295" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="49. Left Ankle"  shape="poly"  data-map="fortynine" coords="195,324,206,323,207,336,198,336,196,335" />
+                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="50. Right Ankle"  shape="poly" data-map="fifty" coords="195,324,206,323,207,336,198,336,196,335" />
+                                                    </map>
+                                                    </div></script>
                                                         <!--male total parts -->
 
                                                         <!--female total parts -->
                                                         <script type="text/template" id="tmp-female">
-                                                                <div class="img-wrap female" >
-                                                <div class="canvas">
-                                                <canvas id='image1_canvas'></canvas>
-                                                <canvas id='image1_canvas_marked'></canvas>
-                                                </div>
-                                                <img src="{{ admin_url('public/assets/images/human_body_parts/female/full.png') }}"  usemap='#imgmap_1' class='imgmap_1' title='imgmap1' alt='imgmap1' id='img-imgmap1' />
-                                                <map id='imgmap1' name='imgmap_1' data-type='total' data-map="total">
-                                                <area alt="" onclick="changeImage('.female-face')" title="1. Head"  data-map="one" shape="poly" coords="56,43,55,32,59,25,61,23,66,21,74,21,80,23,86,30,87,34,88,41,87,45,88,47,86,53,85,55,82,60,78,64,74,68,69,69,68,70,61,65,59,57,56,54,54,50,53,46" />
-                                                <area alt="" onclick="changeImage()" title="2. Neck"  data-map="two" shape="poly" coords="48,81,87,82,82,72,82,58,71,69,72,70,59,62,57,57,58,67,59,74,56,77" />
-                                                <area alt="" onclick="changeImage()" title="3. Left Shoulder Front" data-map="three"  shape="poly" coords="69,83,87,81,103,86,110,92,113,103,83,104,69,102,70,102" />
-                                                <area alt="" onclick="changeImage()" title="4. Right Shoulder Front" data-map="four"  shape="poly" coords="70,103,23,104,25,94,30,87,36,85,47,82,59,82,69,83" />
-                                                <area alt="" onclick="changeImage()" title="5. Left Arm Front"  data-map="five" shape="poly" coords="99,103,113,104,114,113,119,140,103,149,100,130" />
-                                                <area alt="" onclick="changeImage()" title="6. Right Arm Front"  data-map="six" shape="poly" coords="25,104,25,124,23,142,39,147,42,129,41,107,40,103" />
-                                                <area alt="" onclick="changeImage()" title="7. Left Elbow Front"  data-map="seven" shape="poly" coords="106,163,123,157,120,142,102,150" />
-                                                <area alt="" onclick="changeImage()" title="8. Right Elbow Front"  data-map="eight" shape="poly" coords="39,148,37,162,21,155,23,142" />
-                                                <area alt="" onclick="changeImage()" title="9. Left Forearm Front"  data-map="nine" shape="poly" coords="107,164,123,157,125,170,125,182,125,189,127,195,127,195,118,199" />
-                                                <area alt="" onclick="changeImage()" title="10. Right Forearm Front"  data-map="ten" shape="poly" coords="20,156,36,161,26,197,18,196,20,181" />
-                                                <area alt="" onclick="changeImage('.female-hand-right')" title="12. Right Hand"  shape="poly" data-map="eleven" coords="18,195,25,196,26,197,27,212,26,220,23,220,25,215,23,223,22,223,21,225,22,215,21,218,18,226,17,224,17,216,15,220,13,222,13,221,16,207,15,207,13,205,12,206,9,207,7,207,7,206,7,206,6,206" />
-                                                <area alt="" onclick="changeImage('.female-hand-left')" title="11. Left Hand"  shape="poly" data-map="twelve" coords="126,193,118,199,118,205,118,213,118,221,122,222,122,215,121,215,124,225,125,218,128,226,130,224,130,215,129,214,134,224,131,209,133,206,137,209,140,209,140,209,140,208" />
-                                                <area alt="" onclick="changeImage()" title="13. Left Brest"  shape="poly" data-map="thirteen" coords="69,104,88,103,99,104,100,118,98,132,72,133,69,132" />
-                                                <area alt="" onclick="changeImage()" title="14. Right Brest"  shape="poly" data-map="fourteen" coords="41,103,62,103,69,104,70,127,70,131,44,133" />
-                                                <area alt="" onclick="changeImage()" title="15. Stomach"  shape="poly" data-map="fifteen" coords="41,134,70,133,98,133,97,145,97,155,97,158,71,159,48,158" />
-                                                <area alt="" onclick="changeImage()" title="16. Left Hip"  shape="poly" data-map="sixteen" coords="73,176,107,175,103,164,99,158,77,158,73,158" />
-                                                <area alt="" onclick="changeImage()" title="17. Right Hip"  shape="poly" data-map="seventeen" coords="47,159,72,159,71,175,50,175,38,175,41,165" />
-                                                <area alt="" onclick="changeImage()" title="18. Pubis"  shape="poly" data-map="eighteen" coords="38,175,62,176,86,176,105,176,106,176,108,192,108,213,107,222,77,222,46,222,37,221,34,202" />
-                                                <area alt="" onclick="changeImage()" title="19. Left Thigh"  shape="poly" data-map="ninteen" coords="70,224,106,223,96,270,72,266,76,242" />
-                                                <area alt="" onclick="changeImage()" title="20. Right Thigh"  shape="poly" data-map="twenty" coords="38,224,71,223,69,266,46,269" />
-                                                <area alt="" onclick="changeImage()" title="21. Left Knee"  shape="poly" data-map="twentyone" coords="72,267,97,272,94,287,74,284" />
-                                                <area alt="" onclick="changeImage()" title="22. Right Knee"  shape="poly" data-map="twentytwo"coords="46,269,70,267,69,285,47,289" />
-                                                <area alt="" onclick="changeImage()" title="23. Left Leg"  shape="poly" data-map="twentythree" coords="72,284,93,286,98,304,94,321,84,348,73,352" />
-                                                <area alt="" onclick="changeImage()" title="24. Right Leg"  shape="poly" data-map="twentyfour" coords="69,284,70,309,68,329,67,339,70,354,58,351,53,328,48,308,46,294,46,288" />
-                                                <area alt="" onclick="changeImage()" title="25. Left Ankle"  shape="poly" data-map="twentyfive" coords="74,352,84,350,84,361,72,362" />
-                                                <area alt="" onclick="changeImage()" title="26. Right Ankle"  shape="poly" data-map="twentysix" coords="59,353,69,356,71,366,57,364" />
-                                                <area alt="" onclick="changeImage('.female-foot-left')" title="27. Left Foot"  shape="poly" data-map="twentyseven" coords="72,363,79,361,84,360,89,365,94,373,93,373,91,372,91,374,92,376,89,375,87,377,83,372,84,376,82,378" />
-                                                <area alt="" onclick="changeImage('.female-foot-right')" title="28. Right Foot"  shape="poly" data-map="twentyeight" coords="53,371,57,363,64,364,68,366,70,367,71,372,69,377,65,379,64,375,63,377,61,376,61,376,60,377,60,375,58,377,57,375,55,376,55,374" />
-                                                <area alt="" onclick="changeImage()" title="29. Back Skull"  shape="poly" data-map="twentynine" coords="210,62,225,57,228,50,228,44,226,44,226,34,223,27,219,23,214,21,207,21,200,23,196,29,194,40,194,44,194,46,195,52,199,56,199,61,201,58" />
-                                                <area alt="" onclick="changeImage()" title="30. Neck Back"  shape="poly" data-map="thirty" coords="198,57,209,62,222,59,222,65,222,72,223,75,218,75,212,75,205,75,198,75,200,68" />
-                                                <area alt="" onclick="changeImage()" title="31. Left Shoulder Back"  shape="poly" data-map="thirtyone" coords="169,99,188,99,207,99,209,100,210,89,210,76,198,75,186,82,177,85,171,91" />
-                                                <area alt="" onclick="changeImage()" title="32. Right Shoulder Back"  shape="poly" data-map="thirtytwo" coords="211,76,222,76,226,77,232,80,240,82,246,83,254,88,256,96,254,98,242,98,229,98,217,98,210,98" />
-                                                <area alt="" onclick="changeImage()" title="33. Left Arm Back"  shape="poly" data-map="thirtythree" coords="180,111,175,98,169,98,167,110,167,124,166,135,172,139,179,143,181,144,183,126" />
-                                                <area alt="" onclick="changeImage()" title="34. Right Arm Back"  shape="poly" data-map="thirtyfour" coords="242,98,247,98,255,98,256,108,257,125,258,142,250,146,244,146,241,121,244,108" />
-                                                <area alt="" onclick="changeImage()" title="35. Left Elbow Back"  shape="poly" data-map="thirtyfive" coords="168,136,180,143,180,152,177,163,175,166,171,164,166,160,163,158" />
-                                                <area alt="" onclick="changeImage()" title="36. Right Elbow Back"  shape="poly" data-map="thirtysix" coords="243,148,252,147,257,145,260,153,261,161,256,165,248,168" />
-                                                <area alt="" onclick="changeImage()" title="37. Left Forearm Back"  shape="poly" data-map="thirtyseven" coords="164,157,175,167,168,199,161,194,161,174,161,162,161,158" />
-                                                <area alt="" onclick="changeImage()" title="38. Right Forearm Back"  shape="poly" data-map="thirtyeight" coords="248,169,261,161,265,174,263,186,263,197,253,202" />
-                                                <area alt="" onclick="changeImage()" title="39. Upper Back"  shape="poly" data-map="thirtynine" coords="177,99,179,108,183,121,184,127,187,145,200,145,210,145,222,144,230,145,237,145,240,131,241,122,241,113,242,101,241,99" />
-                                                <area alt="" onclick="changeImage()" title="40. Lower Back"  shape="poly" data-map="fourty" coords="186,144,238,144,237,150,235,156,237,159,239,163,242,167,244,171,246,177,237,177,178,177,188,154" />
-                                                <area alt="" onclick="changeImage()" title="41. Left Buttock "  shape="poly" data-map="fourtyone" coords="176,179,209,179,209,216,173,217,172,199" />
-                                                <area alt="" onclick="changeImage()" title="42. Right Buttock "  shape="poly" data-map="fourtytwo" coords="209,178,246,178,248,189,249,199,249,205,248,216,235,217,220,217,209,216" />
-                                                <area alt="" onclick="changeImage()" title="43. Left Hamstring"  shape="poly" data-map="fourtythree" coords="207,215,174,216,175,228,177,236,179,242,182,251,184,255,184,261,199,262,208,261,209,243,207,259,209,237" />
-                                                <area alt="" onclick="changeImage()" title="44. Right Hamstring"  shape="poly" data-map="fourtyfour" coords="209,216,209,243,212,252,211,262,230,262,239,263,242,253,246,242,247,229,248,216" />
-                                                <area alt="" onclick="changeImage()" title="45. Left Knee Back"  shape="poly" data-map="fourtyfive" coords="184,262,206,262,208,269,208,279,208,284,207,288,207,290,197,290,184,290" />
-                                                <area alt="" onclick="changeImage()" title="46. Right Knee Back"  shape="poly" data-map="fourtysix" coords="212,264,212,262,239,262,236,272,235,277,235,282,235,287,237,290,228,290,221,290,216,289,213,289,211,282,212,274" />
-                                                <area alt="" onclick="changeImage()" title="47. Left Calf"  shape="poly" data-map="fourtyseven" coords="185,291,206,291,208,301,210,307,210,321,209,333,207,340,193,340,186,323,183,304" />
-                                                <area alt="" onclick="changeImage()" title="48. Right Calf"  shape="poly" data-map="fourtyeight" coords="214,291,232,291,234,292,236,300,237,305,236,311,234,321,232,332,229,339,221,339,214,339,210,320" />
-                                                <area alt="" onclick="changeImage()" title="49. Left Ankle"  shape="poly" data-map="fourtynine" coords="193,340,208,338,208,348,208,354,209,360,210,365,208,368,198,356" />
-                                                <area alt="" onclick="changeImage()" title="50. Right Ankle"  shape="poly" data-map="fifty" coords="213,367,226,359,227,352,229,345,231,340,223,339,219,339,215,341,215,339" />
-                                                <area alt="" onclick="changeImage()" title="51. Left Toe"  shape="poly" data-map="fiftyone" coords="192,365,194,365,197,363,198,360,199,358,203,363,208,367,210,373,208,377,204,380,196,369" />
-                                                <area alt="" onclick="changeImage()" title="52. Right Toe"  shape="poly" data-map="fiftytwo" coords="214,366,223,359,226,363,230,364,231,366,231,369,226,373,222,376,218,377,214,376,212,371" />
-                                                </map>
-                                                </div></script>
+                                                                    <div class="img-wrap female" >
+                                                    <div class="canvas">
+                                                    <canvas id='image1_canvas'></canvas>
+                                                    <canvas id='image1_canvas_marked'></canvas>
+                                                    </div>
+                                                    <img src="{{ admin_url('public/assets/images/human_body_parts/female/full.png') }}"  usemap='#imgmap_1' class='imgmap_1' title='imgmap1' alt='imgmap1' id='img-imgmap1' />
+                                                    <map id='imgmap1' name='imgmap_1' data-type='total' data-map="total">
+                                                    <area alt="" onclick="changeImage('.female-face')" title="1. Head"  data-map="one" shape="poly" coords="56,43,55,32,59,25,61,23,66,21,74,21,80,23,86,30,87,34,88,41,87,45,88,47,86,53,85,55,82,60,78,64,74,68,69,69,68,70,61,65,59,57,56,54,54,50,53,46" />
+                                                    <area alt="" onclick="changeImage()" title="2. Neck"  data-map="two" shape="poly" coords="48,81,87,82,82,72,82,58,71,69,72,70,59,62,57,57,58,67,59,74,56,77" />
+                                                    <area alt="" onclick="changeImage()" title="3. Left Shoulder Front" data-map="three"  shape="poly" coords="69,83,87,81,103,86,110,92,113,103,83,104,69,102,70,102" />
+                                                    <area alt="" onclick="changeImage()" title="4. Right Shoulder Front" data-map="four"  shape="poly" coords="70,103,23,104,25,94,30,87,36,85,47,82,59,82,69,83" />
+                                                    <area alt="" onclick="changeImage()" title="5. Left Arm Front"  data-map="five" shape="poly" coords="99,103,113,104,114,113,119,140,103,149,100,130" />
+                                                    <area alt="" onclick="changeImage()" title="6. Right Arm Front"  data-map="six" shape="poly" coords="25,104,25,124,23,142,39,147,42,129,41,107,40,103" />
+                                                    <area alt="" onclick="changeImage()" title="7. Left Elbow Front"  data-map="seven" shape="poly" coords="106,163,123,157,120,142,102,150" />
+                                                    <area alt="" onclick="changeImage()" title="8. Right Elbow Front"  data-map="eight" shape="poly" coords="39,148,37,162,21,155,23,142" />
+                                                    <area alt="" onclick="changeImage()" title="9. Left Forearm Front"  data-map="nine" shape="poly" coords="107,164,123,157,125,170,125,182,125,189,127,195,127,195,118,199" />
+                                                    <area alt="" onclick="changeImage()" title="10. Right Forearm Front"  data-map="ten" shape="poly" coords="20,156,36,161,26,197,18,196,20,181" />
+                                                    <area alt="" onclick="changeImage('.female-hand-right')" title="12. Right Hand"  shape="poly" data-map="eleven" coords="18,195,25,196,26,197,27,212,26,220,23,220,25,215,23,223,22,223,21,225,22,215,21,218,18,226,17,224,17,216,15,220,13,222,13,221,16,207,15,207,13,205,12,206,9,207,7,207,7,206,7,206,6,206" />
+                                                    <area alt="" onclick="changeImage('.female-hand-left')" title="11. Left Hand"  shape="poly" data-map="twelve" coords="126,193,118,199,118,205,118,213,118,221,122,222,122,215,121,215,124,225,125,218,128,226,130,224,130,215,129,214,134,224,131,209,133,206,137,209,140,209,140,209,140,208" />
+                                                    <area alt="" onclick="changeImage()" title="13. Left Brest"  shape="poly" data-map="thirteen" coords="69,104,88,103,99,104,100,118,98,132,72,133,69,132" />
+                                                    <area alt="" onclick="changeImage()" title="14. Right Brest"  shape="poly" data-map="fourteen" coords="41,103,62,103,69,104,70,127,70,131,44,133" />
+                                                    <area alt="" onclick="changeImage()" title="15. Stomach"  shape="poly" data-map="fifteen" coords="41,134,70,133,98,133,97,145,97,155,97,158,71,159,48,158" />
+                                                    <area alt="" onclick="changeImage()" title="16. Left Hip"  shape="poly" data-map="sixteen" coords="73,176,107,175,103,164,99,158,77,158,73,158" />
+                                                    <area alt="" onclick="changeImage()" title="17. Right Hip"  shape="poly" data-map="seventeen" coords="47,159,72,159,71,175,50,175,38,175,41,165" />
+                                                    <area alt="" onclick="changeImage()" title="18. Pubis"  shape="poly" data-map="eighteen" coords="38,175,62,176,86,176,105,176,106,176,108,192,108,213,107,222,77,222,46,222,37,221,34,202" />
+                                                    <area alt="" onclick="changeImage()" title="19. Left Thigh"  shape="poly" data-map="ninteen" coords="70,224,106,223,96,270,72,266,76,242" />
+                                                    <area alt="" onclick="changeImage()" title="20. Right Thigh"  shape="poly" data-map="twenty" coords="38,224,71,223,69,266,46,269" />
+                                                    <area alt="" onclick="changeImage()" title="21. Left Knee"  shape="poly" data-map="twentyone" coords="72,267,97,272,94,287,74,284" />
+                                                    <area alt="" onclick="changeImage()" title="22. Right Knee"  shape="poly" data-map="twentytwo"coords="46,269,70,267,69,285,47,289" />
+                                                    <area alt="" onclick="changeImage()" title="23. Left Leg"  shape="poly" data-map="twentythree" coords="72,284,93,286,98,304,94,321,84,348,73,352" />
+                                                    <area alt="" onclick="changeImage()" title="24. Right Leg"  shape="poly" data-map="twentyfour" coords="69,284,70,309,68,329,67,339,70,354,58,351,53,328,48,308,46,294,46,288" />
+                                                    <area alt="" onclick="changeImage()" title="25. Left Ankle"  shape="poly" data-map="twentyfive" coords="74,352,84,350,84,361,72,362" />
+                                                    <area alt="" onclick="changeImage()" title="26. Right Ankle"  shape="poly" data-map="twentysix" coords="59,353,69,356,71,366,57,364" />
+                                                    <area alt="" onclick="changeImage('.female-foot-left')" title="27. Left Foot"  shape="poly" data-map="twentyseven" coords="72,363,79,361,84,360,89,365,94,373,93,373,91,372,91,374,92,376,89,375,87,377,83,372,84,376,82,378" />
+                                                    <area alt="" onclick="changeImage('.female-foot-right')" title="28. Right Foot"  shape="poly" data-map="twentyeight" coords="53,371,57,363,64,364,68,366,70,367,71,372,69,377,65,379,64,375,63,377,61,376,61,376,60,377,60,375,58,377,57,375,55,376,55,374" />
+                                                    <area alt="" onclick="changeImage()" title="29. Back Skull"  shape="poly" data-map="twentynine" coords="210,62,225,57,228,50,228,44,226,44,226,34,223,27,219,23,214,21,207,21,200,23,196,29,194,40,194,44,194,46,195,52,199,56,199,61,201,58" />
+                                                    <area alt="" onclick="changeImage()" title="30. Neck Back"  shape="poly" data-map="thirty" coords="198,57,209,62,222,59,222,65,222,72,223,75,218,75,212,75,205,75,198,75,200,68" />
+                                                    <area alt="" onclick="changeImage()" title="31. Left Shoulder Back"  shape="poly" data-map="thirtyone" coords="169,99,188,99,207,99,209,100,210,89,210,76,198,75,186,82,177,85,171,91" />
+                                                    <area alt="" onclick="changeImage()" title="32. Right Shoulder Back"  shape="poly" data-map="thirtytwo" coords="211,76,222,76,226,77,232,80,240,82,246,83,254,88,256,96,254,98,242,98,229,98,217,98,210,98" />
+                                                    <area alt="" onclick="changeImage()" title="33. Left Arm Back"  shape="poly" data-map="thirtythree" coords="180,111,175,98,169,98,167,110,167,124,166,135,172,139,179,143,181,144,183,126" />
+                                                    <area alt="" onclick="changeImage()" title="34. Right Arm Back"  shape="poly" data-map="thirtyfour" coords="242,98,247,98,255,98,256,108,257,125,258,142,250,146,244,146,241,121,244,108" />
+                                                    <area alt="" onclick="changeImage()" title="35. Left Elbow Back"  shape="poly" data-map="thirtyfive" coords="168,136,180,143,180,152,177,163,175,166,171,164,166,160,163,158" />
+                                                    <area alt="" onclick="changeImage()" title="36. Right Elbow Back"  shape="poly" data-map="thirtysix" coords="243,148,252,147,257,145,260,153,261,161,256,165,248,168" />
+                                                    <area alt="" onclick="changeImage()" title="37. Left Forearm Back"  shape="poly" data-map="thirtyseven" coords="164,157,175,167,168,199,161,194,161,174,161,162,161,158" />
+                                                    <area alt="" onclick="changeImage()" title="38. Right Forearm Back"  shape="poly" data-map="thirtyeight" coords="248,169,261,161,265,174,263,186,263,197,253,202" />
+                                                    <area alt="" onclick="changeImage()" title="39. Upper Back"  shape="poly" data-map="thirtynine" coords="177,99,179,108,183,121,184,127,187,145,200,145,210,145,222,144,230,145,237,145,240,131,241,122,241,113,242,101,241,99" />
+                                                    <area alt="" onclick="changeImage()" title="40. Lower Back"  shape="poly" data-map="fourty" coords="186,144,238,144,237,150,235,156,237,159,239,163,242,167,244,171,246,177,237,177,178,177,188,154" />
+                                                    <area alt="" onclick="changeImage()" title="41. Left Buttock "  shape="poly" data-map="fourtyone" coords="176,179,209,179,209,216,173,217,172,199" />
+                                                    <area alt="" onclick="changeImage()" title="42. Right Buttock "  shape="poly" data-map="fourtytwo" coords="209,178,246,178,248,189,249,199,249,205,248,216,235,217,220,217,209,216" />
+                                                    <area alt="" onclick="changeImage()" title="43. Left Hamstring"  shape="poly" data-map="fourtythree" coords="207,215,174,216,175,228,177,236,179,242,182,251,184,255,184,261,199,262,208,261,209,243,207,259,209,237" />
+                                                    <area alt="" onclick="changeImage()" title="44. Right Hamstring"  shape="poly" data-map="fourtyfour" coords="209,216,209,243,212,252,211,262,230,262,239,263,242,253,246,242,247,229,248,216" />
+                                                    <area alt="" onclick="changeImage()" title="45. Left Knee Back"  shape="poly" data-map="fourtyfive" coords="184,262,206,262,208,269,208,279,208,284,207,288,207,290,197,290,184,290" />
+                                                    <area alt="" onclick="changeImage()" title="46. Right Knee Back"  shape="poly" data-map="fourtysix" coords="212,264,212,262,239,262,236,272,235,277,235,282,235,287,237,290,228,290,221,290,216,289,213,289,211,282,212,274" />
+                                                    <area alt="" onclick="changeImage()" title="47. Left Calf"  shape="poly" data-map="fourtyseven" coords="185,291,206,291,208,301,210,307,210,321,209,333,207,340,193,340,186,323,183,304" />
+                                                    <area alt="" onclick="changeImage()" title="48. Right Calf"  shape="poly" data-map="fourtyeight" coords="214,291,232,291,234,292,236,300,237,305,236,311,234,321,232,332,229,339,221,339,214,339,210,320" />
+                                                    <area alt="" onclick="changeImage()" title="49. Left Ankle"  shape="poly" data-map="fourtynine" coords="193,340,208,338,208,348,208,354,209,360,210,365,208,368,198,356" />
+                                                    <area alt="" onclick="changeImage()" title="50. Right Ankle"  shape="poly" data-map="fifty" coords="213,367,226,359,227,352,229,345,231,340,223,339,219,339,215,341,215,339" />
+                                                    <area alt="" onclick="changeImage()" title="51. Left Toe"  shape="poly" data-map="fiftyone" coords="192,365,194,365,197,363,198,360,199,358,203,363,208,367,210,373,208,377,204,380,196,369" />
+                                                    <area alt="" onclick="changeImage()" title="52. Right Toe"  shape="poly" data-map="fiftytwo" coords="214,366,223,359,226,363,230,364,231,366,231,369,226,373,222,376,218,377,214,376,212,371" />
+                                                    </map>
+                                                    </div></script>
                                                         <!--female total parts -->
 
                                                     </div>
@@ -1062,7 +1073,7 @@
                                                 class="btn btn-secondary btn-warnings injcancel center"
                                                 data-bs-dismiss="modal">{{ 'Cancel' }}</button>
                                             <!--
-                                                                                                                                                                                                <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
+                                                                                                                                                                                                                    <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
 
                                         </div>
                                     </div>
@@ -1074,8 +1085,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                                                                                                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                                                                        </div>-->
+                                                                                                                                                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                                                                                            </div>-->
             </div>
         </div>
     </div>
@@ -1086,28 +1097,94 @@
     <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
 
-            flatpickr("#target_date", {
-                dateFormat: "d-m-Y",
+            let injuryIndex = 0;
+
+            // Add new injury details row
+            $(document).on("click", ".addMoreInjuryDetails", function() {
+                injuryIndex++;
+                let newRow = `<hr>
+        <div class="row injury-append" style="margin-top: 20px;" id="injuryDetails_${injuryIndex}">
+            <div class="col-md-4 form-input">
+                    <label for="" class="form-label require">Injury Person Type</label>
+                    <select class="form-control require single-select selectInjPersontype" alt="${injuryIndex}" name="injury_person[${injuryIndex}][injury_person_type]" style="width: 100%" id="RowInjTypedata_${injuryIndex}">
+                        <option value="">Select Person Type</option>
+                        <option value="{{ encryptId('1') }}">Employee</option>
+                        <option value="{{ encryptId('2') }}">Worker</option>
+                        <option value="{{ encryptId('3') }}">Others</option>
+                    </select>
+            </div>
+            <div class="col-md-4 form-input" id="injuryPersonTextContainer_${injuryIndex}">
+                     <label class="form-label require">Injury Person Name</label>
+                   <input type="text"  alt="${injuryIndex}" class="form-control injuryPersonNamerequire"
+                      name="injury_person[${injuryIndex}][injury_person_id]" id="RowInjothersdata_${injuryIndex}"
+                    placeholder="Enter Injury Person Name">
+            </div>
+                     <!-- Injury Person Name (Dropdown) -->
+                <div class="col-md-4 form-input d-none" id="injuryPersonDropdownContainer_${injuryIndex}">
+                     <label class="form-label require">Injury Person Name</label>
+                     <select class="form-control require injuryPersonName single-select" alt="${injuryIndex}"  style="width: 100%" name="injury_person[${injuryIndex}][injury_person_id]"  id="RowInjEmpdata_${injuryIndex}">
+                         <option value="" disabled selected>Select Injury Person Name  </option> </select>
+                </div>
+
+            <div class="col-md-4 form-input">
+                <label class="form-label">Injury Person Designation</label>
+                <input type="text" alt="${injuryIndex}" name="injury_person[${injuryIndex}][injury_person_designation]" id="InjPerDest_${injuryIndex}" class="form-control InjPerDest">
+            </div>
+                   <div class="col-md-4 form-input d-none" id="injuryPersonDepttexxt_${injuryIndex}">
+                      <label class="form-label">Injury Person Department</label>
+                      <input type="text" alt="${injuryIndex}"  name="injury_person[${injuryIndex}][injury_person_department_id]"
+                    class="form-control InjPerDept" id="InjPerDept_${injuryIndex}">  </div>
+
+            <div class="col-md-4 form-input" id="injuryPersonDeptDropdown_${injuryIndex}">
+                <label class="form-label">Injury Person Department</label>
+                <select class="form-control single-select" alt="${injuryIndex}" name="injury_person[${injuryIndex}][injury_person_department_id]" style="width: 100%">
+                    <option value="">Select Department</option>
+                    @foreach ($departmentList as $department)
+                        <option value="{{ $department->id }}">{{ $department->department_name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group form-input">
+                  <label for="nature_of_injury_${injuryIndex}" class="form-label">Nature of  Injury</label>
+                      <select name="nature_of_injury" alt="${injuryIndex}"  id="nature_of_injury_${injuryIndex}"
+                      style="width: 100%" class="form-control single-select">
+                        <option value="">Nature of Injury</option>
+                          <option value="{{ encryptId('1') }}">Major</option>
+                         <option value="{{ encryptId('2') }}">Minor</option>
+                            </select>
+                </div>
+            </div>   
+
+                <div class="col-md-2 form-input">
+                    <label for="inputFirstName" class="form-label require">Location of the Injury</label></br>
+                    <span class="input-group-addon injury-btn btn btn-info" data-id='${injuryIndex}' data-injid="${injuryIndex}" attr_emp="" alt="${injuryIndex}"><i class="fa fa-male" aria-hidden="true"></i></span>
+                </div>
+            <div class="col-md-2 text-right">
+                <button type="button" class="btn btn-danger btn-sm removeInjuryDetails" data-index="${injuryIndex}" style="margin-top: 35px;">Remove</button>
+            </div>
+        </div>`;
+
+                $(".injury-details-templat").append(newRow);
+                $(".single-select").select2();
             });
 
-
-            $('#resetform').on('click', function(e) {
-                e.preventDefault();
-                location.reload();
-            });
             $(document).on("change", "[name^='injury_person'][name$='[injury_person_type]']", function() {
                 var injury_person_type = $(this).val();
-                var injuryPersonDropdownContainer = $("#injuryPersonDropdownContainer");
-                var injuryPersonTextContainer = $("#injuryPersonTextContainer");
-                var injuryPersonDropdown = $("#RowInjEmpdata_0");
-                var injuryPersonDeptDropdown = $("#injuryPersonDeptDropdown");
-                var injuryPersonDepttexxt = $("#injuryPersonDepttexxt");
+                var injuryIndex = $(this).attr("alt");
+                // Get the index of the current row
+                var injuryPersonDropdownContainer = $("#injuryPersonDropdownContainer_" + injuryIndex);
+                var injuryPersonTextContainer = $("#injuryPersonTextContainer_" + injuryIndex);
+                var injuryPersonDropdown = $('#RowInjEmpdata_' + injuryIndex);
+                var injuryPersonDeptDropdown = $("#injuryPersonDeptDropdown_" + injuryIndex);
+                var injuryPersonDepttexxt = $("#injuryPersonDepttexxt_" + injuryIndex);
 
                 // Reset Fields
                 injuryPersonDropdown.empty().append('<option value="">Select Injury Person Name</option>');
-                $("#injuryPersonText_0").val("");
-                $("#InjPerDest_0").val("");
-                $("#InjPerDept_0").val("");
+                $('#RowInjothersdata_' + injuryIndex).val("");
+                $('#InjPerDest_' + injuryIndex).val("");
+                $('#InjPerDept_' + injuryIndex).val("");
 
                 if (injury_person_type === "{{ encryptId('1') }}" || injury_person_type ===
                     "{{ encryptId('2') }}") {
@@ -1156,10 +1233,17 @@
                 }
             });
 
+
             // Fetch Designation and Department on Name Selection
             $(document).on("change", ".injuryPersonName", function() {
                 var injury_person_id = $(this).val();
-                var injury_person_type = $(".selectInjPersontype").val();
+                var injuryIndex = $(this).attr("alt");
+                var injury_person_type = $("#RowInjTypedata_" + injuryIndex)
+                    .val(); // Get correct person type
+
+                // Define injuryPersonDeptDropdown correctly
+                var injuryPersonDeptDropdown = $("#InjPerDept_" + injuryIndex).find("select");
+                var injuryPersonDesignation = $("#InjPerDest_" + injuryIndex);
 
                 $.ajax({
                     url: "{{ url('incident/accidentReport/fetchPersonDetails') }}/" +
@@ -1170,20 +1254,25 @@
                         if (response.employee || response.worker) {
                             let person = response.employee || response.worker;
 
-                            $('#InjPerDest_0').val(person.designation).prop('readonly', true);
-                            $('#InjPerDept_0').val(person.department_name).prop('readonly',
-                                true);
-
-                            if (person.department_name) {
-                                injuryPersonDeptDropdown.find("select")
-                                    .html(
-                                        `<option value="${person.department_name}" selected>${person.department_name}</option>`
-                                    )
-                                    .prop('disabled', true);
+                            // Handle Designation field
+                            if (person.designation) {
+                                injuryPersonDesignation.val(person.designation).prop('readonly',
+                                    true);
                             } else {
-                                injuryPersonDeptDropdown.find("select")
-                                    .html('<option value="">Select Department</option>')
-                                    .prop('disabled', false);
+                                injuryPersonDesignation.val("").prop('readonly', false);
+                            }
+
+                            // Handle Department dropdown
+                            if (person.department_name) {
+                                injuryPersonDeptDropdown.html(
+                                    `<option value="${person.department_name}" selected>${person.department_name}</option>`
+                                ).prop('disabled', true);
+                            } else {
+                                injuryPersonDeptDropdown.html(
+                                    `<option value="">Select Department</option>@foreach ($departmentList as $department)
+                            <option value="{{ $department->id }}">{{ $department->department_name }}</option>
+                         @endforeach`
+                                ).prop('disabled', false);
                             }
                         } else {
                             Swal.fire("Error", "Data could not be fetched.", "error");
@@ -1194,6 +1283,63 @@
                             "error");
                     }
                 });
+            });
+
+
+
+            // Remove injury details row
+            $(document).on("click", ".removeInjuryDetails", function() {
+                $(this).closest(".injury-append").remove();
+            });
+        });
+
+        $(document).ready(function() {
+
+
+            flatpickr("#target_date", {
+                dateFormat: "d-m-Y",
+            });
+
+
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+
+
+
+            $('#witness_id').select2({
+                placeholder: "Select Name of the Witness",
+                allowClear: true,
+                closeOnSelect: false,
+                ajax: {
+                    url: "{{ url('incident/accidentReport/getemployeename') }}",
+                    type: "GET",
+                    dataType: "json",
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term,
+                            _token: "{{ csrf_token() }}"
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.id,
+                                    text: item.text
+                                };
+                            })
+                        };
+                    },
+                    cache: true,
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.log("Error in AJAX request:", textStatus, errorThrown);
+                    }
+                },
+                minimumInputLength: 1,
+                width: '100%',
             });
 
 
@@ -1225,34 +1371,8 @@
                 dropdownCssClass: 'form-control',
                 selectionCssClass: 'form-control'
             });
-            $('#witness_id').select2({
-                ajax: {
-                    url: "{{ url('incident/accidentReport/getemployeename') }}",
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            })
-                        };
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        console.log("Error in AJAX request:", textStatus, errorThrown);
-                    }
-                },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
-            });
+
+
             $('#emp_code').select2({
                 ajax: {
                     url: "{{ url('incident/accidentReport/getemployeename') }}",
@@ -1277,37 +1397,35 @@
                         console.log("Error in AJAX request:", textStatus, errorThrown);
                     }
                 },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
+                minimumInputLength: 1
             });
 
+            // Handle Employee Code Change
             $('#emp_code').change(function() {
                 var emp_code = $(this).val();
 
                 if (emp_code) {
                     $.ajax({
-                        url: "{{ url('incident/accidentReport/fetchEmployeeDetails') }}/" +
-                            emp_code,
+                        url: "{{ url('incident/accidentReport/getEmployeeDetails') }}/" + emp_code,
                         type: "GET",
                         dataType: "json",
                         success: function(response) {
                             if (response.employee) {
+
+                                alert('dsfsdf');
+                                // Set designation value
                                 $('#designation').val(response.employee.designation);
-
-
+                                // Handle department dropdown
                                 if (response.employee.department_name) {
-                                    $('#department_id').html('<option value="' + response
-                                        .employee
-                                        .department_name + '">' + response.employee
-                                        .department_name +
-                                        '</option>');
-                                    $('#department_id').prop('disabled', true);
+                                    $('#department_id')
+                                        .html('<option value="' + response.employee
+                                            .department_name + '" selected>' + response.employee
+                                            .department_name + '</option>')
+                                        .prop('disabled', true);
                                 } else {
-                                    $('#department_id').prop('disabled', false);
-                                    $('#department_id').html(
-                                        '<option value="">Select Department</option>'
-                                    );
+                                    $('#department_id')
+                                        .html('<option value="">Select Department</option>')
+                                        .prop('disabled', false);
                                 }
                             } else {
                                 Swal.fire({
@@ -1326,10 +1444,13 @@
                         }
                     });
                 } else {
-                    $('#designation, #department_id').val('');
-                    $('#department_id').prop('disabled', false);
+                   alert(2323);
+                   $('#designation').val('');
+                    $('#department_id').html('<option value="">Select Department</option>').prop('disabled',
+                        false);
                 }
             });
+
             $(function() {
                 $('#accidentinvestigation').validate({
                     rules: {
@@ -1419,294 +1540,337 @@
                 });
             });
 
-            //injury script
-
-            $("#injury_model").on("shown.bs.modal", function() {
-
-                $('.injury-box').removeClass('hide');
 
 
+        });
+        //injury script
+
+        $("#injury_model").on("shown.bs.modal", function() {
+
+            $('.injury-box').removeClass('hide');
+
+
+        });
+
+
+        $(document).on('click', '.injury-btn', function() {
+
+            var getid = $(this).data('id');
+            var inj_id = $(this).data('injid');
+            var injuredPerson_type = $('#RowInjTypedata_' + getid).val();
+            var injuredPerson_emp = $('#RowInjEmpdata_' + getid).val();
+            var injuredPerson_others = $('#RowInjothersdata_' + getid).val();
+
+            var errorcount = '0';
+            var injuredPerson = '0';
+
+            if (injuredPerson_emp == '') {
+                Swal.fire('Error', 'Please Select Victim Name', 'error');
+                errorcount = '1';
+            } else {
+                errorcount = '0';
+                if (injuredPerson_emp != '') {
+                    injuredPerson = injuredPerson_emp;
+                }
+            }
+
+            if (errorcount == '1') {
+
+                return false;
+            } else {
+
+                $('#injuredPerson').val(injuredPerson);
+                // var acc_prim_id = $('#acc_prim_id').val();
+                // var acc_prim_add = $('#acc_prim_add').val();
+
+                // var emp_details = get_emp_details_by_id(injuredPerson, inj_id, injuredPerson_type);
+
+
+                $("#injury_model [name='injperson']").val(injuredPerson);
+                $("#injury_model").modal("show");
+            }
+
+        });
+
+
+        // function get_emp_details_by_id(injuredPerson, inj_id, injuredPerson_type) {
+        //     var url = "{{ admin_url('incident_investigation/getEmpdetails') }}";
+        //     console.log('check');
+        //     console.log(injuredPerson);
+        //     console.log(acc_prim_id);
+        //     console.log(inj_id);
+        //     console.log(injuredPerson_type);
+        //     var data = {
+        //         partyname: injuredPerson,
+        //         acc_prim_id: acc_prim_id,
+        //         acc_prim_add: acc_prim_add,
+        //         injuredPerson_type: injuredPerson_type,
+        //     };
+
+        //     $.ajax({
+        //         type: 'POST',
+        //         url: url,
+        //         data: data,
+        //         success: function(data) {
+        //             console.log(data);
+        //             console.log('check');
+        //             if (data['empdata'] && data['empdata'].length > 0) {
+        //                 $.each(data['empdata'], function(i, emp) {
+        //                     $("#imgMapdata1").val(emp['imgMapdata']);
+        //                     $("#body_prim_id").val(emp['inc_body_id']);
+        //                     $("#injury_id").val(inj_id);
+        //                 });
+        //             } else {
+        //                 $("#body_prim_id").val(0);
+        //                 $("#injury_id").val(inj_id);
+        //             }
+        //         },
+        //         error: function(xhr, status, error) {
+        //             console.error("Error:", error);
+        //         }
+        //     });
+        // }
+
+
+
+        function clearInjuryBasicDetails() {
+
+            var modalsrc = $("#injury_model");
+
+            $(modalsrc).find("[name='imgMapdata1']").val('');
+            $(modalsrc).find(':input[name="save_inj"]').prop('disabled', false);
+            $('.others').addClass('hide');
+
+        }
+
+
+        $("#injury_model").on("shown.bs.modal", function() {
+            $(window).resize();
+        });
+
+
+        $(document).on('click', '.addbodyparts', function() {
+            var allFilled = true;
+            $(".img-desc .des_injury1_img").each(function(i, ele) {
+                if ($(ele).val() == '') {
+                    allFilled = false;
+                    return false; // Exit the loop early
+                }
             });
 
-
-            $(document).on('click', '.injury-btn', function() {
-
-                var getid = $(this).data('id');
-                var inj_id = $(this).data('injid');
-                console.log(getid);
-                var injuredPerson_type = $('#RowInjTypedata_' + getid).val();
-                var injuredPerson_emp = $('#RowInjEmpdata_' + getid).val();
-                var injuredPerson_others = $('#RowInjothersdata_' + getid).val();
-
-                var errorcount = '0';
-                var injuredPerson = '0';
-
-                if (injuredPerson_emp == '') {
-                    Swal.fire('Error', 'Please Select Victim Name', 'error');
-                    errorcount = '1';
-                } else {
-                    errorcount = '0';
-                    if (injuredPerson_emp != '') {
-                        injuredPerson = injuredPerson_emp;
-                    }
-                }
-                console.log(injuredPerson_emp);
-                console.log(injuredPerson);
-                if (errorcount == '1') {
-
-                    return false;
-                } else {
-
-                    $('#injuredPerson').val(injuredPerson);
-                    var acc_prim_id = $('#acc_prim_id').val();
-                    var acc_prim_add = $('#acc_prim_add').val();
-
-
-                    var emp_details = get_emp_details_by_id(injuredPerson, acc_prim_id, acc_prim_add,
-                        inj_id, injuredPerson_type);
-
-
-                    $("#injury_model [name='injperson']").val(injuredPerson);
-                    $("#injury_model").modal("show");
-                }
-
-            });
-
-
-            function get_emp_details_by_id(injuredPerson, acc_prim_id, acc_prim_add, inj_id, injuredPerson_type) {
-                var url = "{{ admin_url('incident_investigation/getEmpdetails') }}";
-                console.log('check');
-                console.log(injuredPerson);
-                console.log(acc_prim_id);
-                console.log(inj_id);
-                console.log(injuredPerson_type);
-                var data = {
-                    partyname: injuredPerson,
-                    acc_prim_id: acc_prim_id,
-                    acc_prim_add: acc_prim_add,
-                    injuredPerson_type: injuredPerson_type,
-                };
-
-                $.ajax({
-                    type: 'POST',
-                    url: url,
-                    data: data,
-                    success: function(data) {
-                        console.log(data);
-                        console.log('check');
-                        if (data['empdata'] && data['empdata'].length > 0) {
-                            $.each(data['empdata'], function(i, emp) {
-                                $("#imgMapdata1").val(emp['imgMapdata']);
-                                $("#body_prim_id").val(emp['inc_body_id']);
-                                $("#injury_id").val(inj_id);
-                            });
-                        } else {
-                            $("#body_prim_id").val(0);
-                            $("#injury_id").val(inj_id);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error:", error);
-                    }
-                });
+            if (!allFilled) {
+                Swal.fire('Alert', 'Please Enter The Body Parts Descriptions', 'Alert');
+            } else {
+                Swal.fire('Alert', 'Please Select Body Parts', 'Alert');
             }
 
 
 
-            function clearInjuryBasicDetails() {
+        });
 
-                var modalsrc = $("#injury_model");
-
-                $(modalsrc).find("[name='imgMapdata1']").val('');
-                $(modalsrc).find(':input[name="save_inj"]').prop('disabled', false);
-                $('.others').addClass('hide');
-
-            }
-
-
-            $("#injury_model").on("shown.bs.modal", function() {
-                $(window).resize();
-            });
-
-
-            $(document).on('click', '.addbodyparts', function() {
-                var allFilled = true;
-                $(".img-desc .des_injury1_img").each(function(i, ele) {
-                    if ($(ele).val() == '') {
-                        allFilled = false;
-                        return false; // Exit the loop early
-                    }
-                });
-
-                if (!allFilled) {
-                    Swal.fire('Alert', 'Please Enter The Body Parts Descriptions', 'Alert');
-                } else {
-                    Swal.fire('Alert', 'Please Select Body Parts', 'Alert');
-                }
-
-
-
-            });
-
-            $('img[usemap]').rwdImageMaps();
-            window.mapEdit = false;
-            window.canvas_obj = {};
-            $("#injury_model").on("shown.bs.modal", function() {
-                setTimeout(function() {
-                    $(".img-map").css("opacity", "0");
-                    $(".img-map").html($("#tmp-male").html())
-
-                    editInjuryDetails();
-                    setTimeout(function() {
-                        $('div.img-content div.img-map img[usemap]').rwdImageMaps();
-                        myInit1($("div.img-content div.img-map img"), 1);
-
-                        triggerMapClick1();
-                    }, 200);
-                    setTimeout(function() {
-                        $(".img-map").css("opacity", "1");
-                    }, 290);
-
-
-                }, 300);
-
-                $.each(window.canvas_obj, function(canvas, canvasObj) {
-                    canvasClear($("#" + canvas)[0]);
-                });
-                $("div.image-container .parts").hide();
-
-            }).on("hidden.bs.modal", function() {
-
-                $("area[desc]").each(function(i, ele) {
-
-                    $(ele).removeAttr("desc");
-                });
-                $(".img-desc").html('');
-                $("div.image-container .parts").hide();
-                for (i = 0; i < 10; i++) {
-                    window.clearTimeout(i);
-                }
-                $('#imgMapdata1').val('');
+        $('img[usemap]').rwdImageMaps();
+        window.mapEdit = false;
+        window.canvas_obj = {};
+        $("#injury_model").on("shown.bs.modal", function() {
+            setTimeout(function() {
                 $(".img-map").css("opacity", "0");
+                $(".img-map").html($("#tmp-male").html())
 
+                editInjuryDetails();
+                setTimeout(function() {
+                    $('div.img-content div.img-map img[usemap]').rwdImageMaps();
+                    myInit1($("div.img-content div.img-map img"), 1);
+
+                    triggerMapClick1();
+                }, 200);
+                setTimeout(function() {
+                    $(".img-map").css("opacity", "1");
+                }, 290);
+
+
+            }, 300);
+
+            $.each(window.canvas_obj, function(canvas, canvasObj) {
+                canvasClear($("#" + canvas)[0]);
             });
-
-            $('.gender').change(function() {
-
-
-            });
-
-            function editInjuryDetails() {
-
-                var json = $('#imgMapdata1').val();
-                if (json != undefined && json != '') {
-                    json = JSON.parse(json);
-                    $.each(json, function(name, value) {
-                        switch (name) {
-                            case 'map':
-                                mapTrigger(value);
-
-                                break;
-                            default:
-
-                                break;
-                        }
-                    });
-                }
-            }
-
             $("div.image-container .parts").hide();
 
-            //assign iage map json to hidden input
+        }).on("hidden.bs.modal", function() {
 
+            $("area[desc]").each(function(i, ele) {
 
-            $('#injuryform').submit(function(e) {
-
-                var data = getAllValues();
-                data['map'] = getMapValues();
-                var data1 = JSON.stringify(data);
-
-                $('#imgMapdata1').val(data1);
-
-
+                $(ele).removeAttr("desc");
             });
-
-
-            function getAllValues(data) {
-
-                var data = {};
-                return data;
+            $(".img-desc").html('');
+            $("div.image-container .parts").hide();
+            for (i = 0; i < 10; i++) {
+                window.clearTimeout(i);
             }
+            $('#imgMapdata1').val('');
+            $(".img-map").css("opacity", "0");
 
-            function getMapValues() {
+        });
 
-                var data1 = {},
-                    cmap, pmap;
-                $('body .des_injury1_img').each(function(i, ele) {
+        $('.gender').change(function() {
 
-                    pmap = $(ele).attr('data-point1');
-                    cmap = $(ele).attr('data-point2');
-                    if (!(pmap in data1)) {
-                        data1[pmap] = {};
+
+        });
+
+        function editInjuryDetails() {
+
+            var json = $('#imgMapdata1').val();
+            if (json != undefined && json != '') {
+                json = JSON.parse(json);
+                $.each(json, function(name, value) {
+                    switch (name) {
+                        case 'map':
+                            mapTrigger(value);
+
+                            break;
+                        default:
+
+                            break;
                     }
-                    if (!(cmap in data1[pmap])) {
-                        data1[pmap][cmap] = {};
-                    }
-                    data1[pmap][cmap] = $(ele).val();
                 });
-                //console.log(data1);
-                return data1;
+            }
+        }
+
+        $("div.image-container .parts").hide();
+
+        //assign iage map json to hidden input
+
+
+        $('#injuryform').submit(function(e) {
+
+            var data = getAllValues();
+            data['map'] = getMapValues();
+            var data1 = JSON.stringify(data);
+
+            $('#imgMapdata1').val(data1);
+
+
+        });
+
+
+        function getAllValues(data) {
+
+            var data = {};
+            return data;
+        }
+
+        function getMapValues() {
+
+            var data1 = {},
+                cmap, pmap;
+            $('body .des_injury1_img').each(function(i, ele) {
+
+                pmap = $(ele).attr('data-point1');
+                cmap = $(ele).attr('data-point2');
+                if (!(pmap in data1)) {
+                    data1[pmap] = {};
+                }
+                if (!(cmap in data1[pmap])) {
+                    data1[pmap][cmap] = {};
+                }
+                data1[pmap][cmap] = $(ele).val();
+            });
+            //console.log(data1);
+            return data1;
+        }
+
+
+
+        function triggerMapClick1() {
+
+            $("div.image-container .img-map-parts map area,div.img-content div.img-map map area").unbind(
+                'click');
+            $("div.image-container .img-map-parts map area,div.img-content div.img-map map area").click(
+                function() {
+                    var canvas = $(this).closest("div").find("canvas")[0],
+                        txtarea, addtxt;
+                    canvas = $("#image2_canvas")[0];
+                    var i = 1;
+                    if ($(this).parent().attr("data-type") === 'total') {
+
+                        canvas = $("#image1_canvas")[0];
+                        myLeave(canvas, 1);
+                    }
+
+                    myLeave(canvas);
+                    descBox(this, i);
+                    initDescriptionJs();
+                    var coordStr = $(this).attr('coords');
+                    var areaType = $(this).attr('shape');
+                    switch (areaType) {
+                        case 'polygon':
+                        case 'poly':
+                            drawPoly1(coordStr, canvas);
+                            break;
+                        case 'rect':
+                            drawRect1(coordStr, canvas);
+                    }
+
+                    i++;
+
+                });
+        }
+
+        function descBox1(point1, point2, desc) {
+            var is_ready_only = '{{ $is_ready_only }}';
+            var div, label, point1, point2;
+            var j = 0;
+            div = $("<div/>");
+            label = $("<label/>").text("" + $('[data-map~="' + point1 + '"] [data-map~="' + point2 + '"]').attr(
+                    "title"))
+                .addClass("desc-label").attr('id', "desc-label" + j);
+            var tit = $(label).text();
+
+            //console.log('gfdgf:')
+            //console.log($('[data-map~="'+point1+'"]'))
+
+            if (is_ready_only != 1) {
+                txtarea = $("<textarea/>", {
+                    'data-point1': point1,
+                    'data-point2': point2,
+                    "class": 'form-control des_injury1_img',
+                    "id": 'des_img' + j,
+                    "alt": j,
+
+                });
+            } else {
+                txtarea = $("<textarea/>", {
+                    'data-point1': point1,
+                    'data-point2': point2,
+                    "class": 'form-control des_injury1_img',
+                    "id": 'des_img' + j,
+                    "alt": j,
+                    "style": 'pointer-events: none;',
+                });
             }
 
-
-
-            function triggerMapClick1() {
-
-                $("div.image-container .img-map-parts map area,div.img-content div.img-map map area").unbind(
-                    'click');
-                $("div.image-container .img-map-parts map area,div.img-content div.img-map map area").click(
-                    function() {
-                        var canvas = $(this).closest("div").find("canvas")[0],
-                            txtarea, addtxt;
-                        canvas = $("#image2_canvas")[0];
-                        var i = 1;
-                        if ($(this).parent().attr("data-type") === 'total') {
-
-                            canvas = $("#image1_canvas")[0];
-                            myLeave(canvas, 1);
-                        }
-
-                        myLeave(canvas);
-                        descBox(this, i);
-                        initDescriptionJs();
-                        var coordStr = $(this).attr('coords');
-                        var areaType = $(this).attr('shape');
-                        switch (areaType) {
-                            case 'polygon':
-                            case 'poly':
-                                drawPoly1(coordStr, canvas);
-                                break;
-                            case 'rect':
-                                drawRect1(coordStr, canvas);
-                        }
-
-                        i++;
-
-                    });
+            if (is_ready_only != 1) {
+                buttons = $(
+                    '<div><button type="button" class="fa fa-trash-o deletes" style="color:red;" alt="' +
+                    j +
+                    '" id="deletes' + j + '" title="' + tit + '"></button></div>');
+            } else {
+                buttons = '';
             }
 
-            function descBox1(point1, point2, desc) {
-                var is_ready_only = '{{ $is_ready_only }}';
-                var div, label, point1, point2;
-                var j = 0;
-                div = $("<div/>");
-                label = $("<label/>").text("" + $('[data-map~="' + point1 + '"] [data-map~="' + point2 + '"]').attr(
+            addtxt = true;
+            if (j == 0) {
+                j = 1;
+            }
+            $(".img-desc .des_injury1_img").each(function(i, ele) {
+                if ($(ele).val() == '') {
+                    addtxt = false;
+                    $(ele).attr("data-point1", point1).attr("data-point2", point2);
+                }
+
+                label = $("<label/>").text("" + $('[data-map~="' + point1 + '"] [data-map~="' + point2 +
+                        '"]').attr(
                         "title"))
-                    .addClass("desc-label").attr('id', "desc-label" + j);
-                var tit = $(label).text();
-
-                //console.log('gfdgf:')
-                //console.log($('[data-map~="'+point1+'"]'))
+                    .addClass("desc-label" + j).attr('id', "desc-label" + j);
 
                 if (is_ready_only != 1) {
                     txtarea = $("<textarea/>", {
@@ -1728,88 +1892,73 @@
                     });
                 }
 
+
                 if (is_ready_only != 1) {
                     buttons = $(
                         '<div><button type="button" class="fa fa-trash-o deletes" style="color:red;" alt="' +
-                        j +
-                        '" id="deletes' + j + '" title="' + tit + '"></button></div>');
+                        j + '" id="deletes' + j + '" title="' + tit + '"></button></div>');
+                    j++;
                 } else {
                     buttons = '';
                 }
 
-                addtxt = true;
-                if (j == 0) {
-                    j = 1;
-                }
-                $(".img-desc .des_injury1_img").each(function(i, ele) {
-                    if ($(ele).val() == '') {
-                        addtxt = false;
-                        $(ele).attr("data-point1", point1).attr("data-point2", point2);
-                    }
+            });
 
-                    label = $("<label/>").text("" + $('[data-map~="' + point1 + '"] [data-map~="' + point2 +
-                            '"]').attr(
-                            "title"))
-                        .addClass("desc-label" + j).attr('id', "desc-label" + j);
-
-                    if (is_ready_only != 1) {
-                        txtarea = $("<textarea/>", {
-                            'data-point1': point1,
-                            'data-point2': point2,
-                            "class": 'form-control des_injury1_img',
-                            "id": 'des_img' + j,
-                            "alt": j,
-
-                        });
-                    } else {
-                        txtarea = $("<textarea/>", {
-                            'data-point1': point1,
-                            'data-point2': point2,
-                            "class": 'form-control des_injury1_img',
-                            "id": 'des_img' + j,
-                            "alt": j,
-                            "style": 'pointer-events: none;',
-                        });
-                    }
-
-
-                    if (is_ready_only != 1) {
-                        buttons = $(
-                            '<div><button type="button" class="fa fa-trash-o deletes" style="color:red;" alt="' +
-                            j + '" id="deletes' + j + '" title="' + tit + '"></button></div>');
-                        j++;
-                    } else {
-                        buttons = '';
-                    }
-
-                });
-
-                if (addtxt) {
-                    $(div).append(label).append(buttons)
-                    $(div).append(label).append(txtarea)
-                    $(".img-desc").append(div);
-                } else {
-                    $(".img-desc div:last-child .desc-label")
-                        .text("" + $(area).attr("title"));
-                }
-                if (desc != undefined) {
-                    $(txtarea).text(desc).val(desc);
-                }
-
+            if (addtxt) {
+                $(div).append(label).append(buttons)
+                $(div).append(label).append(txtarea)
+                $(".img-desc").append(div);
+            } else {
+                $(".img-desc div:last-child .desc-label")
+                    .text("" + $(area).attr("title"));
+            }
+            if (desc != undefined) {
+                $(txtarea).text(desc).val(desc);
             }
 
-            function descBox(area, k, desc) {
+        }
+
+        function descBox(area, k, desc) {
 
 
-                var div, label, point1, point2, buttons, txtarea;
-                var j = 0;
-                var tit = $(area).attr("title");
-                div = $("<div/>");
+            var div, label, point1, point2, buttons, txtarea;
+            var j = 0;
+            var tit = $(area).attr("title");
+            div = $("<div/>");
+            label = $("<label/>").text("" + $(area).attr("title"))
+                .addClass("desc-label").attr('id', "desc-label" + j);
+
+            point2 = $(area).attr("data-map");
+            point1 = $(area).parent().attr("data-map");
+            txtarea = $("<textarea/>", {
+                'data-point1': point1,
+                'data-point2': point2,
+                "class": 'form-control des_injury1_img',
+                "id": 'des_img' + j,
+                "alt": j,
+
+            });
+
+            buttons = $('<div><button type="button" class="fa fa-trash-o deletes" style="color:red;" alt="' +
+                j +
+                '" id="deletes' + j + '" title="' + tit + '"></button></div>');
+
+
+            addtxt = true;
+            if (j == 0) {
+                j = 1;
+            }
+            $(".img-desc .des_injury1_img").each(function(i, ele) {
+                if ($(ele).val() == '') {
+                    addtxt = false;
+                    $(ele).attr("data-point1", point1).attr("data-point2", point2);
+
+                }
+
                 label = $("<label/>").text("" + $(area).attr("title"))
                     .addClass("desc-label").attr('id', "desc-label" + j);
 
-                point2 = $(area).attr("data-map");
-                point1 = $(area).parent().attr("data-map");
+
                 txtarea = $("<textarea/>", {
                     'data-point1': point1,
                     'data-point2': point2,
@@ -1818,573 +1967,508 @@
                     "alt": j,
 
                 });
+                buttons = $(
+                    '<div><button type="button" class="fa fa-trash-o deletes" style="color:red;" alt="' +
+                    j + '" id="deletes' + j + '" title="' + tit + '"></button></div>');
+                j++;
+            });
+            if ($(area).attr("ref") == undefined) {
+                if (addtxt) {
 
-                buttons = $('<div><button type="button" class="fa fa-trash-o deletes" style="color:red;" alt="' +
-                    j +
-                    '" id="deletes' + j + '" title="' + tit + '"></button></div>');
+                    $(div).append(label).append(txtarea)
+                    $(".img-desc").append(div);
+                    $(div).append(txtarea).append(buttons)
 
-
-                addtxt = true;
-                if (j == 0) {
-                    j = 1;
-                }
-                $(".img-desc .des_injury1_img").each(function(i, ele) {
-                    if ($(ele).val() == '') {
-                        addtxt = false;
-                        $(ele).attr("data-point1", point1).attr("data-point2", point2);
-
-                    }
-
-                    label = $("<label/>").text("" + $(area).attr("title"))
-                        .addClass("desc-label").attr('id', "desc-label" + j);
-
-
-                    txtarea = $("<textarea/>", {
-                        'data-point1': point1,
-                        'data-point2': point2,
-                        "class": 'form-control des_injury1_img',
-                        "id": 'des_img' + j,
-                        "alt": j,
-
-                    });
-                    buttons = $(
-                        '<div><button type="button" class="fa fa-trash-o deletes" style="color:red;" alt="' +
-                        j + '" id="deletes' + j + '" title="' + tit + '"></button></div>');
-                    j++;
-                });
-                if ($(area).attr("ref") == undefined) {
-                    if (addtxt) {
-
-                        $(div).append(label).append(txtarea)
-                        $(".img-desc").append(div);
-                        $(div).append(txtarea).append(buttons)
-
-                    } else {
-                        $(".img-desc div:last-child .desc-label").text("" + $(area).attr("title"));
-                    }
-                }
-
-                if (desc != undefined) {
-                    $(txtarea).text(desc).val(desc);
-                }
-
-                // alert(j);
-            }
-
-            $(document).on('click', '.deletes', function() {
-                var photoimgDivss = $('.deletes');
-                if (photoimgDivss.length > 1) {
-                    var alt = $(this).attr('alt');
-                    $('#des_img' + alt).val('');
-
-                    if ($('#des_img' + alt).attr("data-point1") != undefined) {
-                        //map
-                        var point1 = $("[data-map='" + $('#des_img' + alt).attr("data-point1") + "']");
-                        if (point1.length == 0) {
-
-                            return;
-                        }
-
-                        //area
-                        var point2 = $(point1).find("[data-map='" + $('#des_img' + alt).attr(
-                            "data-point2") + "']");
-                        //console.log(point2);
-                        if (point2.length == 0) {
-                            return;
-                        }
-
-                        var canvas = $(point2).closest("div").find("canvas")[1];
-                        //  canvas = $("#image2_canvas_marked")[0];
-                        if ($(point1).attr("data-map") == "total") {
-                            canvas = $("#image1_canvas_marked")[0];
-                        }
-
-                        if ($(point1).attr("data-map") == "head") {
-                            canvas = $("#image1_canvas_marked")[0];
-                            $("[data-map~='total'] [data-map~='one']").attr("desc", "abc");
-                            myLeave(canvas);
-                            canvasMark($("map[data-map='total']"));
-                        } else if ($(point1).attr("data-map") == "hand-right") {
-                            canvas = $("#image1_canvas_marked")[0];
-                            $("[data-map~='total'] [data-map~='eleven']").attr("desc", "abc");
-                            myLeave(canvas);
-                            canvasMark($("map[data-map='total']"));
-                        } else if ($(point1).attr("data-map") == "hand-left") {
-                            canvas = $("#image1_canvas_marked")[0];
-                            $("[data-map~='total'] [data-map~='twelve']").attr("desc", "abc");
-                            myLeave(canvas);
-                            canvasMark($("map[data-map='total']"));
-                        } else if ($(point1).attr("data-map") == "foot-left") {
-                            canvas = $("#image1_canvas_marked")[0];
-                            $("[data-map~='total'] [data-map~='twentyseven']").attr("desc", "abc");
-                            myLeave(canvas);
-                            canvasMark($("map[data-map='total']"));
-                        } else if ($(point1).attr("data-map") == "foot-right") {
-                            canvas = $("#image1_canvas_marked")[0];
-                            $("[data-map~='total'] [data-map~='twentyeight']").attr("desc", "abc");
-                            myLeave(canvas);
-                            canvasMark($("map[data-map='total']"));
-                        }
-
-                        // console.log(point1);
-                        $(point2).attr("desc", $('#des_img' + alt).val());
-                        if ($('#des_img' + alt).val() == '') {
-                            $(point2).removeAttr("desc");
-                        }
-
-                        var parentClass = $(point2).parent().parent().attr('class').split(' ');
-                        //changeImage('.' + parentClass[1]);
-                        if (parentClass[0] == 'parts') {
-                            $('#des_img' + alt).blur(function() {
-                                changeImage('.' + parentClass[1]);
-                            });
-                        } else {
-                            //   alert('empty');
-                            //   console.log(canvas);
-                            //   console.log(point1);
-                            mapRebuilt(canvas, point1);
-                        }
-                    }
-
-                    $('#desc-label' + alt).remove();
-                    $('#desc-label' + alt).hide();
-
-                    $('#des_img' + alt).remove();
-                    $('#des_img' + alt).hide();
-
-                    $('#deletes' + alt).remove();
-                    $('#deletes' + alt).hide();
                 } else {
-                    Swal.fire('Sorry', 'Image cannot be empty', 'warning');
+                    $(".img-desc div:last-child .desc-label").text("" + $(area).attr("title"));
                 }
-
-
-
-
-            })
-
-            function initDescriptionJs() {
-
-                $(".des_injury1_img").change(function() {
-
-                    if ($(this).attr("data-point1") != undefined) {
-                        //map
-                        var point1 = $("[data-map='" + $(this).attr("data-point1") + "']");
-                        if (point1.length == 0) {
-
-                            return;
-                        }
-
-                        //area
-                        var point2 = $(point1).find("[data-map='" + $(this).attr("data-point2") + "']");
-                        //console.log(point2);
-                        if (point2.length == 0) {
-                            return;
-                        }
-
-                        var canvas = $(point2).closest("div").find("canvas")[1];
-                        //  canvas = $("#image2_canvas_marked")[0];
-                        if ($(point1).attr("data-map") == "total") {
-                            canvas = $("#image1_canvas_marked")[0];
-                        }
-
-                        if ($(point1).attr("data-map") == "head") {
-                            canvas = $("#image1_canvas_marked")[0];
-                            $("[data-map~='total'] [data-map~='one']").attr("desc", "abc");
-                            myLeave(canvas);
-                            canvasMark($("map[data-map='total']"));
-                        } else if ($(point1).attr("data-map") == "hand-right") {
-                            canvas = $("#image1_canvas_marked")[0];
-                            $("[data-map~='total'] [data-map~='eleven']").attr("desc", "abc");
-                            myLeave(canvas);
-                            canvasMark($("map[data-map='total']"));
-                        } else if ($(point1).attr("data-map") == "hand-left") {
-                            canvas = $("#image1_canvas_marked")[0];
-                            $("[data-map~='total'] [data-map~='twelve']").attr("desc", "abc");
-                            myLeave(canvas);
-                            canvasMark($("map[data-map='total']"));
-                        } else if ($(point1).attr("data-map") == "foot-left") {
-                            canvas = $("#image1_canvas_marked")[0];
-                            $("[data-map~='total'] [data-map~='twentyseven']").attr("desc", "abc");
-                            myLeave(canvas);
-                            canvasMark($("map[data-map='total']"));
-                        } else if ($(point1).attr("data-map") == "foot-right") {
-                            canvas = $("#image1_canvas_marked")[0];
-                            $("[data-map~='total'] [data-map~='twentyeight']").attr("desc", "abc");
-                            myLeave(canvas);
-                            canvasMark($("map[data-map='total']"));
-                        }
-
-                        // console.log(point1);
-                        $(point2).attr("desc", $(this).val());
-                        if ($(this).val() == '') {
-                            $(point2).removeAttr("desc");
-                        }
-
-                        var parentClass = $(point2).parent().parent().attr('class').split(' ');
-                        //changeImage('.' + parentClass[1]);
-                        if (parentClass[0] == 'parts') {
-                            $(this).blur(function() {
-                                changeImage('.' + parentClass[1]);
-                            });
-                        } else {
-                            mapRebuilt(canvas, point1);
-                        }
-                    }
-                });
             }
 
-            function mapTrigger(json, isString = false) {
+            if (desc != undefined) {
+                $(txtarea).text(desc).val(desc);
+            }
 
-                if (isString) {
-                    json = JSON.parse(json);
-                }
+            // alert(j);
+        }
 
-                myInit1($("div.img-content div.img-map img"), 1);
-                var map, flag = 0;
-                // console.log(json);
-                $.each(json, function(key, area) {
-                    map = $('[data-map~=' + key + ']');
-                    switch (key) {
-                        case 'head':
-                            $("[data-map~='total'] [data-map~='one']").attr("desc", "abc");
-                            break;
-                        case 'hand-right':
-                            $("[data-map~='total'] [data-map~='eleven']").attr("desc", "abc");
-                            break;
-                        case 'hand-left':
-                            $("[data-map~='total'] [data-map~='twelve']").attr("desc", "abc");
-                            break;
-                        case 'foot-right':
-                            $("[data-map~='total'] [data-map~='twentyeight']").attr("desc", "abc");
-                            break;
-                        case 'foot-left':
-                            $("[data-map~='total'] [data-map~='twentyseven']").attr("desc", "abc");
-                            break;
+        $(document).on('click', '.deletes', function() {
+            var photoimgDivss = $('.deletes');
+            if (photoimgDivss.length > 1) {
+                var alt = $(this).attr('alt');
+                $('#des_img' + alt).val('');
+
+                if ($('#des_img' + alt).attr("data-point1") != undefined) {
+                    //map
+                    var point1 = $("[data-map='" + $('#des_img' + alt).attr("data-point1") + "']");
+                    if (point1.length == 0) {
+
+                        return;
                     }
 
+                    //area
+                    var point2 = $(point1).find("[data-map='" + $('#des_img' + alt).attr(
+                        "data-point2") + "']");
+                    //console.log(point2);
+                    if (point2.length == 0) {
+                        return;
+                    }
 
-                    $.each(area, function(akey, desc) {
+                    var canvas = $(point2).closest("div").find("canvas")[1];
+                    //  canvas = $("#image2_canvas_marked")[0];
+                    if ($(point1).attr("data-map") == "total") {
+                        canvas = $("#image1_canvas_marked")[0];
+                    }
 
-                        //console.log("akey: "+akey);
-                        $(map).find('[data-map~=' + akey + ']').attr("desc", desc);
-                        descBox1(key, akey, desc);
-                    });
-                    $(map).find('area[desc]').each(function(i, area) {
-                        //console.log(area);
-                        // descBox(area, $(area).attr('desc'));
-                    });
+                    if ($(point1).attr("data-map") == "head") {
+                        canvas = $("#image1_canvas_marked")[0];
+                        $("[data-map~='total'] [data-map~='one']").attr("desc", "abc");
+                        myLeave(canvas);
+                        canvasMark($("map[data-map='total']"));
+                    } else if ($(point1).attr("data-map") == "hand-right") {
+                        canvas = $("#image1_canvas_marked")[0];
+                        $("[data-map~='total'] [data-map~='eleven']").attr("desc", "abc");
+                        myLeave(canvas);
+                        canvasMark($("map[data-map='total']"));
+                    } else if ($(point1).attr("data-map") == "hand-left") {
+                        canvas = $("#image1_canvas_marked")[0];
+                        $("[data-map~='total'] [data-map~='twelve']").attr("desc", "abc");
+                        myLeave(canvas);
+                        canvasMark($("map[data-map='total']"));
+                    } else if ($(point1).attr("data-map") == "foot-left") {
+                        canvas = $("#image1_canvas_marked")[0];
+                        $("[data-map~='total'] [data-map~='twentyseven']").attr("desc", "abc");
+                        myLeave(canvas);
+                        canvasMark($("map[data-map='total']"));
+                    } else if ($(point1).attr("data-map") == "foot-right") {
+                        canvas = $("#image1_canvas_marked")[0];
+                        $("[data-map~='total'] [data-map~='twentyeight']").attr("desc", "abc");
+                        myLeave(canvas);
+                        canvasMark($("map[data-map='total']"));
+                    }
+
+                    // console.log(point1);
+                    $(point2).attr("desc", $('#des_img' + alt).val());
+                    if ($('#des_img' + alt).val() == '') {
+                        $(point2).removeAttr("desc");
+                    }
+
+                    var parentClass = $(point2).parent().parent().attr('class').split(' ');
+                    //changeImage('.' + parentClass[1]);
+                    if (parentClass[0] == 'parts') {
+                        $('#des_img' + alt).blur(function() {
+                            alert(446);
+                            changeImage('.' + parentClass[1]);
+                        });
+                    } else {
+                        alert('empty');
+                        //   console.log(canvas);
+                        //   console.log(point1);
+                        mapRebuilt(canvas, point1);
+                    }
+                }
+
+                $('#desc-label' + alt).remove();
+                $('#desc-label' + alt).hide();
+
+                $('#des_img' + alt).remove();
+                $('#des_img' + alt).hide();
+
+                $('#deletes' + alt).remove();
+                $('#deletes' + alt).hide();
+            } else {
+                Swal.fire('Sorry', 'Image cannot be empty', 'warning');
+            }
+
+
+
+
+        })
+
+        function initDescriptionJs() {
+
+            $(".des_injury1_img").change(function() {
+
+                if ($(this).attr("data-point1") != undefined) {
+                    //map
+                    var point1 = $("[data-map='" + $(this).attr("data-point1") + "']");
+                    if (point1.length == 0) {
+
+                        return;
+                    }
+
+                    //area
+                    var point2 = $(point1).find("[data-map='" + $(this).attr("data-point2") + "']");
+                    //console.log(point2);
+                    if (point2.length == 0) {
+                        return;
+                    }
+
+                    var canvas = $(point2).closest("div").find("canvas")[1];
+                    //  canvas = $("#image2_canvas_marked")[0];
+                    if ($(point1).attr("data-map") == "total") {
+                        canvas = $("#image1_canvas_marked")[0];
+                    }
+
+                    if ($(point1).attr("data-map") == "head") {
+                        canvas = $("#image1_canvas_marked")[0];
+                        $("[data-map~='total'] [data-map~='one']").attr("desc", "abc");
+                        myLeave(canvas);
+                        canvasMark($("map[data-map='total']"));
+                    } else if ($(point1).attr("data-map") == "hand-right") {
+                        canvas = $("#image1_canvas_marked")[0];
+                        $("[data-map~='total'] [data-map~='eleven']").attr("desc", "abc");
+                        myLeave(canvas);
+                        canvasMark($("map[data-map='total']"));
+                    } else if ($(point1).attr("data-map") == "hand-left") {
+                        canvas = $("#image1_canvas_marked")[0];
+                        $("[data-map~='total'] [data-map~='twelve']").attr("desc", "abc");
+                        myLeave(canvas);
+                        canvasMark($("map[data-map='total']"));
+                    } else if ($(point1).attr("data-map") == "foot-left") {
+                        canvas = $("#image1_canvas_marked")[0];
+                        $("[data-map~='total'] [data-map~='twentyseven']").attr("desc", "abc");
+                        myLeave(canvas);
+                        canvasMark($("map[data-map='total']"));
+                    } else if ($(point1).attr("data-map") == "foot-right") {
+                        canvas = $("#image1_canvas_marked")[0];
+                        $("[data-map~='total'] [data-map~='twentyeight']").attr("desc", "abc");
+                        myLeave(canvas);
+                        canvasMark($("map[data-map='total']"));
+                    }
+
+                    // console.log(point1);
+                    $(point2).attr("desc", $(this).val());
+                    if ($(this).val() == '') {
+                        $(point2).removeAttr("desc");
+                    }
+
+                    var parentClass = $(point2).parent().parent().attr('class').split(' ');
+                    //changeImage('.' + parentClass[1]);
+                    if (parentClass[0] == 'parts') {
+                        $(this).blur(function() {
+                            changeImage('.' + parentClass[1]);
+                        });
+                    } else {
+                        mapRebuilt(canvas, point1);
+                    }
+                }
+            });
+        }
+
+        function mapTrigger(json, isString = false) {
+
+            if (isString) {
+                json = JSON.parse(json);
+            }
+
+            myInit1($("div.img-content div.img-map img"), 1);
+            var map, flag = 0;
+            // console.log(json);
+            $.each(json, function(key, area) {
+                map = $('[data-map~=' + key + ']');
+                switch (key) {
+                    case 'head':
+                        $("[data-map~='total'] [data-map~='one']").attr("desc", "abc");
+                        break;
+                    case 'hand-right':
+                        $("[data-map~='total'] [data-map~='eleven']").attr("desc", "abc");
+                        break;
+                    case 'hand-left':
+                        $("[data-map~='total'] [data-map~='twelve']").attr("desc", "abc");
+                        break;
+                    case 'foot-right':
+                        $("[data-map~='total'] [data-map~='twentyeight']").attr("desc", "abc");
+                        break;
+                    case 'foot-left':
+                        $("[data-map~='total'] [data-map~='twentyseven']").attr("desc", "abc");
+                        break;
+                }
+
+
+                $.each(area, function(akey, desc) {
+
+                    //console.log("akey: "+akey);
+                    $(map).find('[data-map~=' + akey + ']').attr("desc", desc);
+                    descBox1(key, akey, desc);
                 });
+                $(map).find('area[desc]').each(function(i, area) {
+                    //console.log(area);
+                    // descBox(area, $(area).attr('desc'));
+                });
+            });
+            setTimeout(function() {
+                $(".des_injury1_img").change();
+            }, 300);
+            initDescriptionJs();
+
+            window.mapEdit = true;
+            canvasMark($("map[data-map='total']"));
+        }
+
+        function changeImage(part) {
+            $("div.image-container .img-map-parts .parts").hide();
+            if (part != undefined) {
+                $("div.image-container .img-map-parts .parts" + part).show();
+                $('div.image-container .img-map-parts').prepend($("div.image-container .img-map-parts .parts" +
+                    part));
+            }
+
+            var img = $("div.image-container .img-map-parts .parts:visible img");
+
+            $('.image-container .img-map-parts .parts' + part + ':visible img[usemap]').rwdImageMaps();
+            if (img.length != 0) {
+                myInit1(img);
                 setTimeout(function() {
-                    $(".des_injury1_img").change();
-                }, 300);
-                initDescriptionJs();
+                    triggerMapClick1();
+                }, 500);
 
-                window.mapEdit = true;
-                canvasMark($("map[data-map='total']"));
             }
 
-            function changeImage(part) {
-                $("div.image-container .img-map-parts .parts").hide();
-                if (part != undefined) {
-                    $("div.image-container .img-map-parts .parts" + part).show();
-                    $('div.image-container .img-map-parts').prepend($("div.image-container .img-map-parts .parts" +
-                        part));
-                }
+            if ('image2_canvas' in window.canvas_obj) {
+                canvasClear($("#image2_canvas")[0]);
+                canvasClear($("#image2_canvas_marked")[0]);
+            }
 
-                var img = $("div.image-container .img-map-parts .parts:visible img");
 
-                $('.image-container .img-map-parts .parts' + part + ':visible img[usemap]').rwdImageMaps();
-                if (img.length != 0) {
-                    myInit1(img);
-                    setTimeout(function() {
-                        triggerMapClick1();
-                    }, 500);
+            var map = $(img).closest("div").find("map");
 
-                }
+            if (part != '') {
 
                 if ('image2_canvas' in window.canvas_obj) {
-                    canvasClear($("#image2_canvas")[0]);
-                    canvasClear($("#image2_canvas_marked")[0]);
+
+                    setTimeout(function() {
+
+                        mapRebuilt($("#image2_canvas")[0], map);
+                    }, 1);
                 }
-
-
-                var map = $(img).closest("div").find("map");
-
-                if (part != '') {
-
-                    if ('image2_canvas' in window.canvas_obj) {
-
-                        setTimeout(function() {
-
-                            mapRebuilt($("#image2_canvas")[0], map);
-                        }, 1);
-                    }
-                    return;
-                }
-
+                return;
             }
 
+        }
 
-            function myInit1(image, type = 2, callback) {
-                // get the target image
-                var img = $(image)[0];
-                var x, y, w, h;
-                // get it's position and width+height
-                x = img.offsetLeft;
-                y = img.offsetTop;
-                w = img.clientWidth;
-                h = img.clientHeight;
-                // move the canvas, so it's contained by the same parent as the image
-                //var can = $('#myCanvas')[0];
-                //$(img).parent().append(can);
 
-                var color, canvas_name, canvas_count;
-                canvas_count = 2;
-                for (i = 0; i < canvas_count; i++) {
-                    color = 'rgba(255, 165, 0, 0.69)';
-                    canvas_name = "#image" + type + "_canvas";
+        function myInit1(image, type = 2, callback) {
+            // get the target image
+            var img = $(image)[0];
+            var x, y, w, h;
+            // get it's position and width+height
+            x = img.offsetLeft;
+            y = img.offsetTop;
+            w = img.clientWidth;
+            h = img.clientHeight;
+            // move the canvas, so it's contained by the same parent as the image
+            //var can = $('#myCanvas')[0];
+            //$(img).parent().append(can);
+
+            var color, canvas_name, canvas_count;
+            canvas_count = 2;
+            for (i = 0; i < canvas_count; i++) {
+                color = 'rgba(255, 165, 0, 0.69)';
+                canvas_name = "#image" + type + "_canvas";
+                //alert(canvas_name);
+                if (i == 1) {
+                    color = 'rgba(255, 0, 0, 0.65)';
+                    canvas_name = "#image" + type + "_canvas_marked";
                     //alert(canvas_name);
-                    if (i == 1) {
-                        color = 'rgba(255, 0, 0, 0.65)';
-                        canvas_name = "#image" + type + "_canvas_marked";
-                        //alert(canvas_name);
-                    }
-                    //can = $(img).parent().find("canvas")[i];
-                    can = $(canvas_name)[0];
-                    // place the canvas in front of the image
-                    can.style.zIndex = 1;
-                    // position it over the image
-                    can.style.left = x + 'px';
-                    can.style.top = y + 'px';
-                    // make same size as the image
-                    can.setAttribute('width', w + 'px');
-                    can.setAttribute('height', h + 'px');
-                    // get it's context
-                    window.canvas_obj[$(can).attr("id")] = can.getContext('2d');
-                    // console.log(window.canvas_obj[$(can).attr("id")]);
-                    // set the 'default' values for the colour/width of fill/stroke operations
-                    window.canvas_obj[$(can).attr("id")].fillStyle = color;
-                    window.canvas_obj[$(can).attr("id")].strokeStyle = color;
-                    window.canvas_obj[$(can).attr("id")].lineWidth = 2;
-                    $(window).resize();
-                    if (callback != undefined) {
-                        eval(callback);
-                    }
                 }
-
-            }
-
-            function canvasClear(canvas) {
-
-                return window.canvas_obj[$(canvas).attr("id")].clearRect(0, 0, canvas.width, canvas.height);
-            }
-
-            function mapRebuilt(canvas, map) {
-                window.canvas_obj[$(canvas).attr("id")].clearRect(0, 0, canvas.width, canvas.height);
-                canvasMark(map)
-            }
-
-            function canvasMark(map) {
-                var type = 2;
-                if ($(map).attr("data-map") == "total") {
-                    type = 1;
+                //can = $(img).parent().find("canvas")[i];
+                can = $(canvas_name)[0];
+                // place the canvas in front of the image
+                can.style.zIndex = 1;
+                // position it over the image
+                can.style.left = x + 'px';
+                can.style.top = y + 'px';
+                // make same size as the image
+                can.setAttribute('width', w + 'px');
+                can.setAttribute('height', h + 'px');
+                // get it's context
+                window.canvas_obj[$(can).attr("id")] = can.getContext('2d');
+                // console.log(window.canvas_obj[$(can).attr("id")]);
+                // set the 'default' values for the colour/width of fill/stroke operations
+                window.canvas_obj[$(can).attr("id")].fillStyle = color;
+                window.canvas_obj[$(can).attr("id")].strokeStyle = color;
+                window.canvas_obj[$(can).attr("id")].lineWidth = 2;
+                $(window).resize();
+                if (callback != undefined) {
+                    eval(callback);
                 }
-
-                $(map).find("area[desc]").each(function(i, area) {
-                    var coordStr = $(area).attr('coords');
-                    var canvas = $("#image" + type + "_canvas_marked")[0];
-                    drawPoly1(coordStr, canvas);
-                });
             }
 
-            function myLeave(src, type = 0) {
-                var canvas;
-                var canvas_name = "#image1_canvas";
-                if (type == 1) {
-                    canvas_name = "#image2_canvas";
-                }
-                canvas = $(canvas_name)[0];
-                //canvas = $(src).closest("div").find("canvas");
-                canvas = src;
-                window.canvas_obj[$(canvas).attr("id")].clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function canvasClear(canvas) {
+
+            return window.canvas_obj[$(canvas).attr("id")].clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function mapRebuilt(canvas, map) {
+            window.canvas_obj[$(canvas).attr("id")].clearRect(0, 0, canvas.width, canvas.height);
+            canvasMark(map)
+        }
+
+        function canvasMark(map) {
+            var type = 2;
+            if ($(map).attr("data-map") == "total") {
+                type = 1;
             }
 
-            function drawPoly1(coOrdStr, canvas) {
-                var mCoords = coOrdStr.split(',');
-                var i, n;
-                n = mCoords.length;
-                window.canvas_obj[$(canvas).attr("id")].beginPath();
-                window.canvas_obj[$(canvas).attr("id")].moveTo(mCoords[0], mCoords[1]);
-                for (i = 2; i < n; i += 2) {
-                    window.canvas_obj[$(canvas).attr("id")].lineTo(mCoords[i], mCoords[i + 1]);
-                }
-                window.canvas_obj[$(canvas).attr("id")].lineTo(mCoords[0], mCoords[1]);
-                window.canvas_obj[$(canvas).attr("id")].closePath();
-                window.canvas_obj[$(canvas).attr("id")].fill();
+            $(map).find("area[desc]").each(function(i, area) {
+                var coordStr = $(area).attr('coords');
+                var canvas = $("#image" + type + "_canvas_marked")[0];
+                drawPoly1(coordStr, canvas);
+            });
+        }
+
+        function myLeave(src, type = 0) {
+            var canvas;
+            var canvas_name = "#image1_canvas";
+            if (type == 1) {
+                canvas_name = "#image2_canvas";
             }
+            canvas = $(canvas_name)[0];
+            //canvas = $(src).closest("div").find("canvas");
+            canvas = src;
+            window.canvas_obj[$(canvas).attr("id")].clearRect(0, 0, canvas.width, canvas.height);
+        }
 
-            function drawRect1(coOrdStr, canvas) {
-                var mCoords = coOrdStr.split(',');
-                var top, left, bot, right;
-                left = mCoords[0];
-                top = mCoords[1];
-                right = mCoords[2];
-                bot = mCoords[3];
-                window.canvas_obj[$(canvas).attr("id")].strokeRect(left, top, right - left, bot - top);
+        function drawPoly1(coOrdStr, canvas) {
+            var mCoords = coOrdStr.split(',');
+            var i, n;
+            n = mCoords.length;
+            window.canvas_obj[$(canvas).attr("id")].beginPath();
+            window.canvas_obj[$(canvas).attr("id")].moveTo(mCoords[0], mCoords[1]);
+            for (i = 2; i < n; i += 2) {
+                window.canvas_obj[$(canvas).attr("id")].lineTo(mCoords[i], mCoords[i + 1]);
             }
+            window.canvas_obj[$(canvas).attr("id")].lineTo(mCoords[0], mCoords[1]);
+            window.canvas_obj[$(canvas).attr("id")].closePath();
+            window.canvas_obj[$(canvas).attr("id")].fill();
+        }
 
-            $(document).ready(function() {
+        function drawRect1(coOrdStr, canvas) {
+            var mCoords = coOrdStr.split(',');
+            var top, left, bot, right;
+            left = mCoords[0];
+            top = mCoords[1];
+            right = mCoords[2];
+            bot = mCoords[3];
+            window.canvas_obj[$(canvas).attr("id")].strokeRect(left, top, right - left, bot - top);
+        }
 
-                $.validator.addMethod('alpha_dash_space', function(value) {
-                        return /^[A-Z%()a-z/,.]*$/.test(value);
-                    },
-                    "Please Enter valid Alphabetic characters with allowed special charters are /,.%()");
+        $(document).ready(function() {
 
+            $.validator.addMethod('alpha_dash_space', function(value) {
+                    return /^[A-Z%()a-z/,.]*$/.test(value);
+                },
+                "Please Enter valid Alphabetic characters with allowed special charters are /,.%()");
 
+            $("#injuryform").validate({
 
-                $("#injuryform").validate({
+                // rules: {
+                //     "inci_event_related": {
+                //         required: true,
+                //         maxlength: 100,
+                //         //programming_char:true,
+                //         minlength: 3
+                //     },
 
-                    // rules: {
-                    //     "inci_event_related": {
-                    //         required: true,
-                    //         maxlength: 100,
-                    //         //programming_char:true,
-                    //         minlength: 3
-                    //     },
+                // },
+                // messages: {
 
-                    // },
-                    // messages: {
+                //     "inci_event_related": {
+                //         required: "Incident Event Related Name is required"
+                //     },
 
-                    //     "inci_event_related": {
-                    //         required: "Incident Event Related Name is required"
-                    //     },
+                // },
+                submitHandler: function(form) {
+                    var formDatas = $('#injuryform').serialize();
 
-                    // },
-                    submitHandler: function(form) {
-                        var formDatas = $('#injuryform').serialize();
+                    var imgdata = $('#injuryform').serializeArray();
 
-                        var imgdata = $('#injuryform').serializeArray();
+                    if (imgdata[1]['name'] == "imgMapdata" && imgdata[1]['value'] ==
+                        '{"map":{}}') {
+                        Swal.fire('Error', 'Please Select Body Parts', 'error');
 
-                        if (imgdata[1]['name'] == "imgMapdata" && imgdata[1]['value'] ==
-                            '{"map":{}}') {
-                            Swal.fire('Error', 'Please Select Body Parts', 'error');
+                    } else {
 
+                        var allFilleddesc = true;
+                        $(".img-desc .des_injury1_img").each(function(i, ele) {
+                            if ($(ele).val() == '') {
+                                allFilleddesc = false;
+                                return false; // Exit the loop early
+                            }
+                        });
+
+                        if (!allFilleddesc) {
+                            Swal.fire('Error', 'Please Enter The Body Parts Descriptions',
+                                'error');
                         } else {
 
-                            var allFilleddesc = true;
-                            $(".img-desc .des_injury1_img").each(function(i, ele) {
-                                if ($(ele).val() == '') {
-                                    allFilleddesc = false;
-                                    return false; // Exit the loop early
+                            var url =
+                                "{{ admin_url('incident/accidentReport/addInjury') }}";
+
+                            $("#bodypartimage").val("");
+                            const image = document.getElementById('img-imgmap1');
+                            const canvas = document.getElementById('image1_canvas_marked');
+
+                            const tempCanvas = document.createElement('canvas');
+
+                            const tempCtx = tempCanvas.getContext('2d');
+                            tempCanvas.width = canvas.width;
+                            tempCanvas.height = canvas.height;
+
+                            tempCtx.drawImage(image, 0, 0);
+                            tempCtx.drawImage(canvas, 0, 0);
+
+                            const combinedImageUrl = tempCanvas.toDataURL('image/png');
+                            $("#bodypartimage").val(combinedImageUrl);
+                            console.log(combinedImageUrl);
+
+                            var acc_prim_id = $("#acc_prim_id").val();
+                            var formDatas = new URLSearchParams($('#injuryform')
+                                .serialize());
+                            formDatas.append('acc_prim_id',
+                                acc_prim_id); // Append the new key-value pair
+                            var data = formDatas.toString()
+
+
+                            $.ajax({
+                                type: 'ajax',
+                                dataType: 'json',
+                                method: 'post',
+                                data: data,
+                                url: url,
+                                success: function(data) {
+                                    $('.alert-msg').html(
+                                        '<span style="color:green;">Body Part Saved Successfully!</span>'
+                                    );
+                                    $(".alert-msg").show().delay(3000)
+                                        .fadeOut();
+                                    setTimeout(function() {
+                                        $("#injury_model").modal(
+                                            'hide');
+                                        setTimeout(function() {}, 500);
+                                    }, 1000);
+
+                                    var myModal = $('#injury_model').on('shown',
+                                        function() {
+                                            clearTimeout(myModal.data(
+                                                'hideInteval'))
+                                            var id = setTimeout(function() {
+                                                myModal.modal(
+                                                    'hide');
+                                            });
+                                        })
+
                                 }
                             });
-
-                            if (!allFilleddesc) {
-                                Swal.fire('Error', 'Please Enter The Body Parts Descriptions',
-                                    'error');
-                            } else {
-
-                                var url =
-                                    "{{ admin_url('incident_investigation/addInjury') }}";
-
-                                $("#bodypartimage").val("");
-                                const image = document.getElementById('img-imgmap1');
-                                const canvas = document.getElementById('image1_canvas_marked');
-
-                                const tempCanvas = document.createElement('canvas');
-
-                                const tempCtx = tempCanvas.getContext('2d');
-                                tempCanvas.width = canvas.width;
-                                tempCanvas.height = canvas.height;
-
-                                tempCtx.drawImage(image, 0, 0);
-                                tempCtx.drawImage(canvas, 0, 0);
-
-                                const combinedImageUrl = tempCanvas.toDataURL('image/png');
-                                $("#bodypartimage").val(combinedImageUrl);
-                                console.log(combinedImageUrl);
-
-                                var acc_prim_id = $("#acc_prim_id").val();
-                                var formDatas = new URLSearchParams($('#injuryform')
-                                    .serialize());
-                                formDatas.append('acc_prim_id',
-                                    acc_prim_id); // Append the new key-value pair
-                                var data = formDatas.toString()
-
-
-                                $.ajax({
-                                    type: 'ajax',
-                                    dataType: 'json',
-                                    method: 'post',
-                                    data: data,
-                                    url: url,
-                                    success: function(data) {
-                                        $('.alert-msg').html(
-                                            '<span style="color:green;">Body Part Saved Successfully!</span>'
-                                        );
-                                        $(".alert-msg").show().delay(3000)
-                                            .fadeOut();
-                                        setTimeout(function() {
-                                            $("#injury_model").modal(
-                                                'hide');
-                                            setTimeout(function() {}, 500);
-                                        }, 1000);
-
-                                        var myModal = $('#injury_model').on('shown',
-                                            function() {
-                                                clearTimeout(myModal.data(
-                                                    'hideInteval'))
-                                                var id = setTimeout(function() {
-                                                    myModal.modal(
-                                                        'hide');
-                                                });
-                                            })
-
-                                    }
-                                });
-                            }
                         }
                     }
+                }
 
-                });
-
-                // $('.clearbodyparts').on('click', function() {
-                //     var bpid = $("#injury_model [name='body_prim_id']").val();
-
-                //     if (bpid == '') {
-
-                //     } else {
-                //         $.ajax({
-                //             type: 'post',
-                //             url: "{{ admin_url('incident_investigation/deletebodayparts') }}",
-                //             method: 'POST',
-                //             data: {
-                //                 bid: bpid
-                //             },
-                //             success: function(data) {
-                //                 $('.alert-msg').html(
-                //                     '<span style="color:green;">Body Part Cleared Successfully!</span>'
-                //                     );
-                //                 $(".alert-msg").show().delay(3000).fadeOut();
-                //                 setTimeout(function() {
-                //                     $("#injury_model").modal('hide');
-                //                     setTimeout(function() {}, 500);
-                //                 }, 1000);
-
-                //                 var myModal = $('#injury_model').on('shown', function() {
-                //                     clearTimeout(myModal.data('hideInteval'))
-                //                     var id = setTimeout(function() {
-                //                         myModal.modal('hide');
-                //                     });
-                //                 })
-
-                //             }
-
-                //         });
-                //     }
-                // });
             });
+
+
         });
     </script>
 @endpush

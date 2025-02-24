@@ -1166,6 +1166,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/Submit', [AccidentReportController::class, 'importSubmit']);
                 Route::post('/status', [AccidentReportController::class, 'statusChange']);
                 Route::post('/unique', [AccidentReportController::class, 'Uniquecheck']);
+                Route::get('/getEmployeeDetails/{emp_id}', [AccidentReportController::class, 'getEmployeeDetails']);
                 Route::get('/fetchEmployeeDetails/{emp_code}', [AccidentReportController::class, 'fetchEmployeeDetails']);
                 Route::get('/investigation/{accident_id}', [AccidentReportController::class, 'investigation']);
                 Route::post('/investigation/submit', [AccidentReportController::class, 'investigationSubmit']);
@@ -1174,6 +1175,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/getemployeename', [AccidentReportController::class, 'employeename']);
                 Route::get('/fetchPersonDetails/{id}/{type}', [AccidentReportController::class, 'fetchPersonDetails']);
                 Route::get('/fetchEmployeeOrWorkerList/{type}', [AccidentReportController::class, 'fetchEmployeeOrWorkerList']);
+                Route::post('/addInjury', [AccidentReportController::class, 'addInjury']);
+                Route::post('/deletebodayparts', [AccidentReportController::class, 'deletebodayparts']);
 
             });
 

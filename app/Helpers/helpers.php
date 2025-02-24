@@ -1046,6 +1046,12 @@ if (!function_exists('getHost')) {
     }
 }
 
+function postData($results = array(), $postval = '', $retunval = '')
+{
+    $results = (is_array($results) && $results != FALSE) ? (object) $results : $results;
+    return ($results != FALSE && isset($results->$postval) && ($results->$postval != '')) ? $results->$postval : $retunval;
+}
+
 /**
  * Notificaion Save
  */
