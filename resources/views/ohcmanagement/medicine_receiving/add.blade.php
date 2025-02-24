@@ -36,18 +36,21 @@
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="medicine_name" class="form-label require ">Medicine
-                                                        Name</label>
-                                                    <select name="medicine_id" id="medicine_id"
-                                                        class="form-control form-control-sm single-select"
-                                                        style="width: 100%">
+                                                    <label for="medicine_name" class="form-label require">Medicine Name</label>
+                                                    <select name="medicine_id" id="medicine_id" class="form-control form-control-sm single-select" style="width: 100%">
                                                         <option value="">Select the Medicine Name</option>
-                                                        @foreach ($medicineStock as $list )
-                                                        <option value="{{ encryptId($list->id)}}">{{getMedicinename($list->medicine_id)}}</option>
+                                                        @foreach ($medicineStock as $list)
+                                                            @php
+                                                                $isDisabled = in_array($list->medicine_id, $existingMedicineIds) ? 'disabled' : '';
+                                                            @endphp
+                                                            <option value="{{ encryptId($list->medicine_id) }}" {{ $isDisabled }}>
+                                                                {{ getMedicinename($list->medicine_id) }}
+                                                            </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
                                             </div>
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="hsn_id" class="form-label require">HSN Number</label>
@@ -63,9 +66,10 @@
                                                         class="form-control single-select form-control-sm"
                                                         style="width: 100%">
                                                         <option value="">Select the Pack</option>
-                                                         @foreach ($pack as $list )
-                                                         <option value="{{ encryptId($list->id)}}">{{$list->pack}}</option>
-                                                         @endforeach
+                                                        @foreach ($pack as $list)
+                                                            <option value="{{ encryptId($list->id) }}">{{ $list->pack }}
+                                                            </option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -154,6 +158,7 @@
 
         $('#medicine_id').on('change', function() {
             var medicineId = $('#medicine_id').val();
+            console.log(medicineId);
             if (medicineId) {
                 $.ajax({
                     url: "{{ admin_url('ohc/medicine-receiving-form/hsn-number') }}",
@@ -187,6 +192,7 @@
 
 
 
+
         $(function() {
 
             $.validator.addMethod(
@@ -215,7 +221,7 @@
                     quantity: {
                         required: true,
                         digits: true,
-                        min:1
+                        min: 1
 
                     },
                     batch_number: {

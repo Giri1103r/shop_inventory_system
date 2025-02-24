@@ -89,7 +89,7 @@ class MedicineFirstAidController extends Controller
                             $btn .= '<a href="' . admin_url('ohc/medicine-first-aid/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
                             // if (CheckUserPermission('edit')) {
-                            // $btn .= '<a href="' . admin_url('ohc/medicine-first-aid/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
+                            $btn .= '<a href="' . admin_url('ohc/medicine-first-aid/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             // }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
 
@@ -125,7 +125,7 @@ class MedicineFirstAidController extends Controller
         try {
             $unit = $this->unit->getuserunit();
             $departmentList = $this->department->getunitwiseDepartment();
-            $medicine = $this->medicine_stock->getMedicinestockdata();
+            $medicine = $this->inventory->getmedicineUnitwise();
             $data = array(
                 'medicine' => $medicine,
                 'unit' => $unit,
@@ -174,23 +174,13 @@ class MedicineFirstAidController extends Controller
                     $issuedQuantity = $medicine->quantity;
 
 
-                    $medicine_stock = $this->medicine_stock
-                        ->where('id', $medicine_id)
-                        ->where('unit_id', $unitId)
-                        ->first();
-
-                    if ($medicine_stock) {
-                        $medicine_stock->decrement('quantity', $issuedQuantity);
-                    }
-
-
                     $inventory = $this->inventory
                         ->where('medicine_id', $medicine_id)
                         ->where('unit_id', $unitId)
                         ->first();
 
                     if ($inventory) {
-                        $inventory->update(['total_first_aid' => $issuedQuantity]);
+                        $inventory->increment('total_first_aid', $issuedQuantity);
                         $inventory->decrement('balance', $issuedQuantity);
                     }
                 }
@@ -198,15 +188,14 @@ class MedicineFirstAidController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-             report($ex);
+                report($ex);
 
 
                 Session::flash('error', 'Something went wrong, Please try again later!');
             }
 
-           
-            return redirect(admin_url('ohc/medicine-first-aid/list'));
 
+            return redirect(admin_url('ohc/medicine-first-aid/list'));
         } catch (Exception $ex) {
 
 
@@ -219,76 +208,110 @@ class MedicineFirstAidController extends Controller
 
 
 
-    // public function edit(Request $request)
-    // {
-    //     try {
-    //         $id = decryptId($request->id);
+    public function edit(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
 
 
-    //         $user_medicine_first_aid = $this->user_medicine_first_aid->selectOne($id);
-    //         $departmentList = $this->department->getdepartment();
-    //         $medicine_first_aid = $this->medicine_first_aid->selectOne($id);
-    //         $departmentList = $this->department->getdepartment();
-    //         $unit = $this->unit->getuserunit();
-    //         $medicine = $this->medicine_stock->getMedicineIssuanceStock();
-    //         $data = array(
-    //             'medicine' => $medicine,
-    //             'unit' => $unit,
-    //             'departmentList' => $departmentList,
-    //             'user_medicine_first_aid' => $user_medicine_first_aid,
-    //             'medicine_first_aid' => $medicine_first_aid
-    //         );
-    //         // dd($data );
-    //         return view('ohcmanagement.medicine-first-aid.edit', $data);
-    //     } catch (Exception $ex) {
-    //         dd($ex);
-    //         Session::flash('error', 'Something went wrong, Please try after sometimes!');
-    //         return redirect(admin_url('ohc/medicine-first-aid/list'));
-    //     }
-    // }
+            $user_medicine_first_aid = $this->user_medicine_first_aid->selectOne($id);
+            $departmentList = $this->department->getdepartment();
+            $medicine_first_aid = $this->medicine_first_aid->selectOne($id);
+            $departmentList = $this->department->getdepartment();
+            $unit = $this->unit->getuserunit();
+            $medicine = $this->inventory->getmedicineUnitwise();
+            $data = array(
+                'medicine' => $medicine,
+                'unit' => $unit,
+                'departmentList' => $departmentList,
+                'user_medicine_first_aid' => $user_medicine_first_aid,
+                'medicine_first_aid' => $medicine_first_aid
+            );
+            // dd($data );
+            return view('ohcmanagement.medicine-first-aid.edit', $data);
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medicine-first-aid/list'));
+        }
+    }
 
-    // public function update(Request $request)
-    // {
-    //     try {
-    //         $id = decryptId($request->id);
-    //         $rules = [
-    //             'unit_id' => 'required',
-    //             'department_id' => 'required',
-    //             'issue_date' => 'required',
+    public function update(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
 
-    //         ];
-    //         $messages = [
-    //             'department_id.required' => 'Please select a Deparment.',
-    //             'unit_id.required' => 'Please select a unit.',
-    //             'issue_date.required' => 'Please select the Issued date.',
-    //         ];
-    //         $validator = Validator::make($request->all(), $rules, $messages);
-    //         if ($validator->fails()) {
-    //             return redirect()->back()->withErrors($validator)->withInput();
-    //         }
+            $validator = Validator::make($request->all(), [
+                'unit_id' => 'required',
+                'department_id' => 'required',
+                'issue_date' => 'required',
+            ], [
+                'department_id.required' => 'Please select a Department.',
+                'unit_id.required' => 'Please select a unit.',
+                'issue_date.required' => 'Please select the Issued date.',
+            ]);
 
-    //         try {
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
 
-    //             $user_medicine_first_aid = $this->user_medicine_first_aid->updates($id);
-    //             $this->medicine_first_aid->updates($id);
+            $user_medicine_first_aid = $this->user_medicine_first_aid->selectOne($id);
+            $medicine_first_aid = $this->medicine_first_aid->selectOne($id);
+            // dd($user_medicine_first_aid->unit_id);
+            foreach ($request->medicine_id as $index => $medicine_id) {
+                $medicineRecord = $medicine_first_aid->where('medicine_id', $medicine_id)->where('reference_id', $id)->first();
+
+                if (!$medicineRecord) {
+                   
+                    continue;
+                }
+
+                $newQuantity = $request->quantity[$index];
+                $oldquantity = $medicineRecord->quantity;
+
+                if ($oldquantity > $newQuantity) {
+                    $difference = $oldquantity - $newQuantity;
+
+                    $this->inventory
+                        ->where('medicine_id', $medicine_id)
+                        ->where('unit_id', $user_medicine_first_aid->unit_id)
+                        ->decrement('total_first_aid', $difference);
+
+                    $this->inventory
+                        ->where('medicine_id', $medicine_id)
+                        ->where('unit_id', $user_medicine_first_aid->unit_id)
+                        ->increment('balance', $difference);
+                } elseif ($oldquantity < $newQuantity) {
+                    $difference = $newQuantity - $oldquantity;
+
+                    $this->inventory
+                        ->where('medicine_id', $medicine_id)
+                        ->where('unit_id', $user_medicine_first_aid->unit_id)
+                        ->increment('total_first_aid', $difference);
+
+                    $this->inventory
+                        ->where('medicine_id', $medicine_id)
+                        ->where('unit_id', $user_medicine_first_aid->unit_id)
+                        ->decrement('balance', $difference);
+                }
+            }
 
 
 
 
-    //             Session::flash('success', 'Your data has been Updated successfully!');
-    //         } catch (Exception $ex) {
-    //             dd($ex);
-    //             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-    //         }
+            $this->user_medicine_first_aid->updates($id);
+            $this->medicine_first_aid->updates($id, $user_medicine_first_aid);
 
-    //         return redirect(admin_url('ohc/medicine-first-aid/list'));
-    //     } catch (Exception $ex) {
 
-    //         dd($ex);
-    //         Session::flash('error', 'Something went wrong, Please try after sometimes!');
-    //         return redirect(admin_url('ohc/medicine-first-aid/list'));
-    //     }
-    // }
+            Session::flash('success', 'Your data has been updated successfully!');
+            return redirect(admin_url('ohc/medicine-first-aid/list'));
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try again later!');
+            return redirect(admin_url('ohc/medicine-first-aid/list'));
+        }
+    }
+
 
     public function view(Request $request)
     {
@@ -313,12 +336,12 @@ class MedicineFirstAidController extends Controller
     }
     public function quantity(Request $request, $quantity_id)
     {
-        $id = ($quantity_id);
+        $id = decryptId($quantity_id);
 
-        $availableQuantity = $this->medicine_stock->getAvailableQuantity($id);
+        $availableQuantity = $this->inventory->getunitwiseAvailableQuantity($id);
 
         return response()->json(
-            ['available_quantity' => $availableQuantity->quantity]
+            ['available_quantity' => $availableQuantity->balance]
         );
     }
 
@@ -374,8 +397,25 @@ class MedicineFirstAidController extends Controller
         try {
 
 
-            $this->medicine_first_aid->deleterecord($id);
+            $ids = decryptId($id);
+
+            $data =    $this->medicine_first_aid->firstdata($ids);
+
+            $referenceId =   $data->reference_id;
+            $user_medicine_first_aid = $this->user_medicine_first_aid->selectOne($referenceId);
+
+            $this->inventory->where('unit_id', $user_medicine_first_aid->unit_id)
+                ->where('medicine_id', $data->medicine_id)
+                ->decrement('total_first_aid', $data->quantity);
+
+            $this->inventory->where('unit_id', $user_medicine_first_aid->unit_id)
+                ->where('medicine_id', $data->medicine_id)
+                ->increment('balance', $data->quantity);
+            $this->medicine_first_aid->deleterecord($ids);
+            return response()->json(['status' => 'success', 'msg' => 'Deleted successfully'], 200);
         } catch (Exception $ex) {
+            dd($ex);
+            return response()->json(['status' => 'error', 'msg' => 'Something went wrong'], 200);
         }
     }
 
@@ -444,5 +484,16 @@ class MedicineFirstAidController extends Controller
                 'name' => $medicine->medicine_id,
             ];
         }));
+    }
+
+    public function editquantity(Request $request, $quantity_id)
+    {
+        $id = ($quantity_id);
+
+        $availableQuantity = $this->inventory->getunitwiseAvailableQuantity($id);
+
+        return response()->json(
+            ['available_quantity' => $availableQuantity->balance]
+        );
     }
 }

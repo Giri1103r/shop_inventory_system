@@ -35,7 +35,8 @@ class Inventory extends Model
         'trash' => 'NO',
     ];
 
-    public function list(){
+    public function list()
+    {
         $request = request();
         $search = '';
         $query = $this->select('ohc_report_inventory.*');
@@ -72,7 +73,8 @@ class Inventory extends Model
         return $datas;
     }
 
-    public function store($details, $unitIds) {
+    public function store($details, $unitIds)
+    {
         $insert_array = [];
 
         foreach ($unitIds as $unitId) {
@@ -97,7 +99,7 @@ class Inventory extends Model
 
     public function storepurchasedata($details)
     {
-      return $this->where('unit_id',$details->unit_id)->where('medicine_id',$details->medicine_id)->update(['total_purchase'=> $details->quantity]);
+        return $this->where('unit_id', $details->unit_id)->where('medicine_id', $details->medicine_id)->update(['total_purchase' => $details->quantity]);
     }
     protected static function booted()
     {
@@ -110,7 +112,105 @@ class Inventory extends Model
         // });
     }
 
-    public function getmedicinedata(){
-        return $this->where('unit_id',1)->where('status',1)->whereColumn('balance','<','threshold_limit')->get();
+    public function getmedicinedata()
+    {
+        return $this->where('unit_id', 1)->where('status', 1)->whereColumn('balance', '<', 'threshold_limit')->get();
     }
+
+    public function getstockdata()
+    {
+        return $this->where('unit_id', 1)->where('status', 1)->get();
+    }
+    public function getAvailableQuantity($id)
+    {
+        return $this->where('medicine_id', $id)->where('trash', 'NO')->where('status', 1)->select('balance')->where('unit_id', 1)->first();
+    }
+
+    public function issuestockupdate($user_medicine_requisition, $medicinedata)
+    {
+
+        foreach ($medicinedata as $data) {
+
+            $oldissue = $this->where('unit_id', 1)
+                ->where('medicine_id', $data['medicine_id'])->first();
+            $newIssue  =  $oldissue->total_issue + $data['quantity'];
+            $this->where('unit_id', 1)
+                ->where('medicine_id', $data['medicine_id'])
+                ->update(['total_issue' => $newIssue]);
+
+            $newbalance  =  $oldissue->balance - $data['quantity'];
+            $this->where('unit_id', 1)
+                ->where('medicine_id', $data['medicine_id'])
+                ->update(['balance' => $newbalance]);
+        }
+        foreach ($medicinedata as $data) {
+            $olddata =   $this->where('unit_id', $user_medicine_requisition->unit_id)
+                ->where('medicine_id', $data['medicine_id'])->first();
+            $newdata =  $olddata->total_purchase + $data['quantity'];
+            $this->where('unit_id', $user_medicine_requisition->unit_id)
+                ->where('medicine_id', $data['medicine_id'])
+                ->update(['total_purchase' => $newdata]);
+            $balancedata = $olddata->balance + $data['quantity'];
+            $this->where('unit_id', $user_medicine_requisition->unit_id)
+                ->where('medicine_id', $data['medicine_id'])
+                ->update(['balance' => $balancedata]);
+        }
+    }
+
+    public function getmedicineUnitwise(){
+        return $this->where('unit_id', Auth::user()->unit_id)->where('status', 1)->get();
+    }
+    public function getunitwiseAvailableQuantity($id)
+    {
+        return $this->where('medicine_id', $id)->where('trash', 'NO')->where('unit_id', Auth::user()->unit_id)->select('balance')->first();
+    }
+
+    // public function firstaidstockupdate(){
+    //     $request -
+    //     foreach ($request->medicine_id as $index => $medicine_id) {
+    //         $medicineRecord = $medicine_first_aid->where('medicine_id', $medicine_id)->first();
+    //         $newQuantity = $request->quantity[$index];
+
+    //         if ($medicineRecord) {
+    //             $oldquantity = $medicineRecord->quantity;
+    //             $newquantity = $request->quantity[$index];
+    //             if ($oldquantity > $newquantity) {
+    //                 $difference = $oldquantity - $newquantity;
+
+    //                 $this->inventory
+    //                     ->where('medicine_id', $medicine_id)
+    //                     ->where('unit_id',  $user_medicine_first_aid->unit_id)
+    //                     ->decrement('total_first_aid', $difference);
+
+    //                 $this->inventory
+    //                     ->where('medicine_id', $medicine_id)
+    //                     ->where('unit_id', $user_medicine_first_aid->unit_id)
+    //                     ->decrement('balance', $difference);
+    //             } elseif ($oldquantity < $newquantity) {
+    //                 $difference = $newquantity - $oldquantity;
+
+    //                 $this->inventory
+    //                     ->where('medicine_id', $medicine_id)
+    //                     ->where('unit_id', $user_medicine_first_aid->unit_id)
+    //                     ->increment('total_first_aid', $difference);
+
+    //                 $this->inventory
+    //                     ->where('medicine_id', $medicine_id)
+    //                     ->where('unit_id', $user_medicine_first_aid->unit_id)
+    //                     ->increment('balance', $difference);
+    //             }
+    //         } else {
+    //             $newquantity = $request->quantity[$index];
+    //             $this->inventory
+    //                 ->where('medicine_id', $medicine_id)
+    //                 ->where('unit_id', $user_medicine_first_aid->unit_id)
+    //                 ->increment('total_first_aid',  $newquantity);
+
+    //             $this->inventory
+    //                 ->where('medicine_id', $medicine_id)
+    //                 ->where('unit_id', $user_medicine_first_aid->unit_id)
+    //                 ->decrement('balance',  $newquantity);
+    //         }
+    //     }
+    // }
 }

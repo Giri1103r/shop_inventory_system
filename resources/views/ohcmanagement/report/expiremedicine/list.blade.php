@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medicine Receiving')
+@section('title', 'Expire Medicine List')
 @section('pageurl', admin_url('ohc/medicine-receiving-form/list'))
 @section('content')
     @push('style')
@@ -19,10 +19,7 @@
                     <div class="d-flex justify-content-end p-2 me-2">
                         <x-button-filter dataId="" class="search me-2" href=""></x-button-filter>
 
-                        {{-- @if (CheckUserPermission('add')) --}}
-                        <x-button-add dataId="" class="add btn btn-primary"
-                            href="{{ admin_url('ohc/medicine-receiving-form/add') }}">Add</x-button-add>
-                        {{-- @endif --}}
+
 
                     </div>
 
@@ -41,16 +38,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="vendor_name" class="form-label ">Vendor Name</label>
-                                            <select name="vendor_id" id="vendor_id"
-                                                class="form-control single-select form-control-sm" style="width: 100%">
-                                                <option value="">Select the Vendor Name</option>
-                                                @foreach ($vendor as $list)
-                                                    <option value="{{ $list->id }}">{{ $list->vendor_name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">Expire Date</label>
@@ -64,40 +52,7 @@
 
                                         </div>
 
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">From Date</label>
-                                            <div class="input-group date form-input custom-height">
-                                                <input type="text" class="form-control " name="from_date" id="from_date"
-                                                    autocomplete="off">
-                                                <div class="input-group-addon input-group-text">
-                                                    <span class="fa fa-calendar"></span>
-                                                </div>
-                                            </div>
 
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">To Date</label>
-                                            <div class="input-group date form-input  custom-height">
-                                                <input type="text" class="form-control " name="to_date" id="to_date"
-                                                    autocomplete="off">
-                                                <div class="input-group-addon input-group-text">
-                                                    <span class="fa fa-calendar"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="vendor_name" class="form-label ">Approve Status</label>
-                                            <select name="approve_status" id="approve_status"
-                                                class="form-control single-select form-control-sm" style="width: 100%">
-                                                <option value="">Select the approve status</option>
-                                                <option value="2">EHS Officer verification Pending</option>
-                                                <option value="5">L1 EHS verification Pending</option>
-                                                <option value="8">EHS Head Approval Pending</option>
-                                                <option value="11">Open</option>
-                                                <option value="12">Close</option>
-
-                                            </select>
-                                        </div>
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -117,15 +72,8 @@
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
                                         <th>Medicine Name</th>
-                                        <th>Vendor Name</th>
-                                        <th>HSN Number</th>
-                                        <th>Pack</th>
-                                        <th>Quantity</th>
                                         <th>Batch Number</th>
-                                        <th>Rate</th>
                                         <th>Expire Date</th>
-                                        <th>Approve Status</th>
-                                        <th data-priority="1">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -147,24 +95,7 @@
                 location.reload();
             });
 
-            var fromDatepicker = flatpickr("#from_date", {
-                dateFormat: "d-m-Y",
-                onChange: function(selectedDates) {
-                    if (selectedDates.length > 0) {
-                        var startDate = selectedDates[0];
-                        toDatepicker.set('minDate', startDate);
-                        toDatepicker.clear();
-                    }
-                }
-            });
 
-            var toDatepicker = flatpickr("#to_date", {
-                dateFormat: "d-m-Y",
-                minDate: "today"
-            });
-            $('#expire_date').flatpickr({
-                dateFormat: "d-m-Y",
-            })
             // Initialize DataTable
 
 
@@ -184,15 +115,13 @@
             $('#resetform').on('click', function(e) {
                 e.preventDefault();
                 $('#medicine_id').val('');
-                $('#vendor_id').val('');
-                $('#from_date').val('');
-                $('#to_date').val('');
+
                 $('#datatable-list').DataTable().draw();
             });
         });
 
         var table = $('.datatable-list').DataTable({
-            autoWidth: false,
+            autoWidth: true,
             responsive: false,
             processing: false,
             serverSide: true,
@@ -215,7 +144,7 @@
                 bottom2End: 'paging'
             },
             ajax: {
-                url: "{{ admin_url('ohc/medicine-receiving-form/list') }}",
+                url: "{{ admin_url('ohc/medicine-expire-report/list') }}",
                 type: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -243,43 +172,18 @@
                     data: 'medicine_id',
                     name: 'medicine_id'
                 },
-                {
-                    data: 'vendor_id',
-                    name: 'vendor_id'
-                },
-                {
-                    data: 'hsn_id',
-                    name: 'hsn_id'
-                },
-                {
-                    data: 'pack_id',
-                    name: 'pack_id'
-                },
-                {
-                    data: 'quantity',
-                    name: 'quantity'
-                },
+
+
                 {
                     data: 'batch_number',
                     name: 'batch_number'
                 },
-                {
-                    data: 'rate',
-                    name: 'rate'
-                },
+
                 {
                     data: 'expire_date',
                     name: 'expire_date'
                 },
-                {
-                    data: 'approve_status',
-                    name: 'approve_status'
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false
-                }
+                
             ],
             language: {
                 paginate: {
@@ -305,22 +209,13 @@
                             action: function(e, dt, button, config) {
                                 var searchValue = $('#datatable-list_filter input').val();
                                 var medicine_id = $('#medicine_id').val();
-                                var vendor_id = $('#vendor_id').val();
-                                var from_date = $('#from_date').val();
-                                var to_date = $('#to_date').val();
-                                var approve_status = $('#approve_status').val();
-
 
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
                                 window.location.href =
-                                    "{{ admin_url('ohc/medicine-receiving-form/export/pdf') }}" +
+                                    "{{ admin_url('ohc/medicine-expire-report/export/pdf') }}" +
                                     '?search=' + searchValue +
-                                    '&medicine_id=' + medicine_id +
-                                    '&vendor_id=' + vendor_id +
-                                    '&from_date=' + from_date +
-                                    '&approve_status=' + approve_status +
-                                    '&to_date=' + to_date;
+                                    '&medicine_id=' + medicine_id ;
                             }
                         },
                         {
@@ -329,22 +224,14 @@
                             action: function(e, dt, button, config) {
                                 var searchValue = $('#datatable-list_filter input').val();
                                 var medicine_id = $('#medicine_id').val();
-                                var vendor_id = $('#vendor_id').val();
-                                var from_date = $('#from_date').val();
-                                var approve_status = $('#approve_status').val();
-                                var to_date = $('#to_date').val();
-
 
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
                                 window.location.href =
-                                    "{{ admin_url('ohc/medicine-receiving-form/export/excel') }}" +
+                                    "{{ admin_url('ohc/medicine-expire-report/export/excel') }}" +
                                     '?search=' + searchValue +
-                                    '&medicine_id=' + medicine_id +
-                                    '&vendor_id=' + vendor_id +
-                                    '&from_date=' + from_date +
-                                    '&approve_status=' + approve_status +
-                                    '&to_date=' + to_date;
+                                    '&medicine_id=' + medicine_id ;
+
                             }
                         }
                     ]

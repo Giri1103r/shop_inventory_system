@@ -536,9 +536,14 @@
         });
 
         $(document).on('click', '.popupwindow', function(e) {
-            e.preventDefault();
-            $('#popupwindowmodal').modal('show').find('.modal-content').load($(this).attr('href'));
-        });
+             e.preventDefault();
+             $('#popupwindowmodal').modal('show').find('.modal-content').load($(this).attr('href'));
+             setTimeout(function() {
+                 callpopupsingleselect();
+                 callpopupmultipleselect();
+             }, 500);
+
+         });
 
         /*
          * Menu Active dynamically

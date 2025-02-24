@@ -22,16 +22,14 @@ class IncidentInvestigation extends Model
 
     protected $fillable = [
         'incident_id',
-        'witness',
+        'witness_id',
         'anything_damaged',
-        'hira',
-        'moc',
-        'prca',
-        'immediate_action',
-        'capa',
-        'responsible_person',
+        'root_cause_analysis',
+        'action_taken',
+        'corrective_preventive_action',
+        'responsible_person_id',
         'target_date',
-        'remarks',
+        'remark',
         'status',
         'trash',
         'created_by',
@@ -49,43 +47,31 @@ class IncidentInvestigation extends Model
     public function store()
     {
         $request = request();
-        if (is_array($request->reporting_media)) {
-            $reporting_media = implode(',', array_map(function ($item) {
-                return $item;
-            }, $request->reporting_media));
-        } else {
-
-            $reporting_media = decryptId($request->reporting_media);
-        }
+// dd($request);
         $insert_array = array(
-            'incident_date_time' => DBdatetimeformat($request->incident_date_time),
-            'unit_id' => decryptId($request->unit_id),
-            'shift' => $request->shift,
-            'location_id' => decryptId($request->location_id),
-            'exact_location' => $request->exact_location,
-            'iir_type' => $request->iir_type,
-            'reported_name' => decryptId($request->reported_name),
-            'designation' => $request->designation,
-            'department' => $request->department,
-            'employee_code' => $request->employee_code,
-            'time_of_reporting' => $request->time_of_reporting,
-            'reporting_media' => $reporting_media,
-            'reporting_media_others' => $request->reporting_media_others,
-            'brief_description' => $request->brief_description,
-            'incident_status' => STATUS_INCIDENT_REPORT,
+            'incident_id' => decryptId($request->incident_id),
+            'witness_id' => decryptId($request->witness_id),
+            'anything_damaged' => $request->anything_damaged,
+            'root_cause_analysis' => $request->root_cause,
+            'action_taken' => $request->action_taken,
+            'corrective_preventive_action' => $request->corrective_preventive_action,
+            'responsible_person_id' => decryptId($request->responsible_person_id),
+            'target_date' => DBdateformat($request->target_date),
+            'remark' => $request->remark,
             'created_by' => Auth::id()
         );
+        // dd($insert_array);
         return $this->create($insert_array);
     }
 
-    protected static function booted()
-    {
-        static::addGlobalScope(new TrashScope('ims_initial_incident'));
+    // protected static function booted()
+    // {
+    //     static::addGlobalScope(new TrashScope('ims_initial_incident_investigation'));
 
-        static::created(function ($model) {
+    //     static::created(function ($model) {
 
-            $uniqueId = 'INCIDENT-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
-            $model->update(['sr_no' => $uniqueId]);
-        });
-    }
+    //         $uniqueId = 'INCIDENT-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
+    //         $model->update(['sr_no' => $uniqueId]);
+    //     });
+    // }
 }

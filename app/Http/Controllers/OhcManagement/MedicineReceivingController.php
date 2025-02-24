@@ -13,6 +13,7 @@ use App\Models\OhcManagement\MedicineReceiving;
 use App\Models\OhcManagement\MedicineStock;
 use App\Models\OhcManagement\OhcStatuslog;
 use App\Models\OhcManagement\Report\Inventory;
+use App\Models\OhcManagement\Status\ReceivingStatus;
 use App\Models\UploadLog;
 use App\Models\User;
 use Carbon\Carbon;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
@@ -39,6 +41,7 @@ class MedicineReceivingController extends Controller
     private $unit;
     private $user;
     private $inventory;
+    private $status;
 
     public function __construct()
     {
@@ -50,6 +53,7 @@ class MedicineReceivingController extends Controller
         $this->user = new User();
         $this->inventory = new Inventory();
         $this->unit = new Unit();
+        $this->status = new ReceivingStatus();
     }
     public function index(Request $request)
     {
@@ -68,6 +72,9 @@ class MedicineReceivingController extends Controller
                         })
                         ->editColumn('vendor_id', function ($row) {
                             return $row->vendor_name;
+                        })
+                        ->editColumn('pack_id', function ($row) {
+                            return $row->pack;
                         })
                         ->editColumn('expire_date', function ($row) {
                             return displaydateformat($row->expire_date);
@@ -99,7 +106,7 @@ class MedicineReceivingController extends Controller
                             // }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
 
-                            if (checkUserRole(ROLE_SUPERADMIN)  && $row->approve_status != STATUS_OHC_OPEN  && $row->approve_status != STATUS_OHC_CLOSE) {
+                            if ((checkUserRole(ROLE_SUPERADMIN)  && $row->approve_status != STATUS_OHC_OPEN  && $row->approve_status != STATUS_OHC_CLOSE) ||(checkUserRole(ROLE_EHS_OFFICER)&& $row->approve_status == STATUS_OHC_EHS_VERIFICATION_PENDING) ||(checkUserRole(ROLE_L1_EHS_OFFCIER)&& $row->approve_status == STATUS_OHC_L1_EHS_VERIFICATION_PENDING)  ||(checkUserRole(ROLE_EHS_HEAD)&& $row->approve_status == STATUS_OHC_AGM_APPROVAL_PENDING) ) {
                             $btn .= '<a href="' . admin_url('ohc/medicine-receiving-form/medicineapproval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->created_by == Auth::id() || isAdmin()) && ($row->approve_status == STATUS_OHC_OPEN)) {
@@ -112,7 +119,7 @@ class MedicineReceivingController extends Controller
                             return $btn;
                         })
 
-                        ->rawColumns(['action', 'expire_date', 'approve_status', 'hsn_id'])
+                        ->rawColumns(['action', 'expire_date', 'approve_status', 'hsn_id','pack'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -140,13 +147,18 @@ class MedicineReceivingController extends Controller
         try {
             $pack = $this->medicine->getMedicineData();
             $medicineStock  = $this->inventory->getmedicinedata();
+            $existingMedicineIds = $this->medicine_receiving
+            ->where('status', 1)
+            ->pluck('medicine_id')
+            ->toArray();
             $unit = $this->unit->getunit();
             $vendor = $this->vendor->getVendordata();
             $data = [
                 'pack' => $pack,
                 'vendor' => $vendor,
                 'unit' => $unit,
-                'medicineStock' => $medicineStock
+                'medicineStock' => $medicineStock,
+                'existingMedicineIds'=>$existingMedicineIds
 
             ];
 
@@ -810,14 +822,13 @@ class MedicineReceivingController extends Controller
 
             try {
                 $remarks = $request->remarks;
-                $this->medicine_receiving->stockupdate($id);
-                $this->ohc_status->stockstatuslog($id);
+
                 $data = $this->medicine_receiving->selectOne($id);
                 $ids = $data->medicine_id;
 
 
                 $oldQuantity = $this->inventory
-                    ->where('id', $ids)
+                    ->where('medicine_id', $ids)
                     ->where('unit_id', 1)
                     ->first(['balance', 'total_purchase']);
 
@@ -825,13 +836,13 @@ class MedicineReceivingController extends Controller
                     $newQuantity = $oldQuantity->balance + $data->quantity;
                     $newTotalPurchase = $oldQuantity->total_purchase + $data->quantity;
 
-                    // Update the inventory
-                    $this->inventory->where('id', $ids)->update([
-                        'balance' => $newQuantity,
-                        'total_purchase' => $newTotalPurchase
-                    ]);
-                }
 
+                    $this->inventory->where('medicine_id', $ids) ->where('unit_id', 1)->increment('balance', $newQuantity);
+                    $this->inventory->where('medicine_id', $ids) ->where('unit_id', 1)->update(['total_purchase'=> $data->quantity]);
+
+                }
+                $this->medicine_receiving->stockupdate($id);
+                $this->ohc_status->stockstatuslog($id);
                 $mailsubject = 'Medicine Request for the Stock is Closed';
 
 
@@ -882,15 +893,17 @@ class MedicineReceivingController extends Controller
                     'created_by' => Auth::id(),
                 ];
                 notificationSave($notificationData);
-                Session::flash('success', 'Your Request Has Responded Successfully');
-                return redirect(admin_url('ohc/medicine-receiving-form/list'));
-            } catch (Exception $ex) {
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-                return redirect(admin_url('ohc/medicine-receiving-form/list'));
+                return response()->json(['msg' => 'Stock request closed successfully!']);
+            } catch (\Exception $ex) {
+                Log::error('Stock Close Error: ' . $ex->getMessage());
+
+                return response()->json(['msg' => 'Something went wrong, Please try again later!'], 500);
             }
-        } catch (Exception $ex) {
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('ohc/medicine-receiving-form/list'));
+
+        } catch (\Exception $ex) {
+            Log::error('Stock Close Error: ' . $ex->getMessage());
+
+            return response()->json(['msg' => 'Something went wrong, Please try again later!'], 500);
         }
     }
 
@@ -917,6 +930,8 @@ class MedicineReceivingController extends Controller
                 'Rate',
                 'Expiry Date',
                 'Vendor Name',
+                'From Status',
+                'To Status',
                 'Created_by',
                 'Created_at'
             ];
@@ -926,14 +941,40 @@ class MedicineReceivingController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->medicine;
-                $export[] =  $data->hsn;
+                $export[] =  getMedicinename($data->medicine_id);
+                $export[] =  gethsn($data->hsn_id);
                 $export[] =  $data->pack;
                 $export[] =  $data->quantity;
                 $export[] =  $data->batch_number;
                 $export[] =  $data->rate;
                 $export[] =  Displaydateformat($data->expire_date);
                 $export[] =  $data->vendor_name;
+                if ($data->approve_status == STATUS_OHC_EHS_VERIFICATION_PENDING) {
+                    $export[] = 'Stock Requested ';
+                } elseif ($data->approve_status == STATUS_OHC_L1_EHS_VERIFICATION_PENDING) {
+                    $export[] = 'EHS Officer Verification Pending';
+                } elseif ($data->approve_status == STATUS_OHC_AGM_APPROVAL_PENDING) {
+                    $export[] = 'L1 EHS Officer Verification Pending';
+                } elseif ($data->approve_status == STATUS_OHC_OPEN) {
+                    $export[] = 'EHS Head Approval Pending';
+                } elseif ($data->approve_status == STATUS_OHC_CLOSE) {
+                    $export[] = 'Open';
+                }  else {
+                    $export[] = removeUnderScore(getStatus($data->approve_status));
+                }
+                if ($data->approve_status == STATUS_OHC_EHS_VERIFICATION_PENDING) {
+                    $export[] = 'EHS Officer Verification Pending';
+                } elseif ($data->approve_status == STATUS_OHC_L1_EHS_VERIFICATION_PENDING) {
+                    $export[] = 'L1 EHS Officer Verification Pending';
+                } elseif ($data->approve_status == STATUS_OHC_AGM_APPROVAL_PENDING) {
+                    $export[] = 'EHS Head Approval Pending';
+                } elseif ($data->approve_status == STATUS_OHC_OPEN) {
+                    $export[] = 'Open';
+                } elseif ($data->approve_status == STATUS_OHC_CLOSE) {
+                    $export[] = 'Close';
+                }  else {
+                    $export[] = removeUnderScore(getStatus($data->approve_status));
+                }
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 
@@ -962,23 +1003,16 @@ class MedicineReceivingController extends Controller
                 $medicine_receiving = $this->medicine_receiving->selectOne($id);
             }
 
-            $ehsverify = $this->ohc_status->ehsverifydata($id);
-            $l1ehsverify = $this->ohc_status->ehsL1verifydata($id);
-            $ehsheadverify = $this->ohc_status->ehsheadverifydata($id);
-            $stockopen = $this->ohc_status->stockopen($id);
-            $medicine = $this->medicine->where('id', $id)->select('medicine', 'hsn', 'pack')->first();
-            $vendor = $this->vendor->where('id', $id)->select('vendor_name')->first();
+
+            $medicine = $this->medicine->where('id',  $medicine_receiving->medicine_id)->select('medicine', 'hsn', 'pack')->first();
+            $vendor = $this->vendor->where('id', $medicine_receiving->vendor_id)->select('vendor_name')->first();
             $medicineReceivingStockData = $this->ohc_status->medicineReceivingStockData($id);
             $data = [
                 'medicine_receiving' => $medicine_receiving,
                 'medicine' => $medicine,
                 'vendor' => $vendor,
-                'ehsverify' => $ehsverify,
-                'l1ehsverify' => $l1ehsverify,
-                'ehsheadverify' => $ehsheadverify,
-                'stockopen' => $stockopen,
                 'medicineReceivingStockData' => $medicineReceivingStockData,
-                'pagetitle' => "Medicine Receiving Stock  Details",
+                'pagetitle' => "Medicine Receiving Stock Details",
             ];
 
             $property = [
@@ -1025,6 +1059,8 @@ class MedicineReceivingController extends Controller
                 'Rate',
                 'Expiry Date',
                 'Vendor Name',
+                'From Status',
+                'To Status',
                 'Created_by',
                 'Created_at'
             ];
@@ -1064,6 +1100,7 @@ class MedicineReceivingController extends Controller
     public function hsnnumber(Request $request)
     {
         $medicineId = decryptId($request->medicine_id);
+
         $hsnnumber = $this->medicine->where('id', $medicineId)->select('hsn', 'id')->first();
         if ($hsnnumber) {
             return response()->json([
@@ -1087,26 +1124,26 @@ class MedicineReceivingController extends Controller
         return Response::json(true);
     }
 
-    public function list(Request $request, $unit_id)
-    {
-        $unit_id = decryptId($unit_id);
-        $medicine = $this->medicine_stock->ajaxList($unit_id);
+    // public function list(Request $request, $unit_id)
+    // {
+    //     $unit_id = decryptId($unit_id);
+    //     $medicine = $this->medicine_stock->ajaxList($unit_id);
 
 
-        $medicineIds = collect($medicine)->pluck('id')->map(fn($id) => decryptId($id))->toArray();
+    //     $medicineIds = collect($medicine)->pluck('id')->map(fn($id) => decryptId($id))->toArray();
 
 
-        $excludedMedicineIds = $this->medicine_receiving
-            ->whereIn('medicine_id', $medicineIds)
-            ->where('approve_status', '!=', 'STATUS_OHC_CLOSE')
-            ->pluck('medicine_id')
-            ->toArray();
+    //     $excludedMedicineIds = $this->medicine_receiving
+    //         ->whereIn('medicine_id', $medicineIds)
+    //         ->where('approve_status', '!=', 'STATUS_OHC_CLOSE')
+    //         ->pluck('medicine_id')
+    //         ->toArray();
 
 
-        $filteredMedicine = collect($medicine)->filter(function ($med) use ($excludedMedicineIds) {
-            return !in_array(decryptId($med['id']), $excludedMedicineIds);
-        })->values();
+    //     $filteredMedicine = collect($medicine)->filter(function ($med) use ($excludedMedicineIds) {
+    //         return !in_array(decryptId($med['id']), $excludedMedicineIds);
+    //     })->values();
 
-        return response()->json($filteredMedicine);
-    }
+    //     return response()->json($filteredMedicine);
+    // }
 }
