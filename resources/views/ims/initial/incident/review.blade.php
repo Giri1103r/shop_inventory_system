@@ -150,72 +150,301 @@
 
                                 </div>
                             </div>
-                            <div class="card-body ">
 
-                                <div class="row">
-                                    <div class="card-header-inner">
-                                        <h4 class="text-white">EHS Head Review</h4>
+                            @if ($incident_report->incident_status == STATUS_INCIDENT_REPORT)
+                                <div class="card-body ">
+
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">EHS Head Review</h4>
+                                        </div>
+                                    </div>
+                                    <div class="basic-form">
+                                        <form method="POST" id="ehs_head_review"
+                                            action="{{ admin_url('incident/initial-incident/ehs_head_review/submit') }}"
+                                            enctype="multipart/form-data">
+                                            @csrf
+                                            <div class="row">
+                                                <input type="hidden" class="form-control" name="incident_id"
+                                                    id="incident_id" value="{{ encryptId($incident_report->id) }}">
+
+                                                <input type="hidden" name="reviewer_emp_id" id="reviewer_emp_id"
+                                                    class="form-control" value="{{ Auth::user()->employee_id ?? '' }}">
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="name" class="form-label">Reviewer Name</label>
+                                                        <input type="text" name="reviewer_name" id="reviewer_name"
+                                                            class="form-control" value="{{ Auth::user()->name ?? '' }}"
+                                                            readonly>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="date" class="form-label require">Date</label>
+                                                        <input type="text" name ="date" id="date_datepicker"
+                                                            class="form-control" placeholder="Date" readonly
+                                                            value="{{ todaydate() }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="team_id" class="form-label require">Assign Team
+                                                            members</label>
+                                                        <select name="team_member[]" id="team_id"
+                                                            class="form-control team_name" style="width: 100%" multiple>
+                                                            <option value="">Select Team members</option>
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Remark</label>
+                                                        <textarea name="remark" id="remark" class="form-control" rows="4" required></textarea>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <hr>
+                                            <div class="submit-button" style="text-align: right;">
+                                                <x-button-submit class="submit"></x-button-submit>
+                                                <x-button-reset class=""></x-button-reset>
+                                                <x-button-cancel
+                                                    href="{{ admin_url('incident/initial-incident/list') }}"></x-button-cancel>
+                                            </div>
+                                        </form>
+
                                     </div>
                                 </div>
-                                <div class="basic-form">
-                                    <form method="POST" id="ehs_head_review"
-                                        action="{{ admin_url('incident/initial-incident/ehs_head_review/submit') }}"
-                                        enctype="multipart/form-data">
-                                        @csrf
-                                        <div class="row">
-                                            <input type="hidden" class="form-control" name="incident_id" id="incident_id"
-                                                value="{{ encryptId($incident_report->id) }}">
-
-                                            <input type="hidden" name="reviewer_emp_id" id="reviewer_emp_id"
-                                                class="form-control" value="{{ Auth::user()->employee_id ?? '' }}">
-                                            <div class="col-md-4 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label for="name" class="form-label">Reviewer Name</label>
-                                                    <input type="text" name="reviewer_name" id="reviewer_name"
-                                                        class="form-control" value="{{ Auth::user()->name ?? '' }}"
-                                                        readonly>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-4 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label for="date" class="form-label require">Date</label>
-                                                    <input type="text" name ="date" id="date_datepicker"
-                                                        class="form-control" placeholder="Date" readonly
-                                                        value="{{ todaydate() }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label for="team_id" class="form-label require">Assign Team
-                                                        members</label>
-                                                    <select name="team_member[]" id="team_id"
-                                                        class="form-control team_name" style="width: 100%" multiple>
-                                                        <option value="">Select Team members</option>
-
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-12 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Remark</label>
-                                                    <textarea name="remark" id="remark" class="form-control" rows="4" required></textarea>
-                                                </div>
-                                            </div>
-
+                            @else
+                                <div class="card-body ">
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">EHS Head Review</h4>
                                         </div>
-                                        <hr>
-                                        <div class="submit-button" style="text-align: right;">
-                                            <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-reset class=""></x-button-reset>
-                                            <x-button-cancel
-                                                href="{{ admin_url('incident/initial-incident/list') }}"></x-button-cancel>
+                                    </div>
+                                    <div class="row">
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label for="name" class="form-label">Reviewer Name</label>
+                                            <div class="view_data">
+                                                {{ $getEHSVerify->reviewer_name }}
+                                            </div>
                                         </div>
-                                    </form>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Date') }}</label>
+                                            <div class="view_data">
+                                                {{ $getEHSVerify->date }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label for="team_id" class="form-label">Assign Team
+                                                members</label>
+                                            <div class="view_data">
+                                                {{ $getEHSVerify->team_member_names }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label">Remark</label>
+                                            <div class="view_data">
+                                                {{ $getEHSVerify->remark }}
+                                            </div>
+                                        </div>
 
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
+
+                            @if ($incident_report->incident_status >= STATUS_EHSVERIFY_PENDING)
+                                <div class="card-body ">
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">Investigation</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Name of the
+                                                Witness</label>
+                                            <div class="view_data">
+                                                {{ $getInvestigation->witness_id }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Was anything
+                                                damaged?</label>
+                                            <div class="view_data">
+                                                {{ $getInvestigation->anything_damaged }}
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">HIRA</label>
+                                            <div class="view_data">
+                                                {{ $getInvestigation->hira_id }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label">MOC</label>
+                                            <div class="view_data">
+                                                {{ $getInvestigation->moc_id }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label">Possible Root
+                                                Cause
+                                                Analysis (PRCA)</label>
+                                            <div class="view_data">
+                                                {{ $getInvestigation->root_cause_analysis }}
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Immediate action taken
+                                                (If any)</label>
+                                            <div class="view_data">
+                                                {{ $getInvestigation->action_taken }}
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Recommended Corrective & Preventive
+                                                Action</label>
+                                            <div class="view_data">
+                                                {{ $getInvestigation->corrective_preventive_action }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Responsible Person</label>
+                                            <div class="view_data">
+                                                {{ $getInvestigation->responsible_person_id }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Target Date</label>
+                                            <div class="view_data">
+                                                {{ $getInvestigation->target_date }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Remarks (If Any)</label>
+                                            <div class="view_data">
+                                                {{ $getInvestigation->remark }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                            @if ($incident_report->incident_status == STATUS_EHSVERIFY_PENDING)
+                                <div class="card-body ">
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">EHS Head Verify</h4>
+                                        </div>
+                                    </div>
+                                    <div class="basic-form">
+                                        <form method="POST" id="ehs_head_verify"
+                                            action="{{ admin_url('incident/initial-incident/ehs_head_verify/submit') }}"
+                                            enctype="multipart/form-data">
+                                            @csrf
+                                            <div class="row">
+                                                <input type="hidden" class="form-control" name="incident_id"
+                                                    id="incident_id" value="{{ encryptId($incident_report->id) }}">
+
+                                                <input type="hidden" name="reviewer_emp_id" id="reviewer_emp_id"
+                                                    class="form-control" value="{{ Auth::user()->employee_id ?? '' }}">
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="name" class="form-label">Verifier Name</label>
+                                                        <input type="text" name="reviewer_name" id="reviewer_name"
+                                                            class="form-control" value="{{ Auth::user()->name ?? '' }}"
+                                                            readonly>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="date" class="form-label require">Date</label>
+                                                        <input type="text" name ="date" id="date_datepicker"
+                                                            class="form-control" placeholder="Date" readonly
+                                                            value="{{ todaydate() }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="team_id" class="form-label require">Choose
+                                                            Assignee</label>
+                                                        <select name="team_member[]" id="team_id"
+                                                            class="form-control team_name" style="width: 100%">
+                                                            <option value="">Select Team members</option>
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Target Date</label>
+                                                        <input type="text" name="target_date" id="target_date"
+                                                            class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Remark</label>
+                                                        <textarea name="remark" id="remark" class="form-control" rows="4" required></textarea>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <hr>
+                                            <div class="submit-button" style="text-align: right;">
+                                                <x-button-submit class="submit"></x-button-submit>
+                                                <x-button-reset class=""></x-button-reset>
+                                                <x-button-cancel
+                                                    href="{{ admin_url('incident/initial-incident/list') }}"></x-button-cancel>
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            @elseif($getEHSVerify != null)
+                                <div class="card-body ">
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">EHS Head Verify</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label for="name" class="form-label">Verifier Name</label>
+                                            <div class="view_data">
+                                                {{ $getEHSVerify->reviewer_name }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Date') }}</label>
+                                            <div class="view_data">
+                                                {{ $getEHSVerify->date }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label for="team_id" class="form-label">Choose Assignee</label>
+                                            <div class="view_data">
+                                                {{ $getEHSVerify->team_member_names }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label">Remark</label>
+                                            <div class="view_data">
+                                                {{ $getEHSVerify->remark }}
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -233,6 +462,12 @@
                 e.preventDefault();
                 location.reload();
             });
+
+            flatpickr("#target_date", {
+                dateFormat: "d-m-Y",
+                maxDate: new Date()
+            });
+
             $('#team_id').select2({
                 placeholder: "Select Team Members",
                 allowClear: true,

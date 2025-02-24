@@ -188,7 +188,7 @@
         }
 
         body[data-leftbar-color=dark] .left-side-menu {
-            background-color: #ffffff !important;
+            background-color: #050505 !important;
             color: #000 !important;
         }
 
@@ -336,6 +336,7 @@
     <script src="{{ public_plugins('select2/js/select2.full.min.js') }}"></script>
     <script src="{{ public_plugins('jasny-bootstrap/js/jasny-bootstrap.min.js') }}"></script>
     <script src="{{ public_plugins('apexchart/js/apexcharts.min.js') }}"></script>
+    <script src="{{ url('public/assets/js/rwdImageMaps.js') }}"></script>
 
 
     @stack('scripts')
@@ -535,9 +536,14 @@
         });
 
         $(document).on('click', '.popupwindow', function(e) {
-            e.preventDefault();
-            $('#popupwindowmodal').modal('show').find('.modal-content').load($(this).attr('href'));
-        });
+             e.preventDefault();
+             $('#popupwindowmodal').modal('show').find('.modal-content').load($(this).attr('href'));
+             setTimeout(function() {
+                 callpopupsingleselect();
+                 callpopupmultipleselect();
+             }, 500);
+
+         });
 
         /*
          * Menu Active dynamically

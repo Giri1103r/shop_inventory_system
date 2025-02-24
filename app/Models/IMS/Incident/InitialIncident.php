@@ -54,8 +54,9 @@ class InitialIncident extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ims_initial_incident.*','ims_incident_status.status_name','ims_incident_status.bg_color');
+        $query = $this->select('ims_initial_incident.*', 'ims_incident_status.status_name', 'ims_incident_status.bg_color');
         $query = $query->leftJoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_initial_incident.incident_status');
+        // $query = $query->leftJoin('ims_initial_incident_investigation', 'ims_initial_incident_investigation.incident_id', '=', 'ims_initial_incident.id');
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -176,7 +177,7 @@ class InitialIncident extends Model
         } else {
             $reporting_media = null; // Ensure it is NULL if empty
         }
-        
+
         $update_array = array(
             'incident_date_time' => DBdatetimeformat($request->incident_date_time),
             'unit_id' => decryptId($request->unit_id),
@@ -292,6 +293,39 @@ class InitialIncident extends Model
     }
 
 
+    public function getEHSVerifyincident($id)
+    {
+        $data = $this->select('ims_ehs_review.*', 'ims_ehs_review.team_member')
+            ->where('ims_initial_incident.id', $id)
+            ->leftJoin('ims_ehs_review', 'ims_ehs_review.inicdent_report_id', '=', 'ims_initial_incident.id')
+            ->where('ims_ehs_review.type',1)
+            ->first();
+
+        if ($data && $data->team_member) {
+            $teamMemberIds = explode(',', $data->team_member);
+
+            $employees = DB::table('masters_employee')
+                ->whereIn('id', $teamMemberIds)
+                ->pluck('emp_name')
+                ->toArray();
+            $data->team_member_names = implode(', ', $employees);
+        }
+
+        return $data;
+    }
+
+
+    public function getInvestigation($id)
+    {
+        $data = $this->select('ims_initial_incident_investigation.*','ims_master_incident_hiramoc.*')
+            ->where('ims_initial_incident.id', $id)
+            ->leftJoin('ims_initial_incident_investigation', 'ims_initial_incident_investigation.incident_id', '=', 'ims_initial_incident.id')
+            ->leftJoin('ims_master_incident_hiramoc', 'ims_master_incident_hiramoc.incident_id', '=', 'ims_initial_incident.id')
+            ->first();
+            
+        return $data;
+    }
+
     public function updateStatus($incident_Id, $incident_status)
     {
         $request = request();
@@ -302,6 +336,27 @@ class InitialIncident extends Model
             'updated_at' => now(),
         );
         return $this->where('id', $incident_Id)->update($update_array);
+    }
+
+    public function getEHSReviewincident($id)
+    {
+        $data = $this->select('ims_ehs_review.*', 'ims_ehs_review.team_member')
+            ->where('ims_initial_incident.id', $id)
+            ->leftJoin('ims_ehs_review', 'ims_ehs_review.inicdent_report_id', '=', 'ims_initial_incident.id')
+            ->where('ims_ehs_review.type',2)
+            ->first();
+
+        if ($data && $data->team_member) {
+            $teamMemberIds = explode(',', $data->team_member);
+
+            $employees = DB::table('masters_employee')
+                ->whereIn('id', $teamMemberIds)
+                ->pluck('emp_name')
+                ->toArray();
+            $data->team_member_names = implode(', ', $employees);
+        }
+
+        return $data;
     }
     protected static function booted()
     {

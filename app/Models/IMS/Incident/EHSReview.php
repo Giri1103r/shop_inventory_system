@@ -21,6 +21,7 @@ class EHSReview extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
+        'type',
         'inicdent_report_id',
         'accident_report_id',
         'fire_inicdent_report_id',
@@ -43,7 +44,7 @@ class EHSReview extends Model
     ];
 
 
-    public function store()
+    public function store($type)
     {
         $request = request();
         $decryptedTeamMemberIds = array_map('decryptId', $request->team_member);
@@ -51,6 +52,7 @@ class EHSReview extends Model
         $commaSeparatedTeamMembers = implode(',', $decryptedTeamMemberIds);
 
         $insert_array = array(
+            'type' => $type,
             'inicdent_report_id' =>  decryptId($request->incident_id) ?? null,
             'accident_report_id' =>  decryptId($request->accident_report_id) ?? null,
             'fire_inicdent_report_id' =>  decryptId($request->fire_inicdent_report_id) ?? null,
@@ -59,6 +61,7 @@ class EHSReview extends Model
             'reviewer_name' => $request->reviewer_name,
             'team_member' => $commaSeparatedTeamMembers,
             'remark' => $request->remark,
+            'target_date' => DBdateformat($request->target_date),
             'created_by' => Auth::id()
         );
 
