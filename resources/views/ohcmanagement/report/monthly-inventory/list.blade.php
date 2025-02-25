@@ -58,7 +58,7 @@
                             </div>
                             <div class="col-md-3 d-flex mt-3 align-items-center gap-2">
                                 <button class="btn btn-primary" name="search" id="search">Search</button>
-                                  <a href="{{url('ohc/monthly-inventory/exportexcel')}}" class="btn btn-secondary" id="exportexcel">Export Excel</a>
+                                <a href="#" class="btn btn-secondary" id="exportexcel">Export Excel</a>
                             </div>
 
                         </div>
@@ -98,6 +98,31 @@
                 var toDatepicker = flatpickr("#year", {
                     dateFormat: "Y",
                     minDate: "today"
+                });
+            });
+            $(document).ready(function() {
+                $('#exportexcel').on('click', function(e) {
+                    e.preventDefault();
+
+                    let unitId = $('#unit_id').val();
+                    let year = $('#year').val();
+                    let month = $('#month').val();
+                    if (!unitId || !year|| !month) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Warning',
+                            text: 'Please select the Unit,Year and Month.',
+                            confirmButtonColor: '#3085d6'
+                        });
+                        return;
+                    }
+
+
+                    let exportUrl =
+                        `{{ url('ohc/monthly-inventory/exportexcel') }}?unit_id=${unitId}&year=${year}&month=${month}`;
+
+                    // Redirect to the new URL
+                    window.location.href = exportUrl;
                 });
             });
             var monthNames = [

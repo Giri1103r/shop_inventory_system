@@ -91,7 +91,7 @@
                 bottom2End: 'paging'
             },
             ajax: {
-                url: "{{ admin_url('ohc/inventory-tabular-view/list') }}",
+                url: "{{ admin_url('ohc/inventory-tabular-view/userlist') }}",
                 type: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -114,7 +114,14 @@
                     data: 'medicine_id',
                     name: 'medicine_id'
                 },
-               
+                {
+                    data: 'total_prescribe',
+                    name: 'total_prescribe'
+                },
+                {
+                    data: 'total_received',
+                    name: 'total_received'
+                },
                 {
                     data: 'total_issue',
                     name: 'total_issue'
@@ -123,19 +130,12 @@
                     data: 'total_first_aid',
                     name: 'total_first_aid'
                 },
+
                 {
-                    data: 'total_prescribe',
-                    name: 'total_prescribe'
+                    data: 'user_balance',
+                    name: 'user_balance'
                 },
-                {
-                    data: 'balance',
-                    name: 'balance'
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false
-                }
+               
             ],
             language: {
                 paginate: {
