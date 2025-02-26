@@ -24,7 +24,7 @@ use App\Models\IMS\Master\IncidentType;
 use App\Models\IMS\Master\Hira;
 use App\Models\IMS\Incident\InitialIncident;
 use App\Models\IMS\Incident\AccidentReport;
-
+use App\Models\OhcManagement\Master\Medicine;
 
 /*
  * Menu bar start
@@ -258,6 +258,39 @@ if (!function_exists('gettotalCount')) {
     }
 }
 
+if (!function_exists('getohctotalCount')) {
+
+    function getohctotalCount($type)
+    {
+
+        switch ($type) {
+
+            case 'requisition':
+                $count = UserMedicineRequisition::where('approve_status',STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)->count();
+                break;
+            case 'medicine':
+                $count = Medicine::where('status',1)->count();
+                break;
+            case 'unit':
+                $count = Unit::count();
+                break;
+            case 'department':
+                $count = Department::count();
+                break;
+            case 'employee':
+                $count = Employee::count();
+                break;
+            case 'work':
+                $count = Work::count();
+                break;
+            default:
+                $count = 0;
+                break;
+        }
+
+        return $count;
+    }
+}
 if (!function_exists('getYearArray')) {
     function getYearArray($startYear = null)
     {
