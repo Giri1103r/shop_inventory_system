@@ -48,12 +48,13 @@ class PrescribetoPatient extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_management_opd_patient.*', 'ohc_management_opd_patient_status.patient_status', 'ohc_management_opd_patient_suggested_by.suggested_by', 'ohc_management_opd_patient.patient_status As patientStatus')
-            ->join('ohc_management_opd_patient_status', 'ohc_management_opd_patient.patient_status', '=', 'ohc_management_opd_patient_status.id')
+        $query = $this->select(
+            'ohc_management_opd_patient.*',
 
-            ->join('ohc_management_opd_patient_suggested_by', 'ohc_management_opd_patient.suggested_by', '=', 'ohc_management_opd_patient_suggested_by.id');
+        )
+      ;
 
-        // dd($query);
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -111,12 +112,12 @@ class PrescribetoPatient extends Model
     public function store()
     {
         $request = request();
-        $department = Department::where('department_name', $request->department_id)->first();
+
         // Prepare data for insertion
         $insert_array = [
             'is_outside_employee' => $request->has('is_outside_worker') ? 1 : 0,
             'unit_id' => decryptId($request->unit_id),
-           'department_id' => isset($department) ? $department->id : null,
+           'department_id' => $request->department_id ,
             'company_name' => $request->company_name,
             'emp_id' => $request->emp_id,
             'gender' => $request->gender,
