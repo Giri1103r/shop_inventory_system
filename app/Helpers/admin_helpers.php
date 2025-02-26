@@ -286,7 +286,9 @@ if (!function_exists('getohctotalCount')) {
             case 'prescribetopatient':
                 $count = PrescribetoPatient::where('created_at', Carbon::today())->count();
                 break;
-
+            case 'medicineissuance':
+                $count = UserMedicineIssuance::where('created_at', Carbon::today())->count();
+                break;
             default:
                 $count = 0;
                 break;

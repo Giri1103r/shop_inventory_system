@@ -206,6 +206,7 @@
 
                 <div class="card-body">
                     <div class="row">
+                        <h4>OHC Details</h4>
                         <div class="col-xl-3 col-lg-6 col-sm-6">
                             <div class="widget-stat card card-dashbaord"
                                 onclick="redirectopermanage('{{ isset($masterLink[4]['link']) ? $masterLink[4]['link'] : '' }}')"
@@ -254,7 +255,7 @@
 
                         <div class="col-xl-3 col-lg-6 col-sm-6">
                             <div class="widget-stat card card-dashbaord"
-                                onclick="redirectopermanage('{{ isset($masterLink[1]['link']) ? $masterLink[1]['link'] : '' }}')"
+                                onclick="redirectopermanage('{{ isset($masterLink[5]['link']) ? $masterLink[5]['link'] : '' }}')"
                                 style="cursor: pointer;background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
                                 <div class="card-body p-4"
                                     style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
@@ -284,9 +285,9 @@
                                         </span>
                                         <div class="media-body">
                                             <p class="mb-1" style="color:black;">
-                                                {{ isset($masterLink[1]['name']) ? $masterLink[1]['name'] : '' }}</p>
+                                                {{ isset($masterLink[5]['name']) ? $masterLink[5]['name'] : '' }}</p>
                                             <h4 class="mb-0">
-                                                {{ isset($masterLink[1]['count']) ? $masterLink[1]['count'] : 0 }}</h4>
+                                                {{ isset($masterLink[5]['count']) ? $masterLink[5]['count'] : 0 }}</h4>
                                         </div>
                                     </div>
                                 </div>
