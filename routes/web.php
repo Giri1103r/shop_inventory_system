@@ -1172,7 +1172,7 @@ Route::middleware(['securityheader'])->group(function () {
             });
 
 
-            Route::group(['prefix' => 'incident/accidentReport'], function () {
+            Route::group(['prefix' => 'accidentReport'], function () {
                 Route::get('/list', [AccidentReportController::class, 'index']);
                 Route::post('/list', [AccidentReportController::class, 'index']);
                 Route::get('/add', [AccidentReportController::class, 'add']);
@@ -1199,9 +1199,11 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/fetchEmployeeOrWorkerList/{type}', [AccidentReportController::class, 'fetchEmployeeOrWorkerList']);
                 Route::post('/addInjury', [AccidentReportController::class, 'addInjury']);
                 Route::post('/deletebodayparts', [AccidentReportController::class, 'deletebodayparts']);
-
+                Route::post('/investigation/getbodyEmpdetails', [AccidentReportController::class, 'getbodyEmpdetails']);
+                Route::get('/existingHira/{accident_id}', [AccidentReportController::class, 'existingHira']);
+                Route::get('/existingMOC/{accident_id}', [AccidentReportController::class, 'existingMOC']);
             });
-
+           
 
         });
     });

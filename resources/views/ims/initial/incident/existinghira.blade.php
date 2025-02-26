@@ -11,6 +11,7 @@
                 <button type="button" class="btn btn-secondary mx-2" id="existingHira">Existing</button>
             </div>
             <input type="hidden" name="incident_id" value="{{ $incident_id }}">
+            <input type="hidden" name="accident_id" value="{{ $accident_id }}">
 
             <div class="row" id="existingdiv">
                 <label for="hira_id" class="form-label require">HIRA</label>
@@ -57,7 +58,7 @@
         $('#saveHira').on('click', function() {
             var hiraId = $('#hira_id').val(); // Get selected HIRA ID
             var incidentId = "{{ $incident_id }}"; // Get incident ID
-
+            var accidentId = "{{ $accident_id }}"; // Get incident ID
             if (!hiraId) {
                 alert('Please select a HIRA before proceeding.');
                 return;
@@ -69,7 +70,8 @@
                 data: {
                     _token: "{{ csrf_token() }}",
                     hira_id: hiraId,
-                    incident_id: incidentId
+                    incident_id: incidentId,
+                    accidentId: accidentId
                 },
                 dataType: "json",
                 success: function(response) {

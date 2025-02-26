@@ -21,6 +21,7 @@ class HiraMoc extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
+        'accident_id',
         'incident_id',
         'invesigation_id',
         'hira_id',
@@ -43,13 +44,13 @@ class HiraMoc extends Model
         $request = request();
     
         $insert_array = array(
+            'accident_id' =>  decryptId($request->accident_id) ?? null,
             'incident_id' =>  decryptId($request->incident_id) ?? null,
             'invesigation_id' =>  $request->accident_report_id ?? null,
             'hira_id' =>  decryptId($request->fire_inicdent_report_id) ?? null,
             'moc_id' =>  decryptId($request->fire_inicdent_report_id) ?? null,
             'created_by' => Auth::id()
         );
-
         return $this->create($insert_array);
     }
 

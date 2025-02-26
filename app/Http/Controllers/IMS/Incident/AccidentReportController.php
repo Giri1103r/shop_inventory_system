@@ -26,10 +26,16 @@ use Illuminate\Support\Str;
 use App\Models\IMS\Incident\AccidentBodyParts;
 use App\Models\IMS\Incident\EHSReview;
 use App\Models\IMS\Incident\AccidentReport;
+use App\Models\IMS\Incident\AccidentInvestigationInjury;
+use App\Models\IMS\Incident\AccidentInvestigation;
+use App\Models\IMS\Master\Hira;
+use App\Models\IMS\Incident\HiraMoc;
 
 class AccidentReportController extends Controller
 {
 
+    private $accident_investigation;
+    private $accident_investigation_injury;
     private $accident_body_parts;
     private $accident_report;
     private $unit;
@@ -39,12 +45,15 @@ class AccidentReportController extends Controller
     private $ehs_review;
     private $employee;
     private $uploadlog;
-
+    private $hira;
+    private $hiramoc;
 
     public function __construct()
     {
 
 
+        $this->accident_investigation_injury = new AccidentInvestigationInjury();
+        $this->accident_investigation = new AccidentInvestigation();
         $this->accident_body_parts = new AccidentBodyParts();
         $this->employee = new Employee();
         $this->ehs_review = new EHSReview();
@@ -54,6 +63,8 @@ class AccidentReportController extends Controller
         $this->department = new Department();
         $this->user = new User();
         $this->uploadlog = new UploadLog();
+        $this->hira = new Hira();
+        $this->hiramoc = new HiraMoc();
     }
 
 
@@ -89,17 +100,17 @@ class AccidentReportController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
-                            $btn = '<a href="' . admin_url('incident/accidentReport/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('accidentReport/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
                             // if (CheckUserPermission('edit')) {
-                            $btn .= '<a href="' . admin_url('incident/accidentReport/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            $btn .= '<a href="' . admin_url('accidentReport/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
 
                             if ($row->accident_status == 1) {
-                                $btn .= '<a href="' . admin_url('incident/accidentReport/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
+                                $btn .= '<a href="' . admin_url('accidentReport/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
                             }
                             if ($row->accident_status == 2) {
-                                $btn .= '<a href="' . admin_url('incident/accidentReport/investigation/' . encryptId($row->id)) . '" class=" " title="Investigation"><i class="fa fa-search" style="color: #000000;"></i> ';
+                                $btn .= '<a href="' . admin_url('accidentReport/investigation/' . encryptId($row->id)) . '" class=" " title="Investigation"><i class="fa fa-search" style="color: #000000;"></i> ';
                             }
 
                             return $btn;
@@ -181,34 +192,33 @@ class AccidentReportController extends Controller
     {
         try {
 
-            // $rules = [
-            //     'date_and_time' => 'required',
-            //     'unit_id' => 'required',
-            //     'shift' => 'required',
-            //     'location_id' => 'required',
-            //     'designation' => 'required',
-            //     'department_id' => 'required',
-            //     'emp_code' => 'required',
-            //     'address_of_the_injuredperson' => 'required',
-            // ];
-            // $messages = [
-            //     'date_and_time.required' => 'Please enter the date and time of the accident.',
-            //     'unit_id.required' => 'Unit is required.',
-            //     'shift.required' => 'Shift is required.',
-            //     'location_id.required' => 'Location is required.',
-            //     'designation.required' => 'Designation is required.',
-            //     'department_id.required' => 'Department is required.',
-            //     'emp_code.required' => 'Employee Code is required.',
-            //     'address_of_the_injuredperson.required' => 'Address of the injured person is required.',
-            // ];
+            $rules = [
+                'date_and_time' => 'required',
+                'unit_id' => 'required',
+                'shift' => 'required',
+                'location_id' => 'required',
+                'designation' => 'required',
+                'department_id' => 'required',
+                'emp_code' => 'required',
+                'address_of_the_injuredperson' => 'required',
+            ];
+            $messages = [
+                'date_and_time.required' => 'Please enter the date and time of the accident.',
+                'unit_id.required' => 'Unit is required.',
+                'shift.required' => 'Shift is required.',
+                'location_id.required' => 'Location is required.',
+                'designation.required' => 'Designation is required.',
+                'department_id.required' => 'Department is required.',
+                'emp_code.required' => 'Employee Code is required.',
+                'address_of_the_injuredperson.required' => 'Address of the injured person is required.',
+            ];
 
-            // $validator = Validator::make($request->all(), $rules, $messages);
-            // if ($validator->fails()) {
-            //     return redirect()->back()->withErrors($validator)->withInput();
-            // }
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
 
             try {
-                    dd($request);
                 $accident_report =  $this->accident_report->store();
                 if ($accident_report) {
                     $accidentReport = $this->accident_report->selectOne($accident_report->id);
@@ -260,7 +270,7 @@ class AccidentReportController extends Controller
                                     'icon' => $img,
                                     'module' => 2,
                                 ]),
-                                'web_link' => 'tincident/accidentReport/view/' . encryptId($accidentReport->id),
+                                'web_link' => 'taccidentReport/view/' . encryptId($accidentReport->id),
                                 'assigned_user' => array_to_string($ehsids),
                                 'created_by' => Auth::id(),
                             ];
@@ -278,12 +288,12 @@ class AccidentReportController extends Controller
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
-            return redirect(admin_url('incident/accidentReport/list'));
+            return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/accidentReport/list'));
+            return redirect(admin_url('accidentReport/list'));
         }
     }
 
@@ -362,11 +372,11 @@ class AccidentReportController extends Controller
 
 
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('incident/accidentReport/list'));
+            return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
             dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/accidentReport/list'));
+            return redirect(admin_url('accidentReport/list'));
         }
     }
 
@@ -470,7 +480,6 @@ class AccidentReportController extends Controller
     public function employeename(Request $request)
     {
         $name = $request->input('search');
-        
         $employees = Employee::select('id', 'emp_id', 'emp_name')
             ->where(function ($query) use ($name) {
                 $query->where('emp_name', 'like', '%' . $name . '%')
@@ -528,22 +537,27 @@ class AccidentReportController extends Controller
             $accident = $this->accident_report->updateStatus($accidentReportId, $accident_status);
 
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('incident/accidentReport/list'));
+            return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
             dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/accidentReport/list'));
+            return redirect(admin_url('accidentReport/list'));
         }
     }
 
     public function investigation(Request $request, $accident_id)
-    {
+    {            
         try {
             $accidentId = decryptId($accident_id);
             $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
+            $id = decryptId($request->id);
 
+            $accident_body_parts = $this->accident_body_parts->delete_temprow();
+
+            $accident_investigation = $this->accident_investigation->find($id);
             $data = array(
                 'accidentId' => $accidentId,
+                'accident_body_parts' => $accident_body_parts,
                 'departmentList' => $departmentList,
 
             );
@@ -554,6 +568,49 @@ class AccidentReportController extends Controller
         }
     }
 
+    public function investigationSubmit(Request $request)
+    {
+        try {
+
+            // $rules = [
+            //     'date_and_time' => 'required',
+            //     'unit_id' => 'required',
+            //     'shift' => 'required',
+            //     'location_id' => 'required',
+            //     'designation' => 'required',
+            //     'department_id' => 'required',
+            //     'emp_code' => 'required',
+            //     'address_of_the_injuredperson' => 'required',
+            // ];
+            // $messages = [
+            //     'date_and_time.required' => 'Please enter the date and time of the accident.',
+            //     'unit_id.required' => 'Unit is required.',
+            //     'shift.required' => 'Shift is required.',
+            //     'location_id.required' => 'Location is required.',
+            //     'designation.required' => 'Designation is required.',
+            //     'department_id.required' => 'Department is required.',
+            //     'emp_code.required' => 'Employee Code is required.',
+            //     'address_of_the_injuredperson.required' => 'Address of the injured person is required.',
+            // ];
+
+            // $validator = Validator::make($request->all(), $rules, $messages);
+            // if ($validator->fails()) {
+            //     return redirect()->back()->withErrors($validator)->withInput();
+            // }
+            dd($request);
+                $accident_investigation =  $this->accident_investigation->store();
+                $investigation_injury =  $this->accident_investigation_injury->store($accident_investigation->id);
+               
+                Session::flash('success', 'Your data has been created successfully!');
+           
+            return redirect(admin_url('accidentReport/list'));
+        } catch (Exception $ex) {
+            dd($ex);
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('accidentReport/list'));
+        }
+    }
 
     public function Uniquecheck(Request $request)
     {
@@ -706,6 +763,48 @@ class AccidentReportController extends Controller
             return $addInjury;
         } catch (Exception $ex) {
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+        }
+    }
+
+    public function getbodyEmpdetails(Request $request)
+    {
+        try {
+            $getEmpdetails = $this->accident_body_parts->getEmpdetails();
+            return $getEmpdetails;
+        } catch (Exception $ex) {
+            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+        }
+    }
+
+    public function existingHira($accident_id, Request $request)
+    {
+        try {
+            $incident_id = '';
+            $hiraList = $this->hira->select('id', 'services')->where('status', '1')->get();
+
+            if ($request->ajax()) {
+                return view('ims.initial.incident.existinghira', compact('hiraList', 'incident_id','accident_id'))->render();
+            }
+
+            return view('ims.initial.incident.existinghira', compact('hiraList', 'incident_id','accident_id'));
+        } catch (Exception $error) {
+            return response()->json(['error' => $error->getMessage()], 500);
+        }
+    }
+    public function existingMOC($accident_id, Request $request)
+    {
+        try {
+            $incident_id = '';
+
+            $hiraList = $this->hira->select('id', 'services')->where('status', '1')->get();
+
+            if ($request->ajax()) {
+                return view('ims.initial.incident.existingMOC', compact('hiraList', 'incident_id','accident_id'))->render();
+            }
+
+            return view('ims.initial.incident.existingMOC', compact('hiraList', 'incident_id','accident_id'));
+        } catch (Exception $error) {
+            return response()->json(['error' => $error->getMessage()], 500);
         }
     }
     public function DownloadSample(Request $request)

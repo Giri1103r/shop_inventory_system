@@ -23,12 +23,8 @@ class AccidentBodyParts extends Model
 
     protected $fillable = [
         'accident_id',
-        'injury_person_type',
+        'injury_id',
         'injury_person_id',
-        'injury_person_name',
-        'injury_person_designation',
-        'injury_person_department_id',
-        'nature_of_injury',
         'imgMapdata',
         'body_part_image',
         'status',
@@ -40,7 +36,6 @@ class AccidentBodyParts extends Model
     ];
 
     protected $attributes = [
-        'status' => 1,
         'trash' => 'NO',
     ];
 
@@ -50,25 +45,25 @@ class AccidentBodyParts extends Model
         $request = request();
 
         $partyname = $request->input('partyname');
-        $acc_prim_id = $request->input('acc_prim_id');
         $acc_prim_add = $request->input('acc_prim_add');
+        $accident_id = $request->input('accident_id');
         $injuredPerson_type = $request->input('injuredPerson_type');
 
-        if (decryptId($injuredPerson_type) == 1) {
+        if (decryptId($injuredPerson_type) == 1 || decryptId($injuredPerson_type) == 2) {
             $partyname = decryptId($partyname);
         }
 
-        $query = $this->select('incident_body_parts.*');
+        $query = $this->select('ims_accident_body_parts.*');
 
         if ($acc_prim_add == 'acc_prim_add') {
             $query->where([
-                ['inc_emp_id', '=', $partyname],
+                ['injury_person_id', '=', $partyname],
                 ['status', '=', 'T']
             ]);
         } else {
             $query->where([
-                ['inc_emp_id', '=', $partyname],
-                ['accident_id', '=', $acc_prim_id],
+                ['injury_person_id', '=', $partyname],
+                ['accident_id', '=', $accident_id],
                 ['status', '=', 'Y']
             ]);
         }
@@ -88,8 +83,9 @@ class AccidentBodyParts extends Model
         $folderPath = 'uploads/accident_body_parts/';
 
         $base64String = $_POST['bodypartimage'];
-        // Decode the base64 string
 
+
+        // Decode the base64 string
         $image = base64_decode(str_replace('data:image/png;base64,', '', $base64String));
 
         // Save the image as a file
@@ -103,34 +99,37 @@ class AccidentBodyParts extends Model
         if ($request['body_prim_id'] != 0) {
             $locdatas = [
                 'accident_id' => decryptId($request->accident_id),
-                'injury_person_type' => decryptId($request->injury_person_type),
-                'injury_person_id' => decryptId($request->injury_person_id),
-                'injury_person_name' => $request->injury_person_name,
-                'injury_person_designation' => $request->injury_person_designation,
-                'injury_person_department_id' => decryptId($request->injury_person_department_id),
-                'nature_of_injury' => decryptId($request->nature_of_injury),
+                'injury_person_id' => decryptId($request->injuredPerson),
                 'imgMapdata' => postData($request, 'imgMapdata'),
                 'body_part_image' => $filePath,
-                'updated_by' => Auth::id()
+                'updated_by' => Auth::id(),
+                'status' => 'Y'
             ];
-            return  $this->where('id', $request['body_prim_id'])->update($locdatas);
+
+            $updtBody =  $this->where('id', $request['body_prim_id'])->update($locdatas);
         } else {
             $locdatas = [
-             'accident_id' => decryptId($request->accident_id),
-                'injury_person_type' => decryptId($request->injury_person_type),
-                'injury_person_id' => decryptId($request->injury_person_id),
-                'injury_person_name' => $request->injury_person_name,
-                'injury_person_designation' => $request->injury_person_designation,
-                'injury_person_department_id' => decryptId($request->injury_person_department_id),
-                'nature_of_injury' => decryptId($request->nature_of_injury),
+                'accident_id' => decryptId($request->accident_id),
+                'injury_person_id' => decryptId($request->injuredPerson),
                 'imgMapdata' => postData($request, 'imgMapdata'),
                 'body_part_image' => $filePath,
-                'created_by' => Auth::id()
+                'created_by' => Auth::id(),
+                'status' => 'T'
             ];
-            return  $this->create($locdatas);
+            $updtBody =  $this->create($locdatas);
         }
+        
+		if (!empty($updtBody)) {
+			$data = [
+				'status' => true
+			];
+		} else {
+			$data = [
+				'status' => false
+			];
+		}
 
-   
+		echo json_encode($data);
     }
 
     public function delete_temprow()
@@ -138,10 +137,10 @@ class AccidentBodyParts extends Model
         $this->where('status', 'T')->delete();
     }
 
-    public function updateStatusForIncident($incidentId, $excludedEmpIds)
+    public function updateStatusForIncident($accidentId, $excludedEmpIds)
     {
-        return $this->where('inc_id', $incidentId)
-            ->whereNotIn('inc_emp_id', $excludedEmpIds)
+        return $this->where('accident_id', $accidentId)
+            ->whereNotIn('injury_person_id', $excludedEmpIds)
             ->update(['status' => 'N']);
     }
 }
