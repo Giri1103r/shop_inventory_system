@@ -1181,9 +1181,11 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/gethiradetails/{hira_id}', [InitialIncidentController::class, 'gethiradetails']);
                 Route::get('/existingHira/{incident_id}', [InitialIncidentController::class, 'existingHira']);
                 Route::get('/existingMOC/{incident_id}', [InitialIncidentController::class, 'existingMOC']);
-                Route::get('/riskAnalysis/{incident_id}', [InitialIncidentController::class, 'riskAnalysis']);
+                Route::get('/approvereject/{incident_id}', [InitialIncidentController::class, 'approvereject']);
+                Route::post('/uauc/submit', [InitialIncidentController::class, 'uaucSubmit']);
                 Route::post('/riskAnalysis/submit', [InitialIncidentController::class, 'riskAnalysisSubmit']);
                 Route::post('/ehs_head_verify/submit', [InitialIncidentController::class, 'ehsHeadVerifySubmit']);
+                Route::post('/actiontaken/submit', [InitialIncidentController::class, 'actiontakenSubmit']);
             });
 
 

@@ -7,7 +7,7 @@
         </div>
         <div class="modal-body m-3">
             <div class="d-flex justify-content-left my-3">
-                <button type="button" class="btn btn-primary mx-2" id="newHira">New</button>
+                <a href="{{ admin_url('incident/hira-master/add')}}" class="btn btn-primary mx-2" id="newHira">New</a>
                 <button type="button" class="btn btn-secondary mx-2" id="existingMOC">Existing</button>
             </div>
             <input type="hidden" name="incident_id" value="{{ $incident_id }}">

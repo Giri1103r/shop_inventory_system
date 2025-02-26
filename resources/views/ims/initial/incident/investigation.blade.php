@@ -97,128 +97,127 @@
             --yellow: #FDBE22;
             --green: #69E982;
             --blue: #5CB2FB;
+        }
 
-            .cause {
-                display: flex;
-                flex-direction: column;
-                transform: skew(20deg);
-                transform-origin: bottom;
-                margin-left: .8em;
+        .cause {
+            display: flex;
+            flex-direction: column;
+            transform: skew(20deg);
+            transform-origin: bottom;
+            margin-left: .8em;
+        }
+
+        .rootcause {
+            text-align: center;
+            position: relative;
+            left: 100%;
+            transform: translateX(-50%) skewX(-20deg);
+            font-size: 1.5em;
+            color: #fff;
+            padding: .2em;
+            border-radius: .2em;
+
+            &.yellow {
+                background-color: var(--yellow);
             }
 
-            .rootcause {
-                text-align: center;
-                position: relative;
-                left: 100%;
-                transform: translateX(-50%) skewX(-20deg);
-                font-size: 1.5em;
-                color: #fff;
-                padding: .2em;
-                border-radius: .2em;
-
-                &.yellow {
-                    background-color: var(--yellow);
-                }
-
-                &.green {
-                    background-color: var(--green);
-                }
-
-                &.blue {
-                    background-color: var(--blue);
-                }
+            &.green {
+                background-color: var(--green);
             }
 
-            .subcause {
-                flex-grow: 1;
-                border-right: .2em solid var(--bone-color);
-                padding-bottom: .75em;
-                padding-top: .75em
+            &.blue {
+                background-color: var(--blue);
             }
+        }
 
-            .stat {
-                text-align: right;
-                padding-right: 3em;
-                position: relative;
+        .subcause {
+            flex-grow: 1;
+            border-right: .2em solid var(--bone-color);
+            padding-bottom: .75em;
+            padding-top: .75em
+        }
+
+        .stat {
+            text-align: right;
+            padding-right: 3em;
+            position: relative;
+            transform: skewX(-20deg);
+            line-height: 1.5em;
+            font-size: 1em;
+        }
+
+        .stat:before {
+            content: '';
+            display: block;
+            background-color: var(--bone-color);
+            position: absolute;
+            width: 3em;
+            height: .2em;
+            right: 0;
+            top: 50%;
+            transform: translate(.2em, -50%);
+        }
+
+        .line {
+            grid-column-start: 1;
+            grid-column-end: 4;
+            background-color: var(--bone-color);
+
+            ~.cause {
                 transform: skewX(-20deg);
-                line-height: 1.5em;
-                font-size: 1em;
+                transform-origin: top;
             }
 
-            .stat:before {
-                content: '';
-                display: block;
-                background-color: var(--bone-color);
-                position: absolute;
-                width: 3em;
-                height: .2em;
-                right: 0;
-                top: 50%;
-                transform: translate(.2em, -50%);
+            ~.cause .rootcause {
+                transform: translateX(-50%) skewX(20deg);
             }
 
-            .line {
-                grid-column-start: 1;
-                grid-column-end: 4;
-                background-color: var(--bone-color);
-
-                ~.cause {
-                    transform: skewX(-20deg);
-                    transform-origin: top;
-                }
-
-                ~.cause .rootcause {
-                    transform: translateX(-50%) skewX(20deg);
-                }
-
-                ~.cause .stat {
-                    transform: skewX(20deg);
-                }
+            ~.cause .stat {
+                transform: skewX(20deg);
             }
+        }
 
-            .defect-spacer-top {
-                grid-column-start: 4;
-                grid-column-end: 4;
-                grid-row-start: 1;
-                grid-row-end: 2;
-            }
+        .defect-spacer-top {
+            grid-column-start: 4;
+            grid-column-end: 4;
+            grid-row-start: 1;
+            grid-row-end: 2;
+        }
 
-            .defect {
-                grid-column-start: 4;
-                grid-column-end: 4;
-                grid-row-start: 2;
-                grid-row-end: 3;
-            }
+        .defect {
+            grid-column-start: 4;
+            grid-column-end: 4;
+            grid-row-start: 2;
+            grid-row-end: 3;
+        }
 
-            .defect-spacer-bottom {
-                grid-column-start: 4;
-                grid-column-end: 4;
-                grid-row-start: 3;
-                grid-row-end: 4;
-            }
+        .defect-spacer-bottom {
+            grid-column-start: 4;
+            grid-column-end: 4;
+            grid-row-start: 3;
+            grid-row-end: 4;
+        }
 
-            .defect-text {
-                position: relative;
-                top: 50%;
-                transform: translateY(-50%);
-                padding: 1em;
-                margin-left: .5em;
-                background-color: var(--bone-color);
-                border-radius: .5em;
-                color: #fff;
-                text-align: center;
-            }
+        .defect-text {
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 1em;
+            margin-left: .5em;
+            background-color: var(--bone-color);
+            border-radius: .5em;
+            color: #fff;
+            text-align: center;
+        }
 
-            .subcause .stat {
-                margin-bottom: 15px;
-                /* Adjust the spacing between input fields */
-            }
+        .subcause .stat {
+            margin-bottom: 15px;
+            /* Adjust the spacing between input fields */
+        }
 
-            .subcause {
-                margin-bottom: 20px;
-                /* Add spacing between rows of input fields */
-            }
-
+        .subcause {
+            margin-bottom: 20px;
+            /* Add spacing between rows of input fields */
         }
     </style>
     <div class="clearfix"></div>
@@ -255,7 +254,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Sr. No</label>
                                         <div class="view_data">
-                                            {{ $incident_report->sr_no ?? null}}
+                                            {{ $incident_report->sr_no ?? null }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -366,6 +365,41 @@
 
                                 </div>
                             </div>
+                            <div class="card-body ">
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">EHS Head Review</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label for="name" class="form-label">Reviewer Name</label>
+                                        <div class="view_data">
+                                            {{ $getEHSVerify->reviewer_name }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Date') }}</label>
+                                        <div class="view_data">
+                                            {{ $getEHSVerify->date }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label for="team_id" class="form-label">Assign Team
+                                            members</label>
+                                        <div class="view_data">
+                                            {{ $getEHSVerify->team_member_names }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label">Remark</label>
+                                        <div class="view_data">
+                                            {{ $getEHSVerify->remark }}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
                             <div class="card-body">
                                 <div class="row">
                                     <div class="card-header-inner">
@@ -385,8 +419,8 @@
                                                 <div class="form-group form-input">
                                                     <label for="witness_id" class="form-label">Name of the
                                                         Witness</label>
-                                                    <select name="witness_id" id="witness_id" class="form-control witness"
-                                                        style="width: 100%">
+                                                    <select name="witness_id" id="witness_id"
+                                                        class="form-control witness" style="width: 100%">
                                                         <option value="">Select Name of the Witness</option>
                                                     </select>
                                                 </div>
@@ -518,7 +552,7 @@
 
                                         </div>
 
-                                        <div class="row mt-3" style="display: none;">
+                                        <div class="row mt-3 whywhy" style="display: none;">
                                             <div class="card p-3">
                                                 <div
                                                     class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
@@ -577,169 +611,242 @@
                                             </div>
                                         </div>
 
-                                        <div class="row m-5 p-3" style="display: none;">
+                                        <div class="row m-5 p-3 fishbone" style="display: none;">
                                             <div class="fishbone-container " style="text-align: center;">
                                                 <!-- Mensch -->
                                                 <div class="cause">
                                                     <div class="rootcause blue">
-                                                        <input type="text" class="form-control" placeholder="Enter value">
+                                                        <input type="text" class="form-control"
+                                                            placeholder="Enter value"
+                                                            name = "fishbone[first][root_cause]">
                                                     </div>
                                                     <div class="subcause">
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat " placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat "
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[first][sub][category_1]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[first][sub][category_2]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[first][sub][category_3]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[first][sub][category_4]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[first][sub][category_5]">
                                                         </div>
                                                     </div>
                                                 </div>
-                                        
+
                                                 <!-- Maschine -->
                                                 <div class="cause">
                                                     <div class="rootcause green">
-                                                        <input type="text" class="form-control" placeholder="Enter value">
+                                                        <input type="text" class="form-control"
+                                                            placeholder="Enter value"
+                                                            name = "fishbone[second][root_cause]">
                                                     </div>
                                                     <div class="subcause">
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[second][sub][category_1]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[second][sub][category_2]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[second][sub][category_3]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[second][sub][category_4]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[second][sub][category_5]">
                                                         </div>
                                                     </div>
                                                 </div>
-                                        
+
                                                 <!-- Milieu -->
                                                 <div class="cause">
                                                     <div class="rootcause yellow">
-                                                        <input type="text" class="form-control" placeholder="Enter value">
+                                                        <input type="text" class="form-control"
+                                                            placeholder="Enter value"
+                                                            name = "fishbone[third][root_cause]">
                                                     </div>
                                                     <div class="subcause">
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[third][sub][category_1]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[third][sub][category_2]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[third][sub][category_3]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[third][sub][category_4]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[third][sub][category_5]">
                                                         </div>
-                                                        
+
                                                     </div>
                                                 </div>
-                                        
+
                                                 <!-- Divider Line -->
                                                 <div class="line"></div>
-                                        
+
                                                 <!-- Messung -->
                                                 <div class="cause">
                                                     <div class="subcause">
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[fourth][sub][category_1]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[fourth][sub][category_2]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[fourth][sub][category_3]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[fourth][sub][category_4]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[fourth][sub][category_5]">
                                                         </div>
                                                     </div>
                                                     <div class="rootcause blue">
-                                                        <input type="text" class="form-control" placeholder="Enter value">
+                                                        <input type="text" class="form-control"
+                                                            placeholder="Enter value"
+                                                            name = "fishbone[fourth][root_cause]">
                                                     </div>
                                                 </div>
-                                        
+
                                                 <!-- Material -->
                                                 <div class="cause">
                                                     <div class="subcause">
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[fifth][sub][category_1]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[fifth][sub][category_2]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[fifth][sub][category_3]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[fifth][sub][category_4]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[fifth][sub][category_5]">
                                                         </div>
-                                                        
+
                                                     </div>
                                                     <div class="rootcause green">
-                                                        <input type="text" class="form-control" placeholder="Enter value">
+                                                        <input type="text" class="form-control"
+                                                            placeholder="Enter value"
+                                                            name = "fishbone[fifth][root_cause]">
                                                     </div>
-                                                    
+
                                                 </div>
-                                        
+
                                                 <!-- Methoden -->
                                                 <div class="cause">
                                                     <div class="subcause">
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[sixth][sub][category_1]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[sixth][sub][category_2]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[sixth][sub][category_3]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[sixth][sub][category_4]">
                                                         </div>
                                                         <div class="stat">
-                                                            <input type="text" class="form-control sub-stat" placeholder="Enter value">
+                                                            <input type="text" class="form-control sub-stat"
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[sixth][sub][category_5]">
                                                         </div>
                                                     </div>
                                                     <div class="rootcause yellow">
-                                                        <input type="text" class="form-control" placeholder="Enter value">
+                                                        <input type="text" class="form-control"
+                                                            placeholder="Enter value"
+                                                            name = "fishbone[sixth][root_cause]">
                                                     </div>
                                                 </div>
-                                        
+
                                                 <!-- Defect Section -->
                                                 <div class="defect-spacer-top"></div>
                                                 <div class="defect">
                                                     <div class="defect-text">
-                                                        <input type="text" class="form-control" placeholder="Enter value">
+                                                        <input type="text" class="form-control"
+                                                            placeholder="Enter value" name = "fishbone[root_cause][main]">
                                                     </div>
                                                 </div>
                                                 <div class="defect-spacer-bottom"></div>
                                             </div>
                                         </div>
-                                        
+
 
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
@@ -769,23 +876,20 @@
         // });
         $(document).ready(function() {
 
-            $("#root_cause_analysis").change(function () {
-            if ($(this).val() == "1") {
-                $(".row.mt-3").show(); // Show the Why Why Analysis section
-            } else {
-                $(".row.mt-3").hide(); // Hide it when another option is selected
-            }
-        });
-            let whywhyanalysisIndex = {{ count($incident_investigation_draft['whywhyanalysis'] ?? []) ?: 1 }};
+            $("#root_cause_analysis").change(function() {
+                if ($(this).val() == "1") {
+                    $(".whywhy").show(); // Show the Why Why Analysis section
+                } else {
+                    $(".whywhy").hide(); // Hide it when another option is selected
+                }
+            });
+            let whywhyanalysisIndex = {{ 1 }};
 
-            function updateRootCauseAnalysis() {
-                const values = $(".whywhyanalysis_fifth").map(function() {
-                    return $(this).val().trim();
-                }).get().filter(value => value !== "");
-                $("#root_cause_analysis").val(values.join("\n"));
-            }
+
 
             $(".addwhywhyanalysis").on("click", function() {
+
+                console.log("Root Cause Selected Value:", $("#root_cause_analysis").val());
                 const newRow = `
             <tr id="RowwhywhyanalysisView${whywhyanalysisIndex}">
                 <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_first]" class="form-control"></td>
@@ -807,7 +911,7 @@
 
                 $("#whywhyanalysisBody").append(newRow);
                 whywhyanalysisIndex++;
-                updateRootCauseAnalysis();
+
             });
 
             $(document).on("click", ".removewhywhyanalysisRow", function() {
@@ -826,7 +930,6 @@
                         if (result.isConfirmed) {
                             $(this).closest("tr").fadeOut(300, function() {
                                 $(this).remove();
-                                updateRootCauseAnalysis();
                             });
 
                             Swal.fire("Deleted!", "The row has been deleted.", "success");
@@ -837,8 +940,19 @@
                 }
             });
 
-            $(document).on("input", ".whywhyanalysis_fifth", function() {
-                updateRootCauseAnalysis();
+            // $(document).on("input", ".whywhyanalysis_fifth", function() {
+
+            // });
+        });
+
+        $(document).ready(function() {
+
+            $("#root_cause_analysis").change(function() {
+                if ($(this).val() == "2") {
+                    $(".fishbone").show(); // Show the Why Why Analysis section
+                } else {
+                    $(".fishbone").hide(); // Hide it when another option is selected
+                }
             });
         });
 

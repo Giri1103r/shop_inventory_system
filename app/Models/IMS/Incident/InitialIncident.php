@@ -36,6 +36,9 @@ class InitialIncident extends Model
         'reporting_media',
         'reporting_media_others',
         'brief_description',
+        'ua_uc_yes_no',
+        'ua_or_uc',
+        'description_uauc',
         'incident_status',
         'status',
         'trash',
@@ -229,6 +232,46 @@ class InitialIncident extends Model
         return $this->where('id', $id)->update($update_data);
     }
 
+    
+    public function updateStatus($incident_Id, $incident_status)
+    {
+        $request = request();
+
+        $update_array = array(
+            'incident_status' => $incident_status,
+            'updated_by' => Auth::id(),
+            'updated_at' => now(),
+        );
+        return $this->where('id', $incident_Id)->update($update_array);
+    }
+
+    public function uaucsubmit($id)
+    {
+
+        $request = request();
+        $ua_or_uc = is_array($request->ua_or_uc) ? implode(',', $request->ua_or_uc) : null;
+
+        $update_array = array(
+            'ua_uc_yes_no' => $request->ua_uc_yes_no,
+            'ua_or_uc' => $ua_or_uc,
+            'description_uauc' => $request->description_uauc
+        );
+
+        return $this->where('id', $id)->update($update_array);
+    }
+    public function actiontakensubmit($id)
+    {
+
+        $request = request();
+
+        $update_array = array(
+            'action_submission_by' => Auth::id(),
+            'action_submission_date' => DBdateformat($request->action_submission_date),
+            'action_submission_description' => $request->action_submission_description
+        );
+
+        return $this->where('id', $id)->update($update_array);
+    }
     public function exportdata()
     {
         $request = request();
@@ -325,19 +368,34 @@ class InitialIncident extends Model
             
         return $data;
     }
-
-    public function updateStatus($incident_Id, $incident_status)
+    public function getwhywhy($id)
     {
-        $request = request();
-
-        $update_array = array(
-            'incident_status' => $incident_status,
-            'updated_by' => Auth::id(),
-            'updated_at' => now(),
-        );
-        return $this->where('id', $incident_Id)->update($update_array);
+        $data = $this->select('ims_incident_whywhyanalysis.*')
+            ->where('ims_initial_incident.id', $id)
+            ->leftJoin('ims_incident_whywhyanalysis', 'ims_incident_whywhyanalysis.incident_id', '=', 'ims_initial_incident.id')
+            ->get();
+            
+        return $data;
+    }
+    public function getfishbone($id)
+    {
+        $data = $this->select('ims_incident_fishboneanalysis.*')
+            ->where('ims_initial_incident.id', $id)
+            ->leftJoin('ims_incident_fishboneanalysis', 'ims_incident_fishboneanalysis.incident_id', '=', 'ims_initial_incident.id')
+            ->get();
+            
+        return $data;
     }
 
+    public function getrisklevel($id)
+    {
+        $data = $this->select('ims_master_incident_riskanalysis.*')
+            ->where('ims_initial_incident.id', $id)
+            ->leftJoin('ims_master_incident_riskanalysis', 'ims_master_incident_riskanalysis.incident_id', '=', 'ims_initial_incident.id')
+            ->first();
+            
+        return $data;
+    }
     public function getEHSReviewincident($id)
     {
         $data = $this->select('ims_ehs_review.*', 'ims_ehs_review.team_member')
