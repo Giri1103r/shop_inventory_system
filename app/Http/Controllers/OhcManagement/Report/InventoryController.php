@@ -68,7 +68,7 @@ class InventoryController extends Controller
                             return getUnitname($row->unit_id);
                         })
 
-                       
+
 
                         ->rawColumns(['action', 'request_date', 'approve_status','unit_id','department_id'])
                         ->setFilteredRecords($data['filter_records'])
@@ -90,7 +90,55 @@ class InventoryController extends Controller
 
         );
 
-        return view('ohcmanagement.report.inventory.list', $data);
+        if(checkUserRole(ROLE_SUPERADMIN)){
+            return view('ohcmanagement.report.inventory.list', $data);
+        }else{
+            return view('ohcmanagement.report.inventory.userlist', $data);
+        }
+
+
+    }
+    public function userindex(Request $request)
+    {
+        if (Auth::check()) {
+            if ($request->ajax()) {
+                try {
+                    $data = $this->inventory->userlist();
+                    $datatables = DataTables::of($data['data'])
+                        ->addIndexColumn()
+                        ->addColumn('status', function ($row) {
+                            $text = "<span style='color:red'>In-Active<span>";
+                            if ($row->status == 1) {
+                                $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
+                            } else if ($row->status == 0) {
+                                $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
+                            }
+                            return $text;
+                        })
+                        ->editColumn('medicine_id', function ($row) {
+                            return getMedicinename($row->medicine_id);
+                        })
+                        ->editColumn('unit_id', function ($row) {
+                            return getUnitname($row->unit_id);
+                        })
+                        ->addColumn('user_balance', function ($row) {
+                            return $row->total_received - $row->total_first_aid;
+                        })
+                        ->rawColumns(['action', 'request_date', 'approve_status', 'unit_id', 'department_id','user_balance'])
+                        ->setFilteredRecords($data['filter_records'])
+                        ->setTotalRecords($data['total_records'])
+                        ->skipPaging()
+                        ->make(true);
+
+                    return response()->json($datatables->getData());
+                } catch (Exception $ex) {
+                    report($ex);
+                    return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
+                }
+            }
+        }
+
+        return view('ohcmanagement.report.inventory.userlist');
     }
 
 }

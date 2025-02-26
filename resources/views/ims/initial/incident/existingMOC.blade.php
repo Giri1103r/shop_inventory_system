@@ -11,6 +11,7 @@
                 <button type="button" class="btn btn-secondary mx-2" id="existingMOC">Existing</button>
             </div>
             <input type="hidden" name="incident_id" value="{{ $incident_id }}">
+            <input type="hidden" name="accident_id" value="{{ $accident_id }}">
 
             <div class="row" id="existingMOCdiv" style="display: none;">
                 <label for="moc_id" class="form-label require">MOC</label>
@@ -57,9 +58,10 @@
         $('#savemoc').on('click', function() {
             var mocId = $('#moc_id').val(); // Get selected HIRA ID
             var incidentId = "{{ $incident_id }}"; // Get incident ID
+            var accidentId = "{{ $accident_id }}"; // Get incident ID
 
             if (!mocId) {
-                alert('Please select a HIRA before proceeding.');
+                alert('Please select a MOC before proceeding.');
                 return;
             }
 
@@ -69,17 +71,18 @@
                 data: {
                     _token: "{{ csrf_token() }}",
                     moc_id: mocId,
-                    incident_id: incidentId
+                    incident_id: incidentId,
+                    accidentId: accidentId
                 },
                 dataType: "json",
                 success: function(response) {
                     if (response.success) {
-                        alert("HIRA saved successfully!");
+                        alert("MOC saved successfully!");
                         $('#saved_hira_id').val(response
                         .moc_id); // Update the hidden input
                         $('#hiraModal').modal('hide');
                     } else {
-                        alert("Failed to save HIRA: " + response.message);
+                        alert("Failed to save MOC: " + response.message);
                     }
                 },
                 error: function(xhr) {
@@ -140,7 +143,7 @@
 
         // Cancel button action for closing modal
         $('#cancelHira').on('click', function() {
-            $('#hiraModal').modal('hide');
+            $('#mocModal').modal('hide');
             $('#existingMOCdiv').hide();
             $('#hiramocDetails').hide();
         });
@@ -149,7 +152,7 @@
         $('#confirmHira').on('click', function() {
             // Add logic to handle confirmation
             console.log("HIRA confirmed");
-            $('#hiraModal').modal('hide');
+            $('#mocModal').modal('hide');
         });
     });
 </script>

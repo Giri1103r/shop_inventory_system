@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Discard the Expire Medicine')
+@section('title', 'Discard the Expire Medicine Edit')
 @section('pageurl', admin_url('ohc/discard/list'))
 @section('content')
 
@@ -31,118 +31,109 @@
                                         action="{{ admin_url('ohc/discard/edit/submit') }}">
                                         @csrf
                                         <input type="hidden" name="id" id="id"
-                                        value="{{ encryptId($user_medicine_requisition->id) }}">
+                                            value="{{ encryptId($user_discard->id) }}">
+                                        <input type="hidden" name="medicineid" id="medicineid"
+                                            value="{{ encryptId($discard->id) }}">
                                         <hr>
                                         <div class="row">
 
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Requestion ID</label>
-                                                    <input type="text" name ="req_id" id="req_id" class="form-control"
-                                                        placeholder="Requistion ID"
-                                                        value="{{ $user_medicine_requisition->req_id }}" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Unit </label>
-                                                    <select name="unit_id" id="unit_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Unit</option>
-                                                        @foreach ($unit as $unit)
-                                                            <option @if ($user_medicine_requisition->unit_id == $unit->id) selected @endif
-                                                                value="{{ encryptId($unit->id) }}">
-                                                                {{ $unit->unit_name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label for="department_id" class="form-label require">Department
-                                                    </label>
-                                                    <select name="department_id" id="department_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Department </option>
-                                                        @foreach ($departmentList as $department)
-                                                            <option @if ($user_medicine_requisition->department_id == $department->id) selected @endif
-                                                                value="{{ encryptId($department->id) }}">
-                                                                {{ $department->department_name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Request
+                                                    <label class="form-label require">Unit</label>
+                                                    <input type="text" name="unit_id" id="unit_id" class="form-control"
+                                                        placeholder="Enter the Unit Name"
+                                                        value="{{ getUnitname($user_discard->unit_id) }}" readonly>
+                                                    <input type="hidden" name="hidden_unit_id" id="hidden_unit_id"
+                                                        class="form-control" value="{{ encryptId($user_discard->unit_id) }}"
+                                                        data-url="{{ admin_url('department/ajax-list') }}" readonly>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Department</label>
+                                                    <select name="department_id" id="department_id"
+                                                        class="form-control single-select" style="width: 100%">
+                                                        <option value="">Select Department</option>
+                                                        @foreach ($departmentList as $department)
+                                                            <option value="{{ encryptId($department->id) }}"
+                                                                @if (encryptId($department->id) == encryptId($user_discard->department_id)) selected @endif>
+                                                                {{ $department->department_name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label for="rate" class="form-label require ">Discard
                                                         Date</label>
-                                                    <input type="text" name="request_date" id="request_date"
-                                                        value="{{ displaydateformat($user_medicine_requisition->request_date) }}"
+                                                    <input type="text" name="discard_date" id="discard_date"
+                                                        value="{{ displaydateformat($user_discard->discard_date) }}"
                                                         class="form-control">
                                                 </div>
                                             </div>
 
                                         </div>
-                                        <div class="table-responsive">
-                                            <table class="table view_card" id="requisition_medicine">
-                                                <thead style="background-color: #0000;color:#ffff">
-                                                    <tr>
-                                                        <th>Medicine</th>
-                                                        <th>Quantity</th>
-                                                        <th>Remarks</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="medicine-tbody">
-                                                    @foreach ($medicine_requisition as $key => $requisition)
-                                                        <tr>
-                                                            <td>
-                                                                <div class="form-group form-input">
-                                                                    <label for="medicine_id" class="require">Medicine Name</label>
-                                                                    <select name="medicine_id[{{ $key }}]" id="medicine_id" class="form-control single-select" style="width: 100%">
-                                                                        <option value="">Select the Medicine Name</option>
-                                                                        @foreach ($medicine as $list)
-                                                                            <option value="{{ $list->id }}" @if ($requisition->medicine_id == $list->id) selected @endif>
-                                                                                {{ $list->medicine }}
-                                                                            </option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <div class="form-group form-input">
-                                                                    <label for="quantity" class="require">Quantity</label>
-                                                                    <input type="text" name="quantity[{{ $key }}]" id="quantity" placeholder="Enter the quantity" class="form-control" value="{{ $requisition->quantity }}">
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <div class="form-group form-input">
-                                                                    <label for="remarks" class="require">Remarks</label>
-                                                                    <textarea name="remarks[{{ $key }}]" id="remarks" cols="10" rows="2" class="form-control">{{ $requisition->remarks }}</textarea>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <div class="row gap-2">
-                                                                    <div class="d-flex justify-content-center align-items-center bg-primary mt-2 ml-2 text-white rounded add-row" style="width: 30px; height: 30px;">
-                                                                        <i class="fa-solid fa-plus"></i>
-                                                                    </div>
-                                                                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px;">
-                                                                        <i class="fa-solid fa-trash"></i>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
+                                        <div class="row">
+                                            <div class="row">
+                                                <div class="card-header-inner">
+                                                    <h4 class="text-white">Medicine Details</h4>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Medicine name</label>
+                                                    <select name="medicine_id" id="medicine_id"
+                                                        class="form-control single-select" style="width: 100%">
+                                                        <option value="">Select medicine</option>
+                                                        @foreach ($medicine as $list)
+                                                            <option value="{{ encryptId($list->medicine_id) }}"
+                                                                @if ($list->medicine_id == $discard->medicine_id) selected @endif>
+                                                                {{ getmedicinename($list->medicine_id) }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
 
-                                            </table>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label for="rate" class="form-label require ">Available Quantity
+                                                    </label>
+                                                    <input type="text" name="available_quantity" id="available_quantity"
+                                                        value="{{ $discard->available_quantity }}" readonly
+                                                        class="form-control">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label for="rate" class="form-label require "> Quantity
+                                                    </label>
+                                                    <input type="text" name="quantity" id="quantity"
+                                                        value="{{ $discard->quantity }}" class="form-control">
+                                                    <span id="quantity-error" style=" display:none;"
+                                                        class="text-danger quantity-error">Quantity must be less than
+                                                        available quantity.</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label for="rate" class="form-label require ">Remarks
+                                                    </label>
+                                                   <textarea name="remarks" id="remarks" cols="10" rows="5" class="form-control">{{$discard->remarks}}</textarea>
+                                                </div>
+                                            </div>
                                         </div>
+
                                         <hr>
                                         <div class="submit-button float-end">
                                             <x-button-submit class="submit" id="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
-                                            <x-button-cancel
-                                                href="{{ admin_url('ohc/discard/list') }}"></x-button-cancel>
+                                            <x-button-cancel href="{{ admin_url('ohc/discard/list') }}"></x-button-cancel>
                                         </div>
                                     </form>
                                 </div>
@@ -168,196 +159,88 @@
             });
         });
         $(document).ready(function() {
+            $(document).on('input', '#hidden_unit_id', function() {
+                var unitId = $(this).val();
+                var ajaxUrl = $(this).data('url');
+                var selectedDepartment = $('#department_id').val(); // Get the currently selected department
 
-            var initialUnitId = $('#unit_id').val();
-            var preselectedDepartmentId = "{{ encryptId($user_medicine_requisition->department_id) ?? '0' }}";
+                console.log("Unit ID:", unitId);
+                console.log("Selected Department:", selectedDepartment);
 
-
-            if (initialUnitId) {
-                fetchDepartments(initialUnitId, preselectedDepartmentId, function() {
-                    var department_id = preselectedDepartmentId;
-
-                });
-
-            }
-
-            $('#unit_id').on('change', function() {
-                var unit_id = $(this).val();
-                fetchDepartments(unit_id, preselectedDepartmentId, function() {
-                    $('#department_id').trigger('change');
-                });
-
-            });
-
-
-            function fetchDepartments(unit_id, preselectedDepartmentId, callback) {
-                if (unit_id) {
+                if (unitId) {
                     $.ajax({
-                        url: "{{ admin_url('department/ajax-list/') }}" + unit_id + '/' +
-                            preselectedDepartmentId,
+                        url: ajaxUrl + "/" + unitId + "/0",
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
                             $('#department_id').empty().append(
                                 '<option value="">Select Department</option>');
+
                             $.each(data, function(key, value) {
-                                var selected = (value.id == preselectedDepartmentId) ?
-                                    'selected' : '';
-                                $('#department_id').append('<option value="' + value.id + '" ' +
-                                    selected + '>' + value.name + '</option>');
+                                var isSelected = (value.id === selectedDepartment) ?
+                                    "selected" : "";
+                                $('#department_id').append('<option value="' + value
+                                    .id + '" ' + isSelected + '>' + value.name +
+                                    '</option>');
                             });
-                            if (callback) callback();
+
+                            $('#department_id').trigger('change');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching department. Please try again.');
                         }
                     });
                 } else {
                     $('#department_id').empty().append('<option value="">Select Department</option>');
+                    $('#department_id').trigger('change');
                 }
+            });
+
+            // Trigger on page load if `hidden_unit_id` has a value
+            if ($('#hidden_unit_id').val()) {
+                $('#hidden_unit_id').trigger('input');
             }
-
-
-
-
-
-
         });
+
         $(document).ready(function() {
 
-            const MAX_ROWS = 5;
-            let medicine_requisition_row_count ={{ count($medicine_requisition) }};;
+            $(document).on("change", "#medicine_id", function() {
+                var selectedMedicineId = $(this).val(); // Get selected medicine ID
+                var availableQuantityInput = $('#available_quantity'); // Reference the input field
 
-            $(".add-row").click(function() {
-                var rowCount = $('#medicine-tbody tr').length;
-
-                if (rowCount < MAX_ROWS) {
-                    var newRow = `
-            <tr>
-                <td>
-                    <div class="form-group form-input">
-                        <label for="medicine_id" class="require">Medicine Name</label>
-                        <select name="medicine_id[${medicine_requisition_row_count}]" class="form-control single-select" style="width: 100%">
-                            <option value="">Select the Medicine Name</option>
-                            @foreach ($medicine as $list)
-                                <option value="{{ $list->id }}">{{ $list->medicine }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </td>
-                <td>
-                    <div class="form-group form-input">
-                        <label for="quantity" class="require">Quantity</label>
-                        <input type="text" name="quantity[${medicine_requisition_row_count}]" placeholder="Enter the quantity" class="form-control">
-                    </div>
-                </td>
-                <td>
-                    <div class="form-group form-input">
-                        <label for="remarks" class="require">Remarks</label>
-                        <textarea name="remarks[${medicine_requisition_row_count}]" cols="10" rows="2" class="form-control"></textarea>
-                    </div>
-                </td>
-                <td>
-                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px;">
-                        <i class="fa-solid fa-trash"></i>
-                    </div>
-                </td>
-            </tr>`;
-
-                    $('#medicine-tbody').append(newRow);
-
-                    // Initialize select2 for the newly added select element
-                    $('select[name="medicine_id[' + medicine_requisition_row_count + ']"]').select2({
-                        placeholder: "Select the Medicine Name", // Optional placeholder
-                        width: '100%' // Ensuring it spans the full width
-                    });
-
-                    // Add validation rules
-                    $('select[name="medicine_id[' + medicine_requisition_row_count + ']"]').rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'This Medicine name is required'
+                if (selectedMedicineId) {
+                    $.ajax({
+                        url: "{{ admin_url('ohc/medicine-issuance/quantity') }}/" +
+                            selectedMedicineId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            availableQuantityInput.val(data.available_quantity);
+                        },
+                        error: function() {
+                            Swal.fire('Error', 'Something went wrong. Please try again.',
+                                'error');
                         }
                     });
-
-                    $('input[name="quantity[' + medicine_requisition_row_count + ']"]').rules('add', {
-                        required: true,
-                        digits: true,
-                        messages: {
-                            required: 'Quantity is required',
-                            digits: 'Quantity must be numeric',
-                        }
-                    });
-
-                    $('textarea[name="remarks[' + medicine_requisition_row_count + ']"]').rules('add', {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 600,
-                        messages: {
-                            required: 'Remarks are required',
-                            minlength: 'Minimum 3 characters are required',
-                            maxlength: 'Remarks should not exceed 600 characters',
-                        }
-                    });
-
-                    // Increment the row count for the next addition
-                    medicine_requisition_row_count++;
                 } else {
-                    // Display SweetAlert warning if the limit is exceeded
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Warning',
-                        text: 'Your request has exceeded the limit.',
-                        confirmButtonColor: '#3085d6'
-                    });
+                    availableQuantityInput.val('');
                 }
             });
 
-            $(document).on("click", ".delete-row", function() {
-                var rowCount = $('#medicine-tbody tr').length;
+            // Validate input quantity against available quantity
+            $(document).on("input", 'input[name^="quantity"]', function() {
+                var row = $(this).closest('tr'); // Get the row of the current input
+                var availableQuantity = parseInt(row.find('input[name^="available_quantity"]').val()) || 0;
+                var quantity = parseInt($(this).val()) || 0;
 
-                // Check if there is more than one row
-                if (rowCount > 1) {
-                    $(this).closest("tr").remove();
+                if (quantity > availableQuantity) {
+                    row.find('.quantity-error').show();
+                    $(this).val(availableQuantity);
                 } else {
-                    // Show SweetAlert warning if there's only one row
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Warning',
-                        text: 'At least one row is required.',
-                        confirmButtonColor: '#3085d6'
-                    });
+                    row.find('.quantity-error').hide();
                 }
             });
         });
-
-        $(document).on("change", "[name^='medicine_id']", function() {
-            var medicineIds = [];
-            var isDuplicate = false;
-            var currentRow = $(this).closest("tr");
-            var medicineId = $(this).val();
-
-            // Loop through all medicine_id fields to check for duplicates
-            $("[name^='medicine_id']").each(function() {
-                var otherMedicineId = $(this).val();
-                if (otherMedicineId) {
-                    if (medicineIds.includes(otherMedicineId)) {
-                        isDuplicate = true;
-                    }
-                    medicineIds.push(otherMedicineId);
-                }
-            });
-
-            // If a duplicate is found, show an alert and reset the current row's medicine field
-            if (isDuplicate) {
-                Swal.fire({
-                    icon: "error",
-                    title: "Duplicate Medicine Selection!",
-                    text: "Each Medicine must be unique across all rows.",
-                });
-                // Clear medicine selection in the current row
-                currentRow.find('select[name^="medicine_id"]').val("");
-                return;
-            }
-        });
-
 
 
         $(function() {
@@ -378,29 +261,20 @@
                     department_id: {
                         required: true,
                     },
-                    req_id: {
+                    discard_date: {
                         required: true,
                     },
-                    request_date: {
+                    medicine_id: {
                         required: true,
                     },
-                    @foreach ($medicine_requisition as $key => $requistion)
-                        'medicine_id[{{ $key }}]': {
-                            required: true
-                        },
-                        'quantity[{{ $key }}]': {
-                            required: true,
-                            required: true,
-                            digits: true,
-                        },
-                        'remarks[{{ $key }}]': {
-
-                            required: true,
-                            minlength: 3,
-                            maxlength: 600,
-                        },
-                    @endforeach
-
+                    quantity: {
+                        required: true,
+                    },
+                    remarks: {
+                        required: true,
+                        minlength:3,
+                        maxlength:600,
+                    },
                 },
                 messages: {
                     unit_id: {
@@ -409,25 +283,17 @@
                     department_id: {
                         required: "Please select the Department Name.",
                     },
-                    req_id: {
-                        required: "Requisition ID cannot be empty.",
-                    },
-                    request_date: {
-                        required: "Please select the request date.",
-                    },
-                    'medicine_id[0]': {
-                        required: 'Medicine Name is required',
-                    },
-                    'quantity[0]': {
-                        required: 'Quantity is required',
-                        digits: 'Quantity should be numeric',
-                    },
-                    'remarks[0]': {
-                        required: 'Remarks is required',
-                        minlength: 'Minimum 3 character is required',
-                        maxlength: 'Remarks should not exceed more than the 600 characters',
 
-                    }
+                    discard_date: {
+                        required: "Please select the discard date.",
+                    },
+                    medicine_id: {
+                        required: "Please select the Medicine Name.",
+                    },
+                    quantity: {
+                        required:"Please select the quantity.",
+                    },
+
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {

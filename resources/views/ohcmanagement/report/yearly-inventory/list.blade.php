@@ -49,7 +49,8 @@
 
                             <div class="col-md-3 d-flex mt-3 align-items-center gap-2">
                                 <button class="btn btn-primary" name="search" id="search">Search</button>
-                                <a href="{{url('ohc/yearly-inventory-report/exportexcel')}}" class="btn btn-secondary" id="exportexcel">Export Excel</a>
+                                <a href="#" class="btn btn-secondary" id="exportexcel">Export Excel</a>
+
                             </div>
 
                         </div>
@@ -58,7 +59,8 @@
                             <table class="table table-bordered table-responsive" id="tableToExport" style="width:100%;"
                                 border="0">
                                 <tr style="font-size: 19px; background-color:red; color:rgb(10, 1, 1) ">
-                                    <td colspan="5"><img src="{{ url('public/assets/images/logo-dark.png') }}" style="background-color: white"  alt=""></td>
+                                    <td colspan="5"><img src="{{ url('public/assets/images/logo-dark.png') }}"
+                                            style="background-color: white" alt=""></td>
 
                                     <td colspan="70" align="center">
                                         <center>
@@ -89,6 +91,32 @@
                     minDate: "today"
                 });
             });
+            $(document).ready(function() {
+                $('#exportexcel').on('click', function(e) {
+                    e.preventDefault();
+
+                    let unitId = $('#unit_id').val();
+                    let year = $('#year').val();
+
+                    if (!unitId || !year) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Warning',
+                            text: 'Please select the Unit,Year.',
+                            confirmButtonColor: '#3085d6'
+                        });
+                        return;
+                    }
+
+
+                    let exportUrl =
+                        `{{ url('ohc/yearly-inventory-report/exportexcel') }}?unit_id=${unitId}&year=${year}`;
+
+                    // Redirect to the new URL
+                    window.location.href = exportUrl;
+                });
+            });
+
             var monthNames = [
                 "January", "February", "March", "April", "May", "June", "July", "August",
                 "September", "October", "November", "December"

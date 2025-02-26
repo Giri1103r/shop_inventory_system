@@ -41,7 +41,7 @@ class Inventory extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_report_inventory.*') ->where('unit_id', Auth::user()->unit_id);
+        $query = $this->select('ohc_report_inventory.*')->where('unit_id', Auth::user()->unit_id);
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -74,7 +74,45 @@ class Inventory extends Model
         );
         return $datas;
     }
+    // user list
 
+    public function userlist()
+    {
+        $request = request();
+        $search = '';
+        $query = $this->select('ohc_report_inventory.*')->where('unit_id', Auth::user()->unit_id);
+
+        $org_total =  $query;
+        $org_total_counts = $org_total->count();
+
+        if ($request->search['value'] != null || $request->search['value'] != '') {
+            $search = $request->search['value'];
+
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('medicine_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('unit_id', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        $data_count = $query;
+        $total_records = $data_count->count();
+
+        $query->orderBy('id', 'DESC');
+
+        if ($request->length != -1) {
+            $query->offset($request->start)->limit($request->length);
+        }
+
+        $data = $query->get();
+
+        $datas = array(
+            'data' => $data,
+            'total_records' => $org_total_counts,
+            'filter_records' => $total_records,
+        );
+        return $datas;
+    }
     public function store($details, $unitIds)
     {
         $insert_array = [];
@@ -114,10 +152,14 @@ class Inventory extends Model
         // });
     }
 
-    public function getmedicinedata()
+    public function getMedicineData()
     {
-        return $this->where('unit_id', 1)->where('status', 1)->whereColumn('balance', '<', 'threshold_limit')->get();
+        return $this->where('unit_id', 1)
+                    ->where('status', 1)
+                    ->whereColumn('balance', '<', 'threshold_limit')
+                    ->get();
     }
+
 
     public function getstockdata()
     {
@@ -155,7 +197,10 @@ class Inventory extends Model
             $balancedata = $olddata->balance + $data['quantity'];
             $this->where('unit_id', $user_medicine_requisition->unit_id)
                 ->where('medicine_id', $data['medicine_id'])
-                ->update(['balance' => $balancedata]);
+                ->increment('balance', $balancedata);
+            $this->where('unit_id', $user_medicine_requisition->unit_id)
+                ->where('medicine_id', $data['medicine_id'])
+                ->increment('total_received', $newdata);
         }
     }
 
@@ -171,8 +216,8 @@ class Inventory extends Model
     public function getMonthlyInventoryReport($selectedUnit, $selectedMonth, $selectedYear)
     {
         return $this->when($selectedUnit, function ($query) use ($selectedUnit) {
-                return $query->where('ohc_report_inventory.unit_id', $selectedUnit);
-            })
+            return $query->where('ohc_report_inventory.unit_id', $selectedUnit);
+        })
             ->when($selectedMonth && $selectedYear, function ($query) use ($selectedMonth, $selectedYear) {
                 return $query->whereMonth('ohc_report_inventory.created_at', $selectedMonth)
                     ->whereYear('ohc_report_inventory.created_at', $selectedYear);
@@ -198,10 +243,10 @@ class Inventory extends Model
     public function getyearlyinventoryreport($selectedUnit, $selectedYear)
     {
         return $this->when($selectedUnit, function ($query) use ($selectedUnit) {
-                return $query->where('ohc_report_inventory.unit_id', $selectedUnit);
-            })
+            return $query->where('ohc_report_inventory.unit_id', $selectedUnit);
+        })
             ->when($selectedYear, function ($query) use ($selectedYear) {
-                return $query->whereYear('ohc_report_inventory.created_at', $selectedYear); // FIXED
+                return $query->whereYear('ohc_report_inventory.created_at', $selectedYear);
             })
             ->join('ohc_master_medicine', 'ohc_report_inventory.medicine_id', '=', 'ohc_master_medicine.id')
             ->select(
@@ -219,7 +264,18 @@ class Inventory extends Model
             ->get();
     }
 
+    public function getUnitwise($selectedUnit)
+    {
+        return $this->join('ohc_master_medicine', 'ohc_report_inventory.medicine_id', '=', 'ohc_master_medicine.id')
+            ->select('ohc_master_medicine.medicine as medicine_name')
+            ->where('ohc_report_inventory.unit_id', $selectedUnit)
+            ->where('ohc_report_inventory.status', 1)
+            ->get();
+    }
 
+    public function dicardmedicine($unit_id){
+        return $this->where('unit_id', $unit_id)->where('status', 1)->get();
+    }
 
     // public function firstaidstockupdate(){
     //     $request -

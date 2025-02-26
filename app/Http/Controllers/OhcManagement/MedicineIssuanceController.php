@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\OhcManagement;
 
 use App\Http\Controllers\Controller;
-
+use App\Jobs\Ohc\ImportIssuancejob;
 use App\Mail\Ohc\MedicineRequisitionEmail;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
@@ -16,7 +16,7 @@ use App\Models\OhcManagement\MedicineReceiving;
 use App\Models\OhcManagement\MedicineRequisition;
 use App\Models\OhcManagement\UserMedicineRequisition;
 use App\Models\UploadLog;
-
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Http;
@@ -34,6 +34,7 @@ use App\Models\User;
 use App\Models\OhcManagement\Report\Inventory;
 use App\Models\OhcManagement\Status\CreatorLog;
 use App\Models\OhcManagement\Status\MedicineLog;
+use Illuminate\Support\Facades\File;
 
 class MedicineIssuanceController extends Controller
 {
@@ -52,11 +53,12 @@ class MedicineIssuanceController extends Controller
     private $inventory;
     private $creatorlog;
     private $medicinelog;
-
+    private $uploadlog;
     public function __construct()
     {
         $this->medicine = new Medicine();
         $this->vendor = new Vendor();
+        $this->uploadlog = new UploadLog();
         $this->user_medicine_issuance = new UserMedicineIssuance();
         $this->medicine_issuance = new MedicineIssuance();
         $this->medicine_receiving = new MedicineReceiving();
@@ -221,6 +223,10 @@ class MedicineIssuanceController extends Controller
                         ->where('medicine_id', $medicine_id)
                         ->where('unit_id',  $unitId)
                         ->increment('balance', $issuedQuantity);
+                        $this->inventory
+                        ->where('medicine_id', $medicine_id)
+                        ->where('unit_id',  $unitId)
+                        ->increment('total_received', $issuedQuantity);
                 }
                 // $creatorlog =  $this->creatorlog->store($user_medicine_issuance , $data );
                 $this->medicinelog->store($user_medicine_issuance, $user_medicine_issuance);
@@ -609,7 +615,121 @@ class MedicineIssuanceController extends Controller
             ['available_quantity' => $availableQuantity->balance]
         );
     }
+    public function delete(Request $request, $id)
+    {
+        try {
+            $ids = decryptId($id);
 
+            $data =    $this->medicine_issuance->firstdata($ids);
+
+            $referenceId =   $data->reference_id;
+            $user_medicine_issuance = $this->user_medicine_issuance->selectOne($referenceId);
+            $this->inventory->where('unit_id', 1)
+                ->where('medicine_id', $data->medicine_id)
+                ->decrement('total_issue', $data->quantity);
+
+            $this->inventory->where('unit_id', 1)
+                ->where('medicine_id', $data->medicine_id)
+                ->decrement('balance', $data->quantity);
+
+            $this->inventory->where('unit_id', $user_medicine_issuance->unit_id)
+                ->where('medicine_id', $data->medicine_id)
+                ->decrement('total_purchase', $data->quantity);
+
+            $this->inventory->where('unit_id', $user_medicine_issuance->unit_id)
+                ->where('medicine_id', $data->medicine_id)
+                ->decrement('balance', $data->quantity);
+            $this->medicine_issuance->deleterecord($ids);
+            return response()->json(['status' => 'success', 'msg' => 'Deleted successfully'], 200);
+        } catch (Exception $ex) {
+            dd($ex);
+            return response()->json(['status' => 'error', 'msg' => 'Something went wrong'], 200);
+        }
+    }
+
+    public function import(){
+        return view('ohcmanagement.medicine_issuance.import');
+    }
+
+    public function ImportSubmit(Request $request)
+    {
+        try {
+            $file = $request->file('medicine_upload');
+
+            $rules = [
+                'medicine_upload' => 'required',
+            ];
+            $messages = [
+                'medicine_upload.required' => 'Please upload a file',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+
+            if ($file != null) {
+
+                $uploadpath = 'public/uploads/medicine';
+
+                $folderPath = public_path('uploads/medicine');
+
+                if (!File::exists($folderPath)) {
+
+                    File::makeDirectory($folderPath, 0755, true);
+                }
+
+                $filenewname = time() . Str::random('10') . '.' . $file->getClientOriginalExtension();
+
+                $fileName = $file->getClientOriginalName();
+                $fileSize = $file->getSize();
+
+                $fileExt = $file->getClientOriginalExtension();
+
+                $file->move($uploadpath, $filenewname);
+
+                $path = $uploadpath . "/" . $filenewname;
+                $user_id = Auth::id();
+
+                $insert_data = array(
+                    'upload_type' => 18,
+                    'upload_status' => 0,
+                    'file_name' => $filenewname,
+                    'file_orgname' => $fileName,
+                    'file_path' => $path,
+                    'file_size' => $fileSize,
+                    'file_extension' => $fileExt,
+                    'created_by' => $user_id,
+                );
+
+                $insert_id =  $this->uploadlog->create($insert_data)->id;
+
+
+
+                $details = [
+                    "user_id" => $user_id,
+                    "log_id" => $insert_id,
+                    "path" => $path,
+                ];
+                $medicnieissuance = $this->user_medicine_issuance->store();
+
+
+                dispatch(new ImportIssuancejob($details, $medicnieissuance));
+                //    dispatch((new ImportCompanyJob($details))->onQueue('company'));
+            }
+
+            $insert_data['log_id'] = $insert_id;
+            $insert_data['Uploded_by'] = Auth::user()->toArray();
+
+            Session::flash('success', __('Medicine uploaded sucessfully'));
+            return redirect(admin_url('ohc/medicine-issuance/list'));
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', __('Medicine  upload failed'));
+            return redirect(admin_url('ohc/medicine-issuance/list'));
+        }
+    }
     public function ExportExcel(Request $request)
     {
 
@@ -657,37 +777,7 @@ class MedicineIssuanceController extends Controller
         }
     }
 
-    public function delete(Request $request, $id)
-    {
-        try {
-            $ids = decryptId($id);
 
-            $data =    $this->medicine_issuance->firstdata($ids);
-
-            $referenceId =   $data->reference_id;
-            $user_medicine_issuance = $this->user_medicine_issuance->selectOne($referenceId);
-            $this->inventory->where('unit_id', 1)
-                ->where('medicine_id', $data->medicine_id)
-                ->decrement('total_issue', $data->quantity);
-
-            $this->inventory->where('unit_id', 1)
-                ->where('medicine_id', $data->medicine_id)
-                ->decrement('balance', $data->quantity);
-
-            $this->inventory->where('unit_id', $user_medicine_issuance->unit_id)
-                ->where('medicine_id', $data->medicine_id)
-                ->decrement('total_purchase', $data->quantity);
-
-            $this->inventory->where('unit_id', $user_medicine_issuance->unit_id)
-                ->where('medicine_id', $data->medicine_id)
-                ->decrement('balance', $data->quantity);
-            $this->medicine_issuance->deleterecord($ids);
-            return response()->json(['status' => 'success', 'msg' => 'Deleted successfully'], 200);
-        } catch (Exception $ex) {
-            dd($ex);
-            return response()->json(['status' => 'error', 'msg' => 'Something went wrong'], 200);
-        }
-    }
 
 
     public function ExportPdf(Request $request)
@@ -766,5 +856,17 @@ class MedicineIssuanceController extends Controller
         return response()->json(
             ['available_quantity' => $availableQuantity->balance]
         );
+    }
+
+    public function DownloadSample(Request $request)
+    {
+
+        $filedetails =  exportsamplefile('medicineissuance');
+
+        $filePath = $filedetails->sample_file;
+        $customFileName = $filedetails->file_name;
+
+        //return Response::download($filePath, $customFileName);
+        return redirect(url($filePath));
     }
 }

@@ -23,6 +23,7 @@ class MedicineReceiving extends Model
         'batch_number',
         'vendor_id',
         'approve_status',
+        'approved_date',
         'approved_by',
         'cron_time',
         'status',
@@ -54,7 +55,18 @@ class MedicineReceiving extends Model
                 ['ohc_management_medicine_receiving.trash', '=', 'NO']
             ]);
 
+        if (in_array(ROLE_EHS_OFFICER, $userRole)) {
+            $query->orderBy('ohc_management_medicine_receiving.id', 'DESC');
+        } elseif (in_array(ROLE_L1_EHS_OFFCIER, $userRole)) {
 
+            $query
+                ->orderBy('ohc_management_medicine_receiving.id', 'DESC');
+        } elseif (in_array(ROLE_EHS_HEAD, $userRole)) {
+            $query->orderBy('ohc_management_medicine_receiving.id', 'DESC');
+        } elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+        } else {
+            $query->where('ohc_management_medicine_receiving.created_by', Auth::id());
+        }
         if ($request->search['value'] != null) {
             $search = $request->search['value'];
             $query->where(function ($query) use ($search) {
@@ -122,7 +134,6 @@ class MedicineReceiving extends Model
     }
     public function updates($id, $hsn)
     {
-
         $request = request();
 
         $update_array = array(
@@ -132,11 +143,13 @@ class MedicineReceiving extends Model
             'quantity' => $request->quantity,
             'batch_number' => $request->batch_number,
             'expire_date' => DBdateformat($request->expire_date),
-            'hsn_id' => $request->hsn_id ?? $hsn,
+            'hsn_id' => $request->hsn_id ?? $hsn->id,
             'rate' => $request->rate,
             'pack_id' => ($request->pack_id),
+            'approve_status' => STATUS_OHC_EHS_VERIFICATION_PENDING,
             'updated_by' => Auth::id(),
         );
+
         return $this->where('id', $id)->update($update_array);
     }
     public function selectOne($id)
@@ -235,6 +248,8 @@ class MedicineReceiving extends Model
         $this->where('id', $id)->update([
             'approve_status' => STATUS_OHC_CLOSE,
             'approved_by' =>  Auth::id(),
+            'approved_date' => now(),
+            'status' => 0,
         ]);
     }
 
@@ -249,8 +264,8 @@ class MedicineReceiving extends Model
         $currentDate = now();
         $expiryLimit = now()->addDays(60);
         $query = $this->select('ohc_management_medicine_receiving.*')
-        ->where('approve_status', STATUS_OHC_CLOSE)
-        ->whereBetween('expire_date', [$currentDate, $expiryLimit]); 
+            ->where('approve_status', STATUS_OHC_CLOSE)
+            ->where('expire_date', '<=', $expiryLimit);
 
         if ($request->search['value'] != null) {
             $search = $request->search['value'];
@@ -312,7 +327,7 @@ class MedicineReceiving extends Model
     public function getPurchaseddate($selectedYear, $selectedMonth)
     {
         return $this->where('ohc_management_medicine_receiving.approve_status', STATUS_OHC_CLOSE)
-        ->join('ohc_master_medicine', 'ohc_management_medicine_receiving.medicine_id', '=', 'ohc_master_medicine.id')
+            ->join('ohc_master_medicine', 'ohc_management_medicine_receiving.medicine_id', '=', 'ohc_master_medicine.id')
             ->whereYear('approved_date', $selectedYear)
             ->whereMonth('approved_date', $selectedMonth)
             ->select('ohc_master_medicine.medicine as medicine_name', 'approved_date', 'quantity')
@@ -322,7 +337,7 @@ class MedicineReceiving extends Model
     public function getYearlyPurchaseddate($selectedYear)
     {
         return $this->where('ohc_management_medicine_receiving.approve_status', STATUS_OHC_CLOSE)
-        ->join('ohc_master_medicine', 'ohc_management_medicine_receiving.medicine_id', '=', 'ohc_master_medicine.id')
+            ->join('ohc_master_medicine', 'ohc_management_medicine_receiving.medicine_id', '=', 'ohc_master_medicine.id')
             ->whereYear('approved_date', $selectedYear)
             ->select('ohc_master_medicine.medicine as medicine_name', 'approved_date', 'quantity')
             ->get();

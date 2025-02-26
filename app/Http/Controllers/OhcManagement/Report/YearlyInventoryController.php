@@ -39,6 +39,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
+
 class YearlyInventoryController extends Controller
 {
     private $medicine;
@@ -106,107 +107,164 @@ class YearlyInventoryController extends Controller
         }
     }
 
-
-
-
     public function ExportExcel(Request $request)
     {
         try {
-            $medicine = $this->medicine->getMedicineData();
             $selectedUnit = $request->input('unit_id');
             $selectedYear = $request->input('year');
 
+            // Fetch data
+            $medicine = $this->inventory->getUnitwise($selectedUnit);
             $inventory = $this->inventory->getyearlyinventoryreport($selectedUnit, $selectedYear);
             $receiving = $this->medicine_receiving->getYearlyPurchaseddate($selectedYear);
             $medicineIssuing = $this->user_medicine_issuance->getYealyunitdata($selectedYear, $selectedUnit);
             $allIssuances = $this->medicine_issuance->getYearlyissuedDate($selectedYear, $medicineIssuing);
 
-            // Create a new spreadsheet
+            // Organizing data by medicine ID for easy lookup
+            $inventoryData = [];
+            foreach ($inventory as $inv) {
+                $inventoryData[$inv->medicine_name] = [
+                    'balance' => $inv->balance ?? 0,
+                    'total_purchase' => $inv->total_purchase ?? 0,
+                    'total_issue' => $inv->total_issue ?? 0,
+                ];
+            }
+
+            $receivingData = [];
+            foreach ($receiving as $rec) {
+                $month = date('M', strtotime($rec->approved_date));
+                $receivingData[$rec->medicine_name][$month] = $rec->quantity;
+            }
+
+            $issuanceData = [];
+            foreach ($allIssuances as $issue) {
+                $month = date('M', strtotime($issue->created_at));
+                $issuanceData[$issue->medicine_name][$month] = $issue->quantity;
+            }
+
+            // Initialize Spreadsheet
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
-            // Set A1 Background to White
-            $sheet->getStyle('A1')->applyFromArray([
+            $sheet->getStyle('A1:B3')->applyFromArray([
                 'fill' => [
                     'fillType' => Fill::FILL_SOLID,
-                    'startColor' => ['rgb' => 'FFFFFF'] // White background for logo
+                    'startColor' => ['rgb' => 'FFFFFF']
                 ]
             ]);
 
-            // Insert Logo in A1
-            $drawing = new Drawing();
-            $drawing->setName('Logo');
-            $drawing->setDescription('Company Logo');
-            $drawing->setPath(public_path('assets/images/logo-dark.png'));
-            $drawing->setCoordinates('A1');
-            $drawing->setOffsetX(5);
-            $drawing->setOffsetY(5);
-            $drawing->setWidth(60);
-            $drawing->setHeight(60);
-            $drawing->setWorksheet($sheet);
+            // Insert Logo
+            $logoPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Logo');
+                $drawing->setDescription('Company Logo');
+                $drawing->setPath($logoPath);
+                $drawing->setCoordinates('A1');
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setWidth(60);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+            }
 
-
-            $sheet->mergeCells('A1:Z3');
+            // Title Styling for C1:AC3 (Red)
+            $sheet->mergeCells('C1:AC3');
             $sheet->setCellValue('F1', "Medical Treatment Slip\nPN International Pvt Ltd.");
-            $sheet->getStyle('F1:Z3')->applyFromArray([
-                'font' => [
-                    'bold' => true,
-                    'color' => ['rgb' => 'FFFFFF'], // White text
-                    'size' => 14
-                ],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER
-                ],
+            $sheet->getStyle('C1:AC3')->applyFromArray([
+                'font' => ['bold' => true, 'color' => ['rgb' => '000000'], 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 'fill' => [
                     'fillType' => Fill::FILL_SOLID,
                     'startColor' => ['rgb' => 'FF0000']
                 ]
             ]);
 
-            // Add Spacing Row
-            $sheet->setCellValue('A4', '');
+            // Year Selection
+            $sheet->setCellValue('A4', 'Year:');
+            $sheet->setCellValue('B4', $selectedYear);
+            $sheet->getStyle('A4:B4')->applyFromArray([
+                'font' => ['bold' => true],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'E1ACC9']]
+            ]);
 
-            // Table Headers
-            $headers = ['Medicine Name', 'Unit', 'Year', 'Total Stock'];
-            $columnLetter = 'A';
-            foreach ($headers as $header) {
-                $sheet->setCellValue($columnLetter . '5', $header);
-                $sheet->getStyle($columnLetter . '5')->getFont()->setBold(true);
-                $sheet->getStyle($columnLetter . '5')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                $columnLetter++;
+            // Section Titles
+            $sheet->mergeCells('C4:L4')->setCellValue('C4', 'Material Available (Month Wise)');
+            $sheet->mergeCells('M4:X4')->setCellValue('M4', 'Issued Medicine Quantity (Month Wise)');
+            $sheet->mergeCells('Y4:AC4')->setCellValue('Y4', 'Grant');
+
+            foreach (['C4:L4', 'M4:X4', 'Y4:AC4'] as $range) {
+                $sheet->getStyle($range)->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                    'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'E1ACC9']]
+                ]);
             }
 
-            // Populate Data
-            $rowNum = 6;
-            foreach ($inventory as $item) {
-                $sheet->setCellValue('A' . $rowNum, $item->medicine_name);
-                $sheet->setCellValue('B' . $rowNum, $item->unit);
-                $sheet->setCellValue('C' . $rowNum, $selectedYear);
-                $sheet->setCellValue('D' . $rowNum, $item->total_stock);
-                $rowNum++;
+            // Column Headers
+            $sheet->getStyle('A5:AC5')->applyFromArray([
+                'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '7ECFA1']]
+            ]);
+
+            // Column Names
+            $sheet->setCellValue('A5', 'ID');
+            $sheet->setCellValue('B5', 'Name of Item');
+
+            $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            $col = 'C';
+
+            foreach ($months as $month) {
+                $sheet->setCellValue($col . '5', $month);
+                $col++;
+            }
+            foreach ($months as $month) {
+                $sheet->setCellValue($col . '5', $month);
+                $col++;
             }
 
-            // Auto-size columns
-            foreach (range('A', 'D') as $column) {
-                $sheet->getColumnDimension($column)->setAutoSize(true);
+            $sheet->setCellValue($col . '5', 'Total Purchase');
+            $col++;
+            $sheet->setCellValue($col . '5', 'Total Issue');
+            $col++;
+            $sheet->setCellValue($col . '5', 'Balance');
+
+            // Data Population
+            $row = 6;
+            $id = 1;
+            foreach ($medicine as $med) {
+                $sheet->setCellValue('A' . $row, $id);
+                $sheet->setCellValue('B' . $row, $med->medicine_name);
+                $col = 'C';
+
+                foreach ($months as $month) {
+                    $sheet->setCellValue($col . $row, $receivingData[$med->medicine_name][$month] ?? 0);
+                    $col++;
+                }
+
+                foreach ($months as $month) {
+                    $sheet->setCellValue($col . $row, $issuanceData[$med->medicine_name][$month] ?? 0);
+                    $col++;
+                }
+
+                $sheet->setCellValue($col . $row, $inventoryData[$med->medicine_name]['total_purchase'] ?? 0);
+                $col++;
+                $sheet->setCellValue($col . $row, $inventoryData[$med->medicine_name]['total_issue'] ?? 0);
+                $col++;
+                $sheet->setCellValue($col . $row, $inventoryData[$med->medicine_name]['balance'] ?? 0);
+
+                $row++;
+                $id++;
             }
 
-            // Save & Download File
-            $writer = new Xlsx($spreadsheet);
-            $fileName = 'Monthly_Inventory_Report.xlsx';
-            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header("Content-Disposition: attachment; filename=\"$fileName\"");
-            $writer->save('php://output');
-            exit();
-
+            // Save and Export Excel
+            $fileName = 'Yearly_Inventory_Report.xlsx';
+            return response()->streamDownload(function () use ($spreadsheet) {
+                $writer = new Xlsx($spreadsheet);
+                $writer->save('php://output');
+            }, $fileName, ['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']);
         } catch (Exception $ex) {
-            report($ex);
-            return back()->with('error', 'Failed to export Excel file.');
+            return back()->with('error', 'Failed to export Excel file. ' . $ex->getMessage());
         }
     }
-
-
-
-
 }

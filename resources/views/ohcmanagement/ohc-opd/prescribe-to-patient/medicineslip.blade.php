@@ -228,18 +228,12 @@
                         <h3><span>Treatment Expenses</span></h3>
                     </td>
                 </tr>
-            </tbody>
-        </table>
-        <table>
-            <thead>
                 <tr>
                     <th colspan="3" style="border: 1px solid black;">Date</th>
                     <th colspan="3" style="border: 1px solid black;">Treatment Done By Doctor</th>
                     <th colspan="3" style="border: 1px solid black;">Amount</th>
                     <th colspan="3" style="border: 1px solid black;">Hospital Representative Signature</th>
                 </tr>
-            </thead>
-            <tbody>
                 <tr>
                     <td colspan="3" style="border: 1px solid black; height:30;"></td>
                     <td colspan="3" style="border: 1px solid black; height:30;"></td>
@@ -295,29 +289,30 @@
                         Kanpur Road,AlamBagh Lucknow-226010</td>
 
                 </tr>
-            </tbody>
-        </table>
-        <table>
-            <tbody>
                 <tr>
-                    <td
-                        colspan="12"style="border:1px solid black;text-align:center;margin-top:30px;vertical-align: bottom;">
-                       <strong> Contact Detail</strong>
+                    <td colspan="12" style="border:1px solid black;height:20;text-align: center;">
+                        <h3><span>Contact Detail</span></h3>
                     </td>
-
                 </tr>
                 <tr>
-                    <td colspan="4" style="border: 1px solid black; height:30;">SKD Hospital
-                        +91 8388526262
-                        0522-4044111/4021010</td>
-                    <td colspan="4" style="border: 1px solid black; height:30;">Occupational Health Center
-                        9653038762</td>
-                    <td colspan="4" style="border: 1px solid black; height:30;">Safety Officer
-                        9076843512,8009785601, 9695001116,
-                        9559996662</td>
+                    <td colspan="4"
+                        style="border: 1px solid black; height:30px; text-align: center; vertical-align: middle;">
+                        SKD Hospital <br> +91 8388526262 <br> 0522-4044111/4021010
+                    </td>
+                    <td colspan="4"
+                        style="border: 1px solid black; height:30px; text-align: center; vertical-align: middle;">
+                        Occupational Health Center <br> 9653038762
+                    </td>
+                    <td colspan="4"
+                        style="border: 1px solid black; height:30px; text-align: center; vertical-align: middle;">
+                        Safety Officer <br> 9076843512, 8009785601, 9695001116, 9559996662
+                    </td>
                 </tr>
+
             </tbody>
         </table>
+
+
     </div>
 
 

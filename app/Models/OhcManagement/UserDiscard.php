@@ -32,16 +32,16 @@ class UserDiscard extends Model
         $empId = $user->employee_id;
         $query = $this->select(
             'ohc_management_discard.id as discard_id',
-            'ohc_management_discard_medicine.id as medicine_id',
+            'ohc_management_discard_medicine.id as med_id',
+            'ohc_management_discard_medicine.status as medicine_status',
             'ohc_management_discard.*',
             'ohc_management_discard_medicine.*'
         )
         ->join('ohc_management_discard_medicine', 'ohc_management_discard.id', '=', 'ohc_management_discard_medicine.req_id')
         ->where('ohc_management_discard_medicine.trash', 'NO')
         ->where('ohc_management_discard.trash', 'NO')
-        ->orderBy('discard_id', 'desc')
-        ->limit(10)
-        ->offset(0);
+        ->orderBy('med_id', 'desc')
+        ->orderBy('discard_id', 'desc');
 
 
 
@@ -81,7 +81,7 @@ class UserDiscard extends Model
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
         }
-        $query->orderBy('discard_id', 'DESC');
+        $query->orderBy('discard_id', 'desc');
         $data = $query->get();
         $total_records = $data->count();
 
@@ -105,16 +105,15 @@ class UserDiscard extends Model
 
         return $this->create($insert_array);
     }
-    public function updates($id)
+    public function updates($id, $user_discard)
     {
 
         $request = request();
 
         $update_array = array(
-          'unit_id' =>Auth::user()->unit_id,
-            'department_id' =>Auth::user()->department_id,
+          'unit_id' => $user_discard->unit_id,
+            'department_id' =>decryptId($request->department_id),
             'discard_date' => DBdateformat($request->discard_date),
-            'req_id' => $request->req_id,
             'updated_by' => Auth::id(),
         );
 

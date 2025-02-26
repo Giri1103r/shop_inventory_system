@@ -96,6 +96,8 @@
                                         <th>Quantity</th>
                                         <th>Remarks</th>
                                         <th>Discard Date</th>
+                                        <th data-priority="2">{{ __('common.status') }}</th>
+                                        <th data-priority="1">{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -259,7 +261,14 @@
                     data: 'discard_date',
                     name: 'discard_date'
                 },
-
+                {
+                    data: 'medicine_status',
+                    name: 'medicine_status'
+                },
+                {
+                    data: 'action',
+                    name: 'action'
+                },
             ],
             language: {
                 paginate: {
@@ -326,74 +335,78 @@
             ],
         });
 
-        // $(document).on('click', '.statusChange', function() {
-        //     var id = $(this).data('id');
-        //     var types = $(this).data('type');
-        //     if (types == 1) {
-        //         var title = '{{ __('Do You want to In-Activate Medicine Requisition Details') }}';
-        //         var text = '{{ __('common.inactive') }}';
-        //         var btncolor = '#dc3545'
+       /* Status Change */
 
-        //     } else {
-        //         var title = '{{ __('Do You want to Activate Medicine Requisition Details') }}';
-        //         var text = '{{ __('common.active') }}';
-        //         var btncolor = '#7ddc35'
-        //     }
+            $(document).on('click', '.statusChange', function() {
+                var medicine_id = $(this).data('id');
+                var types = $(this).data('type');
+                if (types == 1) {
+                    var title = '{{ __('Do You want to In-Activate Discard Medicine Details') }}';
+                    var text = '{{ __('common.inactive') }}';
+                    var btncolor = '#dc3545'
 
-        //     Swal.fire({
-        //         title: title,
-        //         icon: 'warning',
-        //         showCancelButton: true,
-        //         confirmButtonText: text,
-        //         confirmButtonColor: btncolor,
-        //         customClass: {
-        //             confirmButton: 'btn-skew',
-        //             cancelButton: 'btn-skew'
-        //         },
-        //     }).then((result) => {
+                } else {
+                    var title = '{{ __('Do You want to Activate Discard Medicine Details') }}';
+                    var text = '{{ __('common.active') }}';
+                    var btncolor = '#7ddc35'
+                }
+
+                Swal.fire({
+                    title: title,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: text,
+                    confirmButtonColor: btncolor,
+                    customClass: {
+                        confirmButton: 'btn-skew',
+                        cancelButton: 'btn-skew'
+                    },
+                }).then((result) => {
 
 
-        //         if (result.value) {
-        //             $.ajax({
-        //                 url: "{{ admin_url('ohc/discard/status') }}",
-        //                 type: 'post',
+                    if (result.value) {
+                        $.ajax({
+                            url: "{{ admin_url('ohc/discard/status') }}",
+                            type: 'post',
 
-        //                 data: {
-        //                     id: id,
-        //                     types: types
-        //                 },
-        //                 success: function(response) {
-        //                     const Toast = Swal.mixin({
-        //                         toast: true,
-        //                         position: 'top-right',
-        //                         showConfirmButton: false,
-        //                         timer: 3000,
-        //                         timerProgressBar: true,
-        //                         didOpen: (toast) => {
-        //                             toast.addEventListener(
-        //                                 'mouseenter',
-        //                                 Swal.stopTimer)
-        //                             toast.addEventListener(
-        //                                 'mouseleave',
-        //                                 Swal.resumeTimer
-        //                             )
-        //                         }
-        //                     });
-        //                     Toast.fire({
-        //                         icon: 'success',
-        //                         title: response.msg
-        //                     });
-        //                     table.draw();
-        //                 },
-        //                 error: function(data) {
-        //                     $.notify(data.responseJSON.msg, "error");
-        //                 }
-        //             });
-        //         } else if (result.isDenied) {
-        //             Swal.fire('Something went wrong', '', 'info');
-        //         }
-        //     })
+                            data: {
+                                medicine_id: medicine_id,
+                                types: types
+                            },
+                            success: function(response) {
+                                const Toast = Swal.mixin({
+                                    toast: true,
+                                    position: 'top-right',
+                                    showConfirmButton: false,
+                                    timer: 3000,
+                                    timerProgressBar: true,
+                                    didOpen: (toast) => {
+                                        toast.addEventListener(
+                                            'mouseenter',
+                                            Swal.stopTimer)
+                                        toast.addEventListener(
+                                            'mouseleave',
+                                            Swal.resumeTimer
+                                        )
+                                    }
+                                });
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: response.msg
+                                });
+                                table.draw();
+                            },
+                            error: function(data) {
+                                $.notify(data.responseJSON.msg, "error");
+                            }
+                        });
+                    } else if (result.isDenied) {
+                        Swal.fire('Something went wrong', '', 'info');
+                    }
+                })
 
-        // });
+            });
+
+
     </script>
 @endpush
