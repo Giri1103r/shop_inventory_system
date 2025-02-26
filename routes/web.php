@@ -777,8 +777,8 @@ Route::middleware(['securityheader'])->group(function () {
 
             // OHC Management
 
-            Route::group(['prefix' => 'ohc/dashboard'], function () {
-                Route::get('/', [OhcDashboardController::class, 'index']);
+            Route::group(['prefix' => 'ohc'], function () {
+                Route::get('/dashboard', [OhcDashboardController::class, 'index']);
             });
 
             Route::group(['prefix' => 'ohc/medicine'], function () {

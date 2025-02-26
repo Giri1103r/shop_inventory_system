@@ -54,11 +54,9 @@ class OhcDashboardController extends Controller
                     'masterLink' => $masterLink,
                 ];
             }
-            if (Auth::user()->role == ROLE_SUPERADMIN || Auth::user()->role == ROLE_ADMIN) {
-                return view('admin.dashboard', $data);
-            } else {
-                return view('admin.userdashboard', $data);
-            }
+
+                return view('ohcmanagement.dashboard.dashboard', $data);
+
         }
     }
 
