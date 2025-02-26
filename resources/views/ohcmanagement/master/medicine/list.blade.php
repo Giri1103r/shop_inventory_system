@@ -116,6 +116,7 @@
                                         <th>Expire Date</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>Remarks</th>
+                                        {{-- <th>Approve Status</th> --}}
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th data-priority="1">{{ __('common.action') }}</th>
@@ -244,6 +245,10 @@
                         data: 'remarks',
                         name: 'remarks'
                     },
+                    // {
+                    //     data: 'approve_status',
+                    //     name: 'approve_status'
+                    // },
                     {
                         data: 'created_by',
                         name: 'created_by'

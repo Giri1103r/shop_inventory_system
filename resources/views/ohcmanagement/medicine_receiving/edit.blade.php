@@ -35,7 +35,7 @@
                                             value="{{ encryptId($medicine_receiving->id) }}">
                                         <hr>
                                         <div class="row">
-                                            <div class="col-md-4 mb-2">
+                                            {{-- <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="unit" class="form-label require ">Unit </label>
                                                     <select name="unit_id" id="unit_id"
@@ -49,7 +49,7 @@
                                                         @endforeach
                                                     </select>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="medicine_name" class="form-label require ">Medicine
@@ -58,10 +58,10 @@
                                                         class="form-control form-control-sm single-select"
                                                         style="width: 100%">
                                                         <option value="">Select the Medicine Name</option>
-                                                        @foreach ($medicine as $list)
-                                                            <option value="{{ encryptId($list->id) }}"
-                                                                @if ($medicine_receiving->medicine_id == $list->id) selected @endif>
-                                                                {{ $list->medicine }}</option>
+                                                        @foreach ($medicineStock as $list)
+                                                            <option value="{{ encryptId($list->medicine_id) }}"
+                                                                @if ($medicine_receiving->medicine_id == $list->medicine_id) selected @endif>
+                                                                {{ getmedicinename($list->medicine_id) }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -82,9 +82,9 @@
                                                         style="width: 100%">
                                                         <option value="">Select the Pack</option>
 
-                                                        @foreach ($medicine_stock as $list)
-                                                            <option value="{{ $list->pack }}"
-                                                                @if ($medicine_receiving->pack_id == $list->pack_id) selected @endif>{{$list->pack_id}}</option>
+                                                        @foreach ($pack as $list)
+                                                            <option value="{{ $list->id }}"
+                                                                @if ($medicine_receiving->pack_id == $list->id) selected @endif>{{$list->pack}}</option>
                                                         @endforeach
 
                                                     </select>

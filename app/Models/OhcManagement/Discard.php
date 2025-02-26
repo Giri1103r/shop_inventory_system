@@ -44,25 +44,24 @@ class Discard extends Model
             $this->create($insert_array);
         }
     }
-    public function updates($id)
+    public function updates($ids,$id)
     {
         $request = request();
 
 
-        foreach ($request->medicine_id as $index => $medicine) {
-
             $update_data = [
                 'req_id' => $id,
-                'medicine_id' => $medicine,
-                'quantity' => $request->quantity[$index],
-                'remarks' => $request->remarks[$index],
+                'medicine_id' => decryptId($request->medicine_id),
+                'available_quantity' => $request->available_quantity,
+                'quantity' => $request->quantity,
+                'remarks' => $request->remarks,
                 'created_by' => Auth::id(),
             ];
 
-            return $this->where('req_id', $id)->update($update_data);
-        }
+            return $this->where('id', $ids)->update($update_data);
+
     }
-    public function statuschange($id)
+    public function statuschange($ids)
     {
         $request = request();
         $type = $request->types;
@@ -77,7 +76,7 @@ class Discard extends Model
             );
         }
 
-        return $this->where('req_id', $id)->update($update_data);
+        return $this->where('id', $ids)->update($update_data);
     }
 
     public function selectOne($id)
@@ -85,6 +84,14 @@ class Discard extends Model
 
         $data  = $this->select('ohc_management_discard_medicine.*')->where('req_id', $id)
             ->get();
+        return $data;
+    }
+
+    public function firstdata($id)
+    {
+
+        $data  = $this->select('ohc_management_discard_medicine.*')->where('id', $id)
+            ->first();
         return $data;
     }
 }

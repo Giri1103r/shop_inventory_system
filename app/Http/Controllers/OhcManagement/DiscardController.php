@@ -66,15 +66,16 @@ class DiscardController extends Controller
                     $data = $this->user_discard->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
-                        ->addColumn('status', function ($row) {
+                        ->addColumn('medicine_status', function ($row) {
                             $text = "<span style='color:red'>In-Active<span>";
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
+                                $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->med_id) . "' data-type = '1' >Active<span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
+                                $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->med_id) . "' data-type = '0' >In-Active<span>";
                             }
                             return $text;
                         })
+
 
 
                         ->editColumn('discard_date', function ($row) {
@@ -92,13 +93,15 @@ class DiscardController extends Controller
                         ->editColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
-                            $btn .= '<a href="' . admin_url('ohc/discard/view/' . encryptId($row->discard_id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/discard/view/' . encryptId($row->discard_id) . '/' . encryptId($row->med_id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a>';
+                                $btn .= '<a href="' . admin_url('ohc/discard/edit/' . encryptId($row->discard_id) . '/' . encryptId($row->med_id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>';
+
                             // }
 
                            return $btn;
                         })
 
-                        ->rawColumns(['action', 'discard_date', 'approve_status','unit_id','department_id','medicine_id'])
+                        ->rawColumns(['action', 'discard_date', 'medicine_status','unit_id','department_id','medicine_id'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -202,9 +205,10 @@ class DiscardController extends Controller
     {
         try {
             $id = decryptId($request->id);
+            $medicine_id = decryptId($request->medicineId);
             if (Auth::check()) {
                 $user_discard = $this->user_discard->selectOne($id);
-                $discard = $this->discard->selectOne($id);
+                $discard = $this->discard->firstdata($medicine_id);
             }
             $unit = $this->unit->getunit();
             $logData = $this->ohcStatus->getMedicineRequisitionLog($id);
@@ -219,8 +223,66 @@ class DiscardController extends Controller
         }
     }
 
+// edit
 
+public function edit(Request $request)
+{
+    try {
+        $id = decryptId($request->id);
+        $medicine_id = decryptId($request->medicineId);
+        if (Auth::check()) {
+            $user_discard = $this->user_discard->selectOne($id);
+            $discard = $this->discard->firstdata($medicine_id);
+        }
+        $departmentList = $this->department->getdepartment();
+        $unit = $this->unit->getuserunit();
+        $logData = $this->ohcStatus->getMedicineRequisitionLog($id);
+        $medicine = $this->inventory->dicardmedicine($user_discard->unit_id);
+        $data = array(
+            'user_discard' => $user_discard,
+            'discard' => $discard,
+            'logdata' => $logData,
+            'unit' => $unit,
+            'departmentList' => $departmentList,
+            'medicine'=>  $medicine
 
+        );
+        return view('ohcmanagement.discard.edit', $data);
+    } catch (Exception $ex) {
+    }
+}
+// update
+public function update(Request $request)
+{
+    try {
+        $id = decryptId($request->id);
+        $ids = decryptId($request->medicineid);
+        $validator = Validator::make($request->all(), [
+            'unit_id' => 'required',
+            'department_id' => 'required',
+            'discard_date' => 'required',
+        ], [
+            'department_id.required' => 'Please select a Department.',
+            'unit_id.required' => 'Please select a unit.',
+            'discard_date.required' => 'Please select the discard date.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+        $user_discard = $this->user_discard->selectOne($id);
+
+        $this->user_discard->updates($id, $user_discard);
+        $this->discard->updates($ids,$id);
+
+        Session::flash('success', 'Your data has been updated successfully!');
+        return redirect(admin_url('ohc/discard/list'));
+    } catch (Exception $ex) {
+        dd($ex);
+        Session::flash('error', 'Something went wrong, Please try again later!');
+        return redirect(admin_url('ohc/discard/list'));
+    }
+}
     // General PDF
 
 
@@ -228,12 +290,10 @@ class DiscardController extends Controller
     {
 
         try {
-            $id = decryptId($request->id);
-
-            $this->user_discard->statuschange($id);
-            $this->discard->statuschange($id);
-
-
+            // $id = decryptId($request->discard_id);
+            $ids = decryptId($request->medicine_id);
+            // $this->user_discard->statuschange($id);
+            $this->discard->statuschange($ids);
             return response()->json(['status' => 'success', 'msg' => 'Your status  has changed Successfully'], 200);
         } catch (Exception $ex) {
             report($ex);

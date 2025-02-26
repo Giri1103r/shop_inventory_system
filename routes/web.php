@@ -1082,9 +1082,9 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/list', [DiscardController::class, 'index']);
                 Route::get('/add', [DiscardController::class, 'add']);
                 Route::post('/add/submit', [DiscardController::class, 'store']);
-                Route::get('/edit/{id}', [DiscardController::class, 'edit']);
+                Route::get('/edit/{id}/{medicineId}', [DiscardController::class, 'edit']);
                 Route::post('/edit/submit', [DiscardController::class, 'update']);
-                Route::get('/view/{id}', [DiscardController::class, 'view']);
+                Route::get('/view/{id}/{medicineId}', [DiscardController::class, 'view']);
                 Route::post('/delete', [DiscardController::class, 'delete']);
                 Route::get('/export/excel', [DiscardController::class, 'exportExcel']);
                 Route::get('/export/pdf', [DiscardController::class, 'exportPdf']);

@@ -85,7 +85,14 @@ class MedicineController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
-
+                        // ->addColumn('approve_status', function ($row) {
+                        //     if ($row->approve_status == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING) {
+                        //         $text = "<span class='badge bg-info' style='font-size: 1.0em;'>EHS Head Approval Pending</span>";
+                        //     } else if ($row->approve_status == STATUS_OHC_EHS_HEAD_APPROVED) {
+                        //         $text = "<span class='badge bg-success' style='font-size: 1.0em;'>EHS Head Approved</span>";
+                        //     }
+                        //     return $text;
+                        // })
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
@@ -99,7 +106,7 @@ class MedicineController extends Controller
                             }
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'unit_id', 'expiry_date'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'unit_id', 'expiry_date','approve_status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -166,7 +173,7 @@ class MedicineController extends Controller
 
                 $id =  $data->id;
                 $medicine = $this->medicine->selectOne($id);
-               $this->ohc_status->medicinelog($id);
+                $this->ohc_status->medicinelog($id);
                 $mailsubject = 'Medicine is Added';
                 $user_role = ROLE_EHS_HEAD;
 
@@ -232,10 +239,10 @@ class MedicineController extends Controller
             if (Auth::check()) {
                 $medicine = $this->medicine->selectOne($id);
                 $unit = $this->unit->getunit();
-              $logdata =   $this->ohc_status->getmedicinestatuslog($id);
+                $logdata =   $this->ohc_status->getmedicinestatuslog($id);
                 $data = array(
                     'medicine' => $medicine,
-                    'logdata'=>$logdata,
+                    'logdata' => $logdata,
                 );
             }
             return view('ohcmanagement.master.medicine.view', $data);
@@ -261,100 +268,99 @@ class MedicineController extends Controller
 
     public function approvalsubmit(Request $request)
     {
+        try {
+            $id = decryptId($request->id);
+
+            $rules = [
+                'approver_name' => 'required',
+                'remarks' => 'required',
+            ];
+            $messages = [
+                'approver_name.required' => 'Approver name is required.',
+                'remarks.required' => 'Remarks are required.',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
             try {
-                $id = decryptId($request->id);
-
-                $rules = [
-                    'approver_name' => 'required',
-                    'remarks' => 'required',
+                $action = $request->input('action');
+                $approveStatus = $action == 'approve' ? STATUS_OHC_EHS_HEAD_APPROVED : STATUS_OHC_EHS_HEAD_REJECTED;
+                $remarks = $request->input('remarks');
+                $updateData = [
+                    'remarks' => $remarks,
+                    'approved_by' => Auth::id(),
+                    'approve_status' =>  $approveStatus,
                 ];
-                $messages = [
-                    'approver_name.required' => 'Approver name is required.',
-                    'remarks.required' => 'Remarks are required.',
-                ];
+                $details = $this->medicine->selectOne($id);
+                $ohcStatus = $this->ohc_status->medicineapproval($id, $updateData);
 
-                $validator = Validator::make($request->all(), $rules, $messages);
-                if ($validator->fails()) {
+                $createdby = $this->medicine->where('id', $id)->value('created_by');
+                $email = $this->user->where('id', $createdby)->value('email');
 
-                    return redirect()->back()->withErrors($validator)->withInput();
+
+                if (!$email) {
+
+                    return redirect()->back()->with('error', 'User email not found.');
                 }
-                try {
-                    $action = $request->input('action');
-                    $approveStatus = $action == 'approve' ? STATUS_OHC_EHS_HEAD_APPROVED : STATUS_OHC_EHS_HEAD_REJECTED;
-                    $remarks = $request->input('remarks');
-                    $updateData = [
-                        'remarks' => $remarks,
-                        'approved_by' => Auth::id(),
-                        'approve_status' =>  $approveStatus,
+
+                $action = $request->action;
+                if ($action == 'approve') {
+                    $mailsubject =  'Medicine Name Has Been Approved';
+                    Mail::to($email)->queue(new MedicineStockRequestEmail($details));
+                    $notificationData = [
+                        'notification_type' => 4,
+                        'module_type' => 1,
+                        'notification_message' => $mailsubject,
+                        'mobile_notification' => json_encode([
+                            'title' => $mailsubject,
+                            'message' => $details->medicine . 'has been approved by the' . $details->approver_name,
+                            'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                            'id' => $id,
+                            'module' => 1,
+                        ]),
+                        'web_link' => admin_url('ohc/medicine/list'),
+                        'assigned_user' => $createdby,
+                        'created_by' => Auth::id(),
                     ];
-                    $details = $this->medicine->selectOne($id);
-                    $ohcStatus = $this->ohc_status->medicineapproval($id, $updateData);
-
-                    $createdby = $this->medicine->where('id', $id)->value('created_by');
-                    $email = $this->user->where('id', $createdby)->value('email');
-
-
-                    if (!$email) {
-
-                        return redirect()->back()->with('error', 'User email not found.');
-                    }
-
-                    $action = $request->action;
-                    if ($action == 'approve') {
-                        $mailsubject =  'Medicine Name Has Been Approved';
-                        Mail::to($email)->queue(new MedicineStockRequestEmail($details));
-                        $notificationData = [
-                            'notification_type' => 4,
-                            'module_type' => 1,
-                            'notification_message' => $mailsubject,
-                            'mobile_notification' => json_encode([
-                                'title' => $mailsubject,
-                                'message' => $details->medicine . 'has been approved by the' . $details->approver_name,
-                                'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
-                                'id' => $id,
-                                'module' => 1,
-                            ]),
-                            'web_link' => admin_url('ohc/medicine/list'),
-                            'assigned_user' => $createdby,
-                            'created_by' => Auth::id(),
-                        ];
-                        $count = $this->unit->getUnitcount();
-                        $this->inventory->store($details, $count);
-                    } else {
-                        $mailsubject =  'Medicine Name Has Been Rejected';
-                        Mail::to($email)->queue(new MedicineStockRequestEmail($details));
-                        $notificationData = [
-                            'notification_type' => 4,
-                            'module_type' => 1,
-                            'notification_message' => $mailsubject,
-                            'mobile_notification' => json_encode([
-                                'title' => $mailsubject,
-                                'message' => $details->medicine . 'has been rejected by the' . $details->approver_name,
-                                'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
-                                'id' => $id,
-                                'module' => 1,
-                            ]),
-                            'web_link' => admin_url('ohc/medicine/list'),
-                            'assigned_user' => $createdby,
-                            'created_by' => Auth::id(),
-                        ];
-                    }
-
-                    $this->medicine->approval($id, $updateData);
-
-                    return redirect(admin_url('ohc/medicine/list'))
-                        ->with('success', 'Request has been processed successfully.');
-                } catch (Exception $ex) {
-                    report($ex);
-                    return redirect(admin_url('ohc/medicine/list'))
-                        ->with('error', 'Something went wrong, Please try again later.');
+                    $count = $this->unit->getUnitcount();
+                    $this->inventory->store($details, $count);
+                } else {
+                    $mailsubject =  'Medicine Name Has Been Rejected';
+                    Mail::to($email)->queue(new MedicineStockRequestEmail($details));
+                    $notificationData = [
+                        'notification_type' => 4,
+                        'module_type' => 1,
+                        'notification_message' => $mailsubject,
+                        'mobile_notification' => json_encode([
+                            'title' => $mailsubject,
+                            'message' => $details->medicine . 'has been rejected by the' . $details->approver_name,
+                            'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                            'id' => $id,
+                            'module' => 1,
+                        ]),
+                        'web_link' => admin_url('ohc/medicine/list'),
+                        'assigned_user' => $createdby,
+                        'created_by' => Auth::id(),
+                    ];
                 }
+
+                $this->medicine->approval($id, $updateData);
+
+                return redirect(admin_url('ohc/medicine/list'))
+                    ->with('success', 'Request has been processed successfully.');
             } catch (Exception $ex) {
                 report($ex);
                 return redirect(admin_url('ohc/medicine/list'))
                     ->with('error', 'Something went wrong, Please try again later.');
             }
-
+        } catch (Exception $ex) {
+            report($ex);
+            return redirect(admin_url('ohc/medicine/list'))
+                ->with('error', 'Something went wrong, Please try again later.');
+        }
     }
     public function Edit(Request $request)
     {

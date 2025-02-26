@@ -152,10 +152,14 @@ class Inventory extends Model
         // });
     }
 
-    public function getmedicinedata()
+    public function getMedicineData()
     {
-        return $this->where('unit_id', 1)->where('status', 1)->whereColumn('balance', '<', 'threshold_limit')->get();
+        return $this->where('unit_id', 1)
+                    ->where('status', 1)
+                    ->whereColumn('balance', '<', 'threshold_limit')
+                    ->get();
     }
+
 
     public function getstockdata()
     {
@@ -267,6 +271,10 @@ class Inventory extends Model
             ->where('ohc_report_inventory.unit_id', $selectedUnit)
             ->where('ohc_report_inventory.status', 1)
             ->get();
+    }
+
+    public function dicardmedicine($unit_id){
+        return $this->where('unit_id', $unit_id)->where('status', 1)->get();
     }
 
     // public function firstaidstockupdate(){
