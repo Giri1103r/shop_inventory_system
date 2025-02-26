@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Accident Report Review')
-@section('pageurl', admin_url('incident/accidentReport/list'))
+@section('pageurl', admin_url('accidentReport/list'))
 
 
 @section('content')
@@ -21,7 +21,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('incident/accidentReport/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('accidentReport/list') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -132,7 +132,7 @@
                                 </div>
                                 <div class="basic-form">
                                     <form method="POST" id="ehs_head_review"
-                                        action="{{ admin_url('incident/accidentReport/ehs_head_review/submit') }}"
+                                        action="{{ admin_url('accidentReport/ehs_head_review/submit') }}"
                                         enctype="multipart/form-data">
                                         @csrf
                                         <div class="row">
@@ -182,7 +182,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('incident/accidentReport/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('accidentReport/list') }}"></x-button-cancel>
                                         </div>
                                     </form>
 
@@ -210,7 +210,7 @@
                 allowClear: true,
                 closeOnSelect: false,
                 ajax: {
-                    url: "{{ url('incident/accidentReport/getemployeename') }}", 
+                    url: "{{ url('accidentReport/getemployeename') }}", 
                     type: "GET",
                     dataType: "json",
                     delay: 250,

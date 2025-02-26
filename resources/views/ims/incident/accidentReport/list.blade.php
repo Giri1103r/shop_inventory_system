@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Accident Report')
-@section('pageurl', admin_url('incident/accidentReport/list'))
+@section('pageurl', admin_url('accidentReport/list'))
 
 
 @section('content')
@@ -16,7 +16,7 @@
 
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('incident/accidentReport/add') }}">Add</x-button-add>
+                            href="{{ admin_url('accidentReport/add') }}">Add</x-button-add>
                         {{-- @endif --}}
 
                     </div>
@@ -167,7 +167,7 @@
                 },
 
                 ajax: {
-                    url: "{{ admin_url('incident/accidentReport/list') }}",
+                    url: "{{ admin_url('accidentReport/list') }}",
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -265,7 +265,7 @@
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('incident/accidentReport/export/pdf') }}" +
+                                        "{{ admin_url('accidentReport/export/pdf') }}" +
                                         '?search=' + searchValue +
                                         '&accident_report_no=' + accident_report_no +
                                         '&emp_code=' + emp_code +
@@ -290,7 +290,7 @@
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('incident/accidentReport/export/excel') }}" +
+                                        "{{ admin_url('accidentReport/export/excel') }}" +
                                         '?search=' + searchValue +
                                         '&accident_report_no=' + accident_report_no +
                                         '&emp_code=' + emp_code +
@@ -358,7 +358,7 @@
 
                     if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('incident/accidentReport/status') }}",
+                            url: "{{ admin_url('accidentReport/status') }}",
                             type: 'post',
 
                             data: {
@@ -426,7 +426,7 @@
 
                     if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('incident/accidentReport/delete') }}",
+                            url: "{{ admin_url('accidentReport/delete') }}",
                             type: 'post',
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

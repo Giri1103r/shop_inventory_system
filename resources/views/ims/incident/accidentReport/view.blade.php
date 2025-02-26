@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Accident Report')
-@section('pageurl', admin_url('incident/accidentReport/list'))
+@section('pageurl', admin_url('accidentReport/list'))
 
 
 @section('content')
@@ -21,7 +21,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('incident/accidentReport/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('accidentReport/list') }}"></x-button-back>
 
                                 </div>
                             </div>

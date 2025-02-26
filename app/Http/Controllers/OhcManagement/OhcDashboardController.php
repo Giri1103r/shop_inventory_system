@@ -27,7 +27,7 @@ class OhcDashboardController extends Controller
                     ],
                     [
                         // 'link' => 'ohc/medicine/list',
-                        'name' => 'Medicine',
+                        'name' => 'Current Stock',
                         'count' => getohctotalCount('medicine'),
                         'icon' => 'bx bx-message-square-detail',
                         'icon_color' => 'text-primary',
@@ -46,6 +46,21 @@ class OhcDashboardController extends Controller
                         'icon' => 'bx bx-message-square-detail',
                         'icon_color' => 'text-primary',
                     ],
+                    [
+                        'link' => 'ohc/prescribe-to-patient/list',
+                        'name' => "Today's OPD",
+                        'count' => getohctotalCount('prescribetopatient'),
+                        'icon' => 'bx bx-message-square-detail',
+                        'icon_color' => 'text-primary',
+                    ],
+                    [
+                        'link' => 'ohc/medicine-issuance/list',
+                        'name' => "Today's Issue",
+                        'count' => getohctotalCount('medicineissuance'),
+                        'icon' => 'bx bx-message-square-detail',
+                        'icon_color' => 'text-primary',
+                    ],
+
 
 
                 ];
