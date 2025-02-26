@@ -1097,6 +1097,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/delete', [DiscardController::class, 'delete']);
                 Route::get('add/{id}', [DiscardController::class, 'issue']);
                 Route::post('/issue/submit', [DiscardController::class, 'issuestore']);
+                Route::post('/unique', [DiscardController::class, 'Uniquecheck']);
                 Route::get('/medicine-details/{unit_id}/{id}', [DiscardController::class, 'medicineDetails']);
             });
 

@@ -187,11 +187,13 @@ class PrescribetoPatientController extends Controller
             $reffered = $this->refered_vechicle->getreffered();
             $patientstatus = $this->patient_status->getpatientstatus();
             $medicine  = $this->inventory->getmedicineUnitwise();
+            $departmentList=$this->department->getdepartment();
             $data = array(
                 'unit' => $unit,
                 'suggestedBy' => $suggestedBy,
                 'reffered' => $reffered,
                 'patientstatus' => $patientstatus,
+                'departmentList'=>$departmentList,
                 'medicine' => $medicine
 
             );

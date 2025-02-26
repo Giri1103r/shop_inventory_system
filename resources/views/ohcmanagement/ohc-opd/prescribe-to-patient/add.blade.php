@@ -36,20 +36,27 @@
                                         @csrf
 
                                         <div class="row">
-                                            <div class="col-md-4 mb-2">
+                                            <div class="col-md-4  mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label"> Is OutSide Worker</label><br>
                                                     <input type="checkbox" id="is_outside_worker" name="is_outside_worker"
                                                         value="1">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
+                                            <div class="col-md-4 employee-id mb-2 ">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Employee code</label>
                                                     <select name="emp_id" class="form-control " id="emp_id"
                                                         style="width: 100%">
                                                         <option value="">Select the Employee ID</option>
                                                     </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 employecode mb-2" style="display: none">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label">Employee code</label>
+                                                    <input type="text" name="emp_id" id="emp_id"
+                                                        class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -59,15 +66,21 @@
                                                         class="form-control" placeholder="Employee Name" readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2 department">
+                                            <div class="col-md-4 mb-2 department" style="display: none;">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Department</label>
-                                                    <input type="text" name="department_id" id="department_id"
-                                                        class="form-control" readonly>
+                                                    <select name="department_id" id="department_id" style="width: 100%"
+                                                        class="form-control single-select">
+                                                        <option value="">Select the department</option>
+                                                        @foreach ($departmentList as $list)
+                                                            <option value="{{ $list->id }}">{{ $list->department_name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4 mb-2 unit" style="display: none;">
+                                            <div class="col-md-4 mb-2 unit">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit</label>
                                                     <select name="unit_id" id="unit_id" class="form-control single-select"
@@ -235,7 +248,8 @@
                                                                                 @foreach ($medicine as $list)
                                                                                     <option
                                                                                         value="{{ encryptId($list->medicine_id) }}">
-                                                                                        {{ getmedicinename($list->medicine_id) }}</option>
+                                                                                        {{ getmedicinename($list->medicine_id) }}
+                                                                                    </option>
                                                                                 @endforeach
                                                                             </select>
                                                                         </div>
@@ -541,19 +555,48 @@
 
             $('#is_outside_worker').change(function() {
                 if ($(this).is(':checked')) {
-                    $('.department').hide();
-                    $('.unit, .company_name').show();
+                    $('.unit').hide();
+                    $('.department, .company_name, .employecode').show();
+                    $('.employee-id').hide(); // Hide dropdown
 
-                    $('#emp_id').val('').prop('disabled', true);
                     $('#emp_name').val('').prop('readonly', false);
+
+                    // Add validation rules for input emp_id
+                    $("input[name='emp_id']").rules("add", {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
+                        messages: {
+                            required: "Employee ID is required",
+                            minlength: "Employee ID must be at least 3 characters",
+                            maxlength: "Employee ID must not exceed 30 characters"
+                        }
+                    });
+
+                    // Remove validation from select emp_id
+                    $("select[name='emp_id']").rules("remove");
+
                 } else {
-                    $('.department').show();
-                    $('.unit, .company_name').hide();
+                    $('.unit').show();
+                    $('.department, .company_name, .employee-id').hide();
+                    $('.employecode').hide(); // Hide input field
+                    $('.employee-id').show(); // Show dropdown
 
-                    $('#emp_id').val('').prop('disabled', false);
                     $('#emp_name').val('').prop('readonly', false);
+
+                    // Remove validation from input emp_id
+                    $("input[name='emp_id']").rules("remove");
+
+                    // Add validation rules for select emp_id
+                    $("select[name='emp_id']").rules("add", {
+                        required: true,
+                        messages: {
+                            required: "Please select an Employee ID"
+                        }
+                    });
                 }
             });
+
 
 
             // suggested by
@@ -842,12 +885,16 @@
 
             $('#opdpatient').validate({
                 rules: {
+                    emp_id: {
+                        required: true,
+
+                    },
                     emp_name: {
                         required: true,
                         minlength: 3,
                         maxlength: 30
                     },
-                    unit_id: {
+                    department_id: {
                         required: function() {
                             return $('#is_outside_worker').is(':checked');
                         },
@@ -969,14 +1016,20 @@
                     }
                 },
                 messages: {
+                    emp_id: {
+                        required: "Please enter employee code.",
+
+                    },
                     emp_name: {
                         required: "Please enter employee name.",
+                        minlength: "employee name must be at least 3 characters.",
+                        maxlength: "employee name must not exceed 30 characters.",
                     },
                     company_name: {
                         required: "Please enter Company name.",
                     },
-                    unit_id: {
-                        required: "Please enter Unit Name.",
+                    department_id: {
+                        required: "Please enter department Name.",
                     },
                     dob: {
                         required: "Please enter the date of birth.",
