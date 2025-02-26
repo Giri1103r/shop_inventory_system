@@ -32,6 +32,7 @@ class OhcDashboardController extends Controller
                         'icon' => 'bx bx-message-square-detail',
                         'icon_color' => 'text-primary',
                     ],
+                    
 
                 ];
 
