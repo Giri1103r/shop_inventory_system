@@ -79,14 +79,15 @@
 
                                             </div>
                                             <div
-                                                class="d-flex justify-content-end align-items-center mb-3 button-container">
+                                            class="d-flex justify-content-end align-items-center me-2 mb-3 button-container">
+                                            <button class="btn btn-primary add-row me-3" type="button" id="add-row"
+                                                style="width: 84px;">
+                                                Add
+                                            </button>
 
-                                                <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                    style="margin-left: 10px; width: 84px;">
-                                                    Add
+                                                <button type="button" id="import-button" class=" btn btn-success">
+                                                    Import
                                                 </button>
-
-
                                             </div>
 
                                         </div>
@@ -221,7 +222,7 @@
         });
 
 
-       
+
 
 
 
@@ -437,10 +438,8 @@
                     department_id: {
                         required: true,
                     },
-                    req_id: {
-                        required: true,
-                    },
-                    request_date: {
+
+                    issue_date: {
                         required: true,
                     },
                     'medicine_id[0]': {
@@ -460,10 +459,8 @@
                     department_id: {
                         required: "Please select the Department Name.",
                     },
-                    req_id: {
-                        required: "Requisition ID cannot be empty.",
-                    },
-                    request_date: {
+
+                    issue_date: {
                         required: "Please select the request date.",
                     },
                     'medicine_id[0]': {
@@ -498,6 +495,25 @@
                     var errors = validator.numberOfInvalids();
                     console.log("Form has " + errors + " invalid fields.");
                 },
+            });
+
+            $('#import-button').click(function(event) {
+                event.preventDefault(); // Prevent default link behavior
+
+                // Validate only unit, department, and request date
+                if ($('#MedicineRequisitionForm').validate().element('#unit_id') &&
+                    $('#MedicineRequisitionForm').validate().element('#department_id') &&
+                    $('#MedicineRequisitionForm').validate().element('#issue_date')) {
+
+                    let url = "{{ admin_url('ohc/medicine-issuance/import') }}";
+                    let unit = $('#unit_id').val();
+                    let department = $('#department_id').val();
+                    let issue_date = $('#issue_date').val();
+
+                    // Redirect with form values
+                    window.location.href = url + "?unit_id=" + unit + "&department_id=" + department +
+                        "&issue_date=" + issue_date;
+                }
             });
         });
     </script>

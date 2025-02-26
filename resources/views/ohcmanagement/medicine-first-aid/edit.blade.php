@@ -123,15 +123,17 @@
                                                                     <div class="form-group form-input">
                                                                         <label for="medicine_id" class="require">Medicine
                                                                             Name</label>
-                                                                            <select name="medicine_id[{{ $key }}]" class="form-control medicine" >
-                                                                                <option value="">Select the Medicine Name</option>
-                                                                                @foreach ($medicine as $list)
-                                                                                    <option value="{{ $list->medicine_id }}"
-                                                                                        @if ($issuance->medicine_id == $list->medicine_id) selected @endif>
-                                                                                        {{ getMedicinename($list->medicine_id) }}
-                                                                                    </option>
-                                                                                @endforeach
-                                                                            </select>
+                                                                        <select name="medicine_id[{{ $key }}]"
+                                                                            class="form-control medicine">
+                                                                            <option value="">Select the Medicine Name
+                                                                            </option>
+                                                                            @foreach ($medicine as $list)
+                                                                                <option value="{{ $list->medicine_id }}"
+                                                                                    @if ($issuance->medicine_id == $list->medicine_id) selected @endif>
+                                                                                    {{ getMedicinename($list->medicine_id) }}
+                                                                                </option>
+                                                                            @endforeach
+                                                                        </select>
                                                                     </div>
                                                                 </td>
                                                                 <td>
@@ -154,8 +156,7 @@
                                                                             class="require">Quantity</label>
                                                                         <input type="text"
                                                                             name="quantity[{{ $key }}]"
-                                                                            id="quantity"
-                                                                            placeholder="Enter the quantity"
+                                                                            id="quantity" placeholder="Enter the quantity"
                                                                             value="{{ $issuance->quantity }}"
                                                                             class="form-control">
                                                                         <span id="quantity-error" style=" display:none;"
@@ -324,9 +325,9 @@
 
         $(document).ready(function() {
             $(".medicine").select2({
-        placeholder: "Select the Medicine Name",
-        width: '100%'
-    });
+                placeholder: "Select the Medicine Name",
+                width: '100%'
+            });
             let rowcount = {{ count($medicine_first_aid) }};
 
             $(".add-row").click(function() {

@@ -7,6 +7,7 @@ use App\Scopes\TrashScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+
 class UserMedicineIssuance extends Model
 {
     protected $table = 'ohc_management_user_medicine_issuance';
@@ -213,4 +214,23 @@ class UserMedicineIssuance extends Model
             $model->update(['req_id' => $uniqueId]);
         });
     }
+
+    public function getunitdata($selectedYear, $selectedMonth, $selectedUnit)
+{
+    return $this->whereYear('created_at', $selectedYear)
+        ->whereMonth('created_at', $selectedMonth)
+        ->where('status', 1)
+        ->where('unit_id', $selectedUnit)
+        ->pluck('id')
+        ->toArray();
+}
+
+public function getYealyunitdata($selectedYear, $selectedUnit)
+{
+    return $this->whereYear('created_at', $selectedYear)
+        ->where('status', 1)
+        ->where('unit_id', $selectedUnit)
+        ->pluck('id')
+        ->toArray();
+}
 }

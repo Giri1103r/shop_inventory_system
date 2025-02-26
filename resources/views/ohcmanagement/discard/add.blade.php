@@ -234,7 +234,7 @@
                         <select name="medicine_id[${medicine_requisition_row_count}]" class="form-control single-select" style="width: 100%">
                             <option value="">Select the Medicine Name</option>
                             @foreach ($medicine as $list)
-                                <option value="{{ encryptId($list->id) }}" data-available-quantity="{{ $list->available_quantity }}">{{ $list->medicine_id }}</option>
+                                <option value="{{ encryptId($list->medicine_id) }}" data-available-quantity="{{ $list->available_quantity }}">{{ getmedicinename($list->medicine_id) }}</option>
                             @endforeach
                         </select>
                     </div>

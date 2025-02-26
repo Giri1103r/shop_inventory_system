@@ -58,7 +58,8 @@ use App\Http\Controllers\OhcManagement\DiscardController;
 use App\Http\Controllers\OhcManagement\Report\InventoryController;
 use App\Http\Controllers\OhcManagement\Report\MedicineExpireController;
 use App\Http\Controllers\OhcManagement\Report\MonthlyInventoryController;
-
+use App\Http\Controllers\OhcManagement\Report\YearlyInventoryController;
+use App\Http\Controllers\OhcManagement\OhcDashboardController;
 Route::get('cache', function () {
     Artisan::call('optimize:clear');
     return 'Routes cache cleared';
@@ -113,8 +114,10 @@ Route::get('cron/master/employee/temp-details', [CronController::class, 'employe
 Route::get('cron/master/employee_save', [CronController::class, 'EmployeeSave']);
 Route::get('permit_expiry', [CronController::class, 'permitExpiry']);
 Route::get('permit_close', [CronController::class, 'permitClose']);
+
 Route::get('stockrequest', [CronController::class, 'stockrequest']);
 Route::get('stockupdate', [CronController::class, 'stockupdate']);
+Route::get('prevoiusmonthstock', [CronController::class, 'prevoiusmonthstock']);
 
 Route::get('test', [TestController::class,  'index']);
 
@@ -774,6 +777,10 @@ Route::middleware(['securityheader'])->group(function () {
 
             // OHC Management
 
+            Route::group(['prefix' => 'ohc'], function () {
+                Route::get('/dashboard', [OhcDashboardController::class, 'index']);
+            });
+
             Route::group(['prefix' => 'ohc/medicine'], function () {
                 Route::get('/list', [MedicineController::class, 'index']);
                 Route::post('/list', [MedicineController::class, 'index']);
@@ -934,6 +941,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/edit/submit', [MedicineRequisitionController::class, 'update']);
                 Route::get('/view/{id}', [MedicineRequisitionController::class, 'view']);
                 Route::post('/delete', [MedicineRequisitionController::class, 'delete']);
+                Route::get('/import', [MedicineRequisitionController::class, 'import']);
+                Route::post('/import/submit', [MedicineRequisitionController::class, 'importSubmit']);
                 Route::get('/export/excel', [MedicineRequisitionController::class, 'exportExcel']);
                 Route::get('/export/pdf', [MedicineRequisitionController::class, 'exportPdf']);
                 Route::post('/status', [MedicineRequisitionController::class, 'statusChange']);
@@ -942,23 +951,27 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('approval/submit', [MedicineRequisitionController::class, 'apporvalsubmit']);
                 Route::get('generalpdf/{id}', [MedicineRequisitionController::class, 'generalpdf']);
                 Route::get('stockdata', [MedicineRequisitionController::class, 'stockdata']);
+                Route::get('/sample-download', [MedicineRequisitionController::class, 'DownloadSample']);
+
             });
 
             Route::group(['prefix' => 'ohc/medicine-issuance'], function () {
                 Route::get('/list', [MedicineIssuanceController::class, 'index']);
                 Route::post('/list', [MedicineIssuanceController::class, 'index']);
                 Route::get('/add', [MedicineIssuanceController::class, 'add']);
+                Route::get('/import', [MedicineIssuanceController::class, 'import']);
                 Route::post('/add/submit', [MedicineIssuanceController::class, 'store']);
                 Route::get('/edit/{id}', [MedicineIssuanceController::class, 'edit']);
                 Route::post('/edit/submit', [MedicineIssuanceController::class, 'update']);
                 Route::get('/view/{id}', [MedicineIssuanceController::class, 'view']);
                 Route::post('/delete', [MedicineIssuanceController::class, 'delete']);
+                Route::post('/import/submit', [MedicineIssuanceController::class, 'importSubmit']);
                 Route::get('/export/excel', [MedicineIssuanceController::class, 'exportExcel']);
                 Route::get('/export/pdf', [MedicineIssuanceController::class, 'exportPdf']);
                 Route::post('/status', [MedicineIssuanceController::class, 'statusChange']);
                 Route::get('/quantity/{quantity_id}', [MedicineIssuanceController::class, 'quantity']);
                 Route::get('/editquantity/{quantity_id}', [MedicineIssuanceController::class, 'editquantity']);
-
+                Route::get('/sample-download', [MedicineIssuanceController::class, 'DownloadSample']);
                 Route::post('/delete/{id}', [MedicineIssuanceController::class, 'delete']);
                 Route::get('add/{id}', [MedicineIssuanceController::class, 'issue']);
                 Route::post('/issue/submit', [MedicineIssuanceController::class, 'issuestore']);
@@ -1073,9 +1086,9 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/list', [DiscardController::class, 'index']);
                 Route::get('/add', [DiscardController::class, 'add']);
                 Route::post('/add/submit', [DiscardController::class, 'store']);
-                Route::get('/edit/{id}', [DiscardController::class, 'edit']);
+                Route::get('/edit/{id}/{medicineId}', [DiscardController::class, 'edit']);
                 Route::post('/edit/submit', [DiscardController::class, 'update']);
-                Route::get('/view/{id}', [DiscardController::class, 'view']);
+                Route::get('/view/{id}/{medicineId}', [DiscardController::class, 'view']);
                 Route::post('/delete', [DiscardController::class, 'delete']);
                 Route::get('/export/excel', [DiscardController::class, 'exportExcel']);
                 Route::get('/export/pdf', [DiscardController::class, 'exportPdf']);
@@ -1091,6 +1104,8 @@ Route::middleware(['securityheader'])->group(function () {
             Route::group(['prefix' => 'ohc/inventory-tabular-view'], function () {
                 Route::get('/list', [InventoryController::class, 'index']);
                 Route::post('/list', [InventoryController::class, 'index']);
+                Route::get('/userlist', [InventoryController::class, 'userindex']);
+                Route::post('/userlist', [InventoryController::class, 'userindex']);
             });
 
             Route::group(['prefix' => 'ohc/medicine-expire-report'], function () {
@@ -1102,6 +1117,19 @@ Route::middleware(['securityheader'])->group(function () {
             Route::group(['prefix' => 'ohc/monthly-inventory'], function () {
                 Route::get('/list', [MonthlyInventoryController::class, 'index']);
                 Route::post('/list', [MonthlyInventoryController::class, 'index']);
+                Route::get('/medicinereport', [MonthlyInventoryController::class, 'medicinereport']);
+                Route::get('/exportexcel', [MonthlyInventoryController::class, 'exportexcel']);
+
+
+
+            });
+            Route::group(['prefix' => 'ohc/yearly-inventory-report'], function () {
+                Route::get('/list', [YearlyInventoryController::class, 'index']);
+                Route::post('/list', [YearlyInventoryController::class, 'index']);
+                Route::get('/medicinereport', [YearlyInventoryController::class, 'medicinereport']);
+                Route::get('/exportexcel', [YearlyInventoryController::class, 'exportexcel']);
+
+
             });
             Route::group(['prefix' => 'incident/type-master'], function () {
                 Route::get('/list', [IncidentTypeController::class, 'index']);

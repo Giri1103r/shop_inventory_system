@@ -101,9 +101,9 @@ class MedicineReceivingController extends Controller
                             // if (CheckUserPermission('view')) {
                             $btn .= '<a href="' . admin_url('ohc/medicine-receiving-form/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
-                            // if (CheckUserPermission('edit') && $row->approve_status != STATUS_OHC_CLOSE) {
-                            // $btn .= '<a href="' . admin_url('ohc/medicine-receiving-form/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
-                            // }
+                            if (CheckUserPermission('edit') && $row->approve_status == STATUS_OHC_EHS_VERIFICATION_PENDING) {
+                            $btn .= '<a href="' . admin_url('ohc/medicine-receiving-form/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
+                            }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
 
                             if ((checkUserRole(ROLE_SUPERADMIN)  && $row->approve_status != STATUS_OHC_OPEN  && $row->approve_status != STATUS_OHC_CLOSE) ||(checkUserRole(ROLE_EHS_OFFICER)&& $row->approve_status == STATUS_OHC_EHS_VERIFICATION_PENDING) ||(checkUserRole(ROLE_L1_EHS_OFFCIER)&& $row->approve_status == STATUS_OHC_L1_EHS_VERIFICATION_PENDING)  ||(checkUserRole(ROLE_EHS_HEAD)&& $row->approve_status == STATUS_OHC_AGM_APPROVAL_PENDING) ) {
@@ -147,6 +147,7 @@ class MedicineReceivingController extends Controller
         try {
             $pack = $this->medicine->getMedicineData();
             $medicineStock  = $this->inventory->getmedicinedata();
+
             $existingMedicineIds = $this->medicine_receiving
             ->where('status', 1)
             ->pluck('medicine_id')
@@ -270,137 +271,142 @@ class MedicineReceivingController extends Controller
         }
     }
 
-    // public function Edit(Request $request)
-    // {
-    //     try {
-    //         $id = decryptId($request->id);
+    public function Edit(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
 
-    //         $unit = $this->unit->getunit();
-    //         $medicine_receiving = $this->medicine_receiving->find($id);
-    //         $medicine = $this->medicine->getMedicineData();
-    //         $medicine_stock = $this->medicine_stock->getPackDetails();
-    //         $vendor = $this->vendor->getVendordata();
-    //         $hsn = $this->medicine->where('id', $id)->select('medicine', 'hsn', 'pack')->first();
+            $unit = $this->unit->getunit();
+            $medicine_receiving = $this->medicine_receiving->find($id);
+            $vendor = $this->vendor->getVendordata();
+            $pack = $this->medicine->getMedicineData();
+            $medicineStock  = $this->inventory->getmedicinedata();
 
-    //         $data = [
-    //             'medicine' => $medicine,
-    //             'vendor' => $vendor,
-    //             'medicine_receiving' => $medicine_receiving,
-    //             'hsn' => $hsn,
-    //             'unitList'=>$unit,
-    //             'medicine_stock'=>$medicine_stock
-
-
-    //         ];
-
-    //         return view('ohcmanagement.medicine_receiving.edit', $data);
-    //     } catch (Exception $ex) {
-    //         report($ex);
-    //         Session::flash('error', 'Something went wrong, Please try after sometimes!');
-    //         return redirect(admin_url('ohc/medicine-receiving-form/list'));
-    //     }
-    // }
-    // public function update(Request $request)
-    // {
-    //     try {
-    //         $id = decryptId($request->id);
-
-    //         $rules = [
-    //             'medicine_id' => 'required',
-    //             'vendor_id' => 'required',
-    //             'quantity' => 'required',
-    //             'batch_number' => 'required',
-    //             'expire_date' => 'required',
-    //             // 'hsn_id' => 'required',
-    //             'rate' => 'required',
-    //             'pack_id' => 'required',
-
-    //         ];
+            $hsn = $this->medicine->where('id',   $medicine_receiving->medicine_id)->select('medicine', 'hsn', 'pack')->first();
+            $existingMedicineIds = $this->medicine_receiving
+            ->where('status', 1)
+            ->pluck('medicine_id')
+            ->toArray();
+            $data = [
+                'medicineStock' => $medicineStock,
+                'vendor' => $vendor,
+                'medicine_receiving' => $medicine_receiving,
+                'hsn' => $hsn,
+                'unitList'=>$unit,
+                'pack'=>$pack
 
 
-    //         $messages = [
-    //             'medicine_id.required' => 'Medicine Name is required',
-    //             'vendor_id.required' => 'Vendor Name is required',
-    //             'quantity.required' => 'Quantity is required',
-    //             'batch_number.required' => 'Quantity is required',
-    //             'expire_date.required' => 'Expire Date is required',
-    //             // 'hsn_id.required' => 'HSN Numner is required',
-    //             'rate.required' => 'Rate is required',
-    //             'pack_id.required => Pack Details is required',
-    //         ];
+            ];
 
-    //         $validator = Validator::make($request->all(), $rules, $messages);
-    //         if ($validator->fails()) {
-    //             dd($validator->errors());
-    //             return redirect()->back()->withErrors($validator)->withInput();
-    //         }
+            return view('ohcmanagement.medicine_receiving.edit', $data);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medicine-receiving-form/list'));
+        }
+    }
+    public function update(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
 
-    //         try {
+            $rules = [
+                'medicine_id' => 'required',
+                'vendor_id' => 'required',
+                'quantity' => 'required',
+                'batch_number' => 'required',
+                'expire_date' => 'required',
+                // 'hsn_id' => 'required',
+                'rate' => 'required',
+                'pack_id' => 'required',
 
-    //             $hsn = $this->medicine_stock->where('hsn_number',$request->hsn_display)->pluck('id');
-    //             $this->medicine_receiving->updates($id,$hsn);
-
-    //             $mailsubject = 'Medicine Request for the Stock';
-    //             $user_role = ROLE_EHS_OFFICER;
-
-
-    //             $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
-    //             $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
-
-    //             if (count($users) > 0) {
-
-    //                 foreach ($users as $user) {
-
-    //                     $email_id = $user->email;
-
-    //                     if ($email_id != '' || $email_id != null) {
-    //                         $data = $this->medicine_receiving->selectOne($id);
-    //                         $permitrray  = $data->toArray();
-
-    //                         $data['name'] = $user->name;
-    //                         $data['email_id'] =  $email_id;
-    //                         $data['mail_subject'] = $mailsubject;
-
-    //                         Mail::to($data['email_id'])->queue(new MedicineReceivingRequestEmail($data));
-    //                     }
-    //                 }
-    //             }
+            ];
 
 
-    //             /**
-    //              * Send Web notification
-    //              */
+            $messages = [
+                'medicine_id.required' => 'Medicine Name is required',
+                'vendor_id.required' => 'Vendor Name is required',
+                'quantity.required' => 'Quantity is required',
+                'batch_number.required' => 'Quantity is required',
+                'expire_date.required' => 'Expire Date is required',
+                // 'hsn_id.required' => 'HSN Numner is required',
+                'rate.required' => 'Rate is required',
+                'pack_id.required => Pack Details is required',
+            ];
 
-    //             $notificationData = array(
-    //                 'notification_type' => 4,
-    //                 'module_type' => 1,
-    //                 'notification_message' => $mailsubject,
-    //                 'mobile_notification' => json_encode(array(
-    //                     'title' => $mailsubject,
-    //                     'message' => getMedicinename($data->medicine_id) . 'Has requested the medicine for the stock' . getUsername($data->created_by),
-    //                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-    //                     'id' => $data->id,
-    //                     'module' => 1,
-    //                 )),
-    //                 'web_link' =>  admin_url('ohc/medicine-receiving-form/approval/view/' . encryptId($data->id)),
-    //                 'assigned_user' => array_to_string($userids),
-    //                 'created_by' => Auth::id(),
-    //             );
-    //             notificationSave($notificationData);
-    //             Session::flash('success', 'Your data has been updated successfully!');
-    //         } catch (Exception $ex) {
-    //             dd($ex);
-    //             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-    //         }
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                dd($validator->errors());
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
 
-    //         return redirect(admin_url('ohc/medicine-receiving-form/list'));
-    //     } catch (Exception $ex) {
+            try {
 
-    //         dd($ex);
-    //         Session::flash('error', 'Something went wrong, Please try after sometimes!');
-    //         return redirect(admin_url('ohc/medicine-receiving-form/list'));
-    //     }
-    // }
+                $hsn = $this->medicine->where('hsn',$request->hsn_display)->first();
+
+                $this->medicine_receiving->updates($id,$hsn);
+
+                $mailsubject = 'Medicine Request for the Stock';
+                $user_role = ROLE_EHS_OFFICER;
+
+
+                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+
+                if (count($users) > 0) {
+
+                    foreach ($users as $user) {
+
+                        $email_id = $user->email;
+
+                        if ($email_id != '' || $email_id != null) {
+                            $data = $this->medicine_receiving->selectOne($id);
+                            $permitrray  = $data->toArray();
+
+                            $data['name'] = $user->name;
+                            $data['email_id'] =  $email_id;
+                            $data['mail_subject'] = $mailsubject;
+
+                            Mail::to($data['email_id'])->queue(new MedicineReceivingRequestEmail($data));
+                        }
+                    }
+                }
+
+
+                /**
+                 * Send Web notification
+                 */
+
+                $notificationData = array(
+                    'notification_type' => 4,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => getMedicinename($data->medicine_id) . 'Has requested the medicine for the stock' . getUsername($data->created_by),
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $data->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('ohc/medicine-receiving-form/approval/view/' . encryptId($data->id)),
+                    'assigned_user' => array_to_string($userids),
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+                Session::flash('success', 'Your data has been updated successfully!');
+            } catch (Exception $ex) {
+                dd($ex);
+                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            }
+
+            return redirect(admin_url('ohc/medicine-receiving-form/list'));
+        } catch (Exception $ex) {
+
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medicine-receiving-form/list'));
+        }
+    }
     public function View(Request $request)
     {
         try {

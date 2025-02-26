@@ -42,30 +42,30 @@
                                                         readonly>
                                                 </div>
                                             </div>
-                                          
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label require">Unit</label>
-                                                        <select name="unit_id" id="unit_id"
-                                                            class="form-control single-select" style="width: 100%">
-                                                            <option value="">Select the unit</option>
-                                                            @foreach ($unit as $list)
-                                                                <option value="{{ encryptId($list->id) }}">
-                                                                    {{ $list->unit_name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label require">Department</label>
-                                                        <select name="department_id" id="department_id"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Department </option>
 
-                                                        </select>
-                                                    </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Unit</label>
+                                                    <select name="unit_id" id="unit_id" class="form-control single-select"
+                                                        style="width: 100%">
+                                                        <option value="">Select the unit</option>
+                                                        @foreach ($unit as $list)
+                                                            <option value="{{ encryptId($list->id) }}">
+                                                                {{ $list->unit_name }}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Department</label>
+                                                    <select name="department_id" id="department_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Department </option>
+
+                                                    </select>
+                                                </div>
+                                            </div>
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -89,15 +89,16 @@
 
                                             </div>
                                             <div
-                                                class="d-flex justify-content-end align-items-center mb-3 button-container">
-
-                                                <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                    style="margin-left: 10px; width: 84px;">
+                                                class="d-flex justify-content-end align-items-center me-2 mb-3 button-container">
+                                                <button class="btn btn-primary add-row me-3" type="button" id="add-row"
+                                                    style="width: 84px;">
                                                     Add
                                                 </button>
-
-
+                                                <button type="button" id="import-button" class=" btn btn-success">
+                                                    Import
+                                                </button>
                                             </div>
+
 
                                         </div>
 
@@ -150,8 +151,8 @@
                                                             <td>
                                                                 <div class="form-group form-input">
                                                                     <label for="quantity" class="require">Quantity</label>
-                                                                    <input type="text" name="quantity[0]"
-                                                                        id="quantity" placeholder="Enter the quantity"
+                                                                    <input type="text" name="quantity[0]" id="quantity"
+                                                                        placeholder="Enter the quantity"
                                                                         class="form-control">
                                                                     <span id="quantity-error" style=" display:none;"
                                                                         class="text-danger">Quantity must be less
@@ -527,6 +528,27 @@
                     var errors = validator.numberOfInvalids();
                     console.log("Form has " + errors + " invalid fields.");
                 },
+            });
+
+            $('#import-button').click(function(event) {
+                event.preventDefault(); // Prevent default link behavior
+
+                // Validate only unit, department, and request date
+                if ($('#MedicineRequisitionForm').validate().element('#unit_id') &&
+                    $('#MedicineRequisitionForm').validate().element('#department_id') &&
+                    $('#MedicineRequisitionForm').validate().element('#req_id') &&
+                    $('#MedicineRequisitionForm').validate().element('#request_date')) {
+
+                    let url = "{{ admin_url('ohc/medicine-requisition/import') }}";
+                    let unit = $('#unit_id').val();
+                    let department = $('#department_id').val();
+                    let req_id = $('#req_id').val();
+                    let requestDate = $('#request_date').val();
+
+                    // Redirect with form values
+                    window.location.href = url + "?unit_id=" + unit + "&department_id=" + department +"&req_id=" + req_id +
+                        "&request_date=" + requestDate;
+                }
             });
         });
     </script>

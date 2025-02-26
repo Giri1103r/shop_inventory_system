@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\OhcManagement;
 
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
+use App\Jobs\Ohc\ImportRequisitionjob;
 use App\Mail\Ohc\MedicineRequisitionEmail;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
@@ -28,6 +30,7 @@ use App\Models\OhcManagement\MedicineStock;
 use App\Models\OhcManagement\OhcStatuslog;
 use App\Models\OhcManagement\Report\Inventory;
 use App\Models\User;
+use Illuminate\Support\Facades\File;
 
 use function Ramsey\Uuid\v1;
 
@@ -37,6 +40,7 @@ class MedicineRequisitionController extends Controller
     private $vendor;
     private $user_medicine_requisition;
     private $unit;
+    private $uploadlog;
     private $department;
     private $medicine_requisition;
     private $medicine_stock;
@@ -56,7 +60,7 @@ class MedicineRequisitionController extends Controller
         $this->ohcStatus = new OhcStatuslog();
         $this->user = new User();
         $this->inventory = new Inventory();
-
+        $this->uploadlog = new UploadLog();
     }
     public function index(Request $request)
     {
@@ -126,7 +130,7 @@ class MedicineRequisitionController extends Controller
                             return $btn;
                         })
 
-                        ->rawColumns(['action', 'request_date', 'approve_status','unit_id','department_id'])
+                        ->rawColumns(['action', 'request_date', 'approve_status', 'unit_id', 'department_id'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -429,12 +433,12 @@ class MedicineRequisitionController extends Controller
                         'id' => $id,
                         'module' => 1,
                     )),
-                    'web_link' =>  admin_url('ohc/medicine-requisition/list' ),
+                    'web_link' =>  admin_url('ohc/medicine-requisition/list'),
                     'assigned_user' => $details->created_by,
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
-            }else{
+            } else {
                 $mailsubject = 'Paramedics Rejected the medicine';
                 $email_id = $user->email;
 
@@ -462,7 +466,7 @@ class MedicineRequisitionController extends Controller
                         'id' => $id,
                         'module' => 1,
                     )),
-                    'web_link' =>  admin_url('ohc/medicine-requisition/list' ),
+                    'web_link' =>  admin_url('ohc/medicine-requisition/list'),
                     'assigned_user' => $details->created_by,
                     'created_by' => Auth::id(),
                 );
@@ -537,6 +541,93 @@ class MedicineRequisitionController extends Controller
         }
     }
 
+    // import
+
+    public function import()
+    {
+        return view('ohcmanagement.medicine_requisition.import');
+    }
+
+    public function ImportSubmit(Request $request)
+    {
+        try {
+            $file = $request->file('medicine_upload');
+
+            $rules = [
+                'medicine_upload' => 'required',
+            ];
+            $messages = [
+                'medicine_upload.required' => 'Please upload a file',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+
+            if ($file != null) {
+
+                $uploadpath = 'public/uploads/medicine';
+
+                $folderPath = public_path('uploads/medicine');
+
+                if (!File::exists($folderPath)) {
+
+                    File::makeDirectory($folderPath, 0755, true);
+                }
+
+                $filenewname = time() . Str::random('10') . '.' . $file->getClientOriginalExtension();
+
+                $fileName = $file->getClientOriginalName();
+                $fileSize = $file->getSize();
+
+                $fileExt = $file->getClientOriginalExtension();
+
+                $file->move($uploadpath, $filenewname);
+
+                $path = $uploadpath . "/" . $filenewname;
+                $user_id = Auth::id();
+
+                $insert_data = array(
+                    'upload_type' => 17,
+                    'upload_status' => 0,
+                    'file_name' => $filenewname,
+                    'file_orgname' => $fileName,
+                    'file_path' => $path,
+                    'file_size' => $fileSize,
+                    'file_extension' => $fileExt,
+                    'created_by' => $user_id,
+                );
+
+                $insert_id =  $this->uploadlog->create($insert_data)->id;
+
+
+
+                $details = [
+                    "user_id" => $user_id,
+                    "log_id" => $insert_id,
+                    "path" => $path,
+                ];
+                $medicnieRequisition = $this->user_medicine_requisition->store();
+                $id = $medicnieRequisition->id;
+                $this->ohcStatus->storeMedicineRecevingdata($id);
+                dispatch(new ImportRequisitionjob($details, $medicnieRequisition));
+                //    dispatch((new ImportCompanyJob($details))->onQueue('company'));
+            }
+
+            $insert_data['log_id'] = $insert_id;
+            $insert_data['Uploded_by'] = Auth::user()->toArray();
+
+            Session::flash('success', __('Medicine uploaded sucessfully'));
+            return redirect(admin_url('ohc/medicine-requisition/list'));
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', __('Medicine  upload failed'));
+            return redirect(admin_url('ohc/medicine-requisition/list'));
+        }
+    }
+
     public function ExportExcel(Request $request)
     {
 
@@ -579,18 +670,18 @@ class MedicineRequisitionController extends Controller
                     $export[] = 'Paramedics approval Pending';
                 } elseif ($data->approve_status == STATUS_OHC_CLOSE) {
                     $export[] = 'Open';
-                }  else {
+                } else {
                     $export[] = removeUnderScore(getStatus($data->approve_status));
                 }
                 if ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) {
                     $export[] = 'Paramedics approval Pending ';
-                }  elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVED) {
+                } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVED) {
                     $export[] = 'Paramedics Approved';
                 } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_REJECTED) {
                     $export[] = 'Paramedics Rejected';
                 } elseif ($data->approve_status == STATUS_OHC_CLOSE) {
                     $export[] = 'closed';
-                }  else {
+                } else {
                     $export[] = removeUnderScore(getStatus($data->approve_status));
                 }
                 $export[] =  getusername($data->created_by);
@@ -695,6 +786,15 @@ class MedicineRequisitionController extends Controller
 
         return response()->json(['results' => $results]);
     }
+    public function DownloadSample(Request $request)
+    {
 
+        $filedetails =  exportsamplefile('medicinerequisition');
 
+        $filePath = $filedetails->sample_file;
+        $customFileName = $filedetails->file_name;
+
+        //return Response::download($filePath, $customFileName);
+        return redirect(url($filePath));
+    }
 }

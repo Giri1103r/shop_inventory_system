@@ -626,7 +626,30 @@ class CronController extends Controller
             ]);
         }
     }
+    public function prevoiusmonthstock()
+    {
+        try {
 
+            $yesterday = Carbon::yesterday();
+
+
+            $lastDayOfMonth = $yesterday->copy()->endOfMonth()->toDateString();
+
+            if ($yesterday->toDateString() === $lastDayOfMonth) {
+
+                Inventory::query()->update([
+                    'previous_month_total' => DB::raw('balance')
+                ]);
+            }
+
+            return response()->json(['message' => 'Previous month balance updated']);
+        } catch (Exception $ex) {
+            return response()->json([
+                'message' => 'An error occurred.',
+                'error' => $ex->getMessage(),
+            ]);
+        }
+    }
 
 
     public function permitExpiry()

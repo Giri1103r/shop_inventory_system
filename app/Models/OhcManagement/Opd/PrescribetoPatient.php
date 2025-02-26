@@ -48,7 +48,7 @@ class PrescribetoPatient extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_management_opd_patient.*', 'ohc_management_opd_patient_status.patient_status', 'ohc_management_opd_patient_suggested_by.suggested_by')
+        $query = $this->select('ohc_management_opd_patient.*', 'ohc_management_opd_patient_status.patient_status', 'ohc_management_opd_patient_suggested_by.suggested_by', 'ohc_management_opd_patient.patient_status As patientStatus')
             ->join('ohc_management_opd_patient_status', 'ohc_management_opd_patient.patient_status', '=', 'ohc_management_opd_patient_status.id')
 
             ->join('ohc_management_opd_patient_suggested_by', 'ohc_management_opd_patient.suggested_by', '=', 'ohc_management_opd_patient_suggested_by.id');
