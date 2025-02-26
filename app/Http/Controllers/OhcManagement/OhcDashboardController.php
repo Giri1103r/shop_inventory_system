@@ -32,6 +32,21 @@ class OhcDashboardController extends Controller
                         'icon' => 'bx bx-message-square-detail',
                         'icon_color' => 'text-primary',
                     ],
+                    [
+                        'link' => 'ohc/medicine-receiving-form/list',
+                        'name' => 'Today’s Purchase',
+                        'count' => getohctotalCount('medicineReceiving'),
+                        'icon' => 'bx bx-message-square-detail',
+                        'icon_color' => 'text-primary',
+                    ],
+                    [
+                        'link' => 'ohc/medicine-issuance/list',
+                        'name' => 'Medicine Issuance',
+                        'count' => getohctotalCount('usermedicineissuance'),
+                        'icon' => 'bx bx-message-square-detail',
+                        'icon_color' => 'text-primary',
+                    ],
+
 
                 ];
 

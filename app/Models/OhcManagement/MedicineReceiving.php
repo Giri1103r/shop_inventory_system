@@ -23,6 +23,7 @@ class MedicineReceiving extends Model
         'batch_number',
         'vendor_id',
         'approve_status',
+        'approved_date',
         'approved_by',
         'cron_time',
         'status',
