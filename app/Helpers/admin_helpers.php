@@ -17,6 +17,8 @@ use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Notification;
 use App\Models\OhcManagement\UserMedicineRequisition;
+use App\Models\OhcManagement\MedicineReceiving;
+use App\Models\OhcManagement\UserMedicineIssuance;
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\WebPushConfig;
@@ -24,7 +26,8 @@ use App\Models\IMS\Master\IncidentType;
 use App\Models\IMS\Master\Hira;
 use App\Models\IMS\Incident\InitialIncident;
 use App\Models\IMS\Incident\AccidentReport;
-
+use App\Models\OhcManagement\Master\Medicine;
+use Carbon\Carbon;
 
 /*
  * Menu bar start
@@ -258,6 +261,36 @@ if (!function_exists('gettotalCount')) {
     }
 }
 
+if (!function_exists('getohctotalCount')) {
+
+    function getohctotalCount($type)
+    {
+
+        switch ($type) {
+
+            case 'requisition':
+                $count = UserMedicineRequisition::where('approve_status',STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)->count();
+                break;
+            case 'medicine':
+                $count = Medicine::where('status',1)->count();
+                break;
+            case 'medicineReceiving':
+              
+                $count = MedicineReceiving::where('approved_date', Carbon::today())->count();
+
+                break;
+            case 'usermedicineissuance':
+                $count = UserMedicineIssuance::count();
+                break;
+
+            default:
+                $count = 0;
+                break;
+        }
+
+        return $count;
+    }
+}
 if (!function_exists('getYearArray')) {
     function getYearArray($startYear = null)
     {

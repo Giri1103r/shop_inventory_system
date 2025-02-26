@@ -59,7 +59,7 @@ use App\Http\Controllers\OhcManagement\Report\InventoryController;
 use App\Http\Controllers\OhcManagement\Report\MedicineExpireController;
 use App\Http\Controllers\OhcManagement\Report\MonthlyInventoryController;
 use App\Http\Controllers\OhcManagement\Report\YearlyInventoryController;
-
+use App\Http\Controllers\OhcManagement\OhcDashboardController;
 Route::get('cache', function () {
     Artisan::call('optimize:clear');
     return 'Routes cache cleared';
@@ -776,6 +776,10 @@ Route::middleware(['securityheader'])->group(function () {
 
 
             // OHC Management
+
+            Route::group(['prefix' => 'ohc/dashboard'], function () {
+                Route::get('/', [OhcDashboardController::class, 'index']);
+            });
 
             Route::group(['prefix' => 'ohc/medicine'], function () {
                 Route::get('/list', [MedicineController::class, 'index']);
