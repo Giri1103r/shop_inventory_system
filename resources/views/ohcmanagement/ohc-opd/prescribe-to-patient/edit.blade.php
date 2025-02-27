@@ -69,18 +69,17 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Employee Name</label>
                                                     <input type="text" name="emp_name" id="emp_name"
-                                                        class="form-control" placeholder="Employee Name"
-                                                       readonly>
+                                                        class="form-control" placeholder="Employee Name" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2 department"style="display: none;">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Department</label>
-                                                    <select name="department_id" id="department_id" class="form-control single-select"
-                                                        style="width: 100%">
+                                                    <select name="department_id" id="department_id"
+                                                        class="form-control single-select" style="width: 100%">
                                                         <option value="">Select the department</option>
                                                         @foreach ($departmentList as $list)
-                                                            <option value="{{ ($list->id) }}"
+                                                            <option value="{{ $list->id }}"
                                                                 @if ($list->id == $opdpatient->department_id) selected @endif>
                                                                 {{ $list->department_name }}</option>
                                                         @endforeach
@@ -88,7 +87,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4 mb-2 unit" >
+                                            <div class="col-md-4 mb-2 unit">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit</label>
                                                     <select name="unit_id" id="unit_id" class="form-control single-select"
@@ -534,41 +533,41 @@
         // getting the employee/worker details
         $(document).ready(function() {
             if (!$('#is_outside_worker').is(':checked')) {
-            $('#emp_id').select2({
-                ajax: {
-                    url: '{{ admin_url('ohc/prescribe-to-patient/fetchemployeename') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
+                $('#emp_id').select2({
+                    ajax: {
+                        url: '{{ admin_url('ohc/prescribe-to-patient/fetchemployeename') }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.id,
+                                        text: item.text
+                                    };
+                                })
+                            };
+                        }
                     },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            })
-                        };
-                    }
-                },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
-            });
+                    minimumInputLength: 1,
+                    dropdownCssClass: 'form-control',
+                    selectionCssClass: 'form-control'
+                });
 
-            // Set selected value if available
-            var empId = '{{ $opdpatient->emp_id ?? '' }}';
-            var empName = '{{ $opdpatient->emp_id ?? '' }}';
-            var phoneNum = '{{ $opdpatient->mobile_no ?? '' }}'
-            if (empId && empName) {
-                var newOption = new Option(empName, empId, true, true);
-                $('#emp_id').append(newOption).trigger('change');
+                // Set selected value if available
+                var empId = '{{ $opdpatient->emp_id ?? '' }}';
+                var empName = '{{ $opdpatient->emp_id ?? '' }}';
+                var phoneNum = '{{ $opdpatient->mobile_no ?? '' }}'
+                if (empId && empName) {
+                    var newOption = new Option(empName, empId, true, true);
+                    $('#emp_id').append(newOption).trigger('change');
+                }
             }
-        }
         });
 
 
@@ -1055,17 +1054,19 @@
                         minlength: 3,
                         maxlength: 30,
                         remote: {
-                            url: "{{ admin_url('ohc/prescribe-to-patient/unique') }}",
-                            type: "post",
+                            url: "{{ url('admin/ohc/prescribe-to-patient/unique') }}", // Ensure correct route
+                            type: "POST",
                             data: {
                                 emp_name: function() {
-                                    return $('#emp_name').val();
+                                    return $("#emp_name").val();
                                 },
                                 id: function() {
-                                    return $('#id').val();
-                                }
+                                    return $("#id").val();
+                                },
+                                _token: "{{ csrf_token() }}" // CSRF token for Laravel POST requests
                             }
-                        }
+                        },
+
                     },
                     unit_id: {
                         required: true,
@@ -1217,6 +1218,8 @@
                         required: "Please enter employee name.",
                         minlength: "employee name must be at least 3 characters.",
                         maxlength: "employee name must not exceed 30 characters.",
+                        remote: "Employee name must be Unique.",
+
                     },
                     // company_name: {
                     //     required: "Please enter Company name.",
