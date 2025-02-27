@@ -165,7 +165,7 @@ class MedicineRequisitionController extends Controller
 
             return view('ohcmanagement.medicine_requisition.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-requisition/list'));
         }
@@ -249,14 +249,14 @@ class MedicineRequisitionController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medicine-requisition/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-requisition/list'));
         }
@@ -366,14 +366,14 @@ class MedicineRequisitionController extends Controller
 
                 Session::flash('success', 'Your data has been updated successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medicine-requisition/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-requisition/list'));
         }
@@ -525,7 +525,7 @@ class MedicineRequisitionController extends Controller
             return redirect(admin_url('ohc/medicine-requisition/list'))
                 ->with('success', 'Request has been processed successfully.');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return redirect(admin_url('ohc/medicine-requisition/list'))
                 ->with('error', 'Something went wrong, Please try again later.');
         }
@@ -569,7 +569,7 @@ class MedicineRequisitionController extends Controller
             $filename = "Medicine Receiving Stock Details.pdf";
             return $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
@@ -600,7 +600,7 @@ class MedicineRequisitionController extends Controller
             return response()->json(['status' => 'success', 'msg' => 'Deleted successfully'], 200);
         }
     catch (Exception $ex) {
-        dd($ex);
+        report($ex);
         return response()->json(['status' => 'error', 'msg' => 'Something went wrong'], 200);
     }
 
@@ -687,7 +687,7 @@ class MedicineRequisitionController extends Controller
             Session::flash('success', __('Medicine uploaded sucessfully'));
             return redirect(admin_url('ohc/medicine-requisition/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', __('Medicine  upload failed'));
             return redirect(admin_url('ohc/medicine-requisition/list'));
         }
@@ -820,7 +820,7 @@ class MedicineRequisitionController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
         }
     }
 

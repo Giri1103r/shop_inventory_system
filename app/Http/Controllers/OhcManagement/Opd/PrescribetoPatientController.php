@@ -165,7 +165,7 @@ class PrescribetoPatientController extends Controller
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
                 }
             }
@@ -307,7 +307,7 @@ class PrescribetoPatientController extends Controller
 
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
         } catch (Exception $ex) {
-            dd($ex);  // Debugging
+            report($ex);  // Debugging
             Session::flash('error', 'Something went wrong. Please try again after some time');
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
         }
@@ -375,7 +375,7 @@ class PrescribetoPatientController extends Controller
 
             return view('ohcmanagement.ohc-opd.prescribe-to-patient.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong please try again after some time');
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
         }
@@ -453,7 +453,7 @@ class PrescribetoPatientController extends Controller
 
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
         } catch (Exception $ex) {
-            dd($ex);  // Debugging
+            report($ex);  // Debugging
             Session::flash('error', 'Something went wrong. Please try again after some time');
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
         }
@@ -523,7 +523,7 @@ class PrescribetoPatientController extends Controller
                     );
             } catch (Exception $ex) {
 
-                dd($ex);
+                report($ex);
             }
         }
     }
@@ -587,7 +587,7 @@ class PrescribetoPatientController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
         }
     }
 

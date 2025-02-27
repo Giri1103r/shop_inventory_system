@@ -110,7 +110,7 @@ class DiscardController extends Controller
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
                 }
             }
@@ -139,7 +139,7 @@ class DiscardController extends Controller
 
             return view('ohcmanagement.discard.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/discard/list'));
         }
@@ -188,14 +188,14 @@ class DiscardController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/discard/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/discard/list'));
         }
@@ -299,7 +299,7 @@ class DiscardController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('ohc/discard/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try again later!');
             return redirect(admin_url('ohc/discard/list'));
         }
@@ -334,7 +334,7 @@ class DiscardController extends Controller
             if (empty($id)) {
                 $isUnique = $this->discard->uniqueCheck($medicine_id);
             } else {
-              
+
                 // dd( $unit_id );
                 $isUnique = $this->discard->existUniqueCheck($medicine_id, $id,$medicineid);
             }

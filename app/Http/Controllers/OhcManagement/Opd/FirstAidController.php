@@ -134,14 +134,14 @@ class FirstAidController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/first-aid/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aid/list'));
         }
@@ -199,7 +199,7 @@ class FirstAidController extends Controller
                 Session::flash('success', 'Your data has been created successfully!');
                 return redirect(admin_url('ohc/first-aid/list'));
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
         } catch (Exception $ex) {

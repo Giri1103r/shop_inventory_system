@@ -127,7 +127,7 @@ class MedicineReceivingController extends Controller
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
                 }
             }
@@ -165,7 +165,7 @@ class MedicineReceivingController extends Controller
 
             return view('ohcmanagement.medicine_receiving.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         }
@@ -258,14 +258,14 @@ class MedicineReceivingController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         }
@@ -395,14 +395,14 @@ class MedicineReceivingController extends Controller
                 notificationSave($notificationData);
                 Session::flash('success', 'Your data has been updated successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         }
@@ -465,7 +465,7 @@ class MedicineReceivingController extends Controller
             }
             return view('ohcmanagement.medicine_receiving.approve', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         }
@@ -591,12 +591,12 @@ class MedicineReceivingController extends Controller
                 Session::flash('success', 'Your Request Has Responded Successfully');
                 return redirect(admin_url('ohc/medicine-receiving-form/list'));
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
                 return redirect(admin_url('ohc/medicine-receiving-form/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         }
@@ -689,12 +689,12 @@ class MedicineReceivingController extends Controller
                 Session::flash('success', 'Your Request Has Responded Successfully');
                 return redirect(admin_url('ohc/medicine-receiving-form/list'));
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
                 return redirect(admin_url('ohc/medicine-receiving-form/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         }
@@ -806,12 +806,12 @@ class MedicineReceivingController extends Controller
                 Session::flash('success', 'Your Request Has Responded Successfully');
                 return redirect(admin_url('ohc/medicine-receiving-form/list'));
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
                 return redirect(admin_url('ohc/medicine-receiving-form/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         }
@@ -1039,7 +1039,7 @@ class MedicineReceivingController extends Controller
             $filename = "Medicine Receiving Stock Details.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
