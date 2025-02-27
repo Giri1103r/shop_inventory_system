@@ -4,9 +4,37 @@
 
 @section('pageurl', admin_url('ohc/dashboard'))
 
+
 @push('style')
     <style>
+            .green-box {
+                background-color: green;
+                color: white;
+                padding: 10px;
+                border-radius: 5px;
+                display: inline-block;
+            }
 
+            .yellow-box {
+                background-color: yellow;
+                color: black;
+                padding: 10px;
+                border-radius: 5px;
+                display: inline-block;
+            }
+
+            .red-box {
+                background-color: red;
+                color: white;
+                padding: 10px;
+                border-radius: 5px;
+                display: inline-block;
+            }
+            .chart-container{
+                width: 100px; 
+                height: 80px;
+                margin-left: 16%;
+            }   
 
     </style>
 @endpush
@@ -26,6 +54,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="card view_card">
 
                 <div class="card-body">
@@ -197,7 +226,6 @@
 
             </div>
 
-
             <div class="card view_card">
 
                 <div class="card-body">
@@ -244,11 +272,13 @@
                                                 {{ isset($masterLink[4]['count']) ? $masterLink[4]['count'] : 0 }}
                                             </h4>
                                         </div>
+
+                                        <div id="chart1" class="chart-container"></div>
+
                                     </div>
                                 </div>
                             </div>
                         </div>
-
 
                         <div class="col-xl-3 col-lg-6 col-sm-6">
                             <div class="widget-stat card card-dashbaord"
@@ -286,6 +316,9 @@
                                             <h4 class="mb-0">
                                                 {{ isset($masterLink[5]['count']) ? $masterLink[5]['count'] : 0 }}</h4>
                                         </div>
+
+                                        <div id="chart2" class="chart-container"></div>
+
                                     </div>
                                 </div>
                             </div>
@@ -330,8 +363,10 @@
                                                 {{ isset($masterLink[6]['name']) ? $masterLink[6]['name'] : '' }}</p>
                                             <h4 class="mb-0">
                                                 {{ isset($masterLink[6]['count']) ? $masterLink[6]['count'] : 0 }}</h4>
-
                                         </div>
+
+                                        <div id="chart3" class="chart-container"></div>
+
                                     </div>
                                 </div>
                             </div>
@@ -363,6 +398,9 @@
                                             <h4 class="mb-0">
                                                 {{ isset($masterLink[7]['count']) ? $masterLink[7]['count'] : 0 }}</h4>
                                         </div>
+
+                                        <div id="chart4" class="chart-container"></div>
+
                                     </div>
                                 </div>
                             </div>
@@ -470,6 +508,40 @@
 
             </div>
 
+            <div class="card-body px-0 overflow-auto">
+                <h4 class="card-title pl-4">Medicine Status </h4>
+                <div class="table-responsive scroll">
+                    <table class="table">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Medicine</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($medicines as $medicine)
+                                <tr>
+                                    <td>{{ $medicine->medicine }}</td>
+                                    <td>
+                                        <span class="
+                                            @if($medicine->balance > 50)
+                                                bg-success text-white
+                                            @elseif($medicine->balance > 10)
+                                                bg-warning text-dark
+                                            @else
+                                                bg-danger text-white
+                                            @endif
+                                            px-3 py-2 rounded">
+                                            {{ $medicine->balance }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -477,10 +549,104 @@
 
 
 @push('scripts')
-    <script>
-        function redirectopermanage(link) {
-            var url = "{{ admin_url('') }}" + link;
-            window.location.href = url;
-        }
-    </script>
+<script>
+    function redirectopermanage(link) {
+        var url = "{{ admin_url('') }}" + link;
+        window.location.href = url;
+    }
+</script>
+
+<script>
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     var opdCounts = [
+    //         {{ isset($masterLink[4]['count']) ? $masterLink[4]['count'] : 0 }},
+    //         {{ isset($masterLink[5]['count']) ? $masterLink[5]['count'] : 0 }},
+    //         {{ isset($masterLink[6]['count']) ? $masterLink[6]['count'] : 0 }},
+    //         {{ isset($masterLink[7]['count']) ? $masterLink[7]['count'] : 0 }}
+    //     ];
+
+    //     opdCounts.forEach((count, index) => {
+    //         var options = {
+    //             chart: {
+    //                 type: 'bar',
+    //                 height: 50,
+    //                 width: 70,
+    //                 sparkline: { enabled: true }
+    //             },
+    //             plotOptions: {
+    //                 bar: {
+    //                     columnWidth: '50%',
+    //                     borderRadius: 4
+    //                 }
+    //             },
+    //             series: [{
+    //                 name: 'OPD Count',
+    //                 data: [count]
+    //             }],
+    //             colors: ['#FF5733'],
+    //             fill: {
+    //                 type: 'gradient',
+    //                 gradient: {
+    //                     shade: 'light',
+    //                     type: 'vertical',
+    //                     gradientToColors: ['#FFC300'],
+    //                     stops: [0, 100]
+    //                 }
+    //             },
+    //             xaxis: {
+    //                 categories: ['Unit OPD'],
+    //                 labels: { show: false }
+    //             },
+    //             yaxis: { show: false }
+    //         };
+
+    //         var chart = new ApexCharts(document.querySelector(`#chart${index + 1}`), options);
+    //         chart.render();
+    //     });
+    // });
+    
+    document.addEventListener("DOMContentLoaded", function () {
+    var opdCounts = [
+        {{ isset($masterLink[4]['count']) ? $masterLink[4]['count'] : 0 }},
+        {{ isset($masterLink[5]['count']) ? $masterLink[5]['count'] : 0 }},
+        {{ isset($masterLink[6]['count']) ? $masterLink[6]['count'] : 0 }},
+        {{ isset($masterLink[7]['count']) ? $masterLink[7]['count'] : 0 }}
+    ];
+
+    var colors = ["#FF5733", "#1E90FF", "#28A745", "#FFC107"]; 
+
+    opdCounts.forEach(function (count, index) {
+        var options = {
+            chart: {
+                type: 'radialBar',
+                height: 80,
+                width: 80,
+                sparkline: { enabled: true }
+            },
+            series: [count], 
+            colors: [colors[index % colors.length]], 
+            plotOptions: {
+                radialBar: {
+                    hollow: {
+                        size: '40%' 
+                    },
+                    track: {
+                        background: "#EAEAEA"
+                    },
+                    dataLabels: {
+                        name: { show: false },
+                        value: { fontSize: '14px', color: "#333" }
+                    }
+                }
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart" + (index + 1)), options);
+        chart.render();
+    });
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.35.3"></script>
+
 @endpush
