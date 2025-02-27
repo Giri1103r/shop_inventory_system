@@ -208,7 +208,7 @@
                     <div class="row">
                         <div class="col-xl-3 col-lg-6 col-sm-6">
                             <div class="widget-stat card card-dashbaord"
-                                onclick="redirectopermanage('{{ isset($masterLink[0]['link']) ? $masterLink[0]['link'] : '' }}')"
+                                onclick="redirectopermanage('{{ isset($masterLink[4]['link']) ? $masterLink[4]['link'] : '' }}')"
                                 style="cursor: pointer;background-image: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%);">
                                 <div class="card-body p-4"
                                     style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
@@ -241,10 +241,10 @@
                                         </span>
                                         <div class="media-body" style="display: block;">
                                             <p class="mb-1" style="color:black;">
-                                                {{ isset($masterLink[0]['name']) ? $masterLink[0]['name'] : '' }}
+                                                {{ isset($masterLink[4]['name']) ? $masterLink[4]['name'] : '' }}
                                             </p>
                                             <h4 class="mb-0">
-                                                {{ isset($masterLink[0]['count']) ? $masterLink[0]['count'] : 0 }}
+                                                {{ isset($masterLink[4]['count']) ? $masterLink[4]['count'] : 0 }}
                                             </h4>
                                         </div>
                                     </div>

@@ -46,6 +46,14 @@ class OhcDashboardController extends Controller
                         'icon' => 'bx bx-message-square-detail',
                         'icon_color' => 'text-primary',
                     ],
+                    [
+                        'link' => 'ohc/prescribe-to-patient/list',
+                        'name' => 'OPD Patient List',
+                        'count' => getohctotalCount('prescribetopatient'),
+                        'icon' => 'bx bx-message-square-detail',
+                        'icon_color' => 'text-primary',
+                    ],
+
 
 
                 ];

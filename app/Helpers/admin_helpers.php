@@ -27,6 +27,7 @@ use App\Models\IMS\Master\Hira;
 use App\Models\IMS\Incident\InitialIncident;
 use App\Models\IMS\Incident\AccidentReport;
 use App\Models\OhcManagement\Master\Medicine;
+use App\Models\OhcManagement\Opd\PrescribetoPatient;
 use Carbon\Carbon;
 
 /*
@@ -275,12 +276,15 @@ if (!function_exists('getohctotalCount')) {
                 $count = Medicine::where('status',1)->count();
                 break;
             case 'medicineReceiving':
-              
+
                 $count = MedicineReceiving::where('approved_date', Carbon::today())->count();
 
                 break;
             case 'usermedicineissuance':
                 $count = UserMedicineIssuance::count();
+                break;
+            case 'prescribetopatient':
+                $count = PrescribetoPatient::where('created_at', Carbon::today())->count();
                 break;
 
             default:
