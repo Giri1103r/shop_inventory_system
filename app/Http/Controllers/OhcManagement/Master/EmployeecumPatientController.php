@@ -360,7 +360,7 @@ class EmployeecumPatientController extends Controller
                 $export[] =  $i;
                 $export[] =  $data->emp_name;
                 $export[] =  getEmployeeType($data->employee_type);
-                $export[] =  $data->dob;
+                $export[] =  Displaydateformat($data->dob);
                 $export[] =  $data->address;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
@@ -379,6 +379,8 @@ class EmployeecumPatientController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/employee-cum-patient/list'));
         }
     }
 
@@ -434,6 +436,8 @@ class EmployeecumPatientController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/employee-cum-patient/list'));
         }
     }
 

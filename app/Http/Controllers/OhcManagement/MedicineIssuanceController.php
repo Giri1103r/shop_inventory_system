@@ -215,10 +215,10 @@ class MedicineIssuanceController extends Controller
                         ->where('medicine_id', $medicine_id)
                         ->where('unit_id', 1)
                         ->increment('total_issue', $issuedQuantity);
-                    $this->inventory
-                        ->where('medicine_id', $medicine_id)
-                        ->where('unit_id',  $unitId)
-                        ->increment('total_purchase', $issuedQuantity);
+                    // $this->inventory
+                    //     ->where('medicine_id', $medicine_id)
+                    //     ->where('unit_id',  $unitId)
+                    //     ->increment('total_purchase', $issuedQuantity);
                     $this->inventory
                         ->where('medicine_id', $medicine_id)
                         ->where('unit_id',  $unitId)
@@ -460,7 +460,7 @@ class MedicineIssuanceController extends Controller
                             $this->inventory
                                 ->where('medicine_id', $medicine_id)
                                 ->where('unit_id', $user_medicine_issuance->unit_id)
-                                ->decrement('total_purchase', $difference);
+                                ->decrement('total_received', $difference);
 
                             $this->inventory
                                 ->where('medicine_id', $medicine_id)
@@ -481,7 +481,7 @@ class MedicineIssuanceController extends Controller
                             $this->inventory
                                 ->where('medicine_id', $medicine_id)
                                 ->where('unit_id', $user_medicine_issuance->unit_id)
-                                ->increment('total_purchase', $difference);
+                                ->increment('total_received', $difference);
 
                             $this->inventory
                                 ->where('medicine_id', $medicine_id)
@@ -518,7 +518,7 @@ class MedicineIssuanceController extends Controller
                             $this->inventory
                                 ->where('medicine_id', $medicine_id)
                                 ->where('unit_id',  $unitId)
-                                ->increment('total_purchase', $issuedQuantity);
+                                ->increment('total_received', $issuedQuantity);
                             $this->inventory
                                 ->where('medicine_id', $medicine_id)
                                 ->where('unit_id',  $unitId)

@@ -31,7 +31,7 @@
                             {{ getEmployeeType($value->employee_type)}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->dob }}
+                            {{ Displaydateformat($value->dob) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->address}}

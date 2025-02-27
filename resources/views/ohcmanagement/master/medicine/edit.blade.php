@@ -157,7 +157,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex: '/^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s]*$/',
+                        regex: /^(?!\s*$)[a-zA-Z0-9\s]+$/,
                         remote: {
                             url: '{{ admin_url('ohc/medicine/unique') }}',
                             type: 'post',
@@ -183,7 +183,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex: '/^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s]*$/',
+                        regex: /^(?!\s*$)[a-zA-Z0-9\s]+$/,
                         remote: {
                             url: '{{ admin_url('ohc/medicine/hsn-unique') }}',
                             type: 'post',

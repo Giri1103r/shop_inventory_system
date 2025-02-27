@@ -48,10 +48,22 @@ class RoadsideFirstAid extends Model
         if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];
 
-            $query->where(function ($query) use ($search) {
+
+            $formattedDate = null;
+            if (\DateTime::createFromFormat('d-m-Y', $search) !== false) {
+                $formattedDate = \Carbon\Carbon::createFromFormat('d-m-Y', $search)->format('Y-m-d');
+            }
+            $query->where(function ($query) use ($search, $formattedDate) {
                 $query
-                    ->orWhere('emp_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('emp_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('remarks', 'LIKE', '%' . $search . '%')
+                    ->orWhere('first_aider_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('time_of_incident', 'LIKE', '%' . $search . '%')
+                    ->orWhere('location_of_incident', 'LIKE', '%' . $search . '%');
+
+                    if ($formattedDate) {
+                        $query->orWhere('date_of_incident', 'LIKE', '%' . $formattedDate . '%');
+                    }
             });
         }
 
@@ -185,12 +197,25 @@ class RoadsideFirstAid extends Model
         $request = request();
         $search = '';
         $query = $this->select('ohc_opd_roadside_first_aid.*');
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
+        if (!empty($request->search) && isset($request->search['value']) && $request->search['value'] !== '') {
+            $search = $request->search['value'];
 
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhere('emp_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('emp_name', 'LIKE', '%' . $search . '%');
+
+            $formattedDate = null;
+            if (\DateTime::createFromFormat('d-m-Y', $search) !== false) {
+                $formattedDate = \Carbon\Carbon::createFromFormat('d-m-Y', $search)->format('Y-m-d');
+            }
+            $query->where(function ($query) use ($search, $formattedDate) {
+                $query
+                    ->orWhere('name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('remarks', 'LIKE', '%' . $search . '%')
+                    ->orWhere('first_aider_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('time_of_incident', 'LIKE', '%' . $search . '%')
+                    ->orWhere('location_of_incident', 'LIKE', '%' . $search . '%');
+
+                    if ($formattedDate) {
+                        $query->orWhere('date_of_incident', 'LIKE', '%' . $formattedDate . '%');
+                    }
             });
         }
 

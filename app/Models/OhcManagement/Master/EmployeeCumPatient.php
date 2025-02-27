@@ -205,7 +205,7 @@ class EmployeeCumPatient extends Model
         // Safely retrieve search value
         $search = data_get($request, 'search.value', '');
 
-        if (!empty($search)) {
+        if (!empty($request->search) && isset($request->search['value']) && $request->search['value'] !== ''){
             $query->where(function ($query) use ($search) {
                 $query
                     ->orWhere('ohc_master_employee_cum_patient.emp_name', 'LIKE', '%' . $search . '%')

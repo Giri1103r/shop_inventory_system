@@ -227,7 +227,7 @@
                                                                 <td>
                                                                     <div class="form-group form-input">
                                                                         <label for="remarks"
-                                                                            class="require">Remarks</label>
+                                                                            class="">Remarks</label>
                                                                         <textarea name="remarks[{{ $key }}]" id="remarks" cols="10" rows="2" class="form-control">{{ $requisition->remarks }}</textarea>
                                                                     </div>
                                                                 </td>
@@ -435,7 +435,7 @@
                 </td>
                  <td>
                     <div class="form-group form-input">
-                        <label for="remarks" class="require">Remarks</label>
+                        <label for="remarks" class="">Remarks</label>
                         <textarea name="remarks[${rowcount}]" cols="10" rows="2" class="form-control"></textarea>
                     </div>
                 </td>
@@ -578,12 +578,12 @@
                             required: true,
                             digits: true,
                         },
-                        'remarks[{{ $key }}]': {
+                        // 'remarks[{{ $key }}]': {
 
-                            required: true,
-                            minlength: 3,
-                            maxlength: 600,
-                        },
+                        //     required: true,
+                        //     minlength: 3,
+                        //     maxlength: 600,
+                        // },
                     @endforeach
 
                 },

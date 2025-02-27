@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Vendor Add')
+@section('title', 'Vendor')
 @section('pageurl', admin_url('ohc/vendor/list'))
 
 

@@ -567,7 +567,7 @@ class MedicineRequisitionController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Medicine Receiving Stock Details.pdf";
-            return $mpdf->Output($filename, 'I');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);

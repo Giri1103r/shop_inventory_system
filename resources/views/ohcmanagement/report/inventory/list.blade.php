@@ -20,9 +20,6 @@
 
 
                     </div>
-
-
-
                     <div class="card-body">
                         <div class="table-responsive">
                             <table id="datatable-list"
@@ -74,7 +71,7 @@
             ordering: true,
             bSort: false,
             scrollX: true,
-            autoWidth: false,
+            autoWidth: true,
             responsive: false,
             dom: 'Bfrtip',
             layout: {
@@ -135,7 +132,7 @@
                     data: 'balance',
                     name: 'balance'
                 },
-              
+
             ],
             language: {
                 paginate: {
@@ -152,56 +149,57 @@
                 [10, 25, 50, 100],
                 [10, 25, 50, 100]
             ],
-            buttons: [{
-                    extend: 'collection',
-                    text: '{{ __('common.export') }}',
-                    buttons: [{
-                            extend: 'pdf',
-                            text: '{{ __('common.pdf') }}',
-                            action: function(e, dt, button, config) {
-                                var searchValue = $('#datatable-list_filter input').val();
-                                var department_id = $('#department_id').val();
-                                var unit_id = $('#unit_id').val();
-                                var from_date = $('#from_date').val();
-                                var to_date = $('#to_date').val();
-                                var status = $('#status').val();
-                                $(".dt-button").removeClass('processing');
-                                $('body').click();
-                                window.location.href =
-                                    "{{ admin_url('ohc/inventory-tabular-view/export/pdf') }}" +
-                                    '?search=' + searchValue +
-                                    '&department_id=' + department_id +
-                                    '&unit_id=' + unit_id +
-                                    '&from_date=' + from_date +
-                                    '&status=' + status +
-                                    '&to_date=' + to_date;
-                            }
-                        },
-                        {
-                            extend: 'excel',
-                            text: '{{ __('common.excel') }}',
-                            action: function(e, dt, button, config) {
-                                var searchValue = $('#datatable-list_filter input').val();
-                                var department_id = $('#department_id').val();
-                                var unit_id = $('#unit_id').val();
-                                var from_date = $('#from_date').val();
-                                var to_date = $('#to_date').val();
-                                var status = $('#status').val();
+            buttons: [
+            // {
+            //         // extend: 'collection',
+            //         // text: '{{ __('common.export') }}',
+            //         // buttons: [{
+            //         //         extend: 'pdf',
+            //         //         text: '{{ __('common.pdf') }}',
+            //         //         action: function(e, dt, button, config) {
+            //         //             var searchValue = $('#datatable-list_filter input').val();
+            //         //             var department_id = $('#department_id').val();
+            //         //             var unit_id = $('#unit_id').val();
+            //         //             var from_date = $('#from_date').val();
+            //         //             var to_date = $('#to_date').val();
+            //         //             var status = $('#status').val();
+            //         //             $(".dt-button").removeClass('processing');
+            //         //             $('body').click();
+            //         //             window.location.href =
+            //         //                 "{{ admin_url('ohc/inventory-tabular-view/export/pdf') }}" +
+            //         //                 '?search=' + searchValue +
+            //         //                 '&department_id=' + department_id +
+            //         //                 '&unit_id=' + unit_id +
+            //         //                 '&from_date=' + from_date +
+            //         //                 '&status=' + status +
+            //         //                 '&to_date=' + to_date;
+            //         //         }
+            //         //     },
+            //         //     {
+            //         //         extend: 'excel',
+            //         //         text: '{{ __('common.excel') }}',
+            //         //         action: function(e, dt, button, config) {
+            //         //             var searchValue = $('#datatable-list_filter input').val();
+            //         //             var department_id = $('#department_id').val();
+            //         //             var unit_id = $('#unit_id').val();
+            //         //             var from_date = $('#from_date').val();
+            //         //             var to_date = $('#to_date').val();
+            //         //             var status = $('#status').val();
 
-                                $(".dt-button").removeClass('processing');
-                                $('body').click();
-                                window.location.href =
-                                    "{{ admin_url('ohc/inventory-tabular-view/export/excel') }}" +
-                                    '?search=' + searchValue +
-                                    '&department_id=' + department_id +
-                                    '&unit_id=' + unit_id +
-                                    '&from_date=' + from_date +
-                                    '&status=' + status +
-                                    '&to_date=' + to_date;
-                            }
-                        }
-                    ]
-                },
+            //         //             $(".dt-button").removeClass('processing');
+            //         //             $('body').click();
+            //         //             window.location.href =
+            //         //                 "{{ admin_url('ohc/inventory-tabular-view/export/excel') }}" +
+            //         //                 '?search=' + searchValue +
+            //         //                 '&department_id=' + department_id +
+            //         //                 '&unit_id=' + unit_id +
+            //         //                 '&from_date=' + from_date +
+            //         //                 '&status=' + status +
+            //         //                 '&to_date=' + to_date;
+            //         //         }
+            //         //     }
+            //         // ]
+            //     },
                 {
                     extend: 'pageLength',
                     text: '{{ __('common.show') }} 10 {{ __('common.records') }}'

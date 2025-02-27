@@ -86,6 +86,10 @@ class Medicine extends Model
 
             $query = $query->where('ohc_master_medicine.status', decryptId($request->status));
         }
+        if ($request->has('approve_status') && $request->approve_status) {
+
+            $query = $query->where('ohc_master_medicine.approve_status', decryptId($request->approve_status));
+        }
         $data_count = $query;
         $total_records = $data_count->count();
 
@@ -105,15 +109,15 @@ class Medicine extends Model
         return $datas;
     }
 
-    public function uniqueCheck($medicine_name, $unit_id)
+    public function uniqueCheck($medicine_name)
     {
 
-        return $this->where('unit_id',  $unit_id)->where('medicine', $medicine_name)->get();
+        return $this->where('medicine', $medicine_name)->get();
     }
 
-    public function existUniqueCheck($medicine_name,  $unit_id, $id)
+    public function existUniqueCheck($medicine_name,$id)
     {
-        return $this->where('unit_id',  $unit_id)->where('medicine', $medicine_name)
+        return $this->where('medicine', $medicine_name)
             ->where('id', '!=', $id)
             ->get();
     }
@@ -206,7 +210,8 @@ class Medicine extends Model
         $request = request();
         $search = '';
         $query = $this->select('ohc_master_medicine.*');
-        if ($request->search['value'] != null || $request->search['value'] != '') {
+
+        if (!empty($request->search) && isset($request->search['value']) && $request->search['value'] !== '') {
             $search = $request->search['value'];
 
             $query->where(function ($query) use ($search) {
@@ -220,13 +225,11 @@ class Medicine extends Model
         }
 
         if ($request->has('medicine') && $request->medicine) {
-            $query = $query->where('medicine', 'LIKE', '%' . $request->medicine . '%');
+            $query->where('medicine', 'LIKE', '%' . $request->medicine . '%');
         }
-        if ($request->has('unit') && $request->unit) {
-            $query = $query->where('ohc_master_medicine.unit_id', 'LIKE', '%' . $request->unit . '%');
-        }
+
         if ($request->has('expire_date') && $request->expire_date) {
-            $query = $query->where('ohc_master_medicine.expiry_date', 'LIKE', '%' . DBdateformat($request->expire_date) . '%');
+            $query->where('ohc_master_medicine.expiry_date', 'LIKE', '%' . DBdateformat($request->expire_date) . '%');
         }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
@@ -239,14 +242,20 @@ class Medicine extends Model
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
             $query->where('ohc_master_medicine.created_at', '<=', $endDate);
         }
-        if ($request->has('status') && $request->status) {
+        if ($request->has('approve_status') && $request->approve_status) {
 
-            $query = $query->where('ohc_master_medicine.status', decryptId($request->status));
+            $query = $query->where('ohc_master_medicine.approve_status', decryptId($request->approve_status));
         }
+
+        if ($request->has('status') && $request->status) {
+            $query->where('ohc_master_medicine.status', decryptId($request->status));
+        }
+
         $query->orderBy('id', 'DESC');
 
-        return  $query->get();
+        return $query->get();
     }
+
 
     public function selectOne($id)
     {

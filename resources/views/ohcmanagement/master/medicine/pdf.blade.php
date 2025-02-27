@@ -34,9 +34,6 @@
                             {{ $value->hsn }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getUnitname($value->unit_id)}}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->threshold_limit}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
@@ -44,6 +41,23 @@
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->remarks}}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            @if ($value->approve_status ==STATUS_OHC_EHS_HEAD_APPROVAL_PENDING)
+                            <p>{{ 'Stock Requested' }}</p>
+                        @elseif($value->approve_status == STATUS_OHC_EHS_HEAD_APPROVED)
+                            <p>{{ 'EHS Head Approval Pending' }}</p>
+
+                        @endif
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            @if ($value->approve_status ==STATUS_OHC_EHS_HEAD_APPROVAL_PENDING)
+                            <p>{{ 'EHS Head Approval Pending' }}</p>
+                        @elseif($value->approve_status == STATUS_OHC_EHS_HEAD_APPROVED)
+                            <p>{{ 'EHS Head Approved' }}</p>
+
+
+                        @endif
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Road Side First Aid')
+@section('title', 'Road Side First Aid Edit')
 @section('pageurl', admin_url('ohc/roadside-first-aid/list'))
 
 
@@ -272,7 +272,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 20,
-                        regex: /^[a-zA-Z0-9_]*$/,
+                        regex:/^(?!\s*$)[a-zA-Z0-9\s]+$/,
                         remote: {
                             url: '{{ admin_url('ohc/roadside-first-aid/unique') }}',
                             type: 'post',

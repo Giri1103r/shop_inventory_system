@@ -194,7 +194,7 @@ class FirstAidLocation extends Model
         $query = $this->select('ohc_master_first_aid_location.*');
 
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
+        if (!empty($request->search) && isset($request->search['value']) && $request->search['value'] !== '')  {
             $search = $request->search['value'];
 
             $query->where(function ($query) use ($search) {

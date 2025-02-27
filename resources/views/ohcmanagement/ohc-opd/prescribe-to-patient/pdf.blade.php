@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'OPD Patient')
+@section('title', 'Prescribe To Patient PDF')
 @section('content')
 
     <div style="width:100%;">

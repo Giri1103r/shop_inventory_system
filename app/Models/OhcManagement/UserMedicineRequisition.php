@@ -195,7 +195,7 @@ class UserMedicineRequisition extends Model
                 $query->where('ohc_management_user_medicine_requisition.created_by',Auth::id());
             }
 
-            if ($request->search['value'] != null) {
+            if (!empty($request->search) && isset($request->search['value']) && $request->search['value'] !== '') {
                 $search = $request->search['value'];
 
 

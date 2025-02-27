@@ -358,6 +358,7 @@ class RoadsideFirstAidController extends Controller
                 'Transport Method',
                 'Incident Report Filled',
                 'Remarks',
+                'Status',
                 __("common.created_by"),
                 __("common.created_date"),
             ];

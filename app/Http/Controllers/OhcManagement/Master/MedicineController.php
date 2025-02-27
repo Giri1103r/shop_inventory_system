@@ -85,14 +85,14 @@ class MedicineController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
-                        // ->addColumn('approve_status', function ($row) {
-                        //     if ($row->approve_status == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING) {
-                        //         $text = "<span class='badge bg-info' style='font-size: 1.0em;'>EHS Head Approval Pending</span>";
-                        //     } else if ($row->approve_status == STATUS_OHC_EHS_HEAD_APPROVED) {
-                        //         $text = "<span class='badge bg-success' style='font-size: 1.0em;'>EHS Head Approved</span>";
-                        //     }
-                        //     return $text;
-                        // })
+                        ->addColumn('approve_status', function ($row) {
+                            if ($row->approve_status == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING) {
+                                $text = "<span class='badge bg-info' style='font-size: 1.0em;'>EHS Head Approval Pending</span>";
+                            } else if ($row->approve_status == STATUS_OHC_EHS_HEAD_APPROVED) {
+                                $text = "<span class='badge bg-success' style='font-size: 1.0em;'>EHS Head Approved</span>";
+                            }
+                            return $text;
+                        })
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
@@ -106,7 +106,7 @@ class MedicineController extends Controller
                             }
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'unit_id', 'expiry_date','approve_status'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'unit_id', 'expiry_date', 'approve_status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -425,16 +425,16 @@ class MedicineController extends Controller
     {
         if ($request->ajax()) {
             $medicine_name = $request->medicine_name;
-            $unit_id = $request->unit_id;
-            $hsn = $request->hsn;
+
+
             $id = $request->id;
 
             if (empty($id)) {
-                $isUnique = $this->medicine->uniqueCheck($medicine_name, $unit_id);
+                $isUnique = $this->medicine->uniqueCheck($medicine_name);
             } else {
                 $id = decryptId($id);
-                // dd( $unit_id );
-                $isUnique = $this->medicine->existUniqueCheck($medicine_name,  $id, $unit_id);
+
+                $isUnique = $this->medicine->existUniqueCheck($medicine_name, $id);
             }
 
             if ($isUnique->count()) {
@@ -519,10 +519,11 @@ class MedicineController extends Controller
                 'Medicine Name',
                 'Pack',
                 'HSN Number',
-                'Unit',
                 'Threshold Limt',
                 'Expiry date',
                 'Reamrks',
+                'From Status',
+                'To Status',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -536,10 +537,24 @@ class MedicineController extends Controller
                 $export[] =  $data->medicine;
                 $export[] =  $data->pack;
                 $export[] =  $data->hsn;
-                $export[] =  getUnitname($data->unit_id);
                 $export[] =  $data->threshold_limit;
                 $export[] =  Displaydateformat($data->expiry_date);
                 $export[] =  $data->remarks;
+                if ($data->approve_status == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING) {
+                    $export[] = 'Stock Requested ';
+                } elseif ($data->approve_status == STATUS_OHC_EHS_HEAD_APPROVED) {
+                    $export[] = 'EHS Head approval Pending';
+                } else {
+                    $export[] = removeUnderScore(getStatus($data->approve_status));
+                }
+                if ($data->approve_status == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING) {
+                    $export[] = 'EHS Head approval Pending';
+                } elseif ($data->approve_status == STATUS_OHC_EHS_HEAD_APPROVED) {
+                    $export[] = 'EHS Head Approved';
+                }
+                else {
+                    $export[] = removeUnderScore(getStatus($data->approve_status));
+                }
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -557,6 +572,8 @@ class MedicineController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medicine/list'));
         }
     }
 
@@ -576,10 +593,11 @@ class MedicineController extends Controller
                 'Medicine Name',
                 'Pack',
                 'HSN Number',
-                'Unit',
                 'Threshold Limt',
                 'Expiry date',
                 'Reamrks',
+                'From Status',
+                'To Status',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -615,6 +633,8 @@ class MedicineController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medicine/list'));
         }
     }
 

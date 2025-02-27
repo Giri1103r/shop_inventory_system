@@ -196,7 +196,7 @@ class CertifiedFirstAider extends Model
         $request = request();
         $search = '';
         $query = $this->select('ohc_master_certified_first_aider.*');
-        if ($request->search['value'] != null || $request->search['value'] != '') {
+        if (!empty($request->search) && isset($request->search['value']) && $request->search['value'] !== '')  {
             $search = $request->search['value'];
 
             $query->where(function ($query) use ($search) {

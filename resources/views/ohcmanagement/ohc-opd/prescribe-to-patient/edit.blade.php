@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Prescribe To Patient')
+@section('title', 'Prescribe To Patient Edit')
 @section('pageurl', admin_url('ohc/prescribe-to-patient/list'))
 
 
@@ -319,7 +319,7 @@
                                                                         <td>
                                                                             <div class="form-group form-input">
                                                                                 <label for="remarks"
-                                                                                    class="require">Remarks</label>
+                                                                                    class="">Remarks</label>
                                                                                 <textarea name="remarks[{{ $key }}]" id="remarks" cols="10" rows="2" class="form-control">{{ $firstaid->remarks }}</textarea>
                                                                             </div>
                                                                         </td>
@@ -932,7 +932,7 @@
                 </td>
                 <td>
                     <div class="form-group form-input">
-                        <label for="remarks" class="require">Remarks</label>
+                        <label for="remarks" class="">Remarks</label>
                         <textarea name="remarks[${rowcount}]" cols="10" rows="2" class="form-control"></textarea>
                     </div>
                 </td>
@@ -1125,13 +1125,13 @@
                             return $('#first_aid_treatment').is(':checked');
                         }
                     },
-                    'remarks[0]': {
-                        required: function() {
-                            return $('#first_aid_treatment').is(':checked');
-                        },
-                        minlength: 3,
-                        maxlength: 600
-                    },
+                    // 'remarks[0]': {
+                    //     required: function() {
+                    //         return $('#first_aid_treatment').is(':checked');
+                    //     },
+                    //     minlength: 3,
+                    //     maxlength: 600
+                    // },
                     details: {
                         required: function() {
                             return $('#suggested_by').val() == '3';

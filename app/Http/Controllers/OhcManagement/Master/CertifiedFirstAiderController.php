@@ -346,6 +346,8 @@ class CertifiedFirstAiderController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/certified-first-aider/list'));
         }
     }
 
@@ -403,6 +405,8 @@ class CertifiedFirstAiderController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/certified-first-aider/list'));
         }
     }
 

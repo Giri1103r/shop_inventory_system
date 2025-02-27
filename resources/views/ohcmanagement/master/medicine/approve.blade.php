@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medicine')
+@section('title', 'Medicine Approval')
 @section('pageurl', admin_url('ohc/medicine/list'))
 
 
@@ -121,7 +121,7 @@
                                             <button type="submit" name="action" value="approve"
                                                 class="btn btn-success w-100">Approve</button>
                                                 <button type="submit" name="action" value="reject"
-                                                class="btn btn-danger w-100">reject</button>
+                                                class="btn btn-danger w-100">Reject</button>
                                         </div>
                                     </form>
                                 </div>

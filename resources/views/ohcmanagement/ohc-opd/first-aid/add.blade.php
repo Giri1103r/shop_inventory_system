@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'First Aid')
+@section('title', 'First Aid Add')
 @section('pageurl', admin_url('ohc/first-aid/list'))
 
 
@@ -207,7 +207,7 @@
                 dateFormat: "H:i",
                 time_24hr: false,
                 onChange: function(selectedDates, dateStr) {
-                    endPicker.set("minTime", dateStr); 
+                    endPicker.set("minTime", dateStr);
                 }
             });
 
