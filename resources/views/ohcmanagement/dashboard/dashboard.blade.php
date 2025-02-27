@@ -300,6 +300,61 @@
 
             </div>
 
+            <div class="card view_card">
+
+                <div class="card-body">
+                    <div class="row">
+                        <h4>Unit Wise OPD Details</h4>
+                        <div class="col-xl-3 col-lg-6 col-sm-6">
+                            <div class="widget-stat card card-dashbaord"
+                                onclick="redirectopermanage('{{ isset($masterLink[6]['link']) ? $masterLink[6]['link'] : '' }}')"
+                                style="cursor: pointer;background-image: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%);">
+                                <div class="card-body p-4"
+                                    style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
+                                    <div class="media ai-icon" style="display: flex; align-items: center;">
+                                        <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
+                                            <svg width="50" height="50" viewBox="0 0 50 50" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M49.2858 19.9989C49.0608 19.832 48.8003 19.7193 48.5246 19.6697C48.249 19.6202 47.9655 19.6351 47.6966 19.7132L32.1438 24.3915V21.4274C32.1439 21.1502 32.0794 20.8767 31.9554 20.6288C31.8315 20.3808 31.6514 20.1652 31.4296 19.9989C31.2046 19.832 30.9441 19.7193 30.6685 19.6697C30.3928 19.6202 30.1094 19.6351 29.8404 19.7132L12.9841 24.7665L12.502 15.9634C12.4754 15.5084 12.2755 15.0808 11.9434 14.7687C11.6113 14.4565 11.1722 14.2834 10.7164 14.2849H3.57392C3.11812 14.2834 2.67904 14.4565 2.34693 14.7687C2.01482 15.0808 1.81491 15.5084 1.7883 15.9634L0.00268023 48.1045C-0.0105505 48.3487 0.0252984 48.5929 0.108107 48.823C0.190916 49.053 0.319003 49.2641 0.484797 49.4438C0.653716 49.6189 0.856208 49.7582 1.08017 49.8533C1.30414 49.9484 1.54498 49.9974 1.7883 49.9973H48.2144C48.6875 49.9959 49.1409 49.8073 49.4754 49.4727C49.81 49.1382 49.9986 48.6848 50 48.2117V21.4274C50.0001 21.1502 49.9356 20.8767 49.8116 20.6288C49.6876 20.3808 49.5076 20.1652 49.2858 19.9989ZM28.5726 46.4261H14.1983L13.1984 28.4449L28.5726 23.8201V46.4261ZM46.4288 46.4261H32.1438V28.1056L46.4288 23.8201V46.4261Z"
+                                                    fill="none" stroke="currentColor" stroke-width="2"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M25.0018 32.1411H17.8594V35.7124H25.0018V32.1411Z" fill="none"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                                <path d="M25.0018 39.2836H17.8594V42.8548H25.0018V39.2836Z" fill="none"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                                <path d="M42.8583 32.1411H35.7158V35.7124H42.8583V32.1411Z" fill="none"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                                <path d="M42.8583 39.2836H35.7158V42.8548H42.8583V39.2836Z" fill="none"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                                <path
+                                                    d="M5.3603 10.7137C5.36139 9.76689 5.73799 8.85917 6.40749 8.18967C7.07699 7.52016 7.98472 7.14356 8.93154 7.14247H9.92488C9.28163 8.22318 8.93869 9.45608 8.93154 10.7137V12.4993H12.5028V10.7137C12.5039 9.76689 12.8805 8.85917 13.55 8.18967C14.2195 7.52016 15.1272 7.14356 16.074 7.14247H30.359C32.2526 7.14044 34.0682 6.38728 35.4072 5.04825C36.7462 3.70921 37.4994 1.89368 37.5014 0H33.9302C33.9291 0.946817 33.5525 1.85454 32.883 2.52405C32.2135 3.19355 31.3058 3.57015 30.359 3.57124H29.3656C30.0089 2.49053 30.3518 1.25763 30.359 0H26.7877C26.7866 0.946817 26.41 1.85454 25.7405 2.52405C25.071 3.19355 24.1633 3.57015 23.2165 3.57124H8.93154C7.03786 3.57327 5.22232 4.32643 3.88329 5.66546C2.54426 7.0045 1.79109 8.82003 1.78906 10.7137V12.4993H5.3603V10.7137Z"
+                                                    fill="none" stroke="currentColor" stroke-width="2"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                        </span>
+                                        <div class="media-body" style="display: block;">
+                                            <p class="mb-1" style="color:black;">
+                                                {{ isset($masterLink[6]['name']) ? $masterLink[6]['name'] : '' }}
+                                            </p>
+                                            <h4 class="mb-0">
+                                                {{ isset($masterLink[6]['count']) ? $masterLink[6]['count'] : 0 }}
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
 
         </div>
     </div>

@@ -255,8 +255,8 @@
                     },
 
                     {
-                        data: 'patientStatus',
-                        name: 'patientStatus'
+                        data: 'patient_status',
+                        name: 'patient_status'
                     },
                     {
                         data: 'fitness_certificate',

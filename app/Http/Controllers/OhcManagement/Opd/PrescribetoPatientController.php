@@ -84,6 +84,9 @@ class PrescribetoPatientController extends Controller
             if ($request->ajax()) {
                 try {
                     $data = $this->opd_patient->list();
+
+
+
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('vital_checkup', function ($row) {
@@ -121,15 +124,15 @@ class PrescribetoPatientController extends Controller
                             return displaydateformat($row->date);
                         })
                         ->editColumn('suggested_by', function ($row) {
-                            return ($row->suggested_by);
+                            return getSuggestedBy($row->suggested_by);
                         })
-                        ->editColumn('patientStatus', function ($row) {
+                        ->editColumn('patient_status', function ($row) {
 
-                            if ($row->patient_status == 'Open') {
+                            if ($row->patient_status == '1') {
                                 return  "<span class='badge bg-info' style='font-size: 1.0em;'>Open</span>";
-                            } elseif ($row->patient_status == 'Close') {
+                            } elseif ($row->patient_status == '2') {
                                 return "<span class='badge bg-success' style='font-size: 1.0em;'>Close</span>";
-                            } elseif ($row->patient_status == 'Cancel') {
+                            } elseif ($row->patient_status == '3') {
                                 return "<span class='badge bg-danger' style='font-size: 1.0em;'>Cancel</span>";
                             } else if ($row->patient_status == null) {
                                 return "";
@@ -145,16 +148,16 @@ class PrescribetoPatientController extends Controller
                             $btn .= '<a href="' . admin_url('ohc/prescribe-to-patient/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             // }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
-                            if ($row->patientStatus !== 3) {
+                            if ($row->patient_status !== 3) {
                             $btn .= '<a href="' . admin_url('ohc/prescribe-to-patient/generalpdf/' . encryptId($row->id)) . '" class="" title="PDF"> <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a> ';
                             }
-                            if ($row->patientStatus !== 3) {
+                            if ($row->patient_status !== 3) {
                             $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="Close" title="Cancel" style="color: #e21e23;margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
                             }
                               return $btn;
                         })
 
-                        ->rawColumns(['action', 'date', 'vital_checkup', 'created_by', 'patientStatus', 'fitness_certificate'])
+                        ->rawColumns(['action', 'date', 'vital_checkup', 'created_by', 'patient_status', 'fitness_certificate'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -326,6 +329,8 @@ class PrescribetoPatientController extends Controller
             $patientstatus = $this->patient_status->getpatientstatus();
             $medicine  = $this->inventory->getmedicineUnitwise();
             $suggestedname = $this->suggestedBy->getsuggestedname();
+            $departmentList=$this->department->getdepartment();
+
             $data = array(
                 'unit' => $unit,
                 'suggestedBy' => $suggestedBy,
@@ -333,6 +338,7 @@ class PrescribetoPatientController extends Controller
                 'patientstatus' => $patientstatus,
                 'medicine' => $medicine,
                 'opdpatient' => $opdpatient,
+                'departmentList'=>$departmentList,
                 'opd_firstaid' => $opd_firstaid,
                 'isreffered' => $isreffered,
 
