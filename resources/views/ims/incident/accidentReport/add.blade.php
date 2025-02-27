@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Accident Report')
-@section('pageurl', admin_url('incident/accidentReport/list'))
+@section('pageurl', admin_url('accidentReport/list'))
 
 
 @section('content')
@@ -24,7 +24,7 @@
                             <div class="card-header">
 
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('incident/accidentReport/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('accidentReport/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -32,7 +32,7 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="accidentReportAdd"
-                                        action="{{ admin_url('incident/accidentReport/add/submit') }}">
+                                        action="{{ admin_url('accidentReport/add/submit') }}">
                                         @csrf
 
                                         <div class="row">
@@ -138,7 +138,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('incident/accidentReport/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('accidentReport/list') }}"></x-button-cancel>
                                         </div>
                                     </form>
                                 </div>
@@ -177,7 +177,7 @@
 
                 if (emp_code) {
                     $.ajax({
-                        url: "{{ url('incident/accidentReport/fetchEmployeeDetails') }}/" +
+                        url: "{{ url('accidentReport/fetchEmployeeDetails') }}/" +
                             emp_code,
                         type: "GET",
                         dataType: "json",

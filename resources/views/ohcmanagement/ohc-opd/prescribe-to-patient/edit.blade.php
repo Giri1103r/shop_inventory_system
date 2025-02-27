@@ -45,9 +45,9 @@
                                                         {{ $opdpatient->is_outside_employee == 1 ? 'checked' : '' }}>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
+                                            <div class="col-md-4 employee-id mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">Employee code</label>
+                                                    <label class="form-label ">Employee code</label>
                                                     <select name="emp_id" class="form-control " id="emp_id"
                                                         style="width: 100%">
                                                         <option value="">Select the Employee ID</option>
@@ -58,6 +58,13 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="col-md-4 employecode mb-2" style="display: none">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Employee code</label>
+                                                    <input type="text" name="emp_id" id="emp_id"
+                                                        value="{{ $opdpatient->emp_id }}" class="form-control">
+                                                </div>
+                                            </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Employee Name</label>
@@ -66,16 +73,22 @@
                                                         value="{{ $opdpatient->emp_name }}" readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2 department">
+                                            <div class="col-md-4 mb-2 department"style="display: none;">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Department</label>
-                                                    <input type="text" name="department_id" id="department_id"
-                                                        value="{{ getDepartment($opdpatient->department_id) }}"
-                                                        class="form-control" readonly>
+                                                    <select name="department_id" id="department_id" class="form-control single-select"
+                                                        style="width: 100%">
+                                                        <option value="">Select the department</option>
+                                                        @foreach ($departmentList as $list)
+                                                            <option value="{{ ($list->id) }}"
+                                                                @if ($list->id == $opdpatient->department_id) selected @endif>
+                                                                {{ $list->department_name }}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4 mb-2 unit" style="display: none;">
+                                            <div class="col-md-4 mb-2 unit" >
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit</label>
                                                     <select name="unit_id" id="unit_id" class="form-control single-select"
@@ -98,7 +111,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label ">Emergency Contact</label>
+                                                    <label class="form-label require">Emergency Contact</label>
                                                     <input type="text" name="emergency_contact" id="emergency_contact"
                                                         value="{{ $opdpatient->emergency_contact }}" class="form-control">
                                                 </div>
@@ -112,7 +125,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3 form-input">
-                                                <label for="dob" class="form-label ">Date Of Birth</label>
+                                                <label for="dob" class="form-label require">Date Of Birth</label>
                                                 <div class="input-group date form-input  custom-height">
                                                     <input type="text" class="form-control " name="dob"
                                                         value="{{ displaydateformat($opdpatient->dob) }}" id="dob"
@@ -125,7 +138,7 @@
 
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label ">Address</label>
+                                                    <label class="form-label require">Address</label>
                                                     <textarea name="address" id="addresss" cols="30" rows="5" class="form-control">{{ $opdpatient->address }}</textarea>
                                                 </div>
                                             </div>
@@ -264,9 +277,10 @@
                                                                                         Medicine Name
                                                                                     </option>
                                                                                     @foreach ($medicine as $list)
-                                                                                    <option value="{{ $list->medicine_id }}"
-                                                                                        @if ($firstaid->medicine_id == $list->medicine_id) selected @endif>
-                                                                                        {{ getMedicinename($list->medicine_id) }}
+                                                                                        <option
+                                                                                            value="{{ $list->medicine_id }}"
+                                                                                            @if ($firstaid->medicine_id == $list->medicine_id) selected @endif>
+                                                                                            {{ getMedicinename($list->medicine_id) }}
                                                                                     @endforeach
                                                                                 </select>
                                                                             </div>
@@ -560,28 +574,30 @@
 
         $(document).on('change', '#emp_id', function() {
             var empId = $(this).val();
-            if (empId) {
-                $.ajax({
-                    url: "{{ admin_url('ohc/prescribe-to-patient/emp-details/') }}" + empId,
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.employee) {
-                            $('#emp_name').val(response.employee.emp_name).prop('readonly', false);
-                            $('#mobile_no').val(response.employee.mobile_no).prop('readonly', false);
-                            $('#department_id').val(response.departments.department_name).prop(
-                                'readonly',
-                                false);
-                        } else {
-                            alert("No employee details found.");
+
+            // Check if 'is_outside_worker' is NOT checked before making AJAX request
+            if (!$('#is_outside_worker').is(':checked')) {
+                if (empId) {
+                    $.ajax({
+                        url: "{{ admin_url('ohc/prescribe-to-patient/emp-details/') }}" + empId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.employee) {
+                                $('#emp_name').val(response.employee.emp_name).prop('readonly', true);
+                                // $('#mobile_no').val(response.employee.mobile_no).prop('readonly', true);
+                                // $('#department_id').val(response.departments.department_name).prop('readonly', true);
+                            } else {
+                                alert("No employee details found.");
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching employee details. Please try again.');
                         }
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching mobile number and department. Please try again.');
-                    }
-                });
-            } else {
-                $('#emp_name, #mobile_no, #department_id').val('').prop('disabled', true);
+                    });
+                } else {
+                    $('#emp_name, #mobile_no, #department_id').val('').prop('disabled', true);
+                }
             }
         });
 
@@ -620,40 +636,79 @@
                 }
             });
 
-            // is checked the worker id
 
-            if ($('#is_outside_worker').is(':checked')) {
-                $('.department').hide();
-                $('.unit, .company_name').show();
 
-                $('#emp_id').val('').prop('disabled', true);
-                $('#emp_name').val('').prop('readonly', false);
-            } else {
-                $('.department').show();
-                $('.unit, .company_name').hide();
 
-                $('#emp_id').val('').prop('disabled', false);
-                $('#emp_name').val('').prop('readonly', true);
-            }
-            // unit and department
-
-            $('#is_outside_worker').change(function() {
-                if ($(this).is(':checked')) {
-                    $('.department').hide();
-                    $('.unit, .company_name').show();
-
-                    $('#emp_id').val('').prop('disabled', true);
-                    $('#emp_name').val('').prop('readonly', false);
-                } else {
-                    $('.department').show();
-                    $('.unit, .company_name').hide();
-
-                    $('#emp_id').val('').prop('disabled', false);
-                    $('#emp_name').val('').prop('readonly', true);
-                }
-            });
 
         });
+        $(document).ready(function() {
+            // Ensure validation is initialized
+            let formValidator = $("#opdpatient").validate();
+
+            // Custom validation method for regex
+            $.validator.addMethod("regex", function(value, element, regexp) {
+                let re = new RegExp(regexp);
+                return this.optional(element) || re.test(value);
+            }, "Invalid format.");
+
+
+
+            function toggleWorkerFields() {
+                if ($("#is_outside_worker").is(":checked")) {
+                    $(".unit").hide();
+                    $(".department, .company_name, .employecode").show();
+                    $(".employee-id").hide();
+
+                    $("#emp_name").val("").prop("readonly", false);
+
+
+                    if (formValidator) {
+                        $("select[name='emp_id']").rules("remove");
+                        $("input[name='emp_id']").rules("add", {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 30,
+                            regex: "^[a-zA-Z0-9_-]+$",
+                            messages: {
+                                required: "Employee code is required",
+                                minlength: "Employee code must be at least 3 characters",
+                                maxlength: "Employee code must not exceed 30 characters",
+                                regex: "Employee code has invalid characters (only letters, numbers, underscores, and hyphens allowed)"
+                            }
+                        });
+                    }
+
+                } else {
+                    $(".unit").show();
+                    $(".department, .company_name, .employecode").hide();
+                    $(".employee-id").show(); // Show dropdown
+
+                    $("#emp_name").val("{{ $opdpatient->emp_name ?? '' }}").prop("readonly", false);
+
+                    if (formValidator) {
+                        $("input[name='emp_id']").rules("remove");
+                        $("select[name='emp_id']").rules("add", {
+                            required: true,
+                            messages: {
+                                required: "Please select an Employee code"
+                            }
+                        });
+                    }
+                }
+
+                // Reset validation errors after toggling
+                formValidator.resetForm();
+            }
+
+            // Initial check on page load
+            toggleWorkerFields();
+
+            // Event handler for is_outside_worker checkbox
+            $("#is_outside_worker").change(function() {
+                toggleWorkerFields();
+            });
+        });
+
 
         $(document).ready(function() {
 
@@ -991,12 +1046,20 @@
 
             $('#opdpatient').validate({
                 rules: {
+                    emp_id: {
+                        required: true,
+
+                    },
                     emp_name: {
                         required: true,
                         minlength: 3,
                         maxlength: 30
                     },
                     unit_id: {
+                        required: true,
+
+                    },
+                    department_id: {
                         required: function() {
                             return $('#is_outside_worker').is(':checked');
                         },
@@ -1008,11 +1071,20 @@
                         },
 
                     },
+                    emergency_contact: {
+                        required: true,
+                        digits: true,
+                        minlength: 10,
+                        maxlength: 10
+                    },
                     dob: {
                         required: true,
                     },
                     mobile_no: {
                         required: true,
+                        digits: true,
+                        minlength: 10,
+                        maxlength: 10
                     },
                     suggested_by: {
                         required: true,
@@ -1026,7 +1098,7 @@
                     gender: {
                         required: true,
                     },
-                    chief_complaint: {
+                    cheif_complaint: {
                         required: true,
                         minlength: 3,
                         maxlength: 600,
@@ -1082,7 +1154,10 @@
                     is_reffered_mobile_no: {
                         required: function() {
                             return $('#is_reffered').is(':checked');
-                        }
+                        },
+                        digits: true,
+                        minlength: 10,
+                        maxlength: 10
                     },
                     vechicle: {
                         required: function() {
@@ -1118,14 +1193,24 @@
                     }
                 },
                 messages: {
+                    emp_id: {
+                        required: "Please enter employee code.",
+
+                    },
+                    unit_id: {
+                        required: "Please enter unit name.",
+
+                    },
                     emp_name: {
                         required: "Please enter employee name.",
+                        minlength: "employee name must be at least 3 characters.",
+                        maxlength: "employee name must not exceed 30 characters.",
                     },
                     company_name: {
                         required: "Please enter Company name.",
                     },
-                    unit_id: {
-                        required: "Please enter Unit Name.",
+                    department_id: {
+                        required: "Please enter department Name.",
                     },
                     dob: {
                         required: "Please enter the date of birth.",
@@ -1143,6 +1228,15 @@
                     },
                     mobile_no: {
                         required: "Please enter the Mobile Number.",
+                        digits: "The Moblie contains only the numeric",
+                        minlength: "mobile number minimum 10 required",
+                        maxlength: "mobile number maximum 10 required",
+                    },
+                    emergency_contact: {
+                        required: "Please enter the Emergency Contact.",
+                        digits: "The Moblie contains only the numeric",
+                        minlength: "Emergency Contact minimum 10 required",
+                        maxlength: "Emergency Contact maximum 10 required",
                     },
                     time: {
                         required: "Please select the time.",
@@ -1150,7 +1244,7 @@
                     gender: {
                         required: "Please select the gender.",
                     },
-                    chief_complaint: {
+                    cheif_complaint: {
                         required: 'Chief Complaint is required',
                         minlength: 'Minimum 3 characters are required',
                         maxlength: 'Chief Complaint should not exceed 600 characters',
@@ -1175,6 +1269,25 @@
                         required: "Please enter remarks .",
                         minlength: "remarks must be at least 3 characters.",
                         maxlength: "remarks must not exceed 100 characters.",
+                    },
+                    hospital_name: {
+                        required: "Hospital name is required .",
+                        minlength: "Hospital name must be at least 3 characters.",
+                        maxlength: "Hospital name must not exceed 100 characters.",
+
+                    },
+                    first_aider: {
+                        required: "Please Select the First aider.",
+
+                    },
+                    is_reffered_mobile_no: {
+                        required: "Please enter the Mobile Number.",
+                        digits: "The Moblie contains only the numeric",
+                        minlength: "mobile number minimum 10 required",
+                        maxlength: "mobile number maximum 10 required",
+                    },
+                    vechicle: {
+                        required: "vechicle is required ",
                     },
                     fitness_certificate: {
                         required: "Fitness Certificate is required .",

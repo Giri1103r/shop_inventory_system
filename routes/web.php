@@ -1097,6 +1097,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/delete', [DiscardController::class, 'delete']);
                 Route::get('add/{id}', [DiscardController::class, 'issue']);
                 Route::post('/issue/submit', [DiscardController::class, 'issuestore']);
+                Route::post('/unique', [DiscardController::class, 'Uniquecheck']);
                 Route::get('/medicine-details/{unit_id}/{id}', [DiscardController::class, 'medicineDetails']);
             });
 
@@ -1194,13 +1195,15 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/gethiradetails/{hira_id}', [InitialIncidentController::class, 'gethiradetails']);
                 Route::get('/existingHira/{incident_id}', [InitialIncidentController::class, 'existingHira']);
                 Route::get('/existingMOC/{incident_id}', [InitialIncidentController::class, 'existingMOC']);
-                Route::get('/riskAnalysis/{incident_id}', [InitialIncidentController::class, 'riskAnalysis']);
+                Route::get('/approvereject/{incident_id}', [InitialIncidentController::class, 'approvereject']);
+                Route::post('/uauc/submit', [InitialIncidentController::class, 'uaucSubmit']);
                 Route::post('/riskAnalysis/submit', [InitialIncidentController::class, 'riskAnalysisSubmit']);
                 Route::post('/ehs_head_verify/submit', [InitialIncidentController::class, 'ehsHeadVerifySubmit']);
+                Route::post('/actiontaken/submit', [InitialIncidentController::class, 'actiontakenSubmit']);
             });
 
 
-            Route::group(['prefix' => 'incident/accidentReport'], function () {
+            Route::group(['prefix' => 'accidentReport'], function () {
                 Route::get('/list', [AccidentReportController::class, 'index']);
                 Route::post('/list', [AccidentReportController::class, 'index']);
                 Route::get('/add', [AccidentReportController::class, 'add']);
@@ -1227,9 +1230,11 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/fetchEmployeeOrWorkerList/{type}', [AccidentReportController::class, 'fetchEmployeeOrWorkerList']);
                 Route::post('/addInjury', [AccidentReportController::class, 'addInjury']);
                 Route::post('/deletebodayparts', [AccidentReportController::class, 'deletebodayparts']);
-
+                Route::post('/investigation/getbodyEmpdetails', [AccidentReportController::class, 'getbodyEmpdetails']);
+                Route::get('/existingHira/{accident_id}', [AccidentReportController::class, 'existingHira']);
+                Route::get('/existingMOC/{accident_id}', [AccidentReportController::class, 'existingMOC']);
             });
-
+           
 
         });
     });

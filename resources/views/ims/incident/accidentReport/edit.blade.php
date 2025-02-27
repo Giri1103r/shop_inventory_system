@@ -1,13 +1,13 @@
 @extends('admin.layouts.admin')
 @section('title', 'Accident Report')
-@section('pageurl', admin_url('incident/accidentReport/list'))
+@section('pageurl', admin_url('accidentReport/list'))
 
 
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
-            {{-- <h4 class="text-black">{{ __('incident/accidentReport Edit') }}</h4> --}}
+            {{-- <h4 class="text-black">{{ __('accidentReport Edit') }}</h4> --}}
 
         </div>
 
@@ -23,7 +23,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('incident/accidentReport/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('accidentReport/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -31,7 +31,7 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="accidentReportedit"
-                                        action="{{ admin_url('incident/accidentReport/edit/submit') }}">
+                                        action="{{ admin_url('accidentReport/edit/submit') }}">
                                         @csrf
                                         <input type="hidden" name="id" id="id"
                                             value="{{ encryptId($accident_report->id) }}">
@@ -143,7 +143,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('incident/accidentReport/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('accidentReport/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -183,7 +183,7 @@
 
                 if (emp_code) {
                     $.ajax({
-                        url: "{{ url('incident/accidentReport/fetchEmployeeDetails') }}/" +
+                        url: "{{ url('accidentReport/fetchEmployeeDetails') }}/" +
                             emp_code,
                         type: "GET",
                         dataType: "json",

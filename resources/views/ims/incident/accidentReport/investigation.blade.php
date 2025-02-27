@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Accident Investigation')
-@section('pageurl', admin_url('incident/accidentReport/list'))
+@section('pageurl', admin_url('accidentReport/list'))
 
 
 @section('content')
@@ -107,6 +107,140 @@
             .slider.round:before {
                 border-radius: 50%;
             }
+            .fishbone-container {
+            display: inline-grid;
+            grid-template-columns: repeat(4, auto);
+            grid-template-rows: auto .2em auto;
+            padding-left: 2em;
+            font-family: Arial;
+            --bone-color: #85A0B2;
+            --yellow: #FDBE22;
+            --green: #69E982;
+            --blue: #5CB2FB;
+
+            .cause {
+                display: flex;
+                flex-direction: column;
+                transform: skew(20deg);
+                transform-origin: bottom;
+                margin-left: .8em;
+            }
+
+            .rootcause {
+                text-align: center;
+                position: relative;
+                left: 100%;
+                transform: translateX(-50%) skewX(-20deg);
+                font-size: 1.5em;
+                color: #fff;
+                padding: .2em;
+                border-radius: .2em;
+
+                &.yellow {
+                    background-color: var(--yellow);
+                }
+
+                &.green {
+                    background-color: var(--green);
+                }
+
+                &.blue {
+                    background-color: var(--blue);
+                }
+            }
+
+            .subcause {
+                flex-grow: 1;
+                border-right: .2em solid var(--bone-color);
+                padding-bottom: .75em;
+                padding-top: .75em
+            }
+
+            .stat {
+                text-align: right;
+                padding-right: 3em;
+                position: relative;
+                transform: skewX(-20deg);
+                line-height: 1.5em;
+                font-size: 1em;
+            }
+
+            .stat:before {
+                content: '';
+                display: block;
+                background-color: var(--bone-color);
+                position: absolute;
+                width: 3em;
+                height: .2em;
+                right: 0;
+                top: 50%;
+                transform: translate(.2em, -50%);
+            }
+
+            .line {
+                grid-column-start: 1;
+                grid-column-end: 4;
+                background-color: var(--bone-color);
+
+                ~.cause {
+                    transform: skewX(-20deg);
+                    transform-origin: top;
+                }
+
+                ~.cause .rootcause {
+                    transform: translateX(-50%) skewX(20deg);
+                }
+
+                ~.cause .stat {
+                    transform: skewX(20deg);
+                }
+            }
+
+            .defect-spacer-top {
+                grid-column-start: 4;
+                grid-column-end: 4;
+                grid-row-start: 1;
+                grid-row-end: 2;
+            }
+
+            .defect {
+                grid-column-start: 4;
+                grid-column-end: 4;
+                grid-row-start: 2;
+                grid-row-end: 3;
+            }
+
+            .defect-spacer-bottom {
+                grid-column-start: 4;
+                grid-column-end: 4;
+                grid-row-start: 3;
+                grid-row-end: 4;
+            }
+
+            .defect-text {
+                position: relative;
+                top: 50%;
+                transform: translateY(-50%);
+                padding: 1em;
+                margin-left: .5em;
+                background-color: var(--bone-color);
+                border-radius: .5em;
+                color: #fff;
+                text-align: center;
+            }
+
+            .subcause .stat {
+                margin-bottom: 15px;
+                /* Adjust the spacing between input fields */
+            }
+
+            .subcause {
+                margin-bottom: 20px;
+                /* Add spacing between rows of input fields */
+            }
+
+        }
+        
         </style>
     @endpush
 
@@ -117,7 +251,7 @@
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
-            {{-- <h4 class="text-black">{{ __('incident/accidentReport Edit') }}</h4> --}}
+            {{-- <h4 class="text-black">{{ __('accidentReport Edit') }}</h4> --}}
 
         </div>
 
@@ -133,7 +267,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('incident/accidentReport/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('accidentReport/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -141,10 +275,12 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="accidentinvestigation"
-                                        action="{{ admin_url('incident/accidentReport/investigation/submit') }}">
+                                        action="{{ admin_url('accidentReport/investigation/submit') }}">
                                         @csrf
                                         <input type="hidden" name="accident_id" id="accident_id"
                                             value="{{ encryptId($accidentId) }}">
+                                        <input type="hidden" name="acc_prim_add" id="acc_prim_add"
+                                            value="{{ 'acc_prim_add' }} ">
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="card-header-inner d-flex justify-content-between">
@@ -280,7 +416,7 @@
                                                     <div class="form-group form-input">
                                                         <label for="emp_code" class="form-label require">Employee
                                                             Code</label>
-                                                        <select name="emp_code" id="emp_code"
+                                                        <select name="emp_code" id="get_emp_id"
                                                             class="form-control single-select" style="width: 100%">
                                                             <option value="">Select Employee Code</option>
                                                             {{-- @foreach ($employeeList as $emp)
@@ -311,8 +447,7 @@
 
                                                 <div class="col-md-4 mt-3">
                                                     <div class="form-group form-input">
-                                                        <label for="is_damaged" class="form-label require">Was
-                                                            anything
+                                                        <label for="is_damaged" class="form-label require">Was anything
                                                             damaged?</label><br>
                                                         <input type="checkbox" id="Man" name="is_damaged"
                                                             value="1">
@@ -329,27 +464,53 @@
                                                     </div>
                                                 </div>
 
-
-                                                <div class="col-md-4 mt-2">
+                                                <div class="col-md-2 mt-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label">HIRA</label>
-                                                        <label class="switch">
-                                                            <input type="checkbox" name="hira">
-                                                            <span class="slider round"></span>
-                                                        </label>
+                                                    </div>
+                                                    <x-button dataId="{{ $accidentId ?? '' }}"
+                                                        class="popupwindow btn btn-primary"
+                                                        href="{{ admin_url('accidentReport/existingHira/' . ($accidentId ?? '')) }}">
+                                                        HIRA
+                                                    </x-button>
+                                                </div>
 
+                                                <div class="modal fade" id="hiraModal" tabindex="-1"
+                                                    aria-labelledby="hiraModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg">
+                                                        <div class="modal-content">
+
+                                                            <div class="modal-body">
+                                                                <p>Loading...</p>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mt-2">
+
+                                                <div class="col-md-2 mt-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label">MOC</label>
-                                                        <label class="switch">
-                                                            <input type="checkbox" name="moc">
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </div>
 
+                                                    </div>
+                                                    <x-button-moc dataId="{{ $accidentId ?? '' }}"
+                                                        class="add popupwindow btn btn-primary"
+                                                        href="{{ admin_url('accidentReport/existingMOC/' . ($accidentId ?? '')) }}">
+                                                    </x-button-moc>
                                                 </div>
+
+
+                                                <div class="modal fade" id="mocModal" tabindex="-1"
+                                                    aria-labelledby="mocModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg">
+                                                        <div class="modal-content">
+
+                                                            <div class="modal-body">
+                                                                <p>Loading...</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                                 <div class="col-md-4 mt-2">
                                                     <div class="form-group form-input">
                                                         <label for="root_cause_analysis" class="form-label">Possible
@@ -431,13 +592,277 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+
+                                            <div class="row mt-3" style="display: none;">
+                                                <div class="card p-3">
+                                                    <div
+                                                        class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                                                        <h4 class="text-dark mb-0">Why Why Analysis</h4>
+                                                        <button type="button"
+                                                            class="btn btn-sm btn-success addwhywhyanalysis">
+                                                             Add
+                                                        </button>
+                                                    </div>
+
+                                                    <!-- Table -->
+                                                    <div class="table-responsive">
+                                                        <table class="table table-bordered whywhyanalysis text-center">
+                                                            <thead class="table-dark">
+                                                                <tr>
+                                                                    <th>Why 1</th>
+                                                                    <th></th>
+                                                                    <th>Why 2</th>
+                                                                    <th></th>
+                                                                    <th>Why 3</th>
+                                                                    <th></th>
+                                                                    <th>Why 4</th>
+                                                                    <th></th>
+                                                                    <th>Why 5</th>
+                                                                    <th>Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="whywhyanalysisBody">
+                                                                <tr id="RowwhywhyanalysisView0">
+                                                                    <td><input type="text"
+                                                                            name="whywhyanalysis[0][whywhyanalysis_first]"
+                                                                            class="form-control"></td>
+                                                                    <td><i class="fas fa-arrow-right text-primary"></i>
+                                                                    </td>
+                                                                    <td><input type="text"
+                                                                            name="whywhyanalysis[0][whywhyanalysis_second]"
+                                                                            class="form-control"></td>
+                                                                    <td><i class="fas fa-arrow-right text-primary"></i>
+                                                                    </td>
+                                                                    <td><input type="text"
+                                                                            name="whywhyanalysis[0][whywhyanalysis_third]"
+                                                                            class="form-control"></td>
+                                                                    <td><i class="fas fa-arrow-right text-primary"></i>
+                                                                    </td>
+                                                                    <td><input type="text"
+                                                                            name="whywhyanalysis[0][whywhyanalysis_forth]"
+                                                                            class="form-control"></td>
+                                                                    <td><i class="fas fa-arrow-right text-primary"></i>
+                                                                    </td>
+                                                                    <td><input type="text"
+                                                                            name="whywhyanalysis[0][whywhyanalysis_fifth]"
+                                                                            class="form-control"></td>
+                                                                    <td><button type="button"
+                                                                            class="btn btn-sm removewhywhyanalysisRow"><i class="fa-solid fa-trash text-danger" ></i></button></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row m-5 p-3" style="display: none;">
+                                                <div class="fishbone-container " style="text-align: center;">
+                                                    <!-- Mensch -->
+                                                    <div class="cause">
+                                                        <div class="rootcause blue">
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Enter value">
+                                                        </div>
+                                                        <div class="subcause">
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat "
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Maschine -->
+                                                    <div class="cause">
+                                                        <div class="rootcause green">
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Enter value">
+                                                        </div>
+                                                        <div class="subcause">
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Milieu -->
+                                                    <div class="cause">
+                                                        <div class="rootcause yellow">
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Enter value">
+                                                        </div>
+                                                        <div class="subcause">
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Divider Line -->
+                                                    <div class="line"></div>
+
+                                                    <!-- Messung -->
+                                                    <div class="cause">
+                                                        <div class="subcause">
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                        </div>
+                                                        <div class="rootcause blue">
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Enter value">
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Material -->
+                                                    <div class="cause">
+                                                        <div class="subcause">
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="rootcause green">
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Enter value">
+                                                        </div>
+
+                                                    </div>
+
+                                                    <!-- Methoden -->
+                                                    <div class="cause">
+                                                        <div class="subcause">
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value">
+                                                            </div>
+                                                        </div>
+                                                        <div class="rootcause yellow">
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Enter value">
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Defect Section -->
+                                                    <div class="defect-spacer-top"></div>
+                                                    <div class="defect">
+                                                        <div class="defect-text">
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Enter value">
+                                                        </div>
+                                                    </div>
+                                                    <div class="defect-spacer-bottom"></div>
+                                                </div>
+                                            </div>
+
                                         </div>
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('incident/accidentReport/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('accidentReport/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -1073,7 +1498,7 @@
                                                 class="btn btn-secondary btn-warnings injcancel center"
                                                 data-bs-dismiss="modal">{{ 'Cancel' }}</button>
                                             <!--
-                                                                                                                                                                                                                    <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
+                                                                                                                                                                                                                                                                                                                                            <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
 
                                         </div>
                                     </div>
@@ -1085,8 +1510,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                                                                                                                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                                                                                            </div>-->
+                                                                                                                                                                                                                                                                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                                                                                                                                                                                                                    </div>-->
             </div>
         </div>
     </div>
@@ -1097,204 +1522,31 @@
     <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
 
-            let injuryIndex = 0;
+            $(document).on('click', '.popupwindow', function(e) {
+                e.preventDefault();
+                var href = $(this).attr('href');
 
-            // Add new injury details row
-            $(document).on("click", ".addMoreInjuryDetails", function() {
-                injuryIndex++;
-                let newRow = `<hr>
-        <div class="row injury-append" style="margin-top: 20px;" id="injuryDetails_${injuryIndex}">
-            <div class="col-md-4 form-input">
-                    <label for="" class="form-label require">Injury Person Type</label>
-                    <select class="form-control require single-select selectInjPersontype" alt="${injuryIndex}" name="injury_person[${injuryIndex}][injury_person_type]" style="width: 100%" id="RowInjTypedata_${injuryIndex}">
-                        <option value="">Select Person Type</option>
-                        <option value="{{ encryptId('1') }}">Employee</option>
-                        <option value="{{ encryptId('2') }}">Worker</option>
-                        <option value="{{ encryptId('3') }}">Others</option>
-                    </select>
-            </div>
-            <div class="col-md-4 form-input" id="injuryPersonTextContainer_${injuryIndex}">
-                     <label class="form-label require">Injury Person Name</label>
-                   <input type="text"  alt="${injuryIndex}" class="form-control injuryPersonNamerequire"
-                      name="injury_person[${injuryIndex}][injury_person_id]" id="RowInjothersdata_${injuryIndex}"
-                    placeholder="Enter Injury Person Name">
-            </div>
-                     <!-- Injury Person Name (Dropdown) -->
-                <div class="col-md-4 form-input d-none" id="injuryPersonDropdownContainer_${injuryIndex}">
-                     <label class="form-label require">Injury Person Name</label>
-                     <select class="form-control require injuryPersonName single-select" alt="${injuryIndex}"  style="width: 100%" name="injury_person[${injuryIndex}][injury_person_id]"  id="RowInjEmpdata_${injuryIndex}">
-                         <option value="" disabled selected>Select Injury Person Name  </option> </select>
-                </div>
+                if (href.includes("existingHira")) {
+                    $('#hiraModal .modal-body').html('<p>Loading...</p>');
+                    $('#hiraModal').modal('show');
 
-            <div class="col-md-4 form-input">
-                <label class="form-label">Injury Person Designation</label>
-                <input type="text" alt="${injuryIndex}" name="injury_person[${injuryIndex}][injury_person_designation]" id="InjPerDest_${injuryIndex}" class="form-control InjPerDest">
-            </div>
-                   <div class="col-md-4 form-input d-none" id="injuryPersonDepttexxt_${injuryIndex}">
-                      <label class="form-label">Injury Person Department</label>
-                      <input type="text" alt="${injuryIndex}"  name="injury_person[${injuryIndex}][injury_person_department_id]"
-                    class="form-control InjPerDept" id="InjPerDept_${injuryIndex}">  </div>
-
-            <div class="col-md-4 form-input" id="injuryPersonDeptDropdown_${injuryIndex}">
-                <label class="form-label">Injury Person Department</label>
-                <select class="form-control single-select" alt="${injuryIndex}" name="injury_person[${injuryIndex}][injury_person_department_id]" style="width: 100%">
-                    <option value="">Select Department</option>
-                    @foreach ($departmentList as $department)
-                        <option value="{{ $department->id }}">{{ $department->department_name }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="col-md-4">
-                <div class="form-group form-input">
-                  <label for="nature_of_injury_${injuryIndex}" class="form-label">Nature of  Injury</label>
-                      <select name="nature_of_injury" alt="${injuryIndex}"  id="nature_of_injury_${injuryIndex}"
-                      style="width: 100%" class="form-control single-select">
-                        <option value="">Nature of Injury</option>
-                          <option value="{{ encryptId('1') }}">Major</option>
-                         <option value="{{ encryptId('2') }}">Minor</option>
-                            </select>
-                </div>
-            </div>   
-
-                <div class="col-md-2 form-input">
-                    <label for="inputFirstName" class="form-label require">Location of the Injury</label></br>
-                    <span class="input-group-addon injury-btn btn btn-info" data-id='${injuryIndex}' data-injid="${injuryIndex}" attr_emp="" alt="${injuryIndex}"><i class="fa fa-male" aria-hidden="true"></i></span>
-                </div>
-            <div class="col-md-2 text-right">
-                <button type="button" class="btn btn-danger btn-sm removeInjuryDetails" data-index="${injuryIndex}" style="margin-top: 35px;">Remove</button>
-            </div>
-        </div>`;
-
-                $(".injury-details-templat").append(newRow);
-                $(".single-select").select2();
-            });
-
-            $(document).on("change", "[name^='injury_person'][name$='[injury_person_type]']", function() {
-                var injury_person_type = $(this).val();
-                var injuryIndex = $(this).attr("alt");
-                // Get the index of the current row
-                var injuryPersonDropdownContainer = $("#injuryPersonDropdownContainer_" + injuryIndex);
-                var injuryPersonTextContainer = $("#injuryPersonTextContainer_" + injuryIndex);
-                var injuryPersonDropdown = $('#RowInjEmpdata_' + injuryIndex);
-                var injuryPersonDeptDropdown = $("#injuryPersonDeptDropdown_" + injuryIndex);
-                var injuryPersonDepttexxt = $("#injuryPersonDepttexxt_" + injuryIndex);
-
-                // Reset Fields
-                injuryPersonDropdown.empty().append('<option value="">Select Injury Person Name</option>');
-                $('#RowInjothersdata_' + injuryIndex).val("");
-                $('#InjPerDest_' + injuryIndex).val("");
-                $('#InjPerDept_' + injuryIndex).val("");
-
-                if (injury_person_type === "{{ encryptId('1') }}" || injury_person_type ===
-                    "{{ encryptId('2') }}") {
-                    // Show Injury Person Name Dropdown, Hide Text Field
-                    injuryPersonDropdownContainer.removeClass("d-none");
-                    injuryPersonTextContainer.addClass("d-none");
-                    injuryPersonDeptDropdown.addClass("d-none");
-                    injuryPersonDepttexxt.removeClass("d-none");
-
-                    // Fetch Employee/Worker List
-                    $.ajax({
-                        url: "{{ url('incident/accidentReport/fetchEmployeeOrWorkerList') }}/" +
-                            injury_person_type,
-                        type: "GET",
-                        dataType: "json",
-                        success: function(data) {
-                            if (data.length > 0) {
-                                $.each(data, function(index, item) {
-                                    injuryPersonDropdown.append(
-                                        `<option value="${item.id}">${item.text}</option>`
-                                    );
-                                });
-                            } else {
-                                Swal.fire("No Data", "No records found for the selected type.",
-                                    "info");
-                            }
-                        },
-                        error: function() {
-                            Swal.fire("Error", "An error occurred while fetching the list.",
-                                "error");
-                        }
+                    $.get(href, function(response) {
+                        $('#hiraModal .modal-body').html(response);
+                    }).fail(function() {
+                        $('#hiraModal .modal-body').html('<p>Error loading content.</p>');
                     });
 
-                } else if (injury_person_type === "{{ encryptId('3') }}") {
-                    // Show Input Fields for Others
-                    injuryPersonTextContainer.removeClass("d-none");
-                    injuryPersonDropdownContainer.addClass("d-none");
-                    injuryPersonDepttexxt.addClass("d-none");
-                    injuryPersonDeptDropdown.removeClass("d-none");
+                } else if (href.includes("existingMOC")) {
+                    $('#mocModal .modal-body').html('<p>Loading...</p>');
+                    $('#mocModal').modal('show');
 
-                } else {
-                    injuryPersonDropdownContainer.addClass("d-none");
-                    injuryPersonTextContainer.addClass("d-none");
-                    injuryPersonDepttexxt.addClass("d-none");
-                    injuryPersonDeptDropdown.removeClass("d-none");
+                    $.get(href, function(response) {
+                        $('#mocModal .modal-body').html(response);
+                    }).fail(function() {
+                        $('#mocModal .modal-body').html('<p>Error loading content.</p>');
+                    });
                 }
             });
-
-
-            // Fetch Designation and Department on Name Selection
-            $(document).on("change", ".injuryPersonName", function() {
-                var injury_person_id = $(this).val();
-                var injuryIndex = $(this).attr("alt");
-                var injury_person_type = $("#RowInjTypedata_" + injuryIndex)
-                    .val(); // Get correct person type
-
-                // Define injuryPersonDeptDropdown correctly
-                var injuryPersonDeptDropdown = $("#InjPerDept_" + injuryIndex).find("select");
-                var injuryPersonDesignation = $("#InjPerDest_" + injuryIndex);
-
-                $.ajax({
-                    url: "{{ url('incident/accidentReport/fetchPersonDetails') }}/" +
-                        injury_person_id + "/" + injury_person_type,
-                    type: "GET",
-                    dataType: "json",
-                    success: function(response) {
-                        if (response.employee || response.worker) {
-                            let person = response.employee || response.worker;
-
-                            // Handle Designation field
-                            if (person.designation) {
-                                injuryPersonDesignation.val(person.designation).prop('readonly',
-                                    true);
-                            } else {
-                                injuryPersonDesignation.val("").prop('readonly', false);
-                            }
-
-                            // Handle Department dropdown
-                            if (person.department_name) {
-                                injuryPersonDeptDropdown.html(
-                                    `<option value="${person.department_name}" selected>${person.department_name}</option>`
-                                ).prop('disabled', true);
-                            } else {
-                                injuryPersonDeptDropdown.html(
-                                    `<option value="">Select Department</option>@foreach ($departmentList as $department)
-                            <option value="{{ $department->id }}">{{ $department->department_name }}</option>
-                         @endforeach`
-                                ).prop('disabled', false);
-                            }
-                        } else {
-                            Swal.fire("Error", "Data could not be fetched.", "error");
-                        }
-                    },
-                    error: function() {
-                        Swal.fire("Error", "An error occurred while fetching details.",
-                            "error");
-                    }
-                });
-            });
-
-
-
-            // Remove injury details row
-            $(document).on("click", ".removeInjuryDetails", function() {
-                $(this).closest(".injury-append").remove();
-            });
-        });
-
-        $(document).ready(function() {
-
 
             flatpickr("#target_date", {
                 dateFormat: "d-m-Y",
@@ -1306,76 +1558,9 @@
                 location.reload();
             });
 
-
-
-            $('#witness_id').select2({
-                placeholder: "Select Name of the Witness",
-                allowClear: true,
-                closeOnSelect: false,
+            $('#get_emp_id').select2({
                 ajax: {
-                    url: "{{ url('incident/accidentReport/getemployeename') }}",
-                    type: "GET",
-                    dataType: "json",
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term,
-                            _token: "{{ csrf_token() }}"
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            })
-                        };
-                    },
-                    cache: true,
-                    error: function(xhr, textStatus, errorThrown) {
-                        console.log("Error in AJAX request:", textStatus, errorThrown);
-                    }
-                },
-                minimumInputLength: 1,
-                width: '100%',
-            });
-
-
-            $('#responsible_person_id').select2({
-                ajax: {
-                    url: "{{ url('incident/accidentReport/getemployeename') }}",
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            })
-                        };
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        console.log("Error in AJAX request:", textStatus, errorThrown);
-                    }
-                },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
-            });
-
-
-            $('#emp_code').select2({
-                ajax: {
-                    url: "{{ url('incident/accidentReport/getemployeename') }}",
+                    url: "{{ url('accidentReport/getemployeename') }}",
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
@@ -1401,18 +1586,16 @@
             });
 
             // Handle Employee Code Change
-            $('#emp_code').change(function() {
+            $('#get_emp_id').change(function() {
                 var emp_code = $(this).val();
 
                 if (emp_code) {
                     $.ajax({
-                        url: "{{ url('incident/accidentReport/getEmployeeDetails') }}/" + emp_code,
+                        url: "{{ url('accidentReport/getEmployeeDetails') }}/" + emp_code,
                         type: "GET",
                         dataType: "json",
                         success: function(response) {
                             if (response.employee) {
-
-                                alert('dsfsdf');
                                 // Set designation value
                                 $('#designation').val(response.employee.designation);
                                 // Handle department dropdown
@@ -1444,12 +1627,148 @@
                         }
                     });
                 } else {
-                   alert(2323);
-                   $('#designation').val('');
+                    $('#designation').val('');
                     $('#department_id').html('<option value="">Select Department</option>').prop('disabled',
                         false);
                 }
             });
+
+            $('#witness_id').select2({
+                placeholder: "Select Name of the Witness",
+                allowClear: true,
+                closeOnSelect: false,
+                ajax: {
+                    url: "{{ url('accidentReport/getemployeename') }}",
+                    type: "GET",
+                    dataType: "json",
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term,
+                            _token: "{{ csrf_token() }}"
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.id,
+                                    text: item.text
+                                };
+                            })
+                        };
+                    },
+                    cache: true,
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.log("Error in AJAX request:", textStatus, errorThrown);
+                    }
+                },
+                minimumInputLength: 1,
+                width: '100%',
+            });
+
+
+            $('#responsible_person_id').select2({
+                ajax: {
+                    url: "{{ url('accidentReport/getemployeename') }}",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.id,
+                                    text: item.text
+                                };
+                            })
+                        };
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.log("Error in AJAX request:", textStatus, errorThrown);
+                    }
+                },
+                minimumInputLength: 1,
+                dropdownCssClass: 'form-control',
+                selectionCssClass: 'form-control'
+            });
+
+            $("#root_cause_analysis").change(function() {
+                if ($(this).val() == "1") {
+                    $(".row.mt-3").show(); // Show the Why Why Analysis section
+                } else {
+                    $(".row.mt-3").hide(); // Hide it when another option is selected
+                }
+            });
+            let whywhyanalysisIndex = {{ count($incident_investigation_draft['whywhyanalysis'] ?? []) ?: 1 }};
+
+            function updateRootCauseAnalysis() {
+                const values = $(".whywhyanalysis_fifth").map(function() {
+                    return $(this).val().trim();
+                }).get().filter(value => value !== "");
+                $("#root_cause_analysis").val(values.join("\n"));
+            }
+
+            $(".addwhywhyanalysis").on("click", function() {
+                const newRow = `
+            <tr id="RowwhywhyanalysisView${whywhyanalysisIndex}">
+                <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_first]" class="form-control"></td>
+                <td><i class="fas fa-arrow-right text-primary"></i></td>
+                <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_second]" class="form-control"></td>
+                <td><i class="fas fa-arrow-right text-primary"></i></td>
+                <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_third]" class="form-control"></td>
+                <td><i class="fas fa-arrow-right text-primary"></i></td>
+                <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_forth]" class="form-control"></td>
+                <td><i class="fas fa-arrow-right text-primary"></i></td>
+                <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_fifth]" class="form-control whywhyanalysis_fifth"></td>
+                <td>
+                    <button type="button" class="btn btn-sm  removewhywhyanalysisRow">
+                      <i class="fa-solid fa-trash text-danger" ></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+
+                $("#whywhyanalysisBody").append(newRow);
+                whywhyanalysisIndex++;
+                updateRootCauseAnalysis();
+            });
+
+            $(document).on("click", ".removewhywhyanalysisRow", function() {
+                const rowCount = $("#whywhyanalysisBody tr").length;
+                if (rowCount > 1) {
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "Do you really want to delete this row?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Yes, delete it!",
+                        cancelButtonText: "Cancel"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $(this).closest("tr").fadeOut(300, function() {
+                                $(this).remove();
+                                updateRootCauseAnalysis();
+                            });
+
+                            Swal.fire("Deleted!", "The row has been deleted.", "success");
+                        }
+                    });
+                } else {
+                    Swal.fire("Warning!", "At least one row is required!", "error");
+                }
+            });
+
+            $(document).on("input", ".whywhyanalysis_fifth", function() {
+                updateRootCauseAnalysis();
+            });
+
 
             $(function() {
                 $('#accidentinvestigation').validate({
@@ -1540,18 +1859,243 @@
                 });
             });
 
+        });
 
+        $(document).ready(function() {
+            let injuryIndex = 0;
+
+            // Add new injury details row
+            $(document).on("click", ".addMoreInjuryDetails", function() {
+                injuryIndex++;
+                let newRow = `
+                    <div class="row injury-append" style="margin-top: 20px;" id="injuryDetails_${injuryIndex}">
+                        <div class="col-md-4 form-input">
+                                <label for="" class="form-label require">Injury Person Type</label>
+                                <select class="form-control require single-select selectInjPersontype" alt="${injuryIndex}" name="injury_person[${injuryIndex}][injury_person_type]" style="width: 100%" id="RowInjTypedata_${injuryIndex}">
+                                    <option value="">Select Person Type</option>
+                                    <option value="{{ encryptId('1') }}">Employee</option>
+                                    <option value="{{ encryptId('2') }}">Worker</option>
+                                    <option value="{{ encryptId('3') }}">Others</option>
+                                </select>
+                        </div>
+                        <div class="col-md-4 form-input" id="injuryPersonTextContainer_${injuryIndex}">
+                                <label class="form-label require">Injury Person Name</label>
+                            <input type="text"  alt="${injuryIndex}" class="form-control injuryPersonNamerequire"
+                                name="injury_person[${injuryIndex}][injury_person_id]" id="RowInjothersdata_${injuryIndex}"
+                                placeholder="Enter Injury Person Name">
+                        </div>
+                                <!-- Injury Person Name (Dropdown) -->
+                            <div class="col-md-4 form-input d-none" id="injuryPersonDropdownContainer_${injuryIndex}">
+                                <label class="form-label require">Injury Person Name</label>
+                                <select class="form-control require injuryPersonName single-select" alt="${injuryIndex}"  style="width: 100%" name="injury_person[${injuryIndex}][injury_person_id]"  id="RowInjEmpdata_${injuryIndex}">
+                                    <option value="" disabled selected>Select Injury Person Name  </option> </select>
+                            </div>
+
+                        <div class="col-md-4 form-input">
+                            <label class="form-label">Injury Person Designation</label>
+                            <input type="text" alt="${injuryIndex}" name="injury_person[${injuryIndex}][injury_person_designation]" id="InjPerDest_${injuryIndex}" class="form-control InjPerDest">
+                        </div>
+                            <div class="col-md-4 form-input d-none" id="injuryPersonDepttexxt_${injuryIndex}">
+                                <label class="form-label">Injury Person Department</label>
+                                <input type="text" alt="${injuryIndex}"  name="injury_person[${injuryIndex}][injury_person_department_id]"
+                                class="form-control InjPerDept" id="InjPerDept_${injuryIndex}">  </div>
+
+                        <div class="col-md-4 form-input" id="injuryPersonDeptDropdown_${injuryIndex}">
+                            <label class="form-label">Injury Person Department</label>
+                            <select class="form-control single-select" alt="${injuryIndex}" name="injury_person[${injuryIndex}][injury_person_department_id]" style="width: 100%">
+                                <option value="">Select Department</option>
+                                @foreach ($departmentList as $department)
+                                    <option value="{{ $department->id }}">{{ $department->department_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group form-input">
+                            <label for="nature_of_injury_${injuryIndex}" class="form-label">Nature of  Injury</label>
+                                <select name="nature_of_injury" alt="${injuryIndex}"  id="nature_of_injury_${injuryIndex}"
+                                style="width: 100%" class="form-control single-select">
+                                    <option value="">Nature of Injury</option>
+                                    <option value="{{ encryptId('1') }}">Major</option>
+                                    <option value="{{ encryptId('2') }}">Minor</option>
+                                        </select>
+                            </div>
+                        </div>   
+
+                            <div class="col-md-2 form-input">
+                                <label for="inputFirstName" class="form-label require">Location of the Injury</label></br>
+                                <span class="input-group-addon injury-btn btn btn-info" data-id='${injuryIndex}' data-injid="${injuryIndex}" attr_emp="" alt="${injuryIndex}"><i class="fa fa-male" aria-hidden="true"></i></span>
+                            </div>
+                        <div class="col-md-2 text-right">
+                            <button type="button" class="btn btn-danger btn-sm removeInjuryDetails" data-index="${injuryIndex}" style="margin-top: 35px;">Remove</button>
+                        </div>
+                    </div>`;
+
+                $(".injury-details-templat").append(newRow);
+                $(".single-select").select2();
+            });
+
+            $(document).on("change", "[name^='injury_person'][name$='[injury_person_type]']", function() {
+                var injury_person_type = $(this).val();
+                var injuryIndex = $(this).attr("alt");
+                // Get the index of the current row
+                var injuryPersonDropdownContainer = $("#injuryPersonDropdownContainer_" + injuryIndex);
+                var injuryPersonTextContainer = $("#injuryPersonTextContainer_" + injuryIndex);
+                var injuryPersonDropdown = $('#RowInjEmpdata_' + injuryIndex);
+                var injuryPersonDeptDropdown = $("#injuryPersonDeptDropdown_" + injuryIndex);
+                var injuryPersonDepttexxt = $("#injuryPersonDepttexxt_" + injuryIndex);
+
+                // Reset Fields
+                injuryPersonDropdown.empty().append('<option value="">Select Injury Person Name</option>');
+                $('#RowInjothersdata_' + injuryIndex).val("");
+                $('#InjPerDest_' + injuryIndex).val("");
+                $('#InjPerDept_' + injuryIndex).val("");
+
+                if (injury_person_type === "{{ encryptId('1') }}" || injury_person_type ===
+                    "{{ encryptId('2') }}") {
+                    // Show Injury Person Name Dropdown, Hide Text Field
+                    injuryPersonDropdownContainer.removeClass("d-none");
+                    injuryPersonTextContainer.addClass("d-none");
+                    injuryPersonDeptDropdown.addClass("d-none");
+                    injuryPersonDepttexxt.removeClass("d-none");
+
+                    // Fetch Employee/Worker List
+                    $.ajax({
+                        url: "{{ url('accidentReport/fetchEmployeeOrWorkerList') }}/" +
+                            injury_person_type,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            if (data.length > 0) {
+                                $.each(data, function(index, item) {
+                                    injuryPersonDropdown.append(
+                                        `<option value="${item.id}">${item.text}</option>`
+                                    );
+                                });
+                            } else {
+                                Swal.fire("No Data", "No records found for the selected type.",
+                                    "info");
+                            }
+                        },
+                        error: function() {
+                            Swal.fire("Error", "An error occurred while fetching the list.",
+                                "error");
+                        }
+                    });
+
+                } else if (injury_person_type === "{{ encryptId('3') }}") {
+                    // Show Input Fields for Others
+                    injuryPersonTextContainer.removeClass("d-none");
+                    injuryPersonDropdownContainer.addClass("d-none");
+                    injuryPersonDepttexxt.addClass("d-none");
+                    injuryPersonDeptDropdown.removeClass("d-none");
+
+                } else {
+                    injuryPersonDropdownContainer.addClass("d-none");
+                    injuryPersonTextContainer.addClass("d-none");
+                    injuryPersonDepttexxt.addClass("d-none");
+                    injuryPersonDeptDropdown.removeClass("d-none");
+                }
+            });
+
+            $(document).on("change", ".injuryPersonName", function() {
+                var injury_person_id = $(this).val();
+                var injuryIndex = $(this).attr("alt");
+                var injury_person_type = $("#RowInjTypedata_" + injuryIndex).val();
+
+                // Prevent duplicate selections
+                var isAlreadySelected = false;
+                $(".injuryPersonName").not(this).each(function() {
+                    if ($(this).val() === injury_person_id && injury_person_id !== "") {
+                        isAlreadySelected = true;
+                        return false; // Exit loop
+                    }
+                });
+
+                if (isAlreadySelected) {
+                    Swal.fire("Error", "Selected value already exists.", "error");
+                    $(this).val("");
+                    return;
+                }
+
+                // Define Designation and Department fields
+                var injuryPersonDesignation = $("#InjPerDest_" + injuryIndex);
+                var injuryPersonDeptInput = $("#InjPerDept_" + injuryIndex);
+
+                $.ajax({
+                    url: "{{ url('accidentReport/fetchPersonDetails') }}/" + injury_person_id +
+                        "/" + injury_person_type,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.employee || response.worker) {
+                            let person = response.employee || response.worker;
+
+                            if (person.designation) {
+                                injuryPersonDesignation.val(person.designation).prop("readonly",
+                                    true);
+                            } else {
+                                injuryPersonDesignation.val("").prop("readonly", false);
+                            }
+
+                            if (person.department_name) {
+                                injuryPersonDeptInput.val(person.department_name).prop(
+                                    "readonly", true);
+                            } else {
+                                injuryPersonDeptInput.val("").prop("readonly", false);
+                            }
+                        } else {
+                            Swal.fire("Error", "Data could not be fetched.", "error");
+                        }
+                    },
+                    error: function() {
+                        Swal.fire("Error", "An error occurred while fetching details.",
+                            "error");
+                    }
+                });
+            });
+
+            // Remove injury details row
+            $(document).on("click", ".removeInjuryDetails", function() {
+                var $row = $(this).closest(".injury-append");
+
+                if ($(".injury-append").length > 1) {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "Do you really want to delete this row?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Yes, delete it!',
+                        cancelButtonText: 'Cancel'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $row.remove();
+                            Swal.fire(
+                                'Deleted!',
+                                'The row has been deleted.',
+                                'success'
+                            );
+                        }
+                    });
+                } else {
+                    Swal.fire(
+                        'Action Denied',
+                        'At least one row is required.',
+                        'warning'
+                    );
+                }
+            });
 
         });
+
         //injury script
 
         $("#injury_model").on("shown.bs.modal", function() {
 
             $('.injury-box').removeClass('hide');
-
-
         });
-
 
         $(document).on('click', '.injury-btn', function() {
 
@@ -1580,10 +2124,11 @@
             } else {
 
                 $('#injuredPerson').val(injuredPerson);
-                // var acc_prim_id = $('#acc_prim_id').val();
-                // var acc_prim_add = $('#acc_prim_add').val();
+                var accident_id = $('#accident_id').val();
+                var acc_prim_add = $('#acc_prim_add').val();
 
-                // var emp_details = get_emp_details_by_id(injuredPerson, inj_id, injuredPerson_type);
+                var emp_details = get_emp_details_by_id(injuredPerson, accident_id, acc_prim_add, inj_id,
+                    injuredPerson_type);
 
 
                 $("#injury_model [name='injperson']").val(injuredPerson);
@@ -1592,45 +2137,37 @@
 
         });
 
+        function get_emp_details_by_id(injuredPerson, accident_id, acc_prim_add, inj_id, injuredPerson_type) {
+            var url = "{{ admin_url('accidentReport/investigation/getbodyEmpdetails') }}";
+            var data = {
+                partyname: injuredPerson,
+                accident_id: accident_id,
+                acc_prim_add: acc_prim_add,
+                injuredPerson_type: injuredPerson_type,
+            };
 
-        // function get_emp_details_by_id(injuredPerson, inj_id, injuredPerson_type) {
-        //     var url = "{{ admin_url('incident_investigation/getEmpdetails') }}";
-        //     console.log('check');
-        //     console.log(injuredPerson);
-        //     console.log(acc_prim_id);
-        //     console.log(inj_id);
-        //     console.log(injuredPerson_type);
-        //     var data = {
-        //         partyname: injuredPerson,
-        //         acc_prim_id: acc_prim_id,
-        //         acc_prim_add: acc_prim_add,
-        //         injuredPerson_type: injuredPerson_type,
-        //     };
-
-        //     $.ajax({
-        //         type: 'POST',
-        //         url: url,
-        //         data: data,
-        //         success: function(data) {
-        //             console.log(data);
-        //             console.log('check');
-        //             if (data['empdata'] && data['empdata'].length > 0) {
-        //                 $.each(data['empdata'], function(i, emp) {
-        //                     $("#imgMapdata1").val(emp['imgMapdata']);
-        //                     $("#body_prim_id").val(emp['inc_body_id']);
-        //                     $("#injury_id").val(inj_id);
-        //                 });
-        //             } else {
-        //                 $("#body_prim_id").val(0);
-        //                 $("#injury_id").val(inj_id);
-        //             }
-        //         },
-        //         error: function(xhr, status, error) {
-        //             console.error("Error:", error);
-        //         }
-        //     });
-        // }
-
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: data,
+                success: function(data) {
+                    console.log(data); // Inspect the response
+                    if (data['empdata'] && data['empdata'].length > 0) {
+                        $.each(data['empdata'], function(i, emp) {
+                            $("#imgMapdata1").val(emp['imgMapdata']);
+                            $("#body_prim_id").val(emp['id']);
+                            $("#injury_id").val(inj_id);
+                        });
+                    } else {
+                        $("#body_prim_id").val(0);
+                        $("#injury_id").val(inj_id);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
+                }
+            });
+        }
 
 
         function clearInjuryBasicDetails() {
@@ -1988,7 +2525,6 @@
                 $(txtarea).text(desc).val(desc);
             }
 
-            // alert(j);
         }
 
         $(document).on('click', '.deletes', function() {
@@ -2056,11 +2592,9 @@
                     //changeImage('.' + parentClass[1]);
                     if (parentClass[0] == 'parts') {
                         $('#des_img' + alt).blur(function() {
-                            alert(446);
                             changeImage('.' + parentClass[1]);
                         });
                     } else {
-                        alert('empty');
                         //   console.log(canvas);
                         //   console.log(point1);
                         mapRebuilt(canvas, point1);
@@ -2405,7 +2939,7 @@
                         } else {
 
                             var url =
-                                "{{ admin_url('incident/accidentReport/addInjury') }}";
+                                "{{ admin_url('accidentReport/addInjury') }}";
 
                             $("#bodypartimage").val("");
                             const image = document.getElementById('img-imgmap1');
@@ -2424,11 +2958,11 @@
                             $("#bodypartimage").val(combinedImageUrl);
                             console.log(combinedImageUrl);
 
-                            var acc_prim_id = $("#acc_prim_id").val();
+                            var accident_id = $("#accident_id").val();
                             var formDatas = new URLSearchParams($('#injuryform')
                                 .serialize());
-                            formDatas.append('acc_prim_id',
-                                acc_prim_id); // Append the new key-value pair
+                            formDatas.append('accident_id',
+                                accident_id); // Append the new key-value pair
                             var data = formDatas.toString()
 
 
