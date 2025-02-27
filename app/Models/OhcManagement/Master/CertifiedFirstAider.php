@@ -57,8 +57,12 @@ class CertifiedFirstAider extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('company_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('company_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('ohc_master_certified_first_aider.certifier_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_certified_first_aider.unit_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_certified_first_aider.department_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_certified_first_aider.mobile_no', 'LIKE', '%' . $search . '%')
+
+                    ->orWhere('ohc_master_certified_first_aider.emp_id', 'LIKE', '%' . $search . '%');
             });
         }
 
@@ -192,12 +196,17 @@ class CertifiedFirstAider extends Model
         $request = request();
         $search = '';
         $query = $this->select('ohc_master_certified_first_aider.*');
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
+        if ($request->search['value'] != null || $request->search['value'] != '') {
+            $search = $request->search['value'];
 
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhere('unit_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('department_id', 'LIKE', '%' . $search . '%');
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('ohc_master_certified_first_aider.certifier_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_certified_first_aider.unit_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_certified_first_aider.department_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_certified_first_aider.mobile_no', 'LIKE', '%' . $search . '%')
+
+                    ->orWhere('ohc_master_certified_first_aider.emp_id', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('status') && $request->status) {

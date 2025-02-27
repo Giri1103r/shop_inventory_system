@@ -172,7 +172,8 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                        pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/
+,
                     },
                     department_id: {
                         required: true,
@@ -187,7 +188,8 @@
                         required: true,
                         minlength: 3,
                         maxlength: 20,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                        pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/
+,
                     },
                 },
                 messages: {
