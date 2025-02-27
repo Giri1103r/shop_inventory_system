@@ -70,7 +70,7 @@
                                                     <label class="form-label require">Employee Name</label>
                                                     <input type="text" name="emp_name" id="emp_name"
                                                         class="form-control" placeholder="Employee Name"
-                                                        value="{{ $opdpatient->emp_name }}" readonly>
+                                                       readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2 department"style="display: none;">
@@ -116,14 +116,14 @@
                                                         value="{{ $opdpatient->emergency_contact }}" class="form-control">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2 company_name"style="display: none;">
+                                            {{-- <div class="col-md-4 mb-2 company_name"style="display: none;">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company Name</label>
                                                     <input type="text" name="company_name" id="company_name"
                                                         value="{{ $opdpatient->company_name }}" class="form-control"
                                                         placeholder="Company Name">
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-4 mb-3 form-input">
                                                 <label for="dob" class="form-label require">Date Of Birth</label>
                                                 <div class="input-group date form-input  custom-height">
@@ -533,6 +533,7 @@
 
         // getting the employee/worker details
         $(document).ready(function() {
+            if (!$('#is_outside_worker').is(':checked')) {
             $('#emp_id').select2({
                 ajax: {
                     url: '{{ admin_url('ohc/prescribe-to-patient/fetchemployeename') }}',
@@ -567,6 +568,7 @@
                 var newOption = new Option(empName, empId, true, true);
                 $('#emp_id').append(newOption).trigger('change');
             }
+        }
         });
 
 
@@ -638,8 +640,6 @@
 
 
 
-
-
         });
         $(document).ready(function() {
             // Ensure validation is initialized
@@ -659,7 +659,7 @@
                     $(".department, .company_name, .employecode").show();
                     $(".employee-id").hide();
 
-                    $("#emp_name").val("").prop("readonly", false);
+                    $("#emp_name").val("{{ $opdpatient->emp_name ?? '' }}").prop("readonly", false);
 
 
                     if (formValidator) {
@@ -683,7 +683,7 @@
                     $(".department, .company_name, .employecode").hide();
                     $(".employee-id").show(); // Show dropdown
 
-                    $("#emp_name").val("{{ $opdpatient->emp_name ?? '' }}").prop("readonly", false);
+
 
                     if (formValidator) {
                         $("input[name='emp_id']").rules("remove");
@@ -930,7 +930,7 @@
 
                     </div>
                 </td>
-   <td>
+                <td>
                     <div class="form-group form-input">
                         <label for="remarks" class="require">Remarks</label>
                         <textarea name="remarks[${rowcount}]" cols="10" rows="2" class="form-control"></textarea>
@@ -1065,12 +1065,12 @@
                         },
 
                     },
-                    company_name: {
-                        required: function() {
-                            return $('#is_outside_worker').is(':checked');
-                        },
+                    // company_name: {
+                    //     required: function() {
+                    //         return $('#is_outside_worker').is(':checked');
+                    //     },
 
-                    },
+                    // },
                     emergency_contact: {
                         required: true,
                         digits: true,
@@ -1206,9 +1206,9 @@
                         minlength: "employee name must be at least 3 characters.",
                         maxlength: "employee name must not exceed 30 characters.",
                     },
-                    company_name: {
-                        required: "Please enter Company name.",
-                    },
+                    // company_name: {
+                    //     required: "Please enter Company name.",
+                    // },
                     department_id: {
                         required: "Please enter department Name.",
                     },

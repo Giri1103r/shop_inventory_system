@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Vendor ')
+@section('title', 'Vendor Add')
 @section('pageurl', admin_url('ohc/vendor/list'))
 
 
@@ -131,7 +131,7 @@
 
             var toDatepicker = flatpickr("#to_date", {
                 dateFormat: "d-m-Y",
-                minDate: "today"
+
             });
         });
 

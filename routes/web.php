@@ -835,6 +835,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/submit', [EmployeecumPatientController::class, 'importSubmit']);
                 Route::post('/status', [EmployeecumPatientController::class, 'statusChange']);
                 Route::post('/unique', [EmployeecumPatientController::class, 'Uniquecheck']);
+                Route::post('/empunique', [EmployeecumPatientController::class, 'EmployeeUniquecheck']);
                 Route::get('/employeeid', [EmployeecumPatientController::class, 'employeeid']);
                 Route::get('/employeename', [EmployeecumPatientController::class, 'employeename']);
             });
@@ -940,7 +941,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/edit/{id}', [MedicineRequisitionController::class, 'edit']);
                 Route::post('/edit/submit', [MedicineRequisitionController::class, 'update']);
                 Route::get('/view/{id}', [MedicineRequisitionController::class, 'view']);
-                Route::post('/delete', [MedicineRequisitionController::class, 'delete']);
+                Route::post('/delete/{id}', [MedicineRequisitionController::class, 'delete']);
                 Route::get('/import', [MedicineRequisitionController::class, 'import']);
                 Route::post('/import/submit', [MedicineRequisitionController::class, 'importSubmit']);
                 Route::get('/export/excel', [MedicineRequisitionController::class, 'exportExcel']);
@@ -964,7 +965,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/edit/{id}', [MedicineIssuanceController::class, 'edit']);
                 Route::post('/edit/submit', [MedicineIssuanceController::class, 'update']);
                 Route::get('/view/{id}', [MedicineIssuanceController::class, 'view']);
-                Route::post('/delete', [MedicineIssuanceController::class, 'delete']);
                 Route::post('/import/submit', [MedicineIssuanceController::class, 'importSubmit']);
                 Route::get('/export/excel', [MedicineIssuanceController::class, 'exportExcel']);
                 Route::get('/export/pdf', [MedicineIssuanceController::class, 'exportPdf']);
@@ -1234,7 +1234,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/existingHira/{accident_id}', [AccidentReportController::class, 'existingHira']);
                 Route::get('/existingMOC/{accident_id}', [AccidentReportController::class, 'existingMOC']);
             });
-           
+
 
         });
     });

@@ -57,6 +57,9 @@ class Medicine extends Model
             $query->where(function ($query) use ($search) {
                 $query
                     ->orWhere('medicine', 'LIKE', '%' . $search . '%')
+                    ->orWhere('expiry_date', 'LIKE', '%' . $search . '%')
+                    ->orWhere('hsn', 'LIKE', '%' . $search . '%')
+                    ->orWhere('threshold_limit', 'LIKE', '%' . $search . '%')
                     ->orWhere('pack', 'LIKE', '%' . $search . '%');
             });
         }
@@ -139,7 +142,7 @@ class Medicine extends Model
             // 'unit_id' => $request->unit_id,
             'expiry_date' =>  DBdateformat($request->expire_date),
             'remarks' => $request->remarks,
-            'approve_status'=>STATUS_OHC_EHS_HEAD_APPROVAL_PENDING,
+            'approve_status' => STATUS_OHC_EHS_HEAD_APPROVAL_PENDING,
             'created_by' => Auth::id(),
             'status' => 0,
         );
@@ -160,7 +163,7 @@ class Medicine extends Model
             'expiry_date' => DBdateformat($request->expire_date),
             'remarks' => $request->remarks,
             'updated_by' => Auth::id(),
-            'approve_status'=>STATUS_OHC_EHS_HEAD_APPROVAL_PENDING,
+            'approve_status' => STATUS_OHC_EHS_HEAD_APPROVAL_PENDING,
             'status' => 0,
         );
 
@@ -203,14 +206,19 @@ class Medicine extends Model
         $request = request();
         $search = '';
         $query = $this->select('ohc_master_medicine.*');
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
+        if ($request->search['value'] != null || $request->search['value'] != '') {
+            $search = $request->search['value'];
 
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhere('medicine', 'LIKE', '%' . $search . '%')
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('medicine', 'LIKE', '%' . $search . '%')
+                    ->orWhere('expiry_date', 'LIKE', '%' . $search . '%')
+                    ->orWhere('hsn', 'LIKE', '%' . $search . '%')
+                    ->orWhere('threshold_limit', 'LIKE', '%' . $search . '%')
                     ->orWhere('pack', 'LIKE', '%' . $search . '%');
             });
         }
+
         if ($request->has('medicine') && $request->medicine) {
             $query = $query->where('medicine', 'LIKE', '%' . $request->medicine . '%');
         }
@@ -246,7 +254,7 @@ class Medicine extends Model
         $data = $this->select(
             'ohc_master_medicine.*'
         )
-            ->where('ohc_master_medicine.id', $id)->where('trash','NO')
+            ->where('ohc_master_medicine.id', $id)->where('trash', 'NO')
             ->first();
 
         return $data;
@@ -264,7 +272,7 @@ class Medicine extends Model
 
     public function ajaxList($unitId = '')
     {
-        $query = $this->select('id', 'medicine','pack')->where('status', 1);
+        $query = $this->select('id', 'medicine', 'pack')->where('status', 1);
 
 
         if (!empty($unitId)) {
@@ -288,7 +296,7 @@ class Medicine extends Model
 
     public function stocklist($medicineid)
     {
-       return $this->where('id',$medicineid)->where('status',1)->first();
+        return $this->where('id', $medicineid)->where('status', 1)->first();
     }
 
     // stock update approval
@@ -310,8 +318,6 @@ class Medicine extends Model
                 'approve_status' => $updateData['approve_status']
             ]);
         }
-
-
     }
 
     protected static function booted()
