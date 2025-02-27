@@ -225,6 +225,7 @@
                     d.vendor_id = $('#vendor_id').val();
                     d.from_date = $('#from_date').val();
                     d.to_date = $('#to_date').val();
+                    d.expire_date = $('#expire_date').val();
                     d.approve_status = $('#approve_status').val();
                 },
                 error: function(xhr, error, code) {
@@ -272,8 +273,8 @@
                     name: 'expire_date'
                 },
                 {
-                    data: 'approve_status',
-                    name: 'approve_status'
+                    data: 'approvedStatus',
+                    name: 'approvedStatus'
                 },
                 {
                     data: 'action',
@@ -306,6 +307,8 @@
                                 var searchValue = $('#datatable-list_filter input').val();
                                 var medicine_id = $('#medicine_id').val();
                                 var vendor_id = $('#vendor_id').val();
+                                var expire_date = $('#expire_date').val();
+
                                 var from_date = $('#from_date').val();
                                 var to_date = $('#to_date').val();
                                 var approve_status = $('#approve_status').val();
@@ -318,6 +321,7 @@
                                     '?search=' + searchValue +
                                     '&medicine_id=' + medicine_id +
                                     '&vendor_id=' + vendor_id +
+                                    '&expire_date=' + expire_date +
                                     '&from_date=' + from_date +
                                     '&approve_status=' + approve_status +
                                     '&to_date=' + to_date;
@@ -330,6 +334,7 @@
                                 var searchValue = $('#datatable-list_filter input').val();
                                 var medicine_id = $('#medicine_id').val();
                                 var vendor_id = $('#vendor_id').val();
+                                var expire_date = $('#expire_date').val();
                                 var from_date = $('#from_date').val();
                                 var approve_status = $('#approve_status').val();
                                 var to_date = $('#to_date').val();
@@ -342,6 +347,7 @@
                                     '?search=' + searchValue +
                                     '&medicine_id=' + medicine_id +
                                     '&vendor_id=' + vendor_id +
+                                    '&expire_date=' + expire_date +
                                     '&from_date=' + from_date +
                                     '&approve_status=' + approve_status +
                                     '&to_date=' + to_date;

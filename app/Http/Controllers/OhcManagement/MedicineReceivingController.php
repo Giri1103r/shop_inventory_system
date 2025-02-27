@@ -79,19 +79,19 @@ class MedicineReceivingController extends Controller
                         ->editColumn('expire_date', function ($row) {
                             return displaydateformat($row->expire_date);
                         })
-                        ->addColumn('approve_status', function ($row) {
+                        ->addColumn('approvedStatus', function ($row) {
 
-                            if ($row->approve_status == STATUS_OHC_OPEN) {
+                            if ($row->approvedStatus == STATUS_OHC_OPEN) {
                                 $text = "<span class='badge bg-info' style='font-size: 1.0em;'>Open</span>";
-                            } else if ($row->approve_status == STATUS_OHC_EHS_VERIFICATION_PENDING) {
+                            } else if ($row->approvedStatus == STATUS_OHC_EHS_VERIFICATION_PENDING) {
                                 $text = "<span class='badge bg-info' style='font-size: 1.0em;'>EHS Officer verification Pending</span>";
-                            } else if ($row->approve_status == STATUS_OHC_EHS_REJECTED) {
+                            } else if ($row->approvedStatus == STATUS_OHC_EHS_REJECTED) {
                                 $text = "<span class='badge bg-danger' style='font-size: 1.0em;'>EHS Officer Rejected</span>";
-                            } else if ($row->approve_status == STATUS_OHC_L1_EHS_VERIFICATION_PENDING) {
+                            } else if ($row->approvedStatus == STATUS_OHC_L1_EHS_VERIFICATION_PENDING) {
                                 $text = "<span class='badge bg-info' style='font-size: 1.0em;'>L1 EHS Officer Approval Pending</span>";
-                            } else if ($row->approve_status == STATUS_OHC_AGM_APPROVAL_PENDING) {
+                            } else if ($row->approvedStatus == STATUS_OHC_AGM_APPROVAL_PENDING) {
                                 $text = "<span class='badge bg-info' style='font-size: 1.0em;'>EHS Head Approval Pending</span>";
-                            } else if ($row->approve_status == STATUS_OHC_CLOSE) {
+                            } else if ($row->approvedStatus == STATUS_OHC_CLOSE) {
                                 $text = "<span class='badge bg-success' style='font-size: 1.0em;'>Closed</span>";
                             }
                             return $text;
@@ -119,7 +119,7 @@ class MedicineReceivingController extends Controller
                             return $btn;
                         })
 
-                        ->rawColumns(['action', 'expire_date', 'approve_status', 'hsn_id','pack'])
+                        ->rawColumns(['action', 'expire_date', 'approvedStatus', 'hsn_id','pack'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -1037,7 +1037,7 @@ class MedicineReceivingController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Medicine Receiving Stock Details.pdf";
-            return $mpdf->Output($filename, 'I');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
