@@ -93,7 +93,6 @@ class OhcDashboardController extends Controller
 
                 ];
 
-                // $medicines = Inventory::where('unit_id', 1)->get();
                 $medicines = Inventory::where('ohc_report_inventory.unit_id',Auth::user()->unit_id)
                     ->join('ohc_master_medicine', 'ohc_report_inventory.medicine_id', '=', 'ohc_master_medicine.id')
                     ->select('ohc_master_medicine.medicine', 'ohc_report_inventory.balance')
@@ -116,17 +115,13 @@ class OhcDashboardController extends Controller
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     */
+
     public function show(string $id)
     {
         //
