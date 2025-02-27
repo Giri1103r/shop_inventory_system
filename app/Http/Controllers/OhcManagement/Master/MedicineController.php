@@ -390,7 +390,7 @@ class MedicineController extends Controller
                 'medicine' => 'required',
                 'pack' => 'required',
                 'hsn' => 'required',
-                'unit_id' => 'required',
+                // 'unit_id' => 'required',
                 'threshold_limit' => 'required',
                 'expire_date' => 'required',
 
@@ -399,7 +399,7 @@ class MedicineController extends Controller
                 'medicine.required' => 'Please enter the medicine name.',
                 'pack.required' => 'Please enter the pack details.',
                 'hsn.required' => 'Please enter the HSN code.',
-                'unit_id.required' => 'Please select a unit.',
+                // 'unit_id.required' => 'Please select a unit.',
                 'threshold_limit.required' => 'Please enter the threshold limit.',
                 'expire_date.required' => 'Please select the expiry date.',
 

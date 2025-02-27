@@ -151,7 +151,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex: /^[a-zA-Z0-9\s\-]*$/,
+                        regex: '/^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s]*$/',
                         remote: {
                             url: '{{ admin_url('ohc/medicine/unique') }}',
                             type: 'post',
@@ -174,7 +174,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex: /^[a-zA-Z0-9\s\-]*$/,
+                        regex: '/^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s]*$/',
                         remote: {
                             url: '{{ admin_url('ohc/medicine/hsn-unique') }}',
                             type: 'post',
@@ -191,9 +191,7 @@
                     },
                     threshold_limit: {
                         required: true,
-                        minlength: 2,
-                        maxlength: 100,
-                        regex: /^[a-zA-Z0-9\s\-]*$/,
+                       digits:true,
                     },
                     expire_date: {
                         required: true,
@@ -204,7 +202,7 @@
                     medicine: {
                         required: "Medicine Name Cannot Be Empty.",
                         minlength: "Medicine name must be at least 3 characters.",
-                        maxlength: "Medicine name cannot exceed 100 characters.",
+                        maxlength: "Medicine name cannot exceed 30 characters.",
                         regex: "Medicine name contains invalid characters.",
                         remote: "This Medicine Name should be unique .",
                     },
@@ -227,9 +225,7 @@
                     },
                     threshold_limit: {
                         required: "Please enter the threshold limit.",
-                        minlength: "Threshold limit must be at least 3 characters.",
-                        maxlength: "Threshold limit cannot exceed 100 characters.",
-                        regex: "Threshold limit contains invalid characters.",
+                        digits: "Threshold limit contains only numeric.",
                     },
                     expire_date: {
                         required: "Please select the expiry date.",

@@ -835,6 +835,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/submit', [EmployeecumPatientController::class, 'importSubmit']);
                 Route::post('/status', [EmployeecumPatientController::class, 'statusChange']);
                 Route::post('/unique', [EmployeecumPatientController::class, 'Uniquecheck']);
+                Route::post('/empunique', [EmployeecumPatientController::class, 'EmployeeUniquecheck']);
                 Route::get('/employeeid', [EmployeecumPatientController::class, 'employeeid']);
                 Route::get('/employeename', [EmployeecumPatientController::class, 'employeename']);
             });
@@ -1234,7 +1235,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/existingHira/{accident_id}', [AccidentReportController::class, 'existingHira']);
                 Route::get('/existingMOC/{accident_id}', [AccidentReportController::class, 'existingMOC']);
             });
-           
+
 
         });
     });

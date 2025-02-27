@@ -92,7 +92,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        pattern: /^[a-zA-Z0-9\s\-]*$/,
+                        pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/,
                         remote: {
                             url: '{{ admin_url('ohc/vendor/unique') }}',
                             type: 'post',
@@ -107,6 +107,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
+                        pattern:'/^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-\]*$/',
                         remote: {
                             url: '{{ admin_url('ohc/vendor/unique') }}',
                             type: 'post',
@@ -134,7 +135,8 @@
                     license_no: {
                         required: "{{ __('license No is Required') }}",
                         minlength: "Minimum character should not less than 3 ",
-                        maxlength: "Maximum Characters should not exceed 10",
+                        maxlength: "Maximum Characters should not exceed 30",
+                        pattern: "license No contains invalid characters.",
                         remote: "{{ __('license No should be unique') }}"
                     },
                     address: {
