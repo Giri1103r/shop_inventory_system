@@ -930,7 +930,7 @@
 
                     </div>
                 </td>
-   <td>
+                <td>
                     <div class="form-group form-input">
                         <label for="remarks" class="require">Remarks</label>
                         <textarea name="remarks[${rowcount}]" cols="10" rows="2" class="form-control"></textarea>
