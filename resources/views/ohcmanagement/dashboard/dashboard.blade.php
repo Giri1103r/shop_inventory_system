@@ -6,7 +6,29 @@
 
 @push('style')
     <style>
+            .green-box {
+                background-color: green;
+                color: white;
+                padding: 10px;
+                border-radius: 5px;
+                display: inline-block;
+            }
 
+            .yellow-box {
+                background-color: yellow;
+                color: black;
+                padding: 10px;
+                border-radius: 5px;
+                display: inline-block;
+            }
+
+            .red-box {
+                background-color: red;
+                color: white;
+                padding: 10px;
+                border-radius: 5px;
+                display: inline-block;
+            }
 
     </style>
 @endpush
@@ -26,6 +48,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="card view_card">
 
                 <div class="card-body">
@@ -197,7 +220,6 @@
 
             </div>
 
-
             <div class="card view_card">
 
                 <div class="card-body">
@@ -248,7 +270,6 @@
                                 </div>
                             </div>
                         </div>
-
 
                         <div class="col-xl-3 col-lg-6 col-sm-6">
                             <div class="widget-stat card card-dashbaord"
@@ -470,6 +491,41 @@
 
             </div>
 
+            <div class="card-body px-0 overflow-auto">
+                <h4 class="card-title pl-4">Medicine Status </h4>
+                <div class="table-responsive scroll">
+                    <table class="table">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Medicine</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($medicines as $medicine)
+                                <tr>
+                                    <td>{{ $medicine->medicine }}</td>
+                                    <td>
+                                        <!-- Apply conditional classes for background color based on the quantity -->
+                                        <span class="
+                                            @if($medicine->balance > 50)
+                                                bg-success text-white
+                                            @elseif($medicine->balance > 10)
+                                                bg-warning text-dark
+                                            @else
+                                                bg-danger text-white
+                                            @endif
+                                            px-3 py-2 rounded">
+                                            {{ $medicine->balance }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -483,4 +539,5 @@
             window.location.href = url;
         }
     </script>
+
 @endpush
