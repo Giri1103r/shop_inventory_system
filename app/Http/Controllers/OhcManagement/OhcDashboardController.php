@@ -46,6 +46,38 @@ class OhcDashboardController extends Controller
                         'icon' => 'bx bx-message-square-detail',
                         'icon_color' => 'text-primary',
                     ],
+                
+
+
+                    [
+                        'link' => 'ohc/prescribe-to-patient/list',
+                        'name' => "Unit 1",
+                        'count' => getohctotalCount('prescribetopatient1'),
+                        'icon' => 'bx bx-message-square-detail',
+                        'icon_color' => 'text-primary',
+                    ],
+                    [
+                        'link' => 'ohc/prescribe-to-patient/list',
+                        'name' => "Unit 2",
+                        'count' => getohctotalCount('prescribetopatient2'),
+                        'icon' => 'bx bx-message-square-detail',
+                        'icon_color' => 'text-primary',
+                    ],
+                    [
+                        'link' => 'ohc/prescribe-to-patient/list',
+                        'name' => "Unit 3",
+                        'count' => getohctotalCount('prescribetopatient3'),
+                        'icon' => 'bx bx-message-square-detail',
+                        'icon_color' => 'text-primary',
+                    ],
+                    [
+                        'link' => 'ohc/prescribe-to-patient/list',
+                        'name' => "Unit 4",
+                        'count' => getohctotalCount('prescribetopatient4'),
+                        'icon' => 'bx bx-message-square-detail',
+                        'icon_color' => 'text-primary',
+                    ],
+
                     [
                         'link' => 'ohc/prescribe-to-patient/list',
                         'name' => "Today's OPD",
