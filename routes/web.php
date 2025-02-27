@@ -987,6 +987,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/add/submit', [PrescribetoPatientController::class, 'store']);
                 Route::get('/edit/{id}', [PrescribetoPatientController::class, 'edit']);
                 Route::post('/edit/submit', [PrescribetoPatientController::class, 'update']);
+                Route::post('/unique', [PrescribetoPatientController::class, 'Uniquecheck']);
                 Route::get('/view/{id}', [PrescribetoPatientController::class, 'view']);
                 Route::get('/view/{id}', [PrescribetoPatientController::class, 'view']);
                 Route::get('/generalpdf/{id}', [PrescribetoPatientController::class, 'medicineslip']);

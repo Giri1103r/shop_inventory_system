@@ -1053,7 +1053,19 @@
                     emp_name: {
                         required: true,
                         minlength: 3,
-                        maxlength: 30
+                        maxlength: 30,
+                        remote: {
+                            url: "{{ admin_url('ohc/prescribe-to-patient/unique') }}",
+                            type: "post",
+                            data: {
+                                emp_name: function() {
+                                    return $('#emp_name').val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
+                                }
+                            }
+                        }
                     },
                     unit_id: {
                         required: true,

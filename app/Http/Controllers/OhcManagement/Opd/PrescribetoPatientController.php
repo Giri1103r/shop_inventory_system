@@ -34,10 +34,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
-use phpseclib3\File\ASN1\Maps\CertificateIssuer;
 use Spatie\SimpleExcel\SimpleExcelWriter;
-use Symfony\Component\Console\Completion\Suggestion;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Response;
 
 class PrescribetoPatientController extends Controller
 {
@@ -458,10 +457,34 @@ class PrescribetoPatientController extends Controller
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
         }
     }
+    // unique check
+
+    public function Uniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $emp_name = $request->emp_name;
+
+
+            $id = $request->id;
+
+            if (empty($id)) {
+                $isUnique = $this->opd_patient->uniqueCheck($emp_name);
+            } else {
+                $id = decryptId($id);
+
+                $isUnique = $this->opd_patient->existUniqueCheck($emp_name, $id);
+            }
+
+            if ($isUnique->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
+        }
+    }
 
     // export pdf
     public function exportExcel()
-    { {
+    {
 
             try {
 
@@ -525,7 +548,7 @@ class PrescribetoPatientController extends Controller
 
                 report($ex);
             }
-        }
+
     }
 
     // Export pdf

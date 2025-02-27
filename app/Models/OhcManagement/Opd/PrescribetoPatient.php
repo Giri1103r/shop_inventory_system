@@ -213,6 +213,24 @@ class PrescribetoPatient extends Model
         return $data;
     }
 
+    public function uniqueCheck($emp_name)
+    {
+
+        return $this->where('emp_name', $emp_name)->get();
+    }
+
+    public function existUniqueCheck($emp_name,$id)
+    {
+        return $this->where('emp_name', $emp_name)
+            ->where('id', '!=', $id)
+            ->get();
+    }
+    public function HsnuniqueCheck($hsn)
+    {
+
+        return $this->where('hsn',  $hsn)->get();
+    }
+
     public function exportdata()
     {
         $request = request();
@@ -221,7 +239,7 @@ class PrescribetoPatient extends Model
         $query = $this->select(
             'ohc_management_opd_patient.*');
 
-      
+
         if (!empty($request->search) && isset($request->search['value']) && $request->search['value'] !== '') {
             $search = $request->search['value'];
 

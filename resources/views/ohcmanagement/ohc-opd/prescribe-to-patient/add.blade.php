@@ -55,7 +55,8 @@
                                             <div class="col-md-4 employecode mb-2" style="display: none">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Employee code</label>
-                                                    <input type="text" name="outside_emp_id" id="emp_id_text" class="form-control">
+                                                    <input type="text" name="outside_emp_id" id="emp_id_text"
+                                                        class="form-control">
 
                                                 </div>
                                             </div>
@@ -283,8 +284,7 @@
                                                                     </td>
                                                                     <td>
                                                                         <div class="form-group form-input">
-                                                                            <label
-                                                                                for="remarks"class="">Remarks</label>
+                                                                            <label for="remarks"class="">Remarks</label>
                                                                             <textarea name="remarks[0]" id="remarks" cols="10" rows="2" class="form-control"></textarea>
                                                                         </div>
                                                                     </td>
@@ -638,53 +638,53 @@
         });
 
         $(document).ready(function() {
-    $("#is_outside_worker").change(function() {
-        if ($(this).is(":checked")) {
-            $(".unit").hide();
-            $(".department, .company_name, .employecode").show();
-            $(".employee-id").hide(); // Hide dropdown
+            $("#is_outside_worker").change(function() {
+                if ($(this).is(":checked")) {
+                    $(".unit").hide();
+                    $(".department, .company_name, .employecode").show();
+                    $(".employee-id").hide(); // Hide dropdown
 
-            $("#emp_id").prop("disabled", true); // Disable the select field
-            $(".employecode input[name='emp_id']").prop("disabled", false); // Enable text input
+                    $("#emp_id").prop("disabled", true); // Disable the select field
+                    $(".employecode input[name='emp_id']").prop("disabled", false); // Enable text input
 
-            $("#emp_name").val("").prop("readonly", false);
+                    $("#emp_name").val("").prop("readonly", false);
 
-            // Add validation for text input
-            $("input[name='emp_id']").rules("add", {
-                required: true,
-                minlength: 3,
-                maxlength: 30,
-                pattern: /^[a-zA-Z0-9_-]+$/,
-                messages: {
-                    required: "Employee code is required",
-                    minlength: "Employee code must be at least 3 characters",
-                    maxlength: "Employee code must not exceed 30 characters",
-                    pattern: "Employee code has invalid characters"
+                    // Add validation for text input
+                    $("input[name='emp_id']").rules("add", {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
+                        pattern: /^[a-zA-Z0-9_-]+$/,
+                        messages: {
+                            required: "Employee code is required",
+                            minlength: "Employee code must be at least 3 characters",
+                            maxlength: "Employee code must not exceed 30 characters",
+                            pattern: "Employee code has invalid characters"
+                        }
+                    });
+
+                } else {
+                    $(".unit").show();
+                    $(".department, .company_name,.employecode").hide();
+                    $(".employee-id").show();
+
+                    $(".employecode input[name='emp_id']").prop("disabled", true); // Disable text input
+                    $("#emp_id").prop("disabled", false); // Enable select field
+
+                    $("#emp_name").val("").prop("readonly", false);
+
+                    // Add validation for dropdown
+                    $("select[name='emp_id']").rules("add", {
+                        required: true,
+                        messages: {
+                            required: "Please select an Employee code"
+                        }
+                    });
                 }
+
+                $("#opdpatient").validate().resetForm();
             });
-
-        } else {
-            $(".unit").show();
-            $(".department, .company_name,.employecode").hide();
-            $(".employee-id").show();
-
-            $(".employecode input[name='emp_id']").prop("disabled", true); // Disable text input
-            $("#emp_id").prop("disabled", false); // Enable select field
-
-            $("#emp_name").val("").prop("readonly", false);
-
-            // Add validation for dropdown
-            $("select[name='emp_id']").rules("add", {
-                required: true,
-                messages: {
-                    required: "Please select an Employee code"
-                }
-            });
-        }
-
-        $("#opdpatient").validate().resetForm();
-    });
-});
+        });
 
 
 
@@ -946,7 +946,16 @@
                     emp_name: {
                         required: true,
                         minlength: 3,
-                        maxlength: 30
+                        maxlength: 30,
+                        remote: {
+                            url: "{{ admin_url('ohc/prescribe-to-patient/unique') }}",
+                            type: "post",
+                            data: {
+                                emp_name: function() {
+                                    return $('#emp_name').val();
+                                }
+                            }
+                        }
                     },
                     unit_id: {
                         required: true,
@@ -1098,6 +1107,7 @@
                         required: "Please enter employee name.",
                         minlength: "employee name must be at least 3 characters.",
                         maxlength: "employee name must not exceed 30 characters.",
+                        remote:"Employee Name Should be Unique"
                     },
                     // company_name: {
                     //     required: "Please enter Company name.",
