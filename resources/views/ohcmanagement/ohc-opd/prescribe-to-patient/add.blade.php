@@ -55,8 +55,8 @@
                                             <div class="col-md-4 employecode mb-2" style="display: none">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Employee code</label>
-                                                    <input type="text" name="emp_id" id="emp_id"
-                                                        class="form-control">
+                                                    <input type="text" name="outside_emp_id" id="emp_id_text" class="form-control">
+
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -107,13 +107,13 @@
                                                         class="form-control">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2 company_name"style="display: none;">
+                                            {{-- <div class="col-md-4 mb-2 company_name"style="display: none;">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company Name</label>
                                                     <input type="text" name="company_name" id="company_name"
                                                         class="form-control" placeholder="Company Name">
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-4 mb-3 form-input">
                                                 <label for="dob" class="form-label require">Date Of Birth</label>
                                                 <div class="input-group date form-input  custom-height">
@@ -638,49 +638,54 @@
         });
 
         $(document).ready(function() {
-            $("#is_outside_worker").change(function() {
-                if ($(this).is(":checked")) {
-                    $(".unit").hide();
-                    $(".department, .company_name, .employecode").show();
-                    $(".employee-id").hide(); // Hide dropdown
+    $("#is_outside_worker").change(function() {
+        if ($(this).is(":checked")) {
+            $(".unit").hide();
+            $(".department, .company_name, .employecode").show();
+            $(".employee-id").hide(); // Hide dropdown
 
-                    $("#emp_name").val("").prop("readonly", false);
+            $("#emp_id").prop("disabled", true); // Disable the select field
+            $(".employecode input[name='emp_id']").prop("disabled", false); // Enable text input
 
-                   
+            $("#emp_name").val("").prop("readonly", false);
 
-                    $("input[name='emp_id']").rules("add", {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 30,
-                        pattern: /^[a-zA-Z0-9_-]+$/,
-                        messages: {
-                            required: "Employee code is required",
-                            minlength: "Employee code must be at least 3 characters",
-                            maxlength: "Employee code must not exceed 30 characters",
-                            pattern: "Employee code has invalid characters"
-                        }
-                    });
-
-
-                } else {
-                    $(".unit").show();
-                    $(".department, .company_name,.employecode").hide();
-                    $(".employee-id").show();
-
-                    $("#emp_name").val("").prop("readonly", false);
-
-                    $("select[name='emp_id']").rules("add", {
-                        required: true,
-                        messages: {
-                            required: "Please select an Employee code"
-                        }
-                    });
+            // Add validation for text input
+            $("input[name='emp_id']").rules("add", {
+                required: true,
+                minlength: 3,
+                maxlength: 30,
+                pattern: /^[a-zA-Z0-9_-]+$/,
+                messages: {
+                    required: "Employee code is required",
+                    minlength: "Employee code must be at least 3 characters",
+                    maxlength: "Employee code must not exceed 30 characters",
+                    pattern: "Employee code has invalid characters"
                 }
-
-
-                $("#opdpatient").validate().resetForm();
             });
-        });
+
+        } else {
+            $(".unit").show();
+            $(".department, .company_name,.employecode").hide();
+            $(".employee-id").show();
+
+            $(".employecode input[name='emp_id']").prop("disabled", true); // Disable text input
+            $("#emp_id").prop("disabled", false); // Enable select field
+
+            $("#emp_name").val("").prop("readonly", false);
+
+            // Add validation for dropdown
+            $("select[name='emp_id']").rules("add", {
+                required: true,
+                messages: {
+                    required: "Please select an Employee code"
+                }
+            });
+        }
+
+        $("#opdpatient").validate().resetForm();
+    });
+});
+
 
 
         // getting the first aider
@@ -953,12 +958,12 @@
                         },
 
                     },
-                    company_name: {
-                        required: function() {
-                            return $('#is_outside_worker').is(':checked');
-                        },
+                    // company_name: {
+                    //     required: function() {
+                    //         return $('#is_outside_worker').is(':checked');
+                    //     },
 
-                    },
+                    // },
                     emergency_contact: {
                         required: true,
                         digits: true,
@@ -1094,9 +1099,9 @@
                         minlength: "employee name must be at least 3 characters.",
                         maxlength: "employee name must not exceed 30 characters.",
                     },
-                    company_name: {
-                        required: "Please enter Company name.",
-                    },
+                    // company_name: {
+                    //     required: "Please enter Company name.",
+                    // },
                     department_id: {
                         required: "Please enter department Name.",
                     },

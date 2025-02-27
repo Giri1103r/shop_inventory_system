@@ -114,12 +114,17 @@ class PrescribetoPatient extends Model
         $request = request();
 
         // Prepare data for insertion
+        if( $request->has('is_outside_worker') == 1){
+           $employeeId =  $request->outside_emp_id;
+        }else{
+            $employeeId =   $request->emp_id;
+        }
         $insert_array = [
             'is_outside_employee' => $request->has('is_outside_worker') ? 1 : 0,
             'unit_id' => decryptId($request->unit_id),
            'department_id' => $request->department_id ,
             'company_name' => $request->company_name,
-            'emp_id' => $request->emp_id,
+            'emp_id' =>$employeeId ,
             'gender' => $request->gender,
             'emp_name' => $request->emp_name,
             'mobile_no' => $request->mobile_no,

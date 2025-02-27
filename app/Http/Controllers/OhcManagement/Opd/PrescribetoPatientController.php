@@ -225,7 +225,7 @@ class PrescribetoPatientController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-
+// dd($request->all());
             $opd_patient = $this->opd_patient->store();
 
             $firstaid = $this->opd_firstaid->store($opd_patient);
@@ -404,47 +404,50 @@ class PrescribetoPatientController extends Controller
 
             $user_opd_patient = $this->opd_patient->selectOne($id);
             $user_opd_firstaid = $this->opd_firstaid->selectOne($id);
-            foreach ($request->medicine_id as $index => $medicine_id) {
-                $medicineRecord = $user_opd_firstaid->where('medicine_id', $medicine_id)->where('opd_id', $id)->first();
+            if ($user_opd_patient->first_aid_treatment === 1) {
+                foreach ($request->medicine_id as $index => $medicine_id) {
+                    $medicineRecord = $user_opd_firstaid->where('medicine_id', $medicine_id)->where('opd_id', $id)->first();
 
-                if (!$medicineRecord) {
+                    if (!$medicineRecord) {
 
-                    continue;
-                }
+                        continue;
+                    }
 
-                $newQuantity = $request->quantity[$index];
-                $oldquantity = $medicineRecord->quantity;
+                    $newQuantity = $request->quantity[$index];
+                    $oldquantity = $medicineRecord->quantity;
 
-                if ($oldquantity > $newQuantity) {
-                    $difference = $oldquantity - $newQuantity;
+                    if ($oldquantity > $newQuantity) {
+                        $difference = $oldquantity - $newQuantity;
 
-                    $this->inventory
-                        ->where('medicine_id', $medicine_id)
-                        ->where('unit_id', Auth::user()->unit_id)
-                        ->decrement('total_prescribe', $difference);
+                        $this->inventory
+                            ->where('medicine_id', $medicine_id)
+                            ->where('unit_id', Auth::user()->unit_id)
+                            ->decrement('total_prescribe', $difference);
 
-                    $this->inventory
-                        ->where('medicine_id', $medicine_id)
-                        ->where('unit_id', Auth::user()->unit_id)
-                        ->increment('balance', $difference);
-                } elseif ($oldquantity < $newQuantity) {
-                    $difference = $newQuantity - $oldquantity;
+                        $this->inventory
+                            ->where('medicine_id', $medicine_id)
+                            ->where('unit_id', Auth::user()->unit_id)
+                            ->increment('balance', $difference);
+                    } elseif ($oldquantity < $newQuantity) {
+                        $difference = $newQuantity - $oldquantity;
 
-                    $this->inventory
-                        ->where('medicine_id', $medicine_id)
-                        ->where('unit_id', Auth::user()->unit_id)
-                        ->increment('total_prescribe', $difference);
+                        $this->inventory
+                            ->where('medicine_id', $medicine_id)
+                            ->where('unit_id', Auth::user()->unit_id)
+                            ->increment('total_prescribe', $difference);
 
-                    $this->inventory
-                        ->where('medicine_id', $medicine_id)
-                        ->where('unit_id', Auth::user()->unit_id)
-                        ->decrement('balance', $difference);
+                        $this->inventory
+                            ->where('medicine_id', $medicine_id)
+                            ->where('unit_id', Auth::user()->unit_id)
+                            ->decrement('balance', $difference);
+                    }
                 }
             }
+
             $opd_patient = $this->opd_patient->updates($id);
-
+            if ($user_opd_patient->first_aid_treatment === 1) {
             $firstaid = $this->opd_firstaid->updates($id);
-
+        }
             $isreffered = $this->isreffered->updates($id);
             Session::flash('success', __('Your data has been created successfully'));
 
