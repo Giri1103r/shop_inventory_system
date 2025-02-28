@@ -361,7 +361,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/status', [EmployeeController::class, 'statusChange']);
                 Route::post('/unique', [EmployeeController::class, 'Uniquecheck']);
                 Route::get('/passwordchange/{id}', [EmployeeController::class, 'PasswordUpdate']);
-                Route::post('/passwordchange/submit', [EmployeeController::class, 'PasswordUp`dateSubmit']);
+                Route::post('/passwordchange/submit', [EmployeeController::class, 'PasswordUpdateSubmit']);
                 Route::post('/company-ajax', [EmployeeController::class, 'companyajax']);
                 Route::get('/ajax-list/{unit_id}/{id}', [EmployeeController::class, 'list']);
             });
