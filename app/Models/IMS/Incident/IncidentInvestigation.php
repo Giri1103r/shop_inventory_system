@@ -47,12 +47,17 @@ class IncidentInvestigation extends Model
     public function store()
     {
         $request = request();
-// dd($request);
+
+        $decryptedDamaged = array_map('decryptId', $request->anything_damaged);
+
+        $commaSeparatedDamaged = implode(',', $decryptedDamaged);
         $insert_array = array(
             'incident_id' => decryptId($request->incident_id),
-            'witness_id' => decryptId($request->witness_id),
-            'anything_damaged' => $request->anything_damaged,
-            'root_cause_analysis' => $request->root_cause,
+            'witness_id' => !empty($request->witness_id) && is_array($request->witness_id)
+                ? implode(',', array_map('decryptId', $request->witness_id))
+                : null,
+            'anything_damaged' => $commaSeparatedDamaged,
+            'root_cause_analysis' => $request->root_cause ?? null,
             'action_taken' => $request->action_taken,
             'corrective_preventive_action' => $request->corrective_preventive_action,
             'responsible_person_id' => decryptId($request->responsible_person_id),
@@ -60,9 +65,12 @@ class IncidentInvestigation extends Model
             'remark' => $request->remark,
             'created_by' => Auth::id()
         );
-        // dd($insert_array);
+
+        // dd($insert_array); // Debugging
+
         return $this->create($insert_array);
     }
+
 
     // protected static function booted()
     // {

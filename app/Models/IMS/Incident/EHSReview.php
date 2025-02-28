@@ -47,9 +47,12 @@ class EHSReview extends Model
     public function store($type)
     {
         $request = request();
-        $decryptedTeamMemberIds = array_map('decryptId', $request->team_member);
+        $decryptedTeamMemberIds = is_array($request->team_member)
+            ? array_map('decryptId', $request->team_member)
+            : [];
 
-        $commaSeparatedTeamMembers = implode(',', $decryptedTeamMemberIds);
+        $commaSeparatedTeamMembers = !empty($decryptedTeamMemberIds) ? implode(',', $decryptedTeamMemberIds) : null;
+
 
         $insert_array = array(
             'type' => $type,
@@ -64,7 +67,6 @@ class EHSReview extends Model
             'target_date' => DBdateformat($request->target_date),
             'created_by' => Auth::id()
         );
-
         return $this->create($insert_array);
     }
 }

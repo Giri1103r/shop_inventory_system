@@ -138,7 +138,7 @@ class InitialIncidentController extends Controller
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/approvereject/' . encryptId($row->id)) . '" class=" " title="Investigation"><i class="fa fa-exclamation-triangle" style="color: #e83333;"></i>';
                             }
 
-                            if ($row->incident_status == 5) {
+                            if ($row->incident_status == 5 || $row->incident_status == 8) {
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
                             }
                             if ($row->incident_status == 6) {
@@ -154,7 +154,11 @@ class InitialIncidentController extends Controller
                             if ($row->incident_status == 7) {
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
                             }
-                            
+
+                            $btn .= '<a href="' . admin_url('incident/initial-incident/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                             </a>';
+
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status', 'status_batch'])
@@ -299,10 +303,44 @@ class InitialIncidentController extends Controller
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
-                $hira = $this->initialincident->selectOne($id);
+                $incident_report = $this->initialincident->selectOne($id);
+                $getEHSVerify = $this->initialincident->getEHSVerifyincident($id);
+                $getEHSReview = $this->initialincident->getEHSReviewincident($id);
+                $getInvestigation = $this->initialincident->getInvestigation($id);
+                $getwhywhy = $this->initialincident->getwhywhy($id);
+                $getfishbone = $this->initialincident->getfishbone($id);
+                $fishboneData = json_decode($getfishbone->first()->fishbone, true);
+                $getrisklevel = $this->initialincident->getrisklevel($id);
+                $getEHSApprovalincident = $this->initialincident->getEHSApprovalincident($id);
+                // dd($getEHSVerify);
+                $initialincidentevidence = $this->initialincidentevidence->selectOne($id);
+
+                $mediaOptions = [
+                    1 => 'Phone',
+                    2 => 'Walkie Talkie',
+                    3 => 'Extension',
+                    4 => 'Others',
+                ];
+
+                $selectedMedia = isset($incident_report->reporting_media)
+                    ? explode(',', $incident_report->reporting_media)
+                    : [];
+
+                $displayMedia = array_map(function ($media) use ($mediaOptions) {
+                    return $mediaOptions[$media] ?? $media;
+                }, $selectedMedia);
 
                 $data = array(
-                    'hira' => $hira,
+                    'incident_report' => $incident_report,
+                    'displayMedia' => $displayMedia,
+                    'initialincidentevidence' => $initialincidentevidence,
+                    'getEHSVerify' => $getEHSVerify,
+                    'getInvestigation' => $getInvestigation,
+                    'getEHSReview' => $getEHSReview,
+                    'getwhywhy' => $getwhywhy,
+                    'fishboneData' => $fishboneData,
+                    'getrisklevel' => $getrisklevel,
+                    'getEHSApprovalincident' => $getEHSApprovalincident,
                 );
             }
             return view('ims.initial.incident.view', $data);
@@ -512,6 +550,7 @@ class InitialIncidentController extends Controller
             $incident_report = $this->initialincident->selectOne($incidentId);
             $initialincidentevidence = $this->initialincidentevidence->selectOne($incidentId);
             $getEHSVerify = $this->initialincident->getEHSVerifyincident($incidentId);
+            $getEHSReview = $this->initialincident->getEHSReviewincident($incidentId);
             $mediaOptions = [
                 1 => 'Phone',
                 2 => 'Walkie Talkie',
@@ -534,6 +573,7 @@ class InitialIncidentController extends Controller
                 'displayMedia' => $displayMedia,
                 'initialincidentevidence' => $initialincidentevidence,
                 'getEHSVerify' => $getEHSVerify,
+                'getEHSReview' => $getEHSReview,
 
             );
 
@@ -547,13 +587,14 @@ class InitialIncidentController extends Controller
     public function existingHira($incident_id, Request $request)
     {
         try {
+            $accident_id = '';
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->get();
 
             if ($request->ajax()) {
-                return view('ims.initial.incident.existinghira', compact('hiraList', 'incident_id'))->render();
+                return view('ims.initial.incident.existinghira', compact('hiraList', 'accident_id', 'incident_id'))->render();
             }
 
-            return view('ims.initial.incident.existinghira', compact('hiraList', 'incident_id'));
+            return view('ims.initial.incident.existinghira', compact('hiraList', 'accident_id', 'incident_id'));
         } catch (Exception $error) {
             return response()->json(['error' => $error->getMessage()], 500);
         }
@@ -561,9 +602,9 @@ class InitialIncidentController extends Controller
     public function saveHira(Request $request)
     {
         try {
-            
 
-        
+
+
             $HiraMoc = new HiraMoc();
             $HiraMoc->incident_id = $request->incident_id;
             $HiraMoc->accident_id = $request->accidentId;
@@ -583,13 +624,14 @@ class InitialIncidentController extends Controller
     public function existingMOC($incident_id, Request $request)
     {
         try {
+            $accident_id = '';
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->get();
 
             if ($request->ajax()) {
-                return view('ims.initial.incident.existingMOC', compact('hiraList', 'incident_id'))->render();
+                return view('ims.initial.incident.existingMOC', compact('hiraList', 'accident_id', 'incident_id'))->render();
             }
 
-            return view('ims.initial.incident.existingMOC', compact('hiraList', 'incident_id'));
+            return view('ims.initial.incident.existingMOC', compact('hiraList', 'accident_id', 'incident_id'));
         } catch (Exception $error) {
             return response()->json(['error' => $error->getMessage()], 500);
         }
@@ -603,7 +645,7 @@ class InitialIncidentController extends Controller
             if ($request->root_cause ==  3) {
                 $incident_status = STATUS_INCIDENT_CLOSED;
             } else {
-                $incident_status = STATUS_RISKANALYSIS_PENDING;
+                $incident_status = STATUS_UAUC_PENDING;
             }
 
 
@@ -645,6 +687,7 @@ class InitialIncidentController extends Controller
             $getfishbone = $this->initialincident->getfishbone($incidentId);
             $fishboneData = json_decode($getfishbone->first()->fishbone, true);
             $getrisklevel = $this->initialincident->getrisklevel($incidentId);
+            $getEHSReview = $this->initialincident->getEHSReviewincident($incidentId);
             // dd($getwhywhy); // To inspect the decoded fishbone data
 
             $mediaOptions = [
@@ -675,6 +718,7 @@ class InitialIncidentController extends Controller
                 'fishboneData' => $fishboneData,
                 'getwhywhy' => $getwhywhy,
                 'getrisklevel' => $getrisklevel,
+                'getEHSReview' => $getEHSReview,
 
             );
 
@@ -753,6 +797,28 @@ class InitialIncidentController extends Controller
         }
     }
 
+    public function ehsApprovalSubmit(Request $request)
+    {
+        try {
+
+            $ehsApproval = $this->ehs_review->store(3);
+            if ($request->has('approve')) {
+                $incident_status = STATUS_INCIDENT_CLOSED;
+            } else {
+                $incident_status = STATUS_EHSAPPROVAL_REJECTED;
+            }
+            $incident_id = $ehsApproval->inicdent_report_id;
+            $incident = $this->initialincident->updateStatus($incident_id, $incident_status);
+
+            Session::flash('success', 'Your data has been updated successfully!');
+            return redirect(admin_url('incident/initial-incident/list'));
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/initial-incident/list'));
+        }
+    }
+
     public function gethiradetails($hira_id)
     {
         $hira_id = decryptId($hira_id);
@@ -798,7 +864,71 @@ class InitialIncidentController extends Controller
         }
     }
 
+    public function generalpdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $incident_report = $this->initialincident->selectOne($id);
+                $getEHSVerify = $this->initialincident->getEHSVerifyincident($id);
+                $getEHSReview = $this->initialincident->getEHSReviewincident($id);
+                $getInvestigation = $this->initialincident->getInvestigation($id);
+                $getwhywhy = $this->initialincident->getwhywhy($id);
+                $getfishbone = $this->initialincident->getfishbone($id);
+                $fishboneData = json_decode($getfishbone->first()->fishbone, true);
+                $getrisklevel = $this->initialincident->getrisklevel($id);
+                $getEHSApprovalincident = $this->initialincident->getEHSApprovalincident($id);
+                $initialincidentevidence = $this->initialincidentevidence->selectOne($id);
 
+                $mediaOptions = [
+                    1 => 'Phone',
+                    2 => 'Walkie Talkie',
+                    3 => 'Extension',
+                    4 => 'Others',
+                ];
+
+                $selectedMedia = isset($incident_report->reporting_media)
+                    ? explode(',', $incident_report->reporting_media)
+                    : [];
+
+                $displayMedia = array_map(function ($media) use ($mediaOptions) {
+                    return $mediaOptions[$media] ?? $media;
+                }, $selectedMedia);
+            }
+
+            $data = array(
+                'incident_report' => $incident_report,
+                'displayMedia' => $displayMedia,
+                'initialincidentevidence' => $initialincidentevidence,
+                'getEHSVerify' => $getEHSVerify,
+                'getInvestigation' => $getInvestigation,
+                'getEHSReview' => $getEHSReview,
+                'getwhywhy' => $getwhywhy,
+                'fishboneData' => $fishboneData,
+                'getrisklevel' => $getrisklevel,
+                'getEHSApprovalincident' => $getEHSApprovalincident,
+            );
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+            $html = view('ims.initial.incident.exportpdf', $data)->render();
+            $mpdf->WriteHTML($html);
+            $filename = "Safety Permit.pdf";
+            return $mpdf->Output($filename, 'I');
+        } catch (Exception $ex) {
+
+            dd($ex);
+            report($ex);
+        }
+    }
 
     public function ExportExcel(Request $request)
     {

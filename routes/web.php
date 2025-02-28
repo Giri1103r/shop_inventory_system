@@ -1177,6 +1177,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/delete', [InitialIncidentController::class, 'delete']);
                 Route::get('/export/excel', [InitialIncidentController::class, 'exportExcel']);
                 Route::get('/export/pdf', [InitialIncidentController::class, 'exportPdf']);
+                Route::get('/generalpdf/{id}', [InitialIncidentController::class, 'generalpdf']);
                 Route::get('/sample_download', [InitialIncidentController::class, 'DownloadSample']);
                 Route::get('/import', [InitialIncidentController::class, 'import']);
                 Route::post('/import/Submit', [InitialIncidentController::class, 'importSubmit']);
@@ -1199,6 +1200,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/riskAnalysis/submit', [InitialIncidentController::class, 'riskAnalysisSubmit']);
                 Route::post('/ehs_head_verify/submit', [InitialIncidentController::class, 'ehsHeadVerifySubmit']);
                 Route::post('/actiontaken/submit', [InitialIncidentController::class, 'actiontakenSubmit']);
+                Route::post('/ehApproval/submit', [InitialIncidentController::class, 'ehsApprovalSubmit']);
             });
 
 

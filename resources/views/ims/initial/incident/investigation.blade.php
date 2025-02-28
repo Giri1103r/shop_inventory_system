@@ -267,7 +267,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Unit</label>
                                         <div class="view_data">
-                                            {{ getUsername($incident_report->unit_id) }}
+                                            {{ getUnitname($incident_report->unit_id) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -279,14 +279,14 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label require">Location</label>
                                         <div class="view_data">
-                                            {{ $incident_report->location_id }}
+                                            {{ $incident_report->location_name }}
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">IIR Type</label>
                                         <div class="view_data">
-                                            {{ $incident_report->iir_type }}
+                                            {{ $incident_report->incident_type_name }}
                                         </div>
                                     </div>
                                 </div>
@@ -375,26 +375,26 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label for="name" class="form-label">Reviewer Name</label>
                                         <div class="view_data">
-                                            {{ $getEHSVerify->reviewer_name }}
+                                            {{ $getEHSReview->reviewer_name }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Date') }}</label>
                                         <div class="view_data">
-                                            {{ $getEHSVerify->date }}
+                                            {{ Displaydateformat($getEHSReview->date) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label for="team_id" class="form-label">Assign Team
                                             members</label>
                                         <div class="view_data">
-                                            {{ $getEHSVerify->team_member_names }}
+                                            {{ $getEHSReview->team_member_names }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label">Remark</label>
                                         <div class="view_data">
-                                            {{ $getEHSVerify->remark }}
+                                            {{ $getEHSReview->remark }}
                                         </div>
                                     </div>
 
@@ -419,8 +419,8 @@
                                                 <div class="form-group form-input">
                                                     <label for="witness_id" class="form-label">Name of the
                                                         Witness</label>
-                                                    <select name="witness_id" id="witness_id"
-                                                        class="form-control witness" style="width: 100%">
+                                                    <select name="witness_id[]" id="witness_id"
+                                                        class="form-control witness" style="width: 100%" multiple>
                                                         <option value="">Select Name of the Witness</option>
                                                     </select>
                                                 </div>
@@ -429,16 +429,16 @@
                                                 <div class="form-group form-input">
                                                     <label for="anything_damaged" class="form-label require">Was anything
                                                         damaged?</label><br>
-                                                    <input type="checkbox" id="Man" name="anything_damaged"
+                                                    <input type="checkbox" id="Man" name="anything_damaged[]"
                                                         value="1">
                                                     <label for="Man">Man</label>
-                                                    <input type="checkbox" id="Machine" name="anything_damaged"
+                                                    <input type="checkbox" id="Machine" name="anything_damaged[]"
                                                         value="2">
                                                     <label for="Machine">Machine</label><br>
-                                                    <input type="checkbox" id="Materials" name="anything_damaged"
+                                                    <input type="checkbox" id="Materials" name="anything_damaged[]"
                                                         value="3">
                                                     <label for="Materials"> Materials</label>
-                                                    <input type="checkbox" id="NA" name="anything_damaged"
+                                                    <input type="checkbox" id="NA" name="anything_damaged[]"
                                                         value="4">
                                                     <label for="NA"> NA</label><br>
                                                 </div>
