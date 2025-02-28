@@ -107,16 +107,18 @@
             .slider.round:before {
                 border-radius: 50%;
             }
+
             .fishbone-container {
-            display: inline-grid;
-            grid-template-columns: repeat(4, auto);
-            grid-template-rows: auto .2em auto;
-            padding-left: 2em;
-            font-family: Arial;
-            --bone-color: #85A0B2;
-            --yellow: #FDBE22;
-            --green: #69E982;
-            --blue: #5CB2FB;
+                display: inline-grid;
+                grid-template-columns: repeat(4, auto);
+                grid-template-rows: auto .2em auto;
+                padding-left: 2em;
+                font-family: Arial;
+                --bone-color: #85A0B2;
+                --yellow: #FDBE22;
+                --green: #69E982;
+                --blue: #5CB2FB;
+            }
 
             .cause {
                 display: flex;
@@ -238,9 +240,6 @@
                 margin-bottom: 20px;
                 /* Add spacing between rows of input fields */
             }
-
-        }
-        
         </style>
     @endpush
 
@@ -308,7 +307,7 @@
                                                     <div class="col-md-4 form-input" id="injuryPersonTextContainer_0">
                                                         <label class="form-label require">Injury Person Name</label>
                                                         <input type="text" class="form-control injuryPersonName require"
-                                                            name="injury_person[0][injury_person_id]" alt="0"
+                                                            name="injury_person[0][injury_person_name]" alt="0"
                                                             id="RowInjothersdata_0" placeholder="Enter Injury Person Name">
                                                     </div>
                                                     <!-- Injury Person Name (Dropdown) -->
@@ -353,7 +352,7 @@
                                                             style="width: 100%">
                                                             <option value="">Select Department</option>
                                                             @foreach ($departmentList as $department)
-                                                                <option value="{{ $department->id }}">
+                                                                <option value="{{ encryptId($department->id) }}">
                                                                     {{ $department->department_name }}</option>
                                                             @endforeach
                                                         </select>
@@ -362,7 +361,7 @@
                                                         <div class="form-group form-input">
                                                             <label for="nature_of_injury" class="form-label">Nature of
                                                                 Injury</label>
-                                                            <select alt="0" name="nature_of_injury"
+                                                            <select alt="0" name="injury_person[0][nature_of_injury]"
                                                                 id="nature_of_injury_0" style="width: 100%"
                                                                 class="form-control single-select">
                                                                 <option value="">Nature of Injury</option>
@@ -419,10 +418,7 @@
                                                         <select name="emp_code" id="get_emp_id"
                                                             class="form-control single-select" style="width: 100%">
                                                             <option value="">Select Employee Code</option>
-                                                            {{-- @foreach ($employeeList as $emp)
-                                                            <option value="{{ $emp->emp_id }}">
-                                                                {{ $emp->emp_id }}</option>
-                                                        @endforeach --}}
+
                                                         </select>
                                                     </div>
                                                 </div>
@@ -447,20 +443,37 @@
 
                                                 <div class="col-md-4 mt-3">
                                                     <div class="form-group form-input">
-                                                        <label for="is_damaged" class="form-label require">Was anything
+                                                        <label for="is_damaged" class="form-check-label require">Was
+                                                            anything
                                                             damaged?</label><br>
-                                                        <input type="checkbox" id="Man" name="is_damaged"
-                                                            value="1">
-                                                        <label for="Man">Man</label>
-                                                        <input type="checkbox" id="Machine" name="is_damaged"
-                                                            value="2">
-                                                        <label for="Machine">Machine</label><br>
-                                                        <input type="checkbox" id="Materials" name="is_damaged"
-                                                            value="3">
-                                                        <label for="Materials"> Materials</label>
-                                                        <input type="checkbox" id="NA" name="is_damaged"
-                                                            value="4">
-                                                        <label for="NA"> NA</label><br>
+                                                        <div class="form-check">
+                                                            <input type="checkbox" id="Man"
+                                                                class="form-check-input" name="is_damaged[]"
+                                                                value="{{ encryptId('1') }}">
+                                                            <label class="form-check-label" for="Man">Man</label>
+                                                        </div>
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input"
+                                                                id="Machine" name="is_damaged[]"
+                                                                value="{{ encryptId('2') }}">
+                                                            <label class="form-check-label" for="Machine">Machine</label>
+                                                        </div>
+                                                        <div class="form-check">
+
+                                                            <input type="checkbox" class="form-check-input"
+                                                                id="Materials" name="is_damaged[]"
+                                                                value="{{ encryptId('3') }}">
+                                                            <label class="form-check-label" for="Materials">
+                                                                Materials</label>
+                                                        </div>
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input"
+                                                                id="NA" name="is_damaged[]"
+                                                                value="{{ encryptId('4') }}">
+                                                            <label class="form-check-label" for="NA"> NA</label>
+                                                        </div>
+
+
                                                     </div>
                                                 </div>
 
@@ -537,23 +550,24 @@
                                                 <div class="col-md-4 mt-3">
                                                     <div class="form-group form-input">
                                                         <label for="treatment" class="form-label require">Where the
-                                                            injured
-                                                            person receiving any treatment at present?</label>
-                                                        <input type="checkbox" id="Yes" name="is_treatment"
+                                                            injured person receiving any treatment at present?</label>
+                                                        <input type="radio" id="Yes" name="is_treatment"
                                                             value="1">
                                                         <label for="Yes">Yes</label>
-                                                        <input type="checkbox" id="No" name="is_treatment"
+                                                        <input type="radio" id="No" name="is_treatment"
                                                             value="2">
                                                         <label for="No">No</label><br>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mt-2">
+                                                <div class="col-md-4 mt-2" id="details-container" style="display: none;">
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">Details</label>
                                                         <input type="text" name="details" id="details"
                                                             class="form-control" placeholder="Details">
                                                     </div>
                                                 </div>
+
+
                                                 <div class="col-md-4 mt-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">Recommended Corrective &
@@ -592,16 +606,15 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-
-                                            <div class="row mt-3" style="display: none;">
+                                            <hr>
+                                            <div class="row mt-3 whywhy" style="display: none;">
                                                 <div class="card p-3">
                                                     <div
                                                         class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
                                                         <h4 class="text-dark mb-0">Why Why Analysis</h4>
                                                         <button type="button"
                                                             class="btn btn-sm btn-success addwhywhyanalysis">
-                                                             Add
+                                                            Add
                                                         </button>
                                                     </div>
 
@@ -648,7 +661,9 @@
                                                                             name="whywhyanalysis[0][whywhyanalysis_fifth]"
                                                                             class="form-control"></td>
                                                                     <td><button type="button"
-                                                                            class="btn btn-sm removewhywhyanalysisRow"><i class="fa-solid fa-trash text-danger" ></i></button></td>
+                                                                            class="btn btn-sm  removewhywhyanalysisRow"> <i
+                                                                                class="fa-solid fa-trash text-danger"></i></button>
+                                                                    </td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
@@ -656,34 +671,41 @@
                                                 </div>
                                             </div>
 
-                                            <div class="row m-5 p-3" style="display: none;">
+
+                                            <div class="row m-5 p-3 fishbone" style="display: none;">
                                                 <div class="fishbone-container " style="text-align: center;">
                                                     <!-- Mensch -->
                                                     <div class="cause">
                                                         <div class="rootcause blue">
                                                             <input type="text" class="form-control"
-                                                                placeholder="Enter value">
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[first][root_cause]">
                                                         </div>
                                                         <div class="subcause">
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat "
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[first][sub][category_1]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[first][sub][category_2]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[first][sub][category_3]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[first][sub][category_4]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[first][sub][category_5]">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -692,28 +714,34 @@
                                                     <div class="cause">
                                                         <div class="rootcause green">
                                                             <input type="text" class="form-control"
-                                                                placeholder="Enter value">
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[second][root_cause]">
                                                         </div>
                                                         <div class="subcause">
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[second][sub][category_1]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[second][sub][category_2]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[second][sub][category_3]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[second][sub][category_4]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[second][sub][category_5]">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -722,28 +750,34 @@
                                                     <div class="cause">
                                                         <div class="rootcause yellow">
                                                             <input type="text" class="form-control"
-                                                                placeholder="Enter value">
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[third][root_cause]">
                                                         </div>
                                                         <div class="subcause">
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[third][sub][category_1]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[third][sub][category_2]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[third][sub][category_3]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[third][sub][category_4]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[third][sub][category_5]">
                                                             </div>
 
                                                         </div>
@@ -757,28 +791,34 @@
                                                         <div class="subcause">
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[fourth][sub][category_1]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[fourth][sub][category_2]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[fourth][sub][category_3]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[fourth][sub][category_4]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[fourth][sub][category_5]">
                                                             </div>
                                                         </div>
                                                         <div class="rootcause blue">
                                                             <input type="text" class="form-control"
-                                                                placeholder="Enter value">
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[fourth][root_cause]">
                                                         </div>
                                                     </div>
 
@@ -787,29 +827,35 @@
                                                         <div class="subcause">
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[fifth][sub][category_1]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[fifth][sub][category_2]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[fifth][sub][category_3]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[fifth][sub][category_4]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[fifth][sub][category_5]">
                                                             </div>
 
                                                         </div>
                                                         <div class="rootcause green">
                                                             <input type="text" class="form-control"
-                                                                placeholder="Enter value">
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[fifth][root_cause]">
                                                         </div>
 
                                                     </div>
@@ -819,28 +865,34 @@
                                                         <div class="subcause">
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[sixth][sub][category_1]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[sixth][sub][category_2]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[sixth][sub][category_3]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[sixth][sub][category_4]">
                                                             </div>
                                                             <div class="stat">
                                                                 <input type="text" class="form-control sub-stat"
-                                                                    placeholder="Enter value">
+                                                                    placeholder="Enter value"
+                                                                    name = "fishbone[sixth][sub][category_5]">
                                                             </div>
                                                         </div>
                                                         <div class="rootcause yellow">
                                                             <input type="text" class="form-control"
-                                                                placeholder="Enter value">
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[sixth][root_cause]">
                                                         </div>
                                                     </div>
 
@@ -849,15 +901,17 @@
                                                     <div class="defect">
                                                         <div class="defect-text">
                                                             <input type="text" class="form-control"
-                                                                placeholder="Enter value">
+                                                                placeholder="Enter value"
+                                                                name = "fishbone[root_cause][main]">
                                                         </div>
                                                     </div>
                                                     <div class="defect-spacer-bottom"></div>
                                                 </div>
                                             </div>
 
+
                                         </div>
-                                        <hr>
+
                                         <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
@@ -874,7 +928,6 @@
                 </div>
             </div>
         </div>
-        </form>
     </div>
     <!--injury model-->
 
@@ -1498,7 +1551,7 @@
                                                 class="btn btn-secondary btn-warnings injcancel center"
                                                 data-bs-dismiss="modal">{{ 'Cancel' }}</button>
                                             <!--
-                                                                                                                                                                                                                                                                                                                                            <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
+                                                                                                                                                                                                                                                                                                                                                                    <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
 
                                         </div>
                                     </div>
@@ -1510,8 +1563,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                                                                                                                                                                                                                                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                                                                                                                                                                                                                    </div>-->
+                                                                                                                                                                                                                                                                                                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                                                                                                                                                                                                                                            </div>-->
             </div>
         </div>
     </div>
@@ -1521,6 +1574,13 @@
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
+            $('input[name="is_treatment"]').on('change', function() {
+                if ($('#Yes').is(':checked')) {
+                    $('#details-container').show();
+                } else {
+                    $('#details-container').hide();
+                }
+            });
 
             $(document).on('click', '.popupwindow', function(e) {
                 e.preventDefault();
@@ -1699,21 +1759,18 @@
 
             $("#root_cause_analysis").change(function() {
                 if ($(this).val() == "1") {
-                    $(".row.mt-3").show(); // Show the Why Why Analysis section
+                    $(".whywhy").show(); // Show the Why Why Analysis section
                 } else {
-                    $(".row.mt-3").hide(); // Hide it when another option is selected
+                    $(".whywhy").hide(); // Hide it when another option is selected
                 }
             });
-            let whywhyanalysisIndex = {{ count($incident_investigation_draft['whywhyanalysis'] ?? []) ?: 1 }};
+            let whywhyanalysisIndex = {{ 1 }};
 
-            function updateRootCauseAnalysis() {
-                const values = $(".whywhyanalysis_fifth").map(function() {
-                    return $(this).val().trim();
-                }).get().filter(value => value !== "");
-                $("#root_cause_analysis").val(values.join("\n"));
-            }
+
 
             $(".addwhywhyanalysis").on("click", function() {
+
+                console.log("Root Cause Selected Value:", $("#root_cause_analysis").val());
                 const newRow = `
             <tr id="RowwhywhyanalysisView${whywhyanalysisIndex}">
                 <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_first]" class="form-control"></td>
@@ -1727,7 +1784,7 @@
                 <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_fifth]" class="form-control whywhyanalysis_fifth"></td>
                 <td>
                     <button type="button" class="btn btn-sm  removewhywhyanalysisRow">
-                      <i class="fa-solid fa-trash text-danger" ></i>
+                     <i class="fa-solid fa-trash text-danger"></i>
                     </button>
                 </td>
             </tr>
@@ -1735,7 +1792,7 @@
 
                 $("#whywhyanalysisBody").append(newRow);
                 whywhyanalysisIndex++;
-                updateRootCauseAnalysis();
+
             });
 
             $(document).on("click", ".removewhywhyanalysisRow", function() {
@@ -1754,7 +1811,6 @@
                         if (result.isConfirmed) {
                             $(this).closest("tr").fadeOut(300, function() {
                                 $(this).remove();
-                                updateRootCauseAnalysis();
                             });
 
                             Swal.fire("Deleted!", "The row has been deleted.", "success");
@@ -1765,10 +1821,13 @@
                 }
             });
 
-            $(document).on("input", ".whywhyanalysis_fifth", function() {
-                updateRootCauseAnalysis();
+            $("#root_cause_analysis").change(function() {
+                if ($(this).val() == "2") {
+                    $(".fishbone").show(); // Show the Why Why Analysis section
+                } else {
+                    $(".fishbone").hide(); // Hide it when another option is selected
+                }
             });
-
 
             $(function() {
                 $('#accidentinvestigation').validate({
@@ -1881,7 +1940,7 @@
                         <div class="col-md-4 form-input" id="injuryPersonTextContainer_${injuryIndex}">
                                 <label class="form-label require">Injury Person Name</label>
                             <input type="text"  alt="${injuryIndex}" class="form-control injuryPersonNamerequire"
-                                name="injury_person[${injuryIndex}][injury_person_id]" id="RowInjothersdata_${injuryIndex}"
+                                name="injury_person[${injuryIndex}][injury_person_name]" id="RowInjothersdata_${injuryIndex}"
                                 placeholder="Enter Injury Person Name">
                         </div>
                                 <!-- Injury Person Name (Dropdown) -->
@@ -1898,22 +1957,16 @@
                             <div class="col-md-4 form-input d-none" id="injuryPersonDepttexxt_${injuryIndex}">
                                 <label class="form-label">Injury Person Department</label>
                                 <input type="text" alt="${injuryIndex}"  name="injury_person[${injuryIndex}][injury_person_department_id]"
-                                class="form-control InjPerDept" id="InjPerDept_${injuryIndex}">  </div>
+                                class="form-control InjPerDept" id="InjPerDept_${injuryIndex}"> 
+                                
+                            </div>
 
-                        <div class="col-md-4 form-input" id="injuryPersonDeptDropdown_${injuryIndex}">
-                            <label class="form-label">Injury Person Department</label>
-                            <select class="form-control single-select" alt="${injuryIndex}" name="injury_person[${injuryIndex}][injury_person_department_id]" style="width: 100%">
-                                <option value="">Select Department</option>
-                                @foreach ($departmentList as $department)
-                                    <option value="{{ $department->id }}">{{ $department->department_name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+            
 
                         <div class="col-md-4">
                             <div class="form-group form-input">
                             <label for="nature_of_injury_${injuryIndex}" class="form-label">Nature of  Injury</label>
-                                <select name="nature_of_injury" alt="${injuryIndex}"  id="nature_of_injury_${injuryIndex}"
+                                <select name="injury_person[${injuryIndex}][nature_of_injury]" alt="${injuryIndex}"  id="nature_of_injury_${injuryIndex}"
                                 style="width: 100%" class="form-control single-select">
                                     <option value="">Nature of Injury</option>
                                     <option value="{{ encryptId('1') }}">Major</option>

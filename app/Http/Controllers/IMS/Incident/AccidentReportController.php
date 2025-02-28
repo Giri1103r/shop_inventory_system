@@ -30,6 +30,9 @@ use App\Models\IMS\Incident\AccidentInvestigationInjury;
 use App\Models\IMS\Incident\AccidentInvestigation;
 use App\Models\IMS\Master\Hira;
 use App\Models\IMS\Incident\HiraMoc;
+use App\Models\IMS\Incident\RiskAnalysis;
+use App\Models\IMS\Incident\WhyWhyAnalysis;
+use App\Models\IMS\Incident\FishboneAnalysis;
 
 class AccidentReportController extends Controller
 {
@@ -47,6 +50,9 @@ class AccidentReportController extends Controller
     private $uploadlog;
     private $hira;
     private $hiramoc;
+    private $riskanalysis;
+    private $whyanalysis;
+    private $fishboneAnalysis;
 
     public function __construct()
     {
@@ -65,6 +71,9 @@ class AccidentReportController extends Controller
         $this->uploadlog = new UploadLog();
         $this->hira = new Hira();
         $this->hiramoc = new HiraMoc();
+        $this->riskanalysis = new RiskAnalysis();
+        $this->whyanalysis = new WhyWhyAnalysis();
+        $this->fishboneAnalysis = new FishboneAnalysis();
     }
 
 
@@ -533,8 +542,8 @@ class AccidentReportController extends Controller
 
             $ehsReview = $this->ehs_review->store();
             $accident_status = 2;
-            $accidentReportId = $ehsReview->accident_report_id;
-            $accident = $this->accident_report->updateStatus($accidentReportId, $accident_status);
+            $accidentId = $ehsReview->accident_report_id;
+            $accident = $this->accident_report->updateStatus($accidentId, $accident_status);
 
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
@@ -597,10 +606,30 @@ class AccidentReportController extends Controller
             // if ($validator->fails()) {
             //     return redirect()->back()->withErrors($validator)->withInput();
             // }
-            dd($request);
+            $incident_id = null;
+            $fire_id = null;
+            $accident_id = decryptId($request->accident_id);
+
+                 if ($request->root_cause_analysis ==  3) {
+                    $accident_status = STATUS_INCIDENT_CLOSED;
+                } else {
+                    $accident_status = STATUS_RISKANALYSIS_PENDING;
+                }
+
                 $accident_investigation =  $this->accident_investigation->store();
-                $investigation_injury =  $this->accident_investigation_injury->store($accident_investigation->id);
-               
+                $investigation_injury =  $this->accident_investigation_injury->store($accident_id, $accident_investigation->id);
+
+                $accident = $this->accident_report->updateStatus($accident_id, $accident_status);
+
+                if ($accident_investigation->root_cause_analysis ==  1) {
+                    $whyanalysis = $this->whyanalysis->store($accident_id, $incident_id, $fire_id , $accident_investigation->id);
+                }
+                if ($accident_investigation->root_cause_analysis == 2) {
+                    $this->fishboneAnalysis->storeFishbone($accident_id, $incident_id, $fire_id , $accident_investigation->id);
+                }
+    
+                $this->hiramoc->updateAccidentInvestigation($accident_id, $accident_investigation->id);
+
                 Session::flash('success', 'Your data has been created successfully!');
            
             return redirect(admin_url('accidentReport/list'));
@@ -762,6 +791,7 @@ class AccidentReportController extends Controller
             $addInjury = $this->accident_body_parts->addInjury();
             return $addInjury;
         } catch (Exception $ex) {
+            dd($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }

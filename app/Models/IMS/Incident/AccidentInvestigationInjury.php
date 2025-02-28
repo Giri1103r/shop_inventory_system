@@ -43,25 +43,23 @@ class AccidentInvestigationInjury extends Model
         'trash' => 'NO',
     ];
 
-    public function store($accident_investigationId)
+    public function store($accident_id ,$accident_investigationId)
     {
         $request = request();
-        // dd($request->all());
         $IncidentBodyParts = new AccidentBodyParts();
-
+        
         $injuryPerson = $request->input('injury_person');
-
         if (!empty($injuryPerson) && is_array($injuryPerson)) {
             foreach ($injuryPerson as $injuryPersonData) {
                 $insert_array = [
-                    'accident_id' => decryptId($request->accident_id),
+                    'accident_id' => $accident_id,
                     'accident_investigation_id' => $accident_investigationId,
-                    'injury_person_type' => $injuryPersonData['injury_person_type'],
+                    'injury_person_type' => decryptId($injuryPersonData['injury_person_type']),
                     'injury_person_id' => decryptId($injuryPersonData['injury_person_id']),
                     'injury_person_name' => $injuryPersonData['injury_person_name'],
                     'injury_person_designation' => $injuryPersonData['injury_person_designation'],
                     'injury_person_department_id' => decryptId($injuryPersonData['injury_person_department_id']),
-                    'nature_of_injury' => $injuryPersonData['nature_of_injury'],
+                    'nature_of_injury' => decryptId($injuryPersonData['nature_of_injury']),
                     'created_by' => Auth::id()
                 ];
                 $saveinjuryData = $this->create($insert_array);
@@ -77,5 +75,16 @@ class AccidentInvestigationInjury extends Model
             }
         }
         $IncidentBodyParts->updateStatusForIncident(decryptId($accident_investigationId), $inj_person_arr);
+    }
+
+    public function deleterecord($id)
+    {
+
+        $update_data = array(
+            'status' => 0,
+            'trash' => 'YES',
+        );
+
+        return $this->where('id', $id)->update($update_data);
     }
 }
