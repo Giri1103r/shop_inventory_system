@@ -42,14 +42,15 @@
                                                     <label class="form-label require">Vendor Name</label>
                                                     <input type="text" name ="vendor_name" id="vendor_name"
                                                         class="form-control" placeholder="Enter the vendor name"
-                                                        value="{{ $vendor->vendor_name }}" >
+                                                        value="{{ $vendor->vendor_name }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">License Number</label>
-                                                    <input type="text" name="license_no" id="license_no" class="form-control"
-                                                        placeholder="Enter the License_no" value="{{ $vendor->license_no }}">
+                                                    <input type="text" name="license_no" id="license_no"
+                                                        class="form-control" placeholder="Enter the License_no"
+                                                        value="{{ $vendor->license_no }}">
                                                 </div>
                                             </div>
 
@@ -91,13 +92,20 @@
             });
         });
         $(function() {
+            $.validator.addMethod(
+                "regex",
+                function(value, element, pattern) {
+                    return this.optional(element) || new RegExp(pattern).test(value);
+                },
+                "Invalid format."
+            );
             $('#vendoredit').validate({
                 rules: {
                     vendor_name: {
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        pattern: /^[a-zA-Z0-9\s\-]*$/,
+                        regex: /^(?!\s*$)[a-zA-Z0-9\s]+$/,
                         remote: {
                             url: '{{ admin_url('ohc/vendor/unique') }}',
                             type: 'post',
@@ -115,6 +123,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
+                        regex: /^(?!\s*$)[a-zA-Z0-9\s-/]+$/,
                         remote: {
                             url: '{{ admin_url('ohc/vendor/unique') }}',
                             type: 'post',
@@ -139,13 +148,15 @@
                         required: "{{ __('Vendor Name is Required') }}",
                         minlength: " Minimum character should not less than 3 ",
                         maxlength: "Maximum Characters should not exceed 30 ",
-                        pattern: "Vendor name contains invalid characters.",
+                        regex: "Vendor name contains invalid characters.",
                         remote: "{{ __('Vendor Name should be unique') }}"
                     },
                     license_no: {
                         required: "{{ __('license No is Required') }}",
                         minlength: "Minimum character should not less than 3 ",
-                        maxlength: "Maximum Characters should not exceed 10",
+                        regex: "license No contains invalid characters.",
+                        remote: "{{ __('license No should be unique') }}"
+                        maxlength: "Maximum Characters should not exceed 30",
 
                     },
                     address: {

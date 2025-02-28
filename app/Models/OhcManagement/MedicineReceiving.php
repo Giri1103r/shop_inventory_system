@@ -44,6 +44,7 @@ class MedicineReceiving extends Model
         $empId = $user->employee_id;
         $query = $this->select(
             'ohc_management_medicine_receiving.*',
+          'ohc_management_medicine_receiving.approve_status as approvedStatus',
             'ohc_master_vendor.vendor_name',
             'ohc_master_medicine.pack',
         )
@@ -70,7 +71,11 @@ class MedicineReceiving extends Model
         if ($request->search['value'] != null) {
             $search = $request->search['value'];
             $query->where(function ($query) use ($search) {
-                $query->orWhere('medicine_id', 'LIKE', '%' . $search . '%');
+                $query->orWhere('medicine_id', 'LIKE', '%' . $search . '%')
+               ->orWhere('ohc_management_medicine_receiving.hsn_id', 'LIKE', '%' . $search . '%')
+               ->orWhere('batch_number', 'LIKE', '%' . $search . '%')
+               ->orWhere('ohc_management_medicine_receiving.expire_date', 'LIKE', '%' . $search . '%')
+               ->orWhere('rate', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('medicine_id') && $request->medicine_id) {
@@ -92,7 +97,12 @@ class MedicineReceiving extends Model
             $query->where('ohc_management_medicine_receiving.created_at', '<=', $endDate);
         }
         if ($request->has('approve_status') && $request->approve_status) {
-            $query = $query->where('ohc_management_medicine_receiving.approve_status', 'LIKE', '%' . $request->approve_status . '%');
+
+            $query = $query->where('ohc_management_medicine_receiving.approve_status',  $request->approve_status . '%');
+        }
+        if ($request->has('expire_date') && $request->expire_date) {
+
+            $query = $query->where('ohc_management_medicine_receiving.expire_date', 'LIKE', '%' . DBdateformat($request->expire_date ). '%');
         }
 
         $org_total_counts = $query->count();
@@ -214,7 +224,9 @@ class MedicineReceiving extends Model
             $endDate = Carbon::parse($request->to_date)->endOfDay();
             $query->where('ohc_management_medicine_receiving.created_at', '<=', $endDate);
         }
-
+        if ($request->has('expire_date') && $request->expire_date) {
+            $query = $query->where('ohc_management_medicine_receiving.expire_date', 'LIKE', '%' . $request->expire_date . '%');
+        }
         return $query->orderByDesc('id')->get();
     }
 

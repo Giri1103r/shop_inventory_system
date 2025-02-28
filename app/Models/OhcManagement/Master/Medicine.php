@@ -57,6 +57,9 @@ class Medicine extends Model
             $query->where(function ($query) use ($search) {
                 $query
                     ->orWhere('medicine', 'LIKE', '%' . $search . '%')
+                    ->orWhere('expiry_date', 'LIKE', '%' . $search . '%')
+                    ->orWhere('hsn', 'LIKE', '%' . $search . '%')
+                    ->orWhere('threshold_limit', 'LIKE', '%' . $search . '%')
                     ->orWhere('pack', 'LIKE', '%' . $search . '%');
             });
         }
@@ -83,6 +86,10 @@ class Medicine extends Model
 
             $query = $query->where('ohc_master_medicine.status', decryptId($request->status));
         }
+        if ($request->has('approve_status') && $request->approve_status) {
+
+            $query = $query->where('ohc_master_medicine.approve_status', decryptId($request->approve_status));
+        }
         $data_count = $query;
         $total_records = $data_count->count();
 
@@ -102,15 +109,15 @@ class Medicine extends Model
         return $datas;
     }
 
-    public function uniqueCheck($medicine_name, $unit_id)
+    public function uniqueCheck($medicine_name)
     {
 
-        return $this->where('unit_id',  $unit_id)->where('medicine', $medicine_name)->get();
+        return $this->where('medicine', $medicine_name)->get();
     }
 
-    public function existUniqueCheck($medicine_name,  $unit_id, $id)
+    public function existUniqueCheck($medicine_name,$id)
     {
-        return $this->where('unit_id',  $unit_id)->where('medicine', $medicine_name)
+        return $this->where('medicine', $medicine_name)
             ->where('id', '!=', $id)
             ->get();
     }
@@ -139,7 +146,7 @@ class Medicine extends Model
             // 'unit_id' => $request->unit_id,
             'expiry_date' =>  DBdateformat($request->expire_date),
             'remarks' => $request->remarks,
-            'approve_status'=>STATUS_OHC_EHS_HEAD_APPROVAL_PENDING,
+            'approve_status' => STATUS_OHC_EHS_HEAD_APPROVAL_PENDING,
             'created_by' => Auth::id(),
             'status' => 0,
         );
@@ -160,7 +167,7 @@ class Medicine extends Model
             'expiry_date' => DBdateformat($request->expire_date),
             'remarks' => $request->remarks,
             'updated_by' => Auth::id(),
-            'approve_status'=>STATUS_OHC_EHS_HEAD_APPROVAL_PENDING,
+            'approve_status' => STATUS_OHC_EHS_HEAD_APPROVAL_PENDING,
             'status' => 0,
         );
 
@@ -203,22 +210,26 @@ class Medicine extends Model
         $request = request();
         $search = '';
         $query = $this->select('ohc_master_medicine.*');
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
 
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhere('medicine', 'LIKE', '%' . $search . '%')
+        if (!empty($request->search) && isset($request->search['value']) && $request->search['value'] !== '') {
+            $search = $request->search['value'];
+
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('medicine', 'LIKE', '%' . $search . '%')
+                    ->orWhere('expiry_date', 'LIKE', '%' . $search . '%')
+                    ->orWhere('hsn', 'LIKE', '%' . $search . '%')
+                    ->orWhere('threshold_limit', 'LIKE', '%' . $search . '%')
                     ->orWhere('pack', 'LIKE', '%' . $search . '%');
             });
         }
+
         if ($request->has('medicine') && $request->medicine) {
-            $query = $query->where('medicine', 'LIKE', '%' . $request->medicine . '%');
+            $query->where('medicine', 'LIKE', '%' . $request->medicine . '%');
         }
-        if ($request->has('unit') && $request->unit) {
-            $query = $query->where('ohc_master_medicine.unit_id', 'LIKE', '%' . $request->unit . '%');
-        }
+
         if ($request->has('expire_date') && $request->expire_date) {
-            $query = $query->where('ohc_master_medicine.expiry_date', 'LIKE', '%' . DBdateformat($request->expire_date) . '%');
+            $query->where('ohc_master_medicine.expiry_date', 'LIKE', '%' . DBdateformat($request->expire_date) . '%');
         }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
@@ -231,14 +242,20 @@ class Medicine extends Model
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
             $query->where('ohc_master_medicine.created_at', '<=', $endDate);
         }
-        if ($request->has('status') && $request->status) {
+        if ($request->has('approve_status') && $request->approve_status) {
 
-            $query = $query->where('ohc_master_medicine.status', decryptId($request->status));
+            $query = $query->where('ohc_master_medicine.approve_status', decryptId($request->approve_status));
         }
+
+        if ($request->has('status') && $request->status) {
+            $query->where('ohc_master_medicine.status', decryptId($request->status));
+        }
+
         $query->orderBy('id', 'DESC');
 
-        return  $query->get();
+        return $query->get();
     }
+
 
     public function selectOne($id)
     {
@@ -246,7 +263,7 @@ class Medicine extends Model
         $data = $this->select(
             'ohc_master_medicine.*'
         )
-            ->where('ohc_master_medicine.id', $id)->where('trash','NO')
+            ->where('ohc_master_medicine.id', $id)->where('trash', 'NO')
             ->first();
 
         return $data;
@@ -264,7 +281,7 @@ class Medicine extends Model
 
     public function ajaxList($unitId = '')
     {
-        $query = $this->select('id', 'medicine','pack')->where('status', 1);
+        $query = $this->select('id', 'medicine', 'pack')->where('status', 1);
 
 
         if (!empty($unitId)) {
@@ -288,7 +305,7 @@ class Medicine extends Model
 
     public function stocklist($medicineid)
     {
-       return $this->where('id',$medicineid)->where('status',1)->first();
+        return $this->where('id', $medicineid)->where('status', 1)->first();
     }
 
     // stock update approval
@@ -310,8 +327,6 @@ class Medicine extends Model
                 'approve_status' => $updateData['approve_status']
             ]);
         }
-
-
     }
 
     protected static function booted()

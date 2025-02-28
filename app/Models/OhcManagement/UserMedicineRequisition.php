@@ -38,10 +38,22 @@ class UserMedicineRequisition extends Model
 
         if ($request->search['value'] != null) {
             $search = $request->search['value'];
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('unit_id', 'LIKE', '%' . $search . '%');
+
+
+            $formattedDate = null;
+            if (\DateTime::createFromFormat('d-m-Y', $search)) {
+                $formattedDate = \Carbon\Carbon::createFromFormat('d-m-Y', $search)->format('Y-m-d');
+            }
+
+            $query->where(function ($query) use ($search, $formattedDate) {
+                $query->orWhere('req_id', 'LIKE', '%' . $search . '%');
+
+                if ($formattedDate) {
+                    $query->orWhere('request_date', 'LIKE', '%' . $formattedDate . '%');
+                }
             });
         }
+
 
 
         if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
@@ -53,10 +65,8 @@ class UserMedicineRequisition extends Model
             $query->where('ohc_management_user_medicine_requisition.created_by',Auth::id());
         }
 
-        if ($request->has('status') && $request->status) {
 
-            $query = $query->where('ohc_management_user_medicine_requisition.approve_status', ($request->status));
-        }
+
         if ($request->has('req_id') && $request->req_id) {
 
             $query = $query->where('ohc_management_user_medicine_requisition.req_id', $request->req_id);
@@ -85,7 +95,9 @@ class UserMedicineRequisition extends Model
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
             $query->where('ohc_management_user_medicine_requisition.created_at', '<=', $endDate);
         }
-
+        if ($request->filled('status')) {
+            $query->where('ohc_management_user_medicine_requisition.approve_status', 'LIKE', '%' . $request->status . '%');
+        }
 
         $org_total_counts = $query->count();
 
@@ -183,14 +195,23 @@ class UserMedicineRequisition extends Model
                 $query->where('ohc_management_user_medicine_requisition.created_by',Auth::id());
             }
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
+            if (!empty($request->search) && isset($request->search['value']) && $request->search['value'] !== '') {
+                $search = $request->search['value'];
 
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhere('unit_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('department_id', 'LIKE', '%' . $search . '%');
-            });
-        }
+
+                $formattedDate = null;
+                if (\DateTime::createFromFormat('d-m-Y', $search)) {
+                    $formattedDate = \Carbon\Carbon::createFromFormat('d-m-Y', $search)->format('Y-m-d');
+                }
+
+                $query->where(function ($query) use ($search, $formattedDate) {
+                    $query->orWhere('req_id', 'LIKE', '%' . $search . '%');
+
+                    if ($formattedDate) {
+                        $query->orWhere('request_date', 'LIKE', '%' . $formattedDate . '%');
+                    }
+                });
+            }
         if ($request->has('status') && $request->status) {
 
             $query = $query->where('ohc_management_user_medicine_requisition.approve_status', ($request->status));

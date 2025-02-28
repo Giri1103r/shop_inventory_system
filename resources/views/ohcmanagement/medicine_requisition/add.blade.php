@@ -161,7 +161,7 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-group form-input">
-                                                                    <label for="remarks"class="require">Remarks</label>
+                                                                    <label for="remarks"class="">Remarks</label>
                                                                     <textarea name="remarks[0]" id="remarks" cols="10" rows="2" class="form-control"></textarea>
                                                                 </div>
                                                             </td>
@@ -297,7 +297,7 @@
                 </td>
                 <td>
                     <div class="form-group form-input">
-                        <label for="remarks" class="require">Remarks</label>
+                        <label for="remarks" class="">Remarks</label>
                         <textarea name="remarks[${medicine_requisition_row_count}]" cols="10" rows="2" class="form-control"></textarea>
                     </div>
                 </td>
@@ -333,16 +333,16 @@
                         }
                     });
 
-                    $('textarea[name="remarks[' + medicine_requisition_row_count + ']"]').rules('add', {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 600,
-                        messages: {
-                            required: 'Remarks are required',
-                            minlength: 'Minimum 3 characters are required',
-                            maxlength: 'Remarks should not exceed 600 characters',
-                        }
-                    });
+                    // $('textarea[name="remarks[' + medicine_requisition_row_count + ']"]').rules('add', {
+                    //     required: true,
+                    //     minlength: 3,
+                    //     maxlength: 600,
+                    //     messages: {
+                    //         required: 'Remarks are required',
+                    //         minlength: 'Minimum 3 characters are required',
+                    //         maxlength: 'Remarks should not exceed 600 characters',
+                    //     }
+                    // });
                     filterMedicineOptions();
                     medicine_requisition_row_count++;
                 } else {
@@ -476,11 +476,11 @@
                         required: true,
                         digits: true,
                     },
-                    'remarks[0]': {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 600,
-                    }
+                    // 'remarks[0]': {
+                    //     required: true,
+                    //     minlength: 3,
+                    //     maxlength: 600,
+                    // }
 
                 },
                 messages: {

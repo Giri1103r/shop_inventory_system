@@ -160,14 +160,14 @@ class EmployeecumPatientController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/employee-cum-patient/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/employee-cum-patient/list'));
         }
@@ -256,17 +256,41 @@ class EmployeecumPatientController extends Controller
     {
         if ($request->ajax()) {
             $emp_id = $request->emp_id;
+
+            $id = $request->id;
+
+            if (empty($id)) {
+                $isUnique = $this->employeecumpatient->uniqueCheck($emp_id);
+            } else {
+                $id = decryptId($id);
+                $isUnique = $this->employeecumpatient->existUniqueCheck($emp_id, $id);
+            }
+
+            if ($isUnique->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
+        }
+    }
+
+    public function EmployeeUniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+
             $emp_name = $request->emp_name;
             $id = $request->id;
 
             if (empty($id)) {
-                $isUnique = !$this->employeecumpatient->uniqueCheck($emp_id, $emp_name);
+                $isUnique = $this->employeecumpatient->empuniqueCheck( $emp_name);
             } else {
                 $id = decryptId($id);
-                $isUnique = !$this->employeecumpatient->existUniqueCheck($emp_id, $emp_name, $id);
+                $isUnique = $this->employeecumpatient->empexistUniqueCheck($emp_name, $id);
             }
 
-            return Response::json($isUnique);
+            if ($isUnique->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
         }
     }
 
@@ -336,7 +360,7 @@ class EmployeecumPatientController extends Controller
                 $export[] =  $i;
                 $export[] =  $data->emp_name;
                 $export[] =  getEmployeeType($data->employee_type);
-                $export[] =  $data->dob;
+                $export[] =  Displaydateformat($data->dob);
                 $export[] =  $data->address;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
@@ -355,6 +379,8 @@ class EmployeecumPatientController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/employee-cum-patient/list'));
         }
     }
 
@@ -410,6 +436,8 @@ class EmployeecumPatientController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/employee-cum-patient/list'));
         }
     }
 

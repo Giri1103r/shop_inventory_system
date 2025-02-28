@@ -124,7 +124,7 @@
                                                 <div class="form-group form-input">
                                                     <label for="rate" class="form-label require ">Remarks
                                                     </label>
-                                                   <textarea name="remarks" id="remarks" cols="10" rows="5" class="form-control">{{$discard->remarks}}</textarea>
+                                                    <textarea name="remarks" id="remarks" cols="10" rows="5" class="form-control">{{ $discard->remarks }}</textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -228,18 +228,17 @@
             });
 
             // Validate input quantity against available quantity
-            $(document).on("input", 'input[name^="quantity"]', function() {
-                var row = $(this).closest('tr'); // Get the row of the current input
-                var availableQuantity = parseInt(row.find('input[name^="available_quantity"]').val()) || 0;
+            $(document).on("input", 'input[name="quantity"]', function() {
+                var availableQuantity = parseInt($('#available_quantity').val()) || 0;
                 var quantity = parseInt($(this).val()) || 0;
 
                 if (quantity > availableQuantity) {
-                    row.find('.quantity-error').show();
-                    $(this).val(availableQuantity);
+                    $('#quantity-error').show();
                 } else {
-                    row.find('.quantity-error').hide();
+                    $('#quantity-error').hide();
                 }
             });
+
         });
 
 
@@ -266,14 +265,29 @@
                     },
                     medicine_id: {
                         required: true,
+                        remote: {
+                            url: '{{ admin_url('ohc/discard/unique') }}',
+                            type: 'post',
+                            data: {
+                                medicine_id: function() {
+                                    return $('#medicine_id').val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
+                                },
+                                medicineid: function() {
+                                    return $('#medicineid').val();
+                                },
+                            }
+                        }
                     },
                     quantity: {
                         required: true,
                     },
                     remarks: {
                         required: true,
-                        minlength:3,
-                        maxlength:600,
+                        minlength: 3,
+                        maxlength: 600,
                     },
                 },
                 messages: {
@@ -289,9 +303,10 @@
                     },
                     medicine_id: {
                         required: "Please select the Medicine Name.",
+                        remote:"The selected Medicine is already taken for this id"
                     },
                     quantity: {
-                        required:"Please select the quantity.",
+                        required: "Please select the quantity.",
                     },
 
                 },

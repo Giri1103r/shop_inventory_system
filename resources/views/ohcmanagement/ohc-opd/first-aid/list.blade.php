@@ -33,7 +33,7 @@
                                             <label for="emp_id" class="form-label ">Emp Id</label>
                                             <select name="emp_id" id="emp_id" class="form-control form-control-sm"
                                                 style="width: 100%">
-                                                <option value="">Select the Employee Name</option>
+                                                <option value="">Select the Employee Id</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">

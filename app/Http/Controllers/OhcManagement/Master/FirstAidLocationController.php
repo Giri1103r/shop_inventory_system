@@ -48,7 +48,6 @@ class FirstAidLocationController extends Controller
         $this->uploadlog = new UploadLog();
         $this->employee = new Employee();
         $this->work = new Work();
-
     }
 
 
@@ -90,10 +89,10 @@ class FirstAidLocationController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
-                                $btn = '<a href="' . admin_url('ohc/first-aid-location/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('ohc/first-aid-location/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
                             // if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('ohc/first-aid-location/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            $btn .= '<a href="' . admin_url('ohc/first-aid-location/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
 
                             return $btn;
@@ -105,7 +104,7 @@ class FirstAidLocationController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                  report($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -144,11 +143,11 @@ class FirstAidLocationController extends Controller
 
             ];
             $messages = [
-              'unit_id.required'=>'Unit is required',
-                'department_id.required'=>'Department is required',
-                'location_id.required'=>'Location Name is required',
-                'station_master.required'=>'Station Master is required',
-                'station_number.required'=>'Station number is required',
+                'unit_id.required' => 'Unit is required',
+                'department_id.required' => 'Department is required',
+                'location_id.required' => 'Location Name is required',
+                'station_master.required' => 'Station Master is required',
+                'station_number.required' => 'Station number is required',
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -199,15 +198,15 @@ class FirstAidLocationController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $departmentList=$this->department->getdepartment();
+            $departmentList = $this->department->getdepartment();
             $firstaidlocation = $this->firstaidlocation->find($id);
             $unit = $this->unit->getunit();
-            $employeeList=$this->employee->getEmployeefulldata();
+            $employeeList = $this->employee->getEmployeefulldata();
             $data = array(
                 'firstaidlocation' => $firstaidlocation,
                 'unit' => $unit,
-                'departmentList'=>$departmentList,
-                'employeeList'=>$employeeList
+                'departmentList' => $departmentList,
+                'employeeList' => $employeeList
 
             );
 
@@ -231,11 +230,11 @@ class FirstAidLocationController extends Controller
 
             ];
             $messages = [
-              'unit_id.required'=>'Unit is required',
-                'department_id.required'=>'Department is required',
-                'location_id.required'=>'Location Name is required',
-                'station_master.required'=>'Station Master is required',
-                'station_number.required'=>'Station number is required',
+                'unit_id.required' => 'Unit is required',
+                'department_id.required' => 'Department is required',
+                'location_id.required' => 'Location Name is required',
+                'station_master.required' => 'Station Master is required',
+                'station_number.required' => 'Station number is required',
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -343,6 +342,8 @@ class FirstAidLocationController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/first-aid-location/list'));
         }
     }
 
@@ -372,7 +373,7 @@ class FirstAidLocationController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "first aid location Details",
+                'pagetitle' => "First Aid Location Details",
             );
 
             $property = [
@@ -399,6 +400,8 @@ class FirstAidLocationController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/first-aid-location/list'));
         }
     }
 

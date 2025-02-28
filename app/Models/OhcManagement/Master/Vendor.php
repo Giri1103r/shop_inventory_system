@@ -51,6 +51,7 @@ class Vendor extends Model
             $query->where(function ($query) use ($search) {
                 $query
                     ->orWhere('vendor_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('address', 'LIKE', '%' . $search . '%')
                     ->orWhere('license_no', 'LIKE', '%' . $search . '%');
             });
         }
@@ -176,9 +177,11 @@ class Vendor extends Model
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhere('license_no', 'LIKE', '%' . $search . '%')
-                    ->orWhere('vendor_name', 'LIKE', '%' . $search . '%');
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('vendor_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('address', 'LIKE', '%' . $search . '%')
+                    ->orWhere('license_no', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('vendor_name') && $request->vendor_name) {

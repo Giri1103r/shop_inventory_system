@@ -276,7 +276,7 @@ class VendorController extends Controller
 
             $header = [
                 __("common.sno"),
-                'vendor Name',
+                'Vendor Name',
                 'License Number',
                 'Address',
                 __("common.status"),
@@ -309,6 +309,8 @@ class VendorController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/vendor/list'));
         }
     }
 
@@ -325,7 +327,7 @@ class VendorController extends Controller
 
             $header = [
                 __("common.sno"),
-                'vendor Name',
+                'Vendor Name',
                 'License Number',
                 'Address',
                 __("common.status"),
@@ -363,6 +365,8 @@ class VendorController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/vendor/list'));
         }
     }
 

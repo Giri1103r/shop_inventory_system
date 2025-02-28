@@ -190,17 +190,15 @@ class Inventory extends Model
         foreach ($medicinedata as $data) {
             $olddata =   $this->where('unit_id', $user_medicine_requisition->unit_id)
                 ->where('medicine_id', $data['medicine_id'])->first();
-            $newdata =  $olddata->total_purchase + $data['quantity'];
+            $newdata =  $olddata->total_received + $data['quantity'];
             $this->where('unit_id', $user_medicine_requisition->unit_id)
                 ->where('medicine_id', $data['medicine_id'])
-                ->update(['total_purchase' => $newdata]);
+                ->update(['total_received' => $newdata]);
             $balancedata = $olddata->balance + $data['quantity'];
             $this->where('unit_id', $user_medicine_requisition->unit_id)
                 ->where('medicine_id', $data['medicine_id'])
                 ->increment('balance', $balancedata);
-            $this->where('unit_id', $user_medicine_requisition->unit_id)
-                ->where('medicine_id', $data['medicine_id'])
-                ->increment('total_received', $newdata);
+           
         }
     }
 

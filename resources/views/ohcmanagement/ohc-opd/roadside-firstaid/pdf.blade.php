@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Road Side First Aid')
+@section('title', 'Road Side First Aid PDF')
 @section('content')
 
     <div style="width:100%;">
