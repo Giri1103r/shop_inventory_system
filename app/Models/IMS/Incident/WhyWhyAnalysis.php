@@ -23,6 +23,8 @@ class WhyWhyAnalysis extends Model
 
     protected $fillable = [
         'incident_id',
+        'accident_id',
+        'fire_id',
         'investigation_id',
         'why_1',
         'why_2',
@@ -42,7 +44,7 @@ class WhyWhyAnalysis extends Model
         'trash' => 'NO',
     ];
 
-    public function store($incident_id, $investigation_id)
+    public function store($accident_id ,$incident_id, $fire_id , $investigation_id)
     {
         $request = request();
     
@@ -60,11 +62,12 @@ class WhyWhyAnalysis extends Model
                 // Only insert if at least one field has a value
                 if (!empty($filteredAnalysis)) {
                     $filteredAnalysis['incident_id'] = $incident_id;
+                    $filteredAnalysis['accident_id'] = $accident_id;
+                    $filteredAnalysis['fire_id'] = $fire_id;
                     $filteredAnalysis['investigation_id'] = $investigation_id;
                     $filteredAnalysis['created_at'] = now();
                     $filteredAnalysis['updated_at'] = now();
                     $filteredAnalysis['created_by'] = Auth::id();
-    // dd($filteredAnalysis);
                     return $this->create($filteredAnalysis);
                     if (!$inserted) {
                         return false; // If any insert fails, return false

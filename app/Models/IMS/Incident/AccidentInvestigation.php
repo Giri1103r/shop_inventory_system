@@ -49,11 +49,20 @@ class AccidentInvestigation extends Model
     public function store()
     {
         $request = request();
+
+        $decryptedWitnessIds = array_map('decryptId', $request->witness_id);
+
+        $commaSeparatedWitness = implode(',', $decryptedWitnessIds);
+
+        $decryptedDamaged = array_map('decryptId', $request->is_damaged);
+
+        $commaSeparatedDamaged = implode(',', $decryptedDamaged);
+
         $insert_array = array(
-            'accident_id' => decryptId($request->incident_id),
-            'witness_id' => decryptId($request->witness_id),
-            'is_damaged' => $request->anything_damaged,
-            'root_cause_analysis' => $request->root_cause,
+            'accident_id' => decryptId($request->accident_id),
+            'witness_id' => $commaSeparatedWitness,
+            'is_damaged' => $commaSeparatedDamaged,
+            'root_cause_analysis' => $request->root_cause_analysis,
             'action_taken' => $request->action_taken,
             'is_treatment' => $request->is_treatment,
             'details' => $request->details,

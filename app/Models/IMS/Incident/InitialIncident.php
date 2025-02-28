@@ -232,7 +232,7 @@ class InitialIncident extends Model
         return $this->where('id', $id)->update($update_data);
     }
 
-    
+
     public function updateStatus($incident_Id, $incident_status)
     {
         $request = request();
@@ -324,12 +324,14 @@ class InitialIncident extends Model
             'ims_initial_incident.*',
             'masters_employee.emp_name as reported_by',
             'masters_department.department_name as reported_department',
-            'ims_initial_incident_evidence_upload.file_path'
+            'ims_initial_incident_evidence_upload.file_path','ims_master_incident_type.incident_type_name','masters_location.location_name'
         )
             ->where('ims_initial_incident.id', $id)
             ->leftJoin('masters_employee', 'masters_employee.id', '=', 'ims_initial_incident.reported_name')
             ->leftJoin('masters_department', 'masters_department.id', '=', 'ims_initial_incident.department')
-            ->leftJoin('ims_initial_incident_evidence_upload', 'ims_initial_incident_evidence_upload.incident_id', '=', 'ims_initial_incident.id')
+            ->leftJoin('ims_master_incident_type', 'ims_master_incident_type.id', '=', 'ims_initial_incident.iir_type')
+            ->leftJoin('masters_location', 'masters_location.id', '=', 'ims_initial_incident.location_id')
+            ->leftJoin('ims_initial_incident_evidence_upload', 'ims_initial_incident_evidence_upload.incident_id', '=', 'ims_initial_incident.iir_type')
             ->first();
 
         return $data;
@@ -341,7 +343,7 @@ class InitialIncident extends Model
         $data = $this->select('ims_ehs_review.*', 'ims_ehs_review.team_member')
             ->where('ims_initial_incident.id', $id)
             ->leftJoin('ims_ehs_review', 'ims_ehs_review.inicdent_report_id', '=', 'ims_initial_incident.id')
-            ->where('ims_ehs_review.type',1)
+            ->where('ims_ehs_review.type', 2)
             ->first();
 
         if ($data && $data->team_member) {
@@ -358,23 +360,106 @@ class InitialIncident extends Model
     }
 
 
+    // public function getInvestigation($id)
+    // {
+    //     $data = $this->select('ims_initial_incident_investigation.*', 'ims_master_incident_hiramoc.*')
+    //         ->where('ims_initial_incident.id', $id)
+    //         ->leftJoin('ims_initial_incident_investigation', 'ims_initial_incident_investigation.incident_id', '=', 'ims_initial_incident.id')
+    //         ->leftJoin('ims_master_incident_hiramoc', 'ims_master_incident_hiramoc.incident_id', '=', 'ims_initial_incident.id')
+    //         ->first();
+    //     if ($data && $data->witness_id) {
+    //         $witnessids = explode(',', $data->witness_id);
+
+    //         $employees = DB::table('masters_employee')
+    //             ->whereIn('id', $witnessids)
+    //             ->pluck('emp_name')
+    //             ->toArray();
+    //         $data->witness_name = implode(', ', $employees);
+    //     }
+    //     return $data;
+    // }
+
     public function getInvestigation($id)
     {
-        $data = $this->select('ims_initial_incident_investigation.*','ims_master_incident_hiramoc.*')
+        $data = $this->select('ims_initial_incident_investigation.*','masters_employee.emp_name as responsible_person')
             ->where('ims_initial_incident.id', $id)
             ->leftJoin('ims_initial_incident_investigation', 'ims_initial_incident_investigation.incident_id', '=', 'ims_initial_incident.id')
-            ->leftJoin('ims_master_incident_hiramoc', 'ims_master_incident_hiramoc.incident_id', '=', 'ims_initial_incident.id')
+            ->leftJoin('masters_employee', 'masters_employee.id', '=', 'ims_initial_incident_investigation.responsible_person_id')
             ->first();
-            
+
+        if ($data) {
+            $hiraMocRecords = DB::table('ims_master_incident_hiramoc as hiramoc')
+                ->leftJoin('ims_master_hira as hira', 'hiramoc.hira_id', '=', 'hira.id')
+                ->leftJoin('ims_master_hira as moc', 'hiramoc.moc_id', '=', 'moc.id') 
+                ->where('hiramoc.incident_id', $id)
+                ->select('hiramoc.hira_id', 'hira.services as hira_name', 'hiramoc.moc_id', 'moc.services as moc_name')
+                ->get();
+
+            $mergedHiraMoc = [];
+            $tempHira = null;
+
+            foreach ($hiraMocRecords as $record) {
+                if ($record->hira_id != 0 && $record->moc_id == 0) {
+                    $tempHira = [
+                        'hira_id' => $record->hira_id,
+                        'hira_name' => $record->hira_name,
+                        'moc_id' => null,
+                        'moc_name' => null
+                    ];
+                } elseif ($record->hira_id == 0 && $record->moc_id != 0) {
+                    
+                    if ($tempHira) {
+                        $tempHira['moc_id'] = $record->moc_id;
+                        $tempHira['moc_name'] = $record->moc_name;
+                        $mergedHiraMoc[] = $tempHira;
+                        $tempHira = null;
+                    } else {
+                        
+                        $mergedHiraMoc[] = [
+                            'hira_id' => null,
+                            'hira_name' => null,
+                            'moc_id' => $record->moc_id,
+                            'moc_name' => $record->moc_name
+                        ];
+                    }
+                } else {
+                    
+                    $mergedHiraMoc[] = [
+                        'hira_id' => $record->hira_id,
+                        'hira_name' => $record->hira_name,
+                        'moc_id' => $record->moc_id,
+                        'moc_name' => $record->moc_name
+                    ];
+                }
+            }
+            if ($tempHira) {
+                $mergedHiraMoc[] = $tempHira;
+            }
+
+            $data->hira_moc = $mergedHiraMoc;
+
+            if (!empty($data->witness_id)) {
+                $witnessIds = explode(',', $data->witness_id);
+                $employees = DB::table('masters_employee')
+                    ->whereIn('id', $witnessIds)
+                    ->pluck('emp_name')
+                    ->toArray();
+                $data->witness_name = implode(', ', $employees);
+            }
+        }
+
+        // dd($data);
         return $data;
     }
+
+
     public function getwhywhy($id)
     {
         $data = $this->select('ims_incident_whywhyanalysis.*')
             ->where('ims_initial_incident.id', $id)
             ->leftJoin('ims_incident_whywhyanalysis', 'ims_incident_whywhyanalysis.incident_id', '=', 'ims_initial_incident.id')
             ->get();
-            
+
         return $data;
     }
     public function getfishbone($id)
@@ -383,7 +468,7 @@ class InitialIncident extends Model
             ->where('ims_initial_incident.id', $id)
             ->leftJoin('ims_incident_fishboneanalysis', 'ims_incident_fishboneanalysis.incident_id', '=', 'ims_initial_incident.id')
             ->get();
-            
+
         return $data;
     }
 
@@ -393,7 +478,7 @@ class InitialIncident extends Model
             ->where('ims_initial_incident.id', $id)
             ->leftJoin('ims_master_incident_riskanalysis', 'ims_master_incident_riskanalysis.incident_id', '=', 'ims_initial_incident.id')
             ->first();
-            
+
         return $data;
     }
     public function getEHSReviewincident($id)
@@ -401,7 +486,7 @@ class InitialIncident extends Model
         $data = $this->select('ims_ehs_review.*', 'ims_ehs_review.team_member')
             ->where('ims_initial_incident.id', $id)
             ->leftJoin('ims_ehs_review', 'ims_ehs_review.inicdent_report_id', '=', 'ims_initial_incident.id')
-            ->where('ims_ehs_review.type',2)
+            ->where('ims_ehs_review.type', 1)
             ->first();
 
         if ($data && $data->team_member) {
@@ -413,7 +498,16 @@ class InitialIncident extends Model
                 ->toArray();
             $data->team_member_names = implode(', ', $employees);
         }
+        return $data;
+    }
 
+    public function getEHSApprovalincident($id)
+    {
+        $data = $this->select('ims_ehs_review.*', 'ims_ehs_review.team_member')
+            ->where('ims_initial_incident.id', $id)
+            ->leftJoin('ims_ehs_review', 'ims_ehs_review.inicdent_report_id', '=', 'ims_initial_incident.id')
+            ->where('ims_ehs_review.type', 3)
+            ->first();
         return $data;
     }
     protected static function booted()

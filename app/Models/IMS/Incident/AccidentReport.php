@@ -161,6 +161,8 @@ class AccidentReport extends Model
         return $this->where('id', $id)->update($update_array);
     }
 
+
+
     public function statuschange($id)
     {
         $request = request();
@@ -259,7 +261,7 @@ class AccidentReport extends Model
     }
 
 
-    public function updateStatus($accidentReportId, $accident_status)
+    public function updateStatus($accidentId, $accident_status)
     {
         $request = request();
 
@@ -268,7 +270,7 @@ class AccidentReport extends Model
             'updated_by' => Auth::id(),
             'updated_at' => now(),
         );
-        return $this->where('id', $accidentReportId)->update($update_array);
+        return $this->where('id', $accidentId)->update($update_array);
     }
 
 

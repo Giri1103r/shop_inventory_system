@@ -4,6 +4,141 @@
 
 
 @section('content')
+    <style>
+        /* Main container */
+        .fishbone-container {
+            display: inline-grid;
+            grid-template-columns: repeat(4, auto);
+            grid-template-rows: auto .2em auto;
+            padding-left: 2em;
+            font-family: Arial;
+            --bone-color: #85A0B2;
+            --yellow: #FDBE22;
+            --green: #69E982;
+            --blue: #5CB2FB;
+        }
+
+        .cause {
+            display: flex;
+            flex-direction: column;
+            transform: skew(20deg);
+            transform-origin: bottom;
+            margin-left: .8em;
+        }
+
+        .rootcause {
+            text-align: center;
+            position: relative;
+            left: 100%;
+            transform: translateX(-50%) skewX(-20deg);
+            font-size: 1.5em;
+            color: #fff;
+            padding: .2em;
+            border-radius: .2em;
+
+            &.yellow {
+                background-color: var(--yellow);
+            }
+
+            &.green {
+                background-color: var(--green);
+            }
+
+            &.blue {
+                background-color: var(--blue);
+            }
+        }
+
+        .subcause {
+            flex-grow: 1;
+            border-right: .2em solid var(--bone-color);
+            padding-bottom: .75em;
+            padding-top: .75em
+        }
+
+        .stat {
+            text-align: right;
+            padding-right: 3em;
+            position: relative;
+            transform: skewX(-20deg);
+            line-height: 1.5em;
+            font-size: 1em;
+        }
+
+        .stat:before {
+            content: '';
+            display: block;
+            background-color: var(--bone-color);
+            position: absolute;
+            width: 3em;
+            height: .2em;
+            right: 0;
+            top: 50%;
+            transform: translate(.2em, -50%);
+        }
+
+        .line {
+            grid-column-start: 1;
+            grid-column-end: 4;
+            background-color: var(--bone-color);
+
+            ~.cause {
+                transform: skewX(-20deg);
+                transform-origin: top;
+            }
+
+            ~.cause .rootcause {
+                transform: translateX(-50%) skewX(20deg);
+            }
+
+            ~.cause .stat {
+                transform: skewX(20deg);
+            }
+        }
+
+        .defect-spacer-top {
+            grid-column-start: 4;
+            grid-column-end: 4;
+            grid-row-start: 1;
+            grid-row-end: 2;
+        }
+
+        .defect {
+            grid-column-start: 4;
+            grid-column-end: 4;
+            grid-row-start: 2;
+            grid-row-end: 3;
+        }
+
+        .defect-spacer-bottom {
+            grid-column-start: 4;
+            grid-column-end: 4;
+            grid-row-start: 3;
+            grid-row-end: 4;
+        }
+
+        .defect-text {
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 1em;
+            margin-left: .5em;
+            background-color: var(--bone-color);
+            border-radius: .5em;
+            color: #fff;
+            text-align: center;
+        }
+
+        .subcause .stat {
+            margin-bottom: 15px;
+            /* Adjust the spacing between input fields */
+        }
+
+        .subcause {
+            margin-bottom: 20px;
+            /* Add spacing between rows of input fields */
+        }
+    </style>
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
@@ -52,7 +187,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Unit</label>
                                         <div class="view_data">
-                                            {{ getUsername($incident_report->unit_id) }}
+                                            {{ getUnitname($incident_report->unit_id) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -64,14 +199,14 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label require">Location</label>
                                         <div class="view_data">
-                                            {{ $incident_report->location_id }}
+                                            {{ $incident_report->location_name }}
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">IIR Type</label>
                                         <div class="view_data">
-                                            {{ $incident_report->iir_type }}
+                                            {{ $incident_report->incident_type_name }}
                                         </div>
                                     </div>
                                 </div>
@@ -229,26 +364,26 @@
                                         <div class="mb-3 col-md-4 form-input">
                                             <label for="name" class="form-label">Reviewer Name</label>
                                             <div class="view_data">
-                                                {{ $getEHSVerify->reviewer_name }}
+                                                {{ $getEHSReview->reviewer_name }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">{{ __('Date') }}</label>
                                             <div class="view_data">
-                                                {{ $getEHSVerify->date }}
+                                                {{ Displaydateformat($getEHSReview->date) }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
                                             <label for="team_id" class="form-label">Assign Team
                                                 members</label>
                                             <div class="view_data">
-                                                {{ $getEHSVerify->team_member_names }}
+                                                {{ $getEHSReview->team_member_names }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label">Remark</label>
                                             <div class="view_data">
-                                                {{ $getEHSVerify->remark }}
+                                                {{ $getEHSReview->remark }}
                                             </div>
                                         </div>
 
@@ -269,29 +404,48 @@
                                             <label class="form-label view_label">Name of the
                                                 Witness</label>
                                             <div class="view_data">
-                                                {{ $getInvestigation->witness_id }}
+                                                {{ $getInvestigation->witness_name }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">Was anything
                                                 damaged?</label>
                                             <div class="view_data">
-                                                {{ $getInvestigation->anything_damaged }}
+
+                                                @if ($getInvestigation->anything_damaged == 1)
+                                                    Man
+                                                @elseif($getInvestigation->anything_damaged == 2)
+                                                    Machine
+                                                @elseif($getInvestigation->anything_damaged == 3)
+                                                    Materials
+                                                @else
+                                                    NA
+                                                @endif
                                             </div>
                                         </div>
 
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">HIRA</label>
                                             <div class="view_data">
-                                                {{ $getInvestigation->hira_id }}
+                                                @if (!empty($getInvestigation->hira_moc[0]['hira_name']))
+                                                    {{ $getInvestigation->hira_moc[0]['hira_name'] }}
+                                                @else
+                                                    N/A
+                                                @endif
                                             </div>
                                         </div>
+
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label">MOC</label>
                                             <div class="view_data">
-                                                {{ $getInvestigation->moc_id }}
+                                                @if (!empty($getInvestigation->hira_moc[0]['moc_name']))
+                                                    {{ $getInvestigation->hira_moc[0]['moc_name'] }}
+                                                @else
+                                                    N/A
+                                                @endif
                                             </div>
                                         </div>
+
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label">Possible Root
                                                 Cause
@@ -319,7 +473,7 @@
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">Responsible Person</label>
                                             <div class="view_data">
-                                                {{ $getInvestigation->responsible_person_id }}
+                                                {{ $getInvestigation->responsible_person }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
@@ -411,7 +565,8 @@
                                                     <div class="rootcause blue">
                                                         <input type="text" class="form-control"
                                                             placeholder="Enter value" name="fishbone[first][root_cause]"
-                                                            value="{{ $fishboneData['first']['root_cause'] ?? '' }}">
+                                                            value="{{ $fishboneData['first']['root_cause'] ?? '' }}"
+                                                            readonly>
                                                     </div>
                                                     <div class="subcause">
                                                         @foreach ($fishboneData['first']['sub'] as $key => $value)
@@ -419,7 +574,7 @@
                                                                 <input type="text" class="form-control sub-stat"
                                                                     placeholder="Enter value"
                                                                     name="fishbone[first][sub][{{ $key }}]"
-                                                                    value="{{ $value }}">
+                                                                    value="{{ $value }}" readonly>
                                                             </div>
                                                         @endforeach
                                                     </div>
@@ -430,7 +585,8 @@
                                                     <div class="rootcause green">
                                                         <input type="text" class="form-control"
                                                             placeholder="Enter value" name="fishbone[second][root_cause]"
-                                                            value="{{ $fishboneData['second']['root_cause'] ?? '' }}">
+                                                            value="{{ $fishboneData['second']['root_cause'] ?? '' }}"
+                                                            readonly>
                                                     </div>
                                                     <div class="subcause">
                                                         @foreach ($fishboneData['second']['sub'] as $key => $value)
@@ -438,7 +594,7 @@
                                                                 <input type="text" class="form-control sub-stat"
                                                                     placeholder="Enter value"
                                                                     name="fishbone[second][sub][{{ $key }}]"
-                                                                    value="{{ $value }}">
+                                                                    value="{{ $value }}" readonly>
                                                             </div>
                                                         @endforeach
                                                     </div>
@@ -449,7 +605,8 @@
                                                     <div class="rootcause yellow">
                                                         <input type="text" class="form-control"
                                                             placeholder="Enter value" name="fishbone[fourth][root_cause]"
-                                                            value="{{ $fishboneData['fourth']['root_cause'] ?? '' }}">
+                                                            value="{{ $fishboneData['fourth']['root_cause'] ?? '' }}"
+                                                            readonly>
                                                     </div>
                                                     <div class="subcause">
                                                         @foreach ($fishboneData['third']['sub'] as $key => $value)
@@ -457,7 +614,7 @@
                                                                 <input type="text" class="form-control sub-stat"
                                                                     placeholder="Enter value"
                                                                     name="fishbone[third][sub][{{ $key }}]"
-                                                                    value="{{ $value }}">
+                                                                    value="{{ $value }}" readonly>
                                                             </div>
                                                         @endforeach
                                                     </div>
@@ -473,14 +630,15 @@
                                                                 <input type="text" class="form-control sub-stat"
                                                                     placeholder="Enter value"
                                                                     name="fishbone[fourth][sub][{{ $key }}]"
-                                                                    value="{{ $value }}">
+                                                                    value="{{ $value }}" readonly>
                                                             </div>
                                                         @endforeach
                                                     </div>
                                                     <div class="rootcause blue">
                                                         <input type="text" class="form-control"
                                                             placeholder="Enter value" name="fishbone[fourth][root_cause]"
-                                                            value="{{ $fishboneData['fourth']['root_cause'] ?? '' }}">
+                                                            value="{{ $fishboneData['fourth']['root_cause'] ?? '' }}"
+                                                            readonly>
                                                     </div>
                                                 </div>
 
@@ -493,14 +651,15 @@
                                                                 <input type="text" class="form-control sub-stat"
                                                                     placeholder="Enter value"
                                                                     name="fishbone[fifth][sub][{{ $key }}]"
-                                                                    value="{{ $value }}">
+                                                                    value="{{ $value }}" readonly>
                                                             </div>
                                                         @endforeach
                                                     </div>
                                                     <div class="rootcause green">
                                                         <input type="text" class="form-control"
                                                             placeholder="Enter value" name="fishbone[fifth][root_cause]"
-                                                            value="{{ $fishboneData['fifth']['root_cause'] ?? '' }}">
+                                                            value="{{ $fishboneData['fifth']['root_cause'] ?? '' }}"
+                                                            readonly>
                                                     </div>
                                                 </div>
 
@@ -513,14 +672,15 @@
                                                                 <input type="text" class="form-control sub-stat"
                                                                     placeholder="Enter value"
                                                                     name="fishbone[sixth][sub][{{ $key }}]"
-                                                                    value="{{ $value }}">
+                                                                    value="{{ $value }}" readonly>
                                                             </div>
                                                         @endforeach
                                                     </div>
                                                     <div class="rootcause yellow">
                                                         <input type="text" class="form-control"
                                                             placeholder="Enter value" name="fishbone[sixth][root_cause]"
-                                                            value="{{ $fishboneData['sixth']['root_cause'] ?? '' }}">
+                                                            value="{{ $fishboneData['sixth']['root_cause'] ?? '' }}"
+                                                            readonly>
                                                     </div>
                                                 </div>
 
@@ -531,7 +691,8 @@
                                                     <div class="defect-text">
                                                         <input type="text" class="form-control"
                                                             placeholder="Enter value" name="fishbone[root_cause][main]"
-                                                            value="{{ $fishboneData['root_cause']['main'] ?? '' }}">
+                                                            value="{{ $fishboneData['root_cause']['main'] ?? '' }}"
+                                                            readonly>
                                                     </div>
                                                 </div>
 
@@ -623,7 +784,9 @@
                                 </div>
                             @endif
 
-                            @if ($incident_report->incident_status == STATUS_EHSVERIFY_PENDING)
+                            @if (
+                                $incident_report->incident_status == STATUS_EHSVERIFY_PENDING ||
+                                    $incident_report->incident_status == STATUS_EHSAPPROVAL_REJECTED)
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -664,7 +827,7 @@
                                                             Assignee</label>
                                                         <select name="team_member[]" id="team_id"
                                                             class="form-control team_name" style="width: 100%">
-                                                            <option value="">Select Team members</option>
+                                                            <option value="">Select Assignee</option>
 
                                                         </select>
                                                     </div>
@@ -740,7 +903,7 @@
                                         </div>
                                     </div>
                                     <div class="basic-form">
-                                        <form method="POST" id="ehs_head_verify"
+                                        <form method="POST" id="action_submission"
                                             action="{{ admin_url('incident/initial-incident/actiontaken/submit') }}"
                                             enctype="multipart/form-data">
                                             @csrf
@@ -785,7 +948,9 @@
 
                                     </div>
                                 </div>
-                            @elseif($incident_report->incident_status > STATUS_ACTION_PENDING)
+                            @elseif(
+                                $incident_report->incident_status > STATUS_ACTION_PENDING &&
+                                    $incident_report->incident_status != STATUS_EHSAPPROVAL_REJECTED)
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -805,7 +970,7 @@
                                                 {{ Displaydateformat($incident_report->action_submission_date) }}
                                             </div>
                                         </div>
-                                    
+
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label">Action Taken</label>
                                             <div class="view_data">
@@ -817,58 +982,58 @@
                                 </div>
                             @endif
                             @if ($incident_report->incident_status == STATUS_EHSAPPROVAL_PENDING)
-                            <div class="card-body ">
-                                <div class="row">
-                                    <div class="card-header-inner">
-                                        <h4 class="text-white">EHS Approval</h4>
+                                <div class="card-body ">
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">EHS Approval</h4>
+                                        </div>
+                                    </div>
+                                    <div class="basic-form">
+                                        <form method="POST" id="ehs_approval"
+                                            action="{{ admin_url('incident/initial-incident/ehApproval/submit') }}"
+                                            enctype="multipart/form-data">
+                                            @csrf
+                                            <div class="row">
+                                                <input type="hidden" class="form-control" name="incident_id"
+                                                    id="incident_id" value="{{ encryptId($incident_report->id) }}">
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="name" class="form-label">Approval By</label>
+                                                        <input type="text" name="reviewer_name" id="reviewer_name"
+                                                            class="form-control" value="{{ Auth::user()->name ?? '' }}"
+                                                            readonly>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="date" class="form-label require">Date</label>
+                                                        <input type="text" name ="date" id=""
+                                                            class="form-control" placeholder="Date" readonly
+                                                            value="{{ todaydate() }}">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Remark</label>
+                                                        <textarea name="remark" id="remark" class="form-control"
+                                                            rows="4" required></textarea>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <hr>
+                                            <div class="d-flex float-end gap-2 mx-auto">
+                                                <button type="submit" name="approve" value="approve"
+                                                    class="btn btn-success w-100">Approve</button>
+                                                <button type="submit" name="reject" value="reject"
+                                                    class="btn btn-danger w-100">Reject</button>
+                                            </div>
+                                        </form>
+
                                     </div>
                                 </div>
-                                <div class="basic-form">
-                                    <form method="POST" id="ehs_head_verify"
-                                        action="{{ admin_url('incident/initial-incident/actiontaken/submit') }}"
-                                        enctype="multipart/form-data">
-                                        @csrf
-                                        <div class="row">
-                                            <input type="hidden" class="form-control" name="incident_id"
-                                                id="incident_id" value="{{ encryptId($incident_report->id) }}">
-                                            <div class="col-md-4 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label for="name" class="form-label">Approval By</label>
-                                                    <input type="text" name="reviewer_name" id="reviewer_name"
-                                                        class="form-control" value="{{ Auth::user()->name ?? '' }}"
-                                                        readonly>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-4 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label for="date" class="form-label require">Date</label>
-                                                    <input type="text" name ="action_submission_date"
-                                                        id="" class="form-control" placeholder="Date"
-                                                        readonly value="{{ todaydate() }}">
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-12 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Remark</label>
-                                                    <textarea name="action_submission_description" id="action_submission_description" class="form-control"
-                                                        rows="4" required></textarea>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                        <hr>
-                                        <div class="submit-button" style="text-align: right;">
-                                            <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-reset class=""></x-button-reset>
-                                            <x-button-cancel
-                                                href="{{ admin_url('incident/initial-incident/list') }}"></x-button-cancel>
-                                        </div>
-                                    </form>
-
-                                </div>
-                            </div>
                             @endif
                         </div>
                     </div>
@@ -896,7 +1061,7 @@
             $('#team_id').select2({
                 placeholder: "Select Team Members",
                 allowClear: true,
-                closeOnSelect: false,
+                closeOnSelect: true,
                 ajax: {
                     url: "{{ admin_url('incident/initial-incident/teamMembers') }}",
                     type: "GET",
@@ -949,6 +1114,137 @@
                     },
                     remark: {
                         required: "Please provide a remark.",
+                        maxlength: "Remark cannot exceed 1000 characters."
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    if ($('#vp_approval').data('conflict') === true) {
+                        return false;
+                    } else {
+                        form.submit(); // Submit the form when valid
+                    }
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {
+
+                    });
+                }
+            });
+            $('#ehs_head_verify').validate({
+                rules: {
+                    "team_member[]": {
+                        required: true,
+                    },
+                    target_date: {
+                        required: true,
+                    },
+                    remark: {
+                        required: true,
+                        maxlength: 1000
+                    }
+                },
+                messages: {
+                    "team_member[]": {
+                        required: "Please select a Assignee.",
+                    },
+                    target_date: {
+                        required: "Please provide Target Date.",
+                       
+                    },
+                    remark: {
+                        required: "Please provide a remark.",
+                        maxlength: "Remark cannot exceed 1000 characters."
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    if ($('#vp_approval').data('conflict') === true) {
+                        return false;
+                    } else {
+                        form.submit(); // Submit the form when valid
+                    }
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {
+
+                    });
+                }
+            });
+            $('#action_submission').validate({
+                rules: {
+                    
+                    action_submission_description: {
+                        required: true,
+                        maxlength: 1000
+                    }
+                },
+                messages: {
+                   
+                    action_submission_description: {
+                        required: "Please provide Action Taken.",
+                        maxlength: "Action Taken cannot exceed 1000 characters."
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    if ($('#vp_approval').data('conflict') === true) {
+                        return false;
+                    } else {
+                        form.submit(); // Submit the form when valid
+                    }
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {
+
+                    });
+                }
+            });
+            $('#ehs_approval').validate({
+                rules: {
+                    
+                    remark: {
+                        required: true,
+                        maxlength: 1000
+                    }
+                },
+                messages: {
+                   
+                    remark: {
+                        required: "Please provide remark.",
                         maxlength: "Remark cannot exceed 1000 characters."
                     }
                 },

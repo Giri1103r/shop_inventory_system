@@ -23,6 +23,8 @@ class FishboneAnalysis extends Model
 
     protected $fillable = [
         'incident_id',
+        'accident_id',
+        'fire_id',
         'investigation_id',
         'fishbone',
         'status',
@@ -38,7 +40,7 @@ class FishboneAnalysis extends Model
         'trash' => 'NO',
     ];
 
-    public function storeFishbone($incident_id, $investigation_id)
+    public function storeFishbone($accident_id, $incident_id, $fire_id ,$investigation_id)
     {
         $request = request();
 
@@ -48,6 +50,8 @@ class FishboneAnalysis extends Model
         // Prepare the data to be saved in JSON format
         $dataToSave = [
             'incident_id' => $incident_id,
+            'accident_id' => $accident_id,
+            'fire_id' => $fire_id,
             'investigation_id' => $investigation_id,
             'created_by' => Auth::id(),
             'created_at' => now(),

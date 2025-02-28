@@ -293,26 +293,26 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label for="name" class="form-label">Reviewer Name</label>
                                         <div class="view_data">
-                                            {{ $getEHSVerify->reviewer_name }}
+                                            {{ $getEHSReview->reviewer_name }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Date') }}</label>
                                         <div class="view_data">
-                                            {{ $getEHSVerify->date }}
+                                            {{ $getEHSReview->date }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label for="team_id" class="form-label">Assign Team
                                             members</label>
                                         <div class="view_data">
-                                            {{ $getEHSVerify->team_member_names }}
+                                            {{ $getEHSReview->team_member_names }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label">Remark</label>
                                         <div class="view_data">
-                                            {{ $getEHSVerify->remark }}
+                                            {{ $getEHSReview->remark }}
                                         </div>
                                     </div>
 
@@ -330,29 +330,48 @@
                                         <label class="form-label view_label">Name of the
                                             Witness</label>
                                         <div class="view_data">
-                                            {{ $getInvestigation->witness_id }}
+                                            {{ $getInvestigation->witness_name }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Was anything
                                             damaged?</label>
                                         <div class="view_data">
-                                            {{ $getInvestigation->anything_damaged }}
+
+                                            @if ($getInvestigation->anything_damaged == 1)
+                                                Man
+                                            @elseif($getInvestigation->anything_damaged == 2)
+                                                Machine
+                                            @elseif($getInvestigation->anything_damaged == 3)
+                                                Materials
+                                            @else
+                                                NA
+                                            @endif
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">HIRA</label>
                                         <div class="view_data">
-                                            {{ $getInvestigation->hira_id }}
+                                            @if (!empty($getInvestigation->hira_moc[0]['hira_name']))
+                                                {{ $getInvestigation->hira_moc[0]['hira_name'] }}
+                                            @else
+                                                N/A
+                                            @endif
                                         </div>
                                     </div>
+
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label">MOC</label>
                                         <div class="view_data">
-                                            {{ $getInvestigation->moc_id }}
+                                            @if (!empty($getInvestigation->hira_moc[0]['moc_name']))
+                                                {{ $getInvestigation->hira_moc[0]['moc_name'] }}
+                                            @else
+                                                N/A
+                                            @endif
                                         </div>
                                     </div>
+
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label">Possible Root
                                             Cause
@@ -380,7 +399,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Responsible Person</label>
                                         <div class="view_data">
-                                            {{ $getInvestigation->responsible_person_id }}
+                                            {{ $getInvestigation->responsible_person }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -468,7 +487,7 @@
                                                 <div class="rootcause blue">
                                                     <input type="text" class="form-control" placeholder="Enter value"
                                                         name="fishbone[first][root_cause]"
-                                                        value="{{ $fishboneData['first']['root_cause'] ?? '' }}">
+                                                        value="{{ $fishboneData['first']['root_cause'] ?? '' }}" readonly>
                                                 </div>
                                                 <div class="subcause">
                                                     @foreach ($fishboneData['first']['sub'] as $key => $value)
@@ -476,7 +495,7 @@
                                                             <input type="text" class="form-control sub-stat"
                                                                 placeholder="Enter value"
                                                                 name="fishbone[first][sub][{{ $key }}]"
-                                                                value="{{ $value }}">
+                                                                value="{{ $value }}" readonly>
                                                         </div>
                                                     @endforeach
                                                 </div>
@@ -487,7 +506,8 @@
                                                 <div class="rootcause green">
                                                     <input type="text" class="form-control" placeholder="Enter value"
                                                         name="fishbone[second][root_cause]"
-                                                        value="{{ $fishboneData['second']['root_cause'] ?? '' }}">
+                                                        value="{{ $fishboneData['second']['root_cause'] ?? '' }}"
+                                                        readonly>
                                                 </div>
                                                 <div class="subcause">
                                                     @foreach ($fishboneData['second']['sub'] as $key => $value)
@@ -495,7 +515,7 @@
                                                             <input type="text" class="form-control sub-stat"
                                                                 placeholder="Enter value"
                                                                 name="fishbone[second][sub][{{ $key }}]"
-                                                                value="{{ $value }}">
+                                                                value="{{ $value }}" readonly>
                                                         </div>
                                                     @endforeach
                                                 </div>
@@ -506,7 +526,8 @@
                                                 <div class="rootcause yellow">
                                                     <input type="text" class="form-control" placeholder="Enter value"
                                                         name="fishbone[fourth][root_cause]"
-                                                        value="{{ $fishboneData['fourth']['root_cause'] ?? '' }}">
+                                                        value="{{ $fishboneData['fourth']['root_cause'] ?? '' }}"
+                                                        readonly>
                                                 </div>
                                                 <div class="subcause">
                                                     @foreach ($fishboneData['third']['sub'] as $key => $value)
@@ -514,7 +535,7 @@
                                                             <input type="text" class="form-control sub-stat"
                                                                 placeholder="Enter value"
                                                                 name="fishbone[third][sub][{{ $key }}]"
-                                                                value="{{ $value }}">
+                                                                value="{{ $value }}" readonly>
                                                         </div>
                                                     @endforeach
                                                 </div>
@@ -530,14 +551,15 @@
                                                             <input type="text" class="form-control sub-stat"
                                                                 placeholder="Enter value"
                                                                 name="fishbone[fourth][sub][{{ $key }}]"
-                                                                value="{{ $value }}">
+                                                                value="{{ $value }}" readonly>
                                                         </div>
                                                     @endforeach
                                                 </div>
                                                 <div class="rootcause blue">
                                                     <input type="text" class="form-control" placeholder="Enter value"
                                                         name="fishbone[fourth][root_cause]"
-                                                        value="{{ $fishboneData['fourth']['root_cause'] ?? '' }}">
+                                                        value="{{ $fishboneData['fourth']['root_cause'] ?? '' }}"
+                                                        readonly>
                                                 </div>
                                             </div>
 
@@ -550,14 +572,14 @@
                                                             <input type="text" class="form-control sub-stat"
                                                                 placeholder="Enter value"
                                                                 name="fishbone[fifth][sub][{{ $key }}]"
-                                                                value="{{ $value }}">
+                                                                value="{{ $value }}" readonly>
                                                         </div>
                                                     @endforeach
                                                 </div>
                                                 <div class="rootcause green">
                                                     <input type="text" class="form-control" placeholder="Enter value"
                                                         name="fishbone[fifth][root_cause]"
-                                                        value="{{ $fishboneData['fifth']['root_cause'] ?? '' }}">
+                                                        value="{{ $fishboneData['fifth']['root_cause'] ?? '' }}" readonly>
                                                 </div>
                                             </div>
 
@@ -570,14 +592,14 @@
                                                             <input type="text" class="form-control sub-stat"
                                                                 placeholder="Enter value"
                                                                 name="fishbone[sixth][sub][{{ $key }}]"
-                                                                value="{{ $value }}">
+                                                                value="{{ $value }}" readonly>
                                                         </div>
                                                     @endforeach
                                                 </div>
                                                 <div class="rootcause yellow">
                                                     <input type="text" class="form-control" placeholder="Enter value"
                                                         name="fishbone[sixth][root_cause]"
-                                                        value="{{ $fishboneData['sixth']['root_cause'] ?? '' }}">
+                                                        value="{{ $fishboneData['sixth']['root_cause'] ?? '' }}" readonly>
                                                 </div>
                                             </div>
 
@@ -588,7 +610,7 @@
                                                 <div class="defect-text">
                                                     <input type="text" class="form-control" placeholder="Enter value"
                                                         name="fishbone[root_cause][main]"
-                                                        value="{{ $fishboneData['root_cause']['main'] ?? '' }}">
+                                                        value="{{ $fishboneData['root_cause']['main'] ?? '' }}" readonly>
                                                 </div>
                                             </div>
 
@@ -607,7 +629,7 @@
                                         </div>
                                     </div>
                                     <div class="basic-form">
-                                        <form method="POST" id="riskanalysis"
+                                        <form method="POST" id="uauc"
                                             action="{{ admin_url('incident/initial-incident/uauc/submit') }}">
                                             @csrf
 
@@ -779,11 +801,15 @@
                     $('.ua_uc_div').hide();
                 }
             });
+
             $(function() {
-                $('#riskanalysis').validate({
+                $('#uauc').validate({
                     rules: {
 
-                        ua_uc: {
+                        ua_uc_yes_no: {
+                            required: true,
+                        },
+                        'ua_or_uc[]': {
                             required: true,
                         },
                         description_ca: {
@@ -793,8 +819,62 @@
                     },
                     messages: {
 
-                        ua_uc: {
+                        ua_uc_yes_no: {
                             required: "UA UC is required.",
+                        },
+                        'ua_or_uc[]': {
+                            required: "This field is required.",
+                        },
+                        description_uauc: {
+                            required: "Description of UA UC is required.",
+                        },
+
+                    },
+
+                    errorElement: 'span',
+                    errorPlacement: function(error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-input').append(error);
+                    },
+                    highlight: function(element) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function(element) {
+                        $(element).removeClass('is-invalid');
+                    },
+                    submitHandler: function(form) {
+                        form.submit();
+                    },
+                    invalidHandler: function(event, validator) {
+                        var errors = validator.numberOfInvalids();
+                        if (errors) {
+                            console.log(`There are ${errors} validation errors.`);
+                            validator.errorList.forEach(function(error) {
+                                console.log(
+                                    `Field: ${error.element.name}, Error: ${error.message}`
+                                );
+                            });
+                        }
+                    },
+                });
+            });
+
+            $(function() {
+                $('#riskanalysis').validate({
+                    rules: {
+
+                        risk_level: {
+                            required: true,
+                        },
+                        description_ca: {
+                            required: true,
+                        },
+
+                    },
+                    messages: {
+
+                        risk_level: {
+                            required: "Risk Level is required.",
                         },
                         description_ca: {
                             required: "Description of CA is required.",
