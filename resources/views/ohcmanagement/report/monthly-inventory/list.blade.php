@@ -67,7 +67,8 @@
                             <table class="table table-bordered table-responsive" id="tableToExport" style="width:100%;"
                                 border="0">
                                 <tr style="font-size: 19px; background-color:red; color:rgb(0, 0, 0) ">
-                                    <td colspan="5"><img src="{{ url('public/assets/images/logo-dark.png') }}" style="background-color: white"  alt=""></td>
+                                    <td colspan="5"><img src="{{ url('public/assets/images/logo-dark.png') }}"
+                                            style="background-color: white" alt=""></td>
                                     <td colspan="70" align="center">
                                         <center>
                                             <b>Occupational Health Center Inventory Record <br>
@@ -89,17 +90,28 @@
     @stop
     @push('script')
         <script>
-            $(document).ready(function() {
-                var fromDatepicker = flatpickr("#month", {
-                    dateFormat: "m",
+            // $(document).ready(function() {
+            //     var fromDatepicker = datepicker("#month", {
+            //         dateFormat: "mm",
 
-                });
+            //     });
 
-                var toDatepicker = flatpickr("#year", {
-                    dateFormat: "Y",
-                    minDate: "today"
-                });
+            //     var toDatepicker = flatpickr("#year", {
+            //         dateFormat: "Y",
+            //         minDate: "today"
+            //     });
+            // });
+            $('#month').datepicker({
+                format: 'mm', 
+                minViewMode: 1,
+                autoclose: true
             });
+            $('#year').datepicker({
+                format: 'yyyy',
+                minViewMode: 1,
+                autoclose: true
+            });
+
             $(document).ready(function() {
                 $('#exportexcel').on('click', function(e) {
                     e.preventDefault();
@@ -107,7 +119,7 @@
                     let unitId = $('#unit_id').val();
                     let year = $('#year').val();
                     let month = $('#month').val();
-                    if (!unitId || !year|| !month) {
+                    if (!unitId || !year || !month) {
                         Swal.fire({
                             icon: 'warning',
                             title: 'Warning',

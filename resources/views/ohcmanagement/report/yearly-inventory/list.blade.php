@@ -86,10 +86,11 @@
             $(document).ready(function() {
 
 
-                var toDatepicker = flatpickr("#year", {
-                    dateFormat: "Y",
-                    minDate: "today"
-                });
+                $('#year').datepicker({
+                format: 'yyyy',
+                minViewMode: 1,
+                autoclose: true
+            });
             });
             $(document).ready(function() {
                 $('#exportexcel').on('click', function(e) {

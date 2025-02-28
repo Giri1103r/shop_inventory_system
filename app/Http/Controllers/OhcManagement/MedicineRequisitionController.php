@@ -196,9 +196,9 @@ class MedicineRequisitionController extends Controller
                 $medicineRequisition = $this->medicine_requisition->store($user_medicine_requisition);
                 $id = $user_medicine_requisition->id;
                 $this->ohcStatus->storeMedicineRecevingdata($id);
-
+                $details = $this->user_medicine_requisition->selectOne($user_medicine_requisition->id);
                 // Email details
-                $mailsubject = 'Certified First Aider Request the Medicine';
+                $mailsubject = getUsername($details ->created_by) .'Request the Medicine for the stock';
                 $user_role = ROLE_PARAMEDICS;
 
                 // Fetch users with the specified role
@@ -229,19 +229,19 @@ class MedicineRequisitionController extends Controller
                 /**
                  * Send Web notification
                  */
-
+                $details = $this->user_medicine_requisition->selectOne($user_medicine_requisition->id);
                 $notificationData = array(
                     'notification_type' => 4,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
-                        'message' => "Request For the Medicine by " . getUsername($user_medicine_requisition->created_by),
+                        'message' => "Request For the Medicine by " . getUsername($details->created_by),
                         'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                        'id' => $user_medicine_requisition->id,
+                        'id' =>    $details->id,
                         'module' => 1,
                     )),
-                    'web_link' =>  admin_url('ohc/medicine-requisition/approval/view/' . encryptId($user_medicine_requisition->id)),
+                    'web_link' =>  admin_url('ohc/medicine-requisition/approval/view/' . encryptId($details->id)),
                     'assigned_user' => array_to_string($userids),
                     'created_by' => Auth::id(),
                 );
@@ -249,14 +249,14 @@ class MedicineRequisitionController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medicine-requisition/list'));
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-requisition/list'));
         }
@@ -409,8 +409,8 @@ class MedicineRequisitionController extends Controller
                 $medicine_requisition = $this->medicine_requisition->selectOne($id);
             }
             if ($user_medicine_requisition->approve_status != STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) {
-                return redirect(admin_url('ohc/medicine-requisition/list'))
-                    ->with('error', 'You have already responded to this request !.');
+                return redirect(admin_url('ohc/medicine-requisition/view/' . encryptId($id)))
+                 ;
             }
 
             $data = array(
@@ -677,8 +677,8 @@ class MedicineRequisitionController extends Controller
                 $medicnieRequisition = $this->user_medicine_requisition->store();
                 $id = $medicnieRequisition->id;
                 $this->ohcStatus->storeMedicineRecevingdata($id);
-                dispatch(new ImportRequisitionjob($details, $medicnieRequisition));
-                //    dispatch((new ImportCompanyJob($details))->onQueue('company'));
+                // dispatch(new ImportRequisitionjob($details, $medicnieRequisition));
+                   dispatch((new ImportRequisitionjob($details, $medicnieRequisition))->onQueue('medicine_requisition'));
             }
 
             $insert_data['log_id'] = $insert_id;

@@ -256,12 +256,18 @@ class MedicineController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $medicine = $this->medicine->selectOne($id);
+
                 $unit = $this->unit->getunit();
                 $data = array(
                     'medicine' => $medicine,
                 );
             }
-            return view('ohcmanagement.master.medicine.approve', $data);
+            if($medicine->approve_status == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING){
+                return view('ohcmanagement.master.medicine.approve', $data);
+            }else{
+               return redirect(admin_url('ohc/medicine/view/' . encryptId($medicine->id)));
+            }
+
         } catch (Exception $ex) {
         }
     }
@@ -309,7 +315,7 @@ class MedicineController extends Controller
                 $action = $request->action;
                 if ($action == 'approve') {
                     $mailsubject =  'Medicine Name Has Been Approved';
-                    Mail::to($email)->queue(new MedicineStockRequestEmail($details));
+                    Mail::to($email)->queue(new MedicineRequestEmail($details));
                     $notificationData = [
                         'notification_type' => 4,
                         'module_type' => 1,

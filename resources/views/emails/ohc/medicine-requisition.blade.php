@@ -60,6 +60,7 @@
                             <th style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                                 <b>Quantity</b>
                             </th>
+
                         </tr>
                     </thead>
                     <tbody style="font-family:Nakheel Headline">
@@ -74,6 +75,7 @@
                                 <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                                     {{ $data['quantity'] }}
                                 </td>
+
                             </tr>
                         @endforeach
                     </tbody>

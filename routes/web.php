@@ -95,6 +95,10 @@ Route::get('queuelocationimport', [CronController::class, 'queuelocationimport']
 Route::get('queueunitimport', [CronController::class, 'queueunitimport']);
 Route::get('queueDepartmentuplodimport', [CronController::class, 'queueDepartmentuplodimport']);
 
+Route::get('cron/ohc/medicine-issuance/import', [CronController::class, 'queueMedicineIsuuanceImport']);
+Route::get('cron/ohc/medicine-requisition/import', [CronController::class, 'queueMedicineRequisitionImport']);
+
+
 Route::get('cron/safetypermit/protectiveequipmentmaster/import', [CronController::class, 'queueProtectiveequipmentmasterImport']);
 Route::get('cron/safetypermit/equipinvolvemaster/import', [CronController::class, 'queueEquipinvolvemasterImport']);
 Route::get('cron/safetypermit/safeworkmaster/import', [CronController::class, 'queueSafeworkmasterImport']);

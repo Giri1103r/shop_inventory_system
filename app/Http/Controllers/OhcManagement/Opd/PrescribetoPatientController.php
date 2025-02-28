@@ -297,7 +297,7 @@ class PrescribetoPatientController extends Controller
                 if ($inventory) {
                     $inventory->increment('total_prescribe', $issuedQuantity);
                     $inventory->decrement('balance', $issuedQuantity);
-                    $inventory->decrement('total_purchase', $issuedQuantity);
+                   
                 }
             }
 

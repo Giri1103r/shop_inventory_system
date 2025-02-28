@@ -48,7 +48,7 @@
                                 <b>Time</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ ($emailDetails['time']) }}</td>
+                                valign="top"> {{ $emailDetails['time'] }}</td>
                         </tr>
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
@@ -83,59 +83,75 @@
                         </tr>
                     </thead>
                     <tbody style="font-family:Nakheel Headline">
-                        @foreach ($medicineDetails as $data)
+
+                        @if ($medicineDetails->isEmpty())
                             <tr>
-                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                    {{ (getMedicinename($data['medicine_id'])) }}
-                                </td>
-                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                    {{ $data['available_quantity'] }}
-                                </td>
-                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                    {{ $data['quantity'] }}
+                                <td colspan="4" align="center"
+                                    style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                    <b>No data is available</b>
                                 </td>
                             </tr>
-                        @endforeach
+                        @else
+                            @foreach ($medicineDetails as $data)
+                                <tr>
+                                    <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                        valign="top">
+                                        {{ getMedicinename($data['medicine_id']) }}
+                                    </td>
+                                    <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                        valign="top">
+                                        {{ $data['available_quantity'] }}
+                                    </td>
+                                    <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                        valign="top">
+                                        {{ $data['quantity'] }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endif
+
                     </tbody>
                 </table>
+
+
                 <table role="presentation" border="1" cellpadding="0" cellspacing="0"
-                style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;"
-                width="100%">
-                <tbody style="font-family:Nakheel Headline">
+                    style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;margin-top:10%;"
+                    width="100%">
+                    <tbody style="font-family:Nakheel Headline">
 
-                    <tr>
-                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>Hospital Name</b>
-                        </td>
-                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ ($hospitaldetails['hospital_name']) }}</td>
-                    </tr>
-                    <tr>
-                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>First Aider Name</b>
-                        </td>
-                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ ($hospitaldetails['first_aider']) }}</td>
-                    </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Hospital Name</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ isset($hospitaldetails['hospital_name'])? $hospitaldetails['hospital_name']:'-'}}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>First Aider Name</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ isset($hospitaldetails['first_aider'])? $hospitaldetails['first_aider']:'-' }}</td>
+                        </tr>
 
 
-                    <tr>
-                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>Mobile Number</b>
-                        </td>
-                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ ($hospitaldetails['mobile_no']) }}</td>
-                    </tr>
-                    <tr>
-                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>Refered By Vechicle</b>
-                        </td>
-                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ ($emailDetails['refered_by_vechicle']) }}</td>
-                    </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Mobile Number</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ isset($hospitaldetails['mobile_no']) ? $hospitaldetails['mobile_no']:'-' }}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Refered By Vechicle</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ isset($hospitaldetails['refered_by_vechicle']) ? $hospitaldetails['refered_by_vechicle']:'-'}}</td>
+                        </tr>
 
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
 
             </td>
         </tr>
