@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Employee Cum Patient')
+@section('title', 'Employee Cum Patient Show')
 @section('pageurl', admin_url('ohc/employee-cum-patient/list'))
 
 

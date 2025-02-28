@@ -35,7 +35,7 @@
                                             <input type="text" name="medicine" id="medicine" class="form-control"
                                                 placeholder="Medicine Name">
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
+                                        {{-- <div class="col-md-3 mb-3 form-input">
                                             <label class="form-label require">Unit</label>
                                             <select name="unit" id="unit" class="form-select single-select"
                                                 style="width: 100%">
@@ -45,7 +45,7 @@
                                                 @endforeach
                                             </select>
 
-                                        </div>
+                                        </div> --}}
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">Expire Date</label>
                                             <div class="input-group date form-input custom-height">
@@ -89,6 +89,16 @@
                                             </select>
                                         </div>
 
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="status" class="form-label">Approve Status</label>
+                                            <select name="approve_status" id="approve_status" style="width: 100%"
+                                                class="form-control single-select">
+                                                <option value="">Select Status</option>
+                                                <option value="{{ encryptId(2) }}">EHS Head Approval Pending</option>
+                                                <option value="{{ encryptId(3) }}">EHS Head Approved</option>
+                                            </select>
+                                        </div>
+
                                         <div class="col-md-3 mb-3 d-flex align-items-end gap-2">
                                             <x-button-search class="me-2"></x-button-search>
                                             <x-button-reset class="ms-1"></x-button-reset>
@@ -116,7 +126,7 @@
                                         <th>Expire Date</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>Remarks</th>
-                                        {{-- <th>Approve Status</th> --}}
+                                        <th>Approve Status</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th data-priority="1">{{ __('common.action') }}</th>
@@ -155,7 +165,7 @@
 
             var toDatepicker = flatpickr("#to_date", {
                 dateFormat: "d-m-Y",
-                minDate: "today"
+
             });
             $('#expire_date').flatpickr({
                 dateFormat: "d-m-Y",
@@ -202,6 +212,7 @@
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
                         d.status = $('#status').val();
+                        d.approve_status = $('#approve_status').val();
                         d.expire_date = $('#expire_date').val();
 
                     },
@@ -245,10 +256,10 @@
                         data: 'remarks',
                         name: 'remarks'
                     },
-                    // {
-                    //     data: 'approve_status',
-                    //     name: 'approve_status'
-                    // },
+                    {
+                        data: 'approve_status',
+                        name: 'approve_status'
+                    },
                     {
                         data: 'created_by',
                         name: 'created_by'
@@ -291,6 +302,7 @@
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
                                     var status = $('#status').val();
+                                    var approve_status = $('#approve_status').val();
                                     var expire_date = $('#expire_date').val();
 
                                     $(".dt-button").removeClass('processing');
@@ -303,6 +315,7 @@
                                         '&expire_date=' + expire_date +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
+                                        '&approve_status=' + approve_status +
                                         '&status=' + status
                                 }
                             },
@@ -316,6 +329,8 @@
                                     var expire_date = $('#expire_date').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
+                                    var approve_status = $('#approve_status').val();
+
                                     var status = $('#status').val();
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
@@ -326,6 +341,7 @@
                                         '&unit=' + unit +
                                         '&expire_date=' + expire_date +
                                         '&from_date=' + from_date +
+                                        '&approve_status=' + approve_status +
                                         '&to_date=' + to_date +
                                         '&status=' + status
                                 }

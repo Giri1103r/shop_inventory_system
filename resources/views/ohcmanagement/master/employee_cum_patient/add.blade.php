@@ -204,16 +204,16 @@
                 rules: {
                     emp_name: {
                         required: true,
-                        remote: {
-                            url: '{{ admin_url('ohc/employee-cum-patient/unique') }}',
-                            type: 'post',
-                            data: {
-                                _token: "{{ csrf_token() }}",
-                                employee_name: function() {
-                                    return $('#emp_name').val();
-                                },
-                            },
-                        },
+                        // remote: {
+                        //     url: '{{ admin_url('ohc/employee-cum-patient/unique') }}',
+                        //     type: 'post',
+                        //     data: {
+                        //         _token: "{{ csrf_token() }}",
+                        //         employee_name: function() {
+                        //             return $('#emp_name').val();
+                        //         },
+                        //     },
+                        // },
                     },
                     employee_type: {
                         required: true,
@@ -223,16 +223,16 @@
                     },
                     emp_id: {
                         required: true,
-                        remote: {
-                            url: '{{ admin_url('ohc/employee-cum-patient/unique') }}',
-                            type: 'post',
-                            data: {
-                                _token: "{{ csrf_token() }}",
-                                employee_id: function() {
-                                    return $('#emp_id').val();
-                                },
-                            },
-                        },
+                        // remote: {
+                        //     url: '{{ admin_url('ohc/employee-cum-patient/empunique') }}',
+                        //     type: 'post',
+                        //     data: {
+                        //         _token: "{{ csrf_token() }}",
+                        //         employee_id: function() {
+                        //             return $('#emp_id').val();
+                        //         },
+                        //     },
+                        // },
                     },
                     address: {
                         required: true,

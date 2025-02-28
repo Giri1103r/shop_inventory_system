@@ -48,24 +48,36 @@ class PrescribetoPatient extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_management_opd_patient.*', 'ohc_management_opd_patient_status.patient_status', 'ohc_management_opd_patient_suggested_by.suggested_by', 'ohc_management_opd_patient.patient_status As patientStatus')
-            ->join('ohc_management_opd_patient_status', 'ohc_management_opd_patient.patient_status', '=', 'ohc_management_opd_patient_status.id')
+        $query = $this->select(
+            'ohc_management_opd_patient.*');
 
-            ->join('ohc_management_opd_patient_suggested_by', 'ohc_management_opd_patient.suggested_by', '=', 'ohc_management_opd_patient_suggested_by.id');
 
-        // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
+
+        if (!empty($request->search) && isset($request->search['value']) && $request->search['value'] !== '') {
             $search = $request->search['value'];
 
-            $query->where(function ($query) use ($search) {
+
+            $formattedDate = null;
+            if (\DateTime::createFromFormat('d-m-Y', $search) !== false) {
+                $formattedDate = \Carbon\Carbon::createFromFormat('d-m-Y', $search)->format('Y-m-d');
+            }
+
+            $query->where(function ($query) use ($search, $formattedDate) {
                 $query
                     ->orWhere('emp_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('mobile_no', 'LIKE', '%' . $search . '%')
                     ->orWhere('emp_name', 'LIKE', '%' . $search . '%');
+
+
+                if ($formattedDate) {
+                    $query->orWhere('date', 'LIKE', '%' . $formattedDate . '%');
+                }
             });
         }
+
 
         if ($request->has('emp_name') && $request->emp_name) {
             $query = $query->where('ohc_management_opd_patient.emp_name', 'LIKE', '%' . $request->emp_name . '%');
@@ -111,14 +123,19 @@ class PrescribetoPatient extends Model
     public function store()
     {
         $request = request();
-        $department = Department::where('department_name', $request->department_id)->first();
+
         // Prepare data for insertion
+        if( $request->has('is_outside_worker') == 1){
+           $employeeId =  $request->outside_emp_id;
+        }else{
+            $employeeId =   $request->emp_id;
+        }
         $insert_array = [
             'is_outside_employee' => $request->has('is_outside_worker') ? 1 : 0,
             'unit_id' => decryptId($request->unit_id),
-           'department_id' => isset($department) ? $department->id : null,
+           'department_id' => $request->department_id ,
             'company_name' => $request->company_name,
-            'emp_id' => $request->emp_id,
+            'emp_id' =>$employeeId ,
             'gender' => $request->gender,
             'emp_name' => $request->emp_name,
             'mobile_no' => $request->mobile_no,
@@ -196,6 +213,24 @@ class PrescribetoPatient extends Model
         return $data;
     }
 
+    public function uniqueCheck($emp_name)
+    {
+
+        return $this->where('emp_name', $emp_name)->get();
+    }
+
+    public function existUniqueCheck($emp_name,$id)
+    {
+        return $this->where('emp_name', $emp_name)
+            ->where('id', '!=', $id)
+            ->get();
+    }
+    public function HsnuniqueCheck($hsn)
+    {
+
+        return $this->where('hsn',  $hsn)->get();
+    }
+
     public function exportdata()
     {
         $request = request();
@@ -204,12 +239,26 @@ class PrescribetoPatient extends Model
         $query = $this->select(
             'ohc_management_opd_patient.*');
 
-        // Check if search exists to prevent undefined array errors
-        if (!empty($request->search) && !empty($request->search['value'])) {
+
+        if (!empty($request->search) && isset($request->search['value']) && $request->search['value'] !== '') {
             $search = $request->search['value'];
 
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('ohc_management_opd_patient.emp_name', 'LIKE', '%' . $search . '%');
+
+            $formattedDate = null;
+            if (\DateTime::createFromFormat('d-m-Y', $search) !== false) {
+                $formattedDate = \Carbon\Carbon::createFromFormat('d-m-Y', $search)->format('Y-m-d');
+            }
+
+            $query->where(function ($query) use ($search, $formattedDate) {
+                $query
+                    ->orWhere('emp_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('mobile_no', 'LIKE', '%' . $search . '%')
+                    ->orWhere('emp_name', 'LIKE', '%' . $search . '%');
+
+
+                if ($formattedDate) {
+                    $query->orWhere('date', 'LIKE', '%' . $formattedDate . '%');
+                }
             });
         }
         if ($request->has('emp_name') && $request->emp_name) {

@@ -34,10 +34,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
-use phpseclib3\File\ASN1\Maps\CertificateIssuer;
 use Spatie\SimpleExcel\SimpleExcelWriter;
-use Symfony\Component\Console\Completion\Suggestion;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Response;
 
 class PrescribetoPatientController extends Controller
 {
@@ -84,6 +83,9 @@ class PrescribetoPatientController extends Controller
             if ($request->ajax()) {
                 try {
                     $data = $this->opd_patient->list();
+
+
+
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('vital_checkup', function ($row) {
@@ -121,15 +123,15 @@ class PrescribetoPatientController extends Controller
                             return displaydateformat($row->date);
                         })
                         ->editColumn('suggested_by', function ($row) {
-                            return ($row->suggested_by);
+                            return getSuggestedBy($row->suggested_by);
                         })
-                        ->editColumn('patientStatus', function ($row) {
+                        ->editColumn('patient_status', function ($row) {
 
-                            if ($row->patient_status == 'Open') {
+                            if ($row->patient_status == '1') {
                                 return  "<span class='badge bg-info' style='font-size: 1.0em;'>Open</span>";
-                            } elseif ($row->patient_status == 'Close') {
+                            } elseif ($row->patient_status == '2') {
                                 return "<span class='badge bg-success' style='font-size: 1.0em;'>Close</span>";
-                            } elseif ($row->patient_status == 'Cancel') {
+                            } elseif ($row->patient_status == '3') {
                                 return "<span class='badge bg-danger' style='font-size: 1.0em;'>Cancel</span>";
                             } else if ($row->patient_status == null) {
                                 return "";
@@ -145,16 +147,16 @@ class PrescribetoPatientController extends Controller
                             $btn .= '<a href="' . admin_url('ohc/prescribe-to-patient/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             // }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
-                            if ($row->patientStatus !== 3) {
+                            if ($row->patient_status !== 3) {
                             $btn .= '<a href="' . admin_url('ohc/prescribe-to-patient/generalpdf/' . encryptId($row->id)) . '" class="" title="PDF"> <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a> ';
                             }
-                            if ($row->patientStatus !== 3) {
+                            if ($row->patient_status !== 3) {
                             $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="Close" title="Cancel" style="color: #e21e23;margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
                             }
                               return $btn;
                         })
 
-                        ->rawColumns(['action', 'date', 'vital_checkup', 'created_by', 'patientStatus', 'fitness_certificate'])
+                        ->rawColumns(['action', 'date', 'vital_checkup', 'created_by', 'patient_status', 'fitness_certificate'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -162,7 +164,7 @@ class PrescribetoPatientController extends Controller
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
                 }
             }
@@ -187,11 +189,13 @@ class PrescribetoPatientController extends Controller
             $reffered = $this->refered_vechicle->getreffered();
             $patientstatus = $this->patient_status->getpatientstatus();
             $medicine  = $this->inventory->getmedicineUnitwise();
+            $departmentList=$this->department->getdepartment();
             $data = array(
                 'unit' => $unit,
                 'suggestedBy' => $suggestedBy,
                 'reffered' => $reffered,
                 'patientstatus' => $patientstatus,
+                'departmentList'=>$departmentList,
                 'medicine' => $medicine
 
             );
@@ -220,7 +224,7 @@ class PrescribetoPatientController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-
+// dd($request->all());
             $opd_patient = $this->opd_patient->store();
 
             $firstaid = $this->opd_firstaid->store($opd_patient);
@@ -302,7 +306,7 @@ class PrescribetoPatientController extends Controller
 
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
         } catch (Exception $ex) {
-            dd($ex);  // Debugging
+            report($ex);  // Debugging
             Session::flash('error', 'Something went wrong. Please try again after some time');
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
         }
@@ -324,6 +328,8 @@ class PrescribetoPatientController extends Controller
             $patientstatus = $this->patient_status->getpatientstatus();
             $medicine  = $this->inventory->getmedicineUnitwise();
             $suggestedname = $this->suggestedBy->getsuggestedname();
+            $departmentList=$this->department->getdepartment();
+
             $data = array(
                 'unit' => $unit,
                 'suggestedBy' => $suggestedBy,
@@ -331,6 +337,7 @@ class PrescribetoPatientController extends Controller
                 'patientstatus' => $patientstatus,
                 'medicine' => $medicine,
                 'opdpatient' => $opdpatient,
+                'departmentList'=>$departmentList,
                 'opd_firstaid' => $opd_firstaid,
                 'isreffered' => $isreffered,
 
@@ -367,7 +374,7 @@ class PrescribetoPatientController extends Controller
 
             return view('ohcmanagement.ohc-opd.prescribe-to-patient.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong please try again after some time');
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
         }
@@ -396,61 +403,88 @@ class PrescribetoPatientController extends Controller
 
             $user_opd_patient = $this->opd_patient->selectOne($id);
             $user_opd_firstaid = $this->opd_firstaid->selectOne($id);
-            foreach ($request->medicine_id as $index => $medicine_id) {
-                $medicineRecord = $user_opd_firstaid->where('medicine_id', $medicine_id)->where('opd_id', $id)->first();
+            if ($user_opd_patient->first_aid_treatment === 1) {
+                foreach ($request->medicine_id as $index => $medicine_id) {
+                    $medicineRecord = $user_opd_firstaid->where('medicine_id', $medicine_id)->where('opd_id', $id)->first();
 
-                if (!$medicineRecord) {
+                    if (!$medicineRecord) {
 
-                    continue;
-                }
+                        continue;
+                    }
 
-                $newQuantity = $request->quantity[$index];
-                $oldquantity = $medicineRecord->quantity;
+                    $newQuantity = $request->quantity[$index];
+                    $oldquantity = $medicineRecord->quantity;
 
-                if ($oldquantity > $newQuantity) {
-                    $difference = $oldquantity - $newQuantity;
+                    if ($oldquantity > $newQuantity) {
+                        $difference = $oldquantity - $newQuantity;
 
-                    $this->inventory
-                        ->where('medicine_id', $medicine_id)
-                        ->where('unit_id', Auth::user()->unit_id)
-                        ->decrement('total_prescribe', $difference);
+                        $this->inventory
+                            ->where('medicine_id', $medicine_id)
+                            ->where('unit_id', Auth::user()->unit_id)
+                            ->decrement('total_prescribe', $difference);
 
-                    $this->inventory
-                        ->where('medicine_id', $medicine_id)
-                        ->where('unit_id', Auth::user()->unit_id)
-                        ->increment('balance', $difference);
-                } elseif ($oldquantity < $newQuantity) {
-                    $difference = $newQuantity - $oldquantity;
+                        $this->inventory
+                            ->where('medicine_id', $medicine_id)
+                            ->where('unit_id', Auth::user()->unit_id)
+                            ->increment('balance', $difference);
+                    } elseif ($oldquantity < $newQuantity) {
+                        $difference = $newQuantity - $oldquantity;
 
-                    $this->inventory
-                        ->where('medicine_id', $medicine_id)
-                        ->where('unit_id', Auth::user()->unit_id)
-                        ->increment('total_prescribe', $difference);
+                        $this->inventory
+                            ->where('medicine_id', $medicine_id)
+                            ->where('unit_id', Auth::user()->unit_id)
+                            ->increment('total_prescribe', $difference);
 
-                    $this->inventory
-                        ->where('medicine_id', $medicine_id)
-                        ->where('unit_id', Auth::user()->unit_id)
-                        ->decrement('balance', $difference);
+                        $this->inventory
+                            ->where('medicine_id', $medicine_id)
+                            ->where('unit_id', Auth::user()->unit_id)
+                            ->decrement('balance', $difference);
+                    }
                 }
             }
+
             $opd_patient = $this->opd_patient->updates($id);
-
+            if ($user_opd_patient->first_aid_treatment === 1) {
             $firstaid = $this->opd_firstaid->updates($id);
-
+        }
             $isreffered = $this->isreffered->updates($id);
             Session::flash('success', __('Your data has been created successfully'));
 
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
         } catch (Exception $ex) {
-            dd($ex);  // Debugging
+            report($ex);  // Debugging
             Session::flash('error', 'Something went wrong. Please try again after some time');
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
+        }
+    }
+    // unique check
+
+    public function Uniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $emp_name = $request->emp_name;
+
+
+            $id = $request->id;
+
+            if (empty($id)) {
+                $isUnique = $this->opd_patient->uniqueCheck($emp_name);
+            } else {
+                $id = decryptId($id);
+
+                $isUnique = $this->opd_patient->existUniqueCheck($emp_name, $id);
+            }
+
+            if ($isUnique->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
         }
     }
 
     // export pdf
     public function exportExcel()
-    { {
+    {
 
             try {
 
@@ -512,9 +546,9 @@ class PrescribetoPatientController extends Controller
                     );
             } catch (Exception $ex) {
 
-                dd($ex);
+                report($ex);
             }
-        }
+
     }
 
     // Export pdf
@@ -576,7 +610,7 @@ class PrescribetoPatientController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
         }
     }
 

@@ -649,17 +649,18 @@ class InitialIncidentController extends Controller
             }
 
 
+            $accident_id = null;
+            $fire_id = null; 
+
             $incidentinvestigation = $this->incidentinvestigation->store($incident_id, $incident_status);
             // dd($incidentinvestigation);
             $incident = $this->initialincident->updateStatus($incident_id, $incident_status);
             if ($incidentinvestigation->root_cause_analysis ==  1) {
-                $whyanalysis = $this->whyanalysis->store($incident_id, $incidentinvestigation->id);
+                $whyanalysis = $this->whyanalysis->store($accident_id , $incident_id, $fire_id ,$incidentinvestigation->id);
             }
             if ($incidentinvestigation->root_cause_analysis == 2) {
-                $this->fishboneAnalysis->storeFishbone($incident_id, $incidentinvestigation->id);
+                $this->fishboneAnalysis->storeFishbone($accident_id  , $incident_id, $fire_id ,$incidentinvestigation->id);
             }
-
-
 
             $this->hiramoc->updateinvestigation($incident_id, $incidentinvestigation->id);
             Session::flash('success', 'Your data has been updated successfully!');

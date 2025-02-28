@@ -31,10 +31,9 @@
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">Emp Name</label>
-                                            <select name="emp_name" id="emp_name" class="form-control form-control-sm"
-                                                style="width: 100%">
-                                                <option value="">Select the Employee Name</option>
-                                            </select>
+                                            <input name="emp_name" id="emp_name" class="form-control form-control-sm"
+                                              >
+
                                         </div>
 
 
@@ -136,7 +135,7 @@
 
             var toDatepicker = flatpickr("#to_date", {
                 dateFormat: "d-m-Y",
-                minDate: "today"
+
             });
         });
 
@@ -340,33 +339,33 @@
                 });
             });
 
-            $('#emp_name').select2({
-            ajax: {
-                url: '{{ admin_url('safetypermit/employeename') }}',
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        search: params.term
-                    };
-                },
-                processResults: function(data) {
-                    return {
-                        results: $.map(data, function(item) {
+        //     $('#emp_name').select2({
+        //     ajax: {
+        //         url: '{{ admin_url('safetypermit/employeename') }}',
+        //         dataType: 'json',
+        //         delay: 250,
+        //         data: function(params) {
+        //             return {
+        //                 search: params.term
+        //             };
+        //         },
+        //         processResults: function(data) {
+        //             return {
+        //                 results: $.map(data, function(item) {
 
-                            var cleanedText = item.text.replace(/ - .*/, '').trim();
-                            return {
-                                id: cleanedText,
-                                text: cleanedText
-                            };
-                        })
-                    };
-                }
-            },
-            minimumInputLength: 1,
-            dropdownCssClass: 'form-control',
-            selectionCssClass: 'form-control'
-        });
+        //                     var cleanedText = item.text.replace(/ - .*/, '').trim();
+        //                     return {
+        //                         id: cleanedText,
+        //                         text: cleanedText
+        //                     };
+        //                 })
+        //             };
+        //         }
+        //     },
+        //     minimumInputLength: 1,
+        //     dropdownCssClass: 'form-control',
+        //     selectionCssClass: 'form-control'
+        // });
 
         });
     </script>

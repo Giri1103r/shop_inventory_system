@@ -276,12 +276,26 @@ if (!function_exists('getohctotalCount')) {
                 $count = Medicine::where('status',1)->count();
                 break;
             case 'medicineReceiving':
-
                 $count = MedicineReceiving::where('approved_date', Carbon::today())->count();
-
                 break;
             case 'usermedicineissuance':
                 $count = UserMedicineIssuance::count();
+                break;
+            case 'prescribetopatient1':
+                $count = PrescribetoPatient::where('unit_id', 1) 
+                ->count(); 
+                break;
+            case 'prescribetopatient2':
+                $count = PrescribetoPatient::where('unit_id', 2) 
+                ->count(); 
+                break;
+            case 'prescribetopatient3':
+                $count = PrescribetoPatient::where('unit_id', 3) 
+                ->count(); 
+                break;
+            case 'prescribetopatient4':
+                $count = PrescribetoPatient::where('unit_id', 4) 
+                ->count(); 
                 break;
             case 'prescribetopatient':
                 $count = PrescribetoPatient::where('created_at', Carbon::today())->count();
@@ -289,6 +303,7 @@ if (!function_exists('getohctotalCount')) {
             case 'medicineissuance':
                 $count = UserMedicineIssuance::where('created_at', Carbon::today())->count();
                 break;
+
             default:
                 $count = 0;
                 break;

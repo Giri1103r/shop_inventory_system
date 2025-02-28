@@ -79,7 +79,7 @@ class RoadsideFirstAidController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -137,14 +137,14 @@ class RoadsideFirstAidController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/roadside-first-aid/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/roadside-first-aid/list'));
         }
@@ -202,14 +202,14 @@ class RoadsideFirstAidController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/roadside-first-aid/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/roadside-first-aid/list'));
         }
@@ -358,6 +358,7 @@ class RoadsideFirstAidController extends Controller
                 'Transport Method',
                 'Incident Report Filled',
                 'Remarks',
+                'Status',
                 __("common.created_by"),
                 __("common.created_date"),
             ];

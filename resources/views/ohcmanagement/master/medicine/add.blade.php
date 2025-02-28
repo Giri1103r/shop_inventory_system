@@ -136,125 +136,114 @@
 
         });
         $(function() {
-            // Add custom regex rule
-            $.validator.addMethod(
-                "regex",
-                function(value, element, regex) {
-                    return this.optional(element) || regex.test(value);
-                },
-                "Invalid format."
-            );
+    // Add custom regex rule
+    $.validator.addMethod(
+        "regex",
+        function(value, element, pattern) {
+            return this.optional(element) || new RegExp(pattern).test(value);
+        },
+        "Invalid format."
+    );
 
-            $('#medicineadd').validate({
-                rules: {
-                    medicine: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 30,
-                        regex: /^[a-zA-Z0-9\s\-]*$/,
-                        remote: {
-                            url: '{{ admin_url('ohc/medicine/unique') }}',
-                            type: 'post',
-                            data: {
-                                medicine_name: function() {
-                                    return $('#medicine').val();
-                                },
-                                // unit_id: function() {
-                                //     return $('#unit_id').val();
-                                // },
-                            },
-                        },
-                    },
-                    pack: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 100,
-                    },
-                    hsn: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 30,
-                        regex: /^[a-zA-Z0-9\s\-]*$/,
-                        remote: {
-                            url: '{{ admin_url('ohc/medicine/hsn-unique') }}',
-                            type: 'post',
-                            data: {
-                                hsn: function() {
-                                    return $('#hsn').val();
-                                }
-                            }
+    $('#medicineadd').validate({
+        rules: {
+            medicine: {
+                required: true,
+                minlength: 3,
+                maxlength: 30,
+                regex: /^(?!\s*$)[a-zA-Z0-9\s]+$/,
+                remote: {
+                    url: "{{ admin_url('ohc/medicine/unique') }}",
+                    type: "post",
+                    data: {
+                        medicine_name: function() {
+                            return $('#medicine').val();
                         }
-                    },
-                    unit_id: {
-                        required: true,
+                    }
+                }
+            },
+            pack: {
+                required: true,
+                minlength: 3,
+                maxlength: 100
+            },
+            hsn: {
+                required: true,
+                minlength: 3,
+                maxlength: 30,
+                regex: /^(?!\s*$)[a-zA-Z0-9\s]+$/,
+                remote: {
+                    url: "{{ admin_url('ohc/medicine/hsn-unique') }}",
+                    type: "post",
+                    data: {
+                        hsn: function() {
+                            return $('#hsn').val();
+                        }
+                    }
+                }
+            },
+            unit_id: {
+                required: true
+            },
+            threshold_limit: {
+                required: true,
+                digits: true
+            },
+            expire_date: {
+                required: true
+            }
+        },
+        messages: {
+            medicine: {
+                required: "Medicine Name Cannot Be Empty.",
+                minlength: "Medicine name must be at least 3 characters.",
+                maxlength: "Medicine name cannot exceed 30 characters.",
+                regex: "Medicine name contains invalid characters.",
+                remote: "This Medicine Name should be unique."
+            },
+            pack: {
+                required: "Pack details Cannot be empty.",
+                minlength: "Pack details must be at least 3 characters.",
+                maxlength: "Pack details cannot exceed 100 characters."
+            },
+            hsn: {
+                required: "HSN Number cannot be empty.",
+                minlength: "HSN code must be at least 3 characters.",
+                maxlength: "HSN code cannot exceed 30 characters.",
+                regex: "HSN code contains invalid characters.",
+                remote: "This HSN Number already exists."
+            },
+            unit_id: {
+                required: "Please select a unit."
+            },
+            threshold_limit: {
+                required: "Please enter the threshold limit.",
+                digits: "Threshold limit contains only numeric."
+            },
+            expire_date: {
+                required: "Please select the expiry date."
+            }
+        },
+        errorElement: "span",
+        errorPlacement: function(error, element) {
+            error.addClass("invalid-feedback");
+            element.closest(".form-input").append(error); // Ensure `.form-input` exists
+        },
+        highlight: function(element, errorClass, validClass) {
+            $(element).addClass("is-invalid");
+        },
+        unhighlight: function(element, errorClass, validClass) {
+            $(element).removeClass("is-invalid");
+        },
+        submitHandler: function(form) {
+            form.submit(); // Default form submission
+        },
+        invalidHandler: function(event, validator) {
+            var errors = validator.numberOfInvalids();
+            console.log("Form has " + errors + " invalid fields."); // Optional debugging
+        }
+    });
+});
 
-                    },
-                    threshold_limit: {
-                        required: true,
-                        minlength: 2,
-                        maxlength: 100,
-                        regex: /^[a-zA-Z0-9\s\-]*$/,
-                    },
-                    expire_date: {
-                        required: true,
-                    },
-
-                },
-                messages: {
-                    medicine: {
-                        required: "Medicine Name Cannot Be Empty.",
-                        minlength: "Medicine name must be at least 3 characters.",
-                        maxlength: "Medicine name cannot exceed 100 characters.",
-                        regex: "Medicine name contains invalid characters.",
-                        remote: "This Medicine Name should be unique .",
-                    },
-                    pack: {
-                        required: "Pack details Cannot be empty.",
-                        minlength: "Pack details must be at least 3 characters.",
-                        maxlength: "Pack details cannot exceed 100 characters.",
-                    },
-                    hsn: {
-                        required: "HSN Number cannot be empty.",
-                        minlength: "HSN code must be at least 3 characters.",
-                        maxlength: "HSN code cannot exceed 30 characters.",
-                        regex: "HSN code contains invalid characters.",
-                        remote: "This HSN Number already exists.",
-                    },
-                    unit_id: {
-                        required: "Please select a unit.",
-
-
-                    },
-                    threshold_limit: {
-                        required: "Please enter the threshold limit.",
-                        minlength: "Threshold limit must be at least 3 characters.",
-                        maxlength: "Threshold limit cannot exceed 100 characters.",
-                        regex: "Threshold limit contains invalid characters.",
-                    },
-                    expire_date: {
-                        required: "Please select the expiry date.",
-                    },
-
-                },
-                errorElement: 'span',
-                errorPlacement: function(error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-input').append(error); // Ensure `.form-input` exists
-                },
-                highlight: function(element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                },
-                submitHandler: function(form) {
-                    form.submit(); // Default form submission
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                    console.log("Form has " + errors + " invalid fields."); // Optional debugging
-                },
-            });
-        });
     </script>
 @endpush

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Road Side First Aid')
+@section('title', 'Road Side First Aid Edit')
 @section('pageurl', admin_url('ohc/roadside-first-aid/list'))
 
 
@@ -39,7 +39,7 @@
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">Person Injured Name</label>
+                                                    <label class="form-label require">Person Injured Name</label>
                                                     <input type="text" name="emp_name" id="emp_name"
                                                         class="form-control" placeholder="Injured Person Name" value="{{$opd_roadside_first_aid->name}}">
                                                 </div>
@@ -75,7 +75,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">Location of Incident</label>
+                                                    <label class="form-label require">Location of Incident</label>
                                                     <input type="text" name="location_of_incident" id="location_of_incident" value="{{$opd_roadside_first_aid->location_of_incident}}"
                                                         class="form-control" placeholder="Location of the incident">
                                                 </div>
@@ -100,7 +100,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">First Aid Provided</label>
+                                                    <label class="form-label require">First Aid Provided</label>
                                                     <input type="text" name="first_aid_provided" id="first_aid_provided" value="{{$opd_roadside_first_aid->first_aid_provided}}"
                                                         class="form-control" placeholder="First Aid Provided">
                                                 </div>
@@ -272,6 +272,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 20,
+                        regex:/^(?!\s*$)[a-zA-Z0-9\s]+$/,
                         remote: {
                             url: '{{ admin_url('ohc/roadside-first-aid/unique') }}',
                             type: 'post',
@@ -324,6 +325,8 @@
                         required: "Injured person Name is required.",
                         minlength: "Injured person Name must be at least 3 characters.",
                         maxlength: "Injured person Name must not exceed 20 characters."
+                        regex: "Injured Person Name has invalid characters",
+
                     },
                     date_of_incident: {
                         required: "Please select the date of the incident."

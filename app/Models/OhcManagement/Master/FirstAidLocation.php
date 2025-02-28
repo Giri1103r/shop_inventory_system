@@ -58,8 +58,12 @@ class FirstAidLocation extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('satation_master', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_first_aid_location.department_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_first_aid_location.unit_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_first_aid_location.status', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_first_aid_location.location_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('station_number', 'LIKE', '%' . $search . '%');
+
             });
         }
 
@@ -190,13 +194,17 @@ class FirstAidLocation extends Model
         $query = $this->select('ohc_master_first_aid_location.*');
 
 
-        if (!empty($request->search) && is_array($request->search) && !empty($request->search['value'])) {
+        if (!empty($request->search) && isset($request->search['value']) && $request->search['value'] !== '')  {
             $search = $request->search['value'];
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('satation_master', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_first_aid_location.department_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_first_aid_location.unit_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_first_aid_location.status', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_first_aid_location.location_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('station_number', 'LIKE', '%' . $search . '%');
+
             });
         }
 

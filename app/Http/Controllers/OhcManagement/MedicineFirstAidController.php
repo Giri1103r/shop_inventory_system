@@ -230,7 +230,7 @@ class MedicineFirstAidController extends Controller
             // dd($data );
             return view('ohcmanagement.medicine-first-aid.edit', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-first-aid/list'));
         }
@@ -262,7 +262,7 @@ class MedicineFirstAidController extends Controller
                 $medicineRecord = $medicine_first_aid->where('medicine_id', $medicine_id)->where('reference_id', $id)->first();
 
                 if (!$medicineRecord) {
-                   
+
                     continue;
                 }
 
@@ -306,7 +306,7 @@ class MedicineFirstAidController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('ohc/medicine-first-aid/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try again later!');
             return redirect(admin_url('ohc/medicine-first-aid/list'));
         }
@@ -414,7 +414,7 @@ class MedicineFirstAidController extends Controller
             $this->medicine_first_aid->deleterecord($ids);
             return response()->json(['status' => 'success', 'msg' => 'Deleted successfully'], 200);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Something went wrong'], 200);
         }
     }

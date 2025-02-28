@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'OPD Patient')
+@section('title', 'Prescribe To Patient')
 @section('pageurl', admin_url('ohc/prescribe-to-patient/list'))
 
 
@@ -31,10 +31,9 @@
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">Emp Name</label>
-                                            <select name="emp_name" id="emp_name" class="form-control form-control-sm"
-                                                style="width: 100%">
-                                                <option value="">Select the Employee Name</option>
-                                            </select>
+                                            <input type="text" name="emp_name" id="emp_name" class="form-control form-control-sm">
+
+
                                         </div>
 
 
@@ -146,35 +145,35 @@
 
             var toDatepicker = flatpickr("#to_date", {
                 dateFormat: "d-m-Y",
-                minDate: "today"
+
             });
         });
 
-        $('#emp_name').select2({
-            ajax: {
-                url: '{{ admin_url('ohc/prescribe-to-patient/employeename') }}',
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        search: params.term
-                    };
-                },
-                processResults: function(data) {
-                    return {
-                        results: $.map(data, function(item) {
-                            return {
-                                id: item.id,
-                                text: item.text
-                            };
-                        })
-                    };
-                }
-            },
-            minimumInputLength: 1,
-            dropdownCssClass: 'form-control',
-            selectionCssClass: 'form-control'
-        });
+        // $('#emp_name').select2({
+        //     ajax: {
+        //         url: '{{ admin_url('ohc/prescribe-to-patient/employeename') }}',
+        //         dataType: 'json',
+        //         delay: 250,
+        //         data: function(params) {
+        //             return {
+        //                 search: params.term
+        //             };
+        //         },
+        //         processResults: function(data) {
+        //             return {
+        //                 results: $.map(data, function(item) {
+        //                     return {
+        //                         id: item.id,
+        //                         text: item.text
+        //                     };
+        //                 })
+        //             };
+        //         }
+        //     },
+        //     minimumInputLength: 1,
+        //     dropdownCssClass: 'form-control',
+        //     selectionCssClass: 'form-control'
+        // });
         $(function() {
             /* Initialize DataTable */
             var table = $('.datatable-list').DataTable({
@@ -255,8 +254,8 @@
                     },
 
                     {
-                        data: 'patientStatus',
-                        name: 'patientStatus'
+                        data: 'patient_status',
+                        name: 'patient_status'
                     },
                     {
                         data: 'fitness_certificate',

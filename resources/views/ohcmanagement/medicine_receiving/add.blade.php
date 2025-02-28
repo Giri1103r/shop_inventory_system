@@ -193,104 +193,103 @@
 
 
 
-        $(function() {
+        $(function () {
+    $.validator.addMethod(
+        "regex",
+        function (value, element, pattern) {
+            let regex = new RegExp(pattern); // Convert string pattern to RegExp object
+            return this.optional(element) || regex.test(value);
+        },
+        "Invalid format."
+    );
 
-            $.validator.addMethod(
-                "regex",
-                function(value, element, regex) {
-                    return this.optional(element) || regex.test(value);
-                },
-                "Invalid format."
-            );
+    $('#MedicineRecevingForm').validate({
+        rules: {
+            medicine_id: {
+                required: true,
+            },
+            pack_id: {
+                required: true,
+            },
+            hsn_id: {
+                required: true,
+            },
+            vendor_id: {
+                required: true,
+            },
+            quantity: {
+                required: true,
+                digits: true,
+                min: 1
+            },
+            batch_number: {
+                required: true,
+                minlength: 3,
+                maxlength: 20,
+                regex: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-/]*$/,  // Use a direct RegExp object
+            },
+            rate: {
+                required: true,
+                number: true,
+                regex: /^[0-9]+(\.[0-9]{1,2})?$/,  // Use a direct RegExp object
+            },
+            expire_date: {
+                required: true,
+            },
+        },
+        messages: {
+            medicine_id: {
+                required: "Please select the medicine name.",
+            },
+            pack_id: {
+                required: "Please select the pack details.",
+            },
+            hsn_id: {
+                required: "HSN Number cannot be empty.",
+            },
+            vendor_id: {
+                required: "Please select a Vendor name.",
+            },
+            quantity: {
+                required: "Please enter the quantity.",
+                digits: "Please enter a valid number for quantity.",
+                min: "Quantity must be greater than 0.",
+            },
+            batch_number: {
+                required: "Please enter a batch number.",
+                minlength: "Minimum 3 characters are required",
+                maxlength: "Batch Number should not exceed more than 20 characters",
+                regex: "Batch number has invalid characters",
+            },
+            rate: {
+                required: "Please enter the rate.",
+                number: "Please enter a valid numeric value for rate.",
+                regex: "Rate has invalid format (only numbers with up to 2 decimal places).",
+            },
+            expire_date: {
+                required: "Please select the expiry date.",
+            },
+        },
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.form-input').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        },
+        submitHandler: function (form) {
+            form.submit();
+        },
+        invalidHandler: function (event, validator) {
+            var errors = validator.numberOfInvalids();
+            console.log("Form has " + errors + " invalid fields.");
+        },
+    });
+});
 
-            $('#MedicineRecevingForm').validate({
-                rules: {
-                    medicine_id: {
-                        required: true,
-
-                    },
-                    pack_id: {
-                        required: true,
-                    },
-                    hsn_id: {
-                        required: true,
-                    },
-                    vendor_id: {
-                        required: true,
-                    },
-                    quantity: {
-                        required: true,
-                        digits: true,
-                        min: 1
-
-                    },
-                    batch_number: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 20,
-                        // regex: /^[a-zA-Z0-9/-]$/,
-                    },
-                    rate: {
-                        required: true,
-                        number: true,
-                        // regex: /^[0-9]+(\.[0-9]+)?$/,
-                    },
-                    expire_date: {
-                        required: true,
-                    },
-                },
-                messages: {
-                    medicine_id: {
-                        required: "Please select the medicine name.",
-                    },
-                    pack_id: {
-                        required: "Please select the pack details.",
-                    },
-                    hsn_id: {
-                        required: "HSN Number cannot be empty.",
-                    },
-                    vendor_id: {
-                        required: "Please select a Vendor name.",
-                    },
-                    quantity: {
-                        required: "Please enter the quantity.",
-                        digits: "Please enter a valid number for quantity.",
-                        min: "Quantity must be greater than 0.",
-                    },
-                    batch_number: {
-                        required: "Please enter a batch number.",
-                        minlength: "Minimum 3 characters are required",
-                        maxlength: "Batch Number should not Exceed more than 20 characters",
-                        // regex: "Batch number has invalid characters",
-                    },
-                    rate: {
-                        required: "Please enter the rate.",
-                        number: "Please enter a valid numeric value for rate.",
-                        // regex: "Rate has invalid characters.",
-                    },
-                    expire_date: {
-                        required: "Please select the expiry date.",
-                    },
-                },
-                errorElement: 'span',
-                errorPlacement: function(error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-input').append(error);
-                },
-                highlight: function(element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                },
-                submitHandler: function(form) {
-                    form.submit();
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                    console.log("Form has " + errors + " invalid fields.");
-                },
-            });
-        });
     </script>
 @endpush

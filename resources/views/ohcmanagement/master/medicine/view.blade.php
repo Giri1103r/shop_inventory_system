@@ -107,7 +107,7 @@
                                 </div>
 
 
-                                {{-- <div class="row">
+                                <div class="row">
                                     <div class="card-header-inner">
                                         <h4 class="text-white">Status Logs</h4>
                                     </div>
@@ -153,7 +153,7 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                </div> --}}
+                                </div>
 
 
                             </div>

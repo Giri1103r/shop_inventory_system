@@ -25,10 +25,10 @@
                             {{ $i }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->medicine }}
+                            {{ getmedicinename($value->medicine_id) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->hsn }}
+                            {{ gethsn($value->hsn_id )}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->pack }}

@@ -56,7 +56,10 @@ class EmployeeCumPatient extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('emp_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_employee_cum_patient.emp_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_employee_cum_patient.emp_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_employee_cum_patient.dob', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_employee_cum_patient.address', 'LIKE', '%' . $search . '%')
                     ->orWhere('employee_type', 'LIKE', '%' . $search . '%');
             });
         }
@@ -99,21 +102,36 @@ class EmployeeCumPatient extends Model
         return $datas;
     }
 
-    public function uniqueCheck($emp_id, $emp_name)
+    public function uniqueCheck($emp_id)
     {
-        return $this->where('emp_id', $emp_id)
-                    ->orWhere('emp_name', $emp_name)
-                    ->exists();
+        return $this->where('ohc_master_employee_cum_patient.emp_id', $emp_id)
+
+            ->get();
     }
 
-    public function existUniqueCheck($emp_id, $emp_name, $id)
+    public function existUniqueCheck($emp_id, $id)
     {
-        return $this->where(function ($query) use ($emp_id, $emp_name) {
-                        $query->where('emp_id', $emp_id)
-                              ->orWhere('emp_name', $emp_name);
-                    })
-                    ->where('id', '!=', $id)
-                    ->exists();
+        return $this->where(function ($query) use ($emp_id) {
+            $query->where('ohc_master_employee_cum_patient.emp_id', $emp_id);
+
+        })
+            ->where('id', '!=', $id)
+            ->get();
+    }
+
+    public function empuniqueCheck($emp_name)
+    {
+        return $this->Where('ohc_master_employee_cum_patient.emp_name', $emp_name)
+            ->get();
+    }
+
+    public function empexistUniqueCheck($emp_name, $id)
+    {
+        return $this->where(function ($query) use ($emp_name) {
+            $query->Where('ohc_master_employee_cum_patient.emp_name', $emp_name);
+        })
+            ->where('id', '!=', $id)
+            ->get();
     }
 
     public function store()
@@ -182,39 +200,67 @@ class EmployeeCumPatient extends Model
     public function exportdata()
     {
         $request = request();
-        $search = '';
         $query = $this->select('ohc_master_employee_cum_patient.*');
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
 
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhere('company_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('company_name', 'LIKE', '%' . $search . '%');
+        // Safely retrieve search value
+        $search = data_get($request, 'search.value', '');
+
+        if (!empty($request->search) && isset($request->search['value']) && $request->search['value'] !== ''){
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('ohc_master_employee_cum_patient.emp_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_employee_cum_patient.emp_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_employee_cum_patient.dob', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_employee_cum_patient.address', 'LIKE', '%' . $search . '%')
+                    ->orWhere('employee_type', 'LIKE', '%' . $search . '%');
             });
         }
-        if ($request->has('emp_name') && $request->emp_name) {
-            $query = $query->where('ohc_master_employee_cum_patient.emp_name', 'LIKE', '%' . $request->emp_name . '%');
+
+        // Filter by Employee Name
+        if ($request->filled('emp_name')) {
+            $query->where('ohc_master_employee_cum_patient.emp_name', 'LIKE', '%' . $request->emp_name . '%');
         }
 
-        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
-            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('ohc_master_employee_cum_patient.created_at', [$startDate, $endDate]);
-        } elseif ($request->has('from_date') && !empty($request->from_date)) {
-            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('ohc_master_employee_cum_patient.created_at', '>=', $startDate);
-        } elseif ($request->has('to_date') && !empty($request->to_date)) {
-            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('ohc_master_employee_cum_patient.created_at', '<=', $endDate);
+        // Filter by Date Range
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            try {
+                $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+                $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+                $query->whereBetween('ohc_master_employee_cum_patient.created_at', [$startDate, $endDate]);
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Invalid date format'], 400);
+            }
+        } elseif ($request->filled('from_date')) {
+            try {
+                $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+                $query->where('ohc_master_employee_cum_patient.created_at', '>=', $startDate);
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Invalid from_date format'], 400);
+            }
+        } elseif ($request->filled('to_date')) {
+            try {
+                $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+                $query->where('ohc_master_employee_cum_patient.created_at', '<=', $endDate);
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Invalid to_date format'], 400);
+            }
         }
-        if ($request->has('status') && $request->status) {
 
-            $query = $query->where('ohc_master_employee_cum_patient.status', decryptId($request->status));
+        // Filter by Status
+        if ($request->filled('status')) {
+            try {
+                $query->where('ohc_master_employee_cum_patient.status', decryptId($request->status));
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Invalid status ID'], 400);
+            }
         }
+
+        // Order By Latest Records
         $query->orderBy('id', 'DESC');
 
-        return  $query->get();
+        return $query->get();
     }
+
 
     public function selectOne($id)
     {

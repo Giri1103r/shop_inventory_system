@@ -97,15 +97,15 @@
                                                 </div>
                                             </div>
 
-                                                <div class="col-md-12">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label ">Remarks</label>
-                                                        <textarea name="remarks" id="remarks" class="form-control" placeholder="Enter the Remarks">{{ $medicine->remarks }}</textarea>
-                                                        @error('remarks')
-                                                            <div class="text-danger">{{ $message }}</div>
-                                                        @enderror
-                                                    </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">Remarks</label>
+                                                    <textarea name="remarks" id="remarks" class="form-control" placeholder="Enter the Remarks">{{ $medicine->remarks }}</textarea>
+                                                    @error('remarks')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
+                                            </div>
 
                                         </div>
                                         <hr>
@@ -157,7 +157,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex: /^[a-zA-Z0-9\s\-]*$/,
+                        regex: /^(?!\s*$)[a-zA-Z0-9\s]+$/,
                         remote: {
                             url: '{{ admin_url('ohc/medicine/unique') }}',
                             type: 'post',
@@ -183,7 +183,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex: /^[a-zA-Z0-9\s\-]*$/,
+                        regex: /^(?!\s*$)[a-zA-Z0-9\s]+$/,
                         remote: {
                             url: '{{ admin_url('ohc/medicine/hsn-unique') }}',
                             type: 'post',
@@ -203,9 +203,7 @@
                     },
                     threshold_limit: {
                         required: true,
-                        minlength: 2,
-                        maxlength: 100,
-                        regex: /^[a-zA-Z0-9\s\-]*$/,
+                        digits: true,
                     },
                     expire_date: {
                         required: true,
@@ -239,9 +237,7 @@
                     },
                     threshold_limit: {
                         required: "Please enter the threshold limit.",
-                        minlength: "Threshold limit must be at least 3 characters.",
-                        maxlength: "Threshold limit cannot exceed 100 characters.",
-                        regex: "Threshold limit contains invalid characters.",
+                        digits: "Threshold limit contains only numeric characters.",
                     },
                     expire_date: {
                         required: "Please select the expiry date.",

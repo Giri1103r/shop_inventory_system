@@ -87,11 +87,32 @@ class Discard extends Model
         return $data;
     }
 
-    public function firstdata($id)
+    public function firstdata($medicine_id,$id)
     {
 
-        $data  = $this->select('ohc_management_discard_medicine.*')->where('id', $id)
+        $data  = $this->select('ohc_management_discard_medicine.*')->where('id',$medicine_id)->where('req_id',$id)
             ->first();
         return $data;
+    }
+
+    public function uniqueCheck($medicine_id)
+    {
+
+        return $this->where('unit_id',)->where('medicine', $medicine_id)->get();
+    }
+
+    public function existUniqueCheck($medicine_id, $id,$medicineid)
+    {
+        $data = $this->where('medicine_id', '=', $medicine_id) ->where('id', '!=', $medicineid)
+            ->where('req_id', '=', $id)
+            ->get();
+
+            return  $data;
+    }
+
+    public function medicinedetails($id,$ids){
+        $data  = $this->select('ohc_management_discard_medicine.*')->where('id', $ids)->where('req_id', $id)
+        ->first();
+    return $data;
     }
 }

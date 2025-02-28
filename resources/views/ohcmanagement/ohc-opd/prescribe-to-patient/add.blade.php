@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Prescribe To Patient')
+@section('title', 'Prescribe To Patient Add')
 @section('pageurl', admin_url('ohc/prescribe-to-patient/list'))
 
 
@@ -36,20 +36,28 @@
                                         @csrf
 
                                         <div class="row">
-                                            <div class="col-md-4 mb-2">
+                                            <div class="col-md-4  mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label"> Is OutSide Worker</label><br>
                                                     <input type="checkbox" id="is_outside_worker" name="is_outside_worker"
                                                         value="1">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
+                                            <div class="col-md-4 employee-id mb-2 ">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">Employee code</label>
+                                                    <label class="form-label require">Employee code</label>
                                                     <select name="emp_id" class="form-control " id="emp_id"
                                                         style="width: 100%">
                                                         <option value="">Select the Employee ID</option>
                                                     </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 employecode mb-2" style="display: none">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Employee code</label>
+                                                    <input type="text" name="outside_emp_id" id="emp_id_text"
+                                                        class="form-control">
+
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -59,15 +67,21 @@
                                                         class="form-control" placeholder="Employee Name" readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2 department">
+                                            <div class="col-md-4 mb-2 department" style="display: none;">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Department</label>
-                                                    <input type="text" name="department_id" id="department_id"
-                                                        class="form-control" readonly>
+                                                    <select name="department_id" id="department_id" style="width: 100%"
+                                                        class="form-control single-select">
+                                                        <option value="">Select the department</option>
+                                                        @foreach ($departmentList as $list)
+                                                            <option value="{{ $list->id }}">{{ $list->department_name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4 mb-2 unit" style="display: none;">
+                                            <div class="col-md-4 mb-2 unit">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit</label>
                                                     <select name="unit_id" id="unit_id" class="form-control single-select"
@@ -89,20 +103,20 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label ">Emergency Contact</label>
+                                                    <label class="form-label require">Emergency Contact</label>
                                                     <input type="text" name="emergency_contact" id="emergency_contact"
                                                         class="form-control">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2 company_name"style="display: none;">
+                                            {{-- <div class="col-md-4 mb-2 company_name"style="display: none;">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company Name</label>
                                                     <input type="text" name="company_name" id="company_name"
                                                         class="form-control" placeholder="Company Name">
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-4 mb-3 form-input">
-                                                <label for="dob" class="form-label ">Date Of Birth</label>
+                                                <label for="dob" class="form-label require">Date Of Birth</label>
                                                 <div class="input-group date form-input  custom-height">
                                                     <input type="text" class="form-control " name="dob"
                                                         id="dob" autocomplete="off">
@@ -114,7 +128,7 @@
 
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label ">Address</label>
+                                                    <label class="form-label require">Address</label>
                                                     <textarea name="address" id="addresss" cols="30" rows="5" class="form-control"></textarea>
                                                 </div>
                                             </div>
@@ -162,7 +176,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">Vital Checkup</label><br>
+                                                    <label class="form-label require">Vital Checkup</label><br>
                                                     <input type="checkbox" id="vital_checkup" name="vital_checkup"
                                                         value="1">
                                                 </div>
@@ -235,7 +249,8 @@
                                                                                 @foreach ($medicine as $list)
                                                                                     <option
                                                                                         value="{{ encryptId($list->medicine_id) }}">
-                                                                                        {{ getmedicinename($list->medicine_id) }}</option>
+                                                                                        {{ getmedicinename($list->medicine_id) }}
+                                                                                    </option>
                                                                                 @endforeach
                                                                             </select>
                                                                         </div>
@@ -269,8 +284,7 @@
                                                                     </td>
                                                                     <td>
                                                                         <div class="form-group form-input">
-                                                                            <label
-                                                                                for="remarks"class="require">Remarks</label>
+                                                                            <label for="remarks"class="">Remarks</label>
                                                                             <textarea name="remarks[0]" id="remarks" cols="10" rows="2" class="form-control"></textarea>
                                                                         </div>
                                                                     </td>
@@ -490,30 +504,33 @@
 
         $(document).on('change', '#emp_id', function() {
             var empId = $(this).val();
-            if (empId) {
-                $.ajax({
-                    url: "{{ admin_url('ohc/prescribe-to-patient/emp-details/') }}" + empId,
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.employee) {
-                            $('#emp_name').val(response.employee.emp_name).prop('readonly', false);
-                            $('#mobile_no').val(response.employee.mobile_no).prop('readonly', false);
-                            $('#department_id').val(response.departments.department_name).prop(
-                                'readonly',
-                                false);
-                        } else {
-                            alert("No employee details found.");
+
+            // Check if 'is_outside_worker' is NOT checked before making AJAX request
+            if (!$('#is_outside_worker').is(':checked')) {
+                if (empId) {
+                    $.ajax({
+                        url: "{{ admin_url('ohc/prescribe-to-patient/emp-details/') }}" + empId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.employee) {
+                                $('#emp_name').val(response.employee.emp_name).prop('readonly', true);
+                                // $('#mobile_no').val(response.employee.mobile_no).prop('readonly', true);
+                                // $('#department_id').val(response.departments.department_name).prop('readonly', true);
+                            } else {
+                                alert("No employee details found.");
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching employee details. Please try again.');
                         }
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching mobile number and department. Please try again.');
-                    }
-                });
-            } else {
-                $('#emp_name, #mobile_no, #department_id').val('').prop('disabled', true);
+                    });
+                } else {
+                    $('#emp_name, #mobile_no, #department_id').val('').prop('disabled', true);
+                }
             }
         });
+
 
 
 
@@ -539,21 +556,50 @@
 
             // unit and department
 
-            $('#is_outside_worker').change(function() {
-                if ($(this).is(':checked')) {
-                    $('.department').hide();
-                    $('.unit, .company_name').show();
+            // $('#is_outside_worker').change(function() {
+            //     if ($(this).is(':checked')) {
+            //         $('.unit').hide();
+            //         $('.department, .company_name, .employecode').show();
+            //         $('.employee-id').hide(); // Hide dropdown
 
-                    $('#emp_id').val('').prop('disabled', true);
-                    $('#emp_name').val('').prop('readonly', false);
-                } else {
-                    $('.department').show();
-                    $('.unit, .company_name').hide();
+            //         $('#emp_name').val('').prop('readonly', false);
 
-                    $('#emp_id').val('').prop('disabled', false);
-                    $('#emp_name').val('').prop('readonly', false);
-                }
-            });
+            //         // Add validation rules for input emp_id
+            //         $("input[name='emp_id']").rules("add", {
+            //             required: true,
+            //             minlength: 3,
+            //             maxlength: 30,
+            //             messages: {
+            //                 required: "Employee ID is required",
+            //                 minlength: "Employee ID must be at least 3 characters",
+            //                 maxlength: "Employee ID must not exceed 30 characters"
+            //             }
+            //         });
+
+            //         // Remove validation from select emp_id
+            //         $("select[name='emp_id']").rules("remove");
+
+            //     } else {
+            //         $('.unit').show();
+            //         $('.department, .company_name, .employee-id').hide();
+            //         $('.employecode').hide(); // Hide input field
+            //         $('.employee-id').show(); // Show dropdown
+
+            //         $('#emp_name').val('').prop('readonly', false);
+
+            //         // Remove validation from input emp_id
+            //         $("input[name='emp_id']").rules("remove");
+
+            //         // Add validation rules for select emp_id
+            //         $("select[name='emp_id']").rules("add", {
+            //             required: true,
+            //             messages: {
+            //                 required: "Please select an Employee ID"
+            //             }
+            //         });
+            //     }
+            // });
+
 
 
             // suggested by
@@ -590,6 +636,57 @@
                 }
             });
         });
+
+        $(document).ready(function() {
+            $("#is_outside_worker").change(function() {
+                if ($(this).is(":checked")) {
+                    $(".unit").hide();
+                    $(".department, .company_name, .employecode").show();
+                    $(".employee-id").hide(); // Hide dropdown
+
+                    $("#emp_id").prop("disabled", true); // Disable the select field
+                    $(".employecode input[name='emp_id']").prop("disabled", false); // Enable text input
+
+                    $("#emp_name").val("").prop("readonly", false);
+
+                    // Add validation for text input
+                    $("input[name='emp_id']").rules("add", {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
+                        pattern: /^[a-zA-Z0-9_-]+$/,
+                        messages: {
+                            required: "Employee code is required",
+                            minlength: "Employee code must be at least 3 characters",
+                            maxlength: "Employee code must not exceed 30 characters",
+                            pattern: "Employee code has invalid characters"
+                        }
+                    });
+
+                } else {
+                    $(".unit").show();
+                    $(".department, .company_name,.employecode").hide();
+                    $(".employee-id").show();
+
+                    $(".employecode input[name='emp_id']").prop("disabled", true); // Disable text input
+                    $("#emp_id").prop("disabled", false); // Enable select field
+
+                    $("#emp_name").val("").prop("readonly", false);
+
+                    // Add validation for dropdown
+                    $("select[name='emp_id']").rules("add", {
+                        required: true,
+                        messages: {
+                            required: "Please select an Employee code"
+                        }
+                    });
+                }
+
+                $("#opdpatient").validate().resetForm();
+            });
+        });
+
+
 
         // getting the first aider
 
@@ -709,7 +806,7 @@
                 </td>
                  <td>
                     <div class="form-group form-input">
-                        <label for="remarks" class="require">Remarks</label>
+                        <label for="remarks" class="">Remarks</label>
                         <textarea name="remarks[${rowcount}]" cols="10" rows="2" class="form-control"></textarea>
                     </div>
                 </td>
@@ -842,28 +939,54 @@
 
             $('#opdpatient').validate({
                 rules: {
+                    emp_id: {
+                        required: true,
+
+                    },
                     emp_name: {
                         required: true,
                         minlength: 3,
-                        maxlength: 30
+                        maxlength: 30,
+                        remote: {
+                            url: "{{ admin_url('ohc/prescribe-to-patient/unique') }}",
+                            type: "post",
+                            data: {
+                                emp_name: function() {
+                                    return $('#emp_name').val();
+                                }
+                            }
+                        }
                     },
                     unit_id: {
+                        required: true,
+
+                    },
+                    department_id: {
                         required: function() {
                             return $('#is_outside_worker').is(':checked');
                         },
 
                     },
-                    company_name: {
-                        required: function() {
-                            return $('#is_outside_worker').is(':checked');
-                        },
+                    // company_name: {
+                    //     required: function() {
+                    //         return $('#is_outside_worker').is(':checked');
+                    //     },
 
+                    // },
+                    emergency_contact: {
+                        required: true,
+                        digits: true,
+                        minlength: 10,
+                        maxlength: 10
                     },
                     dob: {
                         required: true,
                     },
                     mobile_no: {
                         required: true,
+                        digits: true,
+                        minlength: 10,
+                        maxlength: 10
                     },
                     suggested_by: {
                         required: true,
@@ -877,7 +1000,7 @@
                     gender: {
                         required: true,
                     },
-                    chief_complaint: {
+                    cheif_complaint: {
                         required: true,
                         minlength: 3,
                         maxlength: 600,
@@ -904,13 +1027,13 @@
                             return $('#first_aid_treatment').is(':checked');
                         }
                     },
-                    'remarks[0]': {
-                        required: function() {
-                            return $('#first_aid_treatment').is(':checked');
-                        },
-                        minlength: 3,
-                        maxlength: 600
-                    },
+                    // 'remarks[0]': {
+                    //     required: function() {
+                    //         return $('#first_aid_treatment').is(':checked');
+                    //     },
+                    //     minlength: 3,
+                    //     maxlength: 600
+                    // },
                     details: {
                         required: function() {
                             return $('#suggested_by').val() == '3';
@@ -933,7 +1056,10 @@
                     is_reffered_mobile_no: {
                         required: function() {
                             return $('#is_reffered').is(':checked');
-                        }
+                        },
+                        digits: true,
+                        minlength: 10,
+                        maxlength: 10
                     },
                     vechicle: {
                         required: function() {
@@ -969,14 +1095,25 @@
                     }
                 },
                 messages: {
-                    emp_name: {
-                        required: "Please enter employee name.",
-                    },
-                    company_name: {
-                        required: "Please enter Company name.",
+                    emp_id: {
+                        required: "Please enter employee code.",
+
                     },
                     unit_id: {
-                        required: "Please enter Unit Name.",
+                        required: "Please enter unit name.",
+
+                    },
+                    emp_name: {
+                        required: "Please enter employee name.",
+                        minlength: "employee name must be at least 3 characters.",
+                        maxlength: "employee name must not exceed 30 characters.",
+                        remote:"Employee Name Should be Unique"
+                    },
+                    // company_name: {
+                    //     required: "Please enter Company name.",
+                    // },
+                    department_id: {
+                        required: "Please enter department Name.",
                     },
                     dob: {
                         required: "Please enter the date of birth.",
@@ -994,6 +1131,15 @@
                     },
                     mobile_no: {
                         required: "Please enter the Mobile Number.",
+                        digits: "The Moblie contains only the numeric",
+                        minlength: "mobile number minimum 10 required",
+                        maxlength: "mobile number maximum 10 required",
+                    },
+                    emergency_contact: {
+                        required: "Please enter the Emergency Contact.",
+                        digits: "The Moblie contains only the numeric",
+                        minlength: "Emergency Contact minimum 10 required",
+                        maxlength: "Emergency Contact maximum 10 required",
                     },
                     time: {
                         required: "Please select the time.",
@@ -1001,7 +1147,7 @@
                     gender: {
                         required: "Please select the gender.",
                     },
-                    chief_complaint: {
+                    cheif_complaint: {
                         required: 'Chief Complaint is required',
                         minlength: 'Minimum 3 characters are required',
                         maxlength: 'Chief Complaint should not exceed 600 characters',
@@ -1026,6 +1172,25 @@
                         required: "Please enter remarks .",
                         minlength: "remarks must be at least 3 characters.",
                         maxlength: "remarks must not exceed 100 characters.",
+                    },
+                    hospital_name: {
+                        required: "Hospital name is required .",
+                        minlength: "Hospital name must be at least 3 characters.",
+                        maxlength: "Hospital name must not exceed 100 characters.",
+
+                    },
+                    first_aider: {
+                        required: "Please Select the First aider.",
+
+                    },
+                    is_reffered_mobile_no: {
+                        required: "Please enter the Mobile Number.",
+                        digits: "The Moblie contains only the numeric",
+                        minlength: "mobile number minimum 10 required",
+                        maxlength: "mobile number maximum 10 required",
+                    },
+                    vechicle: {
+                        required: "vechicle is required ",
                     },
                     fitness_certificate: {
                         required: "Fitness Certificate is required .",
