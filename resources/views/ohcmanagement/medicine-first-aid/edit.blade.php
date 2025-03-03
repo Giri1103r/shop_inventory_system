@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medicine First Aid')
+@section('title', 'Medicine First Aid Edit')
 @section('pageurl', admin_url('ohc/medicine-first-aid/list'))
 @section('content')
 

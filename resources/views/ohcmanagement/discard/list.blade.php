@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Discard the Expire Medicine')
+@section('title', 'Discard medicine')
 @section('pageurl', admin_url('ohc/discard/list'))
 @section('content')
     @push('style')
@@ -160,7 +160,7 @@
             })
             var toDatepicker = flatpickr("#to_date", {
                 dateFormat: "d-m-Y",
-              
+
             });
 
             // Initialize DataTable
