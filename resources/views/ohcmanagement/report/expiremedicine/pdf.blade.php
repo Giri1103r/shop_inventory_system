@@ -25,7 +25,7 @@
                             {{ $i }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getMediciname($value->medicine_id) }}
+                            {{ getMedicinename($value->medicine_id) }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>

@@ -110,13 +110,15 @@ class MedicineIssuance extends Model
 
     public function getissuedDate($selectedYear, $selectedMonth, $ids)
     {
-        return $this
+  $data=    $this
             ->join('ohc_master_medicine', 'ohc_management_medicine_issuance.medicine_id', '=', 'ohc_master_medicine.id')
             ->whereIn('reference_id', $ids)
             ->whereYear('ohc_management_medicine_issuance.created_at', $selectedYear)
             ->whereMonth('ohc_management_medicine_issuance.created_at', $selectedMonth)
             ->select('ohc_master_medicine.medicine as medicine_name', 'ohc_management_medicine_issuance.created_at', 'quantity')
             ->get();
+
+            return $data;
     }
 
     public function getYearlyissuedDate($selectedYear, $ids)
