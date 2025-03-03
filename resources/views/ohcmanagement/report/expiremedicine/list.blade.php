@@ -95,7 +95,10 @@
                 location.reload();
             });
 
-
+            var toDatepicker = flatpickr("#expire_date", {
+                dateFormat: "d-m-Y",
+                
+            });
             // Initialize DataTable
 
 
@@ -183,7 +186,7 @@
                     data: 'expire_date',
                     name: 'expire_date'
                 },
-                
+
             ],
             language: {
                 paginate: {

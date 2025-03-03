@@ -160,7 +160,7 @@
 
             var toDatepicker = flatpickr("#to_date", {
                 dateFormat: "d-m-Y",
-                minDate: "today"
+               
             });
             $('#expire_date').flatpickr({
                 dateFormat: "d-m-Y",
