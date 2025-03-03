@@ -280,6 +280,7 @@
 
     <!-- Vendor -->
     <script src="{{ public_plugins('jquery/jquery.min.js') }}"></script>
+    <script src="{{ public_plugins('canvas/html2canvas.min.js') }}"></script>
 
     <script src="{{ url('public/assets/js/pages/responsive-table.init.js') }}"></script>
     <script src="{{ url('public/assets/js/pages/datatables.init.js') }}"></script>

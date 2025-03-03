@@ -311,15 +311,21 @@
                             damaged?</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        @if ($getInvestigation->anything_damaged == 1)
-                            Man
-                        @elseif($getInvestigation->anything_damaged == 2)
-                            Machine
-                        @elseif($getInvestigation->anything_damaged == 3)
-                            Materials
-                        @else
-                            NA
-                        @endif
+                        @php
+
+                            $damageTypes = [
+                                1 => 'Man',
+                                2 => 'Machine',
+                                3 => 'Materials',
+                            ];
+
+                            $damagedItems = explode(',', $getInvestigation->anything_damaged);
+                            $damagedLabels = array_map(function ($item) use ($damageTypes) {
+                                return $damageTypes[$item] ?? 'NA';
+                            }, $damagedItems);
+                        @endphp
+
+                        {{ implode(', ', $damagedLabels) }}
                     </td>
                 </tr>
                 <tr>
@@ -398,6 +404,63 @@
                 </tr>
 
             </table>
+
+            @if ($getInvestigation->root_cause_analysis == 1 && !empty($getwhywhy))
+                <h4 style="margin-top: 20px; border-bottom: 2px solid black; padding-bottom: 5px;">Why Why Analysis
+                </h4>
+                <table border="1" width="100%" cellspacing="0" cellpadding="5" style="text-align: center;">
+                    <thead style="background-color: #d3d3d3;">
+                        <tr>
+                            <th>Why 1</th>
+                            <th></th>
+                            <th>Why 2</th>
+                            <th></th>
+                            <th>Why 3</th>
+                            <th></th>
+                            <th>Why 4</th>
+                            <th></th>
+                            <th>Why 5</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($getwhywhy as $item)
+                            <tr>
+                                <td>{{ $item->why_1 }}</td>
+                                <td>&#8594;</td> <!-- Unicode right arrow -->
+                                <td>{{ $item->why_2 }}</td>
+                                <td>&#8594;</td>
+                                <td>{{ $item->why_3 }}</td>
+                                <td>&#8594;</td>
+                                <td>{{ $item->why_4 }}</td>
+                                <td>&#8594;</td>
+                                <td>{{ $item->why_5 }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @endif
+            @if ($getInvestigation->root_cause_analysis == 2)
+                <h4 style="margin-top: 20px; border-bottom: 2px solid black; padding-bottom: 5px;">
+                    Fishbone</h4>
+                <table width="100%">
+                    <tr>
+                        <td style="text-align: center">
+                            @if (!$getfishbone->isEmpty())
+                                @foreach ($getfishbone as $key => $fishbone)
+                                    <a href="{{ asset($fishbone->fishbone_image) }}" target="_blank">
+                                        <img src="{{ asset($fishbone->fishbone_image) }}" alt="Fishbone Image"
+                                            style="width: 80%; max-width: 1000px; height: auto;">
+                                    </a>
+                                @endforeach
+                            @else
+                                <p>No files available</p>
+                            @endif
+                        </td>
+                    </tr>
+                </table>
+            @endif
+
+
         @endif
 
         @if ($incident_report->incident_status >= STATUS_RISKANALYSIS_PENDING)
@@ -515,6 +578,13 @@
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
                         {{ $getEHSVerify->team_member_names }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Target Date</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ Displaydateformat($getEHSVerify->target_date) }}
                     </td>
                 </tr>
                 <tr>

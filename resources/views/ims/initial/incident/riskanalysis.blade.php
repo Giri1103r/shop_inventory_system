@@ -186,7 +186,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Unit</label>
                                         <div class="view_data">
-                                            {{ getUsername($incident_report->unit_id) }}
+                                            {{ getUnitname($incident_report->unit_id) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -198,14 +198,14 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label require">Location</label>
                                         <div class="view_data">
-                                            {{ $incident_report->location_id }}
+                                            {{ $incident_report->location_name }}
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">IIR Type</label>
                                         <div class="view_data">
-                                            {{ $incident_report->iir_type }}
+                                            {{ $incident_report->incident_type_name }}
                                         </div>
                                     </div>
                                 </div>
@@ -334,19 +334,23 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Was anything
-                                            damaged?</label>
+                                        <label class="form-label view_label">Was anything damaged?</label>
                                         <div class="view_data">
+                                            @php
+                                               
+                                                $damageTypes = [
+                                                    1 => 'Man',
+                                                    2 => 'Machine',
+                                                    3 => 'Materials',
+                                                ];
 
-                                            @if ($getInvestigation->anything_damaged == 1)
-                                                Man
-                                            @elseif($getInvestigation->anything_damaged == 2)
-                                                Machine
-                                            @elseif($getInvestigation->anything_damaged == 3)
-                                                Materials
-                                            @else
-                                                NA
-                                            @endif
+                                                $damagedItems = explode(',', $getInvestigation->anything_damaged);
+                                                $damagedLabels = array_map(function ($item) use ($damageTypes) {
+                                                    return $damageTypes[$item] ?? 'NA';
+                                                }, $damagedItems);
+                                            @endphp
+
+                                            {{ implode(', ', $damagedLabels) }}
                                         </div>
                                     </div>
 
@@ -377,7 +381,13 @@
                                             Cause
                                             Analysis (PRCA)</label>
                                         <div class="view_data">
-                                            {{ $getInvestigation->root_cause_analysis }}
+                                            @if ($getInvestigation->root_cause_analysis == 1)
+                                                    Why Why Analysis
+                                                @elseif($getInvestigation->root_cause_analysis == 2)
+                                                    Fish Bone Analysis
+                                                @else
+                                                    NA
+                                                @endif
                                         </div>
                                     </div>
 

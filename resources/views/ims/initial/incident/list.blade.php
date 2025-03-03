@@ -15,8 +15,10 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
                         {{-- @if (CheckUserPermission('add')) --}}
+                        @if((CheckUserRole(ROLE_SUPERADMIN))|| (CheckUserRole(ROLE_EHS_OFFICER)) )
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('incident/initial-incident/add') }}">Add</x-button-add>
+                        href="{{ admin_url('incident/initial-incident/add') }}">Add</x-button-add>
+                        @endif
                         {{-- @endif --}}
 
                     </div>

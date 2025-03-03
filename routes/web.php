@@ -1166,6 +1166,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/Submit', [HiraController::class, 'importSubmit']);
                 Route::post('/status', [HiraController::class, 'statusChange']);
                 Route::post('/unique', [HiraController::class, 'Uniquecheck']);
+                Route::get('/ehsapproval/{id}', [HiraController::class, 'ehsapproval']);
+                Route::post('/ehsapproval/submit', [HiraController::class, 'ehsApprovalSubmit']);
             });
 
             Route::group(['prefix' => 'incident/initial-incident'], function () {
