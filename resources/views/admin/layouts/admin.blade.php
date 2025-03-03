@@ -188,7 +188,7 @@
         }
 
         body[data-leftbar-color=dark] .left-side-menu {
-            background-color: #050505 !important;
+            background-color: #fff8f8 !important;
             color: #000 !important;
         }
 

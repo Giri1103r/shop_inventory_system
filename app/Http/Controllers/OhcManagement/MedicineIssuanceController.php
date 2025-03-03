@@ -715,8 +715,8 @@ class MedicineIssuanceController extends Controller
                 $medicnieissuance = $this->user_medicine_issuance->store();
 
 
-                dispatch(new ImportIssuancejob($details, $medicnieissuance));
-                //    dispatch((new ImportCompanyJob($details))->onQueue('company'));
+                // dispatch(new ImportIssuancejob($details, $medicnieissuance));
+                   dispatch((new ImportIssuancejob($details,$medicnieissuance))->onQueue('medicine_issuance'));
             }
 
             $insert_data['log_id'] = $insert_id;

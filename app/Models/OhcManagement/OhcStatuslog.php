@@ -259,10 +259,10 @@ public function medicinestockstore($id){
         return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICINE_RECEIVING)->where('from_status', STATUS_OHC_L1_EHS_VERIFICATION_PENDING)->first();
     }
 
-    // public function ehsheadverifydata($id)
-    // {
-    //     return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICINE_RECEIVING)->where('from_status', STATUS_OHC_EHS_HEAD_APPROVAL_PENDING)->first();
-    // }
+    public function ehsheadverifydata($id)
+    {
+        return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICINE_RECEIVING)->where('from_status', STATUS_OHC_AGM_APPROVAL_PENDING)->first();
+    }
     // public function stockopen($id)
     // {
     //     return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICINE_RECEIVING)->where('from_status', STATUS_OHC_OPEN)->first();

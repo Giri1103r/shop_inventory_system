@@ -23,11 +23,11 @@ use App\Models\OhcManagement\MedicineRequisition;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
-// class ImportRequisitionjob implements ShouldQueue
-class ImportRequisitionjob
+class ImportRequisitionjob implements ShouldQueue
+// class ImportRequisitionjob
 {
 
-    // use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $details;
 

@@ -1098,4 +1098,45 @@ class CronController extends Controller
             return response()->json(['message' => 'No jobs in the Nomination Process Import queue to process', 'exit_code' => 0]);
         }
     }
+
+    public function queueMedicineIsuuanceImport()
+    {
+        $queueLength = Queue::size('medicine_issuance');
+        if ($queueLength > 0) {
+            $options = [
+                '--sleep' => 3,
+                '--tries' => 3,
+                '--queue' => 'medicine_issuance',
+                '--timeout' => 600,
+                '--max-jobs' => 10,
+            ];
+
+            $exitCode = Artisan::call('queue:work', $options);
+            Session::invalidate();
+            return response()->json(['message' => 'Queue Medicine Issuance command executed successfully',  'exit_code' => $exitCode]);
+        } else {
+            Session::invalidate();
+            return response()->json(['message' => 'No jobs in the Medicine Issuance Import queue to process', 'exit_code' => 0]);
+        }
+    }
+    public function queueMedicineRequisitionImport()
+    {
+        $queueLength = Queue::size('medicine_requisition');
+        if ($queueLength > 0) {
+            $options = [
+                '--sleep' => 3,
+                '--tries' => 3,
+                '--queue' => 'medicine_requisition',
+                '--timeout' => 600,
+                '--max-jobs' => 10,
+            ];
+
+            $exitCode = Artisan::call('queue:work', $options);
+            Session::invalidate();
+            return response()->json(['message' => 'Queue Medicine Issuance command executed successfully',  'exit_code' => $exitCode]);
+        } else {
+            Session::invalidate();
+            return response()->json(['message' => 'No jobs in the Medicine Issuance Import queue to process', 'exit_code' => 0]);
+        }
+    }
 }

@@ -189,7 +189,11 @@
                                 </div>
                             @endif
                             <div>
-                                @if ($medicine_receiving->approve_status == STATUS_OHC_L1_EHS_VERIFICATION_PENDING)
+                                @if (
+                                    (checkUserRole(ROLE_L1_EHS_OFFCIER) &&
+                                        $medicine_receiving->approve_status == STATUS_OHC_L1_EHS_VERIFICATION_PENDING) ||
+                                        (checkUserRole(ROLE_SUPERADMIN) &&
+                                            $medicine_receiving->approve_status == STATUS_OHC_L1_EHS_VERIFICATION_PENDING))
                                     <div class="row">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">L1 EHS Officer Approval </h4>
@@ -238,7 +242,7 @@
                                                     class="btn btn-success w-100">Approve</button>
                                                 {{-- <button type="submit" name="action" value="reject"
                                         class="btn btn-danger w-100">reject</button> --}}
-                                             </div>
+                                            </div>
                                         </form>
                                     </div>
                                 @endif
@@ -284,7 +288,9 @@
                                 @endif
                             </div>
                             <div>
-                                @if ($medicine_receiving->approve_status == STATUS_OHC_AGM_APPROVAL_PENDING)
+                                @if (
+                                    (checkUserRole(ROLE_EHS_HEAD) && $medicine_receiving->approve_status == STATUS_OHC_AGM_APPROVAL_PENDING) ||
+                                        (checkUserRole(ROLE_SUPERADMIN) && $medicine_receiving->approve_status == STATUS_OHC_AGM_APPROVAL_PENDING))
                                     <div class="row">
                                         <div class="card-header-inner">
                                             <h4 class="text-white"> EHS Head Approval </h4>
@@ -339,7 +345,7 @@
                                 @endif
                             </div>
 
-                            {{-- <div>
+                            <div>
                                 @if ($medicine_receiving->approve_status == STATUS_OHC_OPEN)
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -376,7 +382,7 @@
                                         </div>
                                     </div>
                                 @endif
-                            </div> --}}
+                            </div>
                             {{-- <div>
                                 @if ($medicine_receiving->approve_status == STATUS_OHC_OPEN)
                                     <div class="row">

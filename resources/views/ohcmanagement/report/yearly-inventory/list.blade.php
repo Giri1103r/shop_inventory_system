@@ -86,9 +86,10 @@
             $(document).ready(function() {
 
 
-                var toDatepicker = flatpickr("#year", {
-                    dateFormat: "Y",
-                    minDate: "today"
+                $('#year').datepicker({
+                    format: 'yyyy',
+                    minViewMode: 1,
+                    autoclose: true
                 });
             });
             $(document).ready(function() {
@@ -134,21 +135,25 @@
                             year: selectedYear,
                         },
                         success: function(response) {
+                            let medicineData = response.inventory.length ? response.inventory : response
+                                .medicine; // Use inventory if available, otherwise fallback to medicine
 
-                            if (response.inventory && Array.isArray(response.inventory)) {
+                            if (medicineData && Array.isArray(medicineData) && medicineData.length > 0) {
                                 $(".selectedMonthYear").text(monthNames[parseInt(selectedYear) - 1] + " " +
-                                    selectedYear);
+                                selectedYear);
                                 $("#dataDiv").show();
-                                fillMonthDays(response.inventory, selectedYear, response
-                                    .receiving, response.issuing);
+                                fillMonthDays(medicineData,  selectedYear, response
+                                    .receiving || [], response.issuing || []);
                             } else {
-                                alert("No data found for the selected filters.");
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Warning',
+                                    text: 'No data found for the selected filters.',
+                                    confirmButtonColor: '#3085d6'
+                                });
                             }
                         },
-                        error: function(xhr, status, error) {
-                            console.log("AJAX Error:", error);
-                            alert("Failed to fetch data. Please try again.");
-                        },
+
                     });
                 } else {
                     Swal.fire({
@@ -195,7 +200,8 @@
                 inventoryData.forEach((item) => {
                     let purchaseData = new Array(12).fill(0);
                     let issueQuantities = new Array(12).fill(0);
-
+                    let medicineName = item.medicine || item
+                        .medicine_name;
                     // Process received medicines
                     receivingData.forEach((received) => {
                         if (received.medicine_name === item.medicine_name) {
@@ -223,12 +229,12 @@
 
                     tableBody += `<tr>
             <td>${idCounter++}</td>
-            <td>${item.medicine_name}</td>
-            ${purchaseData.map(qty => `<td>${qty !== 0 ? qty : ""}</td>`).join("")}
-            ${issueQuantities.map(qty => `<td>${qty !== 0 ? qty : ""}</td>`).join("")}
-            <td>${item.total_purchase ? item.total_purchase : ""}</td>
-            <td>${item.total_issue ? item.total_issue : ""}</td>
-            <td>${item.balance ? item.balance : ""}</td>
+            <td>${medicineName}</td>
+            ${purchaseData.map(qty => `<td>${qty !== 0 ? qty : "0"}</td>`).join("")}
+            ${issueQuantities.map(qty => `<td>${qty !== 0 ? qty : "0"}</td>`).join("")}
+            <td>${item.total_purchase ? item.total_purchase : "0"}</td>
+            <td>${item.total_issue ? item.total_issue : "0"}</td>
+            <td>${item.balance ? item.balance : "0"}</td>
         </tr>`;
                 });
 

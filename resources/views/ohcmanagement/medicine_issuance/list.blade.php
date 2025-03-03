@@ -75,7 +75,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
+                                        {{-- <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
@@ -83,7 +83,8 @@
                                                 <option value="{{ encryptId(1) }}">Active</option>
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
-                                        </div>
+                                        </div> --}}
+
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -166,7 +167,7 @@
 
             var toDatepicker = flatpickr("#to_date", {
                 dateFormat: "d-m-Y",
-                minDate: "today"
+
             });
 
             // Initialize DataTable
