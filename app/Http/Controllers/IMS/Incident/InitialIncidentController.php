@@ -5,7 +5,7 @@ namespace App\Http\Controllers\IMS\Incident;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-
+use Mail;
 use App\Models\Master\Unit;
 use App\Models\Master\Location;
 use App\Models\Master\Department;
@@ -32,6 +32,8 @@ use App\Models\IMS\Incident\IncidentInvestigation;
 use App\Models\IMS\Incident\RiskAnalysis;
 use App\Models\IMS\Incident\WhyWhyAnalysis;
 use App\Models\IMS\Incident\FishboneAnalysis;
+use App\Models\IMS\Incident\Statuslog;
+use App\Mail\IncidentEmail;
 
 class InitialIncidentController extends Controller
 {
@@ -52,7 +54,7 @@ class InitialIncidentController extends Controller
     private $riskanalysis;
     private $whyanalysis;
     private $fishboneAnalysis;
-
+    private $Statuslog;
 
 
     public function __construct()
@@ -74,6 +76,7 @@ class InitialIncidentController extends Controller
         $this->riskanalysis = new RiskAnalysis();
         $this->whyanalysis = new WhyWhyAnalysis();
         $this->fishboneAnalysis = new FishboneAnalysis();
+        $this->Statuslog = new Statuslog();
     }
 
 
@@ -101,7 +104,6 @@ class InitialIncidentController extends Controller
 
 
                         ->editColumn('status_batch', function ($row) {
-
                             return "<span class='" . $row->bg_color . "' >" . $row->status_name . "</span>";
                         })
                         ->addColumn('unit_name', function ($row) {
@@ -124,32 +126,40 @@ class InitialIncidentController extends Controller
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
                             // }
-                            if ($row->incident_status == 1) {
+                            if ((CheckUserRole(ROLE_SUPERADMIN)) || (CheckUserRole(ROLE_EHS_HEAD) && $row->incident_status == 1) || $row->incident_status == 5 || $row->incident_status == 8 || $row->incident_status == 6 || $row->incident_status == 7) {
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
                             }
 
-                            if ($row->incident_status == 2) {
-                                $btn .= '<a href="' . admin_url('incident/initial-incident/investigation/' . encryptId($row->id)) . '" class=" " title="Investigation"><i class="fa fa-search" style="color: #000000;"></i> ';
+
+                            if (!empty($row->investigation_assigned) && $row->incident_status == 2) {
+                                $assignedUsers = explode(',', $row->investigation_assigned); 
+                                $loggedInUserId = Auth::id(); 
+                                $assignedLoginIds = Employee::whereIn('id', $assignedUsers)->pluck('login_id')->toArray();
+                                if (in_array($loggedInUserId, $assignedLoginIds)) {
+                                    $btn .= '<a href="' . admin_url('incident/initial-incident/investigation/' . encryptId($row->id)) . '" class=" " title="Investigation">
+                                                <i class="fa fa-search" style="color: #000000;"></i>
+                                             </a>';
+                                }
                             }
-                            if ($row->incident_status == 3) {
+
+
+                            if ($row->incident_status == 3 || $row->incident_status == 4) {
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/approvereject/' . encryptId($row->id)) . '" class=" " title="Investigation"><i class="fas fa-user-shield" style="color: #7e9611;"></i>';
                             }
-                            if ($row->incident_status == 4) {
-                                $btn .= '<a href="' . admin_url('incident/initial-incident/approvereject/' . encryptId($row->id)) . '" class=" " title="Investigation"><i class="fa fa-exclamation-triangle" style="color: #e83333;"></i>';
-                            }
 
-                            if ($row->incident_status == 5 || $row->incident_status == 8) {
-                                $btn .= '<a href="' . admin_url('incident/initial-incident/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
-                            }
-                            if ($row->incident_status == 6) {
-                                $btn .= '<a href="' . admin_url('incident/initial-incident/review/' . encryptId($row->id)) .  '" 
-                                            class="edit-icon" 
-                                            title="' . __('Corrective Action') . '">';
-                                $btn .= '<img src="' . public_image('common/ca.png') . '" 
-                                            alt="' . __('common.edit') . '" 
-                                            style="width: 20px;">';
-                                $btn .= '</a>';
-                            }
+
+                            // if ($row->incident_status == 5 || $row->incident_status == 8) {
+                            //     $btn .= '<a href="' . admin_url('incident/initial-incident/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
+                            // }
+                            // if ($row->incident_status == 6) {
+                            //     $btn .= '<a href="' . admin_url('incident/initial-incident/review/' . encryptId($row->id)) .  '" 
+                            //                 class="edit-icon" 
+                            //                 title="' . __('Corrective Action') . '">';
+                            //     $btn .= '<img src="' . public_image('common/ca.png') . '" 
+                            //                 alt="' . __('common.edit') . '" 
+                            //                 style="width: 20px;">';
+                            //     $btn .= '</a>';
+                            // }
 
                             if ($row->incident_status == 7) {
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
@@ -181,7 +191,7 @@ class InitialIncidentController extends Controller
     }
 
     public function Add(Request $request)
-    {
+        {
 
         try {
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
@@ -279,7 +289,59 @@ class InitialIncidentController extends Controller
 
                 $initialincident =   $this->initialincident->store();
                 $this->initialincidentevidence->store($initialincident);
+                $incident_status = STATUS_INCIDENT_REPORT;
+                $user_role = ROLE_EHS_HEAD;
+                $mailsubject = 'Safety Permit has been submitted';
+                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
 
+
+
+                if (count($users) > 0) {
+                    foreach ($users as $user) {
+
+                        $email_id = $user->email;
+
+                        if ($email_id != '' || $email_id != null) {
+                            $incidentDetails =  $this->initialincident->selectOne($initialincident->id);
+                            $incidentarray  = $incidentDetails->toArray();
+
+                            $incidentarray['name'] = $user->name;
+                            $incidentarray['email_id'] =  $email_id;
+                            $incidentarray['mail_subject'] = $mailsubject;
+
+                            Mail::to($incidentarray['email_id'])->queue(new IncidentEmail($incidentarray));
+                        }
+                    }
+                }
+
+                $notificationData = array(
+                    'notification_type' => 3,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => 'Incident' . $initialincident->sr_no . ' submitted by ' . getUsername($initialincident->created_by),
+                        'icon' =>  admin_url('public/assets/icons/incident.png'),
+                        'id' => $initialincident->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('incident/initial-incident/review/' . encryptId($initialincident->id)),
+                    'assigned_user' => array_to_string($userids),
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+                $insert_array = array(
+                    'permit_type' => 0,
+                    'incident_id' => $initialincident->id,
+                    'from_status' => 0,
+                    'to_status' => $incident_status,
+                    'is_reject' => null,
+                    'remarks' => null,
+                    'approved_by' => Auth::id(),
+                );
+
+                $this->Statuslog->create($insert_array);
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
@@ -525,11 +587,68 @@ class InitialIncidentController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-
-            $ehsReview = $this->ehs_review->store(1);
+            $approve_type = EHS_REVIEW;
+            $ehsReview = $this->ehs_review->store($approve_type);
             $incident_status = STATUS_INVESTIGATION_PENDING;
             $incident_id = $ehsReview->inicdent_report_id;
+            $initialincident = $this->initialincident->find($incident_id);
+            $investigationassigned = $this->initialincident->investigationassigned($incident_id);
             $incident = $this->initialincident->updateStatus($incident_id, $incident_status);
+
+
+            if ($ehsReview->team_member) {
+                $teamMemberIds = explode(',', $ehsReview->team_member);
+
+                $employees = Employee::whereIn('id', $teamMemberIds)->get(['emp_name', 'email']);
+                $mailsubject = 'Investigation Assigned';
+
+                // Fetch incident details once, not inside the loop
+                $incidentDetails = $this->initialincident->selectOne($incident_id);
+                $incidentarray = $incidentDetails->toArray();
+
+                foreach ($employees as $employee) {
+                    $username = $employee->emp_name;
+                    $email_id = $employee->email;
+
+                    if (!empty($email_id)) { // Corrected email validation
+                        $incidentarray['name'] = $username;
+                        $incidentarray['email_id'] = $email_id;
+                        $incidentarray['mail_subject'] = $mailsubject;
+
+                        Mail::to($email_id)->queue(new IncidentEmail($incidentarray));
+                    }
+                }
+
+                // Use incidentDetails for notification data
+                $notificationData = array(
+                    'notification_type' => 3,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => 'Incident ' . $incidentDetails->sr_no . ' submitted by ' . getUsername($ehsReview->created_by),
+                        'icon' => admin_url('public/assets/icons/incident.png'),
+                        'id' => $incidentDetails->id,
+                        'module' => 1,
+                    )),
+                    'web_link' => admin_url('incident/initial-incident/review/' . encryptId($incidentDetails->id)),
+                    'assigned_user' => array_to_string($teamMemberIds),
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+
+                // Insert status log
+                $insert_array = array(
+                    'incident_id' => $incidentDetails->id,
+                    'from_status' => $incidentDetails->incident_status,
+                    'to_status' => $incident_status,
+                    'is_reject' => null,
+                    'remarks' => null,
+                    'approved_by' => Auth::id(),
+                );
+                $this->Statuslog->create($insert_array);
+            }
+
 
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
@@ -544,6 +663,9 @@ class InitialIncidentController extends Controller
     public function investigation(Request $request, $incident_id)
     {
         try {
+            $accidentId = null;
+            $fire_id = null;
+
             $incidentId = decryptId($incident_id);
             $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
             $hiraList  = $this->hira->select('id', 'services')->where('status', '1')->get();
@@ -565,6 +687,10 @@ class InitialIncidentController extends Controller
             $displayMedia = array_map(function ($media) use ($mediaOptions) {
                 return $mediaOptions[$media] ?? $media;
             }, $selectedMedia);
+
+
+            $hiramoc = $this->hiramoc->delete_temprow($accidentId, $incidentId, $fire_id);
+
             $data = array(
                 'incidentId' => $incidentId,
                 'departmentList' => $departmentList,
@@ -587,7 +713,7 @@ class InitialIncidentController extends Controller
     public function existingHira($incident_id, Request $request)
     {
         try {
-            $accident_id = '';
+            $accident_id = null;
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->get();
 
             if ($request->ajax()) {
@@ -624,7 +750,7 @@ class InitialIncidentController extends Controller
     public function existingMOC($incident_id, Request $request)
     {
         try {
-            $accident_id = '';
+            $accident_id = null;
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->get();
 
             if ($request->ajax()) {
@@ -650,16 +776,16 @@ class InitialIncidentController extends Controller
 
 
             $accident_id = null;
-            $fire_id = null; 
+            $fire_id = null;
 
             $incidentinvestigation = $this->incidentinvestigation->store($incident_id, $incident_status);
             // dd($incidentinvestigation);
             $incident = $this->initialincident->updateStatus($incident_id, $incident_status);
             if ($incidentinvestigation->root_cause_analysis ==  1) {
-                $whyanalysis = $this->whyanalysis->store($accident_id , $incident_id, $fire_id ,$incidentinvestigation->id);
+                $whyanalysis = $this->whyanalysis->store($accident_id, $incident_id, $fire_id, $incidentinvestigation->id);
             }
             if ($incidentinvestigation->root_cause_analysis == 2) {
-                $this->fishboneAnalysis->storeFishbone($accident_id  , $incident_id, $fire_id ,$incidentinvestigation->id);
+                $this->fishboneAnalysis->storeFishbone($accident_id, $incident_id, $fire_id, $incidentinvestigation->id);
             }
 
             $this->hiramoc->updateinvestigation($incident_id, $incidentinvestigation->id);
@@ -689,7 +815,6 @@ class InitialIncidentController extends Controller
             $fishboneData = json_decode($getfishbone->first()->fishbone, true);
             $getrisklevel = $this->initialincident->getrisklevel($incidentId);
             $getEHSReview = $this->initialincident->getEHSReviewincident($incidentId);
-            // dd($getwhywhy); // To inspect the decoded fishbone data
 
             $mediaOptions = [
                 1 => 'Phone',
@@ -706,7 +831,6 @@ class InitialIncidentController extends Controller
                 return $mediaOptions[$media] ?? $media;
             }, $selectedMedia);
 
-            // dd($incident_report);
             $data = array(
                 'incidentId' => $incidentId,
                 'departmentList' => $departmentList,
@@ -768,7 +892,8 @@ class InitialIncidentController extends Controller
     {
         try {
 
-            $ehsReview = $this->ehs_review->store(2);
+            $approve_type = EHS_VERIFY;
+            $ehsReview = $this->ehs_review->store($approve_type);
             $incident_status = STATUS_ACTION_PENDING;
             $incident_id = $ehsReview->inicdent_report_id;
             $incident = $this->initialincident->updateStatus($incident_id, $incident_status);
@@ -801,8 +926,8 @@ class InitialIncidentController extends Controller
     public function ehsApprovalSubmit(Request $request)
     {
         try {
-
-            $ehsApproval = $this->ehs_review->store(3);
+            $approve_type = EHS_APPROVAL;
+            $ehsApproval = $this->ehs_review->store($approve_type);
             if ($request->has('approve')) {
                 $incident_status = STATUS_INCIDENT_CLOSED;
             } else {
@@ -881,6 +1006,7 @@ class InitialIncidentController extends Controller
                 $getEHSApprovalincident = $this->initialincident->getEHSApprovalincident($id);
                 $initialincidentevidence = $this->initialincidentevidence->selectOne($id);
 
+                // dd($getfishbone, $initialincidentevidence);
                 $mediaOptions = [
                     1 => 'Phone',
                     2 => 'Walkie Talkie',
@@ -906,6 +1032,7 @@ class InitialIncidentController extends Controller
                 'getEHSReview' => $getEHSReview,
                 'getwhywhy' => $getwhywhy,
                 'fishboneData' => $fishboneData,
+                'getfishbone' => $getfishbone,
                 'getrisklevel' => $getrisklevel,
                 'getEHSApprovalincident' => $getEHSApprovalincident,
             );

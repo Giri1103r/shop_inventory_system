@@ -96,7 +96,9 @@ class AccidentReportController extends Controller
                             }
                             return $text;
                         })
-
+                        ->editColumn('status_batch', function ($row) {
+                            return "<span class='" . $row->bg_color . "' >" . $row->status_name . "</span>";
+                        })
                         ->addColumn('date_and_time', function ($row) {
                             return Displaydatetimeformat($row->date_and_time);
                         })
@@ -115,16 +117,24 @@ class AccidentReportController extends Controller
                             $btn .= '<a href="' . admin_url('accidentReport/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
 
-                            if ($row->accident_status == 1) {
+                            if ($row->accident_status == 1 || $row->accident_status == 5 || $row->accident_status == 8) {
                                 $btn .= '<a href="' . admin_url('accidentReport/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
                             }
                             if ($row->accident_status == 2) {
                                 $btn .= '<a href="' . admin_url('accidentReport/investigation/' . encryptId($row->id)) . '" class=" " title="Investigation"><i class="fa fa-search" style="color: #000000;"></i> ';
                             }
 
+                            if ($row->accident_status == 3) {
+                                $btn .= '<a href="' . admin_url('accidentReport/uauc_riskanalysis/' . encryptId($row->id)) . '" class=" " title="uauc"><i class="fas fa-user-shield" style="color: #7e9611;"></i>';
+                            }
+                            if ($row->accident_status == 4) {
+                                $btn .= '<a href="' . admin_url('accidentReport/uauc_riskanalysis/' . encryptId($row->id)) . '" class=" " title="Risk Analysis"><i class="fa fa-exclamation-triangle" style="color: #e83333;"></i>';
+                            }
+
+
                             return $btn;
                         })
-                        ->rawColumns(['action', 'date_and_time', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['action', 'status_batch', 'date_and_time', 'created_date', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -539,9 +549,9 @@ class AccidentReportController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-
-            $ehsReview = $this->ehs_review->store();
-            $accident_status = 2;
+            $approve_type = EHS_REVIEW;
+            $ehsReview = $this->ehs_review->store($approve_type);
+            $accident_status = STATUS_INVESTIGATION_PENDING;
             $accidentId = $ehsReview->accident_report_id;
             $accident = $this->accident_report->updateStatus($accidentId, $accident_status);
 
@@ -555,19 +565,29 @@ class AccidentReportController extends Controller
     }
 
     public function investigation(Request $request, $accident_id)
-    {            
+    {
         try {
+            $incident_id = null;
+            $fire_id = null;
+
             $accidentId = decryptId($accident_id);
+
+            $accident_report = $this->accident_report->selectOne($accidentId);
+            $getEHSReview = $this->accident_report->getEHSReviewaccident($accidentId);
+
             $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
             $id = decryptId($request->id);
+            $accident_investigation = $this->accident_investigation->find($id);
 
             $accident_body_parts = $this->accident_body_parts->delete_temprow();
 
-            $accident_investigation = $this->accident_investigation->find($id);
+            $hiramoc = $this->hiramoc->delete_temprow($accidentId, $incident_id, $fire_id);
             $data = array(
                 'accidentId' => $accidentId,
                 'accident_body_parts' => $accident_body_parts,
+                'accident_report' => $accident_report,
                 'departmentList' => $departmentList,
+                'getEHSReview' => $getEHSReview,
 
             );
 
@@ -610,32 +630,101 @@ class AccidentReportController extends Controller
             $fire_id = null;
             $accident_id = decryptId($request->accident_id);
 
-                 if ($request->root_cause_analysis ==  3) {
-                    $accident_status = STATUS_INCIDENT_CLOSED;
-                } else {
-                    $accident_status = STATUS_RISKANALYSIS_PENDING;
-                }
 
-                $accident_investigation =  $this->accident_investigation->store();
-                $investigation_injury =  $this->accident_investigation_injury->store($accident_id, $accident_investigation->id);
+            if ($request->root_cause_analysis ==  3) {
+                $accident_status = STATUS_ACCIDENT_CLOSED;
+            } else {
+                $accident_status = STATUS_UAUC_PENDING;
+            }
 
-                $accident = $this->accident_report->updateStatus($accident_id, $accident_status);
+            $accident_investigation =  $this->accident_investigation->store();
+            $investigation_injury =  $this->accident_investigation_injury->store($accident_id, $accident_investigation->id);
 
-                if ($accident_investigation->root_cause_analysis ==  1) {
-                    $whyanalysis = $this->whyanalysis->store($accident_id, $incident_id, $fire_id , $accident_investigation->id);
-                }
-                if ($accident_investigation->root_cause_analysis == 2) {
-                    $this->fishboneAnalysis->storeFishbone($accident_id, $incident_id, $fire_id , $accident_investigation->id);
-                }
-    
-                $this->hiramoc->updateAccidentInvestigation($accident_id, $accident_investigation->id);
+            $accident = $this->accident_report->updateStatus($accident_id, $accident_status);
 
-                Session::flash('success', 'Your data has been created successfully!');
-           
+            if ($accident_investigation->root_cause_analysis ==  1) {
+                $whyanalysis = $this->whyanalysis->store($accident_id, $incident_id, $fire_id, $accident_investigation->id);
+            }
+            if ($accident_investigation->root_cause_analysis == 2) {
+                $this->fishboneAnalysis->storeFishbone($accident_id, $incident_id, $fire_id, $accident_investigation->id);
+            }
+
+            $this->hiramoc->updateAccidentInvestigation($accident_id, $accident_investigation->id);
+
+            Session::flash('success', 'Your data has been created successfully!');
+
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('accidentReport/list'));
+        }
+    }
+    public function uaucRiskanalysis(Request $request, $accident_id)
+    {
+        try {
+            $accidentId = decryptId($accident_id);
+            $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
+            $hiraList  = $this->hira->select('id', 'services')->where('status', '1')->get();
+            $accident_report = $this->accident_report->selectOne($accidentId);
+            $getEHSReview = $this->accident_report->getEHSReviewaccident($accidentId);
+            $getInvestigation = $this->accident_report->getInvestigation($accidentId);
+            $accident_investigation_injury = $this->accident_investigation_injury->getBodypartsInjuryPerson($getInvestigation->id);
+            $getwhywhy = $this->accident_report->getwhywhy($accidentId);
+            $getfishbone = $this->accident_report->getfishbone($accidentId);
+            $fishboneData = json_decode($getfishbone->first()->fishbone, true);
+            $getrisklevel = $this->accident_report->getrisklevel($accidentId);
+
+            // dd($incident_report);
+            $data = array(
+                'accidentId' => $accidentId,
+                'departmentList' => $departmentList,
+                'hiraList' => $hiraList,
+                'accident_report' => $accident_report,
+                'accident_investigation_injury' => $accident_investigation_injury,
+                'getInvestigation' => $getInvestigation,
+                'fishboneData' => $fishboneData,
+                'getwhywhy' => $getwhywhy,
+                'getrisklevel' => $getrisklevel,
+                'getEHSReview' => $getEHSReview,
+
+            );
+
+            return view('ims.incident.accidentReport.uauc_riskanalysis', $data);
+        } catch (Exception $error) {
+            dd($error->getMessage());
+        }
+    }
+    public function uaucSubmit(Request $request)
+    {
+
+        try {
+            $accident_id = decryptId($request->accident_id);
+            $accident_status = STATUS_RISKANALYSIS_PENDING;
+            $this->accident_report->uaucsubmit($accident_id);
+            $this->accident_report->updateStatus($accident_id, $accident_status);
+            Session::flash('success', 'Your data has been updated successfully!');
+            return redirect(admin_url('accidentReport/list'));
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('accidentReport/list'));
+        }
+    }
+
+    public function riskAnalysisSubmit(Request $request)
+    {
+
+        try {
+            $accident_id = decryptId($request->accident_id);
+            $accident_status = STATUS_EHSVERIFY_PENDING;
+            $riskanalysis = $this->riskanalysis->store($accident_id, $accident_status);
+              $this->accident_report->updateStatus($accident_id, $accident_status);
+            Session::flash('success', 'Your data has been updated successfully!');
+            return redirect(admin_url('accidentReport/list'));
+        } catch (Exception $ex) {
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -809,14 +898,14 @@ class AccidentReportController extends Controller
     public function existingHira($accident_id, Request $request)
     {
         try {
-            $incident_id = '';
+            $incident_id = null;
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->get();
 
             if ($request->ajax()) {
-                return view('ims.initial.incident.existinghira', compact('hiraList', 'incident_id','accident_id'))->render();
+                return view('ims.initial.incident.existinghira', compact('hiraList', 'incident_id', 'accident_id'))->render();
             }
 
-            return view('ims.initial.incident.existinghira', compact('hiraList', 'incident_id','accident_id'));
+            return view('ims.initial.incident.existinghira', compact('hiraList', 'incident_id', 'accident_id'));
         } catch (Exception $error) {
             return response()->json(['error' => $error->getMessage()], 500);
         }
@@ -824,15 +913,15 @@ class AccidentReportController extends Controller
     public function existingMOC($accident_id, Request $request)
     {
         try {
-            $incident_id = '';
+            $incident_id = null;
 
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->get();
 
             if ($request->ajax()) {
-                return view('ims.initial.incident.existingMOC', compact('hiraList', 'incident_id','accident_id'))->render();
+                return view('ims.initial.incident.existingMOC', compact('hiraList', 'incident_id', 'accident_id'))->render();
             }
 
-            return view('ims.initial.incident.existingMOC', compact('hiraList', 'incident_id','accident_id'));
+            return view('ims.initial.incident.existingMOC', compact('hiraList', 'incident_id', 'accident_id'));
         } catch (Exception $error) {
             return response()->json(['error' => $error->getMessage()], 500);
         }

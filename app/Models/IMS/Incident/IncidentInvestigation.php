@@ -48,9 +48,7 @@ class IncidentInvestigation extends Model
     {
         $request = request();
 
-        $decryptedDamaged = array_map('decryptId', $request->anything_damaged);
-
-        $commaSeparatedDamaged = implode(',', $decryptedDamaged);
+        $commaSeparatedDamaged = implode(',', $request->anything_damaged);
         $insert_array = array(
             'incident_id' => decryptId($request->incident_id),
             'witness_id' => !empty($request->witness_id) && is_array($request->witness_id)

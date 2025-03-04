@@ -166,19 +166,25 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_OHC_REQUISITION_CLOSE') or define('STATUS_OHC_REQUISITION_CLOSE', 6);
 
 
+        // IMS  EHS_REVIEW
+        defined('EHS_REVIEW') or define('EHS_REVIEW', 1);
+        defined('EHS_VERIFY') or define('EHS_VERIFY', 2);
+        defined('EHS_APPROVAL') or define('EHS_APPROVAL', 3);
+        
         // IMS Incident
 
-       // IMS Incident
+        defined('STATUS_INCIDENT_REPORT') or define('STATUS_INCIDENT_REPORT', 1);
+        defined('STATUS_INVESTIGATION_PENDING') or define('STATUS_INVESTIGATION_PENDING', 2);
+        defined('STATUS_UAUC_PENDING') or define('STATUS_UAUC_PENDING', 3);
+        defined('STATUS_RISKANALYSIS_PENDING') or define('STATUS_RISKANALYSIS_PENDING', 4);
+        defined('STATUS_EHSVERIFY_PENDING') or define('STATUS_EHSVERIFY_PENDING', 5);
+        defined('STATUS_ACTION_PENDING') or define('STATUS_ACTION_PENDING', 6);
+        defined('STATUS_EHSAPPROVAL_PENDING') or define('STATUS_EHSAPPROVAL_PENDING', 7);
+        defined('STATUS_EHSAPPROVAL_REJECTED') or define('STATUS_EHSAPPROVAL_REJECTED', 8);
 
-       defined('STATUS_INCIDENT_REPORT')or define('STATUS_INCIDENT_REPORT', 1);
-       defined('STATUS_INVESTIGATION_PENDING')or define('STATUS_INVESTIGATION_PENDING', 2);
-       defined('STATUS_UAUC_PENDING')or define('STATUS_UAUC_PENDING', 3);
-       defined('STATUS_RISKANALYSIS_PENDING')or define('STATUS_RISKANALYSIS_PENDING', 4);
-       defined('STATUS_EHSVERIFY_PENDING')or define('STATUS_EHSVERIFY_PENDING', 5);
-       defined('STATUS_ACTION_PENDING')or define('STATUS_ACTION_PENDING', 6);
-       defined('STATUS_EHSAPPROVAL_PENDING')or define('STATUS_EHSAPPROVAL_PENDING', 7);
-       defined('STATUS_EHSAPPROVAL_REJECTED')or define('STATUS_EHSAPPROVAL_REJECTED', 8);
-       defined('STATUS_INCIDENT_CLOSED')or define('STATUS_INCIDENT_CLOSED', 9);
+        defined('STATUS_ACCIDENT_REPORT') or define('STATUS_ACCIDENT_REPORT', 1);
+        defined('STATUS_ACCIDENT_CLOSED') or define('STATUS_ACCIDENT_CLOSED', 9);
+        defined('STATUS_INCIDENT_CLOSED') or define('STATUS_INCIDENT_CLOSED', 9);
 
         View::composer('*', function ($view) {
 

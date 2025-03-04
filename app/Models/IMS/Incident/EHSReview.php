@@ -30,6 +30,7 @@ class EHSReview extends Model
         'date',
         'team_member',
         'remark',
+        'target_date',
         'status',
         'trash',
         'created_by',
@@ -52,7 +53,7 @@ class EHSReview extends Model
             : [];
 
         $commaSeparatedTeamMembers = !empty($decryptedTeamMemberIds) ? implode(',', $decryptedTeamMemberIds) : null;
-
+        $targetDate = !empty($request->target_date) ? DBdateformat($request->target_date) : null;
 
         $insert_array = array(
             'type' => $type,
@@ -64,9 +65,11 @@ class EHSReview extends Model
             'reviewer_name' => $request->reviewer_name,
             'team_member' => $commaSeparatedTeamMembers,
             'remark' => $request->remark,
-            'target_date' => DBdateformat($request->target_date),
+            'target_date' => $targetDate,
             'created_by' => Auth::id()
         );
+
+        // dd($insert_array);
         return $this->create($insert_array);
     }
 }

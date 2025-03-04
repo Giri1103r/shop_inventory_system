@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Incident Investigation')
-@section('pageurl', admin_url('incident/initial-incident/list'))
+@section('title', 'Uauc and Riskanalysis')
+@section('pageurl', admin_url('accidentReport/list'))
 
 
 @section('content')
@@ -142,7 +142,7 @@
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
-            {{-- <h4 class="text-black">{{ __('incident/initial-incident Edit') }}</h4> --}}
+            {{-- <h4 class="text-black">{{ __('accidentReport Edit') }}</h4> --}}
 
         </div>
 
@@ -158,14 +158,14 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('incident/initial-incident/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('accidentReport/list') }}"></x-button-back>
                                 </div>
                             </div>
-                            <div class="card-body ">
+                            <div class="card-body">
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Incident Report Details</h4>
+                                        <h4 class="text-white">Accident Report Details</h4>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -173,117 +173,91 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Sr. No</label>
                                         <div class="view_data">
-                                            {{ $incident_report->sr_no }}
+                                            {{ $accident_report->accident_report_no }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Date and Time</label>
                                         <div class="view_data">
-                                            {{ Displaydatetimeformat($incident_report->incident_date_time) }}
+                                            {{ Displaydatetimeformat($accident_report->date_and_time) }}
                                         </div>
                                     </div>
 
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Employee Code</label>
+                                        <div class="view_data">
+                                            {{ $accident_report->emp_code }}
+                                        </div>
+                                    </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Unit</label>
                                         <div class="view_data">
-                                            {{ getUnitname($incident_report->unit_id) }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label require">Shift</label>
-                                        <div class="view_data">
-                                            {{ $incident_report->shift }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label require">Location</label>
-                                        <div class="view_data">
-                                            {{ $incident_report->location_name }}
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">IIR Type</label>
-                                        <div class="view_data">
-                                            {{ $incident_report->incident_type_name }}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row mt-3">
-                                    <div class="card-header-inner">
-                                        <h4 class="text-white">Incident Reported By</h4>
-                                    </div>
-                                </div>
-                                <div class="row">
-
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Name</label>
-                                        <div class="view_data">
-                                            {{ $incident_report->reported_by }}
+                                            {{ $accident_report->unit_name }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Designation</label>
                                         <div class="view_data">
-                                            {{ $incident_report->designation }}
+                                            {{ $accident_report->designation }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Department</label>
                                         <div class="view_data">
-                                            {{ $incident_report->reported_department }}
+                                            {{ $accident_report->department_name }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Employee Code</label>
+                                        <label class="form-label view_label">Shift</label>
                                         <div class="view_data">
-                                            {{ $incident_report->employee_code }}
+                                            {{ $accident_report->shift }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Time of reporting</label>
+                                        <label class="form-label view_label">Accident Location</label>
                                         <div class="view_data">
-                                            {{ $incident_report->time_of_reporting }}
+                                            {{ $accident_report->location_name }}
                                         </div>
                                     </div>
-
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Exact Location</label>
+                                        <div class="view_data">
+                                            {{ $accident_report->exact_location }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Address of the injured person</label>
+                                        <div class="view_data">
+                                            {{ $accident_report->address_of_the_injuredperson }}
+                                        </div>
+                                    </div>
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Reporting Media</label>
+                                        <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
-                                            {{ implode(', ', $displayMedia) }}
+                                            {{ getusername($accident_report->created_by) }}
                                         </div>
                                     </div>
-
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label">Brief Description</label>
+                                        <label class="form-label view_label">{{ __('common.created_date') }}</label>
                                         <div class="view_data">
-                                            {{ $incident_report->brief_description }}
+                                            {{ displayDateformat($accident_report->created_at) }}
                                         </div>
                                     </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('common.status') }}</label>
+                                        <div class="view_data">
+                                            @if ($accident_report->status == 1)
+                                                {{ __('common.active') }}
+                                            @else
+                                                {{ __('common.inactive') }}
+                                            @endif
 
-                                    <div class="col-md-12 mb-3">
-                                        <label class="form-label">Existing Evidence</label>
-                                        @if (!$initialincidentevidence->isEmpty())
-                                            <div class="row">
-                                                @foreach ($initialincidentevidence as $key => $evidence)
-                                                    <div class="col-md-3 col-sm-6 mb-2">
-                                                        <div class="existing-evidence text-center">
-                                                            <a href="{{ asset($evidence->file_path) }}" target="_blank">
-                                                                <img src="{{ asset($evidence->file_path) }}" alt="Evidence"
-                                                                    class="img-fluid rounded shadow"
-                                                                    style="max-width: 20%; height: auto;">
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        @endif
+                                        </div>
                                     </div>
-
                                 </div>
-
+                            </div>
+                            <div class="card-body">
                                 <div class="row">
                                     <div class="card-header-inner">
                                         <h4 class="text-white">EHS Head Review</h4>
@@ -299,7 +273,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Date') }}</label>
                                         <div class="view_data">
-                                            {{ $getEHSReview->date }}
+                                            {{ Displaydateformat($getEHSReview->date) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -317,8 +291,77 @@
                                     </div>
 
                                 </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Injured Person Details</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Injury Person Type</th>
+                                                <th>Injury Person Name</th>
+                                                <th>Injury Person Employee ID</th>
+                                                <th>Injury Person Designation</th>
+                                                <th>Injury Person Department</th>
+                                                <th>Injury Body Parts</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($accident_investigation_injury as $injury)
+                                                <tr>
+                                                    <td>
+                                                        {{ $injury->injury_person_type == 1 ? 'Employee' : ($injury->injury_person_type == 2 ? 'Worker' : 'Others') }}
+                                                    </td>
+                                                    <td>
+                                                        @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
+                                                            {{ $injury->emp_name }}
+                                                        @else
+                                                            {{ $injury->injury_person_name }}
+                                                        @endif
+                                                    </td>
+                                                    <td>{{ $injury->emp_id }}</td>
+                                                    <td>{{ $injury->injury_person_designation }}</td>
+                                                    <td>
+                                                        @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
+                                                            {{ $injury->department_name }}
+                                                        @else
+                                                            {{ $injury->injury_person_department_id }}
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if ($injury->body_part_image)
+                                                            <a href="{{ admin_url('storage/app/private/' . $injury->body_part_image) }}" target="_blank">
+                                                                <img src="{{ admin_url('storage/app/private/' . $injury->body_part_image) }}"
+                                                                     alt="Body Parts Image"
+                                                                     style="max-width: 100px; max-height: 100px; object-fit: contain;">
+                                                            </a>
+                                                        @endif
+                                                    </td>
+                                                 
+                                                    
+                                                    <td>
+                                                        @php
+                                                            $imgMapDataDecoded = json_decode($injury->imgMapdata, true);
+                                                        @endphp
+                                                        @if ($imgMapDataDecoded)
+                                                            <ul>
+                                                                @foreach ($imgMapDataDecoded['map']['total'] as $key => $value)
+                                                                    <li>{{ ucfirst($key) }}: {{ $value }}</li>
+                                                                @endforeach
+                                                            </ul>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
 
-
+                                </div>
                                 <div class="row">
                                     <div class="card-header-inner">
                                         <h4 class="text-white">Investigation</h4>
@@ -334,23 +377,19 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Was anything damaged?</label>
+                                        <label class="form-label view_label">Was anything
+                                            damaged?</label>
                                         <div class="view_data">
-                                            @php
-                                               
-                                                $damageTypes = [
-                                                    1 => 'Man',
-                                                    2 => 'Machine',
-                                                    3 => 'Materials',
-                                                ];
 
-                                                $damagedItems = explode(',', $getInvestigation->anything_damaged);
-                                                $damagedLabels = array_map(function ($item) use ($damageTypes) {
-                                                    return $damageTypes[$item] ?? 'NA';
-                                                }, $damagedItems);
-                                            @endphp
-
-                                            {{ implode(', ', $damagedLabels) }}
+                                            @if ($getInvestigation->anything_damaged == 1)
+                                                Man
+                                            @elseif($getInvestigation->anything_damaged == 2)
+                                                Machine
+                                            @elseif($getInvestigation->anything_damaged == 3)
+                                                Materials
+                                            @else
+                                                NA
+                                            @endif
                                         </div>
                                     </div>
 
@@ -382,12 +421,12 @@
                                             Analysis (PRCA)</label>
                                         <div class="view_data">
                                             @if ($getInvestigation->root_cause_analysis == 1)
-                                                    Why Why Analysis
-                                                @elseif($getInvestigation->root_cause_analysis == 2)
-                                                    Fish Bone Analysis
-                                                @else
-                                                    NA
-                                                @endif
+                                                Why - Why Analysis
+                                            @elseif($getInvestigation->root_cause_analysis == 2)
+                                                Fish Bone Analysis
+                                            @else
+                                                NA
+                                            @endif
                                         </div>
                                     </div>
 
@@ -398,6 +437,24 @@
                                             {{ $getInvestigation->action_taken }}
                                         </div>
                                     </div>
+
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Was the injured person receiving any treatment
+                                            at present?</label>
+                                        <div class="view_data">
+                                            {{ $getInvestigation->is_treatment == 1 ? 'Yes' : 'No' }}
+                                        </div>
+                                    </div>
+
+                                    @if ($getInvestigation->is_treatment == 1)
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Details</label>
+                                            <div class="view_data">
+                                                {{ $getInvestigation->details }}
+                                            </div>
+                                        </div>
+                                    @endif
+
 
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Recommended Corrective & Preventive
@@ -415,7 +472,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Target Date</label>
                                         <div class="view_data">
-                                            {{ $getInvestigation->target_date }}
+                                            {{ Displaydateformat($getInvestigation->target_date) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -631,7 +688,7 @@
                                 @endif
 
                             </div>
-                            @if ($incident_report->incident_status == STATUS_UAUC_PENDING)
+                            @if ($accident_report->accident_status == STATUS_UAUC_PENDING)
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -640,11 +697,11 @@
                                     </div>
                                     <div class="basic-form">
                                         <form method="POST" id="uauc"
-                                            action="{{ admin_url('incident/initial-incident/uauc/submit') }}">
+                                            action="{{ admin_url('accidentReport/uauc/submit') }}">
                                             @csrf
 
-                                            <input type="hidden" name="incident_id" id="incident_id"
-                                                value="{{ encryptId($incidentId) }}">
+                                            <input type="hidden" name="accident_id" id="accident_id"
+                                                value="{{ encryptId($accidentId) }}">
 
                                             <div class="row">
                                                 <div class="col-md-12 mt-3 ua_uc_yes_no">
@@ -686,13 +743,13 @@
                                                 <x-button-submit class="submit"></x-button-submit>
                                                 <x-button-reset class=""></x-button-reset>
                                                 <x-button-cancel
-                                                    href="{{ admin_url('incident/initial-incident/list') }}"></x-button-cancel>
+                                                    href="{{ admin_url('accidentReport/list') }}"></x-button-cancel>
                                             </div>
                                         </form>
                                     </div>
 
                                 </div>
-                            @elseif($incident_report->incident_status > STATUS_UAUC_PENDING)
+                            @elseif($accident_report->accident_status > STATUS_UAUC_PENDING)
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -703,7 +760,7 @@
                                         <div class="mb-3 col-md-12 form-input">
                                             <label for="name" class="form-label">UAUC</label>
                                             <div class="view_data">
-                                                @if ($incident_report->ua_uc_yes_no == 1)
+                                                @if ($accident_report->ua_uc_yes_no == 1)
                                                     Yes
                                                 @else
                                                     No
@@ -711,12 +768,12 @@
                                             </div>
                                         </div>
 
-                                        @if ($incident_report->ua_uc_yes_no == 1)
+                                        @if ($accident_report->ua_uc_yes_no == 1)
                                             <div class="mb-3 col-md-12 form-input">
                                                 <label for="name" class="form-label">UA/UC</label>
                                                 <div class="view_data">
                                                     @php
-                                                        $ua_uc_values = explode(',', $incident_report->ua_or_uc);
+                                                        $ua_uc_values = explode(',', $accident_report->ua_or_uc);
                                                     @endphp
 
                                                     <span>UA: {!! in_array('1', $ua_uc_values)
@@ -733,14 +790,14 @@
                                             <div class="mb-3 col-md-4 form-input">
                                                 <label class="form-label">Description of UAUC</label>
                                                 <div class="view_data">
-                                                    {{ $incident_report->description_uauc }}
+                                                    {{ $accident_report->description_uauc }}
                                                 </div>
                                             </div>
                                         @endif
                                     </div>
                                 </div>
                             @endif
-                            @if ($incident_report->incident_status == STATUS_RISKANALYSIS_PENDING)
+                            @if ($accident_report->accident_status == STATUS_RISKANALYSIS_PENDING)
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -749,11 +806,11 @@
                                     </div>
                                     <div class="basic-form">
                                         <form method="POST" id="riskanalysis"
-                                            action="{{ admin_url('incident/initial-incident/riskAnalysis/submit') }}">
+                                            action="{{ admin_url('accidentReport/riskAnalysis/submit') }}">
                                             @csrf
 
-                                            <input type="hidden" name="incident_id" id="incident_id"
-                                                value="{{ encryptId($incidentId) }}">
+                                            <input type="hidden" name="accident_id" id="accident_id"
+                                                value="{{ encryptId($accidentId) }}">
 
                                             <div class="row">
                                                 <div class="col-md-12 mt-3">
@@ -785,7 +842,7 @@
                                                 <x-button-submit class="submit"></x-button-submit>
                                                 <x-button-reset class=""></x-button-reset>
                                                 <x-button-cancel
-                                                    href="{{ admin_url('incident/initial-incident/list') }}"></x-button-cancel>
+                                                    href="{{ admin_url('accidentReport/list') }}"></x-button-cancel>
                                             </div>
                                         </form>
                                     </div>

@@ -72,7 +72,6 @@ class AccidentInvestigation extends Model
             'remark' => $request->remark,
             'created_by' => Auth::id()
         );
-        // dd($insert_array);
         return $this->create($insert_array);
     }
 

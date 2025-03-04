@@ -341,21 +341,26 @@
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">Was anything
-                                                damaged?</label>
+                                            <label class="form-label view_label">Was anything damaged?</label>
                                             <div class="view_data">
+                                                @php
+                                                   
+                                                    $damageTypes = [
+                                                        1 => 'Man',
+                                                        2 => 'Machine',
+                                                        3 => 'Materials',
+                                                    ];
 
-                                                @if ($getInvestigation->anything_damaged == 1)
-                                                    Man
-                                                @elseif($getInvestigation->anything_damaged == 2)
-                                                    Machine
-                                                @elseif($getInvestigation->anything_damaged == 3)
-                                                    Materials
-                                                @else
-                                                    NA
-                                                @endif
+                                                    $damagedItems = explode(',', $getInvestigation->anything_damaged);
+                                                    $damagedLabels = array_map(function ($item) use ($damageTypes) {
+                                                        return $damageTypes[$item] ?? 'NA';
+                                                    }, $damagedItems);
+                                                @endphp
+
+                                                {{ implode(', ', $damagedLabels) }}
                                             </div>
                                         </div>
+
 
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">HIRA</label>

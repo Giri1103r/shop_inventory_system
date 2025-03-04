@@ -238,45 +238,62 @@
                                     </div>
                                 </div>
                             </div>
-
-
-                            {{-- @if ($hira->hira_stat >= 2)
+                            @if ($hira->hira_status == 1 && CheckUserRole(ROLE_EHS_HEAD))
                                 <div class="card-body ">
+
                                     <div class="row">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">EHS Head Approval</h4>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label for="name" class="form-label">Reviewer Name</label>
-                                            <div class="view_data">
-                                                {{ $getEHSReview->reviewer_name }}
+                                    <div class="basic-form">
+                                        <form method="POST" id="ehs_approval"
+                                            action="{{ admin_url('incident/hira-master/ehsapproval/submit') }}"
+                                            enctype="multipart/form-data">
+                                            @csrf
+                                            <div class="row">
+                                                <input type="hidden" class="form-control" name="hira_id" id="hira_id"
+                                                    value="{{ encryptId($hira->id) }}">
+
+                                                <input type="hidden" name="reviewer_emp_id" id="reviewer_emp_id"
+                                                    class="form-control" value="{{ Auth::user()->employee_id ?? '' }}">
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="name" class="form-label">Reviewer Name</label>
+                                                        <input type="text" name="reviewer_name" id="reviewer_name"
+                                                            class="form-control" value="{{ Auth::user()->name ?? '' }}"
+                                                            readonly>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="date" class="form-label require">Date</label>
+                                                        <input type="text" name ="date" id="date_datepicker"
+                                                            class="form-control" placeholder="Date" readonly
+                                                            value="{{ todaydate() }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Remark</label>
+                                                        <textarea name="remark" id="remark" class="form-control" rows="4" required></textarea>
+                                                    </div>
+                                                </div>
+
                                             </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">{{ __('Date') }}</label>
-                                            <div class="view_data">
-                                                {{ Displaydateformat($getEHSReview->date) }}
+                                            <hr>
+                                            <div class="d-flex float-end gap-2 mx-auto">
+                                                <button type="submit" name="approve" value="approve"
+                                                    class="btn btn-success w-100">Approve</button>
+                                                <button type="submit" name="reject" value="reject"
+                                                    class="btn btn-danger w-100">Reject</button>
                                             </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label for="team_id" class="form-label">Assign Team
-                                                members</label>
-                                            <div class="view_data">
-                                                {{ $getEHSReview->team_member_names }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label">Remark</label>
-                                            <div class="view_data">
-                                                {{ $getEHSReview->remark }}
-                                            </div>
-                                        </div>
+                                        </form>
 
                                     </div>
                                 </div>
-                            @endif --}}
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -286,3 +303,48 @@
     </div>
 
 @stop
+@push('script')
+    <script type="text/javascript" nonce="projectcab">
+        $(document).ready(function() {
+            $('#ehs_approval').validate({
+                rules: {
+                    remark: {
+                        required: true,
+                        maxlength: 1000
+                    }
+                },
+                messages: {
+                    remark: {
+                        required: "Please provide a remark.",
+                        maxlength: "Remark cannot exceed 1000 characters."
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    if ($('#vp_approval').data('conflict') === true) {
+                        return false;
+                    } else {
+                        form.submit(); // Submit the form when valid
+                    }
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {
+
+                    });
+                }
+            });
+
+        });
+    </script>
+@endpush

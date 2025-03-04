@@ -26,6 +26,8 @@ class HiraMoc extends Model
         'fire_id',
         'invesigation_id',
         'hira_id',
+        'moc_id',
+        'hiramoc_status',
         'status',
         'trash',
         'created_by',
@@ -40,6 +42,34 @@ class HiraMoc extends Model
     ];
 
 
+    public function gethiramocdetails()
+    {
+        $request = request();
+
+        $accident_id = decryptId($request->accident_id);
+        $incident_id = decryptId($request->incident_id);
+        $fire_id = decryptId($request->fire_id);
+        $hira_id = decryptId($request->hira_id);
+        $moc_id = decryptId($request->moc_id);
+
+       
+
+        $query = $this->select('ims_master_incident_hiramoc.*');
+
+        if ($accident_id) {
+                $query->where(['accident_id'=> $accident_id , 'hiramoc_status' => 'T' ]);
+        } elseif ($incident_id) {
+            
+                $query->where(['incident_id'=> $incident_id , 'hiramoc_status' => 'T' ]);
+          
+        }elseif ($fire_id) {
+                $query->where(['fire_id'=> $fire_id , 'hiramoc_status' => 'T' ]);
+        }
+
+        $get_data = $query->get(); 
+
+        return response()->json($get_data);
+    }
     public function store()
     {
         $request = request();
@@ -48,9 +78,9 @@ class HiraMoc extends Model
             'accident_id' =>  decryptId($request->accident_id) ?? null,
             'incident_id' =>  decryptId($request->incident_id) ?? null,
             'fire_id' =>  decryptId($request->fire_id) ?? null,
-            'invesigation_id' =>  $request->accident_report_id ?? null,
             'hira_id' =>  decryptId($request->fire_inicdent_report_id) ?? null,
             'moc_id' =>  decryptId($request->fire_inicdent_report_id) ?? null,
+            'hiramoc_status' => 'T',
             'created_by' => Auth::id()
         );
         return $this->create($insert_array);
@@ -62,6 +92,7 @@ class HiraMoc extends Model
 
         $update_array = array(
             'invesigation_id' => $invesigation_id,
+            'hiramoc_status' => 'Y',
             'updated_by' => Auth::id(),
             'updated_at' => now(),
         );
@@ -73,9 +104,23 @@ class HiraMoc extends Model
 
         $update_array = array(
             'invesigation_id' => $invesigation_id,
+            'hiramoc_status' => 'Y',
             'updated_by' => Auth::id(),
             'updated_at' => now(),
         );
         return $this->where('accident_id', $accident_id)->update($update_array);
     }
+
+    public function delete_temprow($accidentId, $incidentId, $fireId)
+    {
+        $this->where(function($query) use ($accidentId, $incidentId, $fireId) {
+            $query->orWhere('accident_id', $accidentId)
+                  ->orWhere('incident_id', $incidentId)
+                  ->orWhere('fire_id', $fireId);
+        })
+        ->where('hiramoc_status', 'T')
+        ->delete();
+    }
+    
+
 }

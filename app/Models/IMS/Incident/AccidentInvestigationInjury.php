@@ -43,11 +43,11 @@ class AccidentInvestigationInjury extends Model
         'trash' => 'NO',
     ];
 
-    public function store($accident_id ,$accident_investigationId)
+    public function store($accident_id, $accident_investigationId)
     {
         $request = request();
         $IncidentBodyParts = new AccidentBodyParts();
-        
+
         $injuryPerson = $request->input('injury_person');
         if (!empty($injuryPerson) && is_array($injuryPerson)) {
             foreach ($injuryPerson as $injuryPersonData) {
@@ -64,14 +64,13 @@ class AccidentInvestigationInjury extends Model
                 ];
                 $saveinjuryData = $this->create($insert_array);
 
-                $inj_person_arr[] = $injuryPersonData['injury_person_id'];
+                $inj_person_arr[] = decryptId($injuryPersonData['injury_person_id']);
 
                 $injdata = [
                     'injury_id' => $saveinjuryData->id,
                     'status' => 'Y',
                 ];
-
-                $updtinjBody = $IncidentBodyParts->where(['injury_person_id' => $injuryPersonData['injury_person_id'], 'status' => 'T'])->update($injdata);
+                $updtinjBody = $IncidentBodyParts->where(['injury_person_id' => $saveinjuryData->injury_person_id, 'status' => 'T'])->update($injdata);
             }
         }
         $IncidentBodyParts->updateStatusForIncident(decryptId($accident_investigationId), $inj_person_arr);
@@ -87,4 +86,32 @@ class AccidentInvestigationInjury extends Model
 
         return $this->where('id', $id)->update($update_data);
     }
+
+    public function getBodypartsInjuryPerson($id)
+    {
+        return $this->select(
+                'ims_accident_investigation_injury.*',
+                DB::raw('COALESCE(masters_employee.emp_name, masters_work.emp_name) as emp_name'),
+                DB::raw('COALESCE(masters_employee.emp_id, masters_work.emp_id) as emp_id'),
+                DB::raw('COALESCE(masters_employee.designation, masters_work.designation) as designation'),
+                'masters_department.department_name',
+                'ims_accident_body_parts.imgMapdata',
+                'ims_accident_body_parts.body_part_image'
+            )
+            ->leftJoin('masters_employee', function($join) {
+                $join->on('ims_accident_investigation_injury.injury_person_id', '=', 'masters_employee.id')
+                     ->where('ims_accident_investigation_injury.injury_person_type', '=', 1);
+            })
+            ->leftJoin('masters_work', function($join) {
+                $join->on('ims_accident_investigation_injury.injury_person_id', '=', 'masters_work.id')
+                     ->where('ims_accident_investigation_injury.injury_person_type', '=', 2);
+            })
+            ->leftJoin('masters_department', 'ims_accident_investigation_injury.injury_person_department_id', '=', 'masters_department.id')
+            ->leftJoin('ims_accident_body_parts', 'ims_accident_investigation_injury.id', '=', 'ims_accident_body_parts.injury_id')
+            ->where('accident_investigation_id', $id)
+            ->get();
+    }
+    
+
+   
 }
