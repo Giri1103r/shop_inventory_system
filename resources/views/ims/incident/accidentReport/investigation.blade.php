@@ -269,6 +269,137 @@
                                     <x-button-back href="{{ admin_url('accidentReport/list') }}"></x-button-back>
                                 </div>
                             </div>
+                            <div class="card-body">
+
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Accident Report Details</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Sr. No</label>
+                                        <div class="view_data">
+                                            {{ $accident_report->accident_report_no }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Date and Time</label>
+                                        <div class="view_data">
+                                            {{ Displaydatetimeformat($accident_report->date_and_time) }}
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Employee Code</label>
+                                        <div class="view_data">
+                                            {{ $accident_report->emp_code }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Unit</label>
+                                        <div class="view_data">
+                                            {{ $accident_report->unit_name }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Designation</label>
+                                        <div class="view_data">
+                                            {{ $accident_report->designation }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Department</label>
+                                        <div class="view_data">
+                                            {{ $accident_report->department_name }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Shift</label>
+                                        <div class="view_data">
+                                            {{ $accident_report->shift }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Accident Location</label>
+                                        <div class="view_data">
+                                            {{ $accident_report->location_name }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Exact Location</label>
+                                        <div class="view_data">
+                                            {{ $accident_report->exact_location }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Address of the injured person</label>
+                                        <div class="view_data">
+                                            {{ $accident_report->address_of_the_injuredperson }}
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('common.created_by') }}</label>
+                                        <div class="view_data">
+                                            {{ getusername($accident_report->created_by) }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('common.created_date') }}</label>
+                                        <div class="view_data">
+                                            {{ displayDateformat($accident_report->created_at) }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('common.status') }}</label>
+                                        <div class="view_data">
+                                            @if ($accident_report->status == 1)
+                                                {{ __('common.active') }}
+                                            @else
+                                                {{ __('common.inactive') }}
+                                            @endif
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">EHS Head Review</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label for="name" class="form-label">Reviewer Name</label>
+                                        <div class="view_data">
+                                            {{ $getEHSReview->reviewer_name }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Date') }}</label>
+                                        <div class="view_data">
+                                            {{ Displaydateformat($getEHSReview->date) }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label for="team_id" class="form-label">Assign Team
+                                            members</label>
+                                        <div class="view_data">
+                                            {{ $getEHSReview->team_member_names }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label">Remark</label>
+                                        <div class="view_data">
+                                            {{ $getEHSReview->remark }}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
 
                             <div class="card-body">
 
@@ -306,9 +437,11 @@
                                                     <!-- Injury Person Name (Text Inputs) -->
                                                     <div class="col-md-4 form-input" id="injuryPersonTextContainer_0">
                                                         <label class="form-label require">Injury Person Name</label>
-                                                        <input type="text" class="form-control injuryPersonName require"
+                                                        <input type="text"
+                                                            class="form-control injuryPersonName require"
                                                             name="injury_person[0][injury_person_name]" alt="0"
-                                                            id="RowInjothersdata_0" placeholder="Enter Injury Person Name">
+                                                            id="RowInjothersdata_0"
+                                                            placeholder="Enter Injury Person Name">
                                                     </div>
                                                     <!-- Injury Person Name (Dropdown) -->
                                                     <div class="col-md-4 form-input d-none"
@@ -361,7 +494,8 @@
                                                         <div class="form-group form-input">
                                                             <label for="nature_of_injury" class="form-label">Nature of
                                                                 Injury</label>
-                                                            <select alt="0" name="injury_person[0][nature_of_injury]"
+                                                            <select alt="0"
+                                                                name="injury_person[0][nature_of_injury]"
                                                                 id="nature_of_injury_0" style="width: 100%"
                                                                 class="form-control single-select">
                                                                 <option value="">Nature of Injury</option>
@@ -411,7 +545,7 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mb-3">
+                                                {{-- <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
                                                         <label for="emp_code" class="form-label require">Employee
                                                             Code</label>
@@ -439,7 +573,7 @@
                                                             <option value="">Select Department</option>
                                                         </select>
                                                     </div>
-                                                </div>
+                                                </div> --}}
 
                                                 <div class="col-md-4 mt-3">
                                                     <div class="form-group form-input">
@@ -1401,19 +1535,23 @@
                                                                         <area alt="" title="A. Left Palm"
                                                                             data-map='hand-left-palm' shape="poly"
                                                                             coords="152,20,177,14,209,13,230,13,250,16,268,18,267,36,266,54,267,68,267,79,269,94,274,106,278,120,284,133,294,144,305,152,314,162,322,173,316,198,309,221,304,235,291,243,283,258,280,272,277,286,276,295,277,315,267,318,239,326,221,326,201,326,194,325,173,317,159,310,148,302,124,289,126,262,128,242,132,210,138,187,142,158,146,151,150,134,153,106" />
-                                                                        <area alt="" title="B. Left Thumb Finger"
+                                                                        <area alt=""
+                                                                            title="B. Left Thumb Finger"
                                                                             data-map='hand-left-thumb' shape="poly"
                                                                             coords="364,237,372,253,378,261,388,269,394,275,391,283,384,287,366,283,350,275,335,263,319,243,312,236,304,234,311,211,320,185,325,174" />
-                                                                        <area alt="" title="C. Left Index Finger"
+                                                                        <area alt=""
+                                                                            title="C. Left Index Finger"
                                                                             data-map='hand-left-index' shape="poly"
                                                                             coords="269,461,277,455,280,450,282,421,279,364,275,316,262,320,249,323,240,324,243,360,245,398,251,440,258,459" />
-                                                                        <area alt="" title="D. Left Middle Finger"
+                                                                        <area alt=""
+                                                                            title="D. Left Middle Finger"
                                                                             data-map='hand-left-middle' shape="poly"
                                                                             coords="193,325,214,326,236,324,235,327,234,340,233,361,232,388,231,409,228,422,228,448,226,478,218,488,204,484,197,461,198,335" />
                                                                         <area alt="" title="E. Left Ring Finger"
                                                                             data-map='hand-left-ring' shape="poly"
                                                                             coords="155,308,172,317,189,324,190,339,186,371,181,400,180,423,176,451,171,462,164,463,153,456,151,422,151,374" />
-                                                                        <area alt="" title="F. Left Little Finger"
+                                                                        <area alt=""
+                                                                            title="F. Left Little Finger"
                                                                             data-map='hand-left-little' shape="poly"
                                                                             coords="105,389,106,398,111,407,120,406,123,401,130,392,133,379,138,356,143,339,146,324,149,317,151,307,144,302,137,295,125,289,117,312" />
 
@@ -1551,7 +1689,7 @@
                                                 class="btn btn-secondary btn-warnings injcancel center"
                                                 data-bs-dismiss="modal">{{ 'Cancel' }}</button>
                                             <!--
-                                                                                                                                                                                                                                                                                                                                                                    <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
+                                                                                                                                                                                                                                                                                                                                                                            <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
 
                                         </div>
                                     </div>
@@ -1563,8 +1701,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                                                                                                                                                                                                                                                                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                                                                                                                                                                                                                                            </div>-->
+                                                                                                                                                                                                                                                                                                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                                                                                                                                                                                                                                                    </div>-->
             </div>
         </div>
     </div>

@@ -1236,6 +1236,12 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/investigation/getbodyEmpdetails', [AccidentReportController::class, 'getbodyEmpdetails']);
                 Route::get('/existingHira/{accident_id}', [AccidentReportController::class, 'existingHira']);
                 Route::get('/existingMOC/{accident_id}', [AccidentReportController::class, 'existingMOC']);
+                Route::get('/uauc_riskanalysis/{accident_id}', [AccidentReportController::class, 'uaucRiskanalysis']);
+                Route::post('/uauc/submit', [AccidentReportController::class, 'uaucSubmit']);
+                Route::post('/riskAnalysis/submit', [AccidentReportController::class, 'riskAnalysisSubmit']);
+                Route::post('/ehs_head_verify/submit', [AccidentReportController::class, 'ehsHeadVerifySubmit']);
+                Route::post('/actiontaken/submit', [AccidentReportController::class, 'actiontakenSubmit']);
+                Route::post('/ehApproval/submit', [AccidentReportController::class, 'ehsApprovalSubmit']);
             });
 
 

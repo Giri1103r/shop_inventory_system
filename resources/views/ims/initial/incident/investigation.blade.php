@@ -365,7 +365,7 @@
 
                                 </div>
                             </div>
-                            <div class="card-body ">
+                            <div class="card-body">
                                 <div class="row">
                                     <div class="card-header-inner">
                                         <h4 class="text-white">EHS Head Review</h4>

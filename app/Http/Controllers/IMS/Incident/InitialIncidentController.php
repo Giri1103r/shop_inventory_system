@@ -101,7 +101,6 @@ class InitialIncidentController extends Controller
 
 
                         ->editColumn('status_batch', function ($row) {
-
                             return "<span class='" . $row->bg_color . "' >" . $row->status_name . "</span>";
                         })
                         ->addColumn('unit_name', function ($row) {
@@ -181,7 +180,7 @@ class InitialIncidentController extends Controller
     }
 
     public function Add(Request $request)
-    {
+        {
 
         try {
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
@@ -525,8 +524,8 @@ class InitialIncidentController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-
-            $ehsReview = $this->ehs_review->store(1);
+            $approve_type = EHS_REVIEW;
+            $ehsReview = $this->ehs_review->store($approve_type);
             $incident_status = STATUS_INVESTIGATION_PENDING;
             $incident_id = $ehsReview->inicdent_report_id;
             $incident = $this->initialincident->updateStatus($incident_id, $incident_status);
@@ -544,6 +543,9 @@ class InitialIncidentController extends Controller
     public function investigation(Request $request, $incident_id)
     {
         try {
+            $accidentId = null;
+            $fire_id = null;
+
             $incidentId = decryptId($incident_id);
             $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
             $hiraList  = $this->hira->select('id', 'services')->where('status', '1')->get();
@@ -565,6 +567,10 @@ class InitialIncidentController extends Controller
             $displayMedia = array_map(function ($media) use ($mediaOptions) {
                 return $mediaOptions[$media] ?? $media;
             }, $selectedMedia);
+
+
+            $hiramoc = $this->hiramoc->delete_temprow($accidentId, $incidentId, $fire_id);
+
             $data = array(
                 'incidentId' => $incidentId,
                 'departmentList' => $departmentList,
@@ -587,7 +593,7 @@ class InitialIncidentController extends Controller
     public function existingHira($incident_id, Request $request)
     {
         try {
-            $accident_id = '';
+            $accident_id = null;
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->get();
 
             if ($request->ajax()) {
@@ -624,7 +630,7 @@ class InitialIncidentController extends Controller
     public function existingMOC($incident_id, Request $request)
     {
         try {
-            $accident_id = '';
+            $accident_id = null;
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->get();
 
             if ($request->ajax()) {
@@ -768,7 +774,8 @@ class InitialIncidentController extends Controller
     {
         try {
 
-            $ehsReview = $this->ehs_review->store(2);
+            $approve_type = EHS_VERIFY;
+            $ehsReview = $this->ehs_review->store($approve_type);
             $incident_status = STATUS_ACTION_PENDING;
             $incident_id = $ehsReview->inicdent_report_id;
             $incident = $this->initialincident->updateStatus($incident_id, $incident_status);
@@ -801,8 +808,8 @@ class InitialIncidentController extends Controller
     public function ehsApprovalSubmit(Request $request)
     {
         try {
-
-            $ehsApproval = $this->ehs_review->store(3);
+            $approve_type = EHS_APPROVAL;
+            $ehsApproval = $this->ehs_review->store($approve_type);
             if ($request->has('approve')) {
                 $incident_status = STATUS_INCIDENT_CLOSED;
             } else {

@@ -101,6 +101,7 @@
                                         <th>Employee Code</th>
                                         <th>Unit</th>
                                         <th>Department</th>
+                                        <th>Approve Status</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -213,6 +214,10 @@
                     {
                         data: 'department_name',
                         name: 'department_name'
+                    },
+                    {
+                        data: 'status_batch',
+                        name: 'status_batch'
                     },
                     {
                         data: 'status',
