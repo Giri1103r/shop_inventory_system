@@ -329,6 +329,7 @@ class PpeRequestController extends Controller
             }
 
             try {
+                // dd($request->all());
                 $pperequest = $this->pperequest->store();
                 $id = $pperequest->id;
                 $statuslog = $this->ppestatus->storestatus($pperequest, $id);
@@ -376,12 +377,12 @@ class PpeRequestController extends Controller
                 Session::flash('success', __('Your data has been created successfully!'));
                 return redirect(admin_url('ppe_request/list'));
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
                 return redirect(admin_url('ppe_request/list'));
             }
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_request/list'));
         }
@@ -724,9 +725,6 @@ class PpeRequestController extends Controller
                 'department' => $empDetails->department,
                 'approved_by' => $empDetails->approved_by,
             ];
-
-
-
 
             $requestor = $this->user->getrequestEmail($empId);
             $recipients = array_filter([$requestor, $hod]);

@@ -130,6 +130,7 @@ class PpeRequest extends Model
     public function store()
     {
         $request = request();
+
         $destinationPath = 'uploads/ppe_files';
 
         if (!File::exists(public_path($destinationPath))) {
@@ -147,6 +148,7 @@ class PpeRequest extends Model
             $ppe_file_path = $destinationPath . '/' . $ppe_file_name;
         }
         // dd($request->all());
+        
         $insert_array = array(
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,

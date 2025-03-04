@@ -235,7 +235,10 @@ class PpeExemption extends Model
     {
         return $this->where('id', $id)->update($updateData);
     }
-
+    public function updateapproval_api($updateData, $id)
+    {
+        return $this->where('id', $id)->update($updateData);
+    }
     public function getExpirestatus()
     {
         $date = Carbon::now();

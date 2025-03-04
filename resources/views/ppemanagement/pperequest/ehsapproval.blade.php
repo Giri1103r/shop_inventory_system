@@ -403,7 +403,7 @@
                                             </div>
                                             <hr>
                                             <div class="d-flex float-end gap-2 mx-auto">
-                                                <button type="submit" name="action" value="issued"
+                                                <button type="submit" name="action" value="issue"
                                                     class="btn btn-success w-100">Issued</button>
                                             </div>
                                         </form>

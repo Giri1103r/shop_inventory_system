@@ -21,7 +21,6 @@ class ExtendAccessTokenExpiration
     {
 
         $user = Auth::user();
-
         if ($user && $user->token()) {
 
             $user->token()->update([

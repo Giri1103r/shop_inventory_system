@@ -233,7 +233,10 @@ class User extends Authenticatable
 
         return $this->where('employee_id', $employee->emp_id)->update($data);
     }
-
+    public function fcmTokens()
+    {
+        return $this->hasMany(FcmToken::class);
+    }
     public function getUserdata()
     {
         $user = Auth::user()->employee_id;
