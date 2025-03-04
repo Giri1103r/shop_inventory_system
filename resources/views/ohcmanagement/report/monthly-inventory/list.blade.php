@@ -67,7 +67,8 @@
                             <table class="table table-bordered table-responsive" id="tableToExport" style="width:100%;"
                                 border="0">
                                 <tr style="font-size: 19px; background-color:red; color:rgb(0, 0, 0) ">
-                                    <td colspan="5"><img src="{{ url('public/assets/images/logo-dark.png') }}" style="background-color: white"  alt=""></td>
+                                    <td colspan="5"><img src="{{ url('public/assets/images/logo-dark.png') }}"
+                                            style="background-color: white" alt=""></td>
                                     <td colspan="70" align="center">
                                         <center>
                                             <b>Occupational Health Center Inventory Record <br>
@@ -89,17 +90,28 @@
     @stop
     @push('script')
         <script>
-            $(document).ready(function() {
-                var fromDatepicker = flatpickr("#month", {
-                    dateFormat: "m",
+            // $(document).ready(function() {
+            //     var fromDatepicker = datepicker("#month", {
+            //         dateFormat: "mm",
 
-                });
+            //     });
 
-                var toDatepicker = flatpickr("#year", {
-                    dateFormat: "Y",
-                    minDate: "today"
-                });
+            //     var toDatepicker = flatpickr("#year", {
+            //         dateFormat: "Y",
+            //         minDate: "today"
+            //     });
+            // });
+            $('#month').datepicker({
+                format: 'mm',
+                minViewMode: 1,
+                autoclose: true
             });
+            $('#year').datepicker({
+                format: 'yyyy',
+                minViewMode: 1,
+                autoclose: true
+            });
+
             $(document).ready(function() {
                 $('#exportexcel').on('click', function(e) {
                     e.preventDefault();
@@ -107,7 +119,7 @@
                     let unitId = $('#unit_id').val();
                     let year = $('#year').val();
                     let month = $('#month').val();
-                    if (!unitId || !year|| !month) {
+                    if (!unitId || !year || !month) {
                         Swal.fire({
                             icon: 'warning',
                             title: 'Warning',
@@ -144,18 +156,20 @@
                             year: selectedYear,
                         },
                         success: function(response) {
+                            let medicineData = response.inventory.length ? response.inventory : response
+                                .medicine; // Use inventory if available, otherwise fallback to medicine
 
-                            if (response.inventory && Array.isArray(response.inventory)) {
+                            if (medicineData && Array.isArray(medicineData)) {
                                 $(".selectedMonthYear").text(monthNames[parseInt(selectedMonth) - 1] + " " +
                                     selectedYear);
                                 $("#dataDiv").show();
-                                fillMonthDays(response.inventory, selectedMonth, selectedYear, response
-                                    .receiving, response.issuing);
+                                fillMonthDays(medicineData, selectedMonth, selectedYear, response
+                                    .receiving || [], response.issuing || []);
                             } else {
                                 Swal.fire({
                                     icon: 'warning',
                                     title: 'Warning',
-                                    text: 'No data is fetch from the filter.',
+                                    text: 'No data is available for the selected filter.',
                                     confirmButtonColor: '#3085d6'
                                 });
                             }
@@ -216,15 +230,17 @@
                 let idCounter = 1;
 
                 inventoryData.forEach((item) => {
-                    let purchaseData = new Array(daysInMonth).fill("");
-                    let issueQuantities = new Array(daysInMonth).fill("");
+                    let medicineName = item.medicine || item
+                    .medicine_name; // Use `medicine` if available, otherwise `medicine_name`
 
-                    // Process received (purchased) medicine
+                    let purchaseData = new Array(daysInMonth).fill(0);
+                    let issueQuantities = new Array(daysInMonth).fill(0);
+
                     receivingData.forEach((received) => {
-                        if (received.medicine_name === item.medicine_name) {
+                        if (received.medicine_name === medicineName) {
                             let approvedDate = new Date(received.approved_date);
                             if (!isNaN(approvedDate.getTime())) {
-                                let dayIndex = approvedDate.getUTCDate() - 1; // Fix timezone issue
+                                let dayIndex = approvedDate.getUTCDate() - 1;
                                 let monthIndex = approvedDate.getUTCMonth() + 1;
 
                                 if (monthIndex === parseInt(month) && approvedDate.getUTCFullYear() ===
@@ -235,11 +251,10 @@
                         }
                     });
 
-                    // Process issued medicine
-                    issueData.flat().forEach((
-                        issued) => { // Flatten issueData (since allIssuances is an array of arrays)
-                        if (issued.medicine_name === item.medicine_name) {
+                    issueData.flat().forEach((issued) => {
+                        if (issued.medicine_name === medicineName) {
                             let issuedDate = new Date(issued.created_at);
+                           
                             if (!isNaN(issuedDate.getTime())) {
                                 let dayIndex = issuedDate.getUTCDate() - 1;
                                 let monthIndex = issuedDate.getUTCMonth() + 1;
@@ -252,17 +267,16 @@
                         }
                     });
 
-                    // Add row data
                     tableBody += `<tr>
             <td>${idCounter++}</td>
-            <td>${item.medicine_name}</td>
-            ${purchaseData.map(qty => `<td>${qty || ""}</td>`).join("")}
-            <td>${item.medicine_name}</td>
-            ${issueQuantities.map(qty => `<td>${qty || ""}</td>`).join("")}
-            <td>${item.total_purchase}</td>
-            <td>${item.total_issue}</td>
-            <td>${item.previous_month_total}</td>
-            <td>${item.balance}</td>
+            <td>${medicineName}</td>
+            ${purchaseData.map(qty => `<td>${qty}</td>`).join("")}
+            <td>${medicineName}</td>
+            ${issueQuantities.map(qty => `<td>${qty}</td>`).join("")}
+            <td>${item.total_purchase || 0}</td>
+            <td>${item.total_issue || 0}</td>
+            <td>${item.previous_month_total || 0}</td>
+            <td>${item.balance || 0}</td>
         </tr>`;
                 });
 

@@ -38,6 +38,7 @@ class Hira extends Model
         'nature_change',
         'implement_change',
         'control_change',
+        'hira_status',
         'status',
         'trash',
         'created_by',
@@ -55,7 +56,8 @@ class Hira extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ims_master_hira.*');
+        $query = $this->select('ims_master_hira.*', 'ims_master_hira_status.status_name', 'ims_master_hira_status.bg_color');
+        $query = $query->leftJoin('ims_master_hira_status', 'ims_master_hira_status.id', '=', 'ims_master_hira.hira_status');
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -121,7 +123,7 @@ class Hira extends Model
             ->exists();
     }
 
-    public function existUniqueCheck($services,$id)
+    public function existUniqueCheck($services, $id)
     {
         return $this->where(function ($query) use ($services) {
             $query->where('services', $services); // Fixed here
@@ -132,7 +134,11 @@ class Hira extends Model
     public function store()
     {
         $request = request();
-
+        if (Auth::id() == ROLE_SUPERADMIN) {
+            $hira_status = 2;
+        } else {
+            $hira_status = 1;
+        }
         $insert_array = array(
             'sr_no' => $request->sr_no,
             'services' => $request->services,
@@ -151,6 +157,7 @@ class Hira extends Model
             'nature_change' => $request->nature_change,
             'implement_change' => $request->implement_change,
             'control_change' => $request->control_change,
+            'hira_status' => $hira_status,
             'created_by' => Auth::id()
         );
         return $this->create($insert_array);
@@ -183,6 +190,18 @@ class Hira extends Model
         );
         return $this->where('id', $id)->update($update_array);
     }
+    public function updateStatus($id, $hira_status)
+    {
+        $request = request();
+
+        $update_array = array(
+            'hira_status' => $hira_status,
+            'updated_by' => Auth::id(),
+            'updated_at' => now(),
+        );
+        return $this->where('id', decryptId($id))->update($update_array);
+    }
+
 
     public function statuschange($id)
     {

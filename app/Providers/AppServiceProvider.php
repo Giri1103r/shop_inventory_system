@@ -75,6 +75,9 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_PARAMEDICS') or define('ROLE_PARAMEDICS', 13);
         defined('ROLE_L1_EHS_OFFCIER') or define('ROLE_L1_EHS_OFFCIER', 14);
         defined('ROLE_CERTIFIED_FIRST_AIDER') or define('ROLE_CERTIFIED_FIRST_AIDER', 15);
+        defined('ROLE_DOCTOR') or define('ROLE_DOCTOR', 16);
+        defined('ROLE_NURSE') or define('ROLE_NURSE', 17);
+
 
         defined('NEW_TRAINING_SCHEDULE') or define('NEW_TRAINING_SCHEDULE', 1);
         defined('VP_APPROVE') or define('VP_APPROVE', 2);
@@ -83,7 +86,7 @@ class AppServiceProvider extends ServiceProvider
         defined('TRAINING_NOMINATION_COMPLETED') or define('TRAINING_NOMINATION_COMPLETED', 5);
         defined('TRAINING_START') or define('TRAINING_START', 6);
         defined('TRAINING_FEEDBACK_ADMIN_APPROVE') or define('TRAINING_FEEDBACK_ADMIN_APPROVE', 7);
-        defined('TRAINING_COMPLETED') or define('TRAINING_COMPLETED', 8);
+        defined('TRAINING_COMPLETED') or define('TRAINING_COMPLETED',8);
 
 
 

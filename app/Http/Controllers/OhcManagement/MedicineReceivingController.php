@@ -245,7 +245,7 @@ class MedicineReceivingController extends Controller
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
-                        'message' => getMedicinename($data->medicine_id) . 'Has requested the medicine for the stock' . getUsername($data->created_by),
+                        'message' => getMedicinename($data->medicine_id) . 'Has requested the medicine for the stock by' . getUsername($data->created_by),
                         'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                         'id' => $data->id,
                         'module' => 1,
@@ -388,7 +388,7 @@ class MedicineReceivingController extends Controller
                         'id' => $data->id,
                         'module' => 1,
                     )),
-                    'web_link' =>  admin_url('ohc/medicine-receiving-form/approval/view/' . encryptId($data->id)),
+                    'web_link' =>  admin_url('ohc/medicine-receiving-form/medicineapproval/view/' . encryptId($data->id)),
                     'assigned_user' => array_to_string($userids),
                     'created_by' => Auth::id(),
                 );
@@ -450,7 +450,7 @@ class MedicineReceivingController extends Controller
                 $vendor = $this->vendor->where('id', $vendor_id)->select('vendor_name')->first();
                 $ehsverify = $this->ohc_status->ehsverifydata($id);
                 $l1ehsverify = $this->ohc_status->ehsL1verifydata($id);
-                // $ehsheadverify = $this->ohc_status->ehsheadverifydata($id);
+                $ehsheadverify = $this->ohc_status->ehsheadverifydata($id);
                 // $stockopen = $this->ohc_status->stockopen($id);
 
                 $data = array(
@@ -459,7 +459,7 @@ class MedicineReceivingController extends Controller
                     'vendor' => $vendor,
                     'ehsverify' => $ehsverify,
                     'l1ehsverify' => $l1ehsverify,
-                    // 'ehsheadverify' => $ehsheadverify,
+                    'ehsheadverify' => $ehsheadverify,
                     // 'stockopen' => $stockopen,
                 );
             }
@@ -550,7 +550,7 @@ class MedicineReceivingController extends Controller
                             'id' => $data->id,
                             'module' => 1,
                         )),
-                        'web_link' =>  admin_url('ohc/medicine-receiving-form/approval/view/' . encryptId($data->id)),
+                        'web_link' =>  admin_url('ohc/medicine-receiving-form/medicineapproval/view/' . encryptId($data->id)),
                         'assigned_user' => array_to_string($userids),
                         'created_by' => Auth::id(),
                     );
@@ -681,7 +681,7 @@ class MedicineReceivingController extends Controller
                         'id' => $data->id,
                         'module' => 1,
                     )),
-                    'web_link' =>  admin_url('ohc/medicine-receiving-form/approval/view/' . encryptId($data->id)),
+                    'web_link' =>  admin_url('ohc/medicine-receiving-form/medicineapproval/view/' . encryptId($data->id)),
                     'assigned_user' => array_to_string($userids),
                     'created_by' => Auth::id(),
                 );
@@ -764,7 +764,7 @@ class MedicineReceivingController extends Controller
                             'id' => $data->id,
                             'module' => 1,
                         )),
-                        'web_link' =>  admin_url('ohc/medicine-receiving-form/approval/view/' . encryptId($data->id)),
+                        'web_link' =>  admin_url('ohc/medicine-receiving-form/medicineapproval/view/' . encryptId($data->id)),
                         'assigned_user' => $createdId,
                         'created_by' => Auth::id(),
                     );

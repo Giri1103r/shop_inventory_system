@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medicine Issuance')
+@section('title', 'Medicine Issuance Edit')
 @section('pageurl', admin_url('ohc/medicine-issuance/list'))
 @section('content')
 
@@ -385,7 +385,7 @@
                     }
                 });
 
-               
+
                 medicine_issuance_row_count++;
             });
 

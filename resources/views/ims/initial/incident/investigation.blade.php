@@ -412,7 +412,7 @@
                                         @csrf
                                         <input type="hidden" name="incident_id" id="incident_id"
                                             value="{{ encryptId($incidentId) }}">
-
+                                        <input type="hidden" name="fishbone_image" id="fishbone_image">
                                         <div class="row">
 
                                             <div class="col-md-4 mb-3">
@@ -612,6 +612,7 @@
                                         </div>
 
                                         <div class="row m-5 p-3 fishbone" style="display: none;">
+
                                             <div class="fishbone-container " style="text-align: center;">
                                                 <!-- Mensch -->
                                                 <div class="cause">
@@ -864,7 +865,6 @@
                 </div>
             </div>
         </div>
-        </form>
     </div>
 
 @stop
@@ -874,8 +874,26 @@
         // html2canvas(document.querySelector(".fishbone-container")).then(canvas => {
         //     document.body.appendChild(canvas)
         // });
-        $(document).ready(function() {
 
+        $(document).ready(function() {
+            // $("#incidentinvestigation").on("submit", function(event) {
+            //     event.preventDefault(); // Prevent default form submission
+
+            //     let fishboneContainer = $(".fishbone-container")[0]; // Get the fishbone diagram container
+
+            //     // Capture the fishbone diagram as an image
+            //     html2canvas(fishboneContainer, {
+            //         scale: 2
+            //     }).then(function(canvas) {
+            //         let imageData = canvas.toDataURL("image/png"); // Convert canvas to base64
+
+            //         // Set the image data to the hidden input field
+            //         $("#fishbone_image").val(imageData);
+
+            //         // Now submit the form programmatically
+            //         $("#incidentinvestigation")[0].submit();
+            //     });
+            // });
             $("#root_cause_analysis").change(function() {
                 if ($(this).val() == "1") {
                     $(".whywhy").show(); // Show the Why Why Analysis section
@@ -1128,15 +1146,12 @@
                 }
             });
             $(function() {
+                // Initialize form validation
                 $('#incidentinvestigation').validate({
                     rules: {
-
                         anything_damaged: {
                             required: true,
                         },
-                        // root_cause_analysis: {
-                        //     required: true,
-                        // },
                         corrective_preventive_action: {
                             required: true,
                         },
@@ -1146,16 +1161,11 @@
                         target_date: {
                             required: true,
                         },
-
                     },
                     messages: {
-
                         anything_damaged: {
                             required: "Was anything damaged is required.",
                         },
-                        // root_cause_analysis: {
-                        //     required: "Possible Root Cause Analysis (PRCA) is required.",
-                        // },
                         corrective_preventive_action: {
                             required: "Recommended Corrective & Preventive Action is required.",
                         },
@@ -1165,9 +1175,7 @@
                         target_date: {
                             required: "Target Date is required.",
                         },
-
                     },
-
                     errorElement: 'span',
                     errorPlacement: function(error, element) {
                         error.addClass('invalid-feedback');
@@ -1180,7 +1188,23 @@
                         $(element).removeClass('is-invalid');
                     },
                     submitHandler: function(form) {
-                        form.submit();
+                        // Form is valid, proceed with capturing the fishbone diagram
+                        let fishboneContainer = $(".fishbone-container")[
+                        0]; // Get the fishbone diagram container
+
+                        // Capture the fishbone diagram as an image
+                        html2canvas(fishboneContainer, {
+                            scale: 2
+                        }).then(function(canvas) {
+                            let imageData = canvas.toDataURL(
+                            "image/png"); // Convert canvas to base64
+
+                            // Set the image data to the hidden input field
+                            $("#fishbone_image").val(imageData);
+
+                            // Now submit the form programmatically
+                            form.submit();
+                        });
                     },
                     invalidHandler: function(event, validator) {
                         var errors = validator.numberOfInvalids();

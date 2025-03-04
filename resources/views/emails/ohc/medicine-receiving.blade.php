@@ -20,13 +20,7 @@
                             <b>Medicine Stock Request</b>
                         </td>
                     </tr>
-                    <tr>
-                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>Unit</b>
-                        </td>
-                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ getUnitname($details['unit_id']) }}</td>
-                    </tr>
+
                     <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                             <b>Medicine Name</b>
@@ -41,15 +35,15 @@
                             <b>HSN Number</b>
                         </td>
                         <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ gethsn($details['hsn']) }}</td>
+                            valign="top"> {{ gethsn($details['hsn_id']) }}</td>
                     </tr>
-                    <tr>
+                    {{-- <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                             <b>Threshold Limit</b>
                         </td>
                         <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                             valign="top"> {{ $details['threshold_limit'] }}</td>
-                    </tr>
+                    </tr> --}}
 
                     <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
@@ -71,7 +65,7 @@
                             <b>Batch Number</b>
                         </td>
                         <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ $details['batch_number '] }}</td>
+                            valign="top"> {{ $details['batch_number'] }}</td>
                     </tr>
                     <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
@@ -79,6 +73,13 @@
                         </td>
                         <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                             valign="top"> {{ $details['rate'] }}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                            <b>Created By</b>
+                        </td>
+                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                            valign="top"> {{ getUsername($details['created_by']) }}</td>
                     </tr>
                 </tbody>
             </table>

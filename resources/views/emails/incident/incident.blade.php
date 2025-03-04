@@ -17,48 +17,58 @@
                     <tr>
                         <td colspan="4" align="center"
                             style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>Medicine Request </b>
+                            <b>Incident Report</b>
                         </td>
                     </tr>
 
                     <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>Medicine Name</b>
+                            <b>Incident ID</b>
                         </td>
                         <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ ($details['medicine']) }}</td>
-                    </tr>
-
-
-                    <tr>
-                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>HSN Number</b>
-                        </td>
-                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ gethsn($details['hsn']) }}</td>
+                            valign="top"> {{ $details['sr_no'] }}</td>
                     </tr>
                     <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>Threshold Limit</b>
+                            <b>Incident Date & Time</b>
                         </td>
                         <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ $details['threshold_limit'] }}</td>
+                            valign="top"> {{ $details['incident_date_time']  }}</td>
                     </tr>
-
                     <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>Expire Date</b>
+                            <b>Unit</b>
                         </td>
                         <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{displaydateformat( $details['expiry_date']) }}</td>
+                            valign="top"> {{ getUnitname($details['unit_id']) }}</td>
                     </tr>
-
                     <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>Approved By</b>
+                            <b>Shift</b>
                         </td>
                         <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ getUsername($details['approver_name']) }}</td>
+                            valign="top"> {{ $details['shift'] }}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                            <b>Location</b>
+                        </td>
+                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                            valign="top"> {{ getLocationname($details['location_id']) }}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                            <b>Exact location</b>
+                        </td>
+                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                            valign="top"> {{ $details['exact_location'] }}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                            <b>Reported Name</b>
+                        </td>
+                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                            valign="top"> {{ $details['reported_by'] }}</td>
                     </tr>
                 </tbody>
             </table>

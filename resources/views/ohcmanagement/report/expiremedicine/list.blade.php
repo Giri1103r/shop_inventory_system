@@ -95,7 +95,10 @@
                 location.reload();
             });
 
+            var toDatepicker = flatpickr("#expire_date", {
+                dateFormat: "d-m-Y",
 
+            });
             // Initialize DataTable
 
 
@@ -151,10 +154,8 @@
                 },
                 data: function(d) {
                     d.medicine_id = $('#medicine_id').val();
-                    d.vendor_id = $('#vendor_id').val();
-                    d.from_date = $('#from_date').val();
-                    d.to_date = $('#to_date').val();
-                    d.approve_status = $('#approve_status').val();
+                    d.expire_date = $('#expire_date').val();
+
                 },
                 error: function(xhr, error, code) {
                     if (xhr.status === 419) {
@@ -183,7 +184,7 @@
                     data: 'expire_date',
                     name: 'expire_date'
                 },
-                
+
             ],
             language: {
                 paginate: {
@@ -209,12 +210,15 @@
                             action: function(e, dt, button, config) {
                                 var searchValue = $('#datatable-list_filter input').val();
                                 var medicine_id = $('#medicine_id').val();
+                                var expire_date = $('#expire_date').val();
+
 
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
                                 window.location.href =
                                     "{{ admin_url('ohc/medicine-expire-report/export/pdf') }}" +
                                     '?search=' + searchValue +
+                                    '?expire_date=' + expire_date +
                                     '&medicine_id=' + medicine_id ;
                             }
                         },
@@ -224,12 +228,13 @@
                             action: function(e, dt, button, config) {
                                 var searchValue = $('#datatable-list_filter input').val();
                                 var medicine_id = $('#medicine_id').val();
-
+                                var expire_date = $('#expire_date').val();
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
                                 window.location.href =
                                     "{{ admin_url('ohc/medicine-expire-report/export/excel') }}" +
                                     '?search=' + searchValue +
+                                    '?expire_date=' + expire_date +
                                     '&medicine_id=' + medicine_id ;
 
                             }

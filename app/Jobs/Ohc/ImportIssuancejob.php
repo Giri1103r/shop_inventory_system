@@ -24,11 +24,11 @@ use App\Models\OhcManagement\Report\Inventory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
-// class ImportIssuancejob implements ShouldQueue
-class ImportIssuancejob
+class ImportIssuancejob implements ShouldQueue
+// class ImportIssuancejob
 {
 
-    // use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     protected $details;
     protected $medicnieissuance;
     /**

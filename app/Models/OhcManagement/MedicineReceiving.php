@@ -285,9 +285,12 @@ class MedicineReceiving extends Model
                 $query->orWhere('medicine_id', 'LIKE', '%' . $search . '%');
             });
         }
-
+        // dd($request->has('expire_date') && $request->expire_date);
         if ($request->has('medicine_id') && $request->medicine_id) {
             $query->where('ohc_management_medicine_receiving.medicine_id', 'LIKE', '%' . $request->medicine_id . '%');
+        }
+        if ($request->has('expire_date') && $request->expire_date) {
+            $query->where('ohc_management_medicine_receiving.expire_date',DBdateformat( $request->expire_date));
         }
 
         // Apply ORDER BY conditionally
@@ -328,12 +331,15 @@ class MedicineReceiving extends Model
                     ->orWhere('ohc_management_medicine_receiving.vendor_id', 'LIKE', '%' . $search . '%');
             });
         }
-
         if ($request->filled('medicine_id')) {
             $query->where('ohc_management_medicine_receiving.medicine_id', 'LIKE', '%' . $request->medicine_id . '%');
         }
 
-        return $query->orderByDesc('id')->get();
+        if ($request->filled('expire_date')) {
+
+            $query->where('ohc_management_medicine_receiving.expire_date',DBdateformat($request->expire_date));
+        }
+        return $query->orderByDesc('ohc_management_medicine_receiving.id')->get();
     }
 
     public function getPurchaseddate($selectedYear, $selectedMonth)

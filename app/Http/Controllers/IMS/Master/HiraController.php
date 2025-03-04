@@ -22,11 +22,13 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Models\IMS\Master\Hira;
+use App\Models\IMS\Master\HiraApproval;
 
 class HiraController extends Controller
 {
 
     private $hira;
+    private $hira_approval;
     private $unit;
     private $location;
     private $department;
@@ -38,6 +40,7 @@ class HiraController extends Controller
     {
 
         $this->hira = new Hira();
+        $this->hira_approval = new HiraApproval();
         $this->unit = new Unit();
         $this->location = new Location();
         $this->department = new Department();
@@ -74,8 +77,12 @@ class HiraController extends Controller
                                 3 => 'B - Behavioral Hazard',
                                 4 => 'O - Other Hazard',
                             ];
-                        
+
                             return $hazardTypes[$row->hazard_type];
+                        })
+                        ->editColumn('status_batch', function ($row) {
+
+                            return "<span class='" . $row->bg_color . "' >" . $row->status_name . "</span>";
                         })
                         ->addColumn('created_at', function ($row) {
                             return Displaydateformat($row->created_at);
@@ -86,15 +93,19 @@ class HiraController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
-                                $btn = '<a href="' . admin_url('incident/hira-master/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('incident/hira-master/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
                             // if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('incident/hira-master/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+
+                            $btn .= '<a href="' . admin_url('incident/hira-master/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            if ($row->hira_status == 1) {
+                                $btn .= '<a href="' . admin_url('incident/hira-master/ehsapproval/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
+                            }
                             // }
 
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'status_batch'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -166,7 +177,7 @@ class HiraController extends Controller
             try {
 
 
-                 $this->hira->store();
+                $this->hira->store();
 
 
                 Session::flash('success', 'Your data has been created successfully!');
@@ -202,7 +213,109 @@ class HiraController extends Controller
             report($ex);
         }
     }
+    public function ehsapproval(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $hira = $this->hira->selectOne($id);
 
+                $data = array(
+                    'hira' => $hira,
+                );
+            }
+            return view('ims.master.hira.ehsapproval', $data);
+        } catch (Exception $ex) {
+            report($ex);
+        }
+    }
+
+
+    public function ehsApprovalSubmit(Request $request)
+    {
+        try {
+            $rules = [
+                'remark' => 'required',
+            ];
+            $messages = [
+                'remark.required' => 'Please provide a remark.',
+            ];
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+            if ($request->has('approve')) {
+                $hira_status = 2;
+            } else {
+                $hira_status = 3;
+            }
+            $id =  $request->hira_id;
+            $ehsReview = $this->hira_approval->ehsapproval($id);
+            $this->hira->updateStatus($id, $hira_status);
+
+
+            // if ($ehsReview->team_member) {
+            //     $teamMemberIds = explode(',', $ehsReview->team_member);
+
+            //     $employees = Employee::whereIn('id', $teamMemberIds)->get(['emp_name', 'email']);
+            //     $mailsubject = 'Investigation Assigned';
+
+            //     // Fetch incident details once, not inside the loop
+            //     $incidentDetails = $this->initialincident->selectOne($incident_id);
+            //     $incidentarray = $incidentDetails->toArray();
+
+            //     foreach ($employees as $employee) {
+            //         $username = $employee->emp_name;
+            //         $email_id = $employee->email;
+
+            //         if (!empty($email_id)) { // Corrected email validation
+            //             $incidentarray['name'] = $username;
+            //             $incidentarray['email_id'] = $email_id;
+            //             $incidentarray['mail_subject'] = $mailsubject;
+
+            //             Mail::to($email_id)->queue(new IncidentEmail($incidentarray));
+            //         }
+            //     }
+
+            //     // Use incidentDetails for notification data
+            //     $notificationData = array(
+            //         'notification_type' => 3,
+            //         'module_type' => 1,
+            //         'notification_message' => $mailsubject,
+            //         'mobile_notification' => json_encode(array(
+            //             'title' => $mailsubject,
+            //             'message' => 'Incident ' . $incidentDetails->sr_no . ' submitted by ' . getUsername($ehsReview->created_by),
+            //             'icon' => admin_url('public/assets/icons/incident.png'),
+            //             'id' => $incidentDetails->id,
+            //             'module' => 1,
+            //         )),
+            //         'web_link' => admin_url('incident/initial-incident/review/' . encryptId($incidentDetails->id)),
+            //         'assigned_user' => array_to_string($teamMemberIds),
+            //         'created_by' => Auth::id(),
+            //     );
+            //     notificationSave($notificationData);
+
+            //     // Insert status log
+            //     $insert_array = array(
+            //         'incident_id' => $incidentDetails->id,
+            //         'from_status' => $incidentDetails->incident_status,
+            //         'to_status' => $incident_status,
+            //         'is_reject' => null,
+            //         'remarks' => null,
+            //         'approved_by' => Auth::id(),
+            //     );
+            //     $this->Statuslog->create($insert_array);
+            // }
+
+
+            Session::flash('success', 'Your data has been updated successfully!');
+            return redirect(admin_url('incident/hira-master/list'));
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/hira-master/list'));
+        }
+    }
     public function Edit(Request $request)
     {
         try {
@@ -286,10 +399,10 @@ class HiraController extends Controller
             $id = $request->id;
 
             if (empty($id)) {
-                $isUnique = !$this->hira->uniqueCheck($vendor_name,$license_no);
+                $isUnique = !$this->hira->uniqueCheck($vendor_name, $license_no);
             } else {
                 $id = decryptId($id);
-                $isUnique = !$this->hira->existUniqueCheck($vendor_name,$license_no, $id);
+                $isUnique = !$this->hira->existUniqueCheck($vendor_name, $license_no, $id);
             }
 
             return Response::json($isUnique);
@@ -340,13 +453,13 @@ class HiraController extends Controller
                 $export[] =  $i;
                 $export[] =  $data->sr_no;
                 $export[] =  $data->services;
-                if($data->hazard_type == 1){
+                if ($data->hazard_type == 1) {
                     $export[] = 'P - Physical Hazard';
-                }elseif($data->hazard_type == 2){
+                } elseif ($data->hazard_type == 2) {
                     $export[] = 'C - Chemical Hazard';
-                }elseif($data->hazard_type == 3){
+                } elseif ($data->hazard_type == 3) {
                     $export[] = 'B - Behavioral Hazard';
-                }elseif($data->hazard_type == 4){
+                } elseif ($data->hazard_type == 4) {
                     $export[] = 'O - Other Hazard';
                 }
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';

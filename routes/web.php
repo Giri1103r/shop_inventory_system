@@ -95,6 +95,10 @@ Route::get('queuelocationimport', [CronController::class, 'queuelocationimport']
 Route::get('queueunitimport', [CronController::class, 'queueunitimport']);
 Route::get('queueDepartmentuplodimport', [CronController::class, 'queueDepartmentuplodimport']);
 
+Route::get('cron/ohc/medicine-issuance/import', [CronController::class, 'queueMedicineIsuuanceImport']);
+Route::get('cron/ohc/medicine-requisition/import', [CronController::class, 'queueMedicineRequisitionImport']);
+
+
 Route::get('cron/safetypermit/protectiveequipmentmaster/import', [CronController::class, 'queueProtectiveequipmentmasterImport']);
 Route::get('cron/safetypermit/equipinvolvemaster/import', [CronController::class, 'queueEquipinvolvemasterImport']);
 Route::get('cron/safetypermit/safeworkmaster/import', [CronController::class, 'queueSafeworkmasterImport']);
@@ -357,7 +361,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/status', [EmployeeController::class, 'statusChange']);
                 Route::post('/unique', [EmployeeController::class, 'Uniquecheck']);
                 Route::get('/passwordchange/{id}', [EmployeeController::class, 'PasswordUpdate']);
-                Route::post('/passwordchange/submit', [EmployeeController::class, 'PasswordUp`dateSubmit']);
+                Route::post('/passwordchange/submit', [EmployeeController::class, 'PasswordUpdateSubmit']);
                 Route::post('/company-ajax', [EmployeeController::class, 'companyajax']);
                 Route::get('/ajax-list/{unit_id}/{id}', [EmployeeController::class, 'list']);
             });
@@ -1166,6 +1170,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/Submit', [HiraController::class, 'importSubmit']);
                 Route::post('/status', [HiraController::class, 'statusChange']);
                 Route::post('/unique', [HiraController::class, 'Uniquecheck']);
+                Route::get('/ehsapproval/{id}', [HiraController::class, 'ehsapproval']);
+                Route::post('/ehsapproval/submit', [HiraController::class, 'ehsApprovalSubmit']);
             });
 
             Route::group(['prefix' => 'incident/initial-incident'], function () {

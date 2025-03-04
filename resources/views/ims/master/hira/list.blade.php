@@ -104,6 +104,7 @@
                                         <th>Sr. No</th>
                                         <th>Source, Situation, Act,Activity, Product,Services</th>
                                         <th>Type of Hazard</th>
+                                        <th>Hira Status</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -211,6 +212,10 @@
                     {
                         data: 'hazard_type',
                         name: 'hazard_type'
+                    },
+                    {
+                        data: 'status_batch',
+                        name: 'status_batch'
                     },
                     {
                         data: 'status',

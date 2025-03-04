@@ -53,14 +53,23 @@ class Medicine extends Model
 
         if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
+            $formattedDate = null;
+            if (\DateTime::createFromFormat('d-m-Y', $search) !== false) {
+                $formattedDate = \Carbon\Carbon::createFromFormat('d-m-Y', $search)->format('Y-m-d');
+            }
+            $query->where(function ($query) use ($search, $formattedDate) {
                 $query
                     ->orWhere('medicine', 'LIKE', '%' . $search . '%')
-                    ->orWhere('expiry_date', 'LIKE', '%' . $search . '%')
+
                     ->orWhere('hsn', 'LIKE', '%' . $search . '%')
                     ->orWhere('threshold_limit', 'LIKE', '%' . $search . '%')
+                    ->orWhere('remarks', 'LIKE', '%' . $search . '%')
+
                     ->orWhere('pack', 'LIKE', '%' . $search . '%');
+
+                    if ($formattedDate) {
+                        $query  ->orWhere('expiry_date', 'LIKE', '%' . $formattedDate . '%');
+                    }
             });
         }
 

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Discard the Expire Medicine')
+@section('title', 'Discard medicine Add')
 @section('pageurl', admin_url('ohc/discard/list'))
 @section('content')
 

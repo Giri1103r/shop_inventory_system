@@ -36,6 +36,7 @@ class InitialIncident extends Model
         'reporting_media',
         'reporting_media_others',
         'brief_description',
+        'investigation_assigned',
         'ua_uc_yes_no',
         'ua_or_uc',
         'description_uauc',
@@ -59,7 +60,6 @@ class InitialIncident extends Model
         $search = '';
         $query = $this->select('ims_initial_incident.*', 'ims_incident_status.status_name', 'ims_incident_status.bg_color');
         $query = $query->leftJoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_initial_incident.incident_status');
-        // $query = $query->leftJoin('ims_initial_incident_investigation', 'ims_initial_incident_investigation.incident_id', '=', 'ims_initial_incident.id');
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -244,6 +244,20 @@ class InitialIncident extends Model
         );
         return $this->where('id', $incident_Id)->update($update_array);
     }
+    public function investigationassigned($incident_Id)
+    {
+        $request = request();
+        $decryptedTeamMemberIds = is_array($request->team_member)
+        ? array_map('decryptId', $request->team_member)
+        : [];
+        $commaSeparatedTeamMembers = !empty($decryptedTeamMemberIds) ? implode(',', $decryptedTeamMemberIds) : null;
+        $update_array = array(
+            'investigation_assigned' => $commaSeparatedTeamMembers,
+            'updated_by' => Auth::id(),
+            'updated_at' => now(),
+        );
+        return $this->where('id', $incident_Id)->update($update_array);
+    }
 
     public function uaucsubmit($id)
     {
@@ -324,7 +338,9 @@ class InitialIncident extends Model
             'ims_initial_incident.*',
             'masters_employee.emp_name as reported_by',
             'masters_department.department_name as reported_department',
-            'ims_initial_incident_evidence_upload.file_path','ims_master_incident_type.incident_type_name','masters_location.location_name'
+            'ims_initial_incident_evidence_upload.file_path',
+            'ims_master_incident_type.incident_type_name',
+            'masters_location.location_name'
         )
             ->where('ims_initial_incident.id', $id)
             ->leftJoin('masters_employee', 'masters_employee.id', '=', 'ims_initial_incident.reported_name')
@@ -344,6 +360,7 @@ class InitialIncident extends Model
             ->where('ims_initial_incident.id', $id)
             ->leftJoin('ims_ehs_review', 'ims_ehs_review.inicdent_report_id', '=', 'ims_initial_incident.id')
             ->where('ims_ehs_review.type', 2)
+            ->orderBy('id', 'DESC')
             ->first();
 
         if ($data && $data->team_member) {
@@ -381,7 +398,7 @@ class InitialIncident extends Model
 
     public function getInvestigation($id)
     {
-        $data = $this->select('ims_initial_incident_investigation.*','masters_employee.emp_name as responsible_person')
+        $data = $this->select('ims_initial_incident_investigation.*', 'masters_employee.emp_name as responsible_person')
             ->where('ims_initial_incident.id', $id)
             ->leftJoin('ims_initial_incident_investigation', 'ims_initial_incident_investigation.incident_id', '=', 'ims_initial_incident.id')
             ->leftJoin('masters_employee', 'masters_employee.id', '=', 'ims_initial_incident_investigation.responsible_person_id')
@@ -390,7 +407,7 @@ class InitialIncident extends Model
         if ($data) {
             $hiraMocRecords = DB::table('ims_master_incident_hiramoc as hiramoc')
                 ->leftJoin('ims_master_hira as hira', 'hiramoc.hira_id', '=', 'hira.id')
-                ->leftJoin('ims_master_hira as moc', 'hiramoc.moc_id', '=', 'moc.id') 
+                ->leftJoin('ims_master_hira as moc', 'hiramoc.moc_id', '=', 'moc.id')
                 ->where('hiramoc.incident_id', $id)
                 ->select('hiramoc.hira_id', 'hira.services as hira_name', 'hiramoc.moc_id', 'moc.services as moc_name')
                 ->get();
@@ -407,14 +424,14 @@ class InitialIncident extends Model
                         'moc_name' => null
                     ];
                 } elseif ($record->hira_id == 0 && $record->moc_id != 0) {
-                    
+
                     if ($tempHira) {
                         $tempHira['moc_id'] = $record->moc_id;
                         $tempHira['moc_name'] = $record->moc_name;
                         $mergedHiraMoc[] = $tempHira;
                         $tempHira = null;
                     } else {
-                        
+
                         $mergedHiraMoc[] = [
                             'hira_id' => null,
                             'hira_name' => null,
@@ -423,7 +440,7 @@ class InitialIncident extends Model
                         ];
                     }
                 } else {
-                    
+
                     $mergedHiraMoc[] = [
                         'hira_id' => $record->hira_id,
                         'hira_name' => $record->hira_name,
@@ -507,6 +524,7 @@ class InitialIncident extends Model
             ->where('ims_initial_incident.id', $id)
             ->leftJoin('ims_ehs_review', 'ims_ehs_review.inicdent_report_id', '=', 'ims_initial_incident.id')
             ->where('ims_ehs_review.type', 3)
+            ->orderBy('id', 'DESC')
             ->first();
         return $data;
     }
