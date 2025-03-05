@@ -53,7 +53,7 @@ class ImporNominationProcessJob
      */
     public function __construct($details)
     {
-
+        dd(123);
         $this->details = $details;
     }
 
@@ -64,7 +64,7 @@ class ImporNominationProcessJob
      */
     public function handle()
     {
-        dd(123);
+
         $i = 1;
         $update_array = array(
             'upload_status' => 1,
