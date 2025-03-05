@@ -131,16 +131,16 @@ class SafetyPermitController extends BaseController
                 $success = [
 
                     'id' => $safetypermit->id,
-                    'Work Permit No' => $safetypermit->permit_id,
-                    'Date' => $safetypermit->date,
-                    'Time (From)' =>$safetypermit->time_from,
-                    'Time (To)' =>$safetypermit->time_to,
-                    'Unit' => getUnitname($safetypermit->unit_id),
-                    'Exact location of job' => $safetypermit->exact_location_job,
-                    'Job Location & Area' => $safetypermit->job_location_area,
-                    'Created By' => getusername($safetypermit->created_by),
-                    'Created At' => Displaydateformat($safetypermit->created_at),
-                    'Sub Permit' => ($safetypermit->sub_permit),
+                    'permit_id	' => $safetypermit->permit_id,
+                    'date' => $safetypermit->date,
+                    'time_from' =>$safetypermit->time_from,
+                    'time_to' =>$safetypermit->time_to,
+                    'unit_id' => getUnitname($safetypermit->unit_id),
+                    'exact_location_job' => $safetypermit->exact_location_job,
+                    'job_location_area' => $safetypermit->job_location_area,
+                    'created_by' => getusername($safetypermit->created_by),
+                    'created_at' => Displaydateformat($safetypermit->created_at),
+                    'sub_permit' => ($safetypermit->sub_permit),
 
 
                 ];
