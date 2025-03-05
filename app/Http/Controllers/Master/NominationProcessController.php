@@ -318,7 +318,7 @@ class NominationProcessController extends Controller
 
         try {
             $file = $request->file('nomination_process_upload');
-            dd($file);
+            dd($file,'123');
             $rules = [
                 'nomination_process_upload' => 'required',
             ];
