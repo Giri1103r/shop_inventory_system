@@ -38,7 +38,7 @@ use App\Models\Master\Topic;
 use Illuminate\Support\Facades\Session;
 
 class ImporNominationProcessJob  implements ShouldQueue
-class ImporNominationProcessJob
+// class ImporNominationProcessJob
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
