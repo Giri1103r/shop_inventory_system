@@ -378,8 +378,8 @@ class NominationProcessController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImporNominationProcessJob($details));
-                // dispatch((new ImporNominationProcessJob($details))->onQueue('nomination_process'));
+                // dispatch(new ImporNominationProcessJob($details));
+                dispatch((new ImporNominationProcessJob($details))->onQueue('nomination_process'));
             }
 
             $insert_data['log_id'] = $insert_id;
@@ -388,7 +388,7 @@ class NominationProcessController extends Controller
             Session::flash('success', __('Your data has been uploaded sucessfully'));
             return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', __('Nomination Process upload failed'));
             return redirect(admin_url('training_schedule/list'));
         }

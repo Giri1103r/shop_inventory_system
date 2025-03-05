@@ -722,14 +722,14 @@
                         }
                     });
                 } else {
-                    row.remove();
+                    $(this).closest("tr").remove();
                     updateAddMoreButton();
                 }
             });
 
             function updateAddMoreButton() {
                 var rowCount = $(".lesson_learned_row").length;
-                $('#dynamic-add-more').attr("disabled", rowCount >= 10);
+                $('#dynamic-add-more').attr("disabled", rowCount >= 50);
             }
 
             $(document).on('click', '.removerowdata', function() {
@@ -763,7 +763,7 @@
                         });
                     });
 
-                    $('#dynamic-add-more').attr("disabled", rowCount - 1 >= 10);
+                    $('#dynamic-add-more').attr("disabled", rowCount - 1 >= 50);
                 } else {
                     Swal.fire({
                         icon: 'error',
