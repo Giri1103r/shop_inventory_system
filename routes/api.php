@@ -37,6 +37,11 @@ Route::middleware('api')->prefix('v1')->group(function () {
 
          Route::post('/master/employee/dropdown', [MasterController::class, 'employee']);
          Route::post('/master/worker/dropdown', [MasterController::class, 'worker']);
+         Route::post('/master/company/dropdown', [MasterController::class, 'company']);
+         Route::post('/master/location/dropdown', [MasterController::class, 'location']);
+         Route::post('/master/unit/dropdown', [MasterController::class, 'unit']);
+         Route::post('/master/department/dropdown', [MasterController::class, 'department']);
+
 
          Route::group(['prefix' => 'ppe/master'], function () {
             Route::post('/ppetype', [PpemanagementController::class, 'ppetype']);

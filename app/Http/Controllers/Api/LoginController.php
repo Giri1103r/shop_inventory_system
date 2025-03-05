@@ -262,41 +262,26 @@ class LoginController extends BaseController
 
     public function userProfile(Request $request): JsonResponse
     {
-        try {
-            if (Auth::user()) {
 
-                $user_id = Auth::user();
+        if (Auth::user()) {
 
-                $user = User::select('users.*', 'oper_master_factory.factory', 'master_department.department', 'master_designation.designation')
-                    ->leftJoin('oper_master_factory', 'users.factory_id', '=', 'oper_master_factory.id')
-                    ->leftJoin('master_department', 'users.department', '=', 'master_department.id')
-                    ->leftJoin('master_designation', 'users.designation', '=', 'master_designation.id')
-                    ->where('users.id', $user_id->id)
-                    ->first();
-                $user_array = array(
-                    'user_id' => $user->id,
-                    'email' => $user->email,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'role_id' => $user->role,
-                    'role_name' => getUserRoleName($user->id),
-                    'emp_id' => $user->emp_id,
-                    'department' => $user->department,
-                    'designation' => $user->designation,
-                    'factory_id' => $user->factory,
-                    'profile_image' => url(profileImage(Auth::id()))
-                );
+            $user = Auth::user();
 
-                $success = [
-                    'user_details' => $user_array
-                ];
+            $user_array = array(
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'email' => $user->email,
+                'mobile' => $user->mobile,
 
-                return $this->sendResponse($success, 'User Details');
-            } else {
-                return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
-            }
-        } catch (Exception $ex) {
-            return $this->sendError('Invalid user details', ['error' => 'Unauthorised'], 406);
+            );
+
+            $success = [
+                'user_details' => $user_array
+            ];
+
+            return $this->sendResponse($success, 'User Details');
+        } else {
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
 }
