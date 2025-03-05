@@ -123,12 +123,649 @@
                                     </div>
                                 </div>
                             </div>
+
+                            @if ($accident_report->accident_status >= STATUS_INVESTIGATION_PENDING)
+                                <div class="card-body ">
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">EHS Head Review</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label for="name" class="form-label">Reviewer Name</label>
+                                            <div class="view_data">
+                                                {{ $getEHSReview->reviewer_name }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Date') }}</label>
+                                            <div class="view_data">
+                                                {{ Displaydateformat($getEHSReview->date) }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label for="team_id" class="form-label">Assign Team
+                                                members</label>
+                                            <div class="view_data">
+                                                {{ $getEHSReview->team_member_names }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label">Remark</label>
+                                            <div class="view_data">
+                                                {{ $getEHSReview->remark }}
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if ($accident_report->accident_status >= STATUS_UAUC_PENDING)
+                                <div class="card-body ">
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">Injured Person Details</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Injury Person Type</th>
+                                                    <th>Injury Person Name</th>
+                                                    <th>Injury Person Employee ID</th>
+                                                    <th>Injury Person Designation</th>
+                                                    <th>Injury Person Department</th>
+                                                    <th>Injury Body Parts</th>
+                                                    <th>Description</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($accident_investigation_injury as $injury)
+                                                    <tr>
+                                                        <td>
+                                                            {{ $injury->injury_person_type == 1 ? 'Employee' : ($injury->injury_person_type == 2 ? 'Worker' : 'Others') }}
+                                                        </td>
+                                                        <td>
+                                                            @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
+                                                                {{ $injury->emp_name }}
+                                                            @else
+                                                                {{ $injury->injury_person_name }}
+                                                            @endif
+                                                        </td>
+                                                        <td>{{ $injury->emp_id }}</td>
+                                                        <td>{{ $injury->injury_person_designation }}</td>
+                                                        <td>
+                                                            @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
+                                                                {{ $injury->department_name }}
+                                                            @else
+                                                                {{ $injury->injury_person_department_id }}
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            @if ($injury->body_part_image)
+                                                                <a href="{{ admin_url('storage/app/private/' . $injury->body_part_image) }}"
+                                                                    target="_blank">
+                                                                    <img src="{{ admin_url('storage/app/private/' . $injury->body_part_image) }}"
+                                                                        alt="Body Parts Image"
+                                                                        style="max-width: 100px; max-height: 100px; object-fit: contain;">
+                                                                </a>
+                                                            @endif
+                                                        </td>
+
+
+                                                        <td>
+                                                            @php
+                                                                $imgMapDataDecoded = json_decode(
+                                                                    $injury->imgMapdata,
+                                                                    true,
+                                                                );
+                                                            @endphp
+                                                            @if ($imgMapDataDecoded)
+                                                                <ul>
+                                                                    @foreach ($imgMapDataDecoded['map']['total'] as $key => $value)
+                                                                        <li>{{ ucfirst($key) }}: {{ $value }}</li>
+                                                                    @endforeach
+                                                                </ul>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">Investigation</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Name of the
+                                                Witness</label>
+                                            <div class="view_data">
+                                                {{ $getInvestigation->witness_name }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Was anything
+                                                damaged?</label>
+                                            <div class="view_data">
+                                                @php
+
+                                                    $damageTypes = [
+                                                        1 => 'Man',
+                                                        2 => 'Machine',
+                                                        3 => 'Materials',
+                                                    ];
+
+                                                    $damagedItems = explode(',', $getInvestigation->anything_damaged);
+                                                    $damagedLabels = array_map(function ($item) use ($damageTypes) {
+                                                        return $damageTypes[$item] ?? 'NA';
+                                                    }, $damagedItems);
+                                                @endphp
+
+                                                {{ implode(', ', $damagedLabels) }}
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">HIRA</label>
+                                            <div class="view_data">
+                                                @if (!empty($getInvestigation->hira_moc[0]['hira_name']))
+                                                    {{ $getInvestigation->hira_moc[0]['hira_name'] }}
+                                                @else
+                                                    N/A
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label">MOC</label>
+                                            <div class="view_data">
+                                                @if (!empty($getInvestigation->hira_moc[0]['moc_name']))
+                                                    {{ $getInvestigation->hira_moc[0]['moc_name'] }}
+                                                @else
+                                                    N/A
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label">Possible Root
+                                                Cause
+                                                Analysis (PRCA)</label>
+                                            <div class="view_data">
+                                                @if ($getInvestigation->root_cause_analysis == 1)
+                                                    Why - Why Analysis
+                                                @elseif($getInvestigation->root_cause_analysis == 2)
+                                                    Fish Bone Analysis
+                                                @else
+                                                    NA
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Immediate action taken
+                                                (If any)</label>
+                                            <div class="view_data">
+                                                {{ $getInvestigation->action_taken }}
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Was the injured person receiving any
+                                                treatment
+                                                at present?</label>
+                                            <div class="view_data">
+                                                {{ $getInvestigation->is_treatment == 1 ? 'Yes' : 'No' }}
+                                            </div>
+                                        </div>
+
+                                        @if ($getInvestigation->is_treatment == 1)
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">Details</label>
+                                                <div class="view_data">
+                                                    {{ $getInvestigation->details }}
+                                                </div>
+                                            </div>
+                                        @endif
+
+
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Recommended Corrective & Preventive
+                                                Action</label>
+                                            <div class="view_data">
+                                                {{ $getInvestigation->corrective_preventive_action }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Responsible Person</label>
+                                            <div class="view_data">
+                                                {{ $getInvestigation->responsible_person }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Target Date</label>
+                                            <div class="view_data">
+                                                {{ Displaydateformat($getInvestigation->target_date) }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Remarks (If Any)</label>
+                                            <div class="view_data">
+                                                {{ $getInvestigation->remark }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @if ($getInvestigation->root_cause_analysis == 1)
+                                        <div class="row mt-3 whywhy">
+                                            <div class="card p-3">
+                                                <div
+                                                    class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                                                    <h4 class="text-dark mb-0">Why Why Analysis</h4>
+                                                </div>
+
+                                                <!-- Table -->
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered whywhyanalysis text-center">
+                                                        <thead class="table-dark">
+                                                            <tr>
+                                                                <th>Why 1</th>
+                                                                <th></th>
+                                                                <th>Why 2</th>
+                                                                <th></th>
+                                                                <th>Why 3</th>
+                                                                <th></th>
+                                                                <th>Why 4</th>
+                                                                <th></th>
+                                                                <th>Why 5</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="whywhyanalysisBody">
+                                                            @foreach ($getwhywhy as $index => $item)
+                                                                <tr id="RowwhywhyanalysisView{{ $index }}">
+                                                                    <td><input type="text"
+                                                                            name="whywhyanalysis[{{ $index }}][whywhyanalysis_first]"
+                                                                            class="form-control"
+                                                                            value="{{ $item->why_1 }}" readonly>
+                                                                    </td>
+                                                                    <td><i class="fas fa-arrow-right text-primary"></i>
+                                                                    </td>
+                                                                    <td><input type="text"
+                                                                            name="whywhyanalysis[{{ $index }}][whywhyanalysis_second]"
+                                                                            class="form-control"
+                                                                            value="{{ $item->why_2 }}" readonly>
+                                                                    </td>
+                                                                    <td><i class="fas fa-arrow-right text-primary"></i>
+                                                                    </td>
+                                                                    <td><input type="text"
+                                                                            name="whywhyanalysis[{{ $index }}][whywhyanalysis_third]"
+                                                                            class="form-control"
+                                                                            value="{{ $item->why_3 }}" readonly>
+                                                                    </td>
+                                                                    <td><i class="fas fa-arrow-right text-primary"></i>
+                                                                    </td>
+                                                                    <td><input type="text"
+                                                                            name="whywhyanalysis[{{ $index }}][whywhyanalysis_forth]"
+                                                                            class="form-control"
+                                                                            value="{{ $item->why_4 }}" readonly>
+                                                                    </td>
+                                                                    <td><i class="fas fa-arrow-right text-primary"></i>
+                                                                    </td>
+                                                                    <td><input type="text"
+                                                                            name="whywhyanalysis[{{ $index }}][whywhyanalysis_fifth]"
+                                                                            class="form-control"
+                                                                            value="{{ $item->why_5 }}" readonly>
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                    @if ($getInvestigation->root_cause_analysis == 2)
+                                        <div class="row m-5 p-3 fishbone">
+                                            <div class="fishbone-container" style="text-align: center;">
+                                                <!-- First Cause -->
+                                                <div class="cause">
+                                                    <div class="rootcause blue">
+                                                        <input type="text" class="form-control"
+                                                            placeholder="Enter value" name="fishbone[first][root_cause]"
+                                                            value="{{ $fishboneData['first']['root_cause'] ?? '' }}"
+                                                            readonly>
+                                                    </div>
+                                                    <div class="subcause">
+                                                        @foreach ($fishboneData['first']['sub'] as $key => $value)
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value"
+                                                                    name="fishbone[first][sub][{{ $key }}]"
+                                                                    value="{{ $value }}" readonly>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+
+                                                <!-- Second Cause -->
+                                                <div class="cause">
+                                                    <div class="rootcause green">
+                                                        <input type="text" class="form-control"
+                                                            placeholder="Enter value" name="fishbone[second][root_cause]"
+                                                            value="{{ $fishboneData['second']['root_cause'] ?? '' }}"
+                                                            readonly>
+                                                    </div>
+                                                    <div class="subcause">
+                                                        @foreach ($fishboneData['second']['sub'] as $key => $value)
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value"
+                                                                    name="fishbone[second][sub][{{ $key }}]"
+                                                                    value="{{ $value }}" readonly>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+
+                                                <!-- Third Cause -->
+                                                <div class="cause">
+                                                    <div class="rootcause yellow">
+                                                        <input type="text" class="form-control"
+                                                            placeholder="Enter value" name="fishbone[fourth][root_cause]"
+                                                            value="{{ $fishboneData['fourth']['root_cause'] ?? '' }}"
+                                                            readonly>
+                                                    </div>
+                                                    <div class="subcause">
+                                                        @foreach ($fishboneData['third']['sub'] as $key => $value)
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value"
+                                                                    name="fishbone[third][sub][{{ $key }}]"
+                                                                    value="{{ $value }}" readonly>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+
+                                                </div>
+                                                <div class="line"></div>
+                                                <!-- Fourth Cause -->
+                                                <div class="cause">
+
+                                                    <div class="subcause">
+                                                        @foreach ($fishboneData['fourth']['sub'] as $key => $value)
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value"
+                                                                    name="fishbone[fourth][sub][{{ $key }}]"
+                                                                    value="{{ $value }}" readonly>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                    <div class="rootcause blue">
+                                                        <input type="text" class="form-control"
+                                                            placeholder="Enter value" name="fishbone[fourth][root_cause]"
+                                                            value="{{ $fishboneData['fourth']['root_cause'] ?? '' }}"
+                                                            readonly>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Fifth Cause -->
+                                                <div class="cause">
+
+                                                    <div class="subcause">
+                                                        @foreach ($fishboneData['fifth']['sub'] as $key => $value)
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value"
+                                                                    name="fishbone[fifth][sub][{{ $key }}]"
+                                                                    value="{{ $value }}" readonly>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                    <div class="rootcause green">
+                                                        <input type="text" class="form-control"
+                                                            placeholder="Enter value" name="fishbone[fifth][root_cause]"
+                                                            value="{{ $fishboneData['fifth']['root_cause'] ?? '' }}"
+                                                            readonly>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Sixth Cause -->
+                                                <div class="cause">
+
+                                                    <div class="subcause">
+                                                        @foreach ($fishboneData['sixth']['sub'] as $key => $value)
+                                                            <div class="stat">
+                                                                <input type="text" class="form-control sub-stat"
+                                                                    placeholder="Enter value"
+                                                                    name="fishbone[sixth][sub][{{ $key }}]"
+                                                                    value="{{ $value }}" readonly>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                    <div class="rootcause yellow">
+                                                        <input type="text" class="form-control"
+                                                            placeholder="Enter value" name="fishbone[sixth][root_cause]"
+                                                            value="{{ $fishboneData['sixth']['root_cause'] ?? '' }}"
+                                                            readonly>
+                                                    </div>
+                                                </div>
+
+                                                <div class="defect-spacer-top"></div>
+
+                                                <!-- Root Cause -->
+                                                <div class="defect">
+                                                    <div class="defect-text">
+                                                        <input type="text" class="form-control"
+                                                            placeholder="Enter value" name="fishbone[root_cause][main]"
+                                                            value="{{ $fishboneData['root_cause']['main'] ?? '' }}"
+                                                            readonly>
+                                                    </div>
+                                                </div>
+
+                                                <div class="defect-spacer-bottom"></div>
+                                            </div>
+                                        </div>
+
+                                    @endif
+                                </div>
+                            @endif
+
+
+                            @if ($accident_report->accident_status >= STATUS_RISKANALYSIS_PENDING)
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">UAUC</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label for="name" class="form-label">UAUC</label>
+                                            <div class="view_data">
+                                                @if ($accident_report->ua_uc_yes_no == 1)
+                                                    Yes
+                                                @else
+                                                    No
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        @if ($accident_report->ua_uc_yes_no == 1)
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label for="name" class="form-label">UA/UC</label>
+                                                <div class="view_data">
+                                                    @php
+                                                        $ua_uc_values = explode(',', $accident_report->ua_or_uc);
+                                                    @endphp
+
+                                                    <span>UA: {!! in_array('1', $ua_uc_values)
+                                                        ? '<i class="fas fa-check text-success"></i>'
+                                                        : '<i class="fas fa-times text-danger"></i>' !!}</span>
+                                                    <br>
+                                                    <span>UC: {!! in_array('2', $ua_uc_values)
+                                                        ? '<i class="fas fa-check text-success"></i>'
+                                                        : '<i class="fas fa-times text-danger"></i>' !!}</span>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="mb-3 col-md-12 form-input">
+                                                <label class="form-label">Description of UAUC</label>
+                                                <div class="view_data">
+                                                    {{ $accident_report->description_uauc }}
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if ($accident_report->accident_status >= STATUS_EHSVERIFY_PENDING)
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">Risk Level</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="mb-3 col-md-12 form-input">
+                                            <label for="name" class="form-label">Risk Level</label>
+                                            <div class="view_data">
+                                                @if ($getrisklevel->risk_level == 1)
+                                                    Low
+                                                @elseif($getrisklevel->risk_level == 2)
+                                                    Medium
+                                                @else
+                                                    High
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label">Description of CA</label>
+                                            <div class="view_data">
+                                                {{ $getrisklevel->description_ca }}
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if (
+                                $accident_report->accident_status >= STATUS_ACTION_PENDING &&
+                                    $accident_report->accident_status != STATUS_EHSAPPROVAL_REJECTED)
+                                <div class="card-body ">
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">EHS Head Verify</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label for="name" class="form-label">Verifier Name</label>
+                                            <div class="view_data">
+                                                {{ $getEHSVerify->reviewer_name }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Date') }}</label>
+                                            <div class="view_data">
+                                                {{ Displaydateformat($getEHSVerify->date) }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label for="team_id" class="form-label">Choose Assignee</label>
+                                            <div class="view_data">
+                                                {{ $getEHSVerify->team_member_names }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label">Remark</label>
+                                            <div class="view_data">
+                                                {{ $getEHSVerify->remark }}
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if (
+                                $accident_report->accident_status >= STATUS_EHSAPPROVAL_PENDING &&
+                                    $accident_report->accident_status != STATUS_EHSAPPROVAL_REJECTED)
+                                <div class="card-body ">
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">Action submission</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label for="name" class="form-label">Submission By</label>
+                                            <div class="view_data">
+                                                {{ getUsername($accident_report->action_submission_by) }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Date') }}</label>
+                                            <div class="view_data">
+                                                {{ Displaydateformat($accident_report->action_submission_date) }}
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label">Action Taken</label>
+                                            <div class="view_data">
+                                                {{ $accident_report->action_submission_description }}
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            @endif
+                            @if ($accident_report->accident_status >= STATUS_ACCIDENT_CLOSED)
+                                <div class="card-body ">
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">EHS Approval</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label for="name" class="form-label">Approval By</label>
+                                            <div class="view_data">
+                                                {{ $getEHSApprovalAccident->reviewer_name }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Date') }}</label>
+                                            <div class="view_data">
+                                                {{ Displaydateformat($getEHSApprovalAccident->date) }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label">Remark</label>
+                                            <div class="view_data">
+                                                {{ $getEHSApprovalAccident->remark }}
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        </form>
     </div>
 
 @stop

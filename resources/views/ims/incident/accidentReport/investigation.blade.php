@@ -461,7 +461,7 @@
 
                                                     <!-- Designation -->
                                                     <div class="col-md-4 form-input">
-                                                        <label class="form-label">Injury Person
+                                                        <label class="form-label require">Injury Person
                                                             Designation</label>
                                                         <input type="text" alt="0"
                                                             name="injury_person[0][injury_person_designation]"
@@ -470,7 +470,7 @@
 
                                                     <!-- Department -->
                                                     <div class="col-md-4 form-input d-none" id="injuryPersonDepttexxt_0">
-                                                        <label class="form-label">Injury Person
+                                                        <label class="form-label require">Injury Person
                                                             Department</label>
                                                         <input type="text" alt="0"
                                                             name="injury_person[0][injury_person_department_id]"
@@ -479,7 +479,7 @@
 
                                                     <!-- Department Dropdown for Others -->
                                                     <div class="col-md-4 form-input" id="injuryPersonDeptDropdown_0">
-                                                        <label class="form-label">Injury Person Department</label>
+                                                        <label class="form-label require">Injury Person Department</label>
                                                         <select alt="0" class="form-control single-select"
                                                             name="injury_person[0][injury_person_department_id]"
                                                             style="width: 100%">
@@ -506,7 +506,7 @@
                                                     </div>
 
                                                     <div class="col-md-2 form-input">
-                                                        <label for="inputFirstName" class="form-label require">Location of
+                                                        <label for="inputFirstName" class="form-label">Location of
                                                             the
                                                             Injury</label>
                                                         <br>
@@ -660,7 +660,8 @@
 
                                                 <div class="col-md-4 mt-2">
                                                     <div class="form-group form-input">
-                                                        <label for="root_cause_analysis" class="form-label">Possible
+                                                        <label for="root_cause_analysis"
+                                                            class="form-label require">Possible
                                                             Root
                                                             Cause
                                                             Analysis (PRCA)</label>
@@ -1535,8 +1536,7 @@
                                                                         <area alt="" title="A. Left Palm"
                                                                             data-map='hand-left-palm' shape="poly"
                                                                             coords="152,20,177,14,209,13,230,13,250,16,268,18,267,36,266,54,267,68,267,79,269,94,274,106,278,120,284,133,294,144,305,152,314,162,322,173,316,198,309,221,304,235,291,243,283,258,280,272,277,286,276,295,277,315,267,318,239,326,221,326,201,326,194,325,173,317,159,310,148,302,124,289,126,262,128,242,132,210,138,187,142,158,146,151,150,134,153,106" />
-                                                                        <area alt=""
-                                                                            title="B. Left Thumb Finger"
+                                                                        <area alt="" title="B. Left Thumb Finger"
                                                                             data-map='hand-left-thumb' shape="poly"
                                                                             coords="364,237,372,253,378,261,388,269,394,275,391,283,384,287,366,283,350,275,335,263,319,243,312,236,304,234,311,211,320,185,325,174" />
                                                                         <area alt=""
@@ -1689,7 +1689,7 @@
                                                 class="btn btn-secondary btn-warnings injcancel center"
                                                 data-bs-dismiss="modal">{{ 'Cancel' }}</button>
                                             <!--
-                                                                                                                                                                                                                                                                                                                                                                            <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
+                                                                                                                                                                                                                                                                                                                                                                                        <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
 
                                         </div>
                                     </div>
@@ -1701,8 +1701,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                                                                                                                                                                                                                                                                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                                                                                                                                                                                                                                                    </div>-->
+                                                                                                                                                                                                                                                                                                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                                                                                                                                                                                                                                                                </div>-->
             </div>
         </div>
     </div>
@@ -1925,8 +1925,7 @@
                      <i class="fa-solid fa-trash text-danger"></i>
                     </button>
                 </td>
-            </tr>
-        `;
+            </tr>`;
 
                 $("#whywhyanalysisBody").append(newRow);
                 whywhyanalysisIndex++;
@@ -1967,95 +1966,115 @@
                 }
             });
 
-            $(function() {
-                $('#accidentinvestigation').validate({
-                    rules: {
-                        date_and_time: {
-                            required: true,
-                        },
-                        unit_id: {
-                            required: true,
-                        },
-                        shift: {
-                            required: true,
-                        },
-                        location_id: {
-                            required: true,
-                        },
-                        designation: {
-                            required: true,
-                        },
-                        department_id: {
-                            required: true,
-                        },
-                        emp_code: {
-                            required: true,
-                        },
-                        address_of_the_injuredperson: {
-                            required: true,
-                            minlength: 3,
-                            maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-\_\'\"()\n\r]+$/,
-                        },
-                    },
-                    messages: {
-                        date_and_time: {
-                            required: "Date and Time is required.",
-                        },
-                        unit_id: {
-                            required: "Unit is required.",
-                        },
-                        shift: {
-                            required: "Shift is required.",
-                        },
-                        location_id: {
-                            required: "Accident Location is required.",
-                        },
-                        designation: {
-                            required: "Designation is required.",
-                        },
-                        department_id: {
-                            required: "Department is required.",
-                        },
-                        emp_code: {
-                            required: "Employee Code is required.",
-                        },
-                        address_of_the_injuredperson: {
-                            required: "Address of the injured person is required.",
-                            minlength: "Minimum 3 characters required.",
-                            maxlength: "Maximum 2000 characters allowed.",
-                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
-                        },
-                    },
 
-                    errorElement: 'span',
-                    errorPlacement: function(error, element) {
-                        error.addClass('invalid-feedback');
-                        element.closest('.form-input').append(error);
+        });
+        $(function() {
+            $('#accidentinvestigation').validate({
+                rules: {
+                    'witness_id[]': {
+                        required: true,
                     },
-                    highlight: function(element) {
-                        $(element).addClass('is-invalid');
+                    'is_damaged[]': {
+                        required: true,
                     },
-                    unhighlight: function(element) {
-                        $(element).removeClass('is-invalid');
+                    root_cause_analysis: {
+                        required: true,
                     },
-                    submitHandler: function(form) {
-                        form.submit();
+                    is_treatment: {
+                        required: true,
                     },
-                    invalidHandler: function(event, validator) {
-                        var errors = validator.numberOfInvalids();
-                        if (errors) {
-                            console.log(`There are ${errors} validation errors.`);
-                            validator.errorList.forEach(function(error) {
-                                console.log(
-                                    `Field: ${error.element.name}, Error: ${error.message}`
-                                );
-                            });
-                        }
+                    action_taken: {
+                        required: true,
+                        minlength: 10,
+                        maxlength: 2000,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
                     },
-                });
+                    details: {
+                        required: function(element) {
+                            return $('input[name="is_treatment"]:checked').val() === '1';
+                        },
+                        minlength: 3,
+                        maxlength: 2000,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/
+                    },
+                    corrective_preventive_action: {
+                        required: true,
+                        minlength: 10,
+                        maxlength: 2000,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
+                    },
+                    responsible_person_id: {
+                        required: true,
+                    },
+                    target_date: {
+                        required: true,
+                    },
+                },
+                messages: {
+                    'witness_id[]': {
+                        required: "Witness ID is required.",
+                    },
+                    'is_damaged[]': {
+                        required: "Was anything damaged is required.",
+                    },
+                    root_cause_analysis: {
+                        required: "Root cause analysis is required.",
+                    },
+                    is_treatment: {
+                        required: "Where the injured person receiving any treatment at present is required.",
+                    },
+                    action_taken: {
+                        required: "Action taken is required.",
+                        minlength: "Minimum 10 characters required.",
+                        maxlength: "Maximum 2000 characters allowed.",
+                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                    },
+                    details: {
+                        required: "Please provide details of the treatment.",
+                        minlength: "Details must be at least 3 characters long.",
+                        maxlength: "Details cannot exceed 2000 characters.",
+                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+                    },
+                    corrective_preventive_action: {
+                        required: "Corrective/preventive action is required.",
+                        minlength: "Minimum 10 characters required.",
+                        maxlength: "Maximum 2000 characters allowed.",
+                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                    },
+                    responsible_person_id: {
+                        required: "Responsible person ID is required.",
+                    },
+                    target_date: {
+                        required: "Target date is required.",
+                    },
+                },
+
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    if (errors) {
+                        console.log(`There are ${errors} validation errors.`);
+                        validator.errorList.forEach(function(error) {
+                            console.log(
+                                `Field: ${error.element.name}, Error: ${error.message}`
+                            );
+                        });
+                    }
+                },
             });
-
         });
 
         $(document).ready(function() {
@@ -2089,11 +2108,11 @@
                             </div>
 
                         <div class="col-md-4 form-input">
-                            <label class="form-label">Injury Person Designation</label>
+                            <label class="form-label require">Injury Person Designation</label>
                             <input type="text" alt="${injuryIndex}" name="injury_person[${injuryIndex}][injury_person_designation]" id="InjPerDest_${injuryIndex}" class="form-control InjPerDest">
                         </div>
                             <div class="col-md-4 form-input d-none" id="injuryPersonDepttexxt_${injuryIndex}">
-                                <label class="form-label">Injury Person Department</label>
+                                <label class="form-label require">Injury Person Department</label>
                                 <input type="text" alt="${injuryIndex}"  name="injury_person[${injuryIndex}][injury_person_department_id]"
                                 class="form-control InjPerDept" id="InjPerDept_${injuryIndex}"> 
                                 
@@ -2278,6 +2297,10 @@
                     );
                 }
             });
+
+
+
+
 
         });
 

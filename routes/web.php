@@ -1248,6 +1248,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/ehs_head_verify/submit', [AccidentReportController::class, 'ehsHeadVerifySubmit']);
                 Route::post('/actiontaken/submit', [AccidentReportController::class, 'actiontakenSubmit']);
                 Route::post('/ehApproval/submit', [AccidentReportController::class, 'ehsApprovalSubmit']);
+                Route::get('/accidentpdf/{id}', [AccidentReportController::class, 'accidentExportPdf']);
+
             });
 
 

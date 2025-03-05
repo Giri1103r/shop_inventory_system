@@ -126,10 +126,10 @@ class InitialIncidentController extends Controller
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
                             // }
-                            if ((CheckUserRole(ROLE_SUPERADMIN)) || (CheckUserRole(ROLE_EHS_HEAD) && $row->incident_status == 1) || $row->incident_status == 5 || $row->incident_status == 8 || $row->incident_status == 6 || $row->incident_status == 7) {
+                         
+                            if ((CheckUserRole(ROLE_SUPERADMIN) && $row->accident_status != 9 ) || CheckUserRole(ROLE_EHS_HEAD) || $row->accident_status == 1 || $row->accident_status == 5 || $row->accident_status == 8 || $row->accident_status == 6 || $row->accident_status == 7 ) {
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
                             }
-
 
                             if (!empty($row->investigation_assigned) && $row->incident_status == 2) {
                                 $assignedUsers = explode(',', $row->investigation_assigned); 
@@ -161,9 +161,7 @@ class InitialIncidentController extends Controller
                             //     $btn .= '</a>';
                             // }
 
-                            if ($row->incident_status == 7) {
-                                $btn .= '<a href="' . admin_url('incident/initial-incident/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
-                            }
+                        
 
                             $btn .= '<a href="' . admin_url('incident/initial-incident/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
