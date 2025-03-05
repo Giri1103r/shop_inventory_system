@@ -61,7 +61,6 @@ class PpeExemptionController extends Controller
         $this->approvestatus = new ApproveStatus();
         $this->ppeFiles = new PpeFiles();
         $this->work = new Work();
-
     }
     public function index(Request $request)
     {
@@ -122,7 +121,7 @@ class PpeExemptionController extends Controller
                             // }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
 
-                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) && $row->approve_status == STATUS_EHS_APPROVAL_PENDING) {
+                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) && $row->approve_status == STATUS_EHS_APPROVAL_PENDING && $row->status == 1) {
                                 $btn .= '<a href="' . admin_url('ppe_exemption/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
@@ -130,7 +129,7 @@ class PpeExemptionController extends Controller
 
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_at', 'created_by', 'approve_status','status'])
+                        ->rawColumns(['action', 'created_at', 'created_by', 'approve_status', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -153,7 +152,7 @@ class PpeExemptionController extends Controller
             'department' => $department,
             'unit' => $unit,
             'company' => $company,
-            'approvestatus'=>$approvestatus,
+            'approvestatus' => $approvestatus,
         ];
         return view('ppemanagement.ppeexemption.list', $data);
     }
@@ -179,9 +178,11 @@ class PpeExemptionController extends Controller
         try {
 
             $rules = [
-                'from_date' => 'required|date_format:d-m-Y',
-                'to_date' => 'required|date_format:d-m-Y|after_or_equal:from_date',
-                'reason' =>'required' ,
+
+
+                'from_date' => 'required',
+                'to_date' => 'required',
+                'reason' => 'required',
             ];
 
 
@@ -213,7 +214,7 @@ class PpeExemptionController extends Controller
             try {
 
                 $ppeexemption = $this->ppeexemption->store();
-                $this->ppeFiles->store( $ppeexemption);
+                $this->ppeFiles->store($ppeexemption);
 
                 // Mail
                 $id = $ppeexemption->id;
@@ -235,10 +236,9 @@ class PpeExemptionController extends Controller
 
                 foreach ($ehsofficer as $officer) {
                     $officer_email = getUseremail($officer->id);
-                    if($officer_email != '' || $officer_email != null){
+                    if ($officer_email != '' || $officer_email != null) {
                         Mail::to($officer_email)->queue(new PpeExemptionRequestorEmail($details));
                     }
-
                 }
 
                 // Notification
@@ -270,12 +270,12 @@ class PpeExemptionController extends Controller
                 Session::flash('success', __('Your data has been created successfully!'));
                 return redirect(admin_url('ppe_exemption/list'));
             } catch (Exception $ex) {
-                 report($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
             return redirect(admin_url('ppe_exemption/list'));
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
             Session::flash('error',  'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ppe_exemption/list'));
         }
@@ -289,9 +289,13 @@ class PpeExemptionController extends Controller
             if (Auth::check()) {
                 $ppeexemption = $this->ppeexemption->selectOne($id);
             }
-
-            $ehsheadstatus= $this->ppestatus->getehsheadstatuslog($id);
-
+            if ($ppeexemption->approve_status == 5) {
+                $ehsheadstatus = $this->ppestatus->getehsheadstatuslog($id);
+            } elseif ($ppeexemption->approve_status == 6) {
+                $ehsheadstatus = $this->ppestatus->getehsheadrejectstatuslog($id);
+            } else {
+                $ehsheadstatus = null;
+            }
             $ppefiles = $this->ppeFiles->getExemptionFile($id);
 
             $data = [
@@ -317,7 +321,12 @@ class PpeExemptionController extends Controller
             if (Auth::check()) {
                 $ppeexemption = $this->ppeexemption->selectOne($id);
             }
-            $ehsheadstatus= $this->ppestatus->getehsheadstatuslog($id);
+             if ($ppeexemption->approve_status == 5) {
+                $ehsheadstatus = $this->ppestatus->getehsheadstatuslog($id);
+            } else if ($ppeexemption->approve_status == 6) {
+
+                $ehsheadstatus = $this->ppestatus->getehsheadrejectstatuslog($id);
+            }
             $data = [
                 'ppeexemption' => $ppeexemption,
                 'ehsheadstatus' => $ehsheadstatus,
@@ -343,7 +352,7 @@ class PpeExemptionController extends Controller
             $filename = "PPE_Exemption.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
 
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
@@ -469,7 +478,7 @@ class PpeExemptionController extends Controller
 
             if ($action == 'approve') {
                 $recipients = array_filter([$requestor, $hod]);
-                if(!empty( $recipients )){
+                if (!empty($recipients)) {
                     Mail::to($recipients)->queue(new PpeExemptionEmail($details));
                 }
 
@@ -478,7 +487,7 @@ class PpeExemptionController extends Controller
                 $hodId = $this->user->getdepartmenthodId($departmentId);
                 $requestorId = $this->user->getrequestId($empId);
                 $storemanagerId = $this->user->getStoreManagerId();
-                $assigned_user = array_merge($hodId, $requestorId,$storemanagerId);
+                $assigned_user = array_merge($hodId, $requestorId, $storemanagerId);
                 $img = admin_url('public/assets/images/ppe-management.jpg');
                 $notificationData = array(
                     'notification_type' => 1,
@@ -497,10 +506,9 @@ class PpeExemptionController extends Controller
                 );
 
                 notificationSave($notificationData);
-
             } else {
                 $recipients = array_filter([$requestor, $hod]);
-                if( $recipients){
+                if ($recipients) {
                     Mail::to($recipients)->queue(new PpeExemptionRejectEmail($details));
                 }
 
@@ -526,7 +534,6 @@ class PpeExemptionController extends Controller
                 );
 
                 notificationSave($notificationData);
-
             }
 
 
@@ -583,27 +590,21 @@ class PpeExemptionController extends Controller
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 if ($data->approve_status == STATUS_EHS_APPROVAL_PENDING) {
                     $export[] = 'User Applied';
-                }
-                elseif ($data->approve_status == STATUS_EHS_APPROVED) {
+                } elseif ($data->approve_status == STATUS_EHS_APPROVED) {
                     $export[] = 'EHS Head Approval Pending';
-                }
-                elseif ($data->approve_status == STATUS_EHS_REJECTED) {
+                } elseif ($data->approve_status == STATUS_EHS_REJECTED) {
                     $export[] = 'EHS Head Approval Pending';
-                }
-                else {
+                } else {
                     $export[] = removeUnderScore(getStatus($data->approve_status));
                 }
 
                 if ($data->approve_status == STATUS_EHS_APPROVAL_PENDING) {
                     $export[] = 'EHS Head Approval Pending';
-                }
-                elseif ($data->approve_status == STATUS_EHS_APPROVED) {
+                } elseif ($data->approve_status == STATUS_EHS_APPROVED) {
                     $export[] = 'EHS Head Approved';
-                }
-                elseif ($data->approve_status == STATUS_EHS_REJECTED) {
+                } elseif ($data->approve_status == STATUS_EHS_REJECTED) {
                     $export[] = 'EHS Head Rejected';
-                }
-                else {
+                } else {
                     $export[] = removeUnderScore(getStatus($data->approve_status));
                 }
                 $export[] =  getusername($data->created_by);
@@ -688,14 +689,15 @@ class PpeExemptionController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-             report($ex);
+            report($ex);
         }
     }
 
-    public function list(Request $request){
+    public function list(Request $request)
+    {
         $unitId = $request->input('unitId');
 
-        $data = $this->department->getunitDeparment( $unitId);
+        $data = $this->department->getunitDeparment($unitId);
 
         return response()->json($data);
     }

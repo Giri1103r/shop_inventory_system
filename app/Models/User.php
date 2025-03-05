@@ -84,6 +84,8 @@ class User extends Authenticatable
         $search = '';
         $query = $this->select('users.*', 'template_user_role.role_name',);
         $query = $query->leftJoin('template_user_role', 'users.role', '=', 'template_user_role.id');
+        $query = $query->where('status',1);
+
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -233,7 +235,10 @@ class User extends Authenticatable
 
         return $this->where('employee_id', $employee->emp_id)->update($data);
     }
-
+    public function fcmTokens()
+    {
+        return $this->hasMany(FcmToken::class);
+    }
     public function getUserdata()
     {
         $user = Auth::user()->employee_id;

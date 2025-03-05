@@ -64,7 +64,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->appendToGroup('loginattempt', [
             LoginAttempt::class,
         ]);
-        $middleware->appendToGroup('extendtokenexpiration', [
+        $middleware->appendToGroup('extendAccesstokenexpiration', [
             ExtendAccessTokenExpiration::class,
         ]);
     })
