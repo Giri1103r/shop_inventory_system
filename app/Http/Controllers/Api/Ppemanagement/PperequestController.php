@@ -116,14 +116,14 @@ class PperequestController extends BaseController
                 $data = [];
 
                 $data['id'] = $listdata->id;
-                $data['Employee Id/Worker ID'] = $listdata->emp_id;
-                $data['Employee Name / Worker Name'] = $listdata->emp_name;
-                $data['Item Code'] = $listdata->item_code;
-                $data['PPE Name'] = $listdata->ppe_name;
-                $data['Department'] = $listdata->department_name;
-                $data['Approve Status'] = $text;
-                $data['Created By'] = getUsername($listdata->created_by);
-                $data['Created Date'] = Displaydateformat($listdata->created_at);
+                $data['emp_id'] = $listdata->emp_id;
+                $data['emp_name'] = $listdata->emp_name;
+                $data['item_code'] = $listdata->item_code;
+                $data['ppe_name'] = $listdata->ppe_name;
+                $data['department'] = $listdata->department_name;
+                $data['approve_status'] = $text;
+                $data['created_by'] = getUsername($listdata->created_by);
+                $data['created_at'] = Displaydateformat($listdata->created_at);
 
                 $data_array[] = $data;
             }
@@ -179,7 +179,7 @@ class PperequestController extends BaseController
                     return $this->sendError('Validation Error', $validator->errors(), 422);
                 }
                 $request = request();
-                $image_data = null; 
+                $image_data = null;
 
                 if ($request->has('ppe_image')) {
                     $sign = $request->ppe_image;
@@ -310,11 +310,11 @@ class PperequestController extends BaseController
                 if (!empty($statusLogs)) {
                     foreach ($statusLogs as $value) {
                         $ppestatuslog[] = [
-                            'From Status' => $statusLabels[$value->from_status] ?? 'Unknown',
-                            'To Status' => $statusLabels[$value->to_status] ?? 'Unknown',
-                            'Remarks' => $value->remarks,
-                            'Approved By' => getusername($value->created_by),
-                            'Approved At' => Displaydateformat($value->created_at),
+                            'from_status' => $statusLabels[$value->from_status] ?? 'Unknown',
+                            'to_status' => $statusLabels[$value->to_status] ?? 'Unknown',
+                            'remarks' => $value->remarks,
+                            'created_by' => getusername($value->created_by),
+                            'created_at' => Displaydateformat($value->created_at),
                         ];
                     }
                 }
@@ -323,26 +323,26 @@ class PperequestController extends BaseController
                 if (!empty($previoushistory)) {
                     foreach ($previoushistory as $value) {
                         $history[] = [
-                            'Employee Name' =>$value->emp_name,
-                            'Employee ID' => $value->emp_id,
-                            'Previous Applied Date' => Displaydateformat($value->created_at),
-                            'Approved By' => $statusLabels[$value->approve_status] ?? 'Unknown',
-                            'Remarks' => ($value->remarks),
+                            'emp_name' =>$value->emp_name,
+                            'emp_id' => $value->emp_id,
+                            'created_at' => Displaydateformat($value->created_at),
+                            'approve_status' => $statusLabels[$value->approve_status] ?? 'Unknown',
+                            'remarks' => ($value->remarks),
                         ];
                     }
                 }
 
                 $success = [
                     'id' => $details->id,
-                    'Employee Id' => $details->emp_id,
-                    'Employee Name' => $details->emp_name,
-                    'Department' => getDepartment($details->department),
-                    'Item Code' => getItemCode($details->item_code),
-                    'PPE Name' => $details->ppe_name,
-                    'Created By' => getusername($details->created_by),
-                    'Created At' => Displaydateformat($details->created_at),
-                    'Status Log' => $ppestatuslog ,
-                    'Previous History'=> $history
+                    'emp_id' => $details->emp_id,
+                    'emp_name' => $details->emp_name,
+                    'department' => getDepartment($details->department),
+                    'item_code' => getItemCode($details->item_code),
+                    'ppe_name' => $details->ppe_name,
+                    'created_by' => getusername($details->created_by),
+                    'created_at' => Displaydateformat($details->created_at),
+                    'status_log' => $ppestatuslog ,
+                    'previous_history'=> $history
                 ];
 
                 return $this->sendResponse($success, 'PPE Request Details');

@@ -99,15 +99,15 @@ class PpeExemptionController extends BaseController
                 $data = [];
 
                 $data['id'] = $listdata->id;
-                $data['Employee Id/Worker ID'] = $listdata->emp_id;
-                $data['Employee Name / Worker Name'] = $listdata->emp_name;
-                $data['Department'] = $listdata->department_name;
-                $data['Unit'] = $listdata->unit_name;
-                $data['From Date'] = Displaydateformat($listdata->from_date);
-                $data['To Date'] = Displaydateformat($listdata->to_date);
-                $data['Approve Status'] = $text;
-                $data['Created By'] = getUsername($listdata->created_by);
-                $data['Created Date'] = Displaydateformat($listdata->created_at);
+                $data['emp_id'] = $listdata->emp_id;
+                $data['emp_name'] = $listdata->emp_name;
+                $data['department'] = $listdata->department_name;
+                $data['unit_name'] = $listdata->unit_name;
+                $data['from_date'] = Displaydateformat($listdata->from_date);
+                $data['to_date'] = Displaydateformat($listdata->to_date);
+                $data['approve_status'] = $text;
+                $data['created_by'] = getUsername($listdata->created_by);
+                $data['created_at'] = Displaydateformat($listdata->created_at);
 
                 $data_array[] = $data;
             }
@@ -280,11 +280,11 @@ class PpeExemptionController extends BaseController
                 if (!empty($statusLogs)) {
                     foreach ($statusLogs as $value) {
                         $ppestatuslog[] = [
-                            'From Status' => $statusLabels[$value->from_status] ?? 'Unknown',
-                            'To Status' => $statusLabels[$value->to_status] ?? 'Unknown',
-                            'Remarks' => $value->remarks,
-                            'Approved By' => getusername($value->created_by),
-                            'Approved At' => Displaydateformat($value->created_at),
+                            'from_status' => $statusLabels[$value->from_status] ?? 'Unknown',
+                            'to_status' => $statusLabels[$value->to_status] ?? 'Unknown',
+                            'remarks' => $value->remarks,
+                            'created_by' => getusername($value->created_by),
+                            'created_at' => Displaydateformat($value->created_at),
                         ];
                     }
                 }
@@ -292,23 +292,23 @@ class PpeExemptionController extends BaseController
                 if (!empty($ppefiles)) {
                     foreach ($ppefiles as $value) {
                         $files[] = [
-                            'File' => $value->file_path
+                            'file_path' => $value->file_path
                         ];
                     }
                 }
 
                 $success = [
                     'id' => $details->id,
-                    'Employee Id' => $details->emp_id,
-                    'Employee Name' => $details->emp_name,
-                    'Department' => getDepartment($details->department),
-                    'From Date' => Displaydateformat($details->from_date),
-                    'To Date' => Displaydateformat($details->to_date),
-                    'Reason' => ($details->reason),
-                    'Files'=> $files,
-                    'Created By' => getusername($details->created_by),
-                    'Created At' => Displaydateformat($details->created_at),
-                    'Status Log' => $ppestatuslog,
+                    'emp_id ' => $details->emp_id,
+                    'emp_name' => $details->emp_name,
+                    'department' => getDepartment($details->department),
+                    'from_date' => Displaydateformat($details->from_date),
+                    'to_date' => Displaydateformat($details->to_date),
+                    'reason' => ($details->reason),
+                    'files'=> $files,
+                    'created_by' => getusername($details->created_by),
+                    'created_at' => Displaydateformat($details->created_at),
+                    'status_log' => $ppestatuslog,
 
                 ];
 
