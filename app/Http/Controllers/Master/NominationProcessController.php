@@ -314,6 +314,8 @@ class NominationProcessController extends Controller
     }
     public function ImportSubmit(Request $request)
     {
+
+        dd($request);
         try {
             $file = $request->file('nomination_process_upload');
 
