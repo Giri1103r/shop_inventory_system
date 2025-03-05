@@ -377,7 +377,7 @@ class NominationProcessController extends Controller
                     "trainerId" => $request->trainer_id,
                     "path" => $path,
                 ];
-                dd($details);
+               
                 // dispatch(new ImporNominationProcessJob($details));
                 dispatch((new ImporNominationProcessJob($details))->onQueue('nomination_process'));
             }
