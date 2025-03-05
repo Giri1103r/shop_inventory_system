@@ -54,7 +54,7 @@ class ImporNominationProcessJob  implements ShouldQueue
     public function __construct($details)
     {
 
-
+dd($details);
         $this->details = $details;
     }
 
