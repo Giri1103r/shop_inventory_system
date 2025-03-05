@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Incident Investigation')
-@section('pageurl', admin_url('incident/initial-incident/list'))
+@section('pageurl', admin_url('incident/fire-incident/list'))
 
 
 @section('content')
@@ -223,7 +223,7 @@
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
-            {{-- <h4 class="text-black">{{ __('incident/initial-incident Edit') }}</h4> --}}
+            {{-- <h4 class="text-black">{{ __('incident/fire-incident Edit') }}</h4> --}}
 
         </div>
 
@@ -239,7 +239,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('incident/initial-incident/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('incident/fire-incident/list') }}"></x-button-back>
                                 </div>
                             </div>
                             <div class="card-body ">
@@ -346,9 +346,9 @@
 
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">Existing Evidence</label>
-                                        @if (!$initialincidentevidence->isEmpty())
+                                        @if (!$initialfireincidentevidence->isEmpty())
                                             <div class="row">
-                                                @foreach ($initialincidentevidence as $key => $evidence)
+                                                @foreach ($initialfireincidentevidence as $key => $evidence)
                                                     <div class="col-md-3 col-sm-6 mb-2">
                                                         <div class="existing-evidence text-center">
                                                             <a href="{{ asset($evidence->file_path) }}" target="_blank">
@@ -408,9 +408,9 @@
                                 </div>
                                 <div class="basic-form">
                                     <form method="POST" id="incidentinvestigation"
-                                        action="{{ admin_url('incident/initial-incident/investigation/submit') }}">
+                                        action="{{ admin_url('incident/fire-incident/investigation/submit') }}">
                                         @csrf
-                                        <input type="hidden" name="incident_id" id="incident_id"
+                                        <input type="hidden" name="fire_incident_id" id="fire_incident_id"
                                             value="{{ encryptId($incidentId) }}">
                                         <input type="hidden" name="fishbone_image" id="fishbone_image">
                                         <div class="row">
@@ -451,7 +451,7 @@
                                                 </div>
                                                 <x-button-add dataId="{{ $incidentId ?? '' }}"
                                                     class="add popupwindow btn btn-primary"
-                                                    href="{{ admin_url('incident/initial-incident/existingHira/' . ($incidentId ?? '')) }}">
+                                                    href="{{ admin_url('incident/fire-incident/existingHira/' . ($incidentId ?? '')) }}">
                                                     Add
                                                 </x-button-add>
                                             </div>
@@ -475,7 +475,7 @@
                                                 </div>
                                                 <x-button-add dataId="{{ $incidentId ?? '' }}"
                                                     class="add popupwindow btn btn-primary"
-                                                    href="{{ admin_url('incident/initial-incident/existingMOC/' . ($incidentId ?? '')) }}">
+                                                    href="{{ admin_url('incident/fire-incident/existingMOC/' . ($incidentId ?? '')) }}">
                                                     Add
                                                 </x-button-add>
                                             </div>
@@ -490,6 +490,23 @@
                                                             <p>Loading...</p>
                                                         </div>
                                                     </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4 mt-3">
+                                                <div class="form-group form-input">
+                                                    <label for="damaged_cause" class="form-label require">What factors caused 
+                                                        the Fire Incident?</label><br>
+                                                    <input type="checkbox" id="physical" name="damaged_cause[]"
+                                                        value="1">
+                                                    <label for="physical">Physical</label>
+                                                    <input type="checkbox" id="system" name="damaged_cause[]"
+                                                        value="2">
+                                                    <label for="system">System</label><br>
+                                                    <input type="checkbox" id="human" name="damaged_cause[]"
+                                                        value="3">
+                                                    <label for="human">Human</label>
+                                                    
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mt-2">
@@ -854,7 +871,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('incident/initial-incident/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('incident/fire-incident/list') }}"></x-button-cancel>
                                         </div>
                                     </form>
                                 </div>
@@ -871,8 +888,8 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+ 
         $(document).ready(function() {
-
             $("#root_cause_analysis").change(function() {
                 if ($(this).val() == "1") {
                     $(".whywhy").show(); // Show the Why Why Analysis section
@@ -937,7 +954,6 @@
                 }
             });
 
-
         });
 
         $(document).ready(function() {
@@ -991,7 +1007,7 @@
 
             $('#responsible_person_id').select2({
                 ajax: {
-                    url: "{{ url('incident/initial-incident/employeename') }}",
+                    url: "{{ url('incident/fire-incident/employeename') }}",
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
@@ -1019,7 +1035,7 @@
             });
             $('#witness_id').select2({
                 ajax: {
-                    url: "{{ url('incident/initial-incident/employeename') }}",
+                    url: "{{ url('incident/fire-incident/employeename') }}",
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
@@ -1047,7 +1063,7 @@
             });
             $('#emp_code').select2({
                 ajax: {
-                    url: "{{ url('incident/initial-incident/getemployeename') }}",
+                    url: "{{ url('incident/fire-incident/getemployeename') }}",
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
@@ -1079,7 +1095,7 @@
 
                 if (emp_code) {
                     $.ajax({
-                        url: "{{ url('incident/initial-incident/fetchEmployeeDetails') }}/" +
+                        url: "{{ url('incident/fire-incident/fetchEmployeeDetails') }}/" +
                             emp_code,
                         type: "GET",
                         dataType: "json",
@@ -1126,7 +1142,10 @@
                 // Initialize form validation
                 $('#incidentinvestigation').validate({
                     rules: {
-                        anything_damaged: {
+                        'anything_damaged[]': {
+                            required: true,
+                        },
+                        'damaged_cause[]': {
                             required: true,
                         },
                         corrective_preventive_action: {
@@ -1140,8 +1159,11 @@
                         },
                     },
                     messages: {
-                        anything_damaged: {
+                        'anything_damaged[]': {
                             required: "Was anything damaged is required.",
+                        },
+                        'damaged_cause[]': {
+                            required: "What factors caused the Fire Incident is required.",
                         },
                         corrective_preventive_action: {
                             required: "Recommended Corrective & Preventive Action is required.",
@@ -1167,14 +1189,14 @@
                     submitHandler: function(form) {
                         // Form is valid, proceed with capturing the fishbone diagram
                         let fishboneContainer = $(".fishbone-container")[
-                            0]; // Get the fishbone diagram container
+                        0]; // Get the fishbone diagram container
 
                         // Capture the fishbone diagram as an image
                         html2canvas(fishboneContainer, {
                             scale: 2
                         }).then(function(canvas) {
                             let imageData = canvas.toDataURL(
-                                "image/png"); // Convert canvas to base64
+                            "image/png"); // Convert canvas to base64
 
                             // Set the image data to the hidden input field
                             $("#fishbone_image").val(imageData);

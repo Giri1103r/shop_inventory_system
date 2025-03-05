@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Initial Incident')
-@section('pageurl', admin_url('incident/initial-incident/list'))
+@section('title', 'Initial Fire Incident')
+@section('pageurl', admin_url('incident/fire-incident/list'))
 
 
 @section('content')
@@ -17,11 +17,12 @@
                         {{-- @if (CheckUserPermission('add')) --}}
                         @if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER))
                             <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('incident/initial-incident/add') }}">Add</x-button-add>
+                                href="{{ admin_url('incident/fire-incident/add') }}">Add</x-button-add>
                         @endif
                         {{-- @endif --}}
 
                     </div>
+
 
                     <div id="search" class="collapse">
                         <form action="" id="formsearch">
@@ -92,7 +93,6 @@
                         </form>
                         <hr>
                     </div>
-
 
                     <div class="card-body">
                         <div class="table-responsive">
@@ -174,7 +174,7 @@
                 },
 
                 ajax: {
-                    url: "{{ admin_url('incident/initial-incident/list') }}",
+                    url: "{{ admin_url('incident/fire-incident/list') }}",
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -182,10 +182,11 @@
                     },
                     data: function(d) {
                         d.sr_no = $('#sr_no').val();
-                        d.unit_id = $('#unit_id').val();
-                        d.from_date = $('#from_date').val();
-                        d.to_date = $('#to_date').val();
-                        d.status = $('#status').val();
+                        // d.services = $('#services').val();
+                        // d.hazard_type = $('#hazard_type').val();
+                        // d.from_date = $('#from_date').val();
+                        // d.to_date = $('#to_date').val();
+                        // d.status = $('#status').val();
 
                     },
                     error: function(xhr, error, code) {
@@ -258,7 +259,8 @@
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var sr_no = $('#sr_no').val();
-                                    var unit_id = $('#unit_id').val();
+                                    var services = $('#services').val();
+                                    var hazard_type = $('#hazard_type').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
                                     var status = $('#status').val();
@@ -266,10 +268,11 @@
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('incident/initial-incident/export/pdf') }}" +
+                                        "{{ admin_url('incident/fire-incident/export/pdf') }}" +
                                         '?search=' + searchValue +
                                         '&sr_no=' + sr_no +
-                                        '&unit_id=' + unit_id +
+                                        '&services=' + services +
+                                        '&hazard_type=' + hazard_type +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
                                         '&status=' + status
@@ -282,17 +285,19 @@
 
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var sr_no = $('#sr_no').val();
-                                    var unit_id = $('#unit_id').val();
+                                    var services = $('#services').val();
+                                    var hazard_type = $('#hazard_type').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
                                     var status = $('#status').val();
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('incident/initial-incident/export/excel') }}" +
+                                        "{{ admin_url('incident/fire-incident/export/excel') }}" +
                                         '?search=' + searchValue +
                                         '&sr_no=' + sr_no +
-                                        '&unit_id=' + unit_id +
+                                        '&services=' + services +
+                                        '&hazard_type=' + hazard_type +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
                                         '&status=' + status
@@ -356,7 +361,7 @@
 
                     if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('incident/initial-incident/status') }}",
+                            url: "{{ admin_url('incident/fire-incident/status') }}",
                             type: 'post',
 
                             data: {
@@ -424,7 +429,7 @@
 
                     if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('incident/initial-incident/delete') }}",
+                            url: "{{ admin_url('incident/fire-incident/delete') }}",
                             type: 'post',
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

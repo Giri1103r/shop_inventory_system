@@ -52,6 +52,7 @@ use App\Http\Controllers\Training\TrainingController;
 use App\Http\Controllers\IMS\Master\IncidentTypeController;
 use App\Http\Controllers\IMS\Master\HiraController;
 use App\Http\Controllers\IMS\Incident\InitialIncidentController;
+use App\Http\Controllers\IMS\Incident\InitialFireIncidentController;
 use App\Http\Controllers\IMS\Incident\AccidentReportController;
 use App\Http\Controllers\OhcManagement\MedicineFirstAidController;
 use App\Http\Controllers\OhcManagement\DiscardController;
@@ -60,6 +61,7 @@ use App\Http\Controllers\OhcManagement\Report\MedicineExpireController;
 use App\Http\Controllers\OhcManagement\Report\MonthlyInventoryController;
 use App\Http\Controllers\OhcManagement\Report\YearlyInventoryController;
 use App\Http\Controllers\OhcManagement\OhcDashboardController;
+
 Route::get('cache', function () {
     Artisan::call('optimize:clear');
     return 'Routes cache cleared';
@@ -934,7 +936,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('generalpdf/{id}', [MedicineReceivingController::class, 'generalpdf']);
                 Route::post('/checkExistmedicineId', [MedicineReceivingController::class, 'checkExistmedicineId']);
                 Route::post('/close', [MedicineReceivingController::class, 'stockclosesubmit']);
-
             });
             // Medicine Requistion
             Route::group(['prefix' => 'ohc/medicine-requisition'], function () {
@@ -957,7 +958,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('generalpdf/{id}', [MedicineRequisitionController::class, 'generalpdf']);
                 Route::get('stockdata', [MedicineRequisitionController::class, 'stockdata']);
                 Route::get('/sample-download', [MedicineRequisitionController::class, 'DownloadSample']);
-
             });
 
             Route::group(['prefix' => 'ohc/medicine-issuance'], function () {
@@ -1006,7 +1006,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/status', [PrescribetoPatientController::class, 'statusChange']);
                 Route::get('/quantity', [PrescribetoPatientController::class, 'quantity']);
                 Route::get('/employeename', [PrescribetoPatientController::class, 'employeename']);
-
             });
 
             Route::group(['prefix' => 'ohc/first-aid'], function () {
@@ -1024,8 +1023,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/quantity', [FirstAidController::class, 'quantity']);
                 Route::get('/employeename', [FirstAidController::class, 'employeename']);
                 Route::get('/emp-details/{emp_id}', [FirstAidController::class, 'employeedetails']);
-
-
             });
 
             Route::group(['prefix' => 'ohc/roadside-first-aid'], function () {
@@ -1043,8 +1040,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/quantity', [RoadsideFirstAidController::class, 'quantity']);
                 Route::post('/unique', [RoadsideFirstAidController::class, 'Uniquecheck']);
                 Route::get('/generalpdf/{id}', [RoadsideFirstAidController::class, 'incidentreport']);
-
-
             });
             Route::group(['prefix' => 'ohc/roadside-first-aid'], function () {
                 Route::get('/list', [RoadsideFirstAidController::class, 'index']);
@@ -1125,17 +1120,12 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/list', [MonthlyInventoryController::class, 'index']);
                 Route::get('/medicinereport', [MonthlyInventoryController::class, 'medicinereport']);
                 Route::get('/exportexcel', [MonthlyInventoryController::class, 'exportexcel']);
-
-
-
             });
             Route::group(['prefix' => 'ohc/yearly-inventory-report'], function () {
                 Route::get('/list', [YearlyInventoryController::class, 'index']);
                 Route::post('/list', [YearlyInventoryController::class, 'index']);
                 Route::get('/medicinereport', [YearlyInventoryController::class, 'medicinereport']);
                 Route::get('/exportexcel', [YearlyInventoryController::class, 'exportexcel']);
-
-
             });
             Route::group(['prefix' => 'incident/type-master'], function () {
                 Route::get('/list', [IncidentTypeController::class, 'index']);
@@ -1248,9 +1238,46 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/ehs_head_verify/submit', [AccidentReportController::class, 'ehsHeadVerifySubmit']);
                 Route::post('/actiontaken/submit', [AccidentReportController::class, 'actiontakenSubmit']);
                 Route::post('/ehApproval/submit', [AccidentReportController::class, 'ehsApprovalSubmit']);
+                Route::get('/accidentpdf/{id}', [AccidentReportController::class, 'accidentExportPdf']);
+
             });
 
-
+            Route::group(['prefix' => 'incident/fire-incident'], function () {
+                Route::get('/list', [InitialFireIncidentController::class, 'index']);
+                Route::post('/list', [InitialFireIncidentController::class, 'index']);
+                Route::get('/add', [InitialFireIncidentController::class, 'add']);
+                Route::post('/add/submit', [InitialFireIncidentController::class, 'store']);
+                Route::get('/edit/{id}', [InitialFireIncidentController::class, 'edit']);
+                Route::post('/edit/submit', [InitialFireIncidentController::class, 'update']);
+                Route::get('/view/{id}', [InitialFireIncidentController::class, 'view']);
+                Route::post('/delete', [InitialFireIncidentController::class, 'delete']);
+                Route::get('/export/excel', [InitialFireIncidentController::class, 'exportExcel']);
+                Route::get('/export/pdf', [InitialFireIncidentController::class, 'exportPdf']);
+                Route::get('/generalpdf/{id}', [InitialFireIncidentController::class, 'generalpdf']);
+                Route::get('/sample_download', [InitialFireIncidentController::class, 'DownloadSample']);
+                Route::get('/import', [InitialFireIncidentController::class, 'import']);
+                Route::post('/import/Submit', [InitialFireIncidentController::class, 'importSubmit']);
+                Route::post('/status', [InitialFireIncidentController::class, 'statusChange']);
+                Route::post('/unique', [InitialFireIncidentController::class, 'Uniquecheck']);
+                Route::get('/employeename', [InitialFireIncidentController::class, 'employeename']);
+                Route::get('/fetchEmployeeDetails/{emp_id}', [InitialFireIncidentController::class, 'fetchEmployeeDetails']);
+                Route::post('/deleteEvidence/{id}', [InitialFireIncidentController::class, 'deleteEvidence']);
+                Route::get('/review/{id}', [InitialFireIncidentController::class, 'review']);
+                Route::post('/ehs_head_review/submit', [InitialFireIncidentController::class, 'ehsHeadReviewSubmit']);
+                Route::get('/teamMembers', [InitialFireIncidentController::class, 'teamMembers']);
+                Route::get('/investigation/{incident_id}', [InitialFireIncidentController::class, 'investigation']);
+                Route::post('/savehira', [InitialFireIncidentController::class, 'saveHira']);
+                Route::post('/investigation/submit', [InitialFireIncidentController::class, 'investigationSubmit']);
+                Route::get('/gethiradetails/{hira_id}', [InitialFireIncidentController::class, 'gethiradetails']);
+                Route::get('/existingHira/{incident_id}', [InitialFireIncidentController::class, 'existingHira']);
+                Route::get('/existingMOC/{incident_id}', [InitialFireIncidentController::class, 'existingMOC']);
+                Route::get('/approvereject/{incident_id}', [InitialFireIncidentController::class, 'approvereject']);
+                Route::post('/uauc/submit', [InitialFireIncidentController::class, 'uaucSubmit']);
+                Route::post('/riskAnalysis/submit', [InitialFireIncidentController::class, 'riskAnalysisSubmit']);
+                Route::post('/ehs_head_verify/submit', [InitialFireIncidentController::class, 'ehsHeadVerifySubmit']);
+                Route::post('/actiontaken/submit', [InitialFireIncidentController::class, 'actiontakenSubmit']);
+                Route::post('/ehApproval/submit', [InitialFireIncidentController::class, 'ehsApprovalSubmit']);
+            });
         });
     });
 });

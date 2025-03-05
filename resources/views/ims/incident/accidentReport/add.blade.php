@@ -159,10 +159,10 @@
         $(document).ready(function() {
 
             flatpickr("#date_and_time", {
-                enableTime: true, 
-                dateFormat: "d-m-Y H:i", 
-                time_24hr: true, 
-                maxDate: new Date() 
+                enableTime: true,
+                dateFormat: "d-m-Y H:i",
+                time_24hr: true,
+                maxDate: new Date()
             });
 
 
@@ -171,39 +171,51 @@
                 location.reload();
             });
 
-
             $('#emp_code').change(function() {
                 var emp_code = $(this).val();
 
                 if (emp_code) {
                     $.ajax({
-                        url: "{{ url('accidentReport/fetchEmployeeDetails') }}/" +
-                            emp_code,
+                        url: "{{ url('accidentReport/fetchEmployeeDetails') }}/" + emp_code,
                         type: "GET",
                         dataType: "json",
                         success: function(response) {
                             if (response.employee) {
+                                // Set Designation
                                 $('#designation').val(response.employee.designation);
 
-                                if (response.employee.unit_name) {
-                                    $('#unit_id').val(response.employee.unit_name);
-                                    $('#unit_id').prop('disabled', true); // Disable if fetched
+
+                                  // Set Unit
+                        if (response.employee.unit_id) {
+                            $('#unit_id').val(response.employee.unit_id).trigger('change').prop('disabled', true);
+                        } else {
+                            $('#unit_id').val('').prop('disabled', false);
+                        }
+
+                        // Set Department
+                        if (response.employee.department_id) {
+                            $('#department_id').html('<option value="' + response.employee.department_id + '">' + response.employee.department_name + '</option>').prop('disabled', true);
+                        } else {
+                            $('#department_id').html('<option value="">Select Department</option>').prop('disabled', false);
+                        }
+                                // Set Unit
+                                if (response.employee.unit_id) {
+                                    $('#unit_id').val(response.employee.unit_id).prop(
+                                        'disabled', true);
                                 } else {
-                                    $('#unit_id').prop('disabled', false); // Enable if empty
+                                    $('#unit_id').val('').prop('disabled', false);
                                 }
 
-                                if (response.employee.department_name) {
+                                // Set Department
+                                if (response.employee.department_id) {
                                     $('#department_id').html('<option value="' + response
-                                        .employee
-                                        .department_name + '">' + response.employee
-                                        .department_name +
-                                        '</option>');
-                                    $('#department_id').prop('disabled', true);
+                                        .employee.department_id + '">' + response.employee
+                                        .department_name + '</option>').prop('disabled',
+                                        true);
                                 } else {
-                                    $('#department_id').prop('disabled', false);
                                     $('#department_id').html(
-                                        '<option value="">Select Department</option>'
-                                    );
+                                        '<option value="">Select Department</option>').prop(
+                                        'disabled', false);
                                 }
                             } else {
                                 Swal.fire({
@@ -222,11 +234,15 @@
                         }
                     });
                 } else {
-                    $('#designation, #unit_id, #department_id').val('');
-                    $('#unit_id, #department_id').prop('disabled', false);
+                    // Reset fields if no Employee Code is selected
+                    $('#designation').val('');
+                    $('#unit_id').val('').prop('disabled', false);
+                    $('#department_id').html('<option value="">Select Department</option>').prop('disabled',
+                        false);
                 }
             });
 
+            // Handle Unit change
             $('#unit_id').change(function() {
                 var unitId = $(this).val();
                 if (unitId) {
@@ -235,24 +251,107 @@
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
-                            $('#department_id').empty().append(
-                                '<option value="">Select Department</option>');
+                            var departmentOptions =
+                                '<option value="">Select Department</option>';
                             $.each(data, function(key, value) {
-                                $('#department_id').append('<option value="' + value
-                                    .id + '">' +
-                                    value.name + '</option>');
+                                departmentOptions += '<option value="' + value.id +
+                                    '">' + value.name + '</option>';
                             });
-                            $('#department_id').prop('disabled', false);
+                            $('#department_id').html(departmentOptions).prop('disabled', false);
                         },
                         error: function(xhr) {
                             alert('Error fetching department. Please try again.');
                         }
                     });
                 } else {
-                    $('#department_id').empty().append('<option value="">Select Department</option>');
-                    $('#department_id').prop('disabled', true);
+                    $('#department_id').html('<option value="">Select Department</option>').prop('disabled',
+                        true);
                 }
             });
+            // $('#emp_code').change(function() {
+            //     var emp_code = $(this).val();
+
+            //     if (emp_code) {
+            //         $.ajax({
+            //             url: "{{ url('accidentReport/fetchEmployeeDetails') }}/" + emp_code,
+            //             type: "GET",
+            //             dataType: "json",
+            //             success: function(response) {
+            //                 if (response.employee) {
+            //                     $('#designation').val(response.employee.designation);
+
+            //                     if (response.employee.unit_id) {
+
+            //                         $('#unit_id').html('<option value="' + response
+            //                             .employee.unit_id + '">' + response.employee
+            //                             .unit_name + '</option>');
+            //                         $('#unit_id').prop('disabled', true);
+            //                     } else {
+            //                         $('#unit_id').prop('disabled', false);
+            //                         $('#unit_id').html(
+            //                             '<option value="">Select Unit</option>@foreach ($unitList as $unit)<option value="{{ encryptId($unit->id) }}">{{ $unit->unit_name }}</option>@endforeach');
+            //                     }
+
+            //                     if (response.employee.department_id) {
+            //                         $('#department_id').html('<option value="' + response
+            //                             .employee.department_id + '">' + response.employee
+            //                             .department_name + '</option>');
+            //                         $('#department_id').prop('disabled', true);
+            //                     } else {
+            //                         $('#department_id').prop('disabled', false);
+            //                         $('#department_id').html(
+            //                             '<option value="">Select Department</option>');
+            //                     }
+            //                 } else {
+            //                     Swal.fire({
+            //                         icon: "error",
+            //                         title: "Error",
+            //                         text: "Employee data could not be fetched."
+            //                     });
+            //                 }
+            //             },
+            //             error: function() {
+            //                 Swal.fire({
+            //                     icon: "error",
+            //                     title: "Error",
+            //                     text: "An error occurred while fetching employee details."
+            //                 });
+            //             }
+            //         });
+            //     } else {
+            //         $('#designation').val('');
+            //         $('#unit_id').html('<option value="">Select Unit</option>').prop('disabled',
+            //             false);
+            //         $('#department_id').html('<option value="">Select Department</option>').prop('disabled',
+            //             false);
+            //     }
+            // });
+
+            // $('#unit_id').change(function() {
+            //     var unitId = $(this).val();
+            //     if (unitId) {
+            //         $.ajax({
+            //             url: "{{ url('department/ajax-list') }}/" + unitId + "/0",
+            //             type: 'GET',
+            //             dataType: 'json',
+            //             success: function(data) {
+            //                 $('#department_id').empty().append(
+            //                     '<option value="">Select Department</option>');
+            //                 $.each(data, function(key, value) {
+            //                     $('#department_id').append('<option value="' + value
+            //                         .id + '">' + value.name + '</option>');
+            //                 });
+            //                 $('#department_id').prop('disabled', false);
+            //             },
+            //             error: function(xhr) {
+            //                 alert('Error fetching department. Please try again.');
+            //             }
+            //         });
+            //     } else {
+            //         $('#department_id').empty().append('<option value="">Select Department</option>').prop(
+            //             'disabled', true);
+            //     }
+            // });
             $(function() {
                 $('#accidentReportAdd').validate({
                     rules: {
@@ -264,12 +363,17 @@
                         },
                         shift: {
                             required: true,
+                            pattern: /^[a-zA-Z\s\-\_\'\"()\n\r]+$/,
+                        },
+                        exact_location: {
+                            pattern: /^[a-zA-Z0-9\s\-\_\'\"()\n\r]+$/,
                         },
                         location_id: {
                             required: true,
                         },
                         designation: {
                             required: true,
+                            pattern: /^[a-zA-Z\s\-\_\'\"()\n\r]+$/,
                         },
                         department_id: {
                             required: true,
@@ -291,14 +395,19 @@
                         unit_id: {
                             required: "Unit is required.",
                         },
+                        exact_location: {
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                        },
                         shift: {
                             required: "Shift is required.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
                         },
                         location_id: {
                             required: "Accident Location is required.",
                         },
                         designation: {
                             required: "Designation is required.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
                         },
                         department_id: {
                             required: "Department is required.",

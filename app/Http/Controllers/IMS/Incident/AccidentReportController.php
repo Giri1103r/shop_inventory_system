@@ -113,13 +113,26 @@ class AccidentReportController extends Controller
                             // if (CheckUserPermission('view')) {
                             $btn = '<a href="' . admin_url('accidentReport/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
-                            // if (CheckUserPermission('edit')) {
-                            $btn .= '<a href="' . admin_url('accidentReport/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            // }
+                            if ($row->accident_status == 1 && $row->created_by == Auth::id()) {
+                                $btn .= '<a href="' . admin_url('accidentReport/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            }
 
-                            if ($row->accident_status == 1 || $row->accident_status == 5 || $row->accident_status == 8) {
+
+                            if ((CheckUserRole(ROLE_SUPERADMIN) && $row->accident_status != 9 && $row->accident_status != 2) || CheckUserRole(ROLE_EHS_HEAD) || $row->accident_status == 1 || $row->accident_status == 5 || $row->accident_status == 8 || $row->accident_status == 6 || $row->accident_status == 7) {
                                 $btn .= '<a href="' . admin_url('accidentReport/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
                             }
+
+                            if (!empty($row->investigation_assigned) && $row->accident_status == 2) {
+                                $assignedUsers = explode(',', $row->investigation_assigned);
+                                $loggedInUserId = Auth::id();
+                                $assignedLoginIds = Employee::whereIn('id', $assignedUsers)->pluck('login_id')->toArray();
+                                if (in_array($loggedInUserId, $assignedLoginIds)) {
+                                    $btn .= '<a href="' . admin_url('incident/initial-incident/investigation/' . encryptId($row->id)) . '" class=" " title="Investigation">
+                                                <i class="fa fa-search" style="color: #000000;"></i>
+                                             </a>';
+                                }
+                            }
+
                             if ($row->accident_status == 2) {
                                 $btn .= '<a href="' . admin_url('accidentReport/investigation/' . encryptId($row->id)) . '" class=" " title="Investigation"><i class="fa fa-search" style="color: #000000;"></i> ';
                             }
@@ -130,7 +143,9 @@ class AccidentReportController extends Controller
                             if ($row->accident_status == 4) {
                                 $btn .= '<a href="' . admin_url('accidentReport/uauc_riskanalysis/' . encryptId($row->id)) . '" class=" " title="Risk Analysis"><i class="fa fa-exclamation-triangle" style="color: #e83333;"></i>';
                             }
-
+                            $btn .= '<a href="' . admin_url('accidentReport/accidentpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                             </a>';
 
                             return $btn;
                         })
@@ -182,8 +197,10 @@ class AccidentReportController extends Controller
         return response()->json([
             'employee' => [
                 'designation' => $employee->designation_name ?? '',
+                'unit_id' => $employee->unit ?? '',
                 'unit_name' => $employee->unit_name ?? '',
                 'department_name' => $employee->department_name ?? '',
+                'department_id' => $employee->department ?? '',
             ],
         ]);
     }
@@ -236,69 +253,9 @@ class AccidentReportController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-
             try {
                 $accident_report =  $this->accident_report->store();
-                if ($accident_report) {
-                    $accidentReport = $this->accident_report->selectOne($accident_report->id);
-                    $ehs_head_role = ROLE_EHS_HEAD;
-
-                    $ehs_details = User::select('id', 'role', 'name', 'employee_id', 'email')
-                        ->whereRaw('FIND_IN_SET(' . $ehs_head_role . ', role)')
-                        ->get();
-
-                    if (!empty($accidentReport)) {
-                        $mailsubject = 'New Initial Accident Report';
-
-                        /**
-                         * Send Email Notifications
-                         */
-                        if ($ehs_details->isNotEmpty()) {
-                            foreach ($ehs_details as $ehs_detail) {
-                                if (!empty($ehs_detail->email)) {
-                                    $accidentReportArray = [
-                                        'name' => $ehs_detail->name,
-                                        'accident_report_no' => $accidentReport->accident_report_no,
-                                        'date_and_time' => Displaydatetimeformat($accidentReport->date_and_time),
-                                        'emp_code' => $accidentReport->emp_code,
-                                        'unit' => $accidentReport->unit_name,
-                                        'department' => $accidentReport->department_name,
-                                        'location' => $accidentReport->location_name,
-                                        'mail_subject' => $mailsubject,
-                                    ];
-
-                                    // Queue email
-                                    Mail::to($ehs_detail->email)->queue(new TrainingApprovalEmail($accidentReportArray));
-                                }
-                            }
-                        }
-
-                        /**
-                         * Send Web Notifications
-                         */
-                        $ehsids = $ehs_details->pluck('id')->toArray();
-                        if (!empty($ehsids)) {
-                            $img = admin_url('public/assets/icons/training.png');
-                            $notificationData = [
-                                'notification_type' => 2,
-                                'module_type' => 2,
-                                'notification_message' => $mailsubject,
-                                'mobile_notification' => json_encode([
-                                    'title' => $mailsubject,
-                                    'message' => 'A new training schedule has been created by ' . getUsername($accidentReport->created_by),
-                                    'icon' => $img,
-                                    'module' => 2,
-                                ]),
-                                'web_link' => 'taccidentReport/view/' . encryptId($accidentReport->id),
-                                'assigned_user' => array_to_string($ehsids),
-                                'created_by' => Auth::id(),
-                            ];
-
-                            // Save notification
-                            notificationSave($notificationData);
-                        }
-                    }
-                }
+               
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
 
@@ -315,21 +272,37 @@ class AccidentReportController extends Controller
             return redirect(admin_url('accidentReport/list'));
         }
     }
-
     public function View(Request $request)
     {
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $accident_report = $this->accident_report->selectOne($id);
+                $getEHSVerify = $this->accident_report->getEHSVerifyAccident($id);
+                $getEHSReview = $this->accident_report->getEHSReviewaccident($id);
+                $getInvestigation = $this->accident_report->getInvestigation($id);
+                $accident_investigation_injury = $this->accident_investigation_injury->getBodypartsInjuryPerson($getInvestigation->id);
+                $getwhywhy = $this->accident_report->getwhywhy($id);
+                $getfishbone = $this->accident_report->getfishbone($id);
+                $fishboneData = json_decode($getfishbone->first()->fishbone, true);
+                $getrisklevel = $this->accident_report->getrisklevel($id);
+                $getEHSApprovalAccident = $this->accident_report->getEHSApprovalAccident($id);
 
                 $data = array(
                     'accident_report' => $accident_report,
+                    'getEHSVerify' => $getEHSVerify,
+                    'getInvestigation' => $getInvestigation,
+                    'accident_investigation_injury' => $accident_investigation_injury,
+                    'getEHSReview' => $getEHSReview,
+                    'getwhywhy' => $getwhywhy,
+                    'fishboneData' => $fishboneData,
+                    'getrisklevel' => $getrisklevel,
+                    'getEHSApprovalAccident' => $getEHSApprovalAccident,
                 );
             }
             return view('ims.incident.accidentReport.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -517,7 +490,6 @@ class AccidentReportController extends Controller
             })
         );
     }
-
     public function review(Request $request)
     {
         try {
@@ -525,10 +497,26 @@ class AccidentReportController extends Controller
             if (Auth::check()) {
                 $accident_report = $this->accident_report->selectOne($id);
                 $employeeList  = $this->employee->select('id', 'emp_id', 'emp_name')->where('status', '1')->get();
+                $getEHSVerify = $this->accident_report->getEHSVerifyAccident($id);
+                $getEHSReview = $this->accident_report->getEHSReviewaccident($id);
+                $getInvestigation = $this->accident_report->getInvestigation($id);
+                $accident_investigation_injury = $this->accident_investigation_injury->getBodypartsInjuryPerson($getInvestigation->id);
+                $getwhywhy = $this->accident_report->getwhywhy($id);
+                $getfishbone = $this->accident_report->getfishbone($id);
+                $fishboneData = json_decode($getfishbone->first()->fishbone, true);
+                $getrisklevel = $this->accident_report->getrisklevel($id);
+
 
                 $data = array(
                     'employeeList' => $employeeList,
+                    'accident_investigation_injury' => $accident_investigation_injury,
                     'accident_report' => $accident_report,
+                    'getEHSVerify' => $getEHSVerify,
+                    'getInvestigation' => $getInvestigation,
+                    'getEHSReview' => $getEHSReview,
+                    'getwhywhy' => $getwhywhy,
+                    'fishboneData' => $fishboneData,
+                    'getrisklevel' => $getrisklevel,
                 );
             }
             return view('ims.incident.accidentReport.review', $data);
@@ -536,6 +524,8 @@ class AccidentReportController extends Controller
             dd($ex);
         }
     }
+
+
     public function ehsHeadReviewSubmit(Request $request)
     {
         try {
@@ -552,8 +542,10 @@ class AccidentReportController extends Controller
             $approve_type = EHS_REVIEW;
             $ehsReview = $this->ehs_review->store($approve_type);
             $accident_status = STATUS_INVESTIGATION_PENDING;
-            $accidentId = $ehsReview->accident_report_id;
-            $accident = $this->accident_report->updateStatus($accidentId, $accident_status);
+            $accident_id = $ehsReview->accident_report_id;
+            $accident_report = $this->accident_report->find($accident_id);
+            $investigationassigned = $this->accident_report->investigationassigned($accident_id);
+            $accident = $this->accident_report->updateStatus($accident_id, $accident_status);
 
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
@@ -563,6 +555,7 @@ class AccidentReportController extends Controller
             return redirect(admin_url('accidentReport/list'));
         }
     }
+
 
     public function investigation(Request $request, $accident_id)
     {
@@ -720,7 +713,41 @@ class AccidentReportController extends Controller
             $accident_id = decryptId($request->accident_id);
             $accident_status = STATUS_EHSVERIFY_PENDING;
             $riskanalysis = $this->riskanalysis->store($accident_id, $accident_status);
-              $this->accident_report->updateStatus($accident_id, $accident_status);
+            $this->accident_report->updateStatus($accident_id, $accident_status);
+            Session::flash('success', 'Your data has been updated successfully!');
+            return redirect(admin_url('accidentReport/list'));
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('accidentReport/list'));
+        }
+    }
+    public function ehsHeadVerifySubmit(Request $request)
+    {
+        try {
+
+            $approve_type = EHS_VERIFY;
+            $ehsReview = $this->ehs_review->store($approve_type);
+            $accident_status = STATUS_ACTION_PENDING;
+            $accident_id = $ehsReview->accident_report_id;
+            $accident = $this->accident_report->updateStatus($accident_id, $accident_status);
+
+            Session::flash('success', 'Your data has been updated successfully!');
+            return redirect(admin_url('accidentReport/list'));
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('accidentReport/list'));
+        }
+    }
+    public function actiontakenSubmit(Request $request)
+    {
+
+        try {
+            $accident_id = decryptId($request->accident_id);
+            $accident_status = STATUS_EHSAPPROVAL_PENDING;
+            $this->accident_report->actiontakensubmit($accident_id);
+            $this->accident_report->updateStatus($accident_id, $accident_status);
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
@@ -730,6 +757,27 @@ class AccidentReportController extends Controller
         }
     }
 
+    public function ehsApprovalSubmit(Request $request)
+    {
+        try {
+            $approve_type = EHS_APPROVAL;
+            $ehsApproval = $this->ehs_review->store($approve_type);
+            if ($request->has('approve')) {
+                $accident_status = STATUS_ACCIDENT_CLOSED;
+            } else {
+                $accident_status = STATUS_EHSAPPROVAL_REJECTED;
+            }
+            $accident_id = $ehsApproval->accident_report_id;
+            $accident = $this->accident_report->updateStatus($accident_id, $accident_status);
+
+            Session::flash('success', 'Your data has been updated successfully!');
+            return redirect(admin_url('accidentReport/list'));
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('accidentReport/list'));
+        }
+    }
     public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {
@@ -747,7 +795,55 @@ class AccidentReportController extends Controller
             return Response::json($isUnique);
         }
     }
+    public function accidentExportPdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $accident_report = $this->accident_report->selectOne($id);
+                $getEHSVerify = $this->accident_report->getEHSVerifyAccident($id);
+                $getEHSReview = $this->accident_report->getEHSReviewaccident($id);
+                $getInvestigation = $this->accident_report->getInvestigation($id);
+                $accident_investigation_injury = $this->accident_investigation_injury->getBodypartsInjuryPerson($getInvestigation->id);
+                $getwhywhy = $this->accident_report->getwhywhy($id);
+                $getfishbone = $this->accident_report->getfishbone($id);
+                $fishboneData = json_decode($getfishbone->first()->fishbone, true);
+                $getrisklevel = $this->accident_report->getrisklevel($id);
+                $getEHSApprovalAccident = $this->accident_report->getEHSApprovalAccident($id);
+             
+            }
+            $data = array(
+                'accident_report' => $accident_report,
+                'getEHSVerify' => $getEHSVerify,
+                'getInvestigation' => $getInvestigation,
+                'accident_investigation_injury' => $accident_investigation_injury,
+                'getEHSReview' => $getEHSReview,
+                'getwhywhy' => $getwhywhy,
+                'fishboneData' => $fishboneData,
+                'getrisklevel' => $getrisklevel,
+                'getEHSApprovalAccident' => $getEHSApprovalAccident,
+            );
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
 
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+            $html = view('ims.incident.accidentReport.accidentPdf', $data)->render();
+            $mpdf->WriteHTML($html);
+            $filename = "Accident.pdf";
+            return $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+
+            dd($ex);
+            report($ex);
+        }
+    }
     public function StatusChange(Request $request)
     {
 

@@ -38,6 +38,7 @@ class AccidentReport extends Model
         'action_submission_by',
         'action_submission_date',
         'action_submission_description',
+        'investigation_assigned',
         'status',
         'trash',
         'created_by',
@@ -213,6 +214,21 @@ class AccidentReport extends Model
         }
         return $data;
     }
+    public function investigationassigned($accident_Id)
+    {
+        $request = request();
+        $decryptedTeamMemberIds = is_array($request->team_member)
+            ? array_map('decryptId', $request->team_member)
+            : [];
+        $commaSeparatedTeamMembers = !empty($decryptedTeamMemberIds) ? implode(',', $decryptedTeamMemberIds) : null;
+        $update_array = array(
+            'investigation_assigned' => $commaSeparatedTeamMembers,
+            'updated_by' => Auth::id(),
+            'updated_at' => now(),
+        );
+        return $this->where('id', $accident_Id)->update($update_array);
+    }
+
     public function getEHSVerifyAccident($id)
     {
         $data = $this->select('ims_ehs_review.*', 'ims_ehs_review.team_member')
@@ -270,7 +286,7 @@ class AccidentReport extends Model
 
         return $data;
     }
-
+  
     public function getInvestigation($id)
     {
         $data = $this->select('ims_accident_investigation.*', 'masters_employee.emp_name as responsible_person')
