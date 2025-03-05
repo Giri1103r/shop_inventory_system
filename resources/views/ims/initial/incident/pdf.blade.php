@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Certified First Aider PDF')
+@section('title', 'Initial Incident PDF')
 @section('content')
 
     <div style="width:100%;">
@@ -28,18 +28,16 @@
                             {{ $value->sr_no }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->services}}
+                            {{ getUnitname($value->unit_id)}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            @if($value->hazard_type == 1)
-                                {{'P - Physical Hazard'}} 
-                            @elseif($value->hazard_type == 2)
-                               {{'C - Chemical Hazard'}}
-                            @elseif($value->hazard_type == 3)
-                                {{'B - Behavioral Hazard'}}
-                            @elseif($value->hazard_type == 4)
-                                {{'O - Other Hazard'}}
-                            @endif
+                            {{ $value->shift }}
+                        </td>
+                        {{-- <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->to_status }}
+                        </td> --}}
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->status_name }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php

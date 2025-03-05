@@ -15,9 +15,9 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
                         {{-- @if (CheckUserPermission('add')) --}}
-                        @if((CheckUserRole(ROLE_SUPERADMIN))|| (CheckUserRole(ROLE_EHS_OFFICER)) )
-                        <x-button-add dataId="" class="add btn btn-primary ms-1"
-                        href="{{ admin_url('incident/initial-incident/add') }}">Add</x-button-add>
+                        @if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER))
+                            <x-button-add dataId="" class="add btn btn-primary ms-1"
+                                href="{{ admin_url('incident/initial-incident/add') }}">Add</x-button-add>
                         @endif
                         {{-- @endif --}}
 
@@ -30,28 +30,23 @@
                                     <div class="row">
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label ">Incident Type ID</label>
+                                                <label class="form-label ">Sr.No</label>
                                                 <input type="text" name="sr_no" id="sr_no" class=" form-control ">
                                             </div>
                                         </div>
-                                        {{-- <div class="col-md-3 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">Source, Situation,
-                                                    Act,Activity,Product,Services</label>
-                                                <input type="text" name="services" id="services" class=" form-control ">
-                                            </div>
-                                        </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label require">Type of Hazard</label>
-                                            <select name="hazard_type" id="hazard_type" style="width: 100%"
-                                                class="form-control single-select">
-                                                <option value="">Select Type of Hazard</option>
-                                                <option value="1">P - Physical Hazard</option>
-                                                <option value="2">C - Chemical Hazard</option>
-                                                <option value="3">B - Behavioral Hazard</option>
-                                                <option value="4">O - Other Hazard</option>
+                                            <label for="inspectiontype" class="form-label ">Unit</label>
+                                            <select name="unit_id" id="unit_id" class=" form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select Unit</option>
+                                                @foreach ($unitList as $unit)
+                                                    <option value="{{ encryptId($unit->id) }}">
+                                                        {{ $unit->unit_name }}</option>
+                                                @endforeach
+
                                             </select>
                                         </div>
+
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
                                             <div class="input-group date form-input custom-height">
@@ -74,14 +69,17 @@
                                             </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
-                                                class="form-control single-select">
+                                            <label for="inspectiontype" class="form-label ">Status</label>
+                                            <select name="status" id="status" class=" form-control single-select"
+                                                style="width: 100%">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
+                                                @foreach ($status as $status)
+                                                    <option value="{{ encryptId($status->id) }}">
+                                                        {{ $status->status_name }}</option>
+                                                @endforeach
+
                                             </select>
-                                        </div> --}}
+                                        </div>
 
                                         <div class="col-md-3 mb-3 d-flex align-items-end gap-2">
                                             <x-button-search class="me-2"></x-button-search>
@@ -184,11 +182,10 @@
                     },
                     data: function(d) {
                         d.sr_no = $('#sr_no').val();
-                        // d.services = $('#services').val();
-                        // d.hazard_type = $('#hazard_type').val();
-                        // d.from_date = $('#from_date').val();
-                        // d.to_date = $('#to_date').val();
-                        // d.status = $('#status').val();
+                        d.unit_id = $('#unit_id').val();
+                        d.from_date = $('#from_date').val();
+                        d.to_date = $('#to_date').val();
+                        d.status = $('#status').val();
 
                     },
                     error: function(xhr, error, code) {
@@ -261,8 +258,7 @@
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var sr_no = $('#sr_no').val();
-                                    var services = $('#services').val();
-                                    var hazard_type = $('#hazard_type').val();
+                                    var unit_id = $('#unit_id').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
                                     var status = $('#status').val();
@@ -273,8 +269,7 @@
                                         "{{ admin_url('incident/initial-incident/export/pdf') }}" +
                                         '?search=' + searchValue +
                                         '&sr_no=' + sr_no +
-                                        '&services=' + services +
-                                        '&hazard_type=' + hazard_type +
+                                        '&unit_id=' + unit_id +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
                                         '&status=' + status
@@ -287,8 +282,7 @@
 
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var sr_no = $('#sr_no').val();
-                                    var services = $('#services').val();
-                                    var hazard_type = $('#hazard_type').val();
+                                    var unit_id = $('#unit_id').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
                                     var status = $('#status').val();
@@ -298,8 +292,7 @@
                                         "{{ admin_url('incident/initial-incident/export/excel') }}" +
                                         '?search=' + searchValue +
                                         '&sr_no=' + sr_no +
-                                        '&services=' + services +
-                                        '&hazard_type=' + hazard_type +
+                                        '&unit_id=' + unit_id +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
                                         '&status=' + status

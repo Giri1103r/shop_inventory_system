@@ -250,7 +250,7 @@ class MedicineReceivingController extends Controller
                         'id' => $data->id,
                         'module' => 1,
                     )),
-                    'web_link' =>  admin_url('ohc/medicine-receiving-form/approval/view/' . encryptId($data->id)),
+                    'web_link' =>  admin_url('ohc/medicine-receiving-form/medicineapproval/view/' . encryptId($data->id)),
                     'assigned_user' => array_to_string($userids),
                     'created_by' => Auth::id(),
                 );

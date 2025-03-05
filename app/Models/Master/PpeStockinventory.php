@@ -112,15 +112,17 @@ class PpeStockinventory extends Model
 
     public function store($data)
     {
-        $groupedData = collect($data)->groupBy('ITEM_CODE');
 
+        $itemcodes = PpeTypeMaster::where('status',1)->get();
+        $itemCodeMapping = collect($itemcodes)->pluck('ppe_name', 'item_code')->toArray();
+        $groupedData = collect($data)->groupBy('ITEM_CODE');
         foreach ($groupedData as $itemCode => $items) {
             foreach ($items as $item) {
                 $insert_array = [
                     'org' => $item['ORG'] ?? null,
                     'inventory_item_id' => $item['INVENTORY_ITEM_ID'] ?? null,
                     'item_code' => $item['ITEM_CODE'] ?? null,
-                    'ppe_name' => $item['PPE_NAME'] ??  null,
+                    'ppe_name' => $itemCodeMapping[$itemCode] ?? null,
                     'sub' => $item['SUB'] ?? null,
                     'uom' => $item['UOM'] ?? null,
                     'quantity' => $item['QTY'] ?? null,
@@ -130,13 +132,13 @@ class PpeStockinventory extends Model
                     'updated_at' => now(),
                 ];
 
-
                 $this->updateOrInsert(['item_code' => $itemCode], $insert_array);
             }
         }
 
-        return true; 
+        return true;
     }
+
 
 
     public function updates($id)

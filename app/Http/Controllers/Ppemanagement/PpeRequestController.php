@@ -329,6 +329,7 @@ class PpeRequestController extends Controller
             }
 
             try {
+                // dd($request->all());
                 $pperequest = $this->pperequest->store();
                 $id = $pperequest->id;
                 $statuslog = $this->ppestatus->storestatus($pperequest, $id);
@@ -724,9 +725,6 @@ class PpeRequestController extends Controller
                 'department' => $empDetails->department,
                 'approved_by' => $empDetails->approved_by,
             ];
-
-
-
 
             $requestor = $this->user->getrequestEmail($empId);
             $recipients = array_filter([$requestor, $hod]);

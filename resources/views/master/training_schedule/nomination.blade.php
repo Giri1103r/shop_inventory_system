@@ -496,11 +496,11 @@
             $("#dynamic-add-more").on("click", function() {
                 var rowCount = $("#lesson_learned_block .lesson_learned_row").length;
 
-                if (rowCount >= 10) {
+                if (rowCount >= 50) {
                     Swal.fire({
                         icon: "error",
                         title: "Sorry!",
-                        text: "Maximum 10 records only.",
+                        text: "Maximum 50 records only.",
                     });
                     return;
                 }
@@ -533,7 +533,7 @@
                         $(this).prop("checked", false);
                     }
                     if ($(this).is("input[type='hidden'][name*='[id]']")) {
-                        $(this).val(""); 
+                        $(this).val("");
                     }
                 });
 
@@ -687,6 +687,13 @@
             $(document).on('click', '.removerow', function() {
                 var row = $(this).closest(".lesson_learned_row");
                 var rowId = row.find("input[name*='[id]']").val();
+                var totalRows = $(".lesson_learned_row").length; // Count total rows
+
+                if (totalRows <= 1) {
+                    Swal.fire('Warning!', 'At least one row is required.', 'warning');
+                    return; // Prevent deletion
+                }
+
                 if (rowId) {
                     Swal.fire({
                         title: 'Are you sure?',
@@ -727,9 +734,10 @@
                 }
             });
 
+
             function updateAddMoreButton() {
                 var rowCount = $(".lesson_learned_row").length;
-                $('#dynamic-add-more').attr("disabled", rowCount >= 10);
+                $('#dynamic-add-more').attr("disabled", rowCount >= 50);
             }
 
             $(document).on('click', '.removerowdata', function() {
@@ -763,7 +771,7 @@
                         });
                     });
 
-                    $('#dynamic-add-more').attr("disabled", rowCount - 1 >= 10);
+                    $('#dynamic-add-more').attr("disabled", rowCount - 1 >= 50);
                 } else {
                     Swal.fire({
                         icon: 'error',

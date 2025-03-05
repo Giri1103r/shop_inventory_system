@@ -69,34 +69,31 @@ class InitialIncident extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('incident_type_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('incident_type_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('short_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('sr_no', 'LIKE', '%' . $search . '%');
             });
         }
-        if ($request->has('incident_type_id') && $request->incident_type_id) {
-            $query = $query->where('incident_type_id',  $request->incident_type_id);
+        if ($request->has('sr_no') && $request->sr_no) {
+            $query = $query->where('sr_no',  $request->sr_no);
         }
-        if ($request->has('incident_type_name') && $request->incident_type_name) {
-            $query = $query->where('incident_type_name', 'LIKE', $request->incident_type_name);
-        }
-        if ($request->has('short_name') && $request->short_name) {
-            $query = $query->where('short_name', 'LIKE', $request->short_name);
+        if ($request->has('unit_id') && $request->unit_id) {
+
+            $unit_id = decryptId($request->unit_id);
+            $query = $query->where('unit_id', 'LIKE', $unit_id);
         }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('created_at', [$startDate, $endDate]);
-        } elseif ($request->has('from_date') && !empty($request->from_date)) {
+            $query->whereBetween('ims_initial_incident.created_at', [$startDate, $endDate]);
+        } elseif ($request->has('ims_initial_incident.') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('created_at', '>=', $startDate);
+            $query->where('ims_initial_incident.created_at', '>=', $startDate);
         } elseif ($request->has('to_date') && !empty($request->to_date)) {
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('created_at', '<=', $endDate);
+            $query->where('ims_initial_incident.created_at', '<=', $endDate);
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('status', decryptId($request->status));
+            $query = $query->where('incident_status', decryptId($request->status));
         }
 
 
@@ -248,8 +245,8 @@ class InitialIncident extends Model
     {
         $request = request();
         $decryptedTeamMemberIds = is_array($request->team_member)
-        ? array_map('decryptId', $request->team_member)
-        : [];
+            ? array_map('decryptId', $request->team_member)
+            : [];
         $commaSeparatedTeamMembers = !empty($decryptedTeamMemberIds) ? implode(',', $decryptedTeamMemberIds) : null;
         $update_array = array(
             'investigation_assigned' => $commaSeparatedTeamMembers,
@@ -290,40 +287,38 @@ class InitialIncident extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ims_initial_incident.*');
+        $query = $this->select('ims_initial_incident.*', 'ims_incident_status.status_name','ims_incident_status.to_status', 'ims_incident_status.bg_color');
+        $query = $query->leftJoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_initial_incident.incident_status');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('incident_type_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('incident_type_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('short_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('sr_no', 'LIKE', '%' . $search . '%');
             });
         }
-        if ($request->has('incident_type_id') && $request->incident_type_id) {
-            $query = $query->where('incident_type_id',  $request->incident_type_id);
+        if ($request->has('sr_no') && $request->sr_no) {
+            $query = $query->where('sr_no',  $request->sr_no);
         }
-        if ($request->has('incident_type_name') && $request->incident_type_name) {
-            $query = $query->where('incident_type_name', 'LIKE', $request->incident_type_name);
-        }
-        if ($request->has('short_name') && $request->short_name) {
-            $query = $query->where('short_name', 'LIKE', $request->short_name);
+        if ($request->has('unit_id') && $request->unit_id) {
+
+            $unit_id = decryptId($request->unit_id);
+            $query = $query->where('unit_id', 'LIKE', $unit_id);
         }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('created_at', [$startDate, $endDate]);
-        } elseif ($request->has('from_date') && !empty($request->from_date)) {
+            $query->whereBetween('ims_initial_incident.created_at', [$startDate, $endDate]);
+        } elseif ($request->has('ims_initial_incident.') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('created_at', '>=', $startDate);
+            $query->where('ims_initial_incident.created_at', '>=', $startDate);
         } elseif ($request->has('to_date') && !empty($request->to_date)) {
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('created_at', '<=', $endDate);
+            $query->where('ims_initial_incident.created_at', '<=', $endDate);
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('status', decryptId($request->status));
+            $query = $query->where('incident_status', decryptId($request->status));
         }
 
         $query->orderBy('id', 'DESC');

@@ -444,7 +444,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4 mt-2">
+                                            <div class="col-md-2 mt-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">HIRA</label>
 
@@ -468,7 +468,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4 mt-2">
+                                            <div class="col-md-2 mt-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">MOC</label>
 
@@ -871,29 +871,8 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
-        // html2canvas(document.querySelector(".fishbone-container")).then(canvas => {
-        //     document.body.appendChild(canvas)
-        // });
-
         $(document).ready(function() {
-            // $("#incidentinvestigation").on("submit", function(event) {
-            //     event.preventDefault(); // Prevent default form submission
 
-            //     let fishboneContainer = $(".fishbone-container")[0]; // Get the fishbone diagram container
-
-            //     // Capture the fishbone diagram as an image
-            //     html2canvas(fishboneContainer, {
-            //         scale: 2
-            //     }).then(function(canvas) {
-            //         let imageData = canvas.toDataURL("image/png"); // Convert canvas to base64
-
-            //         // Set the image data to the hidden input field
-            //         $("#fishbone_image").val(imageData);
-
-            //         // Now submit the form programmatically
-            //         $("#incidentinvestigation")[0].submit();
-            //     });
-            // });
             $("#root_cause_analysis").change(function() {
                 if ($(this).val() == "1") {
                     $(".whywhy").show(); // Show the Why Why Analysis section
@@ -958,9 +937,7 @@
                 }
             });
 
-            // $(document).on("input", ".whywhyanalysis_fifth", function() {
 
-            // });
         });
 
         $(document).ready(function() {
@@ -1190,14 +1167,14 @@
                     submitHandler: function(form) {
                         // Form is valid, proceed with capturing the fishbone diagram
                         let fishboneContainer = $(".fishbone-container")[
-                        0]; // Get the fishbone diagram container
+                            0]; // Get the fishbone diagram container
 
                         // Capture the fishbone diagram as an image
                         html2canvas(fishboneContainer, {
                             scale: 2
                         }).then(function(canvas) {
                             let imageData = canvas.toDataURL(
-                            "image/png"); // Convert canvas to base64
+                                "image/png"); // Convert canvas to base64
 
                             // Set the image data to the hidden input field
                             $("#fishbone_image").val(imageData);

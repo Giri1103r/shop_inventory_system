@@ -287,7 +287,7 @@ class NominationProcessController extends Controller
     public function delete($id)
     {
         try {
-           
+
             $nominationProcess = $this->nomination_process->findOrFail($id);
             $update_data = array(
                 'status' => 0,
@@ -314,6 +314,8 @@ class NominationProcessController extends Controller
     }
     public function ImportSubmit(Request $request)
     {
+
+
         try {
             $file = $request->file('nomination_process_upload');
 

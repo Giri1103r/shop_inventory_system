@@ -25,6 +25,7 @@ use Kreait\Firebase\Messaging\WebPushConfig;
 use App\Models\IMS\Master\IncidentType;
 use App\Models\IMS\Master\Hira;
 use App\Models\IMS\Incident\InitialIncident;
+use App\Models\IMS\Incident\InitialFireIncident;
 use App\Models\IMS\Incident\AccidentReport;
 use App\Models\OhcManagement\Master\Medicine;
 use App\Models\OhcManagement\Opd\PrescribetoPatient;
@@ -218,7 +219,12 @@ if (!function_exists('getsequence')) {
             case 'incident':
                 $count = InitialIncident::withoutGlobalScopes()->count();
                 $count = $count + 1;
-                $sequence = 'INC-' . getautogen($count);
+                $sequence = 'INCIDENT-' . getautogen($count);
+                break;
+            case 'fireincident':
+                $count = InitialFireIncident::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'FIRE-INCIDENT-' . getautogen($count);
                 break;
             default:
                 $sequence = Str::random(5);
@@ -270,10 +276,10 @@ if (!function_exists('getohctotalCount')) {
         switch ($type) {
 
             case 'requisition':
-                $count = UserMedicineRequisition::where('approve_status',STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)->count();
+                $count = UserMedicineRequisition::where('approve_status', STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)->count();
                 break;
             case 'medicine':
-                $count = Medicine::where('status',1)->count();
+                $count = Medicine::where('status', 1)->count();
                 break;
             case 'medicineReceiving':
                 $count = MedicineReceiving::where('approved_date', Carbon::today())->count();
@@ -282,20 +288,20 @@ if (!function_exists('getohctotalCount')) {
                 $count = UserMedicineIssuance::count();
                 break;
             case 'prescribetopatient1':
-                $count = PrescribetoPatient::where('unit_id', 1) 
-                ->count(); 
+                $count = PrescribetoPatient::where('unit_id', 1)
+                    ->count();
                 break;
             case 'prescribetopatient2':
-                $count = PrescribetoPatient::where('unit_id', 2) 
-                ->count(); 
+                $count = PrescribetoPatient::where('unit_id', 2)
+                    ->count();
                 break;
             case 'prescribetopatient3':
-                $count = PrescribetoPatient::where('unit_id', 3) 
-                ->count(); 
+                $count = PrescribetoPatient::where('unit_id', 3)
+                    ->count();
                 break;
             case 'prescribetopatient4':
-                $count = PrescribetoPatient::where('unit_id', 4) 
-                ->count(); 
+                $count = PrescribetoPatient::where('unit_id', 4)
+                    ->count();
                 break;
             case 'prescribetopatient':
                 $count = PrescribetoPatient::where('created_at', Carbon::today())->count();

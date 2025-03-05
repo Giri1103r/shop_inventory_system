@@ -111,6 +111,19 @@ class HiraMoc extends Model
         return $this->where('accident_id', $accident_id)->update($update_array);
     }
 
+    public function updatefireInvestigation($fire_id, $invesigation_id)
+    {
+        $request = request();
+
+        $update_array = array(
+            'invesigation_id' => $invesigation_id,
+            'hiramoc_status' => 'Y',
+            'updated_by' => Auth::id(),
+            'updated_at' => now(),
+        );
+        return $this->where('fire_id', $fire_id)->update($update_array);
+    }
+
     public function delete_temprow($accidentId, $incidentId, $fireId)
     {
         $this->where(function($query) use ($accidentId, $incidentId, $fireId) {

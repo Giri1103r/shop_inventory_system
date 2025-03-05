@@ -33,7 +33,22 @@ class Statuslog extends Model
             'reference_id' => $id,
             'from_status' => $pperequest->approve_status,
             'to_status' => STATUS_USER_APPLIED,
-           'remarks' => !empty($pperequest->employee_reason) ? $pperequest->employee_reason : $pperequest->employee_remarks,
+            'remarks' => !empty($pperequest->employee_reason) ? $pperequest->employee_reason : $pperequest->employee_remarks,
+            'created_by' => Auth::id(),
+        ];
+        return $this->create($insert_data);
+    }
+
+    public function storestatus_api($pperequest, $id)
+    {
+        $request = request();
+
+        $insert_data = [
+            'type' => TYPE_PPE_REQUEST,
+            'reference_id' => $id,
+            'from_status' => $pperequest->approve_status,
+            'to_status' => STATUS_USER_APPLIED,
+            'remarks' => !empty($request->employee_reason) ? $request->employee_reason : $request->employee_remarks,
             'created_by' => Auth::id(),
         ];
         return $this->create($insert_data);
@@ -41,14 +56,14 @@ class Statuslog extends Model
 
     // PPE REQUEST-HOD STORE
 
-    public function store($updateData, $empDetails)
+    public function store($updatedatas, $empDetails)
     {
         $insert_data = [
             'type' => TYPE_PPE_REQUEST,
             'reference_id' => $empDetails->id,
-            'from_status' =>$updateData['approve_status'],
-            'to_status' => $updateData['approve_status'],
-            'remarks' => $updateData['remarks'],
+            'from_status' => $updatedatas['approve_status'],
+            'to_status' => $updatedatas['approve_status'],
+            'remarks' => $updatedatas['remarks'],
             'created_by' => Auth::id(),
 
         ];
@@ -105,10 +120,25 @@ class Statuslog extends Model
         ];
         return $this->create($insert_data);
     }
+    public function storeexemptionstatus_api($updateData,$emp_details)
+    {
+        $request = request();
+        $insert_data = [
+            'type' => TYPE_PPE_EXEMPTION,
+            'reference_id' => $emp_details->id,
+            'from_status' => $emp_details->approve_status,
+            'to_status' => $updateData['approve_status'],
+            'remarks' => $request->remarks,
+            'created_by' => Auth::id(),
+
+        ];
+        return $this->create($insert_data);
+    }
 
     // PPE Request Storemanager
 
-    public function storemangerstatus($updateStatus, $empDetails){
+    public function storemangerstatus($updateStatus, $empDetails)
+    {
         $insert_data = [
             'type' => TYPE_PPE_REQUEST,
             'reference_id' => $empDetails->id,
@@ -127,20 +157,23 @@ class Statuslog extends Model
         return $data;
     }
 
-    public function statuslog($id){
-        $data = Statuslog::where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)->where('trash','NO')->where('status',1)->get();
+    public function statuslog($id)
+    {
+        $data = Statuslog::where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)->where('trash', 'NO')->where('status', 1)->get();
         return $data;
     }
 
-    public function getstatuslogdata($id){
+    public function getstatuslogdata($id)
+    {
         $data = Statuslog::where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)
-        ->where('to_status','=' ,STATUS_HOD_APPROVED)
-        ->orderBy('id', 'DESC')
-        ->first();
+            ->where('to_status', '=', STATUS_HOD_APPROVED)
+            ->orderBy('id', 'DESC')
+            ->first();
         return $data;
     }
 
-    public function getehsstatuslogdetails($id) {
+    public function getehsstatuslogdetails($id)
+    {
         $data = Statuslog::where('reference_id', $id)
             ->where('type', TYPE_PPE_REQUEST)
             ->where('to_status', '=', STATUS_EHS_APPROVED)
@@ -151,20 +184,29 @@ class Statuslog extends Model
     }
 
 
-    public function statuslogdetails( $id){
+    public function statuslogdetails($id)
+    {
         $data = Statuslog::where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)->latest('id')->first();
         return $data;
     }
 
 
 
-    public function getehsheadstatuslog($id){
-      return $this->where('reference_id',$id)->where('type',TYPE_PPE_EXEMPTION)->where('to_status',STATUS_EHS_APPROVED)->first();
+    public function getehsheadstatuslog($id)
+    {
+        return $this->where('reference_id', $id)->where('type', TYPE_PPE_EXEMPTION)->where('to_status', STATUS_EHS_APPROVED)->first();
     }
-
+    public function getehsheadrejectstatuslog($id)
+    {
+        return $this->where('reference_id', $id)->where('type', TYPE_PPE_EXEMPTION)->where('from_status', STATUS_EHS_REJECTED)->first();
+    }
     public function gethodstatuslog($id)
     {
-        return $this->where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)->where('from_status', STATUS_HOD_APPROVED)->first();
+        return $this->where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)->where('from_status', STATUS_HOD_APPROVED)->orWhere('from_status' ,STATUS_HOD_REJECTED)->first();
+    }
+    public function gethodrejectstatuslog($id)
+    {
+        return $this->where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)->where('from_status', STATUS_HOD_REJECTED)->first();
     }
     public function getehsstatuslog($id)
     {
@@ -174,5 +216,13 @@ class Statuslog extends Model
     public function getsmstatuslog($id)
     {
         return $this->where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)->where('from_status', STATUS_EHS_APPROVED)->first();
+    }
+
+    public function statuslog_api($id){
+        return $this->where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)->get();
+    }
+
+    public function Exemptionstatuslog_api($id){
+        return $this->where('reference_id', $id)->where('type', TYPE_PPE_EXEMPTION)->get();
     }
 }

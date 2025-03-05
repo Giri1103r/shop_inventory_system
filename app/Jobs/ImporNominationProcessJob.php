@@ -53,8 +53,6 @@ class ImporNominationProcessJob  implements ShouldQueue
      */
     public function __construct($details)
     {
-
-
         $this->details = $details;
     }
 
@@ -65,6 +63,7 @@ class ImporNominationProcessJob  implements ShouldQueue
      */
     public function handle()
     {
+
         $i = 1;
         $update_array = array(
             'upload_status' => 1,
@@ -75,7 +74,7 @@ class ImporNominationProcessJob  implements ShouldQueue
 
         $xlsx = SimpleXLSX::parse($this->details['path']);
         $cond_error_datas = [];
-
+        $data_count = 0;
         foreach ($xlsx->rows() as $row) {
 
             /*
@@ -118,6 +117,7 @@ class ImporNominationProcessJob  implements ShouldQueue
             $department_id = trim($row['1']);
             $emp_worker = strtolower(trim($row[2]));
             $emp_id = trim($row['3']);
+
 
 
             /* Column data validation */
@@ -233,7 +233,7 @@ class ImporNominationProcessJob  implements ShouldQueue
                 ->where('training_attendance.attendance_status', 1)
                 ->orderBy('training_attendance.attendance_date', 'desc')
                 ->first();
-         
+
 
             $lastTrainingDate = optional($lastTraining)->attendance_date ?? null;
             $lastTrainingTopic = optional($lastTraining)->id ?? null;
@@ -256,7 +256,16 @@ class ImporNominationProcessJob  implements ShouldQueue
             ];
             $nomination = NominationProcess::create($data);
 
+            $data_count++;
             $i++;
+        }
+
+        if ($data_count > 50) {
+            $cond_error_datas[] = [
+                'upload_id' => $this->details['log_id'],
+                'line_no' => 0,
+                'error' => 'The total number of rows (excluding header) must not exceed 50.',
+            ];
         }
 
         // Log errors or mark as successful

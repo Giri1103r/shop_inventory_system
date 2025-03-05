@@ -33,6 +33,7 @@
                                         <th>Total First Aid</th>
                                         <th>Total Prescribe</th>
                                         <th>Balance</th>
+                                        <th>Threshold</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -131,6 +132,10 @@
                 {
                     data: 'balance',
                     name: 'balance'
+                },
+                {
+                    data: 'threshold_limit',
+                    name: 'threshold_limit'
                 },
 
             ],
