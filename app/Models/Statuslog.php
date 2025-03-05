@@ -202,7 +202,7 @@ class Statuslog extends Model
     }
     public function gethodstatuslog($id)
     {
-        return $this->where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)->where('to_status', STATUS_HOD_APPROVED)->orWhere('to_status' ,STATUS_HOD_REJECTED)->first();
+        return $this->where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)->where('from_status', STATUS_HOD_APPROVAL_PENDING)->first();
     }
     public function gethodrejectstatuslog($id)
     {
