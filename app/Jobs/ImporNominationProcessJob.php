@@ -37,11 +37,11 @@ use App\Models\Master\Employee;
 use App\Models\Master\Topic;
 use Illuminate\Support\Facades\Session;
 
-// class ImporNominationProcessJob  implements ShouldQueue
+class ImporNominationProcessJob  implements ShouldQueue
 class ImporNominationProcessJob
 {
 
-    // use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $details;
 
@@ -255,6 +255,7 @@ class ImporNominationProcessJob
                 'created_by' => $this->details['user_id'],
             ];
             $nomination = NominationProcess::create($data);
+
             $data_count++;
             $i++;
 
