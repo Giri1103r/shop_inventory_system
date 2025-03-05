@@ -84,6 +84,8 @@ class User extends Authenticatable
         $search = '';
         $query = $this->select('users.*', 'template_user_role.role_name',);
         $query = $query->leftJoin('template_user_role', 'users.role', '=', 'template_user_role.id');
+        $query = $query->where('status',1);
+
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();

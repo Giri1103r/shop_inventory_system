@@ -73,13 +73,13 @@ class EmployeeTemp extends Model
         $chunks = array_chunk($data['Result'], $batchSize);
         foreach ($chunks as $chunk) {
             foreach ($chunk as $item) {
-                   
+
                 if (empty($item['Emp_OfficialMail'])) {
                     Log::info("Skipped record due to empty email", [
                         'emp_id' => $item['pk_Emp_Code'],
                         'email' => $item['Emp_OfficialMail'],
                     ]);
-                    continue; 
+                    continue;
                 }
                 $emailExists = $this->where('email', $item['Emp_OfficialMail'])->where('emp_id', '!=', $item['pk_Emp_Code'])->exists();
 
@@ -90,13 +90,13 @@ class EmployeeTemp extends Model
                         'emp_id' => $item['pk_Emp_Code'],
                         'email' => $item['Emp_OfficialMail'],
                     ]);
-                    continue; 
+                    continue;
                 }
 
                 $designation = DB::table('masters_designation')
                 ->where('des_code', $item['fk_Emp_DesCode'])
                 ->value('designation_name') ?? null;
-            
+
                 $status = isset($item['Emp_Active']) ? ($item['Emp_Active'] ? 1 : 0) : null;
 
 
@@ -116,7 +116,7 @@ class EmployeeTemp extends Model
                     'error_status' => 0,
                     'error_remarks' => null,
                 ];
-               
+
 
                 $exists = $this->where('emp_id', $item['pk_Emp_Code'])->exists();
 
@@ -171,6 +171,8 @@ class EmployeeTemp extends Model
 
         $query = $this->select('masters_employee_temp.*');
         $query = $this->where('error_status', 1);
+        $query = $this->where('status', 1);
+
 
         if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];

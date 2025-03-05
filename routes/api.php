@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\{LoginController, NotificationController, AdminController};
 use App\Http\Controllers\Api\MasterController;
+use App\Http\Controllers\Api\Permit\SafetyPermitController;
 use App\Http\Controllers\Api\Ppemanagement\PpeExemptionController;
 use App\Http\Controllers\Api\Ppemanagement\PpemanagementController;
 use App\Http\Controllers\Api\Ppemanagement\PperequestController;
@@ -68,6 +69,14 @@ Route::middleware('api')->prefix('v1')->group(function () {
             Route::post('/store', [PpeExemptionController::class, 'store']);
             Route::post('/view', [PpeExemptionController::class, 'view']);
             Route::post('/approval', [PpeExemptionController::class, 'approvereject']);
+
+        });
+
+        Route::group(['prefix' => 'ptw/safetypermit'], function () {
+            Route::post('/list', [SafetyPermitController::class, 'list']);
+            Route::post('/store', [SafetyPermitController::class, 'store']);
+            Route::post('/view', [SafetyPermitController::class, 'view']);
+            Route::post('/approval', [SafetyPermitController::class, 'approvereject']);
 
         });
     });

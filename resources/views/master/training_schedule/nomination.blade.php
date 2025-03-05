@@ -496,11 +496,11 @@
             $("#dynamic-add-more").on("click", function() {
                 var rowCount = $("#lesson_learned_block .lesson_learned_row").length;
 
-                if (rowCount >= 10) {
+                if (rowCount >= 50) {
                     Swal.fire({
                         icon: "error",
                         title: "Sorry!",
-                        text: "Maximum 10 records only.",
+                        text: "Maximum 50 records only.",
                     });
                     return;
                 }
@@ -533,7 +533,7 @@
                         $(this).prop("checked", false);
                     }
                     if ($(this).is("input[type='hidden'][name*='[id]']")) {
-                        $(this).val(""); 
+                        $(this).val("");
                     }
                 });
 

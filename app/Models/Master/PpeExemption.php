@@ -244,7 +244,7 @@ class PpeExemption extends Model
         $date = Carbon::now();
 
 
-       $this->where('to_date', '<', $date)->update(['status' => 0]);
+       $this->where('to_date', '>', $date)->update(['status' => 0]);
     }
 
 

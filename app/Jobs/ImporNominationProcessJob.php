@@ -37,11 +37,11 @@ use App\Models\Master\Employee;
 use App\Models\Master\Topic;
 use Illuminate\Support\Facades\Session;
 
-class ImporNominationProcessJob  implements ShouldQueue
-// class ImporNominationProcessJob
+// class ImporNominationProcessJob  implements ShouldQueue
+class ImporNominationProcessJob
 {
 
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    // use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $details;
 
@@ -75,7 +75,7 @@ class ImporNominationProcessJob  implements ShouldQueue
 
         $xlsx = SimpleXLSX::parse($this->details['path']);
         $cond_error_datas = [];
-
+        $data_count = 0;
         foreach ($xlsx->rows() as $row) {
 
             /*
@@ -233,7 +233,7 @@ class ImporNominationProcessJob  implements ShouldQueue
                 ->where('training_attendance.attendance_status', 1)
                 ->orderBy('training_attendance.attendance_date', 'desc')
                 ->first();
-         
+
 
             $lastTrainingDate = optional($lastTraining)->attendance_date ?? null;
             $lastTrainingTopic = optional($lastTraining)->id ?? null;
@@ -255,8 +255,16 @@ class ImporNominationProcessJob  implements ShouldQueue
                 'created_by' => $this->details['user_id'],
             ];
             $nomination = NominationProcess::create($data);
-
+            $data_count++;
             $i++;
+
+            if ($data_count > 50) {
+                $cond_error_datas[] = [
+                    'upload_id' => $this->details['log_id'],
+                    'line_no' => 0,
+                    'error' => 'The total number of rows (excluding header) must not exceed 50.',
+                ];
+            }
         }
 
         // Log errors or mark as successful
