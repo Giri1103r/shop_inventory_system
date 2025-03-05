@@ -118,7 +118,7 @@ class ImporNominationProcessJob
             $emp_worker = strtolower(trim($row[2]));
             $emp_id = trim($row['3']);
 
-          
+
 
             /* Column data validation */
             if (empty($department_id)) {
@@ -255,7 +255,7 @@ class ImporNominationProcessJob
                 'created_by' => $this->details['user_id'],
             ];
             $nomination = NominationProcess::create($data);
-            dd($nomination);
+          
             $data_count++;
             $i++;
         }
