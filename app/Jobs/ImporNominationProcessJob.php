@@ -65,6 +65,7 @@ class ImporNominationProcessJob  implements ShouldQueue
      */
     public function handle()
     {
+        dd(123);
         $i = 1;
         $update_array = array(
             'upload_status' => 1,
