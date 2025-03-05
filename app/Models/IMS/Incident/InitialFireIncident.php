@@ -12,12 +12,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class InitialIncident extends Model
+class InitialFireIncident extends Model
 {
     use  HasFactory;
 
 
-    protected $table = 'ims_initial_incident';
+    protected $table = 'ims_initial_fireincident';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -58,8 +58,8 @@ class InitialIncident extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ims_initial_incident.*', 'ims_incident_status.status_name', 'ims_incident_status.bg_color');
-        $query = $query->leftJoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_initial_incident.incident_status');
+        $query = $this->select('ims_initial_fireincident.*', 'ims_incident_status.status_name', 'ims_incident_status.to_status','ims_incident_status.bg_color');
+        $query = $query->leftJoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_initial_fireincident.incident_status');
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -76,20 +76,19 @@ class InitialIncident extends Model
             $query = $query->where('sr_no',  $request->sr_no);
         }
         if ($request->has('unit_id') && $request->unit_id) {
-
             $unit_id = decryptId($request->unit_id);
             $query = $query->where('unit_id', 'LIKE', $unit_id);
         }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('ims_initial_incident.created_at', [$startDate, $endDate]);
-        } elseif ($request->has('ims_initial_incident.') && !empty($request->from_date)) {
+            $query->whereBetween('ims_initial_fireincident.created_at', [$startDate, $endDate]);
+        } elseif ($request->has('ims_initial_fireincident.') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('ims_initial_incident.created_at', '>=', $startDate);
+            $query->where('ims_initial_fireincident.created_at', '>=', $startDate);
         } elseif ($request->has('to_date') && !empty($request->to_date)) {
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('ims_initial_incident.created_at', '<=', $endDate);
+            $query->where('ims_initial_fireincident.created_at', '<=', $endDate);
         }
         if ($request->has('status') && $request->status) {
 
@@ -230,7 +229,7 @@ class InitialIncident extends Model
     }
 
 
-    public function updateStatus($incident_Id, $incident_status)
+    public function updateStatus($fire_incident_id, $incident_status)
     {
         $request = request();
 
@@ -239,7 +238,7 @@ class InitialIncident extends Model
             'updated_by' => Auth::id(),
             'updated_at' => now(),
         );
-        return $this->where('id', $incident_Id)->update($update_array);
+        return $this->where('id', $fire_incident_id)->update($update_array);
     }
     public function investigationassigned($incident_Id)
     {
@@ -280,41 +279,40 @@ class InitialIncident extends Model
             'action_submission_date' => DBdateformat($request->action_submission_date),
             'action_submission_description' => $request->action_submission_description
         );
-
+        // dd($update_array);
         return $this->where('id', $id)->update($update_array);
     }
     public function exportdata()
     {
         $request = request();
         $search = '';
-        $query = $this->select('ims_initial_incident.*', 'ims_incident_status.status_name','ims_incident_status.to_status', 'ims_incident_status.bg_color');
-        $query = $query->leftJoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_initial_incident.incident_status');
+        $query = $this->select('ims_initial_fireincident.*', 'ims_incident_status.status_name', 'ims_incident_status.bg_color');
+        $query = $query->leftJoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_initial_fireincident.incident_status');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('sr_no', 'LIKE', '%' . $search . '%');
+                ->orWhere('sr_no', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('sr_no') && $request->sr_no) {
             $query = $query->where('sr_no',  $request->sr_no);
         }
         if ($request->has('unit_id') && $request->unit_id) {
-
             $unit_id = decryptId($request->unit_id);
             $query = $query->where('unit_id', 'LIKE', $unit_id);
         }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('ims_initial_incident.created_at', [$startDate, $endDate]);
-        } elseif ($request->has('ims_initial_incident.') && !empty($request->from_date)) {
+            $query->whereBetween('ims_initial_fireincident.created_at', [$startDate, $endDate]);
+        } elseif ($request->has('ims_initial_fireincident.') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('ims_initial_incident.created_at', '>=', $startDate);
+            $query->where('ims_initial_fireincident.created_at', '>=', $startDate);
         } elseif ($request->has('to_date') && !empty($request->to_date)) {
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('ims_initial_incident.created_at', '<=', $endDate);
+            $query->where('ims_initial_fireincident.created_at', '<=', $endDate);
         }
         if ($request->has('status') && $request->status) {
 
@@ -330,19 +328,19 @@ class InitialIncident extends Model
     {
 
         $data = $this->select(
-            'ims_initial_incident.*',
+            'ims_initial_fireincident.*',
             'masters_employee.emp_name as reported_by',
             'masters_department.department_name as reported_department',
-            'ims_initial_incident_evidence_upload.file_path',
+            'ims_initial_fireincident_evidence_upload.file_path',
             'ims_master_incident_type.incident_type_name',
             'masters_location.location_name'
         )
-            ->where('ims_initial_incident.id', $id)
-            ->leftJoin('masters_employee', 'masters_employee.id', '=', 'ims_initial_incident.reported_name')
-            ->leftJoin('masters_department', 'masters_department.id', '=', 'ims_initial_incident.department')
-            ->leftJoin('ims_master_incident_type', 'ims_master_incident_type.id', '=', 'ims_initial_incident.iir_type')
-            ->leftJoin('masters_location', 'masters_location.id', '=', 'ims_initial_incident.location_id')
-            ->leftJoin('ims_initial_incident_evidence_upload', 'ims_initial_incident_evidence_upload.incident_id', '=', 'ims_initial_incident.iir_type')
+            ->where('ims_initial_fireincident.id', $id)
+            ->leftJoin('masters_employee', 'masters_employee.id', '=', 'ims_initial_fireincident.reported_name')
+            ->leftJoin('masters_department', 'masters_department.id', '=', 'ims_initial_fireincident.department')
+            ->leftJoin('ims_master_incident_type', 'ims_master_incident_type.id', '=', 'ims_initial_fireincident.iir_type')
+            ->leftJoin('masters_location', 'masters_location.id', '=', 'ims_initial_fireincident.location_id')
+            ->leftJoin('ims_initial_fireincident_evidence_upload', 'ims_initial_fireincident_evidence_upload.incident_id', '=', 'ims_initial_fireincident.iir_type')
             ->first();
 
         return $data;
@@ -352,8 +350,8 @@ class InitialIncident extends Model
     public function getEHSVerifyincident($id)
     {
         $data = $this->select('ims_ehs_review.*', 'ims_ehs_review.team_member')
-            ->where('ims_initial_incident.id', $id)
-            ->leftJoin('ims_ehs_review', 'ims_ehs_review.inicdent_report_id', '=', 'ims_initial_incident.id')
+            ->where('ims_initial_fireincident.id', $id)
+            ->leftJoin('ims_ehs_review', 'ims_ehs_review.fire_inicdent_report_id', '=', 'ims_initial_fireincident.id')
             ->where('ims_ehs_review.type', 2)
             ->orderBy('id', 'DESC')
             ->first();
@@ -374,10 +372,10 @@ class InitialIncident extends Model
 
     // public function getInvestigation($id)
     // {
-    //     $data = $this->select('ims_initial_incident_investigation.*', 'ims_master_incident_hiramoc.*')
-    //         ->where('ims_initial_incident.id', $id)
-    //         ->leftJoin('ims_initial_incident_investigation', 'ims_initial_incident_investigation.incident_id', '=', 'ims_initial_incident.id')
-    //         ->leftJoin('ims_master_incident_hiramoc', 'ims_master_incident_hiramoc.incident_id', '=', 'ims_initial_incident.id')
+    //     $data = $this->select('ims_initial_fireincident_investigation.*', 'ims_master_incident_hiramoc.*')
+    //         ->where('ims_initial_fireincident.id', $id)
+    //         ->leftJoin('ims_initial_fireincident_investigation', 'ims_initial_fireincident_investigation.incident_id', '=', 'ims_initial_fireincident.id')
+    //         ->leftJoin('ims_master_incident_hiramoc', 'ims_master_incident_hiramoc.incident_id', '=', 'ims_initial_fireincident.id')
     //         ->first();
     //     if ($data && $data->witness_id) {
     //         $witnessids = explode(',', $data->witness_id);
@@ -393,17 +391,17 @@ class InitialIncident extends Model
 
     public function getInvestigation($id)
     {
-        $data = $this->select('ims_initial_incident_investigation.*', 'masters_employee.emp_name as responsible_person')
-            ->where('ims_initial_incident.id', $id)
-            ->leftJoin('ims_initial_incident_investigation', 'ims_initial_incident_investigation.incident_id', '=', 'ims_initial_incident.id')
-            ->leftJoin('masters_employee', 'masters_employee.id', '=', 'ims_initial_incident_investigation.responsible_person_id')
+        $data = $this->select('ims_initial_fireincident_investigation.*', 'masters_employee.emp_name as responsible_person')
+            ->where('ims_initial_fireincident.id', $id)
+            ->leftJoin('ims_initial_fireincident_investigation', 'ims_initial_fireincident_investigation.incident_id', '=', 'ims_initial_fireincident.id')
+            ->leftJoin('masters_employee', 'masters_employee.id', '=', 'ims_initial_fireincident_investigation.responsible_person_id')
             ->first();
 
         if ($data) {
             $hiraMocRecords = DB::table('ims_master_incident_hiramoc as hiramoc')
                 ->leftJoin('ims_master_hira as hira', 'hiramoc.hira_id', '=', 'hira.id')
                 ->leftJoin('ims_master_hira as moc', 'hiramoc.moc_id', '=', 'moc.id')
-                ->where('hiramoc.incident_id', $id)
+                ->where('hiramoc.fire_id', $id)
                 ->select('hiramoc.hira_id', 'hira.services as hira_name', 'hiramoc.moc_id', 'moc.services as moc_name')
                 ->get();
 
@@ -468,8 +466,8 @@ class InitialIncident extends Model
     public function getwhywhy($id)
     {
         $data = $this->select('ims_incident_whywhyanalysis.*')
-            ->where('ims_initial_incident.id', $id)
-            ->leftJoin('ims_incident_whywhyanalysis', 'ims_incident_whywhyanalysis.incident_id', '=', 'ims_initial_incident.id')
+            ->where('ims_initial_fireincident.id', $id)
+            ->leftJoin('ims_incident_whywhyanalysis', 'ims_incident_whywhyanalysis.fire_id', '=', 'ims_initial_fireincident.id')
             ->get();
 
         return $data;
@@ -477,8 +475,8 @@ class InitialIncident extends Model
     public function getfishbone($id)
     {
         $data = $this->select('ims_incident_fishboneanalysis.*')
-            ->where('ims_initial_incident.id', $id)
-            ->leftJoin('ims_incident_fishboneanalysis', 'ims_incident_fishboneanalysis.incident_id', '=', 'ims_initial_incident.id')
+            ->where('ims_initial_fireincident.id', $id)
+            ->leftJoin('ims_incident_fishboneanalysis', 'ims_incident_fishboneanalysis.fire_id', '=', 'ims_initial_fireincident.id')
             ->get();
 
         return $data;
@@ -487,8 +485,8 @@ class InitialIncident extends Model
     public function getrisklevel($id)
     {
         $data = $this->select('ims_master_incident_riskanalysis.*')
-            ->where('ims_initial_incident.id', $id)
-            ->leftJoin('ims_master_incident_riskanalysis', 'ims_master_incident_riskanalysis.incident_id', '=', 'ims_initial_incident.id')
+            ->where('ims_initial_fireincident.id', $id)
+            ->leftJoin('ims_master_incident_riskanalysis', 'ims_master_incident_riskanalysis.fire_id', '=', 'ims_initial_fireincident.id')
             ->first();
 
         return $data;
@@ -496,8 +494,8 @@ class InitialIncident extends Model
     public function getEHSReviewincident($id)
     {
         $data = $this->select('ims_ehs_review.*', 'ims_ehs_review.team_member')
-            ->where('ims_initial_incident.id', $id)
-            ->leftJoin('ims_ehs_review', 'ims_ehs_review.inicdent_report_id', '=', 'ims_initial_incident.id')
+            ->where('ims_initial_fireincident.id', $id)
+            ->leftJoin('ims_ehs_review', 'ims_ehs_review.fire_inicdent_report_id', '=', 'ims_initial_fireincident.id')
             ->where('ims_ehs_review.type', 1)
             ->first();
 
@@ -516,8 +514,8 @@ class InitialIncident extends Model
     public function getEHSApprovalincident($id)
     {
         $data = $this->select('ims_ehs_review.*', 'ims_ehs_review.team_member')
-            ->where('ims_initial_incident.id', $id)
-            ->leftJoin('ims_ehs_review', 'ims_ehs_review.inicdent_report_id', '=', 'ims_initial_incident.id')
+            ->where('ims_initial_fireincident.id', $id)
+            ->leftJoin('ims_ehs_review', 'ims_ehs_review.fire_inicdent_report_id', '=', 'ims_initial_fireincident.id')
             ->where('ims_ehs_review.type', 3)
             ->orderBy('id', 'DESC')
             ->first();
@@ -525,11 +523,11 @@ class InitialIncident extends Model
     }
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('ims_initial_incident'));
+        static::addGlobalScope(new TrashScope('ims_initial_fireincident'));
 
         static::created(function ($model) {
 
-            $uniqueId = 'INCIDENT-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
+            $uniqueId = 'FIRE-INCIDENT-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
             $model->update(['sr_no' => $uniqueId]);
         });
     }
