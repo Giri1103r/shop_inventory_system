@@ -388,7 +388,7 @@ class NominationProcessController extends Controller
             Session::flash('success', __('Your data has been uploaded sucessfully'));
             return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', __('Nomination Process upload failed'));
             return redirect(admin_url('training_schedule/list'));
         }
