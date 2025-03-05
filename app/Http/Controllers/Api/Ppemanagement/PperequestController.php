@@ -474,7 +474,7 @@ class PperequestController extends BaseController
                         'remarks' => $request->remarks,
                         'approved_at' => Carbon::now(),
                         'approved_by' => Auth::id(),
-                        'approve_status' => STATUS_EHS_APPROVAL_PENDING,
+                        'approve_status' => STATUS_HOD_REJECTED,
                         'status' => 1
                     ];
 
