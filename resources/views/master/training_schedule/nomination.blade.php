@@ -687,6 +687,13 @@
             $(document).on('click', '.removerow', function() {
                 var row = $(this).closest(".lesson_learned_row");
                 var rowId = row.find("input[name*='[id]']").val();
+                var totalRows = $(".lesson_learned_row").length; // Count total rows
+
+                if (totalRows <= 1) {
+                    Swal.fire('Warning!', 'At least one row is required.', 'warning');
+                    return; // Prevent deletion
+                }
+
                 if (rowId) {
                     Swal.fire({
                         title: 'Are you sure?',
@@ -722,10 +729,11 @@
                         }
                     });
                 } else {
-                    $(this).closest("tr").remove();
+                    row.remove();
                     updateAddMoreButton();
                 }
             });
+
 
             function updateAddMoreButton() {
                 var rowCount = $(".lesson_learned_row").length;
