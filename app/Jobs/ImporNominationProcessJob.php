@@ -53,7 +53,6 @@ class ImporNominationProcessJob
      */
     public function __construct($details)
     {
-        dd(123);
         $this->details = $details;
     }
 
@@ -119,6 +118,7 @@ class ImporNominationProcessJob
             $emp_worker = strtolower(trim($row[2]));
             $emp_id = trim($row['3']);
 
+            dd( $department_id);
 
             /* Column data validation */
             if (empty($department_id)) {
