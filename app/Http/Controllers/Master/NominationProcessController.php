@@ -318,7 +318,7 @@ class NominationProcessController extends Controller
 
         try {
             $file = $request->file('nomination_process_upload');
-            dd($file,'123');
+
             $rules = [
                 'nomination_process_upload' => 'required',
             ];
@@ -377,7 +377,7 @@ class NominationProcessController extends Controller
                     "trainerId" => $request->trainer_id,
                     "path" => $path,
                 ];
-                dd($request);
+                dd($details);
                 // dispatch(new ImporNominationProcessJob($details));
                 dispatch((new ImporNominationProcessJob($details))->onQueue('nomination_process'));
             }
