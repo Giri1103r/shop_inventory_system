@@ -255,17 +255,16 @@ class ImporNominationProcessJob  implements ShouldQueue
                 'created_by' => $this->details['user_id'],
             ];
             $nomination = NominationProcess::create($data);
-
             $data_count++;
             $i++;
+        }
 
-            if ($data_count > 50) {
-                $cond_error_datas[] = [
-                    'upload_id' => $this->details['log_id'],
-                    'line_no' => 0,
-                    'error' => 'The total number of rows (excluding header) must not exceed 50.',
-                ];
-            }
+        if ($data_count > 50) {
+            $cond_error_datas[] = [
+                'upload_id' => $this->details['log_id'],
+                'line_no' => 0,
+                'error' => 'The total number of rows (excluding header) must not exceed 50.',
+            ];
         }
 
         // Log errors or mark as successful
