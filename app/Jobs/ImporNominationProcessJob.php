@@ -63,7 +63,7 @@ class ImporNominationProcessJob
      */
     public function handle()
     {
-dd('123');
+
         $i = 1;
         $update_array = array(
             'upload_status' => 1,
@@ -118,7 +118,7 @@ dd('123');
             $emp_worker = strtolower(trim($row[2]));
             $emp_id = trim($row['3']);
 
-            // dd( $department_id);
+          
 
             /* Column data validation */
             if (empty($department_id)) {
