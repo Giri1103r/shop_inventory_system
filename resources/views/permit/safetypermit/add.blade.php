@@ -986,21 +986,21 @@
                             // If the selected date is today
                             startTimePicker.set({
                                 minTime: currentTime, // Current time as minTime
-                                maxTime: "18:00", // Until 6:00 PM
+                                maxTime: "20:00", // Until 6:00 PM
                             });
                             endTimePicker.set({
                                 minTime: currentTime, // Current time as minTime
-                                maxTime: "18:00", // Until 6:00 PM
+                                maxTime: "20:00", // Until 6:00 PM
                             });
                         } else {
                             // If the selected date is in the future
                             startTimePicker.set({
                                 minTime: "09:00", // 9:00 AM
-                                maxTime: "18:00", // 6:00 PM
+                                maxTime: "20:00", // 6:00 PM
                             });
                             endTimePicker.set({
                                 minTime: "09:00", // 9:00 AM
-                                maxTime: "18:00", // 6:00 PM
+                                maxTime: "20:00", // 6:00 PM
                             });
                         }
                     }
