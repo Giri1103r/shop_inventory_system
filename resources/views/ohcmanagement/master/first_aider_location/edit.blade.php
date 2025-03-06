@@ -81,9 +81,10 @@
                                                         style="width: 100%">
                                                         <option value="">Select the person</option>
                                                         @if (isset($firstaidlocation->station_master) && isset($firstaidlocation->station_master))
-                                                        <option value="{{ $firstaidlocation->station_master }}" selected>
-                                                            {{ $firstaidlocation->station_master }}</option>
-                                                    @endif
+                                                            <option value="{{ $firstaidlocation->station_master }}"
+                                                                selected>
+                                                                {{ $firstaidlocation->station_master }}</option>
+                                                        @endif
                                                     </select>
                                                 </div>
                                             </div>
@@ -91,8 +92,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Station Number</label>
                                                     <input type="text" name="station_number" id="station_number"
-                                                        value="{{ $firstaidlocation->station_number }}" class="form-control"
-                                                        placeholder="Station Number">
+                                                        value="{{ $firstaidlocation->station_number }}"
+                                                        class="form-control" placeholder="Station Number">
                                                 </div>
                                             </div>
                                         </div>
@@ -205,35 +206,63 @@
         });
         $(function() {
             $('#FirstAiderLocationAdd').validate({
-                rules: {
-                    location_id: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 30,
-                      pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/
+                    rules: {
+                        location_id: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 30,
+                            pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/,
+                            remote: {
+                                url: '{{ admin_url('ohc/first-aid-location/unique') }}',
+                                type: 'post',
+                                data: {
+                                    _token: "{{ csrf_token() }}",
+                                    location_id: function() {
+                                        return $('#location_id').val();
+                                    },
+                                    id: function() {
+                                        return $('#id').val();
+                                    },
+                                },
+                            },
+                        },
+                        department_id: {
+                            required: true,
+                        },
+                        unit_id: {
+                            required: true,
+                        },
+                        station_master: {
+                            required: true,
+                        },
+                        station_number: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 20,
+                            pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/,
+                            remote: {
+                                url: '{{ admin_url('ohc/first-aid-location/station-number-unique') }}',
+                                type: 'post',
+                                data: {
+                                    _token: "{{ csrf_token() }}",
+                                    station_number: function() {
+                                        return $('#station_number').val();
+                                    },
+                                    id: function() {
+                                        return $('#id').val();
+                                    },
+                                },
+                            },
+                        },
                     },
-                    department_id: {
-                        required: true,
-                    },
-                    unit_id: {
-                        required: true,
-                    },
-                    station_master: {
-                        required: true,
-                    },
-                    station_number: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 20,
-                      pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/
-                    },
-                },
+                
                 messages: {
                     location_id: {
                         required: "Location Name is required.",
                         minlength: "Location Name must be at least 3 characters long.",
                         maxlength: "Location Name must not exceed 30 characters.",
                         pattern: "Location Name contains invalid characters.",
+                        remote: "Location Name Should Be unique.",
                     },
                     department_id: {
                         required: "Department is required.",
@@ -249,6 +278,8 @@
                         minlength: "Station number must be at least 3 characters long.",
                         maxlength: "Station number must not exceed 20 characters.",
                         pattern: "Station number contains invalid characters.",
+                        remote: "Station number Should Be unique.",
+
                     },
                 },
                 errorElement: 'span',

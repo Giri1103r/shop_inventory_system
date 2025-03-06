@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'PPE Exemption EHS Approval')
-@section('pageurl', admin_url('ppe_exemption/list'))
+@section('title', 'Medical Fitness Certificate Approval')
+@section('pageurl', admin_url('ohc/medical-fitness/list'))
 
 
 @section('content')
@@ -21,7 +21,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('ppe_exemption/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('ohc/medical-fitness/list') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -138,7 +138,7 @@
                                 </div>
                                 <div class="basic-form">
                                     <form method="POST" id="requestApprovalForm"
-                                        action="{{ admin_url('ppe_exemption/approvereject/submit') }}">
+                                        action="{{ admin_url('ohc/medical-fitness/approvereject/submit') }}">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $encryptid }}">
                                         <div class="">

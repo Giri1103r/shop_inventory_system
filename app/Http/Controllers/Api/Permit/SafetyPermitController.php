@@ -153,11 +153,29 @@ class SafetyPermitController extends BaseController
 
                 $items = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
 
+                $state_of_isolation = [];
+                $other_if_any = [];
+
                 foreach ($items as $item) {
-                    $state_of_isolation[strtolower(str_replace('/', '_', $item))] = [
+                    $key = strtolower(str_replace('/', '_', $item));
+
+                    $state_of_isolation[$key] = [
                         'image' => asset('assets/images/safetypermit/person.png'),
                         'name' => $item,
                         'checked' => in_array($item, $stateIsolationLoto) ? 'Yes' : 'No'
+
+                    ];
+                    $isolationpanel = [
+                        'image' => asset('assets/images/safetypermit/person.png'),
+                        'name' => "Isolation fire panel",
+                        'checked' => $safetypermit->isolationpanel_checkbox ? 'Yes' : 'No'
+
+                    ];
+                    $isolationpaneldescription = [
+
+                        'name' => "Isolation fire panel Description",
+                        'checked' => $safetypermit->isolationpanel_description
+
                     ];
                 }
 
@@ -175,6 +193,7 @@ class SafetyPermitController extends BaseController
 
                     'type_of_work' => [
                         'sub_permit' => $sub_permits,
+
                         'job_description' => $safetypermit->job_description,
 
                         'shut_down' => [
@@ -209,8 +228,61 @@ class SafetyPermitController extends BaseController
                         ],
                     ],
 
-                    'state_of_isolation' => $state_of_isolation
+                    'state_of_isolation' => $state_of_isolation,
+                    'confined_space_entry' => [
+                        'o2' => [
+                            'name' => "O2%",
+                            "O2" => $confined_space_entry->o2_percentage,
+                        ],
+                        'system_isolated' => [
+                            'name' => "System Isolated",
+                            "system_isolated_checked" => $confined_space_entry->system_isolated  == 1 ? 'Yes' : 'No',
+                        ],
+                        'rescue_system' => [
+                            'name' => "Rescue System Available",
+                            "rescue_system_checked" => $confined_space_entry->rescue_system  == 1 ? 'Yes' : 'No',
+                        ],
+                        'confined_attendant' => [
+                            'name' => "Confined Space Attendant",
+                            "confined_attendant_checked" => $confined_space_entry->confined_attendant  == 1 ? 'Yes' : 'No',
+                        ],
+                        'attendant_name' => [
+                            'name' => "Attendant Name",
+                            "attendant_name" => $confined_space_entry->attendant_name,
+                        ],
+                        'register_entry_exits' => [
+                            'name' => "Register for entry & exits ",
+                            "register_entry_exits_checked" => $confined_space_entry->register_entry_exits  == 1 ? 'Yes' : 'No',
+                        ],
+                        'other_gas' => [
+                            'name' => "Any Other Gas / PPM",
+                            "other_gas_checked" => $confined_space_entry->other_gas  == 1 ? 'Yes' : 'No',
+                        ],
+                        'ppm_safe_to_enter' => [
+                            'name' => "PPM and is therefore safe to enter from",
+                            "ppm_safe_to_enter" => $confined_space_entry->ppm_safe_to_enter ?? 'N/A',
+                        ],
+                        'to' => [
+                            'name' => "PPM and is therefore safe to enter To",
+                            "to" => $confined_space_entry->to ?? 'N/A',
+                        ],
+                    ],
+                    'protective_equipments_worn' => [
+                        'images' => [
+                            "{{ url('public/assets/images/safetypermit/gloves.png') }}",
+                            "{{ url('public/assets/images/safetypermit/helmet.png') }}",
+                            "{{ url('public/assets/images/safetypermit/shoes.png') }}",
+                            "{{ url('public/assets/images/safetypermit/gloves (1).png') }}",
+                            "{{ url('public/assets/images/safetypermit/boots (1).png') }}",
+                            "{{ url('public/assets/images/safetypermit/boots.png') }}",
+                            "{{ url('public/assets/images/safetypermit/safety-goggles.png') }}",
+                                 
+
+                        ]
+                    ]
+
                 ];
+
                 return $this->sendResponse($success, 'Safety Permit Details');
             } else {
                 return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);

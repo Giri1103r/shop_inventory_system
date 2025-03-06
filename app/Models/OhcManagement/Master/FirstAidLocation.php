@@ -111,18 +111,31 @@ class FirstAidLocation extends Model
         return $datas;
     }
 
-    // public function UniqueCheck($data)
-    // {
+    public function uniqueCheck($location_id)
+    {
 
-    //     return $this->where('company_name',  $data)->get();
-    // }
+        return $this->where('location_id', $location_id)->get();
+    }
 
-    // public function ExistuniqueCheck($data, $id)
-    // {
-    //     return $this->where('company_name',  $data)
-    //         ->where('id', '!=', $id)
-    //         ->get();
-    // }
+    public function existUniqueCheck($location_id,$id)
+    {
+        return $this->where('location_id', $location_id)
+            ->where('id', '!=', $id)
+            ->get();
+    }
+
+    public function stationnumberuniqueCheck($station_number)
+    {
+
+        return $this->where('station_number', $station_number)->get();
+    }
+
+    public function stationnumberexistUniqueCheck($station_number,$id)
+    {
+        return $this->where('station_number', $station_number)
+            ->where('id', '!=', $id)
+            ->get();
+    }
 
     public function store()
     {
