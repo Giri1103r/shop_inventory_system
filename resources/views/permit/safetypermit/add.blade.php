@@ -2135,10 +2135,10 @@
             $.validator.addMethod(
                 "validTimeTo",
                 function(value, element) {
-                    const maxTime = "18:00";
+                    const maxTime = "20:00";
                     return value <= maxTime;
                 },
-                "Time cannot exceed 18:00."
+                "Time cannot exceed 20:00."
             );
             $.validator.addMethod("regex", function(value, element, regexp) {
                 return this.optional(element) || regexp.test(value);
@@ -2217,7 +2217,7 @@
                     },
                     time_to: {
                         required: "To Time cannot be empty.",
-                        validTimeTo: "To Time should not exceed 18:00 PM.",
+                        validTimeTo: "To Time should not exceed 20:00 PM.",
                     },
                     unit_id: {
                         required: "Please Select the unit.",
