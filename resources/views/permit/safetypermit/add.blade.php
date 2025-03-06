@@ -986,21 +986,21 @@
                             // If the selected date is today
                             startTimePicker.set({
                                 minTime: currentTime, // Current time as minTime
-                                maxTime: "20:00", // Until 6:00 PM
+                                maxTime: "18:00", // Until 6:00 PM
                             });
                             endTimePicker.set({
                                 minTime: currentTime, // Current time as minTime
-                                maxTime: "20:00", // Until 6:00 PM
+                                maxTime: "18:00", // Until 6:00 PM
                             });
                         } else {
                             // If the selected date is in the future
                             startTimePicker.set({
                                 minTime: "09:00", // 9:00 AM
-                                maxTime: "20:00", // 6:00 PM
+                                maxTime: "18:00", // 6:00 PM
                             });
                             endTimePicker.set({
                                 minTime: "09:00", // 9:00 AM
-                                maxTime: "20:00", // 6:00 PM
+                                maxTime: "18:00", // 6:00 PM
                             });
                         }
                     }
@@ -1031,11 +1031,11 @@
             const currentTime = today.getHours() + ":" + today.getMinutes().toString().padStart(2, "0");
             startTimePicker.set({
                 minTime: currentTime, // Current time
-                maxTime: "20:00", // Until 6:00 PM
+                maxTime: "18:00", // Until 6:00 PM
             });
             endTimePicker.set({
                 minTime: currentTime, // Current time
-                maxTime: "20:00", // Until 6:00 PM
+                maxTime: "18:00", // Until 6:00 PM
             });
 
 
@@ -2135,10 +2135,10 @@
             $.validator.addMethod(
                 "validTimeTo",
                 function(value, element) {
-                    const maxTime = "20:00";
+                    const maxTime = "18:00";
                     return value <= maxTime;
                 },
-                "Time cannot exceed 20:00."
+                "Time cannot exceed 18:00."
             );
             $.validator.addMethod("regex", function(value, element, regexp) {
                 return this.optional(element) || regexp.test(value);
@@ -2217,7 +2217,7 @@
                     },
                     time_to: {
                         required: "To Time cannot be empty.",
-                        validTimeTo: "To Time should not exceed 20:00 PM.",
+                        validTimeTo: "To Time should not exceed 18:00 PM.",
                     },
                     unit_id: {
                         required: "Please Select the unit.",
