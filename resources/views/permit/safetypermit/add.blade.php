@@ -1031,11 +1031,11 @@
             const currentTime = today.getHours() + ":" + today.getMinutes().toString().padStart(2, "0");
             startTimePicker.set({
                 minTime: currentTime, // Current time
-                maxTime: "18:00", // Until 6:00 PM
+                maxTime: "20:00", // Until 6:00 PM
             });
             endTimePicker.set({
                 minTime: currentTime, // Current time
-                maxTime: "18:00", // Until 6:00 PM
+                maxTime: "20:00", // Until 6:00 PM
             });
 
 
