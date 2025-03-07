@@ -1509,7 +1509,7 @@ class InitialIncidentController extends Controller
             $html = view('ims.initial.incident.exportpdf', $data)->render();
             $mpdf->WriteHTML($html);
             $filename = "Incident.pdf";
-            return $mpdf->Output($filename, 'I');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             dd($ex);

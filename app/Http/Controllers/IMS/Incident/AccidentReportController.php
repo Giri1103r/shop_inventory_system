@@ -5,7 +5,7 @@ namespace App\Http\Controllers\IMS\Incident;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-
+use Mail;
 use App\Models\Master\Work;
 use App\Models\Master\Employee;
 use App\Models\Master\Unit;
@@ -130,7 +130,7 @@ class AccidentReportController extends Controller
                                 $assignedUsers = explode(',', $row->investigation_assigned);
                                 $loggedInUserId = Auth::id();
                                 $assignedLoginIds = Employee::whereIn('id', $assignedUsers)->pluck('login_id')->toArray();
-                                if (in_array($loggedInUserId, $assignedLoginIds)) {
+                                if (in_array($loggedInUserId, $assignedLoginIds) || (CheckUserRole(ROLE_SUPERADMIN))) {
                                     $btn .= '<a href="' . admin_url('accidentReport/investigation/' . encryptId($row->id)) . '" class=" " title="Investigation">
                                                 <i class="fa fa-search" style="color: #000000;"></i>
                                              </a>';

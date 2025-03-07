@@ -1180,6 +1180,17 @@
                         },
                         corrective_preventive_action: {
                             required: true,
+                            minlength: 10,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
+                        },
+                        action_taken: {
+                            minlength: 10,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
+                        },
+                        root_cause_analysis: {
+                            required: true,
                         },
                         responsible_person_id: {
                             required: true,
@@ -1207,7 +1218,18 @@
                             required: "What factors caused the Fire Incident is required.",
                         },
                         corrective_preventive_action: {
-                            required: "Recommended Corrective & Preventive Action is required.",
+                            required: "Corrective/preventive action is required.",
+                            minlength: "Minimum 10 characters required.",
+                            maxlength: "Maximum 2000 characters allowed.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                        },
+                        action_taken: {
+                            minlength: "Minimum 10 characters required.",
+                            maxlength: "Maximum 2000 characters allowed.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                        },
+                        root_cause_analysis: {
+                            required: "Root Cause Analysis is required.",
                         },
                         responsible_person_id: {
                             required: "Responsible Person is required.",

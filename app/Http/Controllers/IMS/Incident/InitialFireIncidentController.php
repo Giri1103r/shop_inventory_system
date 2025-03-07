@@ -1503,7 +1503,7 @@ class InitialFireIncidentController extends Controller
             $html = view('ims.initial.firereport.exportpdf', $data)->render();
             $mpdf->WriteHTML($html);
             $filename = "Fire Incident.pdf";
-            return $mpdf->Output($filename, 'I');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             dd($ex);

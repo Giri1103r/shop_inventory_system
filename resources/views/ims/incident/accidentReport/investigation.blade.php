@@ -1713,7 +1713,7 @@
                                                 class="btn btn-secondary btn-warnings injcancel center"
                                                 data-bs-dismiss="modal">{{ 'Cancel' }}</button>
                                             <!--
-                                                                                                                                                                                                                                                                                                                                                                                                                <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                        <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
 
                                         </div>
                                     </div>
@@ -1725,8 +1725,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                                                                                                                                                                                                                                                                                                                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                                                                                                                                                                                                                                                                                        </div>-->
+                                                                                                                                                                                                                                                                                                                                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                                                                                                                                                                                                                                                                                                </div>-->
             </div>
         </div>
     </div>
@@ -2002,6 +2002,41 @@
         });
 
         $(document).ready(function() {
+
+            function initializeSelect2() {
+                $('.responsible_person').select2({
+                    ajax: {
+                        url: "{{ url('accidentReport/getemployeename') }}",
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.id,
+                                        text: item.text
+                                    };
+                                })
+                            };
+                        },
+                        error: function(xhr, textStatus, errorThrown) {
+                            console.log("Error in AJAX request:", textStatus, errorThrown);
+                        }
+                    },
+                    minimumInputLength: 1,
+                    dropdownCssClass: 'form-control',
+                    selectionCssClass: 'form-control'
+                });
+            }
+
+            // Initialize select2 on page load
+            initializeSelect2();
+
             let injuryIndex = 0;
 
             // Add new injury details row
@@ -2069,6 +2104,7 @@
                 $(".single-select").select2();
 
                 addInjuryPersonValidation(injuryIndex);
+                initializeSelect2();
 
             });
 
