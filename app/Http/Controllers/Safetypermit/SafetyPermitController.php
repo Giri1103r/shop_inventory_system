@@ -132,7 +132,7 @@ class SafetyPermitController extends Controller
                             <i class="fa-solid fa-check-to-slot text-success"></i>
                         </a>';
                             }
-
+ dd($$row->date , date('Y-m-d'), in_array($row->date, [date('Y-m-d'), date('Y-m-d', strtotime('+1 day'))]));
                             if (in_array($row->date, [date('Y-m-d'), date('Y-m-d', strtotime('+1 day'))])) {
                                 if (($row->permit_status == STATUS_PERMIT_EXPIRED)
                                     && ($row->created_by == Auth::id() || CheckUserRole(ROLE_SUPERADMIN))
