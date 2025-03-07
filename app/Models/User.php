@@ -84,7 +84,7 @@ class User extends Authenticatable
         $search = '';
         $query = $this->select('users.*', 'template_user_role.role_name',);
         $query = $query->leftJoin('template_user_role', 'users.role', '=', 'template_user_role.id');
-        $query = $query->where('status',1);
+        $query = $query->where('users.status', 1);
 
         // dd($query);
         $org_total =  $query;
@@ -95,16 +95,16 @@ class User extends Authenticatable
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('users.name', 'LIKE', '%' . $search . '%');
             });
         }
 
 
         if ($request->has('employee_id') && $request->employee_id) {
-            $query = $query->where('employee_id', 'LIKE', '%' . $request->employee_id . '%');
+            $query = $query->where('users.employee_id', 'LIKE', '%' . $request->employee_id . '%');
         }
         if ($request->has('name') && $request->name) {
-            $query = $query->where('name', 'LIKE', '%' . $request->name . '%');
+            $query = $query->where('users.name', 'LIKE', '%' . $request->name . '%');
         }
         if ($request->has('status') && $request->status) {
 
