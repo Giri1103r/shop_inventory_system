@@ -56,6 +56,7 @@ use App\Http\Controllers\IMS\Incident\InitialFireIncidentController;
 use App\Http\Controllers\IMS\Incident\AccidentReportController;
 use App\Http\Controllers\OhcManagement\MedicineFirstAidController;
 use App\Http\Controllers\OhcManagement\DiscardController;
+use App\Http\Controllers\OhcManagement\MedicalFitnessCertificateController;
 use App\Http\Controllers\OhcManagement\Report\InventoryController;
 use App\Http\Controllers\OhcManagement\Report\MedicineExpireController;
 use App\Http\Controllers\OhcManagement\Report\MonthlyInventoryController;
@@ -861,6 +862,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/submit', [FirstAidLocationController::class, 'importSubmit']);
                 Route::post('/status', [FirstAidLocationController::class, 'statusChange']);
                 Route::post('/unique', [FirstAidLocationController::class, 'Uniquecheck']);
+                Route::post('/station-number-unique', [FirstAidLocationController::class, 'StationNumberUniquecheck']);
                 Route::get('/employeename', [FirstAidLocationController::class, 'employeename']);
             });
 
@@ -880,6 +882,26 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/submit', [CertifiedFirstAiderController::class, 'importSubmit']);
                 Route::post('/status', [CertifiedFirstAiderController::class, 'statusChange']);
                 Route::post('/unique', [CertifiedFirstAiderController::class, 'Uniquecheck']);
+            });
+
+            // medical Fitness Certificate
+
+            Route::group(['prefix' => 'ohc/medical-fitness/'], function () {
+                Route::get('/list', [MedicalFitnessCertificateController::class, 'index']);
+                Route::post('/list', [MedicalFitnessCertificateController::class, 'index']);
+                Route::get('/add', [MedicalFitnessCertificateController::class, 'add']);
+                Route::post('/add/submit', [MedicalFitnessCertificateController::class, 'store']);
+                Route::get('/edit/{id}', [MedicalFitnessCertificateController::class, 'edit']);
+                Route::post('/edit/submit', [MedicalFitnessCertificateController::class, 'update']);
+                Route::get('/view/{id}', [MedicalFitnessCertificateController::class, 'view']);
+                Route::post('/delete', [MedicalFitnessCertificateController::class, 'delete']);
+                Route::get('/export/excel', [MedicalFitnessCertificateController::class, 'exportExcel']);
+                Route::get('/export/pdf', [MedicalFitnessCertificateController::class, 'exportPdf']);
+                Route::get('/sampledownload', [MedicalFitnessCertificateController::class, 'DownloadSample']);
+                Route::get('/import', [MedicalFitnessCertificateController::class, 'import']);
+                Route::post('/import/submit', [MedicalFitnessCertificateController::class, 'importSubmit']);
+                Route::post('/status', [MedicalFitnessCertificateController::class, 'statusChange']);
+                Route::post('/unique', [MedicalFitnessCertificateController::class, 'Uniquecheck']);
             });
 
 
