@@ -132,7 +132,7 @@ class SafetyPermitController extends Controller
                             <i class="fa-solid fa-check-to-slot text-success"></i>
                         </a>';
                             }
-                            //  dd($row->date , date('Y-m-d'), in_array($row->date, [date('Y-m-d'), date('Y-m-d', strtotime('+1 day'))]));
+
                             //                             if (in_array($row->date, [date('Y-m-d'), date('Y-m-d', strtotime('+1 day'))])) {
                             //                                 if (($row->permit_status == STATUS_PERMIT_EXPIRED)
                             //                                     && ($row->created_by == Auth::id() || CheckUserRole(ROLE_SUPERADMIN))
@@ -142,11 +142,10 @@ class SafetyPermitController extends Controller
                             //                             }
 
                             $permitDate = date('Y-m-d', strtotime($row->date));
-                            $nextDay = date('Y-m-d', strtotime($permitDate . ' +1 day')); // Add 1 day to $row->date
+                            $nextDay = date('Y-m-d', strtotime($permitDate . ' +1 day'));
                             $today = date('Y-m-d');
-                            // dd($permitDate, $nextDay, $today, $today == $nextDay);
 
-                            if ($today == $nextDay) {  // Check if today is +1 day from $row->date
+                            if ($today == $nextDay) {
                                 if (($row->permit_status == STATUS_PERMIT_EXPIRED)
                                     && ($row->created_by == Auth::id() || CheckUserRole(ROLE_SUPERADMIN))
                                 ) {
