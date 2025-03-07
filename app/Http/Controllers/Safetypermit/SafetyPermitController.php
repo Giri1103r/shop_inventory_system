@@ -133,14 +133,6 @@ class SafetyPermitController extends Controller
                         </a>';
                             }
 
-                            //                             if (in_array($row->date, [date('Y-m-d'), date('Y-m-d', strtotime('+1 day'))])) {
-                            //                                 if (($row->permit_status == STATUS_PERMIT_EXPIRED)
-                            //                                     && ($row->created_by == Auth::id() || CheckUserRole(ROLE_SUPERADMIN))
-                            //                                 ) {
-                            //                                     $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '" class="permitExtension" title="' . __('Permit Extension') . '"><i class="fa fa-external-link"></i></a>';
-                            //                                 }
-                            //                             }
-
                             $permitDate = date('Y-m-d', strtotime($row->date));
                             $nextDay = date('Y-m-d', strtotime($permitDate . ' +1 day'));
                             $today = date('Y-m-d');
@@ -150,8 +142,8 @@ class SafetyPermitController extends Controller
                                     && ($row->created_by == Auth::id() || CheckUserRole(ROLE_SUPERADMIN))
                                 ) {
                                     $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '"
-                 class="permitExtension" title="' . __('Permit Extension') . '">
-                 <i class="fa fa-external-link"></i></a>';
+                                    class="permitExtension" title="' . __('Permit Extension') . '">
+                                    <i class="fa fa-external-link"></i></a>';
                                 }
                             }
 
