@@ -184,35 +184,40 @@
                                 // Set Designation
                                 $('#designation').val(response.employee.designation);
 
+                                //  Reset Unit Dropdown Before Updating
+                                $('#unit_id').val('').prop('disabled',
+                                    false); // Make sure it resets first
 
-                                  // Set Unit
-                        if (response.employee.unit_id) {
-                            $('#unit_id').val(response.employee.unit_id).trigger('change').prop('disabled', true);
-                        } else {
-                            $('#unit_id').val('').prop('disabled', false);
-                        }
-
-                        // Set Department
-                        if (response.employee.department_id) {
-                            $('#department_id').html('<option value="' + response.employee.department_id + '">' + response.employee.department_name + '</option>').prop('disabled', true);
-                        } else {
-                            $('#department_id').html('<option value="">Select Department</option>').prop('disabled', false);
-                        }
                                 // Set Unit
                                 if (response.employee.unit_id) {
-                                    $('#unit_id').val(response.employee.unit_id).prop(
-                                        'disabled', true);
+                                    // If unit exists, check if it's already in the dropdown
+                                    if ($('#unit_id option[value="' + response.employee
+                                            .unit_id + '"]').length > 0) {
+                                        $('#unit_id').val(response.employee.unit_id).prop(
+                                            'disabled', true);
+                                    } else {
+                                        // Add the unit dynamically and select it
+                                        $('#unit_id').append('<option value="' + response
+                                                .employee.unit_id + '">' + response.employee
+                                                .unit_name + '</option>')
+                                            .val(response.employee.unit_id).prop('disabled',
+                                                true);
+                                    }
                                 } else {
-                                    $('#unit_id').val('').prop('disabled', false);
+                                    //  If no unit exists, keep dropdown enabled
+                                    $('#unit_id').val('').trigger('change').prop('disabled',
+                                        false);
                                 }
 
                                 // Set Department
                                 if (response.employee.department_id) {
                                     $('#department_id').html('<option value="' + response
-                                        .employee.department_id + '">' + response.employee
-                                        .department_name + '</option>').prop('disabled',
-                                        true);
+                                            .employee.department_id + '">' + response.employee
+                                            .department_name + '</option>')
+                                        .val(response.employee.department_id)
+                                        .prop('disabled', true);
                                 } else {
+                                    //  Reset department dropdown if no department found
                                     $('#department_id').html(
                                         '<option value="">Select Department</option>').prop(
                                         'disabled', false);
@@ -234,16 +239,16 @@
                         }
                     });
                 } else {
-                    // Reset fields if no Employee Code is selected
+                    //  Reset all fields if no Employee Code is selected
                     $('#designation').val('');
-                    $('#unit_id').val('').prop('disabled', false);
+                    $('#unit_id').val('').prop('disabled', false); // ✅ Reset & Enable Unit
                     $('#department_id').html('<option value="">Select Department</option>').prop('disabled',
                         false);
                 }
             });
 
-            // Handle Unit change
-            $('#unit_id').change(function() {
+
+            function unitChangeHandler() {
                 var unitId = $(this).val();
                 if (unitId) {
                     $.ajax({
@@ -251,11 +256,10 @@
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
-                            var departmentOptions =
-                                '<option value="">Select Department</option>';
+                            var departmentOptions = '<option value="">Select Department</option>';
                             $.each(data, function(key, value) {
-                                departmentOptions += '<option value="' + value.id +
-                                    '">' + value.name + '</option>';
+                                departmentOptions += '<option value="' + value.id + '">' + value
+                                    .name + '</option>';
                             });
                             $('#department_id').html(departmentOptions).prop('disabled', false);
                         },
@@ -264,10 +268,13 @@
                         }
                     });
                 } else {
-                    $('#department_id').html('<option value="">Select Department</option>').prop('disabled',
-                        true);
+                    $('#department_id').html('<option value="">Select Department</option>').prop('disabled', true);
                 }
-            });
+            }
+
+            $('#unit_id').change(unitChangeHandler);
+
+
             // $('#emp_code').change(function() {
             //     var emp_code = $(this).val();
 

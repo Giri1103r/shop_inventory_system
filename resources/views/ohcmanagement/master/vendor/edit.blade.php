@@ -105,7 +105,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        regex: /^(?!\s*$)[a-zA-Z0-9\s]+$/,
+                        regex: /^(?!\s*$)[a-zA-Z\s]+$/,
                         remote: {
                             url: '{{ admin_url('ohc/vendor/unique') }}',
                             type: 'post',

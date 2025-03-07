@@ -31,8 +31,8 @@ class Statuslog extends Model
         $insert_data = [
             'type' => TYPE_PPE_REQUEST,
             'reference_id' => $id,
-            'from_status' => $pperequest->approve_status,
-            'to_status' => STATUS_USER_APPLIED,
+            'from_status' => STATUS_USER_APPLIED,
+            'to_status' => $pperequest->approve_status,
             'remarks' => !empty($pperequest->employee_reason) ? $pperequest->employee_reason : $pperequest->employee_remarks,
             'created_by' => Auth::id(),
         ];
@@ -61,7 +61,7 @@ class Statuslog extends Model
         $insert_data = [
             'type' => TYPE_PPE_REQUEST,
             'reference_id' => $empDetails->id,
-            'from_status' => $updatedatas['approve_status'],
+            'from_status' =>STATUS_HOD_APPROVAL_PENDING,
             'to_status' => $updatedatas['approve_status'],
             'remarks' => $updatedatas['remarks'],
             'created_by' => Auth::id(),
@@ -202,7 +202,7 @@ class Statuslog extends Model
     }
     public function gethodstatuslog($id)
     {
-        return $this->where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)->where('from_status', STATUS_HOD_APPROVED)->orWhere('from_status' ,STATUS_HOD_REJECTED)->first();
+        return $this->where('reference_id', $id)->where('type', TYPE_PPE_REQUEST)->where('from_status', STATUS_HOD_APPROVAL_PENDING)->first();
     }
     public function gethodrejectstatuslog($id)
     {

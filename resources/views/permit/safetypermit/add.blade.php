@@ -2066,7 +2066,7 @@
 
         $(document).ready(function() {
             const section1Inputs = $('#section-1 input');
-            const checkboxWithValue8 = $('.work-type-checkbox[data-id="8"]');
+            const checkboxWithValue8 = $('.work-type-checkbox[data-id="ZVZVaE02c211YWFyV0xZelVXU1pNdz09"]');
 
             section1Inputs.prop('disabled', true);
 
