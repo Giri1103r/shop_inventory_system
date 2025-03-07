@@ -132,29 +132,30 @@ class SafetyPermitController extends Controller
                             <i class="fa-solid fa-check-to-slot text-success"></i>
                         </a>';
                             }
-                            //  dd($row->date , date('Y-m-d'), in_array($row->date, [date('Y-m-d'), date('Y-m-d', strtotime('+1 day'))]));
-                            //                             if (in_array($row->date, [date('Y-m-d'), date('Y-m-d', strtotime('+1 day'))])) {
-                            //                                 if (($row->permit_status == STATUS_PERMIT_EXPIRED)
-                            //                                     && ($row->created_by == Auth::id() || CheckUserRole(ROLE_SUPERADMIN))
-                            //                                 ) {
-                            //                                     $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '" class="permitExtension" title="' . __('Permit Extension') . '"><i class="fa fa-external-link"></i></a>';
-                            //                                 }
-                            //                             }
+//  dd($row->date , date('Y-m-d'), in_array($row->date, [date('Y-m-d'), date('Y-m-d', strtotime('+1 day'))]));
+//                             if (in_array($row->date, [date('Y-m-d'), date('Y-m-d', strtotime('+1 day'))])) {
+//                                 if (($row->permit_status == STATUS_PERMIT_EXPIRED)
+//                                     && ($row->created_by == Auth::id() || CheckUserRole(ROLE_SUPERADMIN))
+//                                 ) {
+//                                     $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '" class="permitExtension" title="' . __('Permit Extension') . '"><i class="fa fa-external-link"></i></a>';
+//                                 }
+//                             }
 
+$permitDate = date('Y-m-d', strtotime($row->date));
+$nextDay = date('Y-m-d', strtotime($permitDate . ' +1 day')); // Add 1 day to $row->date
+$today = date('Y-m-d');
+dd($permitDate, $nextDay, $today, $today == $nextDay);
 
-                            $permitDate = date('Y-m-d', strtotime($row->date));
-                            $today = date('Y-m-d');
-                            $tomorrow = date('Y-m-d', strtotime('+1 day'));
-
-                            if (in_array($permitDate, [$today, $tomorrow])) {
-                                if (($row->permit_status == STATUS_PERMIT_EXPIRED)
-                                    && ($row->created_by == Auth::id() || CheckUserRole(ROLE_SUPERADMIN))
-                                ) {
-                                    $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '"
+if ($today == $nextDay) {  // Check if today is +1 day from $row->date
+    if (($row->permit_status == STATUS_PERMIT_EXPIRED)
+        && ($row->created_by == Auth::id() || CheckUserRole(ROLE_SUPERADMIN))
+    ) {
+        $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '"
                  class="permitExtension" title="' . __('Permit Extension') . '">
                  <i class="fa fa-external-link"></i></a>';
-                                }
-                            }
+    }
+}
+
 
                             if (CheckUserPermission('view')) {
                                 $btn .= '<a href="' . admin_url('safetypermit/view/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="' . __('common.view') . '">
@@ -589,12 +590,12 @@ class SafetyPermitController extends Controller
                     'approved_by' => Auth::id(),
                 );
                 $this->statuslog->create($insert_array);
-            } else {
+            }else{
                 $insert_array = array(
                     'permit_type' => 0,
                     'permit_id' => $safetypermit->id,
                     'from_status' => 0,
-                    'to_status' => $permit_status,
+                    'to_status' =>$permit_status,
                     'is_reject' => null,
                     'remarks' => null,
                     'approved_by' => Auth::id(),
