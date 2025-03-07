@@ -719,7 +719,8 @@
                                                             class="form-label require">Responsible
                                                             Person</label>
                                                         <select name="responsible_person_id" id="responsible_person_id"
-                                                            class="form-control single-select" style="width: 100%">
+                                                            class="form-control single-select responsible_person"
+                                                            style="width: 100%">
                                                             <option value="">Select Responsible Person</option>
                                                         </select>
                                                     </div>
@@ -1689,7 +1690,7 @@
                                                 class="btn btn-secondary btn-warnings injcancel center"
                                                 data-bs-dismiss="modal">{{ 'Cancel' }}</button>
                                             <!--
-                                                                                                                                                                                                                                                                                                                                                                                        <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
 
                                         </div>
                                     </div>
@@ -1701,8 +1702,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                                                                                                                                                                                                                                                                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                                                                                                                                                                                                                                                                </div>-->
+                                                                                                                                                                                                                                                                                                                                                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                                                                                                                                                                                                                                                                                        </div>-->
             </div>
         </div>
     </div>
@@ -1748,6 +1749,7 @@
 
             flatpickr("#target_date", {
                 dateFormat: "d-m-Y",
+                minDate: "today"
             });
 
 
@@ -1866,7 +1868,7 @@
             });
 
 
-            $('#responsible_person_id').select2({
+            $('.responsible_person').select2({
                 ajax: {
                     url: "{{ url('accidentReport/getemployeename') }}",
                     dataType: 'json',
@@ -1968,114 +1970,6 @@
 
 
         });
-        $(function() {
-            $('#accidentinvestigation').validate({
-                rules: {
-                    'witness_id[]': {
-                        required: true,
-                    },
-                    'is_damaged[]': {
-                        required: true,
-                    },
-                    root_cause_analysis: {
-                        required: true,
-                    },
-                    is_treatment: {
-                        required: true,
-                    },
-                    action_taken: {
-                        required: true,
-                        minlength: 10,
-                        maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
-                    },
-                    details: {
-                        required: function(element) {
-                            return $('input[name="is_treatment"]:checked').val() === '1';
-                        },
-                        minlength: 3,
-                        maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/
-                    },
-                    corrective_preventive_action: {
-                        required: true,
-                        minlength: 10,
-                        maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
-                    },
-                    responsible_person_id: {
-                        required: true,
-                    },
-                    target_date: {
-                        required: true,
-                    },
-                },
-                messages: {
-                    'witness_id[]': {
-                        required: "Witness ID is required.",
-                    },
-                    'is_damaged[]': {
-                        required: "Was anything damaged is required.",
-                    },
-                    root_cause_analysis: {
-                        required: "Root cause analysis is required.",
-                    },
-                    is_treatment: {
-                        required: "Where the injured person receiving any treatment at present is required.",
-                    },
-                    action_taken: {
-                        required: "Action taken is required.",
-                        minlength: "Minimum 10 characters required.",
-                        maxlength: "Maximum 2000 characters allowed.",
-                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
-                    },
-                    details: {
-                        required: "Please provide details of the treatment.",
-                        minlength: "Details must be at least 3 characters long.",
-                        maxlength: "Details cannot exceed 2000 characters.",
-                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
-                    },
-                    corrective_preventive_action: {
-                        required: "Corrective/preventive action is required.",
-                        minlength: "Minimum 10 characters required.",
-                        maxlength: "Maximum 2000 characters allowed.",
-                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
-                    },
-                    responsible_person_id: {
-                        required: "Responsible person ID is required.",
-                    },
-                    target_date: {
-                        required: "Target date is required.",
-                    },
-                },
-
-                errorElement: 'span',
-                errorPlacement: function(error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-input').append(error);
-                },
-                highlight: function(element) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element) {
-                    $(element).removeClass('is-invalid');
-                },
-                submitHandler: function(form) {
-                    form.submit();
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                    if (errors) {
-                        console.log(`There are ${errors} validation errors.`);
-                        validator.errorList.forEach(function(error) {
-                            console.log(
-                                `Field: ${error.element.name}, Error: ${error.message}`
-                            );
-                        });
-                    }
-                },
-            });
-        });
 
         $(document).ready(function() {
             let injuryIndex = 0;
@@ -2143,6 +2037,9 @@
 
                 $(".injury-details-templat").append(newRow);
                 $(".single-select").select2();
+
+                addInjuryPersonValidation(injuryIndex);
+
             });
 
             $(document).on("change", "[name^='injury_person'][name$='[injury_person_type]']", function() {
@@ -2298,6 +2195,166 @@
                 }
             });
 
+            function addInjuryPersonValidation(injuryIndex) {
+                $(`select[name="injury_person[${injuryIndex}][injury_person_type]"]`).rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Injury Person Type is required."
+                    }
+                });
+                $(`input[name="injury_person[${injuryIndex}][injury_person_name]"]`).rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Injury Person Name is required."
+                    }
+                });
+                $(`input[name="injury_person[${injuryIndex}][injury_person_designation]"]`).rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Injury Person Designation is required."
+                    }
+                });
+                $(`select[name="injury_person[${injuryIndex}][injury_person_department_id]"], input[name="injury_person[${injuryIndex}][injury_person_department_id]"]`)
+                    .rules("add", {
+                        required: true,
+                        messages: {
+                            required: "Injury Person Department is required."
+                        }
+                    });
+            }
+            $(function() {
+                $('#accidentinvestigation').validate({
+                    rules: {
+                        'injury_person[0][injury_person_type]': {
+                            required: true,
+                        },
+                        'injury_person[0][injury_person_name]': {
+                            required: true,
+                        },
+                        'injury_person[0][injury_person_designation]': {
+                            required: true,
+                        },
+                        'injury_person[0][injury_person_department_id]': {
+                            required: true,
+                        },
+                        'witness_id[]': {
+                            required: true,
+                        },
+                        'is_damaged[]': {
+                            required: true,
+                        },
+                        root_cause_analysis: {
+                            required: true,
+                        },
+                        is_treatment: {
+                            required: true,
+                        },
+                        action_taken: {
+                            required: true,
+                            minlength: 10,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
+                        },
+                        details: {
+                            required: function(element) {
+                                return $('input[name="is_treatment"]:checked').val() === '1';
+                            },
+                            minlength: 3,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/
+                        },
+                        corrective_preventive_action: {
+                            required: true,
+                            minlength: 10,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
+                        },
+                        responsible_person_id: {
+                            required: true,
+                        },
+                        target_date: {
+                            required: true,
+                        },
+                    },
+                    messages: {
+                        'injury_person[0][injury_person_type]': {
+                            required: "Injury Person Type is required."
+                        },
+                        'injury_person[0][injury_person_name]': {
+                            required: "Injury Person Name is required."
+                        },
+                        'injury_person[0][injury_person_designation]': {
+                            required: "Injury Person Designation is required."
+                        },
+                        'injury_person[0][injury_person_department_id]': {
+                            required: "Injury Person Department is required."
+                        },
+                        'witness_id[]': {
+                            required: "Witness ID is required.",
+                        },
+                        'is_damaged[]': {
+                            required: "Was anything damaged is required.",
+                        },
+                        root_cause_analysis: {
+                            required: "Root cause analysis is required.",
+                        },
+                        is_treatment: {
+                            required: "Where the injured person receiving any treatment at present is required.",
+                        },
+                        action_taken: {
+                            required: "Action taken is required.",
+                            minlength: "Minimum 10 characters required.",
+                            maxlength: "Maximum 2000 characters allowed.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                        },
+                        details: {
+                            required: "Please provide details of the treatment.",
+                            minlength: "Details must be at least 3 characters long.",
+                            maxlength: "Details cannot exceed 2000 characters.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+                        },
+                        corrective_preventive_action: {
+                            required: "Corrective/preventive action is required.",
+                            minlength: "Minimum 10 characters required.",
+                            maxlength: "Maximum 2000 characters allowed.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                        },
+                        responsible_person_id: {
+                            required: "Responsible person ID is required.",
+                        },
+                        target_date: {
+                            required: "Target date is required.",
+                        },
+                    },
+
+                    errorElement: 'span',
+                    errorPlacement: function(error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-input').append(error);
+                    },
+                    highlight: function(element) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function(element) {
+                        $(element).removeClass('is-invalid');
+                    },
+                    submitHandler: function(form) {
+                        form.submit();
+                    },
+                    invalidHandler: function(event, validator) {
+                        var errors = validator.numberOfInvalids();
+                        if (errors) {
+                            console.log(`There are ${errors} validation errors.`);
+                            validator.errorList.forEach(function(error) {
+                                console.log(
+                                    `Field: ${error.element.name}, Error: ${error.message}`
+                                );
+                            });
+                        }
+                    },
+                });
+
+            });
 
 
 
