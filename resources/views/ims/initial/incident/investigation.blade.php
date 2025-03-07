@@ -449,11 +449,10 @@
                                                     <label class="form-label">HIRA</label>
 
                                                 </div>
-                                                <x-button-add dataId="{{ $incidentId ?? '' }}"
+                                                <x-button dataId="{{ $incidentId ?? '' }}"
                                                     class="add popupwindow btn btn-primary"
-                                                    href="{{ admin_url('incident/initial-incident/existingHira/' . ($incidentId ?? '')) }}">
-                                                    Add
-                                                </x-button-add>
+                                                    href="{{ admin_url('incident/initial-incident/existingHira/' . (encryptId($incidentId) ?? '')) }}">
+                                                </x-button>
                                             </div>
 
                                             <div class="modal fade" id="hiraModal" tabindex="-1"
@@ -473,11 +472,10 @@
                                                     <label class="form-label">MOC</label>
 
                                                 </div>
-                                                <x-button-add dataId="{{ $incidentId ?? '' }}"
+                                                <x-button-moc dataId="{{ $incidentId ?? '' }}"
                                                     class="add popupwindow btn btn-primary"
-                                                    href="{{ admin_url('incident/initial-incident/existingMOC/' . ($incidentId ?? '')) }}">
-                                                    Add
-                                                </x-button-add>
+                                                    href="{{ admin_url('incident/initial-incident/existingMOC/' . (encryptId($incidentId) ?? '')) }}">
+                                                </x-button-moc>
                                             </div>
 
 
@@ -546,6 +544,28 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Remarks (If Any)</label>
                                                     <textarea class="form-control" name="remark" id="remark"></textarea>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4 mt-3">
+                                                <div class="form-group form-input">
+                                                    <label for="risk_analysis" class="form-label require">Risk
+                                                        Analaysis</label><br>
+                                                    <input type="radio" id="yes" name="risk_analysis"
+                                                        value="1">
+                                                    <label for="yes">Yes</label>
+                                                    <input type="radio" id="no" name="risk_analysis"
+                                                        value="2">
+                                                    <label for="no">No</label><br>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mt-2" id="risk_analysis_remark_container"
+                                                style="display: none;">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Risk Analaysis Remarks</label>
+                                                    <textarea class="form-control" name="risk_analysis_remark" id="risk_analysis_remark"></textarea>
 
                                                 </div>
                                             </div>
@@ -873,6 +893,14 @@
     <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
 
+            $('input[name="risk_analysis"]').on('change', function() {
+                if ($('#no').is(':checked')) {
+                    $('#risk_analysis_remark_container').show();
+                } else {
+                    $('#risk_analysis_remark_container').hide();
+                }
+            });
+
             $("#root_cause_analysis").change(function() {
                 if ($(this).val() == "1") {
                     $(".whywhy").show(); // Show the Why Why Analysis section
@@ -1126,7 +1154,7 @@
                 // Initialize form validation
                 $('#incidentinvestigation').validate({
                     rules: {
-                        anything_damaged: {
+                        'anything_damaged[]': {
                             required: true,
                         },
                         corrective_preventive_action: {
@@ -1138,9 +1166,20 @@
                         target_date: {
                             required: true,
                         },
+                        risk_analysis: {
+                            required: true,
+                        },
+                        risk_analysis_remark: {
+                            required: function(element) {
+                                return $('input[name="risk_analysis"]:checked').val() === '2';
+                            },
+                            minlength: 3,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/
+                        },
                     },
                     messages: {
-                        anything_damaged: {
+                        'anything_damaged[]': {
                             required: "Was anything damaged is required.",
                         },
                         corrective_preventive_action: {
@@ -1152,6 +1191,16 @@
                         target_date: {
                             required: "Target Date is required.",
                         },
+                        risk_analysis: {
+                            required: "Risk Analysis is required.",
+                        },
+                        risk_analysis_remark: {
+                            required: "Risk Analysis Remarks is required.",
+                            minlength: "Details must be at least 3 characters long.",
+                            maxlength: "Details cannot exceed 2000 characters.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+                        },
+
                     },
                     errorElement: 'span',
                     errorPlacement: function(error, element) {

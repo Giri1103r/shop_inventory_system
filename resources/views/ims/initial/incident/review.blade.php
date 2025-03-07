@@ -411,7 +411,7 @@
                                             <label class="form-label view_label">Was anything damaged?</label>
                                             <div class="view_data">
                                                 @php
-                                                   
+
                                                     $damageTypes = [
                                                         1 => 'Man',
                                                         2 => 'Machine',
@@ -492,6 +492,20 @@
                                                 {{ $getInvestigation->remark }}
                                             </div>
                                         </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Risk Analysis</label>
+                                            <div class="view_data">
+                                                {{ $getInvestigation->risk_analysis == 1 ? 'Yes' : 'No' }}
+                                            </div>
+                                        </div>
+                                        @if ($getInvestigation->risk_analysis == 2)
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">Risk Analysis Remark</label>
+                                                <div class="view_data">
+                                                    {{ $getInvestigation->risk_analysis_remark }}
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                     @if ($getInvestigation->root_cause_analysis == 1)
                                         <div class="row mt-3 whywhy">
@@ -1021,8 +1035,7 @@
                                                 <div class="col-md-12 mb-3">
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">Remark</label>
-                                                        <textarea name="remark" id="remark" class="form-control"
-                                                            rows="4" required></textarea>
+                                                        <textarea name="remark" id="remark" class="form-control" rows="4" required></textarea>
                                                     </div>
                                                 </div>
 
@@ -1165,7 +1178,7 @@
                     },
                     target_date: {
                         required: "Please provide Target Date.",
-                       
+
                     },
                     remark: {
                         required: "Please provide a remark.",
@@ -1199,14 +1212,14 @@
             });
             $('#action_submission').validate({
                 rules: {
-                    
+
                     action_submission_description: {
                         required: true,
                         maxlength: 1000
                     }
                 },
                 messages: {
-                   
+
                     action_submission_description: {
                         required: "Please provide Action Taken.",
                         maxlength: "Action Taken cannot exceed 1000 characters."
@@ -1239,14 +1252,14 @@
             });
             $('#ehs_approval').validate({
                 rules: {
-                    
+
                     remark: {
                         required: true,
                         maxlength: 1000
                     }
                 },
                 messages: {
-                   
+
                     remark: {
                         required: "Please provide remark.",
                         maxlength: "Remark cannot exceed 1000 characters."

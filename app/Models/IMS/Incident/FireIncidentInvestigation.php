@@ -30,6 +30,8 @@ class FireIncidentInvestigation extends Model
         'corrective_preventive_action',
         'responsible_person_id',
         'target_date',
+        'risk_analysis',
+        'risk_analysis_remark',
         'remark',
         'status',
         'trash',
@@ -64,6 +66,8 @@ class FireIncidentInvestigation extends Model
             'responsible_person_id' => decryptId($request->responsible_person_id),
             'target_date' => DBdateformat($request->target_date),
             'remark' => $request->remark,
+            'risk_analysis' => $request->risk_analysis,
+            'risk_analysis_remark' => $request->risk_analysis_remark,
             'created_by' => Auth::id()
         );
 

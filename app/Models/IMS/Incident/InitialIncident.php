@@ -287,7 +287,7 @@ class InitialIncident extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ims_initial_incident.*', 'ims_incident_status.status_name','ims_incident_status.to_status', 'ims_incident_status.bg_color');
+        $query = $this->select('ims_initial_incident.*', 'ims_incident_status.status_name', 'ims_incident_status.to_status', 'ims_incident_status.bg_color');
         $query = $query->leftJoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_initial_incident.incident_status');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
@@ -352,7 +352,7 @@ class InitialIncident extends Model
     public function getEHSVerifyincident($id)
     {
         $data = $this->select('ims_ehs_review.*', 'ims_ehs_review.team_member')
-            ->where('ims_initial_incident.id', $id)
+            ->where('ims_ehs_review.inicdent_report_id', $id)
             ->leftJoin('ims_ehs_review', 'ims_ehs_review.inicdent_report_id', '=', 'ims_initial_incident.id')
             ->where('ims_ehs_review.type', 2)
             ->orderBy('id', 'DESC')
@@ -367,7 +367,6 @@ class InitialIncident extends Model
                 ->toArray();
             $data->team_member_names = implode(', ', $employees);
         }
-
         return $data;
     }
 

@@ -8,17 +8,17 @@
         <div class="modal-body m-3">
             @if ($newHiraList == null)
                 <div class="d-flex justify-content-left my-3">
-                    <a href="{{ admin_url('incident/hira-master/fire-investigation/add/' . $fire_id . '/' . encryptId(2)) }}"
+                    <a href="{{ admin_url('incident/hira-master/accident-investigation/add/' . $accident_id . '/' . encryptId(2)) }}"
                         class="btn btn-primary mx-2" id="newHira">New</a>
                     <button type="button" class="btn btn-secondary mx-2" id="existingHira">Existing</button>
                 </div>
             @endif
-
-            <input type="hidden" name="fireincident_id" value="{{ $fire_id }}">
+            <input type="hidden" name="accident_id" value="{{ $accident_id }}">
 
             <div class="row" id="existingMOCdiv" style="display: none;">
                 <label for="moc_id" class="form-label require">MOC</label>
                 <div class="col-sm-7 form-input">
+
                     <select name="hira_id" id="hira_id" class="form-control" style="width: 100%">
                         <option value="">Select HIRA</option>
                         @if ($selectedhira != null)
@@ -36,7 +36,6 @@
                     </select>
                 </div>
             </div>
-
 
 
             @if ($newHiraList != null)
@@ -91,7 +90,8 @@
 
         $('#savemoc').on('click', function() {
             var mocId = $('#moc_id').val(); // Get selected HIRA ID
-            var fireincident_id = "{{ $fireincident_id }}"; // Get incident ID
+            var incidentId = "{{ $incident_id }}"; // Get incident ID
+            var accidentId = "{{ $accident_id }}"; // Get incident ID
 
             if (!mocId) {
                 alert('Please select a MOC before proceeding.');
@@ -99,12 +99,13 @@
             }
 
             $.ajax({
-                url: "{{ admin_url('incident/fire-incident/savehira') }}",
+                url: "{{ admin_url('accidentReport/savehira') }}",
                 type: "POST",
                 data: {
                     _token: "{{ csrf_token() }}",
                     moc_id: mocId,
-                    fireincident_id: fireincident_id
+                    incident_id: incidentId,
+                    accidentId: accidentId
                 },
                 dataType: "json",
                 success: function(response) {
@@ -150,7 +151,7 @@
 
             if (hiraId) {
                 $.ajax({
-                    url: "{{ url('incident/fire-incident/gethiradetails') }}/" + hiraId,
+                    url: "{{ url('accidentReport/gethiradetails') }}/" + hiraId,
                     type: "GET",
                     dataType: "json",
                     success: function(data) {

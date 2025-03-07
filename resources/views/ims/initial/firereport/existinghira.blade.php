@@ -6,49 +6,80 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body m-3">
-            <div class="d-flex justify-content-left my-3">
-                <a href="{{ admin_url('incident/hira-master/add')}}" class="btn btn-primary mx-2" id="newHira">New</a>
-                <button type="button" class="btn btn-secondary mx-2" id="existingHira">Existing</button>
-            </div>
-            <input type="hidden" name="incident_id" value="{{ $incident_id }}">
-            <input type="hidden" name="accident_id" value="{{ $accident_id }}">
-            <input type="hidden" name="fireincident_id" value="{{ $fireincident_id }}">
+            @if ($newHiraList == null)
+                <div class="d-flex justify-content-left my-3">
+                    <a href="{{ admin_url('incident/hira-master/fire-investigation/add/' . $fire_id . '/' . encryptId(1)) }}"
+                        class="btn btn-primary mx-2" id="newHira">New</a>
+                    <button type="button" class="btn btn-secondary mx-2" id="existingHira">Existing</button>
+                </div>
+            @endif
+
+            <input type="hidden" name="fireincident_id" value="{{ $fire_id }}">
 
             <div class="row" id="existingdiv">
                 <label for="hira_id" class="form-label require">HIRA</label>
                 <div class="col-sm-7 form-input">
                     <select name="hira_id" id="hira_id" class="form-control" style="width: 100%">
                         <option value="">Select HIRA</option>
-                        @foreach ($hiraList as $hira)
-                            <option value="{{ encryptId($hira->id) }}">{{ $hira->services }}</option>
-                        @endforeach
+                        @if ($selectedhira != null)
+                            @foreach ($hiraList as $hira)
+                                <option value="{{ encryptId($hira->id) }}"
+                                    {{ $selectedhira->hira_id == $hira->id ? 'selected' : '' }}>
+                                    {{ $hira->services }}
+                                </option>
+                            @endforeach
+                        @else
+                            @foreach ($hiraList as $hira)
+                                <option value="{{ encryptId($hira->id) }}">{{ $hira->services }}</option>
+                            @endforeach
+                        @endif
                     </select>
                 </div>
             </div>
 
-
-            <div id="hiraDetails" class="mt-3" style="display: none;">
-                <h5>HIRA Details</h5>
-                <table class="table table-bordered">
-                    <tr>
-                        <th>Source, Situation, Act,Activity, Product,Services</th>
-                        <td id="service"></td>
-                    </tr>
-                    <tr>
-                        <th>Likelihood</th>
-                        <td id="likelihood"></td>
-                    </tr>
-                    <tr>
-                        <th>Risk Level</th>
-                        <td id="riskLevel"></td>
-                    </tr>
-                </table>
-            </div>
+            @if ($newHiraList != null)
+                <div id="hiraDetails" class="mt-3">
+                    <h5>HIRA Details</h5>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Source, Situation, Act,Activity, Product,Services</th>
+                            <td style="font-weight: bold">{{ $newHiraList->services }}</td>
+                        </tr>
+                        <tr>
+                            <th>Likelihood</th>
+                            <td style="font-weight: bold">{{ $newHiraList->likelihood }}</td>
+                        </tr>
+                        <tr>
+                            <th>Risk Level</th>
+                            <td style="font-weight: bold">{{ $newHiraList->risk_levels }}</td>
+                        </tr>
+                    </table>
+                </div>
+            @else
+                <div id="hiraDetails" class="mt-3" style="display: none;">
+                    <h5>HIRA Details</h5>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Source, Situation, Act,Activity, Product,Services</th>
+                            <td id="service"></td>
+                        </tr>
+                        <tr>
+                            <th>Likelihood</th>
+                            <td id="likelihood"></td>
+                        </tr>
+                        <tr>
+                            <th>Risk Level</th>
+                            <td id="riskLevel"></td>
+                        </tr>
+                    </table>
+                </div>
+            @endif
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" id="saveHira">Save HIRA</button>
-
+            @if ($newHiraList == null)
+                <button type="button" class="btn btn-primary" id="saveHira">Save HIRA</button>
+            @endif
         </div>
     </form>
 </div>
@@ -58,8 +89,6 @@
 
         $('#saveHira').on('click', function() {
             var hiraId = $('#hira_id').val(); // Get selected HIRA ID
-            var incidentId = "{{ $incident_id }}"; // Get incident ID
-            var accidentId = "{{ $accident_id }}"; // Get incident ID
             var fireincident_id = "{{ $fireincident_id }}"; // Get incident ID
             if (!hiraId) {
                 alert('Please select a HIRA before proceeding.');
@@ -72,8 +101,6 @@
                 data: {
                     _token: "{{ csrf_token() }}",
                     hira_id: hiraId,
-                    incident_id: incidentId,
-                    accidentId: accidentId,
                     fireincident_id: fireincident_id
                 },
                 dataType: "json",
@@ -81,7 +108,7 @@
                     if (response.success) {
                         alert("HIRA saved successfully!");
                         $('#saved_hira_id').val(response
-                        .hira_id); // Update the hidden input
+                            .hira_id); // Update the hidden input
                         $('#hiraModal').modal('hide');
                     } else {
                         alert("Failed to save HIRA: " + response.message);

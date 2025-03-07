@@ -1094,4 +1094,6 @@ class SafetyPermit extends Model
     {
         return SafetyPermit::where('reference_id', $id)->exists();
     }
+
+   
 }

@@ -451,7 +451,7 @@
                                                 </div>
                                                 <x-button-add dataId="{{ $incidentId ?? '' }}"
                                                     class="add popupwindow btn btn-primary"
-                                                    href="{{ admin_url('incident/fire-incident/existingHira/' . ($incidentId ?? '')) }}">
+                                                    href="{{ admin_url('incident/fire-incident/existingHira/' . (encryptId($incidentId) ?? '')) }}">
                                                     Add
                                                 </x-button-add>
                                             </div>
@@ -475,7 +475,7 @@
                                                 </div>
                                                 <x-button-add dataId="{{ $incidentId ?? '' }}"
                                                     class="add popupwindow btn btn-primary"
-                                                    href="{{ admin_url('incident/fire-incident/existingMOC/' . ($incidentId ?? '')) }}">
+                                                    href="{{ admin_url('incident/fire-incident/existingMOC/' . (encryptId($incidentId) ?? '')) }}">
                                                     Add
                                                 </x-button-add>
                                             </div>
@@ -495,7 +495,8 @@
 
                                             <div class="col-md-4 mt-3">
                                                 <div class="form-group form-input">
-                                                    <label for="damaged_cause" class="form-label require">What factors caused 
+                                                    <label for="damaged_cause" class="form-label require">What factors
+                                                        caused
                                                         the Fire Incident?</label><br>
                                                     <input type="checkbox" id="physical" name="damaged_cause[]"
                                                         value="1">
@@ -506,7 +507,7 @@
                                                     <input type="checkbox" id="human" name="damaged_cause[]"
                                                         value="3">
                                                     <label for="human">Human</label>
-                                                    
+
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mt-2">
@@ -563,6 +564,27 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Remarks (If Any)</label>
                                                     <textarea class="form-control" name="remark" id="remark"></textarea>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mt-3">
+                                                <div class="form-group form-input">
+                                                    <label for="risk_analysis" class="form-label require">Risk
+                                                        Analaysis</label><br>
+                                                    <input type="radio" id="yes" name="risk_analysis"
+                                                        value="1">
+                                                    <label for="yes">Yes</label>
+                                                    <input type="radio" id="no" name="risk_analysis"
+                                                        value="2">
+                                                    <label for="no">No</label><br>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mt-2" id="risk_analysis_remark_container"
+                                                style="display: none;">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Risk Analaysis Remarks</label>
+                                                    <textarea class="form-control" name="risk_analysis_remark" id="risk_analysis_remark"></textarea>
 
                                                 </div>
                                             </div>
@@ -888,8 +910,16 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
- 
         $(document).ready(function() {
+
+            $('input[name="risk_analysis"]').on('change', function() {
+                if ($('#no').is(':checked')) {
+                    $('#risk_analysis_remark_container').show();
+                } else {
+                    $('#risk_analysis_remark_container').hide();
+                }
+            });
+
             $("#root_cause_analysis").change(function() {
                 if ($(this).val() == "1") {
                     $(".whywhy").show(); // Show the Why Why Analysis section
@@ -1157,6 +1187,17 @@
                         target_date: {
                             required: true,
                         },
+                        risk_analysis: {
+                            required: true,
+                        },
+                        risk_analysis_remark: {
+                            required: function(element) {
+                                return $('input[name="risk_analysis"]:checked').val() === '2';
+                            },
+                            minlength: 3,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/
+                        },
                     },
                     messages: {
                         'anything_damaged[]': {
@@ -1174,6 +1215,15 @@
                         target_date: {
                             required: "Target Date is required.",
                         },
+                        risk_analysis: {
+                            required: "Risk Analysis is required.",
+                        },
+                        risk_analysis_remark: {
+                            required: "Risk Analysis Remarks is required.",
+                            minlength: "Details must be at least 3 characters long.",
+                            maxlength: "Details cannot exceed 2000 characters.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+                        },
                     },
                     errorElement: 'span',
                     errorPlacement: function(error, element) {
@@ -1189,14 +1239,14 @@
                     submitHandler: function(form) {
                         // Form is valid, proceed with capturing the fishbone diagram
                         let fishboneContainer = $(".fishbone-container")[
-                        0]; // Get the fishbone diagram container
+                            0]; // Get the fishbone diagram container
 
                         // Capture the fishbone diagram as an image
                         html2canvas(fishboneContainer, {
                             scale: 2
                         }).then(function(canvas) {
                             let imageData = canvas.toDataURL(
-                            "image/png"); // Convert canvas to base64
+                                "image/png"); // Convert canvas to base64
 
                             // Set the image data to the hidden input field
                             $("#fishbone_image").val(imageData);
