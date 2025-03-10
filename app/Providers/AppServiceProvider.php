@@ -109,6 +109,7 @@ class AppServiceProvider extends ServiceProvider
         defined('TYPE_OHC_MEDICINE_REQUISITION') or define('TYPE_OHC_MEDICINE_REQUISITION', 5);
         defined('TYPE_OHC_MEDICINE_STOCK') or define('TYPE_OHC_MEDICINE_STOCK', 6);
         defined('TYPE_OHC_ISSUANCE') or define('TYPE_OHC_ISSUANCE', 7);
+        defined('TYPE_OHC_MEDICAL_FITNESS') or define('TYPE_OHC_MEDICAL_FITNESS', 8);
 
 
         defined('CHEMICAL_DEPARTMENT') or define('CHEMICAL_DEPARTMENT', 53);

@@ -160,7 +160,7 @@ class PperequestController extends BaseController
                     'emp_id' => 'required',
                     'emp_name' => 'required',
                     'item_code' => 'required',
-                    'department_id' => 'required',
+                    // 'department_id' => 'required',
                     'ppe_name' => 'required',
 
 
@@ -169,7 +169,7 @@ class PperequestController extends BaseController
                     'emp_id.required' => 'Employee Code is Required',
                     'emp_name.required' => 'Employee name is Required',
                     'item_code.required' => 'Item code is Required',
-                    'department_id.required' => 'Department Name is Required',
+                    // 'department_id.required' => 'Department Name is Required',
                     'ppe_name.required' => 'PPE Name is Required',
                 ];
 
@@ -535,7 +535,7 @@ class PperequestController extends BaseController
                         'module_type' => 1,
                         'module_sub_type' => 1,
                     ];
-                    mobilePushNotification(array_to_string($requestorId), $notifydata);
+                    mobilePushNotification( $emp_details->created_by, $notifydata);
                 }
 
 
@@ -549,7 +549,7 @@ class PperequestController extends BaseController
                 return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
             }
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }

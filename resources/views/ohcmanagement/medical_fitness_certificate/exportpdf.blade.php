@@ -117,8 +117,8 @@
             <table style="width:100%;">
                 <tr>
                     <td
-                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px; font-weight:bold;"  >
-                       PPE Exemption
+                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px; font-weight:bold;">
+                        Medical Fitness Certificate
                     </td>
                 </tr>
             </table>
@@ -132,53 +132,27 @@
                 <td width="50%" style="padding:5px;"><b>Employee Name</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ isset($ppeexemption->emp_name) ? $ppeexemption->emp_name : '' }}</td>
+                    {{ isset($medicinefitness->emp_name) ? $medicinefitness->emp_name : '' }}</td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>Employee Id</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ isset($ppeexemption->emp_id) ? $ppeexemption->emp_id : '' }}
+                <td width="48%" style="padding:5px;">
+                    {{ isset($medicinefitness->emp_id) ? $medicinefitness->emp_id : '' }}
                 </td>
             </tr>
 
             <tr>
-                <td width="50%" style="padding:5px;"><b>From Date</b></td>
+                <td width="50%" style="padding:5px;"><b>Date</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ isset($ppeexemption->from_date) ? $ppeexemption->from_date : '' }}</td>
+                    {{ isset($medicinefitness->date) ? $medicinefitness->date : '' }}</td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>To Date</b></td>
+                <td width="50%" style="padding:5px;"><b>Remarks</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ isset($ppeexemption->to_date) ? $ppeexemption->to_date : '' }}</td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Department</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ getDepartment(isset($ppeexemption->department) ? $ppeexemption->department : '') }}</td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Company</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ getCompanyname(isset($ppeexemption->company) ? $ppeexemption->company : '') }}
-                </td>
-
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Unit</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ getUnitname(isset($ppeexemption->unit) ? $ppeexemption->unit : '') }}
-                </td>
-            </tr>
-
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Reason</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ isset($ppeexemption->reason) ? $ppeexemption->reason : '' }}
+                    {{ isset($medicinefitness->remarks) ? $medicinefitness->remarks : '' }}
                 </td>
             </tr>
 
@@ -186,87 +160,94 @@
                 <td width="50%" style="padding:5px;"><b>Created By</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ getUsername(isset($ppeexemption->created_by) ? $ppeexemption->created_by : '') }}
+                    {{ getUsername(isset($medicinefitness->created_by) ? $medicinefitness->created_by : '') }}
                 </td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>Created Date</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ displayDateformat($ppeexemption->created_at) }}
+                <td width="48%" style="padding:5px;"> {{ displayDateformat($medicinefitness->created_at) }}
                 </td>
             </tr>
         </table>
-
         <div>
             <div style="width:100%;">
                 <table style="width:100%;">
                     <tr>
                         <td
-                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px; font-weight:bold;">
+                            style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
                             Status Logs
                         </td>
                     </tr>
                 </table>
             </div>
-            <br>
             <div class="table-responsive">
                 <div class="col-md-12">
-                    <table class="table table-bordered table-hover">
+                    <table class="table table-bordered table-hover tblborder">
                         <thead>
                             <tr>
-                                <th> From Status</th>
-                                <th> To Status</th>
-
-                                <th> Approved By</th>
+                                <th>From Status</th>
+                                <th>To Status</th>
+                                <th>Approved By</th>
                                 <th>Remarks</th>
-                                <th>Date</th>
-
+                                <th>Created Date</th>
                             </tr>
                         </thead>
-
                         <tbody>
-                            <tr>
-                                <td> User
-                                        Applied</td>
-                                <td>EHS Head
-                                        Approval
-                                        Pending</td>
-                                <td> {{ getUsername(isset($ppeexemption->created_by) ? $ppeexemption->created_by : '') }}
-                                </td>
-                                <td> {{ isset($ppeexemption->reason) ? $ppeexemption->reason : '' }}
-                                </td>
-                                <td> {{ displaydateformat(isset($ppeexemption->created_at) ? $ppeexemption->created_at : '') }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> EHS Head Approval
-                                    Pending</td>
+                            @foreach ($medicalfitnesslog as $status_log)
+                                <tr>
+                                <tr>
+                                    <!-- From Status Column -->
                                     <td>
-                                        @if (isset($ehsheadstatus['to_status']) && $ehsheadstatus['to_status'] == STATUS_EHS_APPROVED)
-                                           EHS Head Approved
-                                        @elseif (isset($ehsheadstatus['to_status']) && $ehsheadstatus['to_status'] == STATUS_EHS_REJECTED)
-                                           EHS Head Rejected
-                                        @else
-                                            <p>-</p>
-                                        @endif
+                                        <p>
+                                            <span>
+                                                @if ($status_log['from_status'] == STATUS_OHC_MEDICAL_PARAMEDICS_REQUEST)
+                                                    Paramedics request the fitness Approval
+                                                @elseif ($status_log['from_status'] == STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING)
+                                                    Doctor Approval Pending
+                                                @elseif ($status_log['from_status'] == STATUS_OHC_MEDICAL_DOCTOR_APPROVED)
+                                                    Doctor Approved
+                                                @elseif ($status_log['from_status'] == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING)
+                                                    EHS Head Approval Pending
+                                                @elseif ($status_log['from_status'] == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
+                                                    EHS Head Approved
+                                                @endif
+                                            </span>
+                                        </p>
+                                    </td>
+
+                                    <td>
+                                        <p>
+                                            <span>
+                                                @if ($status_log['to_status'] == STATUS_OHC_MEDICAL_PARAMEDICS_REQUEST)
+                                                    Paramedics request the fitness Approval
+                                                @elseif ($status_log['to_status'] == STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING)
+                                                    Doctor Approval Pending
+                                                @elseif ($status_log['to_status'] == STATUS_OHC_MEDICAL_DOCTOR_APPROVED)
+                                                    Doctor Approved
+                                                @elseif ($status_log['to_status'] == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING)
+                                                    EHS Head Approval Pending
+                                                @elseif ($status_log['to_status'] == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
+                                                    EHS Head Approved
+                                                @endif
+                                            </span>
+                                        </p>
                                     </td>
 
 
-                            <td> {{ isset($ehsheadstatus->created_by) && $ehsheadstatus->created_by != '' ? getUsername($ehsheadstatus->created_by) : '-' }}
-                            </td>
-                            <td> {{ isset($ehsheadstatus->remarks) ? $ehsheadstatus->remarks : '-' }}
-                            </td>
-                            <td>  {{ isset($ehsheadstatus->created_at) && $ehsheadstatus->created_at != '' ? displaydateformat($ehsheadstatus->created_at) : '-' }}
-                            </td>
-                            </tr>
-
+                                    <td>{{ isset($status_log['created_by']) ? getUsername($status_log['created_by']) : '-' }}
+                                    </td>
+                                    <td>{{ isset($status_log['remarks']) ? $status_log['remarks'] : '-' }}
+                                    </td>
+                                    <td>{{ null !== Displaydateformat($status_log['created_at']) ? Displaydateformat($status_log['created_at']) : '-' }}
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
-
                 </div>
             </div>
             <br>
-
         </div>
 
 </body>

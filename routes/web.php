@@ -894,14 +894,20 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/edit/{id}', [MedicalFitnessCertificateController::class, 'edit']);
                 Route::post('/edit/submit', [MedicalFitnessCertificateController::class, 'update']);
                 Route::get('/view/{id}', [MedicalFitnessCertificateController::class, 'view']);
+                Route::get('/approval/view/{id}', [MedicalFitnessCertificateController::class, 'approval']);
                 Route::post('/delete', [MedicalFitnessCertificateController::class, 'delete']);
                 Route::get('/export/excel', [MedicalFitnessCertificateController::class, 'exportExcel']);
                 Route::get('/export/pdf', [MedicalFitnessCertificateController::class, 'exportPdf']);
+                Route::get('generalpdf/{id}', [MedicalFitnessCertificateController::class, 'generalpdf']);
+
                 Route::get('/sampledownload', [MedicalFitnessCertificateController::class, 'DownloadSample']);
                 Route::get('/import', [MedicalFitnessCertificateController::class, 'import']);
                 Route::post('/import/submit', [MedicalFitnessCertificateController::class, 'importSubmit']);
                 Route::post('/status', [MedicalFitnessCertificateController::class, 'statusChange']);
                 Route::post('/unique', [MedicalFitnessCertificateController::class, 'Uniquecheck']);
+                Route::post('/approvereject/submit', [MedicalFitnessCertificateController::class, 'doctorapproval']);
+                Route::post('/ehsheadapprove/submit', [MedicalFitnessCertificateController::class, 'ehsheadapproval']);
+
             });
 
 

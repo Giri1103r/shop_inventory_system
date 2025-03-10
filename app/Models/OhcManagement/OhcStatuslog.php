@@ -27,7 +27,8 @@ class OhcStatuslog extends Model
 
     // medicne log
 
-    public function medicinelog($id){
+    public function medicinelog($id)
+    {
         $request = request();
         $insert_data = [
             'type' => TYPE_OHC_MEDICINE,
@@ -39,15 +40,15 @@ class OhcStatuslog extends Model
         ];
         return $this->create($insert_data);
     }
-// medicine approval
-    public function medicineapproval($id,$updateData)
+    // medicine approval
+    public function medicineapproval($id, $updateData)
     {
         $request = request();
         $insert_data = [
             'type' => TYPE_OHC_MEDICINE,
             'reference_id' => $id,
             'from_status' => STATUS_OHC_EHS_HEAD_APPROVAL_PENDING,
-            'to_status' =>$updateData['approve_status'] ,
+            'to_status' => $updateData['approve_status'],
             'remarks' =>  $request->remarks,
             'created_by' => Auth::id(),
         ];
@@ -56,16 +57,18 @@ class OhcStatuslog extends Model
 
     // status log for the medicine
 
-    public function getmedicinestatuslog($id){
-        return $this->where('reference_id',$id)->where('type',TYPE_OHC_MEDICINE)->get();
+    public function getmedicinestatuslog($id)
+    {
+        return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICINE)->get();
     }
 
 
 
     // Medicine Receiving
 
-public function medicinestockstore($id){
-    $request = request();
+    public function medicinestockstore($id)
+    {
+        $request = request();
         $insert_data = [
             'type' => TYPE_OHC_MEDICINE_RECEIVING,
             'reference_id' => $id,
@@ -76,7 +79,7 @@ public function medicinestockstore($id){
         ];
         // dd($insert_data );
         return $this->create($insert_data);
-}
+    }
     // EHS verification pending
 
     public function ehsverificationstatuslog($id, $ehsverifydata)
@@ -86,7 +89,7 @@ public function medicinestockstore($id){
             'type' => TYPE_OHC_MEDICINE_RECEIVING,
             'reference_id' => $id,
             'from_status' => STATUS_OHC_EHS_VERIFICATION_PENDING,
-            'to_status' =>STATUS_OHC_EHS_VERIFIED ,
+            'to_status' => STATUS_OHC_EHS_VERIFIED,
             'remarks' =>  $request->remarks,
             'created_by' => Auth::id(),
         ];
@@ -94,7 +97,7 @@ public function medicinestockstore($id){
         return $this->create($insert_data);
     }
     // EHS Verification is approved
-    public function ehsverificationapprovedstatuslog($id,$ehsverifydata)
+    public function ehsverificationapprovedstatuslog($id, $ehsverifydata)
     {
         $request = request();
         $insert_data = [
@@ -112,21 +115,21 @@ public function medicinestockstore($id){
 
     // L1 EHS Verification
 
-    public function l1ehsstatuslog($id,$ehsverifydata)
+    public function l1ehsstatuslog($id, $ehsverifydata)
     {
         $request = request();
         $insert_data = [
             'type' => TYPE_OHC_MEDICINE_RECEIVING,
             'reference_id' => $id,
             'from_status' => STATUS_OHC_L1_EHS_VERIFICATION_PENDING,
-            'to_status' =>STATUS_OHC_L1_EHS_VERIFIED,
+            'to_status' => STATUS_OHC_L1_EHS_VERIFIED,
             'remarks' =>  $request->ehs_remarks,
             'created_by' => Auth::id(),
         ];
         return $this->create($insert_data);
     }
 
-    public function l1ehsverificationapprovedstatuslog($id,$ehsverifydata)
+    public function l1ehsverificationapprovedstatuslog($id, $ehsverifydata)
     {
         $request = request();
         $insert_data = [
@@ -156,14 +159,14 @@ public function medicinestockstore($id){
         ];
         return $this->create($insert_data);
     }
-    public function ehsheadapprovedstatuslog($id,$updateStatus)
+    public function ehsheadapprovedstatuslog($id, $updateStatus)
     {
         $request = request();
         $insert_data = [
             'type' => TYPE_OHC_MEDICINE_RECEIVING,
             'reference_id' => $id,
             'from_status' => STATUS_OHC_AGM_APPROVED,
-            'to_status' =>$updateStatus['approve_status'],
+            'to_status' => $updateStatus['approve_status'],
             'remarks' =>  $request->ehs_head_remarks,
             'created_by' => Auth::id(),
         ];
@@ -236,7 +239,8 @@ public function medicinestockstore($id){
 
     // Medicine Requistion Close Status
 
-     public function updatecloseStatus($id){
+    public function updatecloseStatus($id)
+    {
         $request = request();
         $insert_data = [
             'type' => TYPE_OHC_MEDICINE_REQUISITION,
@@ -247,7 +251,76 @@ public function medicinestockstore($id){
             'created_by' => Auth::id(),
         ];
         return $this->create($insert_data);
-     }
+    }
+
+    // medical fitness
+
+    public function medicalfitnessstore($id)
+    {
+        $request = request();
+        $insert_data = [
+            'type' => TYPE_OHC_MEDICAL_FITNESS,
+            'reference_id' => $id,
+            'from_status' => STATUS_OHC_MEDICAL_PARAMEDICS_REQUEST,
+            'to_status' =>  STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING,
+            'remarks' =>  $request->remarks,
+            'created_by' => Auth::id(),
+        ];
+        // dd($insert_data );
+        return $this->create($insert_data);
+    }
+
+    public function doctorverificationstatuslog($id, $ehsverifydata)
+    {
+        $request = request();
+        $insert_data = [
+            'type' => TYPE_OHC_MEDICAL_FITNESS,
+            'reference_id' => $id,
+            'from_status' => STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING,
+            'to_status' => STATUS_OHC_MEDICAL_DOCTOR_APPROVED,
+            'remarks' =>  $request->remarks,
+            'created_by' => Auth::id(),
+        ];
+        // dd($insert_data );
+        return $this->create($insert_data);
+    }
+
+    // public function doctorverificationapprovedstatuslog($id, $ehsverifydata)
+    // {
+    //     $request = request();
+    //     $insert_data = [
+    //         'type' => TYPE_OHC_MEDICAL_FITNESS,
+    //         'reference_id' => $id,
+    //         'from_status' => STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING,
+    //         'to_status' => $ehsverifydata['approve_status'],
+    //         'remarks' =>  $request->remarks,
+    //         'created_by' => Auth::id(),
+    //     ];
+    //     // dd($insert_data );
+    //     return $this->create($insert_data);
+    // }
+    public function ehsheadverificationapprovedstatuslog($id, $ehsheadverifydata)
+    {
+        $request = request();
+        $insert_data = [
+            'type' => TYPE_OHC_MEDICAL_FITNESS,
+            'reference_id' => $id,
+            'from_status' => STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING,
+            'to_status' => $ehsheadverifydata['approve_status'],
+            'remarks' =>  $request->remarks,
+            'created_by' => Auth::id(),
+        ];
+
+        return $this->create($insert_data);
+    }
+    // get medicine log
+    public function medicalfitnesslog($id)
+    {
+        return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICAL_FITNESS)->get();
+    }
+    public function doctorapprovalview($id){
+        return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICAL_FITNESS)->where('from_status',STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING)->first();
+    }
     // EHS Verification
     public function ehsverifydata($id)
     {

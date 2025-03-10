@@ -66,7 +66,7 @@ class MedicalFitnessCertificate extends Model
             $query = $query->where('ohc_management_medical_fitness_certificate.emp_id', decryptId($request->emp_id));
         }
         if ($request->has('emp_name') && $request->emp_name) {
-
+        
             $query = $query->where('ohc_management_medical_fitness_certificate.emp_name', decryptId($request->emp_name));
         }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
@@ -187,6 +187,55 @@ class MedicalFitnessCertificate extends Model
         );
 
         return $this->where('id', $ids)->update($update_data);
+    }
+
+    public function doctorapproval($id, $doctorverifydata){
+        return $this->where('id',$id)->update(['approve_status'=>$doctorverifydata['approve_status'],'approved_by' => Auth::id(),]);
+    }
+
+    public function ehsheadapproval($id, $ehsheadverifydata){
+        return $this->where('id',$id)->update(['approve_status'=>$ehsheadverifydata['approve_status'],'approved_by' => Auth::id(),]);
+    }
+
+    public function exportdata()
+    {
+        $request = request();
+
+        $query = $this->select('ohc_management_medical_fitness_certificate.*');
+
+        if (!empty($request->search)) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('ohc_management_medical_fitness_certificate.emp_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_management_medical_fitness_certificate.emp_name', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        // Additional filters
+        if ($request->filled('status')) {
+            $query->where('ohc_management_medical_fitness_certificate.approve_status', 'LIKE', '%' . decryptId($request->status) . '%');
+        }
+        if ($request->filled('emp_id')) {
+            $query->where('ohc_management_medical_fitness_certificate.emp_id', 'LIKE', '%' . $request->emp_id . '%');
+        }
+        if ($request->filled('emp_name')) {
+            $query->where('ohc_management_medical_fitness_certificate.emp_name', 'LIKE', '%' . $request->emp_name . '%');
+        }
+
+        // Date range filter
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $startDate = Carbon::parse($request->from_date)->startOfDay();
+            $endDate = Carbon::parse($request->to_date)->endOfDay();
+            $query->whereBetween('ohc_management_medical_fitness_certificate.created_at', [$startDate, $endDate]);
+        } elseif ($request->filled('from_date')) {
+            $startDate = Carbon::parse($request->from_date)->startOfDay();
+            $query->where('ohc_management_medical_fitness_certificate.created_at', '>=', $startDate);
+        } elseif ($request->filled('to_date')) {
+            $endDate = Carbon::parse($request->to_date)->endOfDay();
+            $query->where('ohc_management_medical_fitness_certificate.created_at', '<=', $endDate);
+        }
+
+        return $query->orderByDesc('id')->get();
     }
 
 
