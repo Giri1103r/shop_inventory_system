@@ -838,6 +838,9 @@
                         },
                         description_ca: {
                             required: true,
+                            minlength: 10,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
                         },
 
                     },
@@ -851,6 +854,9 @@
                         },
                         description_uauc: {
                             required: "Description of UA UC is required.",
+                            minlength: "Minimum 10 characters required.",
+                            maxlength: "Maximum 2000 characters allowed.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
                         },
 
                     },
@@ -892,6 +898,9 @@
                         },
                         description_ca: {
                             required: true,
+                            minlength: 10,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
                         },
 
                     },
@@ -902,6 +911,9 @@
                         },
                         description_ca: {
                             required: "Description of CA is required.",
+                            minlength: "Minimum 10 characters required.",
+                            maxlength: "Maximum 2000 characters allowed.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
                         },
 
                     },

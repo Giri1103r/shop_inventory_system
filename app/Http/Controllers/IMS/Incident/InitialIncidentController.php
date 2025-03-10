@@ -155,7 +155,7 @@ class InitialIncidentController extends Controller
                             // $employees = Employee::select('id','login_id')->where('id',  $getEHSVerify->team_member)->first();
                           
 
-                            if ($row->incident_status == 4) {
+                            if ($row->incident_status == 4  && $row->risk_analysis !=2) {
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/approvereject/' . encryptId($row->id)) . '" class=" " title="Risk Analysis"><i class="fa fa-exclamation-triangle" style="color: #e83333;"></i>';
                             }
 

@@ -1149,21 +1149,25 @@
 
             $('#ehs_head_review').validate({
                 rules: {
-                    "team_id[]": {
+                    "team_member[]": {
                         required: true,
                     },
                     remark: {
                         required: true,
-                        maxlength: 1000
+                        minlength: 10,
+                        maxlength: 2000,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
                     }
                 },
                 messages: {
-                    "team_id[]": {
+                    "team_member[]": {
                         required: "Please select a team member.",
                     },
                     remark: {
                         required: "Please provide a remark.",
-                        maxlength: "Remark cannot exceed 1000 characters."
+                        minlength: "Minimum 10 characters required.",
+                        maxlength: "Maximum 2000 characters allowed.",
+                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',
@@ -1201,7 +1205,9 @@
                     },
                     remark: {
                         required: true,
-                        maxlength: 1000
+                        minlength: 10,
+                        maxlength: 2000,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
                     }
                 },
                 messages: {
@@ -1214,7 +1220,9 @@
                     },
                     remark: {
                         required: "Please provide a remark.",
-                        maxlength: "Remark cannot exceed 1000 characters."
+                        minlength: "Minimum 10 characters required.",
+                        maxlength: "Maximum 2000 characters allowed.",
+                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',
@@ -1247,14 +1255,18 @@
 
                     action_submission_description: {
                         required: true,
-                        maxlength: 1000
+                        minlength: 10,
+                        maxlength: 2000,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
                     }
                 },
                 messages: {
 
                     action_submission_description: {
                         required: "Please provide Action Taken.",
-                        maxlength: "Action Taken cannot exceed 1000 characters."
+                        minlength: "Minimum 10 characters required.",
+                        maxlength: "Maximum 2000 characters allowed.",
+                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',
@@ -1287,14 +1299,18 @@
 
                     remark: {
                         required: true,
-                        maxlength: 1000
+                        minlength: 10,
+                        maxlength: 2000,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
                     }
                 },
                 messages: {
 
                     remark: {
                         required: "Please provide remark.",
-                        maxlength: "Remark cannot exceed 1000 characters."
+                        minlength: "Minimum 10 characters required.",
+                        maxlength: "Maximum 2000 characters allowed.",
+                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',
