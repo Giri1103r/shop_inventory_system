@@ -66,7 +66,7 @@ class MedicalFitnessCertificate extends Model
             $query = $query->where('ohc_management_medical_fitness_certificate.emp_id', decryptId($request->emp_id));
         }
         if ($request->has('emp_name') && $request->emp_name) {
-        
+
             $query = $query->where('ohc_management_medical_fitness_certificate.emp_name', decryptId($request->emp_name));
         }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
@@ -140,7 +140,7 @@ class MedicalFitnessCertificate extends Model
         $ppe_file_path = $request->input('existing_pre_image');
 
         if ($request->hasFile('file')) {
-            $ohc_file = $request->file('pfile');
+            $ohc_file = $request->file('file');
             $ohc_file_name = time() . '_' . $ohc_file->getClientOriginalName();
 
             while (File::exists(public_path($destinationPath . '/' . $ohc_file_name))) {

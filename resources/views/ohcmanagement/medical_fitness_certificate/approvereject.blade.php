@@ -56,7 +56,28 @@
                                         </div>
                                     </div>
 
-
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">File</label>
+                                        @if (isset($medicalfitness) && $medicalfitness && $medicalfitness->file)
+                                            <p>
+                                                @php
+                                                    $fileExtension = pathinfo($medicalfitness->file, PATHINFO_EXTENSION);
+                                                @endphp
+                                                @if (in_array($fileExtension, ['pdf', 'doc', 'docx']))
+                                                    <a href="{{ asset('public/' . $medicalfitness->file) }}" target="_blank" >
+                                                        <i class="fas fa-eye text-danger"></i> View
+                                                    </a>
+                                                @else
+                                                    <a href="{{ asset('public/' . $medicalfitness->file) }}" target="_blank">
+                                                        <img src="{{ asset('public/' . $medicalfitness->file) }}" style="width: 100px" alt="image">
+                                                    </a>
+                                                @endif
+                                            </p>
+                                        @else
+                                            <p>No file is uploaded</p>
+                                        @endif
+                                    </div>
+                                
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Created By') }}</label>
                                         <div class="view_data">
@@ -150,6 +171,7 @@
                                                     {{ displaydateformat(isset($doctorapprovalview->created_at) ? $doctorapprovalview->created_at : '') }}
                                                 </div>
                                             </div>
+
                                             <div class="mb-3 col-md-4 form-input">
                                                 <label class="form-label view_label">{{ __('Approved Time') }}</label>
                                                 <div class="view_data">

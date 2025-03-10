@@ -65,9 +65,9 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Medical Fitness Certificate
-                                                        Upload</label>
-                                                    <input type="file" name="file" id="file" accept:application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                    <label class="form-label require">Medical Fitness Certificate Upload</label>
+                                                    <input type="file" name="file" id="file"
+                                                        accept=".pdf, .doc, .docx"
                                                         class="form-control">
                                                 </div>
                                             </div>
