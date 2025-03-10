@@ -5,6 +5,7 @@ namespace App\Models\OhcManagement;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 
 class MedicalFitnessCertificate extends Model
 {
@@ -100,13 +101,72 @@ class MedicalFitnessCertificate extends Model
     {
         $request = request();
 
+        $destinationPath = 'uploads/ohc_file';
 
+        if (!File::exists(public_path($destinationPath))) {
+            File::makeDirectory(public_path($destinationPath), 0777, true, true);
+        }
 
+        $ppe_file_path = null;
 
+        if ($request->hasFile('file')) {
+            $ohc_file = $request->file('file');
+
+            $ohc_file_name = time() . '_' . $ohc_file->getClientOriginalName();
+            $ohc_file->move(public_path($destinationPath), $ohc_file_name);
+
+            $ohc_file_path = $destinationPath . '/' . $ohc_file_name;
+        }
+
+        $insert_array = [
+            'emp_id' =>$request->emp_id,
+            'emp_name' =>$request->emp_name,
+            'remarks' => $request->remarks,
+            'date' => DBdateformat($request->date),
+            'file'=> $ohc_file_path,
+            'approve_status'=>STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING,
+            'created_by' => Auth::id(),
+        ];
+
+        return $this->create($insert_array);
     }
 
 
+    public function updates($id)
+    {
+        $request = request();
 
+        $destinationPath = 'uploads/ohc_file';
+        $ppe_file_path = $request->input('existing_pre_image');
+
+        if ($request->hasFile('file')) {
+            $ohc_file = $request->file('pfile');
+            $ohc_file_name = time() . '_' . $ohc_file->getClientOriginalName();
+
+            while (File::exists(public_path($destinationPath . '/' . $ohc_file_name))) {
+                $ohc_file_name = time() . '_' . uniqid() . '_' . $ohc_file->getClientOriginalName();
+            }
+
+            $ohc_file->move(public_path($destinationPath), $ohc_file_name);
+            $ohc_file_path = $destinationPath . '/' . $ohc_file_name;
+
+            if ($request->input('existing_pre_image') && File::exists(public_path($request->input('existing_pre_image')))) {
+                File::delete(public_path($request->input('existing_pre_image')));
+            }
+        }
+
+
+        $update_array = array(
+            'emp_id' => $request->emp_id,
+            'emp_name' => $request->emp_name,
+            'remarks' => $request->remarks,
+            'date' => DBdateformat($request->date),
+            'file' =>  $ohc_file_path,
+            'created_by' => Auth::id(),
+            'updated_by' => Auth::id()
+        );
+        return $this->where('id', $id)->update($update_array);
+    }
 
     public function selectOne($id)
     {

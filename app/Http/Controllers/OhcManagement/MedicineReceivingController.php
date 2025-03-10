@@ -283,6 +283,8 @@ class MedicineReceivingController extends Controller
             $medicineStock  = $this->inventory->getmedicinedata();
 
             $hsn = $this->medicine->where('id',   $medicine_receiving->medicine_id)->select('medicine', 'hsn', 'pack')->first();
+
+
             $existingMedicineIds = $this->medicine_receiving
             ->where('status', 1)
             ->pluck('medicine_id')
@@ -318,7 +320,7 @@ class MedicineReceivingController extends Controller
                 'expire_date' => 'required',
                 // 'hsn_id' => 'required',
                 'rate' => 'required',
-                'pack_id' => 'required',
+                // 'pack_id' => 'required',
 
             ];
 
@@ -331,7 +333,7 @@ class MedicineReceivingController extends Controller
                 'expire_date.required' => 'Expire Date is required',
                 // 'hsn_id.required' => 'HSN Numner is required',
                 'rate.required' => 'Rate is required',
-                'pack_id.required => Pack Details is required',
+                // 'pack_id.required => Pack Details is required',
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -343,8 +345,10 @@ class MedicineReceivingController extends Controller
             try {
 
                 $hsn = $this->medicine->where('hsn',$request->hsn_display)->first();
+                $pack = $this->medicine->where('pack',$request->pack_display)->first();
 
-                $this->medicine_receiving->updates($id,$hsn);
+
+                $this->medicine_receiving->updates($id,$hsn, $pack);
 
                 $mailsubject = 'Medicine Request for the Stock';
                 $user_role = ROLE_EHS_OFFICER;
@@ -1129,7 +1133,21 @@ class MedicineReceivingController extends Controller
         } //dd($data);
         return Response::json(true);
     }
+    public function packid(Request $request)
+    {
+        $medicineId = decryptId($request->medicine_id);
 
+        $pack = $this->medicine->where('id', $medicineId)->select('pack', 'id')->first();
+        if ($pack) {
+            return response()->json([
+                'id' => $pack->id,
+                'text' => $pack->pack,
+                'encrypted_id' => encrypt($pack->id),
+            ]);
+        }
+
+        return response()->json(['error' => 'No HSN number found'], 404);
+    }
     // public function list(Request $request, $unit_id)
     // {
     //     $unit_id = decryptId($unit_id);

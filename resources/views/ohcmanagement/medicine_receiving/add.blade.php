@@ -62,15 +62,9 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="pack_id" class="form-label require ">Pack Detatils</label>
-                                                    <select name="pack_id" id="pack_id"
-                                                        class="form-control single-select form-control-sm"
-                                                        style="width: 100%">
-                                                        <option value="">Select the Pack</option>
-                                                        @foreach ($pack as $list)
-                                                            <option value="{{ encryptId($list->id) }}">{{ $list->pack }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
+                                                    <input type="text" name="pack_display" id="pack_id"
+                                                        class="form-control" readonly>
+                                                    <input type="hidden" name="pack_id" id="pack_hidden_id">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -187,6 +181,40 @@
 
                 $('#hsn_id').val('').prop('readonly', true);
                 $('#hsn_hidden_id').val('');
+            }
+        });
+
+        $('#medicine_id').on('change', function() {
+            var medicineId = $('#medicine_id').val();
+            console.log(medicineId);
+            if (medicineId) {
+                $.ajax({
+                    url: "{{ admin_url('ohc/medicine-receiving-form/pack-id') }}",
+                    type: 'POST',
+                    data: {
+                        medicine_id: medicineId,
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        console.log('Response data:', data);
+
+
+                        if (data && data.id && data.text && data.encrypted_id) {
+                            $('#pack_id').val(data.text);
+                            $('#pack_hidden_id').val(data.id);
+                        } else {
+                            alert('HSN data is incomplete or invalid.');
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error(xhr);
+                        alert('Error fetching HSN number. Please try again.');
+                    },
+                });
+            } else {
+
+                $('#pack_id').val('').prop('readonly', true);
+                $('#pack_hidden_id').val('');
             }
         });
 

@@ -115,7 +115,7 @@ class MedicineRequisitionController extends Controller
                             // if (CheckUserPermission('view')) {
                             $btn .= '<a href="' . admin_url('ohc/medicine-requisition/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
-                            if (CheckUserPermission('edit') && $row->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) {
+                            if (CheckUserPermission('edit') && $row->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING && $row->created_by == Auth::id()) {
                             $btn .= '<a href="' . admin_url('ohc/medicine-requisition/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             }
                             if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) || (checkUserRole(ROLE_PARAMEDICS) && $row->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)) {

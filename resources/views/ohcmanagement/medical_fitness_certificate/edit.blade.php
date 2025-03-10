@@ -31,166 +31,68 @@
                                         action="{{ admin_url('ohc/medical-fitness/edit/submit') }}">
                                         @csrf
                                         <input type="hidden" name="id" id="id"
-                                            value="{{ encryptId($user_medicine_issuance->id) }}">
+                                            value="{{ encryptId($medicical_fitness_certificate->id) }}">
                                         <hr>
-                                        <div class="row">
-
-                                            <div class="col-md-4 mb-2">
+                                        <div class="col-md-4 mb-2">
+                                            <div class="col-md-4 employee-id mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Unit</label>
-                                                    <select name="unit_id" id="unit_id" class="form-control single-select"
+                                                    <label class="form-label ">Employee code</label>
+                                                    <select name="emp_id" class="form-control " id="emp_id"
                                                         style="width: 100%">
-                                                        <option value="">Select the unit</option>
-
-                                                        @foreach ($unit as $list)
-                                                            <option @if ($user_medicine_issuance->unit_id == $list->id) selected @endif
-                                                                value="{{ encryptId($list->id) }}">
-                                                                {{ $list->unit_name }}
-                                                            </option>
-                                                        @endforeach
-
+                                                        <option value="">Select the Employee ID</option>
+                                                        @if (isset($medicical_fitness_certificate->emp_id) && isset($medicical_fitness_certificate->emp_id))
+                                                            <option value="{{ $medicical_fitness_certificate->emp_id }}"
+                                                                selected>
+                                                                {{ $medicical_fitness_certificate->emp_id }}</option>
+                                                        @endif
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Department</label>
-                                                    <select name="department_id" id="department_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Department </option>
-                                                        @foreach ($departmentList as $department)
-                                                            <option @if ($user_medicine_issuance->department_id == $department->id) selected @endif
-                                                                value="{{ encryptId($department->id) }}">
-                                                                {{ $department->department_name }}</option>
-                                                        @endforeach
-                                                    </select>
+                                                    <label class="form-label require">Employee Name</label>
+                                                    <input type="text" name="emp_name" id="emp_name"
+                                                        class="form-control" placeholder="Employee Name" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Issued
+                                                    <label for="rate" class="form-label require ">Date
                                                         Date</label>
                                                     <div class="input-group date form-input custom-height">
-                                                        <input type="text" name="issue_date" id="issue_date"
-                                                            class="form-control"autocomplete="off"
-                                                            value="{{ displaydateformat($user_medicine_issuance->issue_date) }}"
-                                                            readonly>
+                                                        <input type="text" name="date" id="date"
+                                                            class="form-control"autocomplete="off">
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-
-                                        </div>
-                                        <div class="row mt-2">
-                                            <div class="card-header-inner">
-                                                <h4 class="text-white">Medicine details</h4>
-
-                                            </div>
-                                            <div
-                                                class="d-flex justify-content-end align-items-center mb-3 button-container">
-
-                                                <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                    style="margin-left: 10px; width: 84px;">
-                                                    Add
-                                                </button>
-
-
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Medical Fitness Certificate
+                                                        Upload</label>
+                                                    <input type="file" name="file" id="file"
+                                                        class="form-control">
+                                                </div>
                                             </div>
 
-                                        </div>
-
-                                        <div class="table-responsive">
-                                            <div class="col-md-12">
-                                                <table class="table table-bordered ">
-
-                                                    <thead class="bg-secondary" style="color: #ffff">
-                                                        <tr>
-                                                            <th>Medicine</th>
-                                                            <th>Available Quantity</th>
-                                                            <th>Quantity</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                    </thead>
-
-                                                    <tbody id="medicine-tbody">
-                                                        @foreach ($medicine_issuance as $key => $issuance)
-                                                            <tr class="medicinedetails">
-                                                                <td>
-                                                                    <input type="hidden" name="encryptid" class="encryptid"
-                                                                        value="{{ encryptId($issuance->id) }}">
-                                                                    <div class="form-group form-input">
-                                                                        <label for="medicine_id" class="require">Medicine
-                                                                            Name</label>
-                                                                        <select name="medicine_id[{{ $key }}]"
-                                                                            id="medicine_id"
-                                                                            class="form-control single-select2"
-                                                                            style="width: 100%">
-                                                                            <option value="">Select the Medicine Name
-                                                                            </option>
-                                                                            @foreach ($medicine as $list)
-                                                                                <option value="{{ $list->medicine_id }}"
-                                                                                    @if ($issuance->medicine_id == $list->medicine_id) selected @endif>
-                                                                                    {{ getMedicinename($list->medicine_id) }}
-                                                                                </option>
-                                                                            @endforeach
-                                                                        </select>
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="form-group form-input">
-                                                                        <label for="available_quantity"
-                                                                            class="require">Available
-                                                                            Quantity</label>
-                                                                        <input type="text"
-                                                                            name="available_quantity[{{ $key }}]"
-                                                                            id="available_quantity"
-                                                                            value="{{ $issuance->available_quantity }}"
-                                                                            placeholder="Available quantity"
-                                                                            class="form-control" readonly>
-                                                                    </div>
-                                                                </td>
-
-                                                                <td>
-                                                                    <div class="form-group form-input">
-                                                                        <label for="quantity"
-                                                                            class="require">Quantity</label>
-                                                                        <input type="text"
-                                                                            name="quantity[{{ $key }}]"
-                                                                            id="quantity" placeholder="Enter the quantity"
-                                                                            value="{{ $issuance->quantity }}"
-                                                                            class="form-control">
-                                                                        <span id="quantity-error" style=" display:none;"
-                                                                            class="text-danger">Quantity must be less
-                                                                            than available quantity.</span>
-                                                                    </div>
-                                                                </td>
-
-                                                                <td>
-                                                                    <div class="row gap-2">
-
-                                                                        <div class="d-flex justify-content-center align-items-center bg-danger mt-2 me-5 text-white rounded delete-row"
-                                                                            style="width: 30px; height: 30px;">
-                                                                            <i class="fa-solid fa-trash"></i>
-                                                                        </div>
-                                                                    </div>
-
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
-
-                                                    </tbody>
-                                                </table>
+                                            <div class="col-md-12 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Remarks</label>
+                                                    <textarea name="remarks" id="remarks" class="form-control " cols="30" rows="5"></textarea>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <hr>
-                                        <div class="submit-button float-end">
-                                            <x-button-submit class="submit" id="submit"></x-button-submit>
-                                            <x-button-reset class="submit"></x-button-reset>
-                                            <x-button-cancel
-                                                href="{{ admin_url('ohc/medical-fitness/list') }}"></x-button-cancel>
-                                        </div>
+
+
+
+                                            <hr>
+                                            <div class="submit-button float-end">
+                                                <x-button-submit class="submit" id="submit"></x-button-submit>
+                                                <x-button-reset class="submit"></x-button-reset>
+                                                <x-button-cancel
+                                                    href="{{ admin_url('ohc/medical-fitness/list') }}"></x-button-cancel>
+                                            </div>
                                     </form>
                                 </div>
                             </div>
@@ -207,273 +109,74 @@
 
 @push('script')
     <script>
-        // $(document).ready(function() {
-        //     var fromDatepicker = flatpickr("#request_date", {
-        //         dateFormat: "d-m-Y",
-        //         minDate: new Date(),
+        $(document).ready(function() {
+            var fromDatepicker = flatpickr("#date", {
+                dateFormat: "d-m-Y",
+                minDate: new Date(),
 
-        //     });
-        // });
+            });
+        });
 
-        $(document).on('click', '.delete-row', function(event) {
-            event.preventDefault(); // Prevents the form from submitting
-
-            var row = $(this).closest(".medicinedetails");
-            var rowId = row.find("input[name='encryptid']").val();
-
-            if (rowId) {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'Do you want to delete this record?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, delete it!',
-                    cancelButtonText: 'No, keep it'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ url('ohc/medical-fitness/delete') }}/" +
-                                rowId,
-                            type: 'POST', // Use POST instead of DELETE
-                            data: {
-                                _token: '{{ csrf_token() }}',
-                                _method: 'POST', // Simulate DELETE method
-                                id: rowId
-                            },
-                            success: function(response) {
-                                if (response.status === 'success') {
-                                    row.remove();
-                                    Swal.fire('Deleted!', response.msg, 'success');
-                                } else {
-                                    Swal.fire('Error!', response.msg, 'error');
-                                }
-                            },
-                            error: function() {
-                                Swal.fire('Error!',
-                                    'Something went wrong. Please try again later.',
-                                    'error');
-                            }
-                        });
-                    }
+        $('#emp_id').select2({
+                    ajax: {
+                        url: '{{ admin_url('ohc/prescribe-to-patient/fetchemployeename') }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.id,
+                                        text: item.text
+                                    };
+                                })
+                            };
+                        }
+                    },
+                    minimumInputLength: 1,
+                    dropdownCssClass: 'form-control',
+                    selectionCssClass: 'form-control'
                 });
-            } else {
-                $(this).closest("tr").remove();
-            }
-        });
-        $('.single-select2').select2({
 
-        });
-        $(document).on('change', '#unit_id', function() {
-            var unitId = $(this).val();
-            if (unitId) {
+                // Set selected value if available
+                var empId = '{{ $medicical_fitness_certificate->emp_id ?? '' }}';
+                var empName = '{{ $medicical_fitness_certificate->emp_name ?? '' }}';
+
+                if (empId && empName) {
+                    var newOption = new Option(empName, empId, true, true);
+                    $('#emp_id').append(newOption).trigger('change');
+                }
+        $(document).on('change', '#emp_id', function() {
+            var empId = $(this).val();
+            if (empId) {
                 $.ajax({
-                    url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                    url: "{{ admin_url('ohc/employee-cum-patient/employeename') }}",
                     type: 'GET',
+                    data: {
+                        empId: empId
+                    },
                     dataType: 'json',
-                    success: function(data) {
-                        $('#department_id').empty().append(
-                            '<option value="">Select Department</option>');
-                        $.each(data, function(key, value) {
-                            $('#department_id').append('<option value="' + value
-                                .id + '">' + value.name + '</option>');
-                        });
-                        $('#department_id').trigger('change.');
+                    success: function(response) {
+                        if (response.employee) {
+                            $('#emp_name').val(response.employee.emp_name).prop('readonly', true);
+
+                        } else {
+                            $('#emp_name').val('').prop('readonly', true);
+                        }
                     },
                     error: function(xhr) {
-                        alert('Error fetching department. Please try again.');
+                        alert('Error fetching employee name. Please try again.');
                     }
                 });
             } else {
-                $('#department_id').empty().append('<option value="">Select Department</option>');
-                $('#department_id').trigger('change.');
+                $('#emp_name').val('').prop('readonly', true);
             }
         });
-
-
-
-
-
-        $('#medicine_id').on('change', function() {
-            var selectedOption = $(this).find(':selected');
-            var availableQuantity = selectedOption.data('available-quantity');
-
-            $('#available_quantity').val(availableQuantity);
-        });
-
-        $('#quantity').on('input', function() {
-            var availableQuantity = parseInt($('#available_quantity').val());
-            var quantity = parseInt($(this).val());
-
-
-            if (quantity > availableQuantity) {
-                $('#quantity-error').show();
-                $(this).val(availableQuantity);
-            } else {
-                $('#quantity-error').hide();
-            }
-        });
-
-
-        $(document).ready(function() {
-
-            let medicine_issuance_row_count = 0;
-
-            $(".add-row").click(function() {
-                var rowCount = $('#medicine-tbody tr').length;
-
-
-                var newRow = `
-            <tr>
-                <td>
-                    <div class="form-group form-input">
-                        <label for="medicine_id" class="require">Medicine Name</label>
-                        <select name="medicine_id[${medicine_issuance_row_count}]" class="form-control single-select" style="width: 100%">
-                            <option value="">Select the Medicine Name</option>
-                                     @foreach ($medicine as $list)
-                                         <option value="{{ ($list->medicine_id) }}">
-                                                {{ getMedicinename($list->medicine_id) }}
-                                         </option>
-                                    @endforeach
-                        </select>
-                    </div>
-                </td>
-                <td>
-                    <div class="form-group form-input">
-                        <label for="quantity" class="require">Available Quantity</label>
-                        <input type="text" name="available_quantity[${medicine_issuance_row_count}]" class="form-control" readonly>
-                    </div>
-                </td>
-                <td>
-                    <div class="form-group form-input">
-                        <label for="quantity" class="require">Quantity</label>
-                        <input type="text" name="quantity[${medicine_issuance_row_count}]"   placeholder="Enter the quantity" class="form-control">
-                         <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
-
-
-                    </div>
-                </td>
-
-                <td>
-                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px;">
-                        <i class="fa-solid fa-trash"></i>
-                    </div>
-                </td>
-            </tr>`;
-
-                $('#medicine-tbody').append(newRow);
-
-
-                $('select[name="medicine_id[' + medicine_issuance_row_count + ']"]').select2({
-                    placeholder: "Select the Medicine Name",
-                    width: '100%'
-                });
-
-
-                $('select[name="medicine_id[' + medicine_issuance_row_count + ']"]').rules('add', {
-                    required: true,
-                    messages: {
-                        required: 'This Medicine name is required'
-                    }
-                });
-
-                $('input[name="quantity[' + medicine_issuance_row_count + ']"]').rules('add', {
-                    required: true,
-                    digits: true,
-                    messages: {
-                        required: 'Quantity is required',
-                        digits: 'Quantity must be numeric',
-                    }
-                });
-
-
-                medicine_issuance_row_count++;
-            });
-
-
-
-
-
-
-            $(document).on('change', 'select[name^="medicine_id"]', function() {
-                var selectedMedicineId = $(this).val();
-                var row = $(this).closest('tr');
-                var duplicateFound = false;
-
-
-                $('select[name^="medicine_id"]').not(this).each(function() {
-                    if ($(this).val() === selectedMedicineId && selectedMedicineId !== "") {
-                        duplicateFound = true;
-                    }
-                });
-
-                if (duplicateFound) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Duplicate Medicine Selected',
-                        text: 'This medicine is already selected. Please choose a different one.',
-                        confirmButtonColor: '#3085d6'
-                    });
-
-                    $(this).val('').trigger('change');
-                    row.find('input[name^="available_quantity"]').val('');
-                    row.find('input[name^="quantity"]').val('');
-                } else {
-
-                    if (selectedMedicineId) {
-                        $.ajax({
-                            url: "{{ admin_url('ohc/medical-fitness/editquantity') }}/" +
-                                selectedMedicineId,
-                            type: 'get',
-                            dataType: 'json',
-                            success: function(data) {
-                                row.find('input[name^="available_quantity"]').val(data
-                                    .available_quantity);
-                            },
-                            error: function() {
-                                Swal.fire('Error', 'Something went wrong. Please try again.',
-                                    'error');
-                            }
-                        });
-                    } else {
-                        row.find('input[name^="available_quantity"]').val('');
-                    }
-                }
-            });
-
-            $(document).on("input", 'input[name^="quantity"]', function() {
-                var row = $(this).closest('tr'); // Get the row of the current input
-                var availableQuantity = parseInt(row.find('input[name^="available_quantity"]').val());
-                var quantity = parseInt($(this).val());
-
-                if (quantity > availableQuantity) {
-                    row.find('.quantity-error').show();
-                    $(this).val(availableQuantity);
-                } else {
-                    row.find('.quantity-error').hide();
-                }
-            });
-
-
-            $(document).on("click", ".delete-row", function() {
-                var rowCount = $('#medicine-tbody tr').length;
-
-                if (rowCount > 1) {
-                    $(this).closest("tr").remove();
-                } else {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Warning',
-                        text: 'At least one row is required.',
-                        confirmButtonColor: '#3085d6'
-                    });
-                }
-            });
-        });
-
-
-
-
-
         $(function() {
 
             $.validator.addMethod(
@@ -484,56 +187,50 @@
                 "Invalid format."
             );
 
-            $('#MedicineRequisitionForm').validate({
+            $('#medicalfitnessform').validate({
                 rules: {
-                    unit_id: {
+                    emp_id: {
                         required: true,
                     },
-                    department_id: {
+                    emp_name: {
                         required: true,
                     },
-                    req_id: {
+
+                    date: {
                         required: true,
                     },
-                    request_date: {
+                    file: {
                         required: true,
                     },
-                    'medicine_id[0]': {
+                    remarks: {
                         required: true,
-                    },
-                    'quantity[0]': {
-                        required: true,
-                        digits: true,
+                        minlength: 3,
+                        maxlength: 600,
+
                     },
 
 
                 },
                 messages: {
-                    unit_id: {
-                        required: "Please select the Unit name.",
+                    emp_id: {
+                        required: "Please select the Employee Code.",
                     },
-                    department_id: {
-                        required: "Please select the Department Name.",
+                    emp_name: {
+                        required: "Please select the Employee Name.",
                     },
-                    req_id: {
-                        required: "Requisition ID cannot be empty.",
-                    },
-                    request_date: {
-                        required: "Please select the request date.",
-                    },
-                    'medicine_id[0]': {
-                        required: 'Medicine Name is required',
-                    },
-                    'quantity[0]': {
-                        required: 'Quantity is required',
-                        digits: 'Quantity should be numeric',
-                    },
-                    'remarks[0]': {
-                        required: 'Remarks is required',
-                        minlength: 'Minimum 3 character is required',
-                        maxlength: 'Remarks should not exceed more than the 600 characters',
 
-                    }
+                    date: {
+                        required: "Please select the date.",
+                    },
+                    file: {
+                        required: 'File is required',
+                    },
+                    remarks: {
+                        required: 'Remarks is required',
+                        minlength: 3,
+                        maxlength: 600,
+                    },
+
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
@@ -554,6 +251,8 @@
                     console.log("Form has " + errors + " invalid fields.");
                 },
             });
+
+
         });
     </script>
 @endpush

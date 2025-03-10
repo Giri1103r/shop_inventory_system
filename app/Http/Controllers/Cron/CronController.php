@@ -461,16 +461,18 @@ class CronController extends Controller
         try {
             $itemcodes = $this->ppetypemaster->getppetypemaster();
 
-            foreach ($itemcodes as $itemList) {
-                $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetPPEInventory?TokenId=123&Orgid=86&Item={$itemList}";
+            foreach ($itemcodes as $itemCode) {
+                $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetPPEInventory?TokenId=123&Orgid=86&Item={$itemCode}";
 
                 $response = Http::get($apiUrl);
 
                 if ($response->successful()) {
                     $data = $response->json();
 
-                    if ($data && is_array($data)) {
-                        $this->ppestock->store($data);
+                    if (!empty($data) && is_array($data)) {
+                        foreach ($data as $item) {
+                            $this->ppestock->store($item);
+                        }
                     } else {
                         return response()->json(['message' => 'No data found in API response.']);
                     }

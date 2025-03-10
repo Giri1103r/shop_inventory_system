@@ -68,14 +68,9 @@ class MedicalFitnessCertificateController extends Controller
 
                         ->addColumn('approve_status', function ($row) {
 
-                            if ($row->created_by == Auth::id()) {
-                                if ($row->approve_status == STATUS_OHC_PARAMEDICS_APPROVED) {
-                                    $text = "<span class='badge bg-info' style='font-size: 1.0em;'>Open</span>";
-                                }
-                            }
 
-                            if ($row->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) {
-                                $text = "<span class='badge bg-info' style='font-size: 1.0em;'>Paramedics Approval Pending</span>";
+                            if ($row->approve_status == STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING) {
+                                $text = "<span class='badge bg-info' style='font-size: 1.0em;'>Doctor Approval Pending</span>";
                             } else if ($row->approve_status == STATUS_OHC_PARAMEDICS_APPROVED) {
                                 $text = "<span class='badge bg-success' style='font-size: 1.0em;'>Paramedics Approved</span>";
                             } else if ($row->approve_status == STATUS_OHC_PARAMEDICS_REJECTED) {
@@ -145,7 +140,240 @@ class MedicalFitnessCertificateController extends Controller
         }
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
+        try {
 
+            $rules = [
+                'emp_id' => 'required',
+                'emp_name' => 'required',
+                'date' => 'required',
+                'remarks' => 'required',
+
+
+            ];
+
+
+            $messages = [
+                'emp_id.required' => 'Employee Id is required',
+                'emp_name.required' => 'Emp Name is required',
+                'date.required' => 'Date is required',
+                'remarks.required' => 'remarks is required',
+
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            try {
+
+
+                $medicinefitness =  $this->medical_fitness_certificate->store();
+
+                $this->ohc_status->medicinestockstore($id);
+                $mailsubject = 'Medicine Request for the Stock';
+                $user_role = ROLE_EHS_OFFICER;
+
+
+                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+
+                if (count($users) > 0) {
+
+                    foreach ($users as $user) {
+
+                        $email_id = $user->email;
+
+                        if ($email_id != '' || $email_id != null) {
+                            $data = $this->medicine_receiving->selectOne($id);
+                            $permitrray  = $data->toArray();
+
+                            $data['name'] = $user->name;
+                            $data['email_id'] =  $email_id;
+                            $data['mail_subject'] = $mailsubject;
+
+                            Mail::to($data['email_id'])->queue(new MedicineReceivingRequestEmail($data));
+                        }
+                    }
+                }
+
+
+                /**
+                 * Send Web notification
+                 */
+
+                $notificationData = array(
+                    'notification_type' => 4,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => getMedicinename($data->medicine_id) . 'Has requested the medicine for the stock by' . getUsername($data->created_by),
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $data->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('ohc/medicine-receiving-form/medicineapproval/view/' . encryptId($data->id)),
+                    'assigned_user' => array_to_string($userids),
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+
+                Session::flash('success', 'Your data has been created successfully!');
+            } catch (Exception $ex) {
+                report($ex);
+                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            }
+
+            return redirect(admin_url('ohc/medicine-receiving-form/list'));
+        } catch (Exception $ex) {
+
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medical-fitness/ist'));
+        }
+    }
+
+    public function Edit(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            $unit = $this->unit->getunit();
+            $medicine_receiving = $this->medicine_receiving->find($id);
+            $vendor = $this->vendor->getVendordata();
+            $pack = $this->medicine->getMedicineData();
+            $medicineStock  = $this->inventory->getmedicinedata();
+
+            $hsn = $this->medicine->where('id',   $medicine_receiving->medicine_id)->select('medicine', 'hsn', 'pack')->first();
+
+
+            $existingMedicineIds = $this->medicine_receiving
+            ->where('status', 1)
+            ->pluck('medicine_id')
+            ->toArray();
+            $data = [
+                'medicineStock' => $medicineStock,
+                'vendor' => $vendor,
+                'medicine_receiving' => $medicine_receiving,
+                'hsn' => $hsn,
+                'unitList'=>$unit,
+                'pack'=>$pack
+
+
+            ];
+
+            return view('ohcmanagement.medicine_receiving.edit', $data);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medical-fitness/list'));
+        }
+    }
+    public function update(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            $rules = [
+                'medicine_id' => 'required',
+                'vendor_id' => 'required',
+                'quantity' => 'required',
+                'batch_number' => 'required',
+                'expire_date' => 'required',
+                // 'hsn_id' => 'required',
+                'rate' => 'required',
+                'pack_id' => 'required',
+
+            ];
+
+
+            $messages = [
+                'medicine_id.required' => 'Medicine Name is required',
+                'vendor_id.required' => 'Vendor Name is required',
+                'quantity.required' => 'Quantity is required',
+                'batch_number.required' => 'Quantity is required',
+                'expire_date.required' => 'Expire Date is required',
+                // 'hsn_id.required' => 'HSN Numner is required',
+                'rate.required' => 'Rate is required',
+                'pack_id.required => Pack Details is required',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                dd($validator->errors());
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            try {
+
+                $hsn = $this->medicine->where('hsn',$request->hsn_display)->first();
+                $pack = $this->medicine->where('pack',$request->pack_display)->first();
+
+
+                $this->medicine_receiving->updates($id,$hsn, $pack);
+
+                $mailsubject = 'Medicine Request for the Stock';
+                $user_role = ROLE_EHS_OFFICER;
+
+
+                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+
+                if (count($users) > 0) {
+
+                    foreach ($users as $user) {
+
+                        $email_id = $user->email;
+
+                        if ($email_id != '' || $email_id != null) {
+                            $data = $this->medicine_receiving->selectOne($id);
+                            $permitrray  = $data->toArray();
+
+                            $data['name'] = $user->name;
+                            $data['email_id'] =  $email_id;
+                            $data['mail_subject'] = $mailsubject;
+
+                            Mail::to($data['email_id'])->queue(new MedicineReceivingRequestEmail($data));
+                        }
+                    }
+                }
+
+
+                /**
+                 * Send Web notification
+                 */
+
+                $notificationData = array(
+                    'notification_type' => 4,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => getMedicinename($data->medicine_id) . 'Has requested the medicine for the stock' . getUsername($data->created_by),
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $data->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('ohc/medical-fitness/approval/view/' . encryptId($data->id)),
+                    'assigned_user' => array_to_string($userids),
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+                Session::flash('success', 'Your data has been updated successfully!');
+            } catch (Exception $ex) {
+                report($ex);
+                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            }
+
+            return redirect(admin_url('ohc/medical-fitness/list'));
+        } catch (Exception $ex) {
+
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medical-fitness/list'));
+        }
     }
 }

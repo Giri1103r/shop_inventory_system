@@ -958,6 +958,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('generalpdf/{id}', [MedicineReceivingController::class, 'generalpdf']);
                 Route::post('/checkExistmedicineId', [MedicineReceivingController::class, 'checkExistmedicineId']);
                 Route::post('/close', [MedicineReceivingController::class, 'stockclosesubmit']);
+                Route::post('/pack-id', [MedicineReceivingController::class, 'packid']);
+
             });
             // Medicine Requistion
             Route::group(['prefix' => 'ohc/medicine-requisition'], function () {
