@@ -56,12 +56,13 @@ class AccidentReport extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ims_initial_accident_report.*', 'masters_unit.unit_name', 'masters_employee.emp_id', 'masters_department.department_name',  'masters_location.location_name', 'ims_incident_status.status_name', 'ims_incident_status.bg_color');
+        $query = $this->select('ims_initial_accident_report.*', 'masters_unit.unit_name', 'masters_employee.emp_id', 'masters_department.department_name',  'masters_location.location_name', 'ims_incident_status.status_name', 'ims_incident_status.bg_color','ims_accident_investigation.risk_analysis');
         $query = $query->leftJoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_initial_accident_report.accident_status');
         $query = $query->leftJoin('masters_unit', 'ims_initial_accident_report.unit_id', '=', 'masters_unit.id');
         $query = $query->leftJoin('masters_employee', 'ims_initial_accident_report.emp_code', '=', 'masters_employee.emp_id');
         $query = $query->leftJoin('masters_department', 'ims_initial_accident_report.department_id', '=', 'masters_department.id');
         $query = $query->leftJoin('masters_location', 'ims_initial_accident_report.location_id', '=', 'masters_location.id');
+        $query = $query->leftJoin('ims_accident_investigation', 'ims_initial_accident_report.id', '=', 'ims_accident_investigation.accident_id');
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
