@@ -70,8 +70,8 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
-            RateLimiter::clear('login:password:' . $email);
-            RateLimiter::clear('login:email:' . $ipAddress);
+            // RateLimiter::clear('login:password:' . $email);
+            // RateLimiter::clear('login:email:' . $ipAddress);
 
             $user = Auth::user();
 

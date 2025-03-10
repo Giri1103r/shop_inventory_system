@@ -140,7 +140,7 @@ class AccidentReportController extends Controller
                             if ($row->accident_status == 3) {
                                 $btn .= '<a href="' . admin_url('accidentReport/uauc_riskanalysis/' . encryptId($row->id)) . '" class=" " title="uauc"><i class="fas fa-user-shield" style="color: #7e9611;"></i>';
                             }
-                            if ($row->accident_status == 4) {
+                            if ($row->accident_status == 4  && $row->risk_analysis !=2 ) {
                                 $btn .= '<a href="' . admin_url('accidentReport/uauc_riskanalysis/' . encryptId($row->id)) . '" class=" " title="Risk Analysis"><i class="fa fa-exclamation-triangle" style="color: #e83333;"></i>';
                             }
 
