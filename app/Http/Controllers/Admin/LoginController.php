@@ -133,7 +133,7 @@ class LoginController extends Controller
 
             $user = User::where('email', '=', $request->email)->first();
 
-            
+
 
             if ($user == null) {
 
@@ -232,7 +232,7 @@ class LoginController extends Controller
 
     public function passwordOTP(Request $request)
     {
-       
+
         $token = Session::get('token');
         $email = Session::get('email');
         dd($token);
@@ -261,7 +261,7 @@ class LoginController extends Controller
             'token'  => $token,
             'expire' => $remainingMinutes,
         ];
-       
+
 
         return view('auth.passwords.otp', $data);
     }

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\API\BaseController as BaseController;
+use App\Http\Controllers\Api\BaseController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 

@@ -94,6 +94,7 @@ class MonthlyInventoryController extends Controller
             'receiving' => $receiving,
             'issuing' => $allIssuances,
         ];
+       
         if ($request->ajax()) {
             return response()->json($data);
         } else {

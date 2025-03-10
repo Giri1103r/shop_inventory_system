@@ -108,10 +108,10 @@
             });
             $('#year').datepicker({
                 format: 'yyyy',
-                minViewMode: 1,
+                minViewMode: 'years',
+                viewMode: 'years',
                 autoclose: true
             });
-
             $(document).ready(function() {
                 $('#exportexcel').on('click', function(e) {
                     e.preventDefault();
@@ -231,7 +231,7 @@
 
                 inventoryData.forEach((item) => {
                     let medicineName = item.medicine || item
-                    .medicine_name; // Use `medicine` if available, otherwise `medicine_name`
+                        .medicine_name; // Use `medicine` if available, otherwise `medicine_name`
 
                     let purchaseData = new Array(daysInMonth).fill(0);
                     let issueQuantities = new Array(daysInMonth).fill(0);
@@ -254,7 +254,7 @@
                     issueData.flat().forEach((issued) => {
                         if (issued.medicine_name === medicineName) {
                             let issuedDate = new Date(issued.created_at);
-                           
+
                             if (!isNaN(issuedDate.getTime())) {
                                 let dayIndex = issuedDate.getUTCDate() - 1;
                                 let monthIndex = issuedDate.getUTCMonth() + 1;

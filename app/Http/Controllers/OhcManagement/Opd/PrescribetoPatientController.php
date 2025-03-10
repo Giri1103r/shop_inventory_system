@@ -148,12 +148,12 @@ class PrescribetoPatientController extends Controller
                             // }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
                             if ($row->patient_status !== 3) {
-                            $btn .= '<a href="' . admin_url('ohc/prescribe-to-patient/generalpdf/' . encryptId($row->id)) . '" class="" title="PDF"> <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/prescribe-to-patient/generalpdf/' . encryptId($row->id)) . '" class="" title="PDF"> <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a> ';
                             }
                             if ($row->patient_status !== 3) {
-                            $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="Close" title="Cancel" style="color: #e21e23;margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
+                                $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="Close" title="Cancel" style="color: #e21e23;margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
                             }
-                              return $btn;
+                            return $btn;
                         })
 
                         ->rawColumns(['action', 'date', 'vital_checkup', 'created_by', 'patient_status', 'fitness_certificate'])
@@ -189,13 +189,13 @@ class PrescribetoPatientController extends Controller
             $reffered = $this->refered_vechicle->getreffered();
             $patientstatus = $this->patient_status->getpatientstatus();
             $medicine  = $this->inventory->getmedicineUnitwise();
-            $departmentList=$this->department->getdepartment();
+            $departmentList = $this->department->getdepartment();
             $data = array(
                 'unit' => $unit,
                 'suggestedBy' => $suggestedBy,
                 'reffered' => $reffered,
                 'patientstatus' => $patientstatus,
-                'departmentList'=>$departmentList,
+                'departmentList' => $departmentList,
                 'medicine' => $medicine
 
             );
@@ -224,8 +224,9 @@ class PrescribetoPatientController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-// dd($request->all());
-            $opd_patient = $this->opd_patient->store();
+            // dd($request->all());
+          $unit =  $this->unit->where('unit_name', $request->unit_id)->where('status', 1)->first();
+            $opd_patient = $this->opd_patient->store( $unit);
 
             $firstaid = $this->opd_firstaid->store($opd_patient);
 
@@ -297,7 +298,6 @@ class PrescribetoPatientController extends Controller
                 if ($inventory) {
                     $inventory->increment('total_prescribe', $issuedQuantity);
                     $inventory->decrement('balance', $issuedQuantity);
-                   
                 }
             }
 
@@ -328,7 +328,7 @@ class PrescribetoPatientController extends Controller
             $patientstatus = $this->patient_status->getpatientstatus();
             $medicine  = $this->inventory->getmedicineUnitwise();
             $suggestedname = $this->suggestedBy->getsuggestedname();
-            $departmentList=$this->department->getdepartment();
+            $departmentList = $this->department->getdepartment();
 
             $data = array(
                 'unit' => $unit,
@@ -337,7 +337,7 @@ class PrescribetoPatientController extends Controller
                 'patientstatus' => $patientstatus,
                 'medicine' => $medicine,
                 'opdpatient' => $opdpatient,
-                'departmentList'=>$departmentList,
+                'departmentList' => $departmentList,
                 'opd_firstaid' => $opd_firstaid,
                 'isreffered' => $isreffered,
 
@@ -400,7 +400,7 @@ class PrescribetoPatientController extends Controller
             }
 
 
-
+            $unit =  $this->unit->where('unit_name', $request->unit_id)->where('status', 1)->first();
             $user_opd_patient = $this->opd_patient->selectOne($id);
             $user_opd_firstaid = $this->opd_firstaid->selectOne($id);
             if ($user_opd_patient->first_aid_treatment === 1) {
@@ -443,10 +443,10 @@ class PrescribetoPatientController extends Controller
                 }
             }
 
-            $opd_patient = $this->opd_patient->updates($id);
+            $opd_patient = $this->opd_patient->updates($id, $unit);
             if ($user_opd_patient->first_aid_treatment === 1) {
-            $firstaid = $this->opd_firstaid->updates($id);
-        }
+                $firstaid = $this->opd_firstaid->updates($id);
+            }
             $isreffered = $this->isreffered->updates($id);
             Session::flash('success', __('Your data has been created successfully'));
 
@@ -486,69 +486,68 @@ class PrescribetoPatientController extends Controller
     public function exportExcel()
     {
 
-            try {
+        try {
 
-                $allData = $this->opd_patient->exportdata();
+            $allData = $this->opd_patient->exportdata();
 
-                if ($allData->isEmpty()) {
-                    return redirect()->back()->with('error', 'No data found');
-                }
-
-                $header = [
-                    __("common.sno"),
-
-                    'Employee Name',
-                    'Problem',
-                    'Gender',
-                    'Unit',
-                    'Department',
-                    'Date',
-                    'Time',
-                    'Suggested By',
-                    'Treatment',
-                    'Check Up',
-                    'Patient Status',
-                    'Fitness Certificate',
-                    __("common.created_by"),
-                    'Cancel Remarks',
-                ];
-
-                $i = 1;
-                foreach ($allData as $data) {
-
-                    $export = [];
-                    $export[] =  $i;
-                    $export[] = $data->emp_name;
-                    $export[] = $data->cheif_complaint;
-                    $export[] = $data->gender;
-                    $export[] =  getUnitname($data->unit_id);
-                    $export[] =  getDepartment($data->department_id);
-                    $export[] = displaydateformat($data->date);
-                    $export[] = ($data->time);
-                    $export[] = getSuggestedBy($data->suggested_by);
-                    $export[] = ($data->treatment);
-                    $export[] =  $data->vital_checkup == 1 ? 'Yes' : 'No';
-                    $export[] = getPatientStatus($data->patient_status);
-                    $export[] =  $data->fitness_certificate == 1 ? 'Required' : 'Not Required';
-                    $export[] =  getusername($data->created_by);
-                    $export[] =  ($data->cancel_remarks);
-
-
-                    $exportData[] = $export;
-
-                    $i++;
-                }
-
-                $writer = SimpleExcelWriter::streamDownload('opd patient .xlsx')
-                    ->addHeader($header)
-                    ->addRows(
-                        $exportData
-                    );
-            } catch (Exception $ex) {
-
-                report($ex);
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
             }
 
+            $header = [
+                __("common.sno"),
+
+                'Employee Name',
+                'Problem',
+                'Gender',
+                'Unit',
+                'Department',
+                'Date',
+                'Time',
+                'Suggested By',
+                'Treatment',
+                'Check Up',
+                'Patient Status',
+                'Fitness Certificate',
+                __("common.created_by"),
+                'Cancel Remarks',
+            ];
+
+            $i = 1;
+            foreach ($allData as $data) {
+
+                $export = [];
+                $export[] =  $i;
+                $export[] = $data->emp_name;
+                $export[] = $data->cheif_complaint;
+                $export[] = $data->gender;
+                $export[] =  getUnitname($data->unit_id);
+                $export[] =  getDepartment($data->department_id);
+                $export[] = displaydateformat($data->date);
+                $export[] = ($data->time);
+                $export[] = getSuggestedBy($data->suggested_by);
+                $export[] = ($data->treatment);
+                $export[] =  $data->vital_checkup == 1 ? 'Yes' : 'No';
+                $export[] = getPatientStatus($data->patient_status);
+                $export[] =  $data->fitness_certificate == 1 ? 'Required' : 'Not Required';
+                $export[] =  getusername($data->created_by);
+                $export[] =  ($data->cancel_remarks);
+
+
+                $exportData[] = $export;
+
+                $i++;
+            }
+
+            $writer = SimpleExcelWriter::streamDownload('opd patient .xlsx')
+                ->addHeader($header)
+                ->addRows(
+                    $exportData
+                );
+        } catch (Exception $ex) {
+
+            report($ex);
+        }
     }
 
     // Export pdf
@@ -647,12 +646,12 @@ class PrescribetoPatientController extends Controller
 
     public function employeedetails($emp_id)
     {
-        $employee = Employee::select('emp_name', 'department', 'mobile_no')
+        $employee = Employee::select('emp_name', 'department', 'mobile_no', 'unit')
             ->where('emp_id', $emp_id)
             ->first();
 
         if (!$employee) {
-            $employee = Work::select('emp_name', 'department', 'mobile_no')
+            $employee = Work::select('emp_name', 'department', 'mobile_no', 'unit')
                 ->where('emp_id', $emp_id)
                 ->first();
         }
@@ -661,6 +660,8 @@ class PrescribetoPatientController extends Controller
             return response()->json([
                 'employee' => $employee,
                 'departments' => $this->department->select('department_name')->where('status', '1')->where('id', $employee->department)
+                    ->first(),
+                'units' => $this->unit->select('unit_name')->where('status', '1')->where('id', $employee->unit)
                     ->first()
             ]);
         } else {
@@ -731,12 +732,16 @@ class PrescribetoPatientController extends Controller
             $referenceId =   $data->reference_id;
             $user_opd_firstaid = $this->opd_patient->selectOne($referenceId);
 
-            $this->inventory->where('unit_id', Auth::user()->unit_id
+            $this->inventory->where(
+                'unit_id',
+                Auth::user()->unit_id
             )
                 ->where('medicine_id', $data->medicine_id)
                 ->decrement('total_prescribe', $data->quantity);
 
-            $this->inventory->where('unit_id', Auth::user()->unit_id
+            $this->inventory->where(
+                'unit_id',
+                Auth::user()->unit_id
             )
                 ->where('medicine_id', $data->medicine_id)
                 ->increment('balance', $data->quantity);

@@ -73,7 +73,7 @@ class Worktemp extends Model
                 $cleanUnit = isset($item['Unit']) ? str_replace(["\r", "\n"], '', trim($item['Unit'])) : null;
 
                 $status = isset($item['Status']) ? ($item['Status'] ? 1 : 0) : null;
-   dd($item['Status'],$status);
+                // dd($item['Status'], $status);
                 $valuesToInsertOrUpdate = [
                     'emp_name' => isset($item['EmpName']) ? $item['EmpName'] : null,
                     'gender' => isset($item['Gender']) ? $item['Gender'] : null,
@@ -140,7 +140,7 @@ class Worktemp extends Model
         $search = '';
 
         $query = $this->select('masters_work_temp.*');
-        $query = $this->where('error_status' , 1);
+        $query = $this->where('error_status', 1);
         if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];
 

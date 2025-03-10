@@ -102,6 +102,7 @@
                                         <th>Employee Name/ Worker Worker Name</th>
                                         <th>Date</th>
                                         <th>Remarks</th>
+                                        <th>Approve Status</th>
                                         <th data-priority="1">Action</th>
                                     </tr>
                                 </thead>
@@ -285,6 +286,11 @@
                 {
                     data: 'remarks',
                     name: 'remarks'
+
+                },
+                {
+                    data: 'approve_status',
+                    name: 'approve_status'
                 },
                 {
                     data: 'action',
