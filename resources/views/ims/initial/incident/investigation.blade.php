@@ -912,9 +912,18 @@
             let whywhyanalysisIndex = {{ 1 }};
 
 
-
             $(".addwhywhyanalysis").on("click", function() {
+                let rowCount = $("#whywhyanalysisBody tr").length;
 
+                if (rowCount >= 5) {
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Limit Reached",
+                        text: "Maximum of 5 rows can be added.",
+                        confirmButtonColor: "#d33"
+                    });
+                    return;
+                }
                 console.log("Root Cause Selected Value:", $("#root_cause_analysis").val());
                 const newRow = `
             <tr id="RowwhywhyanalysisView${whywhyanalysisIndex}">
@@ -1169,7 +1178,7 @@
                             maxlength: 2000,
                             pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
                         },
-                        root_cause_analysis: {
+                        root_cause: {
                             required: true,
                         },
                         responsible_person_id: {
@@ -1189,6 +1198,12 @@
                             maxlength: 2000,
                             pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/
                         },
+
+                        remark: {
+                            minlength: 10,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
+                        },
                     },
                     messages: {
                         'anything_damaged[]': {
@@ -1205,7 +1220,7 @@
                             maxlength: "Maximum 2000 characters allowed.",
                             pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
                         },
-                        root_cause_analysis: {
+                        root_cause: {
                             required: "Root Cause Analysis is required.",
                         },
                         responsible_person_id: {
@@ -1222,6 +1237,11 @@
                             minlength: "Details must be at least 3 characters long.",
                             maxlength: "Details cannot exceed 2000 characters.",
                             pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+                        },
+                        remark: {
+                            minlength: "Minimum 10 characters required.",
+                            maxlength: "Maximum 2000 characters allowed.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
                         },
 
                     },

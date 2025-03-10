@@ -150,7 +150,7 @@ class InitialFireIncidentController extends Controller
                                 $btn .= '<a href="' . admin_url('incident/fire-incident/approvereject/' . encryptId($row->id)) . '" class=" " title="Investigation"><i class="fas fa-user-shield" style="color: #7e9611;"></i>';
                             }
 
-                            if ($row->incident_status == 4) {
+                            if ($row->incident_status == 4  && $row->risk_analysis !=2) {
                                 $btn .= '<a href="' . admin_url('incident/fire-incident/approvereject/' . encryptId($row->id)) . '" class=" " title="Risk Analysis"><i class="fa fa-exclamation-triangle" style="color: #e83333;"></i>';
                             }
 
@@ -812,19 +812,19 @@ class InitialFireIncidentController extends Controller
             $this->hiramoc->updatefireInvestigation($fire_id, $fireincidentinvestigation->id);
 
             $initialfireincident = $this->initialfireincident->selectOne($fire_id);
-            $getEHSReview = $this->initialfireincident->getEHSReviewincident($incident_id);
+            $getEHSReview = $this->initialfireincident->getEHSReviewincident($fire_id);
 
             $teamMemberIds = explode(',', $getEHSReview->team_member);
-
+            
             $employees = Employee::whereIn('id', $teamMemberIds)->get(['emp_name', 'email', 'login_id']);
-
+            // dd($employees);
             // Extract login IDs into an array for notification
             $loginIds = $employees->pluck('login_id')->toArray();
 
             $mailsubject = 'Investigation Submitted';
 
             // Fetch incident details once, not inside the loop
-            $incidentDetails = $this->initialfireincident->selectOne($incident_id);
+            $incidentDetails = $this->initialfireincident->selectOne($fire_id);
             $incidentarray = $incidentDetails->toArray();
 
             foreach ($employees as $employee) {
@@ -944,7 +944,6 @@ class InitialFireIncidentController extends Controller
                 $incident_status = STATUS_EHSVERIFY_PENDING;
             }
 
-            $incident_status = STATUS_RISKANALYSIS_PENDING;
             $this->initialfireincident->uaucsubmit($fire_incident_id);
             $this->initialfireincident->updateStatus($fire_incident_id, $incident_status);
 

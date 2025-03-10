@@ -1713,7 +1713,7 @@
                                                 class="btn btn-secondary btn-warnings injcancel center"
                                                 data-bs-dismiss="modal">{{ 'Cancel' }}</button>
                                             <!--
-                                                                                                                                                                                                                                                                                                                                                                                                                        <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                            <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
 
                                         </div>
                                     </div>
@@ -1725,8 +1725,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                                                                                                                                                                                                                                                                                                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                                                                                                                                                                                                                                                                                                </div>-->
+                                                                                                                                                                                                                                                                                                                                                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                                                                                                                                                                                                                                                                                                    </div>-->
             </div>
         </div>
     </div>
@@ -1939,7 +1939,17 @@
 
 
             $(".addwhywhyanalysis").on("click", function() {
+                let rowCount = $("#whywhyanalysisBody tr").length;
 
+                if (rowCount >= 5) {
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Limit Reached",
+                        text: "Maximum of 5 rows can be added.",
+                        confirmButtonColor: "#d33"
+                    });
+                    return;
+                }
                 console.log("Root Cause Selected Value:", $("#root_cause_analysis").val());
                 const newRow = `
             <tr id="RowwhywhyanalysisView${whywhyanalysisIndex}">

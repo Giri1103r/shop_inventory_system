@@ -337,7 +337,7 @@
                                         <label class="form-label view_label">Was anything damaged?</label>
                                         <div class="view_data">
                                             @php
-                                               
+
                                                 $damageTypes = [
                                                     1 => 'Man',
                                                     2 => 'Machine',
@@ -358,7 +358,7 @@
                                         <label class="form-label view_label">What factors caused the Fire Incident?</label>
                                         <div class="view_data">
                                             @php
-                                               
+
                                                 $damageTypes = [
                                                     1 => 'Physical',
                                                     2 => 'System',
@@ -403,12 +403,12 @@
                                             Analysis (PRCA)</label>
                                         <div class="view_data">
                                             @if ($getInvestigation->root_cause_analysis == 1)
-                                                    Why Why Analysis
-                                                @elseif($getInvestigation->root_cause_analysis == 2)
-                                                    Fish Bone Analysis
-                                                @else
-                                                    NA
-                                                @endif
+                                                Why Why Analysis
+                                            @elseif($getInvestigation->root_cause_analysis == 2)
+                                                Fish Bone Analysis
+                                            @else
+                                                NA
+                                            @endif
                                         </div>
                                     </div>
 
@@ -448,7 +448,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Risk Analysis</label>
                                         <div class="view_data">
-                                            {{ $getInvestigation->risk_analysis == 1 ? 'Yes':'No' }}
+                                            {{ $getInvestigation->risk_analysis == 1 ? 'Yes' : 'No' }}
                                         </div>
                                     </div>
                                     @if ($getInvestigation->risk_analysis == 2)
@@ -859,6 +859,9 @@
                         },
                         description_ca: {
                             required: true,
+                            minlength: 10,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
                         },
 
                     },
@@ -872,6 +875,9 @@
                         },
                         description_uauc: {
                             required: "Description of UA UC is required.",
+                            minlength: "Minimum 10 characters required.",
+                            maxlength: "Maximum 2000 characters allowed.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
                         },
 
                     },
@@ -913,6 +919,9 @@
                         },
                         description_ca: {
                             required: true,
+                            minlength: 10,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
                         },
 
                     },
@@ -923,6 +932,9 @@
                         },
                         description_ca: {
                             required: "Description of CA is required.",
+                            minlength: "Minimum 10 characters required.",
+                            maxlength: "Maximum 2000 characters allowed.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
                         },
 
                     },
