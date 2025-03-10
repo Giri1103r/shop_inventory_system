@@ -117,7 +117,6 @@ class LoginController extends Controller
     public function sendOTP(Request $request)
     {
         try {
-
             $rules = [
                 'email' => 'required',
             ];
@@ -133,6 +132,8 @@ class LoginController extends Controller
             }
 
             $user = User::where('email', '=', $request->email)->first();
+
+            
 
             if ($user == null) {
 
@@ -231,9 +232,10 @@ class LoginController extends Controller
 
     public function passwordOTP(Request $request)
     {
+       
         $token = Session::get('token');
         $email = Session::get('email');
-
+        dd($token);
         if (!$token) {
             Session::flash('error', 'Access Denied!');
             return redirect()->back();
@@ -259,6 +261,7 @@ class LoginController extends Controller
             'token'  => $token,
             'expire' => $remainingMinutes,
         ];
+       
 
         return view('auth.passwords.otp', $data);
     }

@@ -432,6 +432,20 @@
                                                 {{ $getInvestigation->remark }}
                                             </div>
                                         </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Risk Analysis</label>
+                                            <div class="view_data">
+                                                {{ $getInvestigation->risk_analysis == 1 ? 'Yes':'No' }}
+                                            </div>
+                                        </div>
+                                        @if ($getInvestigation->risk_analysis == 2)
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">Risk Analysis Remark</label>
+                                                <div class="view_data">
+                                                    {{ $getInvestigation->risk_analysis_remark }}
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                     @if ($getInvestigation->root_cause_analysis == 1)
                                         <div class="row mt-3 whywhy">

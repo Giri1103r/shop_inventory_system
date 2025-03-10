@@ -21,6 +21,10 @@ class Hira extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
+        'incident_id',
+        'accident_id',
+        'fire_id',
+        'hiramoc_id',
         'sr_no',
         'services',
         'narration',
@@ -140,6 +144,10 @@ class Hira extends Model
             $hira_status = 1;
         }
         $insert_array = array(
+            'incident_id' => decryptId($request->incident_id),
+            'accident_id' => decryptId($request->accident_id),
+            'fire_id' => decryptId($request->fire_id),
+            'hiramoc_id' => decryptId($request->hiramoc_id),
             'sr_no' => $request->sr_no,
             'services' => $request->services,
             'narration' => $request->narration,

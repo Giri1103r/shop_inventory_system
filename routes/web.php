@@ -1170,6 +1170,9 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/list', [HiraController::class, 'index']);
                 Route::post('/list', [HiraController::class, 'index']);
                 Route::get('/add', [HiraController::class, 'add']);
+                Route::get('/incident-investigation/add/{incident_id}/{hiramoc}', [HiraController::class, 'addNewHiraIncident']);
+                Route::get('/accident-investigation/add/{accident_id}/{hiramoc}', [HiraController::class, 'addNewHiraAccident']);
+                Route::get('/fire-investigation/add/{fire_id}/{hiramoc}', [HiraController::class, 'addNewHiraFire']);
                 Route::post('/add/submit', [HiraController::class, 'store']);
                 Route::get('/edit/{id}', [HiraController::class, 'edit']);
                 Route::post('/edit/submit', [HiraController::class, 'update']);
@@ -1261,6 +1264,10 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/actiontaken/submit', [AccidentReportController::class, 'actiontakenSubmit']);
                 Route::post('/ehApproval/submit', [AccidentReportController::class, 'ehsApprovalSubmit']);
                 Route::get('/accidentpdf/{id}', [AccidentReportController::class, 'accidentExportPdf']);
+                Route::get('/gethiradetails/{hira_id}', [AccidentReportController::class, 'gethiradetails']);
+                Route::post('/savehira', [AccidentReportController::class, 'saveHira']);
+
+
 
             });
 

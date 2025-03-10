@@ -2,22 +2,21 @@
     <form action="" id="hiramoc" method="POST" novalidate>
         @csrf
         <div class="modal-header">
-            <h5 class="modal-title">MOC</h5>
+            <h5 class="modal-title">HIRA</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body m-3">
             @if ($newHiraList == null)
                 <div class="d-flex justify-content-left my-3">
-                    <a href="{{ admin_url('incident/hira-master/fire-investigation/add/' . $fire_id . '/' . encryptId(2)) }}"
+                    <a href="{{ admin_url('incident/hira-master/accident-investigation/add/' . $accident_id . '/' . encryptId(1)) }}"
                         class="btn btn-primary mx-2" id="newHira">New</a>
                     <button type="button" class="btn btn-secondary mx-2" id="existingHira">Existing</button>
                 </div>
             @endif
-
-            <input type="hidden" name="fireincident_id" value="{{ $fire_id }}">
-
-            <div class="row" id="existingMOCdiv" style="display: none;">
-                <label for="moc_id" class="form-label require">MOC</label>
+            <input type="hidden" name="accident_id" value="{{ $accident_id }}">
+            {{-- @dd($selectedhira) --}}
+            <div class="row" id="existingdiv">
+                <label for="hira_id" class="form-label require">HIRA</label>
                 <div class="col-sm-7 form-input">
                     <select name="hira_id" id="hira_id" class="form-control" style="width: 100%">
                         <option value="">Select HIRA</option>
@@ -36,8 +35,6 @@
                     </select>
                 </div>
             </div>
-
-
 
             @if ($newHiraList != null)
                 <div id="hiraDetails" class="mt-3">
@@ -77,44 +74,45 @@
                 </div>
             @endif
         </div>
+
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             @if ($newHiraList == null)
                 <button type="button" class="btn btn-primary" id="saveHira">Save HIRA</button>
             @endif
         </div>
+
     </form>
 </div>
 <script type="text/javascript" nonce="projectcab">
     $(document).ready(function() {
         var savedHiraId = null; // Store the selected HIRA ID after saving
 
-        $('#savemoc').on('click', function() {
-            var mocId = $('#moc_id').val(); // Get selected HIRA ID
-            var fireincident_id = "{{ $fireincident_id }}"; // Get incident ID
-
-            if (!mocId) {
-                alert('Please select a MOC before proceeding.');
+        $('#saveHira').on('click', function() {
+            var hiraId = $('#hira_id').val(); // Get selected HIRA ID
+            var accidentId = "{{ $accident_id }}"; // Get incident ID
+            if (!hiraId) {
+                alert('Please select a HIRA before proceeding.');
                 return;
             }
 
             $.ajax({
-                url: "{{ admin_url('incident/fire-incident/savehira') }}",
+                url: "{{ admin_url('accidentReport/savehira') }}",
                 type: "POST",
                 data: {
                     _token: "{{ csrf_token() }}",
-                    moc_id: mocId,
-                    fireincident_id: fireincident_id
+                    hira_id: hiraId,
+                    accidentId: accidentId
                 },
                 dataType: "json",
                 success: function(response) {
                     if (response.success) {
-                        alert("MOC saved successfully!");
+                        alert("HIRA saved successfully!");
                         $('#saved_hira_id').val(response
-                            .moc_id); // Update the hidden input
+                            .hira_id); // Update the hidden input
                         $('#hiraModal').modal('hide');
                     } else {
-                        alert("Failed to save MOC: " + response.message);
+                        alert("Failed to save HIRA: " + response.message);
                     }
                 },
                 error: function(xhr) {
@@ -138,30 +136,30 @@
 
     $(document).ready(function() {
 
-        $('#existingMOC').on('click', function() {
-            $('#existingMOCdiv').show();
+        $('#existingHira').on('click', function() {
+            $('#existingdiv').show();
 
         });
 
         // Handle dropdown change event
-        $('#moc_id').on('change', function() {
+        $('#hira_id').on('change', function() {
             var hiraId = $(this).val();
             console.log("Selected HIRA ID:", hiraId);
 
             if (hiraId) {
                 $.ajax({
-                    url: "{{ url('incident/fire-incident/gethiradetails') }}/" + hiraId,
+                    url: "{{ url('accidentReport/gethiradetails') }}/" + hiraId,
                     type: "GET",
                     dataType: "json",
                     success: function(data) {
                         console.log("AJAX Response:", data); // Debugging log
 
                         if (data.hira) {
-                            $('#moclikelihood').text(data.hira.likelihood);
-                            $('#mocriskLevel').text(data.hira.risk_levels);
-                            $('#hiramocDetails').show(); // Show the details table
+                            $('#likelihood').text(data.hira.likelihood);
+                            $('#riskLevel').text(data.hira.risk_levels);
+                            $('#hiraDetails').show(); // Show the details table
                         } else {
-                            $('#hiramocDetails').hide(); // Hide if no data
+                            $('#hiraDetails').hide(); // Hide if no data
                         }
                     },
                     error: function(xhr, status, error) {
@@ -169,22 +167,22 @@
                     }
                 });
             } else {
-                $('#hiramocDetails').hide(); // Hide details if no HIRA selected
+                $('#hiraDetails').hide(); // Hide details if no HIRA selected
             }
         });
 
         // Cancel button action for closing modal
         $('#cancelHira').on('click', function() {
-            $('#mocModal').modal('hide');
-            $('#existingMOCdiv').hide();
-            $('#hiramocDetails').hide();
+            $('#hiraModal').modal('hide');
+            $('#existingdiv').hide();
+            $('#hiraDetails').hide();
         });
 
         // Confirm button action (if needed)
         $('#confirmHira').on('click', function() {
             // Add logic to handle confirmation
             console.log("HIRA confirmed");
-            $('#mocModal').modal('hide');
+            $('#hiraModal').modal('hide');
         });
     });
 </script>
