@@ -67,9 +67,9 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Medical Fitness Certificate
                                                         Upload</label>
-                                                    <input type="file" name="file" id="file"
-                                                         class="form-control">
-                                                         <small>Allowed file types: pdf, docx , doc</small>
+                                                    <input type="file" name="file" id="file" class="form-control"
+                                                        accept=".pdf, .doc, .docx"> <!-- Restrict file types -->
+                                                    <small>Allowed file types: PDF, DOCX, DOC</small>
                                                 </div>
                                             </div>
 
