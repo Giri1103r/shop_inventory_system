@@ -37,13 +37,12 @@ class ImportRequisitionjob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($details,$medicnieRequisition)
+    public function __construct($details, $medicnieRequisition)
     {
 
 
         $this->details = $details;
         $this->medicnieRequisition = $medicnieRequisition;
-
     }
 
     /**
@@ -151,6 +150,20 @@ class ImportRequisitionjob implements ShouldQueue
                 continue;
             }
 
+            $medicineExists = MedicineRequisition::where('medicine_id', $medicine->id)->where('reference_id', $this->medicnieRequisition->id)
+                ->where('status', 1)
+                ->exists();
+
+            if ($medicineExists) {
+                $cond_error_datas[] = [
+                    'upload_id' => $this->details['log_id'],
+                    'line_no' => $i,
+                    'error' => 'Medicine is already exist',
+                ];
+                $i++;
+                continue;
+            }
+
             // Add medicine name to the tracking array
             $medicine_names[] = $medicinename;
 
@@ -160,7 +173,7 @@ class ImportRequisitionjob implements ShouldQueue
                 'available_quantity' => $availablequantity,
                 'quantity' => $quantity,
                 'remarks' => $remarks,
-                'created_by' =>1,
+                'created_by' => 1,
             ]);
 
             $data_count++; // Increase valid data count
@@ -188,6 +201,4 @@ class ImportRequisitionjob implements ShouldQueue
 
         UploadLog::where('id', $this->details['log_id'])->update($final_update_array);
     }
-
 }
-
