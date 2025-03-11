@@ -53,7 +53,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="rate" class="form-label require ">Date
-                                                        </label>
+                                                    </label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="date" id="date"
                                                             class="form-control"autocomplete="off">
@@ -65,10 +65,11 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Medical Fitness Certificate Upload</label>
+                                                    <label class="form-label require">Medical Fitness Certificate
+                                                        Upload</label>
                                                     <input type="file" name="file" id="file"
-
-                                                        class="form-control">
+                                                         class="form-control">
+                                                         <small>Allowed file types: pdf, docx , doc</small>
                                                 </div>
                                             </div>
 
@@ -180,21 +181,18 @@
                     emp_name: {
                         required: true,
                     },
-
                     date: {
                         required: true,
                     },
                     file: {
                         required: true,
+                        extension: "pdf|doc|docx" // Allow only PDF, DOC, DOCX
                     },
                     remarks: {
                         required: true,
                         minlength: 3,
                         maxlength: 600,
-
                     },
-
-
                 },
                 messages: {
                     emp_id: {
@@ -203,19 +201,18 @@
                     emp_name: {
                         required: "Please select the Employee Name.",
                     },
-
                     date: {
                         required: "Please select the date.",
                     },
                     file: {
-                        required: 'File is required',
+                        required: "File is required.",
+                        extension: "Please Select the valid mime Type."
                     },
                     remarks: {
-                        required: 'Remarks is required',
-                        minlength: 3,
-                        maxlength: 600,
+                        required: "Remarks are required.",
+                        minlength: "Remarks should have at least 3 characters.",
+                        maxlength: "Remarks should not exceed 600 characters.",
                     },
-
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
@@ -236,6 +233,7 @@
                     console.log("Form has " + errors + " invalid fields.");
                 },
             });
+
 
 
         });
