@@ -212,7 +212,7 @@ class CronController extends Controller
             $toDate = todayDbdate();
             $office_id = $this->worker_details->getofficeid();
 
-            $responses = []; // Store API responses for all office IDs
+            $responses = []; 
             $errors = [];
 
             try {

@@ -72,7 +72,8 @@ class Worktemp extends Model
             foreach ($chunk as $item) {
                 $cleanUnit = isset($item['Unit']) ? str_replace(["\r", "\n"], '', trim($item['Unit'])) : null;
 
-                $status = isset($item['Status']) ? ($item['Status'] ? 1 : 0) : null;
+                $status = isset($item['Status']) ? ($item['Status'] === 'Y' ? 1 : 0) : null;
+
                 // dd($item['Status'], $status);
                 $valuesToInsertOrUpdate = [
                     'emp_name' => isset($item['EmpName']) ? $item['EmpName'] : null,
