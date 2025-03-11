@@ -69,7 +69,15 @@
                                                 </div>
                                             </div>
                                         </div>
-
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="status" class="form-label">{{ __('common.status') }}</label>
+                                            <select name="status" id="status" style="width: 100%"
+                                                class="form-control single-select">
+                                                <option value="">Select Status</option>
+                                                <option value="{{ encryptId(1) }}">Active</option>
+                                                <option value="{{ encryptId(0) }}">In-Active</option>
+                                            </select>
+                                        </div>
 
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
@@ -222,6 +230,7 @@
                     d.unit_id = $('#unit_id').val();
                     d.from_date = $('#from_date').val();
                     d.to_date = $('#to_date').val();
+                    d.status = $('#status').val();
 
                 },
                 error: function(xhr, error, code) {
@@ -296,6 +305,8 @@
                                 var unit_id = $('#unit_id').val();
                                 var from_date = $('#from_date').val();
                                 var to_date = $('#to_date').val();
+                                var status = $('#status').val();
+
 
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
@@ -304,6 +315,7 @@
                                     '?search=' + searchValue +
                                     '&unit_id=' + unit_id +
                                     '&from_date=' + from_date +
+                                    '&status=' + status +
                                     '&to_date=' + to_date;
                             }
                         },
@@ -315,6 +327,7 @@
                                 var unit_id = $('#unit_id').val();
                                 var from_date = $('#from_date').val();
                                 var to_date = $('#to_date').val();
+                                var status = $('#status').val();
 
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
@@ -323,6 +336,7 @@
                                     '?search=' + searchValue +
                                     '&unit_id=' + unit_id +
                                     '&from_date=' + from_date +
+                                    '&status=' + status +
                                     '&to_date=' + to_date;
                             }
                         }

@@ -257,7 +257,7 @@ class Work extends Model
                     'status' => 1,
                     'created_by' => Auth::id(),
                 ];
-
+                // dd($valuesToInsertOrUpdate ,$item );
                 // Check if record exists
                 if ($this->where('emp_id', $item['emp_id'])->exists()) {
                     $valuesToInsertOrUpdate['updated_at'] = now();
@@ -270,8 +270,12 @@ class Work extends Model
 
                 // Add to insertedRecords for tracking
                 $insertedRecords[] = array_merge(['emp_id' => $item['emp_id']], $valuesToInsertOrUpdate);
+
             }
+
+
         }
+
 
         // Return inserted or updated records
         return $insertedRecords;
