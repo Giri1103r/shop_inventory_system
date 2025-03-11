@@ -130,10 +130,11 @@ class PrescribetoPatient extends Model
         }else{
             $employeeId =   $request->emp_id;
         }
+
         $insert_array = [
             'is_outside_employee' => $request->has('is_outside_worker') ? 1 : 0,
-            'unit_id' =>  $unit->id,
-           'department_id' => $request->department_id ,
+            'unit_id' =>  $unit->id ?? null,
+            'department_id' => $request->department_id ,
             'company_name' => $request->company_name,
             'emp_id' =>$employeeId ,
             'gender' => $request->gender,
@@ -156,6 +157,8 @@ class PrescribetoPatient extends Model
             'created_by' => Auth::id(),
             'dob' => DBdateformat($request->dob)
         ];
+
+        // dd( $insert_array);
         return $this->create($insert_array);
     }
 

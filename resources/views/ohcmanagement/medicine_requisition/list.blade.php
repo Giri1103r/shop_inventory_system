@@ -100,8 +100,8 @@
                                                 <option value="2">Paramedics Approval Pending</option>
                                                 <option value="3">Paramedics Approved</option>
                                                 <option value="4">Paramedics Rejected</option>
-                                                <option value="1">Open</option>
-                                                <option value="5">Close</option>
+                                                <option value="11">Open</option>
+                                                <option value="12">Close</option>
                                             </select>
                                         </div>
 
@@ -191,7 +191,7 @@
             })
             var toDatepicker = flatpickr("#to_date", {
                 dateFormat: "d-m-Y",
-               
+
             });
 
             // Initialize DataTable

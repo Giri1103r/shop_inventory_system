@@ -224,8 +224,9 @@ class PrescribetoPatientController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-            // dd($request->all());
           $unit =  $this->unit->where('unit_name', $request->unit_id)->where('status', 1)->first();
+
+
             $opd_patient = $this->opd_patient->store( $unit);
 
             $firstaid = $this->opd_firstaid->store($opd_patient);
@@ -234,6 +235,7 @@ class PrescribetoPatientController extends Controller
 
             $id =  $opd_patient->id;
             $opdpatient = $this->opd_patient->selectOne($id);
+
 
 
             // mail notification
@@ -306,6 +308,7 @@ class PrescribetoPatientController extends Controller
 
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
         } catch (Exception $ex) {
+            // dd($ex);
             report($ex);  // Debugging
             Session::flash('error', 'Something went wrong. Please try again after some time');
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
