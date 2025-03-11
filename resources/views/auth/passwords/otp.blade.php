@@ -10,7 +10,7 @@
 
             <form id="resetform" action="{{ admin_url('password/otp/submit') }}" method="post">
                 @csrf
-                {{-- <input type="hidden" name="token" value="{{ $token }}"> --}}
+                <input type="hidden" name="token" value="{{ $token }}">
                 <div class="mb-3">
                     <label for="emailaddress" class="form-label">Email address</label>
                     <input class="form-control" type="email" id="email" name="email" value="{{ $email }}"
