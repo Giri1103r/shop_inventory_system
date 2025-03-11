@@ -693,7 +693,7 @@ class MedicalFitnessCertificateController extends Controller
             $filename = "Medical Fitness Certificate Details.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
@@ -751,7 +751,7 @@ class MedicalFitnessCertificateController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
         }
     }
 }

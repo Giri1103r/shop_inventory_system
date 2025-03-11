@@ -308,7 +308,7 @@ class PrescribetoPatientController extends Controller
 
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
         } catch (Exception $ex) {
-            // dd($ex);
+            // report($ex);
             report($ex);  // Debugging
             Session::flash('error', 'Something went wrong. Please try again after some time');
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
