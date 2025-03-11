@@ -235,7 +235,6 @@ class LoginController extends Controller
 
         $token = Session::get('token');
         $email = Session::get('email');
-        dd($token);
         if (!$token) {
             Session::flash('error', 'Access Denied!');
             return redirect()->back();
