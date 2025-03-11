@@ -253,7 +253,7 @@
                                     window.location.href =
                                         "{{ admin_url('ohc/vendor/export/pdf') }}" +
                                         '?search=' + searchValue +
-                                        '&medicine=' + vendor_name +
+                                        '&vendor_name=' + vendor_name +
                                         '&unit=' + license_no +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
@@ -275,7 +275,7 @@
                                     window.location.href =
                                         "{{ admin_url('ohc/vendor/export/excel') }}" +
                                         '?search=' + searchValue +
-                                        '&medicine=' + vendor_name +
+                                        '&vendor_name=' + vendor_name +
                                         '&unit=' + license_no +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
