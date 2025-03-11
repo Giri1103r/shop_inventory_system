@@ -86,7 +86,7 @@
                     </td>
                     <td border="0"
                         style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                        PPE Exemption
+                        Medical Fitness Certificate
                     </td>
                 </tr>
             </table>
