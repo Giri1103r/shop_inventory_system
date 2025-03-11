@@ -160,7 +160,7 @@ class ImportRequisitionjob implements ShouldQueue
                 'available_quantity' => $availablequantity,
                 'quantity' => $quantity,
                 'remarks' => $remarks,
-                'created_by' => Auth::id(),
+                'created_by' =>1,
             ]);
 
             $data_count++; // Increase valid data count

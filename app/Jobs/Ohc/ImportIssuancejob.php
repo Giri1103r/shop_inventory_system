@@ -142,7 +142,7 @@ class ImportIssuancejob implements ShouldQueue
                     'medicine_id' => $medicine->id,
                     'available_quantity' => $availablequantity,
                     'quantity' => $quantity,
-                    'created_by' => Auth::id(),
+                    'created_by' => 1,
                 ]);
                 $medicine_issuance[] = $issued_medicine;
             } catch (\Exception $e) {
