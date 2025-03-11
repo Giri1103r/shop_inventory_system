@@ -133,7 +133,7 @@ class EmployeecumPatientController extends Controller
             $rules = [
                 'emp_name' => 'required',
                 'employee_type' => 'required',
-                'dob' => 'required',
+                'dateofbirth' => 'required',
                 'address' => 'required|max:300',
             ];
 
@@ -141,7 +141,7 @@ class EmployeecumPatientController extends Controller
             $messages = [
                 'emp_name.required' => 'Employee name is required.',
                 'employee_type.required' => 'Please select an employee type.',
-                'dob.required' => 'Date of birth is required.',
+                'dateofbirth.required' => 'Date of birth is required.',
                 'address.required' => 'Address is required.',
                 'address.max' => 'Address cannot exceed 300 characters.',
             ];
@@ -154,20 +154,19 @@ class EmployeecumPatientController extends Controller
 
             try {
 
-
                $this->employeecumpatient->store();
 
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                report($ex);
+              report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/employee-cum-patient/list'));
         } catch (Exception $ex) {
 
-            report($ex);
+          report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/employee-cum-patient/list'));
         }

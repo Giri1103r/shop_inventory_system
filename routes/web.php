@@ -1017,7 +1017,7 @@ Route::middleware(['securityheader'])->group(function () {
             Route::group(['prefix' => 'ohc/prescribe-to-patient'], function () {
                 Route::get('/list', [PrescribetoPatientController::class, 'index']);
                 Route::post('/list', [PrescribetoPatientController::class, 'index']);
-                Route::get('/add', [PrescribetoPatientController::class, 'adFd']);
+                Route::get('/add', [PrescribetoPatientController::class, 'add']);
                 Route::post('/add/submit', [PrescribetoPatientController::class, 'store']);
                 Route::get('/edit/{id}', [PrescribetoPatientController::class, 'edit']);
                 Route::post('/edit/submit', [PrescribetoPatientController::class, 'update']);

@@ -142,7 +142,7 @@ class EmployeeCumPatient extends Model
             'is_outside_worker' => $request->has('is_outside_worker') ? 1 : 0,
             'emp_name' => $request->emp_name,
             'address' => $request->address,
-            'dob' => $request->dob,
+            'dob' => DBdateformat($request->dateofbirth),
             'emp_id' => $request->emp_id,
             'employee_type' => $request->employee_type,
             'created_by' => Auth::id(),
