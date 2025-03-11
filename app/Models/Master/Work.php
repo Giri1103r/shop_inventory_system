@@ -255,7 +255,7 @@ class Work extends Model
                     'designation' => $item['designation'] ?? null,
                     'wfemptype' => $item['wfemptype'] ?? null,
                     'skill' => $item['skill'] ?? null,
-                    'status' => 1,
+                    'status' => $item['status'],
                     'created_by' => Auth::id(),
                 ];
                 // dd($valuesToInsertOrUpdate ,$item );

@@ -226,12 +226,12 @@ class CronController extends Controller
 
                         if (!empty($data)) {
                             $this->worktemp->store($data);
-                            $responses[] = "Data saved successfully for {$company->company_name}";
+                            $responses[] = "Data saved successfully";
                         } else {
-                            $responses[] = "No data found in API response for {$company->company_name}";
+                            $responses[] = "No data found in API response";
                         }
                     } else {
-                        $errors[] = "API request failed for {$company->company_name}";
+                        $errors[] = "API request failed";
                     }
                 }
 
@@ -289,7 +289,6 @@ class CronController extends Controller
             $worktemp = Worktemp::select('*')->where('upload_status', 0)->where('status', 1)->get();
 
             if (!empty($worktemp)) {
-
 
                 $work = $this->work->store($worktemp);
                 if (empty($work)) {
