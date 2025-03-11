@@ -847,7 +847,7 @@ class MedicineReceivingController extends Controller
                     $newTotalPurchase = $oldQuantity->total_purchase + $data->quantity;
 
 
-                    $this->inventory->where('medicine_id', $ids) ->where('unit_id', 1)->increment('balance', $newQuantity);
+                    $this->inventory->where('medicine_id', $ids) ->where('unit_id', 1)->increment('balance', $data->quantity);
                     $this->inventory->where('medicine_id', $ids) ->where('unit_id', 1)->update(['total_purchase'=> $data->quantity]);
 
                 }
