@@ -61,6 +61,7 @@ class Work extends Model
         $query = $query->leftJoin('masters_location', 'masters_work.location', '=', 'masters_location.id');
         $query = $query->leftJoin('masters_unit', 'masters_work.unit', '=', 'masters_unit.id');
         $query = $query->leftJoin('masters_department', 'masters_work.department', '=', 'masters_department.id');
+        $query = $query->where('masters_work.status',1);
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
