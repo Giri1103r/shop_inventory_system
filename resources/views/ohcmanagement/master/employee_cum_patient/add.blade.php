@@ -56,7 +56,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Employee Name</label>
                                                     <input type="text" name="emp_name" id="emp_name"
-                                                        class="form-control" placeholder="Employee Name" readonly>
+                                                        class="form-control" placeholder="Employee Name" >
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -131,19 +131,17 @@
             });
         });
         $(document).ready(function() {
-            $('#is_outside_worker').change(function() {
-                if ($(this).is(':checked')) {
-                    $('#emp_name').prop('readonly', false);
-                    $('#emp_id').val(null).trigger('change');
+    $('#is_outside_worker').change(function() {
+        if ($(this).is(':checked')) {
+            $('#emp_id').val(null).trigger('change').prop('disabled', true);
+            $('#emp_name').prop('readonly', false); 
+        } else {
+            $('#emp_id').prop('disabled', false);
+            $('#emp_name').prop('readonly', true);
+        }
+    });
+});
 
-                    $('#emp_id').prop('disabled', true);
-                } else {
-
-                    $('#emp_name').prop('readonly', false);
-                    $('#emp_id').prop('disabled', false);
-                }
-            });
-        });
 
         $('#emp_id').select2({
             ajax: {
@@ -183,7 +181,7 @@
                     success: function(response) {
                         if (response.employee) {
                             $('#emp_name').val(response.employee.emp_name).prop('readonly', true);
-                      
+
                         } else {
                             $('#emp_name').val('').prop('readonly', true);
                         }
