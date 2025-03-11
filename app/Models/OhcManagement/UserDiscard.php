@@ -64,7 +64,7 @@ class UserDiscard extends Model
 
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('ohc_management_discard.status', decryptId($request->status));
+            $query = $query->where('ohc_management_discard_medicine.status', decryptId($request->status));
 
         }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
@@ -187,6 +187,11 @@ class UserDiscard extends Model
         if ($request->has('unit_id') && $request->unit_id) {
 
             $query = $query->where('ohc_management_discard.unit_id', decryptId($request->unit_id));
+
+        }
+        if ($request->has('status') && $request->status) {
+
+            $query = $query->where('ohc_management_discard_medicine.status', decryptId($request->status));
 
         }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {

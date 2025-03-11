@@ -649,7 +649,7 @@
                     $('#emp_id').val(null).trigger('change');
                     $(".department, .company_name, .employecode").show();
                     $(".employee-id").hide();
-
+                    $('#mobile_no').val(null).trigger('change');
                     $("#emp_id").prop("disabled", true);
                     $(".employecode input[name='emp_id']").prop("disabled", false);
 
@@ -678,6 +678,7 @@
                     $("#emp_id").prop("disabled", false); // Enable select field
 
                     $("#emp_name").val("").prop("readonly", false);
+                    $("#mobile_no").val("").prop("readonly", false);
 
                     // Add validation for dropdown
                     $("select[name='emp_id']").rules("add", {

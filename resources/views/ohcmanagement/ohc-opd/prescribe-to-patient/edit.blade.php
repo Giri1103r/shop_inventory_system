@@ -659,7 +659,7 @@
                     $('#emp_id').val(null).trigger('change');
                     $(".department, .company_name, .employecode").show();
                     $(".employee-id").hide();
-
+                   
                     $("#emp_name").val("{{ $opdpatient->emp_name ?? '' }}").prop("readonly", false);
 
 
