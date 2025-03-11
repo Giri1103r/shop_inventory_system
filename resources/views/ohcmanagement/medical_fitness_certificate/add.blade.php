@@ -68,7 +68,7 @@
                                                     <label class="form-label require">Medical Fitness Certificate
                                                         Upload</label>
                                                     <input type="file" name="file" id="file" class="form-control"
-                                                        accept=".pdf, .doc, .docx"> <!-- Restrict file types -->
+                                                      > 
                                                     <small>Allowed file types: PDF, DOCX, DOC</small>
                                                 </div>
                                             </div>
@@ -164,20 +164,14 @@
             }
         });
         $(function() {
-            // Custom method to validate file MIME types
-            $.validator.addMethod("validFileType", function(value, element) {
-                if (element.files.length === 0) {
-                    return false; // File is required
-                }
 
-                var allowedTypes = ["application/pdf",
-                    "application/msword",
-                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                ];
-
-                var fileType = element.files[0].type;
-                return allowedTypes.includes(fileType);
-            }, "Only PDF, DOC, and DOCX files are allowed.");
+            $.validator.addMethod(
+                "regex",
+                function(value, element, regex) {
+                    return this.optional(element) || regex.test(value);
+                },
+                "Invalid format."
+            );
 
             $('#medicalfitnessform').validate({
                 rules: {
@@ -192,7 +186,7 @@
                     },
                     file: {
                         required: true,
-                        validFileType: true // Custom MIME type validation
+                        extension: "pdf|doc|docx" // Allow only PDF, DOC, DOCX
                     },
                     remarks: {
                         required: true,
@@ -212,7 +206,7 @@
                     },
                     file: {
                         required: "File is required.",
-                        validFileType: "Only PDF, DOC, and DOCX files are allowed."
+                        extension: "Please Select the valid mime Type."
                     },
                     remarks: {
                         required: "Remarks are required.",
@@ -225,14 +219,13 @@
                     error.addClass('invalid-feedback');
                     element.closest('.form-input').append(error);
                 },
-                highlight: function(element) {
+                highlight: function(element, errorClass, validClass) {
                     $(element).addClass('is-invalid');
                 },
-                unhighlight: function(element) {
+                unhighlight: function(element, errorClass, validClass) {
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
-                    alert("Form submitted successfully!"); // Replace with AJAX or actual submission
                     form.submit();
                 },
                 invalidHandler: function(event, validator) {
@@ -240,6 +233,9 @@
                     console.log("Form has " + errors + " invalid fields.");
                 },
             });
+
+
+
         });
     </script>
 @endpush
