@@ -223,8 +223,11 @@
                     success: function(response) {
                         if (response.employee) {
                             $('#certifier_name').val(response.employee.emp_name).prop('readonly', true);
+                            $('#mobile_no').val(response.employee.mobile_no).prop('readonly', true);
                         } else {
                             $('#certifier_name').val('').prop('readonly', true);
+                            $('#mobile_no').val('').prop('readonly', true);
+
                         }
                     },
                     error: function(xhr) {
@@ -233,8 +236,11 @@
                 });
             } else {
                 $('#certifier_name').val('').prop('readonly', true);
+                $('#mobile_no').val('').prop('readonly', true);
+
             }
         });
+
 
 
         $(function() {

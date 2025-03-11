@@ -472,12 +472,12 @@ class EmployeecumPatientController extends Controller
     {
         $emp_id = $request->input('empId');
 
-        $employee = Employee::select('emp_name')
+        $employee = Employee::select('emp_name','mobile_no')
             ->where('emp_id', $emp_id)
             ->first();
 
         if (!$employee) {
-            $employee = Work::select('emp_name')
+            $employee = Work::select('emp_name','mobile_no')
                 ->where('emp_id', $emp_id)
                 ->first();
         }
