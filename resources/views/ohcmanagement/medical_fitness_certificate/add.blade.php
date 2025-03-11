@@ -164,14 +164,20 @@
             }
         });
         $(function() {
+            // Custom method to validate file MIME types
+            $.validator.addMethod("validFileType", function(value, element) {
+                if (element.files.length === 0) {
+                    return false; // File is required
+                }
 
-            $.validator.addMethod(
-                "regex",
-                function(value, element, regex) {
-                    return this.optional(element) || regex.test(value);
-                },
-                "Invalid format."
-            );
+                var allowedTypes = ["application/pdf",
+                    "application/msword",
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                ];
+
+                var fileType = element.files[0].type;
+                return allowedTypes.includes(fileType);
+            }, "Only PDF, DOC, and DOCX files are allowed.");
 
             $('#medicalfitnessform').validate({
                 rules: {
@@ -186,7 +192,7 @@
                     },
                     file: {
                         required: true,
-                        extension: "pdf|doc|docx" // Allow only PDF, DOC, DOCX
+                        validFileType: true // Custom MIME type validation
                     },
                     remarks: {
                         required: true,
@@ -206,7 +212,7 @@
                     },
                     file: {
                         required: "File is required.",
-                        extension: "Please Select the valid mime Type."
+                        validFileType: "Only PDF, DOC, and DOCX files are allowed."
                     },
                     remarks: {
                         required: "Remarks are required.",
@@ -219,13 +225,14 @@
                     error.addClass('invalid-feedback');
                     element.closest('.form-input').append(error);
                 },
-                highlight: function(element, errorClass, validClass) {
+                highlight: function(element) {
                     $(element).addClass('is-invalid');
                 },
-                unhighlight: function(element, errorClass, validClass) {
+                unhighlight: function(element) {
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
+                    alert("Form submitted successfully!"); // Replace with AJAX or actual submission
                     form.submit();
                 },
                 invalidHandler: function(event, validator) {
@@ -233,9 +240,6 @@
                     console.log("Form has " + errors + " invalid fields.");
                 },
             });
-
-
-
         });
     </script>
 @endpush
