@@ -1,4 +1,3 @@
-
 @extends('admin.layouts.admin')
 @section('title', 'Medical Fitness Certificate Show')
 @section('pageurl', admin_url('ohc/medical-fitness/list'))
@@ -40,13 +39,13 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Employee code') }}</label>
                                         <div class="view_data">
-                                            {{ (isset($medicalfitness->emp_id) ? $medicalfitness->emp_id : '') }}
+                                            {{ isset($medicalfitness->emp_id) ? $medicalfitness->emp_id : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Employee Name') }}</label>
                                         <div class="view_data">
-                                            {{ (isset($medicalfitness->emp_name) ? $medicalfitness->emp_name : '') }}
+                                            {{ isset($medicalfitness->emp_name) ? $medicalfitness->emp_name : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -55,12 +54,7 @@
                                             {{ displaydateformat(isset($medicalfitness->date) ? $medicalfitness->date : '') }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Medical Fitness Certificate') }}</label>
-                                        <div class="view_data">
-                                            {{ (isset($medicalfitness->file) ? $medicalfitness->file : '') }}
-                                        </div>
-                                    </div>
+
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Created at') }}</label>
                                         <div class="view_data">
@@ -72,15 +66,21 @@
                                         @if (isset($medicalfitness) && $medicalfitness && $medicalfitness->file)
                                             <p>
                                                 @php
-                                                    $fileExtension = pathinfo($medicalfitness->file, PATHINFO_EXTENSION);
+                                                    $fileExtension = pathinfo(
+                                                        $medicalfitness->file,
+                                                        PATHINFO_EXTENSION,
+                                                    );
                                                 @endphp
                                                 @if (in_array($fileExtension, ['pdf', 'doc', 'docx']))
-                                                    <a href="{{ asset('public/' . $medicalfitness->file) }}" target="_blank" >
+                                                    <a href="{{ asset('public/' . $medicalfitness->file) }}"
+                                                        target="_blank">
                                                         <i class="fas fa-eye text-danger"></i> View
                                                     </a>
                                                 @else
-                                                    <a href="{{ asset('public/' . $medicalfitness->file) }}" target="_blank">
-                                                        <img src="{{ asset('public/' . $medicalfitness->file) }}" style="width: 100px" alt="image">
+                                                    <a href="{{ asset('public/' . $medicalfitness->file) }}"
+                                                        target="_blank">
+                                                        <img src="{{ asset('public/' . $medicalfitness->file) }}"
+                                                            style="width: 100px" alt="image">
                                                     </a>
                                                 @endif
                                             </p>
@@ -93,6 +93,12 @@
                                         <label class="form-label view_label">{{ __('Created Date') }}</label>
                                         <div class="view_data">
                                             {{ displaydateformat(isset($medicalfitness->created_at) ? $medicalfitness->created_at : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12 form-input">
+                                        <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($medicalfitness->remarks) ? $medicalfitness->remarks : '' }}
                                         </div>
                                     </div>
                                 </div>
@@ -114,45 +120,53 @@
                                             </thead>
 
                                             <tbody>
-                                                @foreach ($medicalfitnesslog as $status_log )
+                                                @foreach ($medicalfitnesslog as $status_log)
+                                                    <tr>
 
-                                                <tr>
+                                                        <td>
+                                                            @if ($status_log['from_status'] == STATUS_OHC_MEDICAL_PARAMEDICS_REQUEST)
+                                                                <p class='badge bg-info' style='font-size: 1.0em;'>
+                                                                    Paramedics request the fitness Approval</p>
+                                                            @elseif($status_log['from_status'] == STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING)
+                                                                <p class='badge bg-info' style='font-size: 1.0em;'>Doctor
+                                                                    Approval Pending</p>
+                                                            @elseif($status_log['from_status'] == STATUS_OHC_MEDICAL_DOCTOR_APPROVED)
+                                                                <p class='badge bg-success' style='font-size: 1.0em;'>Doctor
+                                                                    Approved</p>
+                                                            @elseif($status_log['from_status'] == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING)
+                                                                <p class='badge bg-info' style='font-size: 1.0em;'> EHS Head
+                                                                    Approval Pending</p>
+                                                            @elseif($status_log['from_status'] == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
+                                                                <p class='badge bg-success' style='font-size: 1.0em;'>EHS
+                                                                    Head Approved</p>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            @if ($status_log['to_status'] == STATUS_OHC_MEDICAL_PARAMEDICS_REQUEST)
+                                                                <p class='badge bg-info' style='font-size: 1.0em;'>
+                                                                    Paramedics request the fitness Approval</p>
+                                                            @elseif($status_log['to_status'] == STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING)
+                                                                <p class='badge bg-info' style='font-size: 1.0em;'>Doctor
+                                                                    Approval Pending</p>
+                                                            @elseif($status_log['to_status'] == STATUS_OHC_MEDICAL_DOCTOR_APPROVED)
+                                                                <p class='badge bg-success' style='font-size: 1.0em;'>Doctor
+                                                                    Approved</p>
+                                                            @elseif($status_log['to_status'] == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING)
+                                                                <p class='badge bg-info' style='font-size: 1.0em;'> EHS Head
+                                                                    Approval Pending</p>
+                                                            @elseif($status_log['to_status'] == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
+                                                                <p class='badge bg-success' style='font-size: 1.0em;'>EHS
+                                                                    Head Approved</p>
+                                                            @endif
+                                                        </td>
 
-                                                    <td>
-                                                        @if( ($status_log['from_status']) == STATUS_OHC_MEDICAL_PARAMEDICS_REQUEST)
-                                                            <p class='badge bg-info' style='font-size: 1.0em;'>Paramedics request the fitness Approval</p>
-                                                        @elseif( ($status_log['from_status']) == STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING)
-                                                            <p class='badge bg-info' style='font-size: 1.0em;'>Doctor Approval Pending</p>
-                                                        @elseif( ($status_log['from_status']) == STATUS_OHC_MEDICAL_DOCTOR_APPROVED)
-                                                            <p class='badge bg-success' style='font-size: 1.0em;'>Doctor Approved</p>
-                                                        @elseif( ($status_log['from_status']) == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING)
-                                                            <p class='badge bg-info' style='font-size: 1.0em;'> EHS Head Approval Pending</p>
-                                                        @elseif( ($status_log['from_status']) == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
-                                                            <p class='badge bg-success' style='font-size: 1.0em;'>EHS Head Approved</p>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                         @if( ($status_log['to_status']) == STATUS_OHC_MEDICAL_PARAMEDICS_REQUEST)
-                                                            <p class='badge bg-info' style='font-size: 1.0em;'>Paramedics request the fitness Approval</p>
-                                                        @elseif( ($status_log['to_status']) == STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING)
-                                                            <p class='badge bg-info' style='font-size: 1.0em;'>Doctor Approval Pending</p>
-                                                        @elseif( ($status_log['to_status']) == STATUS_OHC_MEDICAL_DOCTOR_APPROVED)
-                                                            <p class='badge bg-success' style='font-size: 1.0em;'>Doctor Approved</p>
-                                                        @elseif( ($status_log['to_status']) == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING)
-                                                            <p class='badge bg-info' style='font-size: 1.0em;'> EHS Head Approval Pending</p>
-                                                        @elseif( ($status_log['to_status']) == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
-                                                            <p class='badge bg-success' style='font-size: 1.0em;'>EHS Head Approved</p>
-                                                        @endif
-                                                    </td>
-
-                                                    <td>{{ isset($status_log['created_by']) ? getUsername($status_log['created_by']) : '-' }}
-                                                    </td>
-                                                    <td>{{ isset($status_log['remarks']) ? $status_log['remarks'] : '-' }}
-                                                    </td>
-                                                    <td>{{ null !== Displaydateformat($status_log['created_at']) ? Displaydateformat($status_log['created_at']) : '-' }}
-                                                    </td>
-                                                </tr>
-
+                                                        <td>{{ isset($status_log['created_by']) ? getUsername($status_log['created_by']) : '-' }}
+                                                        </td>
+                                                        <td>{{ isset($status_log['remarks']) ? $status_log['remarks'] : '-' }}
+                                                        </td>
+                                                        <td>{{ null !== Displaydateformat($status_log['created_at']) ? Displaydateformat($status_log['created_at']) : '-' }}
+                                                        </td>
+                                                    </tr>
                                                 @endforeach
                                             </tbody>
 
