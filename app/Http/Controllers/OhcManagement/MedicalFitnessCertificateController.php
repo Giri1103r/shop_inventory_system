@@ -185,13 +185,13 @@ class MedicalFitnessCertificateController extends Controller
 
                         if ($email_id != '' || $email_id != null) {
                             $data = $this->medical_fitness_certificate->selectOne($id);
-                            $permitrray  = $data->toArray();
+                            $details  = $data->toArray();
 
-                            $data['name'] = $user->name;
-                            $data['email_id'] =  $email_id;
-                            $data['mail_subject'] = $mailsubject;
+                            $details['name'] = $user->name;
+                            $details['email_id'] =  $email_id;
+                            $details['mail_subject'] = $mailsubject;
 
-                            Mail::to($data['email_id'])->queue(new FitnessEmail($data));
+                            Mail::to($details['email_id'])->queue(new FitnessEmail($details));
                         }
                     }
                 }
@@ -220,14 +220,14 @@ class MedicalFitnessCertificateController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medical-fitness/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medical-fitness/ist'));
         }

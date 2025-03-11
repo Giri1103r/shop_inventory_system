@@ -512,7 +512,7 @@ class MedicineReceivingController extends Controller
 
                 $data = $this->medicine_receiving->selectOne($id);
                 if ($action == 'approve') {
-                    $mailsubject = 'Medicine Request for the Stock';
+                    $mailsubject = 'Medicine Request was Approved by the EHS Officer';
                     $user_role = ROLE_L1_EHS_OFFCIER;
 
 
@@ -527,13 +527,13 @@ class MedicineReceivingController extends Controller
 
                             if ($email_id != '' || $email_id != null) {
                                 $data = $this->medicine_receiving->selectOne($id);
-                                $permitrray  = $data->toArray();
+                                $details  = $data->toArray();
 
-                                $data['name'] = $user->name;
-                                $data['email_id'] =  $email_id;
-                                $data['mail_subject'] = $mailsubject;
+                                $details['name'] = $user->name;
+                                $details['email_id'] =  $email_id;
+                                $details['mail_subject'] = $mailsubject;
 
-                                Mail::to($data['email_id'])->queue(new MedicineReceivingRequestEmail($data));
+                                Mail::to($details['email_id'])->queue(new MedicineReceivingRequestEmail($details));
                             }
                         }
                     }
@@ -566,13 +566,13 @@ class MedicineReceivingController extends Controller
                     $email_id = $user->email;
                     if ($email_id != '' || $email_id != null) {
                         $data = $this->medicine_receiving->selectOne($id);
-                        $permitrray  = $data->toArray();
+                        $details  = $data->toArray();
 
-                        $data['name'] = $user->name;
-                        $data['email_id'] =  $email_id;
-                        $data['mail_subject'] = $mailsubject;
+                        $details['name'] = $user->name;
+                        $details['email_id'] =  $email_id;
+                        $details['mail_subject'] = $mailsubject;
 
-                        Mail::to($data['email_id'])->queue(new MedicineReceivingRequestEmail($data));
+                        Mail::to($details['email_id'])->queue(new MedicineReceivingRequestEmail($details));
                     }
 
                     $notificationData = array(
@@ -643,7 +643,7 @@ class MedicineReceivingController extends Controller
                 }
                 $data = $this->medicine_receiving->selectOne($id);
 
-                $mailsubject = 'Medicine Request for the Stock';
+                $mailsubject = 'Medicine Request was approved by the L1 EHS Officer';
                 $user_role = ROLE_EHS_HEAD;
 
 
@@ -658,13 +658,13 @@ class MedicineReceivingController extends Controller
 
                         if ($email_id != '' || $email_id != null) {
                             $data = $this->medicine_receiving->selectOne($id);
-                            $permitrray  = $data->toArray();
+                            $details  = $data->toArray();
 
-                            $data['name'] = $user->name;
-                            $data['email_id'] =  $email_id;
-                            $data['mail_subject'] = $mailsubject;
+                            $details['name'] = $user->name;
+                            $details['email_id'] =  $email_id;
+                            $details['mail_subject'] = $mailsubject;
 
-                            Mail::to($data['email_id'])->queue(new MedicineReceivingRequestEmail($data));
+                            Mail::to($details['email_id'])->queue(new MedicineReceivingRequestEmail($details));
                         }
                     }
                 }
@@ -739,23 +739,23 @@ class MedicineReceivingController extends Controller
                 }
 
                 if ($action == 'approve') {
-                    $mailsubject = 'Medicine Request was Approved by the EHS Head';
+                   
                     $data = $this->medicine_receiving->selectOne($id);
                     $createdId = $data->created_by;
                     $user = $this->user->where('id', $createdId)->first();
                     if ($user) {
                         $email_id = $user->email;
                     }
-
+                    $mailsubject = 'Medicine Request was Approved by the EHS Head';
                     if ($email_id != '' || $email_id != null) {
                         $data = $this->medicine_receiving->selectOne($id);
-                        $permitrray  = $data->toArray();
+                        $details  = $data->toArray();
 
-                        $data['name'] = $user->name;
-                        $data['email_id'] =  $email_id;
-                        $data['mail_subject'] = $mailsubject;
+                        $details['name'] = $user->name;
+                        $details['email_id'] =  $email_id;
+                        $details['mail_subject'] = $mailsubject;
 
-                        Mail::to($data['email_id'])->queue(new MedicineReceivingRequestEmail($data));
+                        Mail::to($details['email_id'])->queue(new MedicineReceivingRequestEmail($details));
                     }
                     $notificationData = array(
                         'notification_type' => 4,
@@ -848,7 +848,7 @@ class MedicineReceivingController extends Controller
 
 
                     $this->inventory->where('medicine_id', $ids) ->where('unit_id', 1)->increment('balance', $data->quantity);
-                    $this->inventory->where('medicine_id', $ids) ->where('unit_id', 1)->update(['total_purchase'=> $data->quantity]);
+                    $this->inventory->where('medicine_id', $ids) ->where('unit_id', 1)->increment('total_purchase',$data->quantity);
 
                 }
                 $this->medicine_receiving->stockupdate($id);

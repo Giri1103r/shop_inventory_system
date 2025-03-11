@@ -53,7 +53,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Employee Name</label>
                                                     <input type="text" name="emp_name" id="emp_name"
-                                                        class="form-control" value="{{$medicalfitness->emp_name}}" placeholder="Employee Name" readonly>
+                                                        class="form-control" value="{{ $medicalfitness->emp_name }}"
+                                                        placeholder="Employee Name" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -76,7 +77,7 @@
                                                         Upload</label>
                                                     <input type="file" name="file" id="file"
                                                         class="form-control">
-                                                    <small>Allowed file types: png, jpeg , jpg</small>
+                                                    <small>Allowed file types: pdf, docx , doc</small>
                                                     @if (isset($medicalfitness) && $medicalfitness->file)
                                                         <p>
                                                             <a href="{{ asset('public/' . $medicalfitness->file) }}"
@@ -229,6 +230,8 @@
                     },
                     file: {
                         required: true,
+                        extension: "pdf|doc|docx"
+
                     },
                     remarks: {
                         required: true,
@@ -251,7 +254,8 @@
                         required: "Please select the date.",
                     },
                     file: {
-                        required: 'File is required',
+                        required: "File is required.",
+                        extension: "Please Select the valid mime Type."
                     },
                     remarks: {
                         required: 'Remarks is required',
