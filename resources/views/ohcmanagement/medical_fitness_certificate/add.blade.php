@@ -53,7 +53,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="rate" class="form-label require ">Date
-                                                        Date</label>
+                                                        </label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="date" id="date"
                                                             class="form-control"autocomplete="off">
@@ -67,7 +67,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Medical Fitness Certificate Upload</label>
                                                     <input type="file" name="file" id="file"
-                                                        accept=".pdf, .doc, .docx"
+
                                                         class="form-control">
                                                 </div>
                                             </div>
