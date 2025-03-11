@@ -122,9 +122,9 @@ Route::get('cron/master/employee_save', [CronController::class, 'EmployeeSave'])
 Route::get('permit_expiry', [CronController::class, 'permitExpiry']);
 Route::get('permit_close', [CronController::class, 'permitClose']);
 
-Route::get('stockrequest', [CronController::class, 'stockrequest']);
-Route::get('stockupdate', [CronController::class, 'stockupdate']);
-Route::get('prevoiusmonthstock', [CronController::class, 'prevoiusmonthstock']);
+Route::get('cron/ohc/stockrequest', [CronController::class, 'stockrequest']);
+Route::get('cron/ohc/stockupdate', [CronController::class, 'stockupdate']);
+Route::get('cron/ohc/prevoiusmonthstock', [CronController::class, 'prevoiusmonthstock']);
 
 Route::get('test', [TestController::class,  'index']);
 
